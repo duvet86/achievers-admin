@@ -32,7 +32,7 @@ jobs:
 
       - name: run migrations
         run: |
-          npx prisma migrate deploy
+          npm run setup
 
       - name: prune for prod
         run: |
