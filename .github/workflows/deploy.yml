@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'achievers-admin'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_d596b22de03a42a089710d065b4f866e }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_4174d9611137421e882b8f56bac54a7e }}
           package: .
