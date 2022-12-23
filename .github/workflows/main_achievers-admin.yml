@@ -3,6 +3,9 @@
 
 name: Build and deploy Node.js app to Azure Web App - achievers-admin
 
+env:
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
 on:
   push:
     branches:
@@ -27,9 +30,9 @@ jobs:
           npm run test
           npm run build
 
-      # - name: run migrations
-      #   run: |
-      #     npx prisma migrate deploy
+      - name: run migrations
+        run: |
+          npx prisma migrate deploy
 
       - name: prune for prod
         run: |
