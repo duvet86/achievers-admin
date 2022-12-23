@@ -34,9 +34,9 @@ jobs:
         run: |
           npm run setup
 
-      # - name: prune for prod
-      #   run: |
-      #     npm install --omit=dev
+      - name: prune for prod
+        run: |
+          npm install --omit=dev
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
