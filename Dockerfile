@@ -5,7 +5,7 @@ FROM node:16-bullseye-slim as base
 ENV NODE_ENV production
 
 # Install openssl for Prisma
-RUN apt-get update && apt-get install -y openssl sqlite3
+# RUN apt-get update && apt-get install -y openssl sqlite3
 
 # Install all node_modules, including dev dependencies
 FROM base as deps
@@ -21,7 +21,7 @@ FROM base as production-deps
 WORKDIR /myapp
 
 COPY --from=deps /myapp/node_modules /myapp/node_modules
-ADD package.json .npmrc ./
+ADD package.json ./
 RUN npm prune --production
 
 # Build the app
