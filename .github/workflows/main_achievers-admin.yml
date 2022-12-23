@@ -44,7 +44,6 @@ jobs:
           name: node-app
           path: |
             node_modules
-            node_modules/.prisma
             build
             public
             package.json
