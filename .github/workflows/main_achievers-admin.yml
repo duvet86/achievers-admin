@@ -36,7 +36,7 @@ jobs:
 
       - name: prune for prod
         run: |
-          npm prune --production
+          npm install --omit=dev
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
@@ -69,5 +69,5 @@ jobs:
         with:
           app-name: "achievers-admin"
           slot-name: "Production"
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_4797e0140d244f1d8d7406769196531a }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6B0EB860F87540C18BBBD61BAF884202 }}
           package: .
