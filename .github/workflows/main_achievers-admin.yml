@@ -25,15 +25,11 @@ jobs:
         run: |
           npm install
           npm run test
+          npm run build
 
       - name: run migrations
         run: |
           npx prisma generate
-
-      - name: prune for production
-        run: |
-          npm run build
-          npm prune --production
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
