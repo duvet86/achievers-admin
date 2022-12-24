@@ -1,6 +1,8 @@
 # base node image
 FROM node:18-bullseye-slim as base
 
+ARG DATABASE_URL
+
 # set for base and all layer that inherit from it
 ENV NODE_ENV production
 
@@ -61,3 +63,4 @@ COPY --from=build /myapp/prisma /myapp/prisma
 RUN chmod +x start.sh
 
 ENTRYPOINT [ "./start.sh" ]
+# ENTRYPOINT ["npm", "run", "start"]
