@@ -58,4 +58,6 @@ COPY --from=build /myapp/package.json /myapp/package.json
 COPY --from=build /myapp/start.sh /myapp/start.sh
 COPY --from=build /myapp/prisma /myapp/prisma
 
+RUN chmod +x start.sh
+
 ENTRYPOINT [ "./start.sh" ]
