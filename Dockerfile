@@ -41,9 +41,9 @@ RUN npm run build
 # Finally, build the production image with minimal footprint
 FROM base
 
-ARG DATABASE_URL
+# ARG DATABASE_URL
 
-ENV DATABASE_URL=$DATABASE_URL
+# ENV DATABASE_URL=$DATABASE_URL
 ENV PORT="8080"
 ENV NODE_ENV="production"
 
