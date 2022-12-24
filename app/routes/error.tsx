@@ -6,9 +6,6 @@ import { json } from "@remix-run/server-runtime";
 import { authenticator, getSession } from "~/session.server";
 
 export async function loader({ request }: LoaderArgs) {
-  // await authenticator.isAuthenticated(request, {
-  //   successRedirect: "/",
-  // });
   const session = await getSession(request);
   const error = session.get(authenticator.sessionErrorKey);
 
@@ -18,5 +15,7 @@ export async function loader({ request }: LoaderArgs) {
 export default function Error() {
   const data = useLoaderData();
 
-  return <div>{data.error}</div>;
+  console.log(data);
+
+  return <div>{JSON.stringify(data, null, 2)}</div>;
 }

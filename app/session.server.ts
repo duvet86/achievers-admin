@@ -25,7 +25,7 @@ export const sessionStorage = createCookieSessionStorage({
   },
 });
 
-const USER_SESSION_KEY = "userId";
+export const authenticator = new Authenticator<string>(sessionStorage); // User is a custom user types you can define as you want
 
 export async function getSession(request: Request) {
   const cookie = request.headers.get("Cookie");
@@ -36,7 +36,7 @@ export async function getUserId(
   request: Request
 ): Promise<User["id"] | undefined> {
   const session = await getSession(request);
-  const userId = session.get(USER_SESSION_KEY);
+  const userId = session.get(authenticator.sessionKey);
 
   return userId;
 }
@@ -63,10 +63,6 @@ export async function logout(request: Request) {
     },
   });
 }
-
-export const authenticator = new Authenticator<string>(sessionStorage, {
-  sessionKey: USER_SESSION_KEY,
-}); // User is a custom user types you can define as you want
 
 const microsoftStrategy = new MicrosoftStrategy(
   {
