@@ -1,9 +1,9 @@
 import { Link } from "@remix-run/react";
 
-import { useOptionalUser } from "~/utils";
+// import { useOptionalUser } from "~/utils";
 
 export default function Index() {
-  const user = useOptionalUser();
+  // const user = useOptionalUser();
   return (
     <main className="relative min-h-screen bg-white sm:flex sm:items-center sm:justify-center">
       <div className="relative sm:pb-16 sm:pt-8">
@@ -28,7 +28,13 @@ export default function Index() {
                 project deployed.
               </p>
               <div className="mx-auto mt-10 max-w-sm sm:flex sm:max-w-none sm:justify-center">
-                {user ? (
+                <form action="/auth/microsoft" method="post">
+                  <button className="flex items-center justify-center rounded-md bg-yellow-500 px-4 py-3 font-medium text-white hover:bg-yellow-600">
+                    Login
+                  </button>
+                </form>
+
+                {/* {user ? (
                   <Link
                     to="/notes"
                     className="flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-3 text-base font-medium text-yellow-700 shadow-sm hover:bg-yellow-50 sm:px-8"
@@ -50,7 +56,7 @@ export default function Index() {
                       Log In
                     </Link>
                   </div>
-                )}
+                )} */}
               </div>
               <a href="https://remix.run">
                 <img

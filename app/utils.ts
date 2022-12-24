@@ -69,3 +69,7 @@ export function useUser(): User {
 export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
 }
+
+export function parseJwt(token: string) {
+  return JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
+}
