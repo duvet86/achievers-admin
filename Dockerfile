@@ -1,8 +1,6 @@
 # base node image
 FROM node:18-bullseye-slim as base
 
-ARG DATABASE_URL
-
 # set for base and all layer that inherit from it
 ENV NODE_ENV production
 
@@ -41,6 +39,8 @@ RUN npm run build
 
 # Finally, build the production image with minimal footprint
 FROM base
+
+ARG DATABASE_URL
 
 # ENV DATABASE_URL=file:/data/sqlite.db
 ENV PORT="8080"
