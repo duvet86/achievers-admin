@@ -98,7 +98,7 @@ class MicrosoftStrategy<User> extends OAuth2Strategy<
   }
 }
 
-export let authenticator = new Authenticator<User>(sessionStorage); //User is a custom user types you can define as you want
+export let authenticator = new Authenticator<User>(sessionStorage); // User is a custom user types you can define as you want
 
 let microsoftStrategy = new MicrosoftStrategy(
   {
@@ -116,8 +116,6 @@ let microsoftStrategy = new MicrosoftStrategy(
     if (user === null) {
       user = await createUser(userInfo.email, "test");
     }
-
-    console.log("user", user);
 
     return user;
   }
