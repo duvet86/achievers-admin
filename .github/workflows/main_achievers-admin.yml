@@ -35,7 +35,7 @@ jobs:
           context: .
           push: true
           tags: duvet86/achievers-app:latest
-          build-arg: DATABASE_URL=${{ secrets.DATABASE_URL }}
+          build-args: DATABASE_URL=${{ secrets.DATABASE_URL }}
 
   deploy:
     name: 🚀 Deploy
