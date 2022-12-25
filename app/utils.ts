@@ -67,6 +67,6 @@ export function useUser(): User {
   return maybeUser;
 }
 
-export function parseJwt(token: string) {
+export function parseJwt<T>(token: string): T {
   return JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
 }

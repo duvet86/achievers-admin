@@ -4,9 +4,9 @@ import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import { Authenticator } from "remix-auth";
 import invariant from "tiny-invariant";
 
-import { createUser, getUserByEmail, getUserById } from "~/models/user.server";
-import { MicrosoftStrategy } from "./services/auth.server";
-import { parseJwt } from "./utils";
+import { getOrCreateUserAsync, getUserByIdAsync } from "~/models/user.server";
+import { MicrosoftStrategy } from "~/services/auth.server";
+import { parseJwt } from "~/utils";
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");
@@ -47,7 +47,7 @@ export async function getUser(request: Request) {
     return null;
   }
 
-  const user = await getUserById(userId);
+  const user = await getUserByIdAsync(userId);
   if (user === null) {
     throw await logout(request);
   }
@@ -74,12 +74,9 @@ const microsoftStrategy = new MicrosoftStrategy(
     prompt: "login", // optional
   },
   async ({ accessToken }) => {
-    const userInfo = parseJwt(accessToken);
+    const userInfo = parseJwt<{ email: string }>(accessToken);
 
-    let user = await getUserByEmail(userInfo.email);
-    if (user === null) {
-      user = await createUser(userInfo.email, "test");
-    }
+    const user = await getOrCreateUserAsync(userInfo.email);
 
     return user.id;
   }

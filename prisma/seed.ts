@@ -1,42 +1,26 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
 async function seed() {
-  const email = "rachel@remix.run";
-
-  // cleanup the existing database
-  await prisma.user.delete({ where: { email } }).catch(() => {
-    // no worries if it doesn't exist yet
-  });
-
-  const hashedPassword = await bcrypt.hash("racheliscool", 10);
-
-  const user = await prisma.user.create({
+  await prisma.user.create({
     data: {
-      email,
-      password: {
-        create: {
-          hash: hashedPassword,
-        },
-      },
+      email: "lucamarangon86@gmail.com",
     },
   });
 
-  await prisma.note.create({
+  await prisma.chapter.create({
     data: {
-      title: "My first note",
-      body: "Hello, world!",
-      userId: user.id,
+      name: "Girrawheen",
+      address: "11 Patrick Court Girrawheen WA 6064",
     },
   });
 
-  await prisma.note.create({
+  await prisma.chapter.create({
     data: {
-      title: "My second note",
-      body: "Hello, world!",
-      userId: user.id,
+      name: "Armadale",
+      address:
+        "Library, Westfield Park Primary School, Hemingway Drive Camillo WA 6111",
     },
   });
 
