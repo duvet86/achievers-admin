@@ -2,8 +2,6 @@ import { PrismaClient } from "@prisma/client";
 import { writeFileSync } from "fs";
 import invariant from "tiny-invariant";
 
-invariant(process.env.DATABASE_URL2, "DATABASE_URL2 must be set");
-
 let prisma: PrismaClient;
 
 declare global {
@@ -15,6 +13,11 @@ declare global {
 // create a new connection to the DB with every change either.
 // in production we'll have a single connection to the DB.
 if (process.env.NODE_ENV === "production") {
+  invariant(process.env.DATABASE_URL, "DATABASE_URL must be set");
+  invariant(process.env.CERT, "CERT must be set");
+
+  const dbUrl = process.env.DATABASE_URL.split("?");
+
   writeFileSync(
     "/tmp/DigiCertGlobalRootCA.crt.pem",
     Buffer.from(process.env.CERT!, "base64")
@@ -23,9 +26,7 @@ if (process.env.NODE_ENV === "production") {
   prisma = new PrismaClient({
     datasources: {
       db: {
-        url:
-          process.env.DATABASE_URL2 +
-          "sslcert=/tmp/DigiCertGlobalRootCA.crt.pem",
+        url: dbUrl[0] + "?sslcert=/tmp/DigiCertGlobalRootCA.crt.pem",
       },
     },
   });
