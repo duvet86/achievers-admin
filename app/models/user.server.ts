@@ -4,6 +4,14 @@ import { prisma } from "~/db.server";
 
 export type { User } from "@prisma/client";
 
+export async function getUsersAsync() {
+  return prisma.user.findMany({
+    include: {
+      chapters: true,
+    },
+  });
+}
+
 export async function getUserByIdAsync(id: User["id"]) {
   return prisma.user.findUnique({ where: { id } });
 }

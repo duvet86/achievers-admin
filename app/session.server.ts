@@ -32,7 +32,7 @@ export async function getSession(request: Request) {
   return sessionStorage.getSession(cookie);
 }
 
-export async function getUserId(
+export async function getSessionUserId(
   request: Request
 ): Promise<User["id"] | undefined> {
   const session = await getSession(request);
@@ -42,7 +42,7 @@ export async function getUserId(
 }
 
 export async function getUser(request: Request) {
-  const userId = await getUserId(request);
+  const userId = await getSessionUserId(request);
   if (userId === undefined) {
     return null;
   }
