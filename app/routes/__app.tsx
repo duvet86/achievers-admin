@@ -1,8 +1,17 @@
+import type { LoaderArgs } from "@remix-run/server-runtime";
+
 import { Outlet } from "@remix-run/react";
 
 import Header from "~/components/Header";
+import { requireUserSession } from "~/session.server";
 
-export default function AssignUsers() {
+export async function loader({ request }: LoaderArgs) {
+  await requireUserSession(request);
+
+  return null;
+}
+
+export default function AppLayout() {
   return (
     <div className="flex h-full flex-col">
       <Header />

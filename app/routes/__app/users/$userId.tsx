@@ -6,7 +6,13 @@ import type {
 
 import type { UpdateUser } from "~/models/user.server";
 
-import { Form, useActionData, useCatch, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useCatch,
+  useLoaderData,
+  useTransition,
+} from "@remix-run/react";
 import { json } from "@remix-run/server-runtime";
 
 import { useState } from "react";
@@ -16,20 +22,34 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 
 import { getUserByIdAsync, updateAsync } from "~/models/user.server";
 import { getChaptersAsync } from "~/models/chapter.server";
-
-const roles = ["GUEST", "MENTOR", "STUDENT", "ADMIN"];
+import LoadingSpinner from "~/components/LoadingSpinner";
+import {
+  getAzureRolesAsync,
+  getAzureUserByIdAsync,
+} from "~/models/azure.server";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
-  const [user, chapters] = await Promise.all([
+  const [user, chapters, roles] = await Promise.all([
     getUserByIdAsync(params.userId),
     getChaptersAsync(),
+    getAzureRolesAsync(),
   ]);
 
   invariant(user, "user not found");
 
-  return json({ user, chapters });
+  const azureUser = await getAzureUserByIdAsync(user.azureObjectId);
+
+  return json({
+    user: {
+      ...user,
+      roles: azureUser.appRoleAssignments.map(
+        ({ appRoleId }) => roles[appRoleId].displayName
+      ),
+    },
+    chapters,
+  });
 }
 
 export async function action({ request, params }: ActionArgs): Promise<
@@ -42,19 +62,13 @@ export async function action({ request, params }: ActionArgs): Promise<
 
   const urlSearchParams = new URLSearchParams(await request.text());
 
-  const role = urlSearchParams.get("role");
-  invariant(role, "role not found");
-
   const chapterIds = urlSearchParams.getAll("chapterIds");
   invariant(chapterIds, "role not found");
 
   const updateUser: UpdateUser = {
     id: userId,
-    role,
     chapterIds,
   };
-
-  console.log("user", updateUser);
 
   await updateAsync(updateUser);
 
@@ -64,10 +78,17 @@ export async function action({ request, params }: ActionArgs): Promise<
 export default function Chapter() {
   const { user: initialUser, chapters } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
+  const transition = useTransition();
 
   const [user, setUser] = useState<typeof initialUser>(initialUser);
 
+  const isSubmitting = transition.state !== "idle";
+
   const removeChapter = (chapterId: string) => () => {
+    if (isSubmitting) {
+      return;
+    }
+
     setUser((state) => ({
       ...state,
       chapters: state.chapters.filter((c) => c.chapterId !== chapterId),
@@ -75,6 +96,10 @@ export default function Chapter() {
   };
 
   const assignChapter = (chapterId: string) => {
+    if (isSubmitting) {
+      return;
+    }
+
     if (user.chapters.findIndex((c) => c.chapterId === chapterId) !== -1) {
       return;
     }
@@ -101,31 +126,12 @@ export default function Chapter() {
   return (
     <div>
       <h3 className="text-2xl font-bold">User</h3>
-      <p className="py-2">{user.email}</p>
+      <p className="py-2">Email: {user.email}</p>
+      <p className="py-2">Roles: {user.roles.join(", ")}</p>
 
       <hr className="my-4" />
 
       <Form method="post" className="mt-4">
-        <div className="mb-4 rounded bg-gray-200 p-2">
-          <label
-            htmlFor="role"
-            className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-          >
-            Select a Role
-          </label>
-          <select
-            name="role"
-            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-            defaultValue={user.role}
-          >
-            {roles.map((role) => (
-              <option key={role} value={role}>
-                {role}
-              </option>
-            ))}
-          </select>
-        </div>
-
         <div className="rounded bg-gray-200 p-2">
           <label
             htmlFor="addChapter"
@@ -141,6 +147,7 @@ export default function Chapter() {
               assignChapter(event.target.value);
               event.target.value = "";
             }}
+            disabled={isSubmitting}
           >
             <option value="">Assign a Chapter</option>
             {chapters.map(({ id, name }) => (
@@ -162,6 +169,13 @@ export default function Chapter() {
               </tr>
             </thead>
             <tbody>
+              {user.chapters.length === 0 && (
+                <tr>
+                  <td colSpan={2} className="border p-2">
+                    <i>No Chapters assigned to this user</i>
+                  </td>
+                </tr>
+              )}
               {user.chapters.map(({ chapter: { id, name } }) => (
                 <tr key={id}>
                   <td className="border p-2">
@@ -183,9 +197,17 @@ export default function Chapter() {
 
         <button
           type="submit"
-          className="mt-4 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+          disabled={isSubmitting}
+          className={
+            isSubmitting
+              ? "mt-4 flex items-center rounded bg-blue-200 py-2 px-4 text-white"
+              : "mt-4 flex items-center rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+          }
         >
-          Save
+          {isSubmitting && <LoadingSpinner />}
+          <span className="space-x-2">
+            {isSubmitting ? "Saving..." : "Save"}
+          </span>
         </button>
       </Form>
     </div>

@@ -7,13 +7,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum UserType {
-  GUEST
-  MENTOR
-  STUDENT
-  ADMIN
-}
-
 model User {
   id    String @id @default(cuid())
   email String @unique
@@ -21,10 +14,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  role UserType @default(GUEST)
-
   chapters UserAtChapter[]
-  userRels UserAtChapter[] @relation(name: "userRel")
+  userRels UserAtChapter[] @relation(name: "UserRel")
+
+  azureObjectId String
 }
 
 model Chapter {
@@ -39,13 +32,13 @@ model Chapter {
 }
 
 model UserAtChapter {
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   userId String
 
-  chapter   Chapter @relation(fields: [chapterId], references: [id])
+  chapter   Chapter @relation(fields: [chapterId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   chapterId String
 
-  userRel   User?   @relation(name: "userRel", fields: [userRelId], references: [id])
+  userRel   User?   @relation(name: "UserRel", fields: [userRelId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   userRelId String?
 
   assignedAt DateTime @default(now())

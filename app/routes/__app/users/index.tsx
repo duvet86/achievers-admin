@@ -4,11 +4,25 @@ import { json } from "@remix-run/server-runtime";
 import { PencilIcon } from "@heroicons/react/24/solid";
 
 import { getUsersAsync } from "~/models/user.server";
+import { getAzureRolesAsync, getAzureUsersAsync } from "~/models/azure.server";
 
 export async function loader() {
-  const users = await getUsersAsync();
+  const [users, azureUsers, roles] = await Promise.all([
+    getUsersAsync(),
+    getAzureUsersAsync(),
+    getAzureRolesAsync(),
+  ]);
 
-  return json({ users });
+  return json({
+    users: users.map((u) => ({
+      ...u,
+      appRoleAssignments: azureUsers[u.azureObjectId].appRoleAssignments.map(
+        ({ appRoleId }) => ({
+          ...roles[appRoleId],
+        })
+      ),
+    })),
+  });
 }
 
 export default function SelectChapter() {
@@ -35,10 +49,14 @@ export default function SelectChapter() {
           </tr>
         </thead>
         <tbody>
-          {data.users.map(({ id, email, role, chapters }) => (
+          {data.users.map(({ id, email, appRoleAssignments, chapters }) => (
             <tr key={id}>
               <td className="border p-2">{email}</td>
-              <td className="border p-2">{role}</td>
+              <td className="border p-2">
+                {appRoleAssignments
+                  .map(({ displayName }) => displayName)
+                  .join(", ")}
+              </td>
               <td className="border p-2">
                 {chapters.length > 0
                   ? chapters.map(({ chapter }) => chapter.name).join(", ")

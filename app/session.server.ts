@@ -1,5 +1,3 @@
-import type { User } from "@prisma/client";
-
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import { Authenticator } from "remix-auth";
 import invariant from "tiny-invariant";
@@ -7,6 +5,15 @@ import invariant from "tiny-invariant";
 import { getOrCreateUserAsync, getUserByIdAsync } from "~/models/user.server";
 import { MicrosoftStrategy } from "~/services/auth.server";
 import { parseJwt } from "~/utils";
+
+export interface SessionUser {
+  id: string;
+  roles: string[];
+}
+
+declare global {
+  var __accessToken__: string | undefined;
+}
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");
@@ -25,34 +32,54 @@ export const sessionStorage = createCookieSessionStorage({
   },
 });
 
-export const authenticator = new Authenticator<string>(sessionStorage); // User is a custom user types you can define as you want
+export const authenticator = new Authenticator<SessionUser>(sessionStorage); // User is a custom user types you can define as you want
 
-export async function getSession(request: Request) {
+async function getSession(request: Request) {
   const cookie = request.headers.get("Cookie");
   return sessionStorage.getSession(cookie);
 }
 
-export async function getSessionUserId(
+export async function getSessionUser(
   request: Request
-): Promise<User["id"] | undefined> {
+): Promise<SessionUser | undefined> {
   const session = await getSession(request);
-  const userId = session.get(authenticator.sessionKey);
+  const userSession = session.get(authenticator.sessionKey);
 
-  return userId;
+  return userSession;
 }
 
 export async function getUser(request: Request) {
-  const userId = await getSessionUserId(request);
-  if (userId === undefined) {
+  const userSession = await getSessionUser(request);
+  if (userSession === undefined) {
     return null;
   }
 
-  const user = await getUserByIdAsync(userId);
+  const user = await getUserByIdAsync(userSession.id);
   if (user === null) {
     throw await logout(request);
   }
 
   return user;
+}
+
+export async function requireUserSession(request: Request) {
+  const userSession = await getSessionUser(request);
+
+  if (!userSession) {
+    throw redirect("/");
+  }
+  if (!userSession.roles.includes("Admin")) {
+    throw redirect("/401");
+  }
+
+  return userSession;
+}
+
+export async function getSessionError(request: Request) {
+  const session = await getSession(request);
+  const error = session.get(authenticator.sessionErrorKey);
+
+  return error;
 }
 
 export async function logout(request: Request) {
@@ -73,18 +100,25 @@ const microsoftStrategy = new MicrosoftStrategy(
     scope: "openid profile email", // optional
     prompt: "login", // optional
   },
-  async ({ accessToken }) => {
-    const userInfo = parseJwt<{ email?: string; unique_name: string }>(
-      accessToken
-    );
+  async ({ extraParams, accessToken }) => {
+    global.__accessToken__ = accessToken;
 
-    console.log("userInfo", userInfo);
+    const userInfo = parseJwt<{
+      email?: string;
+      preferred_username: string;
+      roles: string[];
+      oid: string;
+    }>(extraParams.id_token);
 
     const user = await getOrCreateUserAsync(
-      userInfo.email ?? userInfo.unique_name
+      userInfo.email ?? userInfo.preferred_username,
+      userInfo.oid
     );
 
-    return user.id;
+    return {
+      id: user.id,
+      roles: userInfo.roles,
+    };
   }
 );
 

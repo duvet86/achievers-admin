@@ -24,13 +24,13 @@ export default function Header() {
       <div className="block w-full flex-grow lg:flex lg:w-auto lg:items-center">
         <div className="lg:flex-grow">
           <Link
-            to="users"
+            to="/users"
             className="mt-4 mr-6 block text-white hover:text-white lg:mt-0 lg:inline-block"
           >
             Users
           </Link>
           <Link
-            to="chapters"
+            to="/chapters"
             className="mt-4 block text-white hover:text-white lg:mt-0 lg:inline-block"
           >
             Chapters
@@ -38,7 +38,7 @@ export default function Header() {
         </div>
         <div>
           <Link
-            to="logout"
+            to="/logout"
             className="mt-4 inline-block rounded border border-white px-4 py-2 text-sm leading-none text-white hover:border-transparent hover:bg-white hover:text-teal-500 lg:mt-0"
           >
             Logout

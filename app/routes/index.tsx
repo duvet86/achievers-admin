@@ -1,17 +1,17 @@
 import type { LoaderArgs } from "@remix-run/node";
 
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 
-import { getSessionUserId } from "~/session.server";
+import { getSessionUser } from "~/session.server";
 
 export async function loader({ request }: LoaderArgs) {
-  const userSession = await getSessionUserId(request);
+  const userSession = await getSessionUser(request);
 
   if (userSession !== undefined) {
     return redirect("/users");
   }
 
-  return json({ ok: true });
+  return null;
 }
 
 export default function Index() {

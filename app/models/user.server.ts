@@ -4,7 +4,6 @@ import { prisma } from "~/db.server";
 
 export interface UpdateUser {
   id: string;
-  role: string;
   chapterIds: string[];
 }
 
@@ -37,7 +36,10 @@ export async function getUserByEmailAsync(email: User["email"]) {
   return prisma.user.findUnique({ where: { email } });
 }
 
-export async function getOrCreateUserAsync(email: User["email"]) {
+export async function getOrCreateUserAsync(
+  email: User["email"],
+  azureObjectId: User["azureObjectId"]
+) {
   const user = await getUserByEmailAsync(email);
   if (user !== null) {
     return user;
@@ -46,22 +48,15 @@ export async function getOrCreateUserAsync(email: User["email"]) {
   return prisma.user.create({
     data: {
       email,
+      azureObjectId,
     },
   });
 }
 
 export async function updateAsync(user: UpdateUser) {
-  await prisma.user.update({
+  await prisma.userAtChapter.deleteMany({
     where: {
-      id: user.id,
-    },
-    data: {
-      userRels: {
-        set: [],
-      },
-      chapters: {
-        set: [],
-      },
+      userId: user.id,
     },
   });
 
