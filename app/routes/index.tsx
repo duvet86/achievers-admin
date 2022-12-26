@@ -8,7 +8,7 @@ export async function loader({ request }: LoaderArgs) {
   const userSession = await getSessionUserId(request);
 
   if (userSession !== undefined) {
-    return redirect("/chapters");
+    return redirect("/users");
   }
 
   return json({ ok: true });
@@ -31,7 +31,7 @@ export default function Index() {
           </h1>
           <div className="mt-4 flex flex-col items-center items-center justify-center justify-center">
             <form action="/auth/microsoft" method="post">
-              <button className="mt-8 w-48 rounded-md bg-yellow-500 px-4 py-3 font-medium text-white hover:bg-yellow-600">
+              <button className="mt-8 w-48 rounded-md bg-yellow-500 px-4 py-3 font-medium uppercase text-white hover:bg-yellow-600">
                 Login
               </button>
             </form>
@@ -40,7 +40,7 @@ export default function Index() {
               className="mt-16 mb-8 font-medium underline underline-offset-4"
               href="https://www.achieversclubwa.org.au/"
             >
-              Achievers Web Site
+              www.achieversclubwa.org.au
             </a>
           </div>
         </div>

@@ -74,9 +74,15 @@ const microsoftStrategy = new MicrosoftStrategy(
     prompt: "login", // optional
   },
   async ({ accessToken }) => {
-    const userInfo = parseJwt<{ email: string }>(accessToken);
+    const userInfo = parseJwt<{ email?: string; unique_name: string }>(
+      accessToken
+    );
 
-    const user = await getOrCreateUserAsync(userInfo.email);
+    console.log("userInfo", userInfo);
+
+    const user = await getOrCreateUserAsync(
+      userInfo.email ?? userInfo.unique_name
+    );
 
     return user.id;
   }

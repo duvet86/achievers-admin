@@ -1,3 +1,5 @@
+import { Link } from "@remix-run/react";
+
 export default function Header() {
   return (
     <nav className="flex flex-wrap items-center justify-between bg-blue-500 p-2">
@@ -21,32 +23,26 @@ export default function Header() {
       </div>
       <div className="block w-full flex-grow lg:flex lg:w-auto lg:items-center">
         <div className="lg:flex-grow">
-          <a
-            href="#responsive-header"
+          <Link
+            to="users"
             className="mt-4 mr-6 block text-white hover:text-white lg:mt-0 lg:inline-block"
           >
-            Docs
-          </a>
-          <a
-            href="#responsive-header"
-            className="mt-4 mr-6 block text-white hover:text-white lg:mt-0 lg:inline-block"
-          >
-            Examples
-          </a>
-          <a
-            href="#responsive-header"
+            Users
+          </Link>
+          <Link
+            to="chapters"
             className="mt-4 block text-white hover:text-white lg:mt-0 lg:inline-block"
           >
-            Blog
-          </a>
+            Chapters
+          </Link>
         </div>
         <div>
-          <a
-            href="#"
+          <Link
+            to="logout"
             className="mt-4 inline-block rounded border border-white px-4 py-2 text-sm leading-none text-white hover:border-transparent hover:bg-white hover:text-teal-500 lg:mt-0"
           >
-            Download
-          </a>
+            Logout
+          </Link>
         </div>
       </div>
     </nav>
