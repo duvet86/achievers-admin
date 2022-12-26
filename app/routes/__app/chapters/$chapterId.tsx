@@ -40,7 +40,7 @@ export default function Chapter() {
           {chapter.users.map(({ user }) => (
             <tr key={user.id}>
               <td className="border p-2">{user.email}</td>
-              <td className="border p-2">{user.role}</td>
+              <td className="border p-2">ROLE</td>
             </tr>
           ))}
         </tbody>

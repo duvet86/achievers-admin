@@ -66,12 +66,6 @@ export async function updateAsync(user: UpdateUser) {
     },
     data: {
       chapters: {
-        // set: user.chapterIds.map((chapterId) => ({
-        //   userId_chapterId: {
-        //     chapterId: chapterId,
-        //     userId: user.id,
-        //   },
-        // })),
         connectOrCreate: user.chapterIds.map((chapterId) => ({
           create: {
             chapterId: chapterId,
