@@ -1,10 +1,15 @@
-import type { User } from "@prisma/client";
+import type { Chapter, User } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
 export interface UpdateUser {
-  id: string;
-  chapterIds: string[];
+  id: User["id"];
+  chapterIds: Chapter["id"][];
+}
+
+export interface CreateUser {
+  email: User["email"];
+  azureObjectId: User["azureObjectId"];
 }
 
 export async function getUsersAsync() {
@@ -80,5 +85,11 @@ export async function updateAsync(user: UpdateUser) {
         })),
       },
     },
+  });
+}
+
+export async function createManyUsers(users: CreateUser[]) {
+  await prisma.user.createMany({
+    data: users,
   });
 }

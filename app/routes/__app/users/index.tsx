@@ -1,15 +1,22 @@
-import { useLoaderData, Link } from "@remix-run/react";
+import type { CreateUser } from "~/models/user.server";
+
+import { useLoaderData, Link, Form, useActionData } from "@remix-run/react";
 import { json } from "@remix-run/server-runtime";
 
 import { PencilIcon } from "@heroicons/react/24/solid";
 
-import { getUsersAsync } from "~/models/user.server";
-import { getAzureRolesAsync, getAzureUsersAsync } from "~/models/azure.server";
+import { createManyUsers, getUsersAsync } from "~/models/user.server";
+import {
+  getAzureRolesAsync,
+  getAzureUsersAsync,
+  getAzureUsersLookUpAsync,
+} from "~/models/azure.server";
+import LoadingButton from "~/components/LoadingButton";
 
 export async function loader() {
   const [users, azureUsers, roles] = await Promise.all([
     getUsersAsync(),
-    getAzureUsersAsync(),
+    getAzureUsersLookUpAsync(),
     getAzureRolesAsync(),
   ]);
 
@@ -25,8 +32,33 @@ export async function loader() {
   });
 }
 
+export async function action() {
+  const [users, azureUsers] = await Promise.all([
+    getUsersAsync(),
+    getAzureUsersAsync(),
+  ]);
+
+  const azureIds = users.map(({ azureObjectId }) => azureObjectId);
+
+  const missingUsers = azureUsers
+    .filter(({ id }) => !azureIds.includes(id))
+    .map<CreateUser>(({ id, mail, userPrincipalName }) => ({
+      azureObjectId: id,
+      email: mail ?? userPrincipalName,
+    }));
+
+  if (missingUsers.length === 0) {
+    return json({ message: "Up to date." });
+  }
+
+  await createManyUsers(missingUsers);
+
+  return json({ message: `${missingUsers} users added.` });
+}
+
 export default function SelectChapter() {
   const data = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
 
   return (
     <>
@@ -53,14 +85,20 @@ export default function SelectChapter() {
             <tr key={id}>
               <td className="border p-2">{email}</td>
               <td className="border p-2">
-                {appRoleAssignments
-                  .map(({ displayName }) => displayName)
-                  .join(", ")}
+                {appRoleAssignments.length > 0 ? (
+                  appRoleAssignments
+                    .map(({ displayName }) => displayName)
+                    .join(", ")
+                ) : (
+                  <i className="text-sm">No roles assigned</i>
+                )}
               </td>
               <td className="border p-2">
-                {chapters.length > 0
-                  ? chapters.map(({ chapter }) => chapter.name).join(", ")
-                  : "-"}
+                {chapters.length > 0 ? (
+                  chapters.map(({ chapter }) => chapter.name).join(", ")
+                ) : (
+                  <i className="text-sm">No chapters assigned</i>
+                )}
               </td>
               <td className="border p-2" align="right">
                 <Link to={id}>
@@ -71,6 +109,14 @@ export default function SelectChapter() {
           ))}
         </tbody>
       </table>
+      <div className="flex flex-col items-end">
+        <Form method="post">
+          <LoadingButton className="mt-4" type="submit">
+            Sync with Azure
+          </LoadingButton>
+          <p className="mt-2 text-green-700">{actionData?.message}</p>
+        </Form>
+      </div>
     </>
   );
 }

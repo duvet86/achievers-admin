@@ -36,7 +36,7 @@ export interface Application {
 
 export type AzureRolesLookUp = Record<string, AppRole>;
 
-export async function getAzureUsersAsync(): Promise<AzureUsersLookUp> {
+export async function getAzureUsersAsync(): Promise<AzureUser[]> {
   try {
     const response = await fetch(
       "https://graph.microsoft.com/v1.0/users?$expand=appRoleAssignments",
@@ -49,19 +49,22 @@ export async function getAzureUsersAsync(): Promise<AzureUsersLookUp> {
 
     const azureUsers: { value: AzureUser[] } = await response.json();
 
-    const azureUsersLookUp = azureUsers.value.reduce<AzureUsersLookUp>(
-      (res, value) => {
-        res[value.id] = value;
-
-        return res;
-      },
-      {}
-    );
-
-    return azureUsersLookUp;
+    return azureUsers.value;
   } catch (e) {
     throw redirect("/logout");
   }
+}
+
+export async function getAzureUsersLookUpAsync(): Promise<AzureUsersLookUp> {
+  const azureUsers = await getAzureUsersAsync();
+
+  const azureUsersLookUp = azureUsers.reduce<AzureUsersLookUp>((res, value) => {
+    res[value.id] = value;
+
+    return res;
+  }, {});
+
+  return azureUsersLookUp;
 }
 
 export async function getAzureUserByIdAsync(
