@@ -22,11 +22,12 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 
 import { getUserByIdAsync, updateAsync } from "~/models/user.server";
 import { getChaptersAsync } from "~/models/chapter.server";
-import LoadingSpinner from "~/components/LoadingSpinner";
+
 import {
   getAzureRolesAsync,
   getAzureUserByIdAsync,
 } from "~/models/azure.server";
+import LoadingButton from "~/components/LoadingButton";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -127,7 +128,14 @@ export default function Chapter() {
     <div>
       <h3 className="text-2xl font-bold">User</h3>
       <p className="py-2">Email: {user.email}</p>
-      <p className="py-2">Roles: {user.roles.join(", ")}</p>
+      <p className="py-2">
+        Roles:{" "}
+        {user.roles.length > 0 ? (
+          user.roles.join(", ")
+        ) : (
+          <i>No roles assigned</i>
+        )}
+      </p>
 
       <hr className="my-4" />
 
@@ -195,20 +203,9 @@ export default function Chapter() {
 
         <p className="text-red-900">{actionData?.error}</p>
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={
-            isSubmitting
-              ? "mt-4 flex items-center rounded bg-blue-200 py-2 px-4 text-white"
-              : "mt-4 flex items-center rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
-          }
-        >
-          {isSubmitting && <LoadingSpinner />}
-          <span className="space-x-2">
-            {isSubmitting ? "Saving..." : "Save"}
-          </span>
-        </button>
+        <LoadingButton className="mt-8" type="submit">
+          Save
+        </LoadingButton>
       </Form>
     </div>
   );
