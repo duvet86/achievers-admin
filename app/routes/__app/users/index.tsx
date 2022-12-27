@@ -21,14 +21,18 @@ export async function loader() {
   ]);
 
   return json({
-    users: users.map((u) => ({
-      ...u,
-      appRoleAssignments: azureUsers[u.azureObjectId].appRoleAssignments.map(
-        ({ appRoleId }) => ({
-          ...roles[appRoleId],
-        })
+    users: users
+      .map((u) => ({
+        ...u,
+        appRoleAssignments: azureUsers[u.azureObjectId].appRoleAssignments.map(
+          ({ appRoleId }) => ({
+            ...roles[appRoleId],
+          })
+        ),
+      }))
+      .sort((a, b) =>
+        a.email.localeCompare(b.email, undefined, { sensitivity: "base" })
       ),
-    })),
   });
 }
 
@@ -53,7 +57,7 @@ export async function action() {
 
   await createManyUsers(missingUsers);
 
-  return json({ message: `${missingUsers} users added.` });
+  return json({ message: `${missingUsers.length} users added.` });
 }
 
 export default function SelectChapter() {
