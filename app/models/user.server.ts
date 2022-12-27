@@ -9,6 +9,7 @@ export interface UpdateUser {
 
 export interface CreateUser {
   email: User["email"];
+  username: User["username"];
   azureObjectId: User["azureObjectId"];
 }
 
@@ -37,21 +38,23 @@ export async function getUserByIdAsync(id: User["id"]) {
   });
 }
 
-export async function getUserByEmailAsync(email: User["email"]) {
-  return prisma.user.findUnique({ where: { email } });
+export async function getUserByUsernameAsync(username: User["username"]) {
+  return prisma.user.findUnique({ where: { username } });
 }
 
 export async function getOrCreateUserAsync(
+  username: User["username"],
   email: User["email"],
   azureObjectId: User["azureObjectId"]
 ) {
-  const user = await getUserByEmailAsync(email);
+  const user = await getUserByUsernameAsync(username);
   if (user !== null) {
     return user;
   }
 
   return prisma.user.create({
     data: {
+      username,
       email,
       azureObjectId,
     },

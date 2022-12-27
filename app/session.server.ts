@@ -111,7 +111,8 @@ const microsoftStrategy = new MicrosoftStrategy(
     }>(extraParams.id_token);
 
     const user = await getOrCreateUserAsync(
-      userInfo.email ?? userInfo.preferred_username,
+      userInfo.preferred_username,
+      userInfo.email ?? null,
       userInfo.oid
     );
 

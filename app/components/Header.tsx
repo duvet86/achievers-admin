@@ -1,16 +1,29 @@
 import { Link } from "@remix-run/react";
+import { useState } from "react";
 
 export default function Header() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const onBurgerClick = () => {
+    setIsOpen((state) => !state);
+  };
+
   return (
-    <nav className="flex flex-wrap items-center justify-between bg-blue-500 p-2">
-      <div className="mr-6 flex flex-shrink-0 items-center text-white">
+    <nav className="relative flex h-14 shrink-0 flex-wrap items-center justify-between bg-blue-500">
+      <Link
+        to="/users"
+        className="mr-6 ml-2 flex flex-shrink-0 items-center text-white"
+      >
         <img className="mr-4 w-16 rounded" src="/images/logo.png" alt="Logo" />
         <span className="text-xl font-semibold tracking-tight">
           Achievers WA
         </span>
-      </div>
-      <div className="block lg:hidden">
-        <button className="flex items-center rounded border border-white px-3 py-2 text-white">
+      </Link>
+      <div className="mr-2 block lg:hidden">
+        <button
+          className="flex items-center rounded border border-white px-3 py-2 text-white"
+          onClick={onBurgerClick}
+        >
           <svg
             className="h-3 w-3 fill-current"
             viewBox="0 0 20 20"
@@ -21,7 +34,12 @@ export default function Header() {
           </svg>
         </button>
       </div>
-      <div className="block w-full flex-grow lg:flex lg:w-auto lg:items-center">
+      <div
+        className={
+          "absolute top-14 z-10 w-full flex-grow bg-blue-500 p-2 lg:static lg:flex lg:w-auto lg:items-center " +
+          (isOpen ? "block" : "hidden")
+        }
+      >
         <div className="lg:flex-grow">
           <Link
             to="/users"

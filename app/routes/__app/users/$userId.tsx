@@ -126,10 +126,10 @@ export default function Chapter() {
 
   return (
     <div>
-      <h3 className="text-2xl font-bold">User</h3>
-      <p className="py-2">Email: {user.email}</p>
+      <h3 className="text-2xl font-bold">{user.username}</h3>
+      <p className="mt-4 py-2">Email: {user.email ?? "-"}</p>
       <p className="py-2">
-        Roles:{" "}
+        Role:{" "}
         {user.roles.length > 0 ? (
           user.roles.join(", ")
         ) : (
@@ -165,40 +165,42 @@ export default function Chapter() {
             ))}
           </select>
 
-          <table className="w-full table-auto">
-            <thead>
-              <tr>
-                <th align="left" className="p-2">
-                  Belongs to
-                </th>
-                <th align="right" className="p-2">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {user.chapters.length === 0 && (
+          <div className="overflow-auto">
+            <table className="w-full table-auto">
+              <thead>
                 <tr>
-                  <td colSpan={2} className="border p-2">
-                    <i>No Chapters assigned to this user</i>
-                  </td>
+                  <th align="left" className="p-2">
+                    Belongs to
+                  </th>
+                  <th align="right" className="p-2">
+                    Action
+                  </th>
                 </tr>
-              )}
-              {user.chapters.map(({ chapter: { id, name } }) => (
-                <tr key={id}>
-                  <td className="border p-2">
-                    <span>{name}</span>
-                    <input type="hidden" name="chapterIds" value={id} />
-                  </td>
-                  <td align="right" className="border p-2">
-                    <button onClick={removeChapter(id)}>
-                      <XMarkIcon className="mr-4 w-6 text-red-500" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {user.chapters.length === 0 && (
+                  <tr>
+                    <td colSpan={2} className="border p-2">
+                      <i>No Chapters assigned to this user</i>
+                    </td>
+                  </tr>
+                )}
+                {user.chapters.map(({ chapter: { id, name } }) => (
+                  <tr key={id}>
+                    <td className="border p-2">
+                      <span>{name}</span>
+                      <input type="hidden" name="chapterIds" value={id} />
+                    </td>
+                    <td align="right" className="border p-2">
+                      <button onClick={removeChapter(id)}>
+                        <XMarkIcon className="mr-4 w-6 text-red-500" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <p className="text-red-900">{actionData?.error}</p>

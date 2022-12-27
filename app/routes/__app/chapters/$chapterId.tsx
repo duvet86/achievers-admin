@@ -25,26 +25,28 @@ export default function Chapter() {
 
       <hr className="my-4" />
 
-      <table className="w-full table-auto">
-        <thead>
-          <tr>
-            <th align="left" className="p-2">
-              Email
-            </th>
-            <th align="left" className="p-2">
-              Role
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {chapter.users.map(({ user }) => (
-            <tr key={user.id}>
-              <td className="border p-2">{user.email}</td>
-              <td className="border p-2">ROLE</td>
+      <div className="overflow-auto">
+        <table className="w-full table-auto">
+          <thead>
+            <tr>
+              <th align="left" className="p-2">
+                Email
+              </th>
+              <th align="left" className="p-2">
+                Role
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {chapter.users.map(({ user }) => (
+              <tr key={user.id}>
+                <td className="border p-2">{user.email}</td>
+                <td className="border p-2">ROLE</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
