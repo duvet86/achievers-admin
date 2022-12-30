@@ -1,21 +1,49 @@
 import type { LoaderArgs } from "@remix-run/server-runtime";
-import { useCatch, useLoaderData } from "@remix-run/react";
+import type { AzureUser } from "~/models/azure.server";
+
+import { Link, useCatch, useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
 
-import { getChapterByIdAsync } from "~/models/chapter.server";
+import {
+  getChapterByIdAsync,
+  getUsersAtChapterByIdAsync,
+} from "~/models/chapter.server";
+
+import { getAzureUsersAsync } from "~/models/azure.server";
+
+import { UsersIcon } from "@heroicons/react/24/solid";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
 
-  const chapter = await getChapterByIdAsync(params.chapterId);
-  invariant(chapter, "chapter not found");
+  const [chapter, usersAtChapter, azureUsers] = await Promise.all([
+    getChapterByIdAsync(params.chapterId),
+    getUsersAtChapterByIdAsync(params.chapterId),
+    getAzureUsersAsync(),
+  ]);
 
-  return json({ chapter });
+  const userIds = usersAtChapter.map(({ userId }) => userId);
+
+  const azureUsersLookUp = azureUsers.reduce<Record<string, AzureUser>>(
+    (res, value) => {
+      res[value.id] = value;
+
+      return res;
+    },
+    {}
+  );
+
+  return json({
+    chapter: {
+      ...chapter,
+      assignedUsers: userIds.map((userId) => azureUsersLookUp[userId]),
+    },
+  });
 }
 
-export default function Chapter() {
+export default function ChapterId() {
   const { chapter } = useLoaderData<typeof loader>();
 
   return (
@@ -35,15 +63,39 @@ export default function Chapter() {
               <th align="left" className="p-2">
                 Role
               </th>
+              <th align="right" className="p-2">
+                Assing Students
+              </th>
             </tr>
           </thead>
           <tbody>
-            {chapter.users.map(({ user }) => (
-              <tr key={user.id}>
-                <td className="border p-2">{user.email}</td>
-                <td className="border p-2">ROLE</td>
-              </tr>
-            ))}
+            {chapter.assignedUsers.map(
+              ({ id, userPrincipalName, appRoleAssignments }) => (
+                <tr key={id}>
+                  <td className="border p-2">{userPrincipalName}</td>
+                  <td className="border p-2">
+                    {appRoleAssignments.length > 0 ? (
+                      appRoleAssignments
+                        .map(({ roleName }) => roleName)
+                        .join(", ")
+                    ) : (
+                      <i className="text-sm">No roles assigned</i>
+                    )}
+                  </td>
+                  <td className="border p-2" align="right">
+                    {appRoleAssignments
+                      .map(({ appRoleId }) => appRoleId)
+                      .includes("d6f716ac-63d9-4116-8381-7db0341775c2") ? (
+                      <Link to={`users/${id}`}>
+                        <UsersIcon className="mr-4 w-6 text-blue-500" />
+                      </Link>
+                    ) : (
+                      <span className="mr-4 w-6">-</span>
+                    )}
+                  </td>
+                </tr>
+              )
+            )}
           </tbody>
         </table>
       </div>

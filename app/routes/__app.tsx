@@ -1,12 +1,25 @@
 import type { LoaderArgs } from "@remix-run/server-runtime";
 
+import { redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 
 import Header from "~/components/Header";
-import { requireUserSession } from "~/session.server";
+import { getSessionUserAsync, logout } from "~/session.server";
 
 export async function loader({ request }: LoaderArgs) {
-  await requireUserSession(request);
+  const sessionUser = await getSessionUserAsync(request);
+
+  if (!sessionUser) {
+    return logout(request);
+  }
+
+  if (
+    !sessionUser.appRoleAssignments
+      .map(({ appRoleId }) => appRoleId)
+      .includes("05d8eac4-9738-4a7b-8b9d-703868df4529")
+  ) {
+    throw redirect("/401");
+  }
 
   return null;
 }

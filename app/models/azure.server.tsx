@@ -8,6 +8,10 @@ export interface AppRoleAssignment {
   resourceDisplayName: string;
 }
 
+export interface AppRoleAssignmentWithRoleName extends AppRoleAssignment {
+  roleName: string;
+}
+
 export interface AzureUser {
   id: string;
   displayName: string;
@@ -15,10 +19,8 @@ export interface AzureUser {
   surname: string | null;
   mail: string | null;
   userPrincipalName: string;
-  appRoleAssignments: AppRoleAssignment[];
+  appRoleAssignments: AppRoleAssignmentWithRoleName[];
 }
-
-export type AzureUsersLookUp = Record<string, AzureUser>;
 
 export interface AppRole {
   id: string;
@@ -36,59 +38,7 @@ export interface Application {
 
 export type AzureRolesLookUp = Record<string, AppRole>;
 
-export async function getAzureUsersAsync(): Promise<AzureUser[]> {
-  try {
-    const response = await fetch(
-      "https://graph.microsoft.com/v1.0/users?$expand=appRoleAssignments",
-      {
-        headers: {
-          Authorization: `Bearer ${global.__accessToken__}`,
-        },
-      }
-    );
-
-    const azureUsers: { value: AzureUser[] } = await response.json();
-
-    return azureUsers.value;
-  } catch (e) {
-    throw redirect("/logout");
-  }
-}
-
-export async function getAzureUsersLookUpAsync(): Promise<AzureUsersLookUp> {
-  const azureUsers = await getAzureUsersAsync();
-
-  const azureUsersLookUp = azureUsers.reduce<AzureUsersLookUp>((res, value) => {
-    res[value.id] = value;
-
-    return res;
-  }, {});
-
-  return azureUsersLookUp;
-}
-
-export async function getAzureUserByIdAsync(
-  azureId: string
-): Promise<AzureUser> {
-  try {
-    const response = await fetch(
-      `https://graph.microsoft.com/v1.0/users/${azureId}?$expand=appRoleAssignments`,
-      {
-        headers: {
-          Authorization: `Bearer ${global.__accessToken__}`,
-        },
-      }
-    );
-
-    const azureUser: AzureUser = await response.json();
-
-    return azureUser;
-  } catch (e) {
-    throw redirect("/logout");
-  }
-}
-
-export async function getAzureRolesAsync(): Promise<AzureRolesLookUp> {
+export async function getAzureRolesLookUpAsync(): Promise<AzureRolesLookUp> {
   try {
     const response = await fetch(
       "https://graph.microsoft.com/v1.0/applications/0a1a0102-bca1-46de-948a-ec65d9101b39?$select=appRoles",
@@ -111,6 +61,70 @@ export async function getAzureRolesAsync(): Promise<AzureRolesLookUp> {
     );
 
     return azureRolesLookUp;
+  } catch (e) {
+    throw redirect("/logout");
+  }
+}
+
+export async function getAzureUsersAsync(): Promise<AzureUser[]> {
+  try {
+    const response = await fetch(
+      "https://graph.microsoft.com/v1.0/users?$expand=appRoleAssignments",
+      {
+        headers: {
+          Authorization: `Bearer ${global.__accessToken__}`,
+        },
+      }
+    );
+
+    const azureUsersPromise: Promise<{ value: AzureUser[] }> = response.json();
+
+    const [azureUsers, roles] = await Promise.all([
+      azureUsersPromise,
+      getAzureRolesLookUpAsync(),
+    ]);
+
+    return azureUsers.value.map((user) => ({
+      ...user,
+      appRoleAssignments: user.appRoleAssignments.map((roleAssignment) => ({
+        ...roleAssignment,
+        roleName: roles[roleAssignment.appRoleId].displayName,
+      })),
+    }));
+  } catch (e) {
+    throw redirect("/logout");
+  }
+}
+
+export async function getAzureUserByIdAsync(
+  azureId: string
+): Promise<AzureUser> {
+  try {
+    const response = await fetch(
+      `https://graph.microsoft.com/v1.0/users/${azureId}?$expand=appRoleAssignments`,
+      {
+        headers: {
+          Authorization: `Bearer ${global.__accessToken__}`,
+        },
+      }
+    );
+
+    const azureUserPromise: Promise<AzureUser> = response.json();
+
+    const [azureUser, roles] = await Promise.all([
+      azureUserPromise,
+      getAzureRolesLookUpAsync(),
+    ]);
+
+    return {
+      ...azureUser,
+      appRoleAssignments: azureUser.appRoleAssignments.map(
+        (roleAssignment) => ({
+          ...roleAssignment,
+          roleName: roles[roleAssignment.appRoleId].displayName,
+        })
+      ),
+    };
   } catch (e) {
     throw redirect("/logout");
   }

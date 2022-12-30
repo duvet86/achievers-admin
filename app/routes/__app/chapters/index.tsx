@@ -9,7 +9,7 @@ export async function loader() {
   return json({ chapters });
 }
 
-export default function SelectChapter() {
+export default function Chapters() {
   const data = useLoaderData<typeof loader>();
 
   return (

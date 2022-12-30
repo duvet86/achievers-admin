@@ -1,15 +1,12 @@
+import type { AzureUser } from "~/models/azure.server";
+
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import { Authenticator } from "remix-auth";
 import invariant from "tiny-invariant";
 
-import { getOrCreateUserAsync, getUserByIdAsync } from "~/models/user.server";
-import { MicrosoftStrategy } from "~/services/auth.server";
 import { parseJwt } from "~/utils";
-
-export interface SessionUser {
-  id: string;
-  roles: string[];
-}
+import { MicrosoftStrategy } from "~/services/auth.server";
+import { getAzureUserByIdAsync } from "~/models/azure.server";
 
 declare global {
   var __accessToken__: string | undefined;
@@ -32,45 +29,25 @@ export const sessionStorage = createCookieSessionStorage({
   },
 });
 
-export const authenticator = new Authenticator<SessionUser>(sessionStorage); // User is a custom user types you can define as you want
+export const authenticator = new Authenticator<AzureUser>(sessionStorage); // User is a custom user types you can define as you want
 
 async function getSession(request: Request) {
   const cookie = request.headers.get("Cookie");
   return sessionStorage.getSession(cookie);
 }
 
-export async function getSessionUser(
+export async function hasSessionUserAsync(request: Request): Promise<boolean> {
+  const session = await getSession(request);
+  const hasUser = session.has(authenticator.sessionKey);
+
+  return hasUser;
+}
+
+export async function getSessionUserAsync(
   request: Request
-): Promise<SessionUser | undefined> {
+): Promise<AzureUser | undefined> {
   const session = await getSession(request);
   const userSession = session.get(authenticator.sessionKey);
-
-  return userSession;
-}
-
-export async function getUser(request: Request) {
-  const userSession = await getSessionUser(request);
-  if (userSession === undefined) {
-    return null;
-  }
-
-  const user = await getUserByIdAsync(userSession.id);
-  if (user === null) {
-    throw await logout(request);
-  }
-
-  return user;
-}
-
-export async function requireUserSession(request: Request) {
-  const userSession = await getSessionUser(request);
-
-  if (!userSession) {
-    throw redirect("/");
-  }
-  if (!userSession.roles.includes("Admin")) {
-    throw redirect("/401");
-  }
 
   return userSession;
 }
@@ -84,6 +61,7 @@ export async function getSessionError(request: Request) {
 
 export async function logout(request: Request) {
   const session = await getSession(request);
+
   return redirect("/", {
     headers: {
       "Set-Cookie": await sessionStorage.destroySession(session),
@@ -110,16 +88,9 @@ const microsoftStrategy = new MicrosoftStrategy(
       oid: string;
     }>(extraParams.id_token);
 
-    const user = await getOrCreateUserAsync(
-      userInfo.preferred_username,
-      userInfo.email ?? null,
-      userInfo.oid
-    );
+    const azureUser = await getAzureUserByIdAsync(userInfo.oid);
 
-    return {
-      id: user.id,
-      roles: userInfo.roles,
-    };
+    return azureUser;
   }
 );
 
