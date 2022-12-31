@@ -100,6 +100,15 @@ export default function Chapter() {
       return;
     }
 
+    // Chapter already assigned.
+    if (
+      user.assignedChapters.findIndex(
+        (assignedChapter) => assignedChapter.chapterId === chapterId
+      ) !== -1
+    ) {
+      return;
+    }
+
     const chapter = chapters.find((chapter) => chapter.id === chapterId);
     invariant(chapter, "userId not found");
 
@@ -120,7 +129,7 @@ export default function Chapter() {
 
   return (
     <div>
-      <h3 className="text-2xl font-bold">{user.userPrincipalName}</h3>
+      <h3 className="text-2xl font-bold">{user.displayName}</h3>
       <p className="mt-4 py-2">Email: {user.mail ?? "-"}</p>
       <p className="py-2">
         Role:{" "}
@@ -166,7 +175,7 @@ export default function Chapter() {
               <thead>
                 <tr>
                   <th align="left" className="p-2">
-                    Belongs to
+                    Assigned to
                   </th>
                   <th align="right" className="p-2">
                     Action

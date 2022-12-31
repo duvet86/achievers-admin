@@ -63,7 +63,7 @@ export default function ChapterId() {
                 Role
               </th>
               <th align="right" className="p-2">
-                Assing Students
+                Assign Students
               </th>
             </tr>
           </thead>

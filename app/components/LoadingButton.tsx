@@ -2,8 +2,6 @@ import type { ButtonHTMLAttributes, DetailedHTMLProps } from "react";
 
 import { useTransition } from "@remix-run/react";
 
-import LoadingSpinner from "~/components/LoadingSpinner";
-
 export default function LoadingButton({
   children,
   className = "",
@@ -28,7 +26,6 @@ export default function LoadingButton({
             className
       }
     >
-      {isSubmitting && <LoadingSpinner />}
       <span className="space-x-2">{children}</span>
     </button>
   );

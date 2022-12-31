@@ -6,8 +6,6 @@ import type {
 import type { AssignStudentToMentor } from "~/models/user.server";
 import type { AzureUser } from "~/models/azure.server";
 
-import { assignStudentToMentorAsync } from "~/models/user.server";
-
 import {
   Form,
   useActionData,
@@ -25,8 +23,11 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import { getSessionUserAsync } from "~/session.server";
 
 import { getAzureUsersAsync, Roles } from "~/models/azure.server";
-import { getStudentsMentoredByAsync } from "~/models/mentoring.server";
 import { getAssignedChaptersToUserAsync } from "~/models/chapter.server";
+import {
+  assignStudentToMentorAsync,
+  getStudentsMentoredByAsync,
+} from "~/models/user.server";
 
 import LoadingButton from "~/components/LoadingButton";
 
@@ -197,7 +198,7 @@ export default function ChapterUser() {
               <thead>
                 <tr>
                   <th align="left" className="p-2">
-                    Mentors
+                    Assigned Students
                   </th>
                   <th align="right" className="p-2">
                     Action

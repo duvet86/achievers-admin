@@ -14,6 +14,14 @@ export interface AssignUserToChapters {
   chapterIds: UserAtChapter["chapterId"][];
 }
 
+export async function getStudentsMentoredByAsync(mentorId: AzureUser["id"]) {
+  return await prisma.mentoringStudent.findMany({
+    where: {
+      mentorId,
+    },
+  });
+}
+
 export async function assignUserToChaptersAsync(
   { userId, chapterIds }: AssignUserToChapters,
   assignedBy: string
