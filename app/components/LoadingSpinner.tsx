@@ -1,7 +1,16 @@
-export default function LoadingSpinner() {
+interface Props {
+  dark?: boolean;
+  large?: boolean;
+}
+
+export default function LoadingSpinner({ dark = false, large = false }: Props) {
   return (
     <svg
-      className="-ml-1 mr-3 h-5 w-5 animate-spin text-white"
+      className={
+        "-ml-1 mr-3 animate-spin " +
+        (dark ? "text-blue-700 " : "text-white ") +
+        (large ? "h-48 w-48" : "h-5 w-5")
+      }
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
