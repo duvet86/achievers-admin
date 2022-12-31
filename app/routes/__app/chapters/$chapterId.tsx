@@ -5,15 +5,13 @@ import { Link, useCatch, useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
+import { UsersIcon } from "@heroicons/react/24/solid";
 
 import {
   getChapterByIdAsync,
   getUsersAtChapterByIdAsync,
 } from "~/models/chapter.server";
-
-import { getAzureUsersAsync } from "~/models/azure.server";
-
-import { UsersIcon } from "@heroicons/react/24/solid";
+import { getAzureUsersAsync, Roles } from "~/models/azure.server";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -40,11 +38,12 @@ export async function loader({ params }: LoaderArgs) {
       ...chapter,
       assignedUsers: userIds.map((userId) => azureUsersLookUp[userId]),
     },
+    mentorRoleId: Roles.Mentor,
   });
 }
 
 export default function ChapterId() {
-  const { chapter } = useLoaderData<typeof loader>();
+  const { chapter, mentorRoleId } = useLoaderData<typeof loader>();
 
   return (
     <div>
@@ -85,7 +84,7 @@ export default function ChapterId() {
                   <td className="border p-2" align="right">
                     {appRoleAssignments
                       .map(({ appRoleId }) => appRoleId)
-                      .includes("d6f716ac-63d9-4116-8381-7db0341775c2") ? (
+                      .includes(mentorRoleId) ? (
                       <Link to={`users/${id}`}>
                         <UsersIcon className="mr-4 w-6 text-blue-500" />
                       </Link>

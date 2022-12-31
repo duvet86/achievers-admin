@@ -1,5 +1,11 @@
 import { redirect } from "@remix-run/node";
 
+export enum Roles {
+  Admin = "05d8eac4-9738-4a7b-8b9d-703868df4529",
+  Mentor = "d6f716ac-63d9-4116-8381-7db0341775c2",
+  Student = "d0f92e80-d129-4d50-a3e1-3689310faa5c",
+}
+
 export interface AppRoleAssignment {
   id: string;
   appRoleId: string;

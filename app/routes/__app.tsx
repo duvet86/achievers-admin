@@ -3,8 +3,10 @@ import type { LoaderArgs } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 
-import Header from "~/components/Header";
 import { getSessionUserAsync, logout } from "~/session.server";
+import { Roles } from "~/models/azure.server";
+
+import Header from "~/components/Header";
 
 export async function loader({ request }: LoaderArgs) {
   const sessionUser = await getSessionUserAsync(request);
@@ -16,7 +18,7 @@ export async function loader({ request }: LoaderArgs) {
   if (
     !sessionUser.appRoleAssignments
       .map(({ appRoleId }) => appRoleId)
-      .includes("05d8eac4-9738-4a7b-8b9d-703868df4529")
+      .includes(Roles.Admin)
   ) {
     throw redirect("/401");
   }

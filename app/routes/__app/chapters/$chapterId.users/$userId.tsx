@@ -24,7 +24,7 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 
 import { getSessionUserAsync } from "~/session.server";
 
-import { getAzureUsersAsync } from "~/models/azure.server";
+import { getAzureUsersAsync, Roles } from "~/models/azure.server";
 import { getStudentsMentoredByAsync } from "~/models/mentoring.server";
 import { getAssignedChaptersToUserAsync } from "~/models/chapter.server";
 
@@ -52,7 +52,7 @@ export async function loader({ params }: LoaderArgs) {
     ({ id, appRoleAssignments }) =>
       appRoleAssignments
         .map(({ appRoleId }) => appRoleId)
-        .includes("d0f92e80-d129-4d50-a3e1-3689310faa5c") &&
+        .includes(Roles.Student) &&
       azureMentoredStudents.map(({ id: studentId }) => id !== studentId)
   );
 

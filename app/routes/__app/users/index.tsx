@@ -58,13 +58,13 @@ export default function SelectChapter() {
             {data.users.map(
               ({
                 id,
-                userPrincipalName,
+                displayName,
                 mail,
                 appRoleAssignments,
                 assignedChapters,
               }) => (
                 <tr key={id}>
-                  <td className="border p-2">{userPrincipalName}</td>
+                  <td className="border p-2">{displayName}</td>
                   <td className="border p-2">{mail ?? "-"}</td>
                   <td className="border p-2">
                     {appRoleAssignments.length > 0 ? (
