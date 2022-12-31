@@ -1,14 +1,23 @@
 import type { LoaderArgs } from "@remix-run/node";
 
 import { redirect } from "@remix-run/node";
+import { Roles } from "~/models/azure.server";
 
-import { hasSessionUserAsync } from "~/session.server";
+import { getSessionUserAsync } from "~/session.server";
 
 export async function loader({ request }: LoaderArgs) {
-  const hasUser = await hasSessionUserAsync(request);
+  const sessionUser = await getSessionUserAsync(request);
 
-  if (hasUser) {
+  const userRoles = sessionUser?.appRoleAssignments.map(
+    ({ appRoleId }) => appRoleId
+  );
+
+  if (userRoles?.includes(Roles.Admin)) {
     return redirect("/users");
+  }
+
+  if (userRoles?.includes(Roles.Mentor)) {
+    return redirect("/roster");
   }
 
   return null;

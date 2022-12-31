@@ -198,7 +198,7 @@ export default function ChapterUser() {
               <thead>
                 <tr>
                   <th align="left" className="p-2">
-                    Assigned Students
+                    Mentee
                   </th>
                   <th align="right" className="p-2">
                     Action

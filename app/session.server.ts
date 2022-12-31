@@ -36,13 +36,6 @@ async function getSession(request: Request) {
   return sessionStorage.getSession(cookie);
 }
 
-export async function hasSessionUserAsync(request: Request): Promise<boolean> {
-  const session = await getSession(request);
-  const hasUser = session.has(authenticator.sessionKey);
-
-  return hasUser;
-}
-
 export async function getSessionUserAsync(
   request: Request
 ): Promise<AzureUser | undefined> {
