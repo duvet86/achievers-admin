@@ -26,13 +26,20 @@ export async function assignUserToChaptersAsync(
   { userId, chapterIds }: AssignUserToChapters,
   assignedBy: string
 ) {
-  await prisma.userAtChapter.createMany({
-    data: chapterIds.map((chapterId) => ({
-      userId,
-      chapterId,
-      assignedBy,
-    })),
-  });
+  await prisma.$transaction([
+    prisma.userAtChapter.deleteMany({
+      where: {
+        userId,
+      },
+    }),
+    prisma.userAtChapter.createMany({
+      data: chapterIds.map((chapterId) => ({
+        userId,
+        chapterId,
+        assignedBy,
+      })),
+    }),
+  ]);
 }
 
 export async function assignStudentToMentorAsync(

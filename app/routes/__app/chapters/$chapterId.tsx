@@ -69,9 +69,9 @@ export default function ChapterId() {
           </thead>
           <tbody>
             {chapter.assignedUsers.map(
-              ({ id, userPrincipalName, appRoleAssignments }) => (
+              ({ id, displayName, appRoleAssignments }) => (
                 <tr key={id}>
-                  <td className="border p-2">{userPrincipalName}</td>
+                  <td className="border p-2">{displayName}</td>
                   <td className="border p-2">
                     {appRoleAssignments.length > 0 ? (
                       appRoleAssignments

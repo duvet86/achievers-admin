@@ -20,7 +20,7 @@ export async function loader() {
         assignedChapters: assignedChaptersLookUp[user.id] ?? [],
       }))
       .sort((a, b) =>
-        a.userPrincipalName.localeCompare(b.userPrincipalName, undefined, {
+        a.displayName.localeCompare(b.displayName, undefined, {
           sensitivity: "base",
         })
       ),

@@ -3,13 +3,11 @@ import type {
   LoaderArgs,
   TypedResponse,
 } from "@remix-run/server-runtime";
-
 import type { AssignUserToChapters } from "~/models/user.server";
-
-import { assignUserToChaptersAsync } from "~/models/user.server";
 
 import {
   Form,
+  Link,
   useActionData,
   useCatch,
   useLoaderData,
@@ -20,15 +18,18 @@ import { json } from "@remix-run/server-runtime";
 import { useState } from "react";
 import invariant from "tiny-invariant";
 
+import { PlusIcon } from "@heroicons/react/24/solid";
 import { XMarkIcon } from "@heroicons/react/24/solid";
+import { ArrowPathIcon } from "@heroicons/react/24/solid";
 
 import {
   getAssignedChaptersToUserAsync,
   getChaptersAsync,
 } from "~/models/chapter.server";
-
 import { getAzureUserByIdAsync } from "~/models/azure.server";
-import LoadingButton from "~/components/LoadingButton";
+import { assignUserToChaptersAsync } from "~/models/user.server";
+
+import ButtonPrimary from "~/components/ButtonPrimary";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -145,7 +146,7 @@ export default function Chapter() {
       <Form method="post" className="mt-4">
         <input type="hidden" name="currentUserId" value={user.id} />
 
-        <div className="rounded bg-gray-200 p-2">
+        <div className="rounded bg-gray-100 px-2 py-6">
           <label
             htmlFor="addChapter"
             className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
@@ -153,7 +154,6 @@ export default function Chapter() {
             Select a Chapter
           </label>
           <select
-            name="addChapter"
             className="mb-2 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             defaultValue=""
             onChange={(event) => {
@@ -197,8 +197,12 @@ export default function Chapter() {
                       <input type="hidden" name="chapterIds" value={id} />
                     </td>
                     <td align="right" className="border p-2">
-                      <button onClick={removeChapter(id)}>
-                        <XMarkIcon className="mr-4 w-6 text-red-500" />
+                      <button
+                        onClick={removeChapter(id)}
+                        className="flex items-center justify-center rounded bg-red-600 px-3 py-1 text-white"
+                      >
+                        <XMarkIcon className="mr-2 w-5" />
+                        <span>Remove</span>
                       </button>
                     </td>
                   </tr>
@@ -210,9 +214,20 @@ export default function Chapter() {
 
         <p className="text-red-900">{actionData?.error}</p>
 
-        <LoadingButton className="mt-8" type="submit">
-          Save
-        </LoadingButton>
+        <div className="flex items-center space-x-6">
+          <Link
+            to="."
+            className="mt-8 flex w-24 items-center justify-center space-x-2 rounded border border-zinc-300 bg-zinc-200 px-4 py-2 hover:bg-zinc-300"
+            type="submit"
+          >
+            <ArrowPathIcon className="w-5" />
+            <span>Reset</span>
+          </Link>
+          <ButtonPrimary className="mt-8 w-24 space-x-2" type="submit">
+            <PlusIcon className="w-5 text-white" />
+            <span>Save</span>
+          </ButtonPrimary>
+        </div>
       </Form>
     </div>
   );

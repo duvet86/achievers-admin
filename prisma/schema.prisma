@@ -41,7 +41,7 @@ model MentoringStudent {
   assignedAt DateTime @default(now())
   assignedBy String
 
-  frequencyInDays Int @default(15)
+  frequencyInDays Int @default(14)
 
   @@id([mentorId, studentId, chapterId])
 }
