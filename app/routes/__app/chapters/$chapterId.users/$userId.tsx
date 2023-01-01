@@ -5,6 +5,7 @@ import { Link, useCatch, useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
+import dayjs from "dayjs";
 
 import { getAzureUsersAsync } from "~/models/azure.server";
 import { getAssignedChaptersToUserAsync } from "~/models/chapter.server";
@@ -38,7 +39,7 @@ export async function loader({ params }: LoaderArgs) {
     .filter(({ id }) => menteesLookUp[id] !== undefined)
     .map((azureUser) => ({
       ...azureUser,
-      frequencyInDays: menteesLookUp[azureUser.id].frequencyInDays,
+      ...menteesLookUp[azureUser.id],
     }));
 
   return json({
@@ -86,6 +87,9 @@ export default function ChapterUser() {
               <th align="left" className="p-2">
                 Frequency
               </th>
+              <th align="left" className="p-2">
+                Start Date
+              </th>
               <th align="right" className="p-2">
                 Action
               </th>
@@ -100,15 +104,12 @@ export default function ChapterUser() {
               </tr>
             )}
             {user.mentoringStudents.map(
-              ({ id, userPrincipalName, frequencyInDays }) => (
+              ({ id, userPrincipalName, frequencyInDays, startDate }) => (
                 <tr key={id}>
+                  <td className="border p-2">{userPrincipalName}</td>
+                  <td className="border p-2">Every {frequencyInDays} days</td>
                   <td className="border p-2">
-                    <span>{userPrincipalName}</span>
-                    <input type="hidden" name="studentIds" value={id} />
-                  </td>
-                  <td className="border p-2">
-                    <span>Every {frequencyInDays} days</span>
-                    <input type="hidden" name="frequencies" value={id} />
+                    {dayjs(startDate).format("DD/MM/YYYY")}
                   </td>
                   <td align="right" className="border p-2">
                     <Link

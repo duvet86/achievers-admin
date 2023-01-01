@@ -15,6 +15,7 @@ import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 import invariant from "tiny-invariant";
+import dayjs from "dayjs";
 
 import { requireSessionUserAsync } from "~/session.server";
 import { getAzureUsersAsync, Roles } from "~/models/azure.server";
@@ -68,10 +69,11 @@ export async function action({ request, params }: ActionArgs) {
 
   const menteeId = formData.get("menteeId");
   const frequencyInDays = formData.get("frequencyInDays");
+  const startDate = formData.get("startDate");
 
-  if (!menteeId || !frequencyInDays) {
+  if (!menteeId || !frequencyInDays || !startDate) {
     return json({
-      error: "Select a Mentee and a Frequency please.",
+      error: "Select a Mentee, a Frequency and a Start Date please.",
     });
   }
 
@@ -80,6 +82,7 @@ export async function action({ request, params }: ActionArgs) {
     menteeId.toString(),
     params.chapterId,
     Number(frequencyInDays),
+    dayjs(startDate.toString(), "YYYY-MM-DD").toDate(),
     sessionUser.displayName
   );
 
@@ -97,7 +100,7 @@ export default function Assign() {
   return (
     <Form method="post">
       <h1 className="mb-4 text-xl font-medium">
-        Assing Mentee to Mentor{" "}
+        Assign Mentee to Mentor{" "}
         <span className="font-medium">'{mentor.displayName}'</span>
       </h1>
 
@@ -105,7 +108,7 @@ export default function Assign() {
         htmlFor="menteeId"
         className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
       >
-        Assign a Mentee
+        Mentee
       </label>
       <select
         name="menteeId"
@@ -125,11 +128,11 @@ export default function Assign() {
         htmlFor="frequency"
         className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
       >
-        Select a Frequency
+        Frequency
       </label>
       <select
         name="frequencyInDays"
-        className="mb-2 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+        className="mb-4 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
         defaultValue=""
         disabled={isSubmitting}
       >
@@ -137,6 +140,20 @@ export default function Assign() {
         <option value="7">Every Week</option>
         <option value="14">Quarterly</option>
       </select>
+
+      <label
+        htmlFor="startDate"
+        className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+      >
+        Start Date
+      </label>
+      <input
+        className="mb-2 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+        type="date"
+        name="startDate"
+        defaultValue={dayjs().format("YYYY-MM-DD")}
+        min={dayjs().format("YYYY-MM-DD")}
+      />
 
       <p className="mt-4 text-red-600">{actionData?.error}</p>
 

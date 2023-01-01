@@ -50,6 +50,7 @@ export async function assignMenteeFromMentorAsync(
   studentId: MentoringStudent["studentId"],
   chapterId: MentoringStudent["chapterId"],
   frequencyInDays: MentoringStudent["frequencyInDays"],
+  startDate: MentoringStudent["startDate"],
   assignedBy: MentoringStudent["assignedBy"]
 ) {
   await prisma.mentoringStudent.create({
@@ -58,6 +59,7 @@ export async function assignMenteeFromMentorAsync(
       studentId,
       chapterId,
       frequencyInDays,
+      startDate,
       assignedBy,
     },
   });
