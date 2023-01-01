@@ -45,6 +45,17 @@ export async function getSessionUserAsync(
   return userSession;
 }
 
+export async function requireSessionUserAsync(
+  request: Request
+): Promise<AzureUser> {
+  const userSession = await getSessionUserAsync(request);
+
+  if (!userSession) {
+    throw redirect("/logout");
+  }
+  return userSession;
+}
+
 export async function getSessionError(request: Request) {
   const session = await getSession(request);
   const error = session.get(authenticator.sessionErrorKey);

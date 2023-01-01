@@ -5,7 +5,7 @@ import { prisma } from "~/db.server";
 
 export interface AssignStudentToMentor {
   mentorId: AzureUser["id"];
-  studentIds: MentoringStudent["studentId"][];
+  studentId: MentoringStudent["studentId"];
   chapterId: MentoringStudent["chapterId"];
 }
 
@@ -42,16 +42,36 @@ export async function assignUserToChaptersAsync(
   ]);
 }
 
-export async function assignStudentToMentorAsync(
-  { mentorId, chapterId, studentIds }: AssignStudentToMentor,
-  assignedBy: string
+export async function assignMenteeFromMentorAsync(
+  mentorId: MentoringStudent["mentorId"],
+  studentId: MentoringStudent["studentId"],
+  chapterId: MentoringStudent["chapterId"],
+  frequencyInDays: MentoringStudent["frequencyInDays"],
+  assignedBy: MentoringStudent["assignedBy"]
 ) {
-  await prisma.mentoringStudent.createMany({
-    data: studentIds.map((studentId) => ({
+  await prisma.mentoringStudent.create({
+    data: {
       mentorId,
       studentId,
       chapterId,
+      frequencyInDays,
       assignedBy,
-    })),
+    },
+  });
+}
+
+export async function unassignMenteeFromMentorAsync(
+  mentorId: MentoringStudent["mentorId"],
+  studentId: MentoringStudent["studentId"],
+  chapterId: MentoringStudent["chapterId"]
+) {
+  await prisma.mentoringStudent.delete({
+    where: {
+      mentorId_studentId_chapterId: {
+        chapterId,
+        mentorId,
+        studentId,
+      },
+    },
   });
 }

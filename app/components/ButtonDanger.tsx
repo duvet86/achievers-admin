@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, DetailedHTMLProps } from "react";
 
-export default function ButtonPrimary({
+export default function ButtonDanger({
   children,
   className = "",
   disabled,
@@ -15,9 +15,9 @@ export default function ButtonPrimary({
       disabled={disabled}
       className={
         disabled
-          ? "flex items-center justify-center rounded border bg-blue-200 py-2 px-4 text-white " +
+          ? "flex items-center justify-center rounded border bg-red-200 py-2 px-4 text-white " +
             className
-          : "flex items-center justify-center rounded border bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 " +
+          : "flex items-center justify-center rounded border bg-red-500 py-2 px-4 text-white hover:bg-red-600 " +
             className
       }
     >
