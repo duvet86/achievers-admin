@@ -9,11 +9,6 @@ export interface AssignStudentToMentor {
   chapterId: MentoringStudent["chapterId"];
 }
 
-export interface AssignUserToChapters {
-  userId: AzureUser["id"];
-  chapterIds: UserAtChapter["chapterId"][];
-}
-
 export async function getStudentsMentoredByAsync(mentorId: AzureUser["id"]) {
   return await prisma.mentoringStudent.findMany({
     where: {
@@ -22,24 +17,32 @@ export async function getStudentsMentoredByAsync(mentorId: AzureUser["id"]) {
   });
 }
 
-export async function assignUserToChaptersAsync(
-  { userId, chapterIds }: AssignUserToChapters,
-  assignedBy: string
+export async function assignChapterToUserAsync(
+  userId: UserAtChapter["userId"],
+  chapterId: UserAtChapter["chapterId"],
+  assignedBy: UserAtChapter["assignedBy"]
 ) {
-  await prisma.$transaction([
-    prisma.userAtChapter.deleteMany({
-      where: {
+  await prisma.userAtChapter.create({
+    data: {
+      assignedBy,
+      userId,
+      chapterId,
+    },
+  });
+}
+
+export async function unassignChapterFromUserAsync(
+  userId: UserAtChapter["userId"],
+  chapterId: UserAtChapter["chapterId"]
+) {
+  await prisma.userAtChapter.delete({
+    where: {
+      userId_chapterId: {
+        chapterId,
         userId,
       },
-    }),
-    prisma.userAtChapter.createMany({
-      data: chapterIds.map((chapterId) => ({
-        userId,
-        chapterId,
-        assignedBy,
-      })),
-    }),
-  ]);
+    },
+  });
 }
 
 export async function assignMenteeFromMentorAsync(

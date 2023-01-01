@@ -6,12 +6,13 @@ import { json } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
 
-import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
-import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
-
 import { getAzureUsersAsync } from "~/models/azure.server";
 import { getAssignedChaptersToUserAsync } from "~/models/chapter.server";
 import { getStudentsMentoredByAsync } from "~/models/user.server";
+
+import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
+import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
+import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -75,15 +76,6 @@ export default function ChapterUser() {
 
       <hr className="my-4" />
 
-      <Link
-        to="mentees/assign"
-        className="my-8 flex w-64 items-center justify-center space-x-2 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600"
-        type="submit"
-      >
-        <PlusIcon className="w-5 text-white" />
-        <span>Assign new Student</span>
-      </Link>
-
       <div className="overflow-auto">
         <table className="w-full table-auto">
           <thead>
@@ -132,6 +124,25 @@ export default function ChapterUser() {
             )}
           </tbody>
         </table>
+      </div>
+
+      <div className="flex items-center space-x-6">
+        <Link
+          to="../"
+          relative="path"
+          className="flex w-24 items-center justify-center space-x-2 rounded border border-zinc-300 bg-zinc-200 px-4 py-2 hover:bg-zinc-300"
+        >
+          <ArrowSmallLeftIcon className="w-5" />
+          <span>Back</span>
+        </Link>
+        <Link
+          to="mentees/assign"
+          relative="path"
+          className="my-8 flex w-64 items-center justify-center space-x-2 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600"
+        >
+          <PlusIcon className="w-5 text-white" />
+          <span>Assign new Student</span>
+        </Link>
       </div>
     </div>
   );

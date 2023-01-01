@@ -5,13 +5,15 @@ import { Link, useCatch, useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
-import { UsersIcon } from "@heroicons/react/24/solid";
 
 import {
   getChapterByIdAsync,
   getUsersAtChapterByIdAsync,
 } from "~/models/chapter.server";
 import { getAzureUsersAsync, Roles } from "~/models/azure.server";
+
+import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
+import UsersIcon from "@heroicons/react/24/solid/UsersIcon";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -98,6 +100,15 @@ export default function ChapterId() {
           </tbody>
         </table>
       </div>
+
+      <Link
+        to="../"
+        relative="path"
+        className="mt-8 flex w-24 items-center justify-center space-x-2 rounded border border-zinc-300 bg-zinc-200 px-4 py-2 hover:bg-zinc-300"
+      >
+        <ArrowSmallLeftIcon className="w-5" />
+        <span>Back</span>
+      </Link>
     </div>
   );
 }

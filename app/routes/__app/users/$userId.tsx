@@ -1,43 +1,23 @@
-import type {
-  ActionArgs,
-  LoaderArgs,
-  TypedResponse,
-} from "@remix-run/server-runtime";
-import type { AssignUserToChapters } from "~/models/user.server";
+import type { LoaderArgs } from "@remix-run/server-runtime";
 
-import {
-  Form,
-  Link,
-  useActionData,
-  useCatch,
-  useLoaderData,
-  useTransition,
-} from "@remix-run/react";
+import { Link, useCatch, useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/server-runtime";
 
-import { useState } from "react";
 import invariant from "tiny-invariant";
 
-import { PlusIcon } from "@heroicons/react/24/solid";
-import { XMarkIcon } from "@heroicons/react/24/solid";
-import { ArrowPathIcon } from "@heroicons/react/24/solid";
-
-import {
-  getAssignedChaptersToUserAsync,
-  getChaptersAsync,
-} from "~/models/chapter.server";
+import { getAssignedChaptersToUserAsync } from "~/models/chapter.server";
 import { getAzureUserByIdAsync } from "~/models/azure.server";
-import { assignUserToChaptersAsync } from "~/models/user.server";
 
-import ButtonPrimary from "~/components/ButtonPrimary";
+import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
+import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
+import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
-  const [azureUser, assignedChapters, chapters] = await Promise.all([
+  const [azureUser, assignedChapters] = await Promise.all([
     getAzureUserByIdAsync(params.userId),
     getAssignedChaptersToUserAsync(params.userId),
-    getChaptersAsync(),
   ]);
 
   return json({
@@ -45,88 +25,11 @@ export async function loader({ params }: LoaderArgs) {
       ...azureUser,
       assignedChapters,
     },
-    chapters,
   });
 }
 
-export async function action({ request, params }: ActionArgs): Promise<
-  TypedResponse<{
-    error: string | undefined;
-  }>
-> {
-  invariant(params.userId, "userId not found");
-
-  const urlSearchParams = new URLSearchParams(await request.text());
-
-  const currentUserId = urlSearchParams.get("currentUserId");
-  invariant(currentUserId, "currentUserId not found");
-
-  const chapterIds = urlSearchParams.getAll("chapterIds");
-  invariant(chapterIds, "chapterIds not found");
-
-  const updateUser: AssignUserToChapters = {
-    userId: currentUserId,
-    chapterIds: chapterIds,
-  };
-
-  await assignUserToChaptersAsync(updateUser, params.userId);
-
-  return json({ error: undefined });
-}
-
 export default function Chapter() {
-  const { user: initialUser, chapters } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
-  const transition = useTransition();
-
-  const [user, setUser] = useState<typeof initialUser>(initialUser);
-
-  const isSubmitting = transition.state === "submitting";
-
-  const removeChapter = (chapterId: string) => () => {
-    if (isSubmitting) {
-      return;
-    }
-
-    setUser((state) => ({
-      ...state,
-      assignedChapters: state.assignedChapters.filter(
-        (chapter) => chapter.chapterId !== chapterId
-      ),
-    }));
-  };
-
-  const assignChapter = (chapterId: string) => {
-    if (isSubmitting) {
-      return;
-    }
-
-    // Chapter already assigned.
-    if (
-      user.assignedChapters.findIndex(
-        (assignedChapter) => assignedChapter.chapterId === chapterId
-      ) !== -1
-    ) {
-      return;
-    }
-
-    const chapter = chapters.find((chapter) => chapter.id === chapterId);
-    invariant(chapter, "userId not found");
-
-    setUser((state) => ({
-      ...state,
-      assignedChapters: [
-        ...state.assignedChapters,
-        {
-          chapter,
-          chapterId: chapter.id,
-          userId: user.id,
-          assignedAt: "",
-          assignedBy: "",
-        },
-      ],
-    }));
-  };
+  const { user } = useLoaderData<typeof loader>();
 
   return (
     <div>
@@ -143,92 +46,65 @@ export default function Chapter() {
 
       <hr className="my-4" />
 
-      <Form method="post" className="mt-4">
-        <input type="hidden" name="currentUserId" value={user.id} />
-
-        <div className="rounded bg-gray-100 px-2 py-6">
-          <label
-            htmlFor="addChapter"
-            className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-          >
-            Select a Chapter
-          </label>
-          <select
-            className="mb-2 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-            defaultValue=""
-            onChange={(event) => {
-              assignChapter(event.target.value);
-              event.target.value = "";
-            }}
-            disabled={isSubmitting}
-          >
-            <option value="">Assign a Chapter</option>
-            {chapters.map(({ id, name }) => (
-              <option key={id} value={id}>
-                {name}
-              </option>
+      <div className="overflow-auto">
+        <table className="w-full table-auto">
+          <thead>
+            <tr>
+              <th align="left" className="p-2">
+                Assigned to
+              </th>
+              <th align="right" className="p-2">
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {user.assignedChapters.length === 0 && (
+              <tr>
+                <td colSpan={2} className="border p-2">
+                  <i>No Chapters assigned to this user</i>
+                </td>
+              </tr>
+            )}
+            {user.assignedChapters.map(({ chapter: { id, name } }) => (
+              <tr key={id}>
+                <td className="border p-2">
+                  <span>{name}</span>
+                  <input type="hidden" name="chapterIds" value={id} />
+                </td>
+                <td align="right" className="border p-2">
+                  <Link
+                    to={`chapters/${id}/delete`}
+                    className="flex w-32 items-center justify-center rounded bg-red-600 px-3 py-1 text-white"
+                  >
+                    <XMarkIcon className="mr-2 w-5" />
+                    <span>Remove</span>
+                  </Link>
+                </td>
+              </tr>
             ))}
-          </select>
+          </tbody>
+        </table>
+      </div>
 
-          <div className="overflow-auto">
-            <table className="w-full table-auto">
-              <thead>
-                <tr>
-                  <th align="left" className="p-2">
-                    Assigned to
-                  </th>
-                  <th align="right" className="p-2">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {user.assignedChapters.length === 0 && (
-                  <tr>
-                    <td colSpan={2} className="border p-2">
-                      <i>No Chapters assigned to this user</i>
-                    </td>
-                  </tr>
-                )}
-                {user.assignedChapters.map(({ chapter: { id, name } }) => (
-                  <tr key={id}>
-                    <td className="border p-2">
-                      <span>{name}</span>
-                      <input type="hidden" name="chapterIds" value={id} />
-                    </td>
-                    <td align="right" className="border p-2">
-                      <button
-                        onClick={removeChapter(id)}
-                        className="flex items-center justify-center rounded bg-red-600 px-3 py-1 text-white"
-                      >
-                        <XMarkIcon className="mr-2 w-5" />
-                        <span>Remove</span>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <p className="text-red-900">{actionData?.error}</p>
-
-        <div className="flex items-center space-x-6">
-          <Link
-            to="."
-            className="mt-8 flex w-24 items-center justify-center space-x-2 rounded border border-zinc-300 bg-zinc-200 px-4 py-2 hover:bg-zinc-300"
-            type="submit"
-          >
-            <ArrowPathIcon className="w-5" />
-            <span>Reset</span>
-          </Link>
-          <ButtonPrimary className="mt-8 w-24 space-x-2" type="submit">
-            <PlusIcon className="w-5 text-white" />
-            <span>Save</span>
-          </ButtonPrimary>
-        </div>
-      </Form>
+      <div className="flex items-center space-x-6">
+        <Link
+          to="../"
+          relative="path"
+          className="flex w-24 items-center justify-center space-x-2 rounded border border-zinc-300 bg-zinc-200 px-4 py-2 hover:bg-zinc-300"
+        >
+          <ArrowSmallLeftIcon className="w-5" />
+          <span>Back</span>
+        </Link>
+        <Link
+          to="chapters/assign"
+          relative="path"
+          className="my-8 flex w-64 items-center justify-center space-x-2 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600"
+        >
+          <PlusIcon className="w-5 text-white" />
+          <span>Assign to a Chapter</span>
+        </Link>
+      </div>
     </div>
   );
 }

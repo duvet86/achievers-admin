@@ -8,7 +8,7 @@ export async function getChaptersAsync() {
 }
 
 export async function getChapterByIdAsync(id: AzureUser["id"]) {
-  return prisma.chapter.findUnique({
+  return prisma.chapter.findUniqueOrThrow({
     where: {
       id,
     },
@@ -23,13 +23,16 @@ export async function getUsersAtChapterByIdAsync(chapterId: Chapter["id"]) {
   });
 }
 
-export async function getAssignedChaptersToUserAsync(id: AzureUser["id"]) {
+export async function getAssignedChaptersToUserAsync(
+  id: AzureUser["id"],
+  includeChapters = true
+) {
   return prisma.userAtChapter.findMany({
     where: {
       userId: id,
     },
     include: {
-      chapter: true,
+      chapter: includeChapters,
     },
   });
 }
