@@ -3,9 +3,6 @@
 
 name: Build and deploy Node.js app to Azure Web App - achievers-admin
 
-# env:
-#   DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
 permissions:
   id-token: write
 
@@ -35,7 +32,6 @@ jobs:
           context: .
           push: true
           tags: duvet86/achievers-app:latest
-          # build-args: DATABASE_URL=${{ secrets.DATABASE_URL }}
 
   deploy:
     name: 🚀 Deploy
@@ -51,5 +47,5 @@ jobs:
         with:
           app-name: "achievers-admin"
           slot-name: "Production"
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6B0EB860F87540C18BBBD61BAF884202 }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_41199dd0b52b47bbb3a686e45f7cc5ec }}
           images: duvet86/achievers-app:latest
