@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === "production") {
 
   writeFileSync(
     "/tmp/DigiCertGlobalRootCA.crt.pem",
-    Buffer.from(process.env.CERT, "base64")
+    Buffer.from(process.env.CERT!, "base64")
   );
 
   prisma = new PrismaClient({
