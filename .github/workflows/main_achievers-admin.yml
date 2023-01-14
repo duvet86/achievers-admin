@@ -45,7 +45,7 @@ jobs:
       - name: "Deploy to Azure Web App"
         uses: azure/webapps-deploy@v2
         with:
-          app-name: "achievers-webapp"
-          slot-name: "production"
+          app-name: "achievers-admin"
+          slot-name: "Production"
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_41199dd0b52b47bbb3a686e45f7cc5ec }}
           images: duvet86/achievers-app:latest
