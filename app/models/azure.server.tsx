@@ -50,7 +50,7 @@ export async function getAzureRolesLookUpAsync(): Promise<AzureRolesLookUp> {
 
   try {
     const response = await fetch(
-      `https://graph.microsoft.com/v1.0/applications/${process.env.CLIENT_ID}?$select=appRoles`,
+      `https://graph.microsoft.com/v1.0/applications/3f224e38-e002-4063-9423-f715f4b0ae85?$select=appRoles`,
       {
         headers: {
           Authorization: `Bearer ${global.__accessToken__}`,
@@ -95,10 +95,12 @@ export async function getAzureUsersAsync(): Promise<AzureUser[]> {
 
     return azureUsers.value.map((user) => ({
       ...user,
-      appRoleAssignments: user.appRoleAssignments.map((roleAssignment) => ({
-        ...roleAssignment,
-        roleName: roles[roleAssignment.appRoleId].displayName,
-      })),
+      appRoleAssignments: user.appRoleAssignments
+        .filter(({ appRoleId }) => roles[appRoleId])
+        .map((roleAssignment) => ({
+          ...roleAssignment,
+          roleName: roles[roleAssignment.appRoleId].displayName,
+        })),
     }));
   } catch (e) {
     throw redirect("/logout");
@@ -127,12 +129,12 @@ export async function getAzureUserByIdAsync(
 
     return {
       ...azureUser,
-      appRoleAssignments: azureUser.appRoleAssignments.map(
-        (roleAssignment) => ({
+      appRoleAssignments: azureUser.appRoleAssignments
+        .filter(({ appRoleId }) => roles[appRoleId])
+        .map((roleAssignment) => ({
           ...roleAssignment,
           roleName: roles[roleAssignment.appRoleId].displayName,
-        })
-      ),
+        })),
     };
   } catch (e) {
     throw redirect("/logout");
