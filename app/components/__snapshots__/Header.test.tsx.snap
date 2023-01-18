@@ -8,7 +8,7 @@ exports[`Header snapshot 1`] = `
     >
       <a
         class="mr-6 ml-2 flex flex-shrink-0 items-center text-white"
-        href="/users"
+        href="/roster"
       >
         <img
           alt="Logo"
@@ -46,20 +46,7 @@ exports[`Header snapshot 1`] = `
       >
         <div
           class="lg:flex-grow"
-        >
-          <a
-            class="mt-4 mr-6 block text-white hover:text-white lg:mt-0 lg:inline-block"
-            href="/users"
-          >
-            Users
-          </a>
-          <a
-            class="mt-4 block text-white hover:text-white lg:mt-0 lg:inline-block"
-            href="/chapters"
-          >
-            Chapters
-          </a>
-        </div>
+        />
         <div>
           <a
             class="mt-4 inline-block rounded border border-white px-4 py-2 text-sm leading-none text-white hover:border-transparent hover:bg-white hover:text-teal-500 lg:mt-0"

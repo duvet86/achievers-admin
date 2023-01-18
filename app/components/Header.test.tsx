@@ -7,7 +7,17 @@ import Header from "~/components/Header";
 test("Header snapshot", async () => {
   const { baseElement } = render(
     <MemoryRouter>
-      <Header />
+      <Header
+        sessionUser={{
+          id: "",
+          appRoleAssignments: [],
+          displayName: "Luca",
+          givenName: "Luca",
+          mail: "luca@luca.com",
+          surname: "Luca",
+          userPrincipalName: "Luca",
+        }}
+      />
     </MemoryRouter>
   );
 
