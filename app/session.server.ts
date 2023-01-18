@@ -92,6 +92,8 @@ const microsoftStrategy = new MicrosoftStrategy(
       oid: string;
     }>(extraParams.id_token);
 
+    console.log(userInfo);
+
     const azureUser = await getAzureUserByIdAsync(userInfo.oid);
 
     return azureUser;

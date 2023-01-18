@@ -27,7 +27,8 @@ CREATE TABLE `MentoringStudent` (
     `chapterId` VARCHAR(191) NOT NULL,
     `assignedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `assignedBy` VARCHAR(191) NOT NULL,
-    `frequencyInDays` INTEGER NOT NULL DEFAULT 15,
+    `frequencyInDays` INTEGER NOT NULL,
+    `startDate` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`mentorId`, `studentId`, `chapterId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

@@ -1,9 +1,10 @@
 import { redirect } from "@remix-run/node";
+import invariant from "tiny-invariant";
 
 export enum Roles {
-  Admin = "05d8eac4-9738-4a7b-8b9d-703868df4529",
-  Mentor = "d6f716ac-63d9-4116-8381-7db0341775c2",
-  Student = "d0f92e80-d129-4d50-a3e1-3689310faa5c",
+  Admin = "e567add0-fec3-4c87-941a-05dd2e18cdfd",
+  Mentor = "a2ed7b54-4379-465d-873d-2e182e0bd8ef",
+  Student = "ee1650fe-387b-40c3-bb73-e8d54fbe09a6",
 }
 
 export interface AppRoleAssignment {
@@ -45,9 +46,11 @@ export interface Application {
 export type AzureRolesLookUp = Record<string, AppRole>;
 
 export async function getAzureRolesLookUpAsync(): Promise<AzureRolesLookUp> {
+  invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");
+
   try {
     const response = await fetch(
-      "https://graph.microsoft.com/v1.0/applications/0a1a0102-bca1-46de-948a-ec65d9101b39?$select=appRoles",
+      `https://graph.microsoft.com/v1.0/applications/${process.env.CLIENT_ID}?$select=appRoles`,
       {
         headers: {
           Authorization: `Bearer ${global.__accessToken__}`,
