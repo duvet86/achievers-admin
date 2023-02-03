@@ -1,7 +1,7 @@
 import type { AzureUser } from "~/models/azure.server";
 
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
-import { Authenticator } from "remix-auth";
+import { Authenticator, AuthorizationError } from "remix-auth";
 import invariant from "tiny-invariant";
 
 import { parseJwt } from "~/utils";
@@ -31,7 +31,7 @@ export const sessionStorage = createCookieSessionStorage({
 
 export const authenticator = new Authenticator<AzureUser>(sessionStorage); // User is a custom user types you can define as you want
 
-async function getSession(request: Request) {
+export async function getSession(request: Request) {
   const cookie = request.headers.get("Cookie");
   return sessionStorage.getSession(cookie);
 }
@@ -83,20 +83,22 @@ const microsoftStrategy = new MicrosoftStrategy(
     prompt: "login", // optional
   },
   async ({ extraParams, accessToken }) => {
-    global.__accessToken__ = accessToken;
+    try {
+      global.__accessToken__ = accessToken;
 
-    const userInfo = parseJwt<{
-      email?: string;
-      preferred_username: string;
-      roles: string[];
-      oid: string;
-    }>(extraParams.id_token);
+      const userInfo = parseJwt<{
+        email?: string;
+        preferred_username: string;
+        roles: string[];
+        oid: string;
+      }>(extraParams.id_token);
 
-    console.log(userInfo);
+      const azureUser = await getAzureUserByIdAsync(userInfo.oid);
 
-    const azureUser = await getAzureUserByIdAsync(userInfo.oid);
-
-    return azureUser;
+      return azureUser;
+    } catch (e: any) {
+      throw new AuthorizationError(e.message, e);
+    }
   }
 );
 

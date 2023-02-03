@@ -110,33 +110,33 @@ export async function getAzureUsersAsync(): Promise<AzureUser[]> {
 export async function getAzureUserByIdAsync(
   azureId: string
 ): Promise<AzureUser> {
-  try {
-    const response = await fetch(
-      `https://graph.microsoft.com/v1.0/users/${azureId}?$expand=appRoleAssignments`,
-      {
-        headers: {
-          Authorization: `Bearer ${global.__accessToken__}`,
-        },
-      }
-    );
+  const response = await fetch(
+    `https://graph.microsoft.com/v1.0/users/${azureId}?$expand=appRoleAssignments`,
+    {
+      headers: {
+        Authorization: `Bearer ${global.__accessToken__}`,
+      },
+    }
+  );
 
-    const azureUserPromise: Promise<AzureUser> = response.json();
+  const azureUserPromise: Promise<AzureUser> = response.json();
 
-    const [azureUser, roles] = await Promise.all([
-      azureUserPromise,
-      getAzureRolesLookUpAsync(),
-    ]);
+  const [azureUser, roles] = await Promise.all([
+    azureUserPromise,
+    getAzureRolesLookUpAsync(),
+  ]);
 
-    return {
-      ...azureUser,
-      appRoleAssignments: azureUser.appRoleAssignments
-        .filter(({ appRoleId }) => roles[appRoleId])
-        .map((roleAssignment) => ({
-          ...roleAssignment,
-          roleName: roles[roleAssignment.appRoleId].displayName,
-        })),
-    };
-  } catch (e) {
-    throw redirect("/logout");
+  if (azureUser.appRoleAssignments.length === 0) {
+    throw new Error("nopermissions");
   }
+
+  return {
+    ...azureUser,
+    appRoleAssignments: azureUser.appRoleAssignments
+      .filter(({ appRoleId }) => roles[appRoleId])
+      .map((roleAssignment) => ({
+        ...roleAssignment,
+        roleName: roles[roleAssignment.appRoleId].displayName,
+      })),
+  };
 }

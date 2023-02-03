@@ -1,4 +1,4 @@
-import { faker } from "@faker-js/faker";
+export {};
 
 declare global {
   namespace Cypress {
@@ -16,18 +16,6 @@ declare global {
       login: typeof login;
 
       /**
-       * Deletes the current @user
-       *
-       * @returns {typeof cleanupUser}
-       * @memberof Chainable
-       * @example
-       *    cy.cleanupUser()
-       * @example
-       *    cy.cleanupUser({ email: 'whatever@example.com' })
-       */
-      cleanupUser: typeof cleanupUser;
-
-      /**
        * Extends the standard visit command to wait for the page to load
        *
        * @returns {typeof visitAndCheck}
@@ -42,42 +30,59 @@ declare global {
   }
 }
 
-function login({
-  email = faker.internet.email(undefined, undefined, "example.com"),
-}: {
-  email?: string;
-} = {}) {
-  cy.then(() => ({ email })).as("user");
-  cy.exec(
-    `npx ts-node --require tsconfig-paths/register ./cypress/support/create-user.ts "${email}"`
-  ).then(({ stdout }) => {
-    const cookieValue = stdout
-      .replace(/.*<cookie>(?<cookieValue>.*)<\/cookie>.*/s, "$<cookieValue>")
-      .trim();
-    cy.setCookie("__session", cookieValue);
+function login() {
+  // cy.log("TENANT_ID:");
+  // cy.log(Cypress.env("TENANT_ID"));
+
+  cy.visit("https://achievers-webapp.azurewebsites.net/");
+
+  cy.get("button").should("be.visible");
+
+  cy.request({
+    method: "POST",
+    url: `https://login.microsoftonline.com/${Cypress.env(
+      "TENANT_ID"
+    )}/oauth2/v2.0/token`,
+    form: true,
+    body: {
+      grant_type: "password",
+      client_id: Cypress.env("CLIENT_ID"),
+      client_secret: Cypress.env("CLIENT_SECRET"),
+      scope: "openid profile email",
+      username: "test@achieversclubwa.org.au",
+      password: "QFh7eDe0c5Db",
+      // resource: "clientId",
+    },
+  }).then((response) => {
+    console.log(response);
+    // defined in step 2
+    // injectTokens(response);
   });
-  return cy.get("@user");
-}
 
-function cleanupUser({ email }: { email?: string } = {}) {
-  if (email) {
-    deleteUserByEmail(email);
-  } else {
-    cy.get("@user").then((user) => {
-      const email = (user as { email?: string }).email;
-      if (email) {
-        deleteUserByEmail(email);
-      }
-    });
-  }
-  cy.clearCookie("__session");
-}
+  // loginButton.click();
 
-function deleteUserByEmail(email: string) {
-  cy.exec(
-    `npx ts-node --require tsconfig-paths/register ./cypress/support/delete-user.ts "${email}"`
-  );
-  cy.clearCookie("__session");
+  // cy.location("pathname")
+  //   .should("contain", "login.microsoftonline.com")
+  //   .wait(1000);
+
+  // const input = cy.find("input");
+
+  // cy.get("input").type("Hello, World");
+
+  // cy.pause();
+
+  // cy.location("pathname").should("contain", "login.microsoftonline").wait(1000);
+
+  // cy.then(() => ({ email })).as("user");
+  // cy.exec(
+  //   `npx ts-node --require tsconfig-paths/register ./cypress/support/create-user.ts "${email}"`
+  // ).then(({ stdout }) => {
+  //   const cookieValue = stdout
+  //     .replace(/.*<cookie>(?<cookieValue>.*)<\/cookie>.*/s, "$<cookieValue>")
+  //     .trim();
+  //   cy.setCookie("__session", cookieValue);
+  // });
+  // return cy.get("@user");
 }
 
 // We're waiting a second because of this issue happen randomly
@@ -91,5 +96,4 @@ function visitAndCheck(url: string, waitTime: number = 1000) {
 }
 
 Cypress.Commands.add("login", login);
-Cypress.Commands.add("cleanupUser", cleanupUser);
 Cypress.Commands.add("visitAndCheck", visitAndCheck);
