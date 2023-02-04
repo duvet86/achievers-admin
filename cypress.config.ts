@@ -24,4 +24,13 @@ export default defineConfig({
       return { ...config, ...configOverrides };
     },
   },
+  env: {
+    DATABASE_URL:
+      "mysql://achievers:TFzwC2gVr5xTSu2Byw@achievers-mysql.mysql.database.azure.com:3306/achievers?sslcert=DigiCertGlobalRootCA.crt.pem",
+    SESSION_SECRET: "2e9e9dd46268d088ab72795371c49b1e",
+    CLIENT_ID: "03ccc390-72dc-4337-9c02-4bb3919ba451",
+    CLIENT_SECRET: "OnO8Q~tp0ObxGICgw2.DYfyvxEmycxCoPS.XNafL",
+    TENANT_ID: "5cf7a1f7-4da4-47a9-813b-c8d1f7c97fa6",
+    REDIRECT_URI: "http://localhost:3000/auth/microsoft/callback",
+  },
 });
