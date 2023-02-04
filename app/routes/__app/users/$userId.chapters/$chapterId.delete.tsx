@@ -12,8 +12,6 @@ import { unassignChapterFromUserAsync } from "~/models/user.server";
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
-import ButtonDanger from "~/components/ButtonDanger";
-
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
   invariant(params.chapterId, "chapterId not found");
@@ -50,19 +48,15 @@ export default function Delete() {
         <span className="font-medium">'{user.displayName}'</span>?
       </div>
 
-      <div className="flex items-center space-x-6">
-        <Link
-          to="../../../"
-          relative="path"
-          className="flex w-24 items-center justify-center rounded border border-slate-300 bg-slate-200 px-4 py-2 hover:bg-slate-300"
-        >
-          <ArrowSmallLeftIcon className="mr-2 w-5" />
+      <div className="mt-6 flex items-center space-x-6">
+        <Link to="../../../" relative="path" className="btn-ghost btn">
+          <ArrowSmallLeftIcon className="mr-2 w-6" />
           <span>Back</span>
         </Link>
-        <ButtonDanger type="submit">
-          <XMarkIcon className="mr-2 w-5" />
-          <span>Confirm</span>
-        </ButtonDanger>
+        <button className="btn-error btn gap-2">
+          <XMarkIcon className="mr-2 w-6" />
+          Confirm
+        </button>
       </div>
     </Form>
   );

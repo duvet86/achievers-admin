@@ -12,7 +12,6 @@ import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 import { getAzureUserByIdAsync } from "~/models/azure.server";
 
-import ButtonDanger from "~/components/ButtonDanger";
 import { unassignMenteeFromMentorAsync } from "~/models/user.server";
 
 export async function loader({ params }: LoaderArgs) {
@@ -56,19 +55,15 @@ export default function MenteesDelete() {
         mentor <span className="font-medium">'{mentor.displayName}'</span>?
       </div>
 
-      <div className="flex items-center space-x-6">
-        <Link
-          to="../../../"
-          relative="path"
-          className="flex w-24 items-center justify-center rounded border border-slate-300 bg-slate-200 px-4 py-2 hover:bg-slate-300"
-        >
-          <ArrowSmallLeftIcon className="mr-2 w-5" />
-          <span>Back</span>
+      <div className="mt-6 flex items-center space-x-6">
+        <Link to="../../../" relative="path" className="btn-ghost btn gap-2">
+          <ArrowSmallLeftIcon className="mr-2 w-6" />
+          Back
         </Link>
-        <ButtonDanger type="submit">
-          <XMarkIcon className="mr-2 w-5" />
-          <span>Confirm</span>
-        </ButtonDanger>
+        <button className="btn-error btn gap-2">
+          <XMarkIcon className="mr-2 w-6" />
+          Confirm
+        </button>
       </div>
     </Form>
   );

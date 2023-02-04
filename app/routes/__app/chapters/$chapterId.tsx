@@ -55,7 +55,7 @@ export default function ChapterId() {
       <hr className="my-4" />
 
       <div className="overflow-auto">
-        <table className="w-full table-auto">
+        <table className="table w-full">
           <thead>
             <tr>
               <th align="left" className="p-2">
@@ -101,13 +101,9 @@ export default function ChapterId() {
         </table>
       </div>
 
-      <Link
-        to="../"
-        relative="path"
-        className="mt-8 flex w-24 items-center justify-center space-x-2 rounded border border-zinc-300 bg-zinc-200 px-4 py-2 hover:bg-zinc-300"
-      >
-        <ArrowSmallLeftIcon className="w-5" />
-        <span>Back</span>
+      <Link to="../" relative="path" className="btn-ghost btn mt-6 gap-2">
+        <ArrowSmallLeftIcon className="w-6" />
+        Back
       </Link>
     </div>
   );

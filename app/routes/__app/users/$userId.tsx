@@ -47,7 +47,7 @@ export default function Chapter() {
       <hr className="my-4" />
 
       <div className="overflow-auto">
-        <table className="w-full table-auto">
+        <table className="table w-full">
           <thead>
             <tr>
               <th align="left" className="p-2">
@@ -87,22 +87,18 @@ export default function Chapter() {
         </table>
       </div>
 
-      <div className="flex items-center space-x-6">
-        <Link
-          to="../"
-          relative="path"
-          className="flex w-24 items-center justify-center space-x-2 rounded border border-zinc-300 bg-zinc-200 px-4 py-2 hover:bg-zinc-300"
-        >
-          <ArrowSmallLeftIcon className="w-5" />
-          <span>Back</span>
+      <div className="mt-6 flex items-center space-x-6">
+        <Link to="../" relative="path" className="btn-ghost btn gap-2">
+          <ArrowSmallLeftIcon className="w-6" />
+          Back
         </Link>
         <Link
           to="chapters/assign"
           relative="path"
-          className="my-8 flex w-64 items-center justify-center space-x-2 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600"
+          className="btn-primary btn gap-2"
         >
-          <PlusIcon className="w-5 text-white" />
-          <span>Assign to a Chapter</span>
+          <PlusIcon className="w-6" />
+          Assign to a Chapter
         </Link>
       </div>
     </div>

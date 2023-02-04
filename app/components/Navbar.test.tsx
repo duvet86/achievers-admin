@@ -2,12 +2,12 @@ import { render } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router";
 
-import Header from "~/components/Header";
+import Navbar from "~/components/Navbar";
 
 test("Header snapshot", async () => {
   const { baseElement } = render(
     <MemoryRouter>
-      <Header
+      <Navbar
         sessionUser={{
           id: "",
           appRoleAssignments: [],

@@ -32,9 +32,9 @@ export default function SelectChapter() {
 
   return (
     <>
-      <h3 className="text-2xl font-bold">Users</h3>
+      <h3 className="mb-4 text-2xl font-bold">Users</h3>
       <div className="overflow-auto">
-        <table className="w-full table-auto">
+        <table className="table w-full">
           <thead>
             <tr>
               <th align="left" className="p-2">
@@ -86,7 +86,7 @@ export default function SelectChapter() {
                   </td>
                   <td className="border p-2" align="right">
                     <Link to={id}>
-                      <PencilIcon className="mr-4 w-6 text-blue-500" />
+                      <PencilIcon className="mr-4 w-6 text-accent" />
                     </Link>
                   </td>
                 </tr>

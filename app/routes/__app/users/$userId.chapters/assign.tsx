@@ -22,8 +22,6 @@ import {
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
-import ButtonPrimary from "~/components/ButtonPrimary";
-
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
@@ -106,20 +104,20 @@ export default function Assign() {
 
       <p className="mt-4 text-red-600">{actionData?.error}</p>
 
-      <div className="flex items-center space-x-6">
+      <div className="mt-6 flex items-center space-x-6">
         <Link
           to="../../"
           relative="path"
-          className="mt-8 flex w-24 items-center justify-center space-x-2 rounded border border-zinc-300 bg-zinc-200 px-4 py-2 hover:bg-zinc-300"
+          className="btn-ghost btn"
           type="submit"
         >
-          <ArrowSmallLeftIcon className="w-5" />
-          <span>Back</span>
+          <ArrowSmallLeftIcon className="w-6" />
+          Back
         </Link>
-        <ButtonPrimary className="mt-8 w-24 space-x-2" type="submit">
-          <PlusIcon className="w-5 text-white" />
-          <span>Save</span>
-        </ButtonPrimary>
+        <button className="btn gap-2">
+          <PlusIcon className="w-6 text-white" />
+          Save
+        </button>
       </div>
     </Form>
   );

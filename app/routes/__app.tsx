@@ -7,7 +7,8 @@ import { Outlet, useLoaderData } from "@remix-run/react";
 import { getSessionUserAsync, logout } from "~/session.server";
 import { Roles } from "~/models/azure.server";
 
-import Header from "~/components/Header";
+import Navbar from "~/components/Navbar";
+import MobileDrawer from "~/components/MobileDrawer";
 
 export async function loader({ request }: LoaderArgs) {
   const sessionUser = await getSessionUserAsync(request);
@@ -24,20 +25,28 @@ export async function loader({ request }: LoaderArgs) {
     throw redirect("/401");
   }
 
+  const isAdmin = sessionUser.appRoleAssignments
+    .map(({ appRoleId }) => appRoleId)
+    .includes("e567add0-fec3-4c87-941a-05dd2e18cdfd");
+
   return json({
-    sessionUser,
+    isAdmin,
   });
 }
 
 export default function AppLayout() {
-  const data = useLoaderData<typeof loader>();
+  const { isAdmin } = useLoaderData<typeof loader>();
 
   return (
-    <div className="flex h-full flex-col">
-      <Header sessionUser={data.sessionUser} />
-      <main className="m-4 h-full bg-white">
-        <Outlet />
-      </main>
+    <div className="drawer">
+      <input id="drawer" type="checkbox" className="drawer-toggle" />
+      <div className="drawer-content flex flex-col">
+        <Navbar isAdmin={isAdmin} />
+        <main className="m-4 h-full bg-white">
+          <Outlet />
+        </main>
+      </div>
+      <MobileDrawer />
     </div>
   );
 }
