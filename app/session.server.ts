@@ -6,11 +6,8 @@ import invariant from "tiny-invariant";
 
 import { parseJwt } from "~/utils";
 import { MicrosoftStrategy } from "~/services/auth.server";
+import { setAzureToken } from "~/services/azure-token.server";
 import { getAzureUserByIdAsync } from "~/models/azure.server";
-
-declare global {
-  var __accessToken__: string | undefined;
-}
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");
@@ -73,6 +70,43 @@ export async function logout(request: Request) {
   });
 }
 
+export async function createUserSession({
+  request,
+  userId,
+  remember,
+  redirectTo,
+}: {
+  request: Request;
+  userId: string;
+  remember: boolean;
+  redirectTo: string;
+}) {
+  const session = await getSession(request);
+  session.set(authenticator.sessionKey, userId);
+  return redirect(redirectTo, {
+    headers: {
+      "Set-Cookie": await sessionStorage.commitSession(session, {
+        maxAge: remember
+          ? 60 * 60 * 24 * 7 // 7 days
+          : undefined,
+      }),
+    },
+  });
+}
+
+export async function getUserFromToken(idToken: string, accessToken: string) {
+  const userInfo = parseJwt<{
+    email?: string;
+    preferred_username: string;
+    roles: string[];
+    oid: string;
+  }>(idToken);
+
+  setAzureToken(accessToken);
+
+  return await getAzureUserByIdAsync(userInfo.oid);
+}
+
 const microsoftStrategy = new MicrosoftStrategy(
   {
     clientId: process.env.CLIENT_ID,
@@ -82,23 +116,14 @@ const microsoftStrategy = new MicrosoftStrategy(
     scope: "openid profile email", // optional
     prompt: "login", // optional
   },
-  async ({ extraParams, accessToken }) => {
-    try {
-      global.__accessToken__ = accessToken;
+  async ({ accessToken, extraParams }) => {
+    const azureUser = await getUserFromToken(extraParams.id_token, accessToken);
 
-      const userInfo = parseJwt<{
-        email?: string;
-        preferred_username: string;
-        roles: string[];
-        oid: string;
-      }>(extraParams.id_token);
-
-      const azureUser = await getAzureUserByIdAsync(userInfo.oid);
-
-      return azureUser;
-    } catch (e: any) {
-      throw new AuthorizationError(e.message, e);
+    if (azureUser.appRoleAssignments.length === 0) {
+      throw new AuthorizationError("nopermissions");
     }
+
+    return azureUser;
   }
 );
 

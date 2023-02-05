@@ -17,17 +17,15 @@ export async function loader({ request }: LoaderArgs) {
     return logout(request);
   }
 
-  if (
-    sessionUser.appRoleAssignments
-      .map(({ appRoleId }) => appRoleId)
-      .includes(Roles.Student)
-  ) {
+  const sessionUserRoles = sessionUser.appRoleAssignments.map(
+    ({ appRoleId }) => appRoleId
+  );
+
+  if (sessionUserRoles.includes(Roles.Student)) {
     throw redirect("/401");
   }
 
-  const isAdmin = sessionUser.appRoleAssignments
-    .map(({ appRoleId }) => appRoleId)
-    .includes("e567add0-fec3-4c87-941a-05dd2e18cdfd");
+  const isAdmin = sessionUserRoles.includes(Roles.Admin);
 
   return json({
     isAdmin,

@@ -1,6 +1,8 @@
 import { redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
+import { getAzureToken } from "~/services/azure-token.server";
+
 export enum Roles {
   Admin = "e567add0-fec3-4c87-941a-05dd2e18cdfd",
   Mentor = "a2ed7b54-4379-465d-873d-2e182e0bd8ef",
@@ -46,14 +48,14 @@ export interface Application {
 export type AzureRolesLookUp = Record<string, AppRole>;
 
 export async function getAzureRolesLookUpAsync(): Promise<AzureRolesLookUp> {
-  invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");
+  invariant(process.env.OBJECT_ID, "OBJECT_ID must be set");
 
   try {
     const response = await fetch(
-      `https://graph.microsoft.com/v1.0/applications/3f224e38-e002-4063-9423-f715f4b0ae85?$select=appRoles`,
+      `https://graph.microsoft.com/v1.0/applications/${process.env.OBJECT_ID}?$select=appRoles`,
       {
         headers: {
-          Authorization: `Bearer ${global.__accessToken__}`,
+          Authorization: `Bearer ${getAzureToken()}`,
         },
       }
     );
@@ -81,7 +83,7 @@ export async function getAzureUsersAsync(): Promise<AzureUser[]> {
       "https://graph.microsoft.com/v1.0/users?$expand=appRoleAssignments",
       {
         headers: {
-          Authorization: `Bearer ${global.__accessToken__}`,
+          Authorization: `Bearer ${getAzureToken()}`,
         },
       }
     );
@@ -114,7 +116,7 @@ export async function getAzureUserByIdAsync(
     `https://graph.microsoft.com/v1.0/users/${azureId}?$expand=appRoleAssignments`,
     {
       headers: {
-        Authorization: `Bearer ${global.__accessToken__}`,
+        Authorization: `Bearer ${getAzureToken()}`,
       },
     }
   );
@@ -125,10 +127,6 @@ export async function getAzureUserByIdAsync(
     azureUserPromise,
     getAzureRolesLookUpAsync(),
   ]);
-
-  if (azureUser.appRoleAssignments.length === 0) {
-    throw new Error("nopermissions");
-  }
 
   return {
     ...azureUser,

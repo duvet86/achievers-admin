@@ -3,12 +3,6 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function seed() {
-  // await prisma.user.create({
-  //   data: {
-  //     email: "lucamarangon86@gmail.com",
-  //   },
-  // });
-
   await prisma.chapter.create({
     data: {
       name: "Girrawheen",
@@ -24,7 +18,7 @@ async function seed() {
     },
   });
 
-  console.log(`Database has been seeded. 🌱`);
+  console.info(`Database has been seeded. 🌱`);
 }
 
 seed()

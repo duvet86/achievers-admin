@@ -14,7 +14,7 @@ export async function loader({ request }: LoaderArgs) {
 export default function Error() {
   const data = useLoaderData();
 
-  console.log(data);
+  console.error(data);
 
   return <div>{JSON.stringify(data, null, 2)}</div>;
 }

@@ -38,9 +38,7 @@ export default function Index() {
       </h1>
       <div className="mt-4 flex h-full flex-col items-center items-center justify-between">
         <form action="/auth/microsoft" method="post">
-          <button className="mt-8 w-48 rounded-md bg-yellow-500 px-4 py-3 font-medium uppercase text-white hover:bg-yellow-600">
-            Login
-          </button>
+          <button className="btn-primary btn mt-8 w-48 uppercase">Login</button>
         </form>
 
         <a
