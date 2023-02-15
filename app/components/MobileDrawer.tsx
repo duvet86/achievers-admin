@@ -2,7 +2,7 @@ import { Link } from "@remix-run/react";
 
 export default function MobileDrawer() {
   return (
-    <div className="drawer-side">
+    <div className="drawer-side hidden lg:block">
       <label htmlFor="drawer" className="drawer-overlay"></label>
       <ul className="menu w-80 bg-base-100 p-4 text-base-content">
         <li>
