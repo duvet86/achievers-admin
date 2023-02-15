@@ -14,6 +14,7 @@ dotenv.config();
  * See https://playwright.dev/docs/test-configuration.
  */
 const config: PlaywrightTestConfig = {
+  globalSetup: require.resolve("./global-setup"),
   testDir: "./integration-tests",
   /* Maximum time one test can run for. */
   timeout: 30 * 1000,
@@ -39,10 +40,12 @@ const config: PlaywrightTestConfig = {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     actionTimeout: 0,
     /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://localhost:3000',
+    baseURL: "http://localhost:3000",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
+    // Tell all tests to load signed-in state from 'storageState.json'.
+    storageState: "storageState.json",
   },
 
   /* Configure projects for major browsers */
