@@ -50,7 +50,7 @@
     "@remix-run/eslint-config": "^1.13.0",
     "@testing-library/dom": "^8.20.0",
     "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
+    "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/eslint": "^8.21.1",
     "@types/node": "^18.13.0",
