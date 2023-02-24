@@ -3,6 +3,12 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function seed() {
+  const chaptersCount = await prisma.chapter.count();
+
+  if (chaptersCount === 2) {
+    return;
+  }
+
   await prisma.chapter.create({
     data: {
       name: "Girrawheen",

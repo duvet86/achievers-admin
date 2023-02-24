@@ -7,6 +7,83 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum Attendace {
+  Weekly
+  Fortnightly
+  Other
+}
+
+enum VaccinationStatus {
+  Confirmed
+  Uncofirmed
+}
+
+model Roles {
+  id   String @id
+  name String @unique
+
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String?
+}
+
+model User {
+  id String @id // Defined by Azure Active Directory.
+
+  firstName                    String
+  lastName                     String
+  email                        String             @unique
+  additionalEmail              String             @unique
+  mobile                       String
+  address                      String
+  dateOfBirth                  DateTime
+  isOver18                     Boolean
+  isPublishPhotoApproved       Boolean
+  isApprovedByMRC              Boolean
+  isCommiteeMemeber            Boolean
+  isCurrentMemeber             Boolean
+  inductionDate                DateTime
+  isActiveMentor               Boolean
+  attendance                   Attendace?
+  vaccinationStatus            VaccinationStatus?
+  policeCheckRenewalDate       DateTime
+  WWCCheckRenewalDate          DateTime
+  WWCCheckNumber               String
+  isVolunteerAgreementComplete Boolean
+  isBoardMemeber               Boolean
+
+  emergencyContactName         String
+  emergencyContactNumber       String
+  emergencyContactAddress      String
+  emergencyContactRelationship String
+
+  occupation                   String?
+  boardTermExpiryDate          DateTime?
+  directorIdentificationNumber String?
+
+  endDate DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userAtChapters   UserAtChapter[]
+  roles            Roles[]
+  mentoringStudent MentoringStudent[]
+
+  @@unique([firstName, lastName])
+}
+
+model Mentee {
+  id String @id @default(cuid())
+
+  firstName String
+  lastName  String
+  yearLevel String
+
+  mentoringStudent MentoringStudent[]
+
+  @@unique([firstName, lastName])
+}
+
 model Chapter {
   id      String @id @default(cuid())
   name    String @unique
@@ -20,6 +97,7 @@ model Chapter {
 }
 
 model UserAtChapter {
+  user   User   @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   userId String
 
   chapter   Chapter @relation(fields: [chapterId], references: [id], onUpdate: Cascade, onDelete: Cascade)
@@ -32,8 +110,11 @@ model UserAtChapter {
 }
 
 model MentoringStudent {
-  mentorId  String
-  studentId String
+  mentor User   @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId String
+
+  mentee   Mentee @relation(fields: [menteeId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  menteeId String
 
   chapter   Chapter @relation(fields: [chapterId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   chapterId String
@@ -42,7 +123,7 @@ model MentoringStudent {
   assignedBy String
 
   frequencyInDays Int
-  startDate       DateTime
+  startDate       DateTime?
 
-  @@id([mentorId, studentId, chapterId])
+  @@id([userId, menteeId, chapterId])
 }
