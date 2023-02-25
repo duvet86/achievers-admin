@@ -1,18 +1,19 @@
-import type { MentoringStudent, UserAtChapter } from "@prisma/client";
-import type { AzureUser } from "~/models/azure.server";
+import type { User, MentoringStudent, UserAtChapter } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
 export interface AssignStudentToMentor {
-  mentorId: AzureUser["id"];
-  studentId: MentoringStudent["studentId"];
+  mentorId: User["id"];
+  menteeeId: MentoringStudent["menteeId"];
   chapterId: MentoringStudent["chapterId"];
 }
 
-export async function getStudentsMentoredByAsync(mentorId: AzureUser["id"]) {
+export async function getMenteesMentoredByAsync(mentorId: User["id"]) {
   return await prisma.mentoringStudent.findMany({
     where: {
-      mentorId,
+      mentor: {
+        id: mentorId,
+      },
     },
   });
 }
@@ -46,8 +47,8 @@ export async function unassignChapterFromUserAsync(
 }
 
 export async function assignMenteeFromMentorAsync(
-  mentorId: MentoringStudent["mentorId"],
-  studentId: MentoringStudent["studentId"],
+  userId: MentoringStudent["userId"],
+  menteeId: MentoringStudent["menteeId"],
   chapterId: MentoringStudent["chapterId"],
   frequencyInDays: MentoringStudent["frequencyInDays"],
   startDate: MentoringStudent["startDate"],
@@ -55,8 +56,8 @@ export async function assignMenteeFromMentorAsync(
 ) {
   await prisma.mentoringStudent.create({
     data: {
-      mentorId,
-      studentId,
+      userId,
+      menteeId,
       chapterId,
       frequencyInDays,
       startDate,
@@ -66,16 +67,16 @@ export async function assignMenteeFromMentorAsync(
 }
 
 export async function unassignMenteeFromMentorAsync(
-  mentorId: MentoringStudent["mentorId"],
-  studentId: MentoringStudent["studentId"],
+  userId: MentoringStudent["userId"],
+  menteeId: MentoringStudent["menteeId"],
   chapterId: MentoringStudent["chapterId"]
 ) {
   await prisma.mentoringStudent.delete({
     where: {
-      mentorId_studentId_chapterId: {
+      userId_menteeId_chapterId: {
         chapterId,
-        mentorId,
-        studentId,
+        userId,
+        menteeId,
       },
     },
   });

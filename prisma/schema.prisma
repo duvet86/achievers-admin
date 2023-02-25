@@ -59,8 +59,7 @@ model User {
   occupation                   String?
   boardTermExpiryDate          DateTime?
   directorIdentificationNumber String?
-
-  endDate DateTime
+  endDate                      DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

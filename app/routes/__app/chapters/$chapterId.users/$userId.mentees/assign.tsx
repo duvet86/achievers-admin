@@ -21,7 +21,7 @@ import { requireSessionUserAsync } from "~/session.server";
 import { getAzureUsersAsync, Roles } from "~/models/azure.server";
 import {
   assignMenteeFromMentorAsync,
-  getStudentsMentoredByAsync,
+  getMenteesMentoredByAsync,
 } from "~/models/user.server";
 
 export async function loader({ params }: LoaderArgs) {
@@ -29,7 +29,7 @@ export async function loader({ params }: LoaderArgs) {
 
   const [azureUsers, mentoringStudents] = await Promise.all([
     getAzureUsersAsync(),
-    getStudentsMentoredByAsync(params.userId),
+    getMenteesMentoredByAsync(params.userId),
   ]);
 
   const mentor = azureUsers.find(({ id }) => id === params.userId);
