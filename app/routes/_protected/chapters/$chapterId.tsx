@@ -1,8 +1,8 @@
 import type { LoaderArgs } from "@remix-run/server-runtime";
 import type { AzureUser } from "~/models/azure.server";
 
+import { redirect, json } from "@remix-run/server-runtime";
 import { Link, useCatch, useLoaderData } from "@remix-run/react";
-import { json } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
 
@@ -16,32 +16,36 @@ import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 import UsersIcon from "@heroicons/react/24/solid/UsersIcon";
 
 export async function loader({ params }: LoaderArgs) {
-  invariant(params.chapterId, "chapterId not found");
+  try {
+    invariant(params.chapterId, "chapterId not found");
 
-  const [chapter, usersAtChapter, azureUsers] = await Promise.all([
-    getChapterByIdAsync(params.chapterId),
-    getUsersAtChapterByIdAsync(params.chapterId),
-    getAzureUsersAsync(),
-  ]);
+    const [chapter, usersAtChapter, azureUsers] = await Promise.all([
+      getChapterByIdAsync(params.chapterId),
+      getUsersAtChapterByIdAsync(params.chapterId),
+      getAzureUsersAsync(),
+    ]);
 
-  const userIds = usersAtChapter.map(({ userId }) => userId);
+    const userIds = usersAtChapter.map(({ userId }) => userId);
 
-  const azureUsersLookUp = azureUsers.reduce<Record<string, AzureUser>>(
-    (res, value) => {
-      res[value.id] = value;
+    const azureUsersLookUp = azureUsers.reduce<Record<string, AzureUser>>(
+      (res, value) => {
+        res[value.id] = value;
 
-      return res;
-    },
-    {}
-  );
+        return res;
+      },
+      {}
+    );
 
-  return json({
-    chapter: {
-      ...chapter,
-      assignedUsers: userIds.map((userId) => azureUsersLookUp[userId]),
-    },
-    mentorRoleId: Roles.Mentor,
-  });
+    return json({
+      chapter: {
+        ...chapter,
+        assignedUsers: userIds.map((userId) => azureUsersLookUp[userId]),
+      },
+      mentorRoleId: Roles.Mentor,
+    });
+  } catch (error) {
+    throw redirect("/logout");
+  }
 }
 
 export default function ChapterId() {

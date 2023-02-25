@@ -1,4 +1,3 @@
-import { redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
 import { getAzureToken } from "~/services/azure-token.server";
@@ -47,66 +46,58 @@ export interface Application {
 
 export type AzureRolesLookUp = Record<string, AppRole>;
 
-export async function getAzureRolesLookUpAsync(): Promise<AzureRolesLookUp> {
+async function getAzureRolesLookUpAsync(): Promise<AzureRolesLookUp> {
   invariant(process.env.OBJECT_ID, "OBJECT_ID must be set");
 
-  try {
-    const response = await fetch(
-      `https://graph.microsoft.com/v1.0/applications/${process.env.OBJECT_ID}?$select=appRoles`,
-      {
-        headers: {
-          Authorization: `Bearer ${getAzureToken()}`,
-        },
-      }
-    );
-
-    const azureApplication: Application = await response.json();
-
-    const azureRolesLookUp = azureApplication.appRoles.reduce<AzureRolesLookUp>(
-      (res, value) => {
-        res[value.id] = value;
-
-        return res;
+  const response = await fetch(
+    `https://graph.microsoft.com/v1.0/applications/${process.env.OBJECT_ID}?$select=appRoles`,
+    {
+      headers: {
+        Authorization: `Bearer ${getAzureToken()}`,
       },
-      {}
-    );
+    }
+  );
 
-    return azureRolesLookUp;
-  } catch (e) {
-    throw redirect("/logout");
-  }
+  const azureApplication: Application = await response.json();
+
+  const azureRolesLookUp = azureApplication.appRoles.reduce<AzureRolesLookUp>(
+    (res, value) => {
+      res[value.id] = value;
+
+      return res;
+    },
+    {}
+  );
+
+  return azureRolesLookUp;
 }
 
 export async function getAzureUsersAsync(): Promise<AzureUser[]> {
-  try {
-    const response = await fetch(
-      "https://graph.microsoft.com/v1.0/users?$expand=appRoleAssignments",
-      {
-        headers: {
-          Authorization: `Bearer ${getAzureToken()}`,
-        },
-      }
-    );
+  const response = await fetch(
+    "https://graph.microsoft.com/v1.0/users?$expand=appRoleAssignments",
+    {
+      headers: {
+        Authorization: `Bearer ${getAzureToken()}`,
+      },
+    }
+  );
 
-    const azureUsersPromise: Promise<{ value: AzureUser[] }> = response.json();
+  const azureUsersPromise: Promise<{ value: AzureUser[] }> = response.json();
 
-    const [azureUsers, roles] = await Promise.all([
-      azureUsersPromise,
-      getAzureRolesLookUpAsync(),
-    ]);
+  const [azureUsers, roles] = await Promise.all([
+    azureUsersPromise,
+    getAzureRolesLookUpAsync(),
+  ]);
 
-    return azureUsers.value.map((user) => ({
-      ...user,
-      appRoleAssignments: user.appRoleAssignments
-        .filter(({ appRoleId }) => roles[appRoleId])
-        .map((roleAssignment) => ({
-          ...roleAssignment,
-          roleName: roles[roleAssignment.appRoleId].displayName,
-        })),
-    }));
-  } catch (e) {
-    throw redirect("/logout");
-  }
+  return azureUsers.value.map((user) => ({
+    ...user,
+    appRoleAssignments: user.appRoleAssignments
+      .filter(({ appRoleId }) => roles[appRoleId])
+      .map((roleAssignment) => ({
+        ...roleAssignment,
+        roleName: roles[roleAssignment.appRoleId].displayName,
+      })),
+  }));
 }
 
 export async function getAzureUserByIdAsync(

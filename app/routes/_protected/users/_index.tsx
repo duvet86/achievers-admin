@@ -1,5 +1,5 @@
 import { useLoaderData, Link } from "@remix-run/react";
-import { json } from "@remix-run/server-runtime";
+import { json, redirect } from "@remix-run/server-runtime";
 
 import { PencilIcon } from "@heroicons/react/24/solid";
 
@@ -7,24 +7,28 @@ import { getAzureUsersAsync } from "~/models/azure.server";
 import { getAssignedChaptersForUsersLookUpAsync } from "~/models/chapter.server";
 
 export async function loader() {
-  const azureUsers = await getAzureUsersAsync();
+  try {
+    const azureUsers = await getAzureUsersAsync();
 
-  const assignedChaptersLookUp = await getAssignedChaptersForUsersLookUpAsync(
-    azureUsers.map(({ id }) => id)
-  );
+    const assignedChaptersLookUp = await getAssignedChaptersForUsersLookUpAsync(
+      azureUsers.map(({ id }) => id)
+    );
 
-  return json({
-    users: azureUsers
-      .map((user) => ({
-        ...user,
-        assignedChapters: assignedChaptersLookUp[user.id] ?? [],
-      }))
-      .sort((a, b) =>
-        a.displayName.localeCompare(b.displayName, undefined, {
-          sensitivity: "base",
-        })
-      ),
-  });
+    return json({
+      users: azureUsers
+        .map((user) => ({
+          ...user,
+          assignedChapters: assignedChaptersLookUp[user.id] ?? [],
+        }))
+        .sort((a, b) =>
+          a.displayName.localeCompare(b.displayName, undefined, {
+            sensitivity: "base",
+          })
+        ),
+    });
+  } catch (error) {
+    throw redirect("/logout");
+  }
 }
 
 export default function SelectChapter() {

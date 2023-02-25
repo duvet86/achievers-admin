@@ -117,13 +117,20 @@ const microsoftStrategy = new MicrosoftStrategy(
     prompt: "login", // optional
   },
   async ({ accessToken, extraParams }) => {
-    const azureUser = await getUserFromToken(extraParams.id_token, accessToken);
+    try {
+      const azureUser = await getUserFromToken(
+        extraParams.id_token,
+        accessToken
+      );
 
-    if (azureUser.appRoleAssignments.length === 0) {
-      throw new AuthorizationError("nopermissions");
+      if (azureUser.appRoleAssignments.length === 0) {
+        throw new AuthorizationError("nopermissions");
+      }
+
+      return azureUser;
+    } catch (e: any) {
+      throw new AuthorizationError(e.Message);
     }
-
-    return azureUser;
   }
 );
 

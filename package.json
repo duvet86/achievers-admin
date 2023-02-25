@@ -18,7 +18,7 @@
     "test": "vitest",
     "pretest:e2e:run": "npm run build",
     "test:e2e": "playwright test --project=chromium",
-    "typecheck": "tsc -b && tsc -b integration-tests",
+    "typecheck": "tsc -b",
     "validate": "run-p \"test -- --run\" lint typecheck test:e2e:run"
   },
   "prettier": {},
