@@ -1,7 +1,8 @@
 import { useLoaderData, Link } from "@remix-run/react";
+
 import { json, redirect } from "@remix-run/server-runtime";
 
-import { PencilIcon } from "@heroicons/react/24/solid";
+import { ArrowUpTrayIcon, PencilIcon } from "@heroicons/react/24/solid";
 
 import { getAzureUsersAsync } from "~/models/azure.server";
 import { getAssignedChaptersForUsersLookUpAsync } from "~/models/chapter.server";
@@ -98,6 +99,12 @@ export default function SelectChapter() {
             )}
           </tbody>
         </table>
+      </div>
+      <div className="mt-4 flex justify-end">
+        <Link className="btn-primary btn gap-2" to="import-from-file">
+          <ArrowUpTrayIcon className="h-6 w-6" />
+          Import users from file
+        </Link>
       </div>
     </>
   );
