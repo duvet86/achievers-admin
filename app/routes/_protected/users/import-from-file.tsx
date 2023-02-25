@@ -1,14 +1,24 @@
-import type { ActionArgs } from "@remix-run/server-runtime";
+import type { ActionArgs, TypedResponse } from "@remix-run/server-runtime";
+import type { SpeadsheetUser } from "~/models/speadsheet";
 
 import {
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
+  json,
 } from "@remix-run/server-runtime";
-import { Form } from "@remix-run/react";
+import { Form, useActionData } from "@remix-run/react";
 
 import ArrowUpTrayIcon from "@heroicons/react/24/solid/ArrowUpTrayIcon";
+import { readExcelFileAsync } from "~/services/read-excel-file.server";
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({
+  request,
+}: ActionArgs): Promise<
+  TypedResponse<{
+    users: SpeadsheetUser[];
+    message: string | null;
+  }>
+> => {
   const uploadHandler = unstable_createMemoryUploadHandler({
     maxPartSize: 500_000,
   });
@@ -18,13 +28,22 @@ export const action = async ({ request }: ActionArgs) => {
   );
 
   const file = formData.get("usersSheet");
+  if (!file) {
+    return json({
+      users: [],
+      message: "Choose a file",
+    });
+  }
 
-  console.log("file", file);
-
-  return null;
+  return json({
+    users: await readExcelFileAsync(file as File),
+    message: null,
+  });
 };
 
 export default function ImportFromFile() {
+  const data = useActionData<typeof action>();
+
   return (
     <Form
       method="post"
@@ -34,7 +53,7 @@ export default function ImportFromFile() {
       <div className="form-control w-full max-w-xs">
         <label htmlFor="usersSheet" className="label">
           <span className="label-text">
-            Upload a spreadsheet with new users.
+            Upload a spreadsheet with new users
           </span>
         </label>
         <input
@@ -51,6 +70,14 @@ export default function ImportFromFile() {
           <ArrowUpTrayIcon className="h-6 w-6" />
           Import users from file
         </button>
+      </div>
+      <div className="ml-4">
+        {data?.users.map((u, index) => (
+          <ul key={index} className="list-disc">
+            <li>{u["First Name"]}</li>
+            <li>{u["Last Name"]}</li>
+          </ul>
+        ))}
       </div>
     </Form>
   );
