@@ -9,7 +9,7 @@ import {
   json,
   redirect,
 } from "@remix-run/server-runtime";
-import { Form, useActionData, useTransition } from "@remix-run/react";
+import { Form, Link, useActionData, useTransition } from "@remix-run/react";
 
 import { readExcelFileAsync } from "~/services/read-excel-file.server";
 import {
@@ -21,7 +21,10 @@ import { createManyUsersAsync } from "~/services/user.server";
 
 import ArrowUpTrayIcon from "@heroicons/react/24/solid/ArrowUpTrayIcon";
 
+import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
+
 import LoadingSpinner from "~/components/LoadingSpinner";
+import Title from "~/components/Title";
 
 export const action = async ({
   request,
@@ -177,60 +180,71 @@ export default function ImportFromFile() {
   const isDisabled = isLoading || isSubmitting;
 
   return (
-    <Form
-      method="post"
-      encType="multipart/form-data"
-      className="relative flex h-full flex-col gap-8"
-    >
-      <div className="form-control w-full max-w-xs">
-        <label htmlFor="usersSheet" className="label">
-          <span className="label-text">
-            Upload a spreadsheet with new users
-          </span>
-        </label>
-        <input
-          type="file"
-          id="usersSheet"
-          name="usersSheet"
-          className="file-input-bordered file-input-primary file-input w-full"
-          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-          disabled={isDisabled}
-        />
-        <label className="label">
-          <span className="label-text-alt">{data?.message}</span>
-        </label>
-      </div>
+    <>
+      <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
+        <ArrowSmallLeftIcon className="w-6" />
+        Back
+      </Link>
 
-      <div className="flex items-center gap-4">
-        <button
-          type="submit"
-          className="btn-primary btn gap-2"
-          disabled={isDisabled}
-        >
-          <ArrowUpTrayIcon className="h-6 w-6" />
-          Import users from file
-        </button>
-        {isDisabled && <LoadingSpinner dark />}
-      </div>
-      <div className="text-info">
-        {!data?.message && data?.newUsers.length === 0 && (
-          <p>No new users to import.</p>
-        )}
-      </div>
-      <div className="ml-4">
-        {data?.newUsers.map((u, index) => (
-          <ul key={index} className="list-disc">
-            <li>{u["First Name"]}</li>
-            <li>{u["Last Name"]}</li>
-            <li>{u["Email address"]}</li>
-          </ul>
-        ))}
-      </div>
-      <div>
-        {data?.responses.map((r) => (
-          <p key={r.id}>{JSON.stringify(r)}</p>
-        ))}
-      </div>
-    </Form>
+      <hr className="mb-4" />
+
+      <Title>Import from file</Title>
+
+      <Form
+        method="post"
+        encType="multipart/form-data"
+        className="relative flex h-full flex-col gap-8"
+      >
+        <div className="form-control w-full max-w-xs">
+          <label htmlFor="usersSheet" className="label">
+            <span className="label-text">
+              Upload a spreadsheet with new users
+            </span>
+          </label>
+          <input
+            type="file"
+            id="usersSheet"
+            name="usersSheet"
+            className="file-input-bordered file-input w-full"
+            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            disabled={isDisabled}
+          />
+          <label className="label">
+            <span className="label-text-alt">{data?.message}</span>
+          </label>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <button
+            type="submit"
+            className="btn-primary btn gap-2"
+            disabled={isDisabled}
+          >
+            <ArrowUpTrayIcon className="h-6 w-6" />
+            Import users from file
+          </button>
+          {isDisabled && <LoadingSpinner dark />}
+        </div>
+        <div className="text-info">
+          {!data?.message && data?.newUsers.length === 0 && (
+            <p>No new users to import.</p>
+          )}
+        </div>
+        <div className="ml-4">
+          {data?.newUsers.map((u, index) => (
+            <ul key={index} className="list-disc">
+              <li>{u["First Name"]}</li>
+              <li>{u["Last Name"]}</li>
+              <li>{u["Email address"]}</li>
+            </ul>
+          ))}
+        </div>
+        <div>
+          {data?.responses.map((r) => (
+            <p key={r.id}>{JSON.stringify(r)}</p>
+          ))}
+        </div>
+      </Form>
+    </>
   );
 }

@@ -2,10 +2,12 @@ import { useLoaderData, Link } from "@remix-run/react";
 
 import { json, redirect } from "@remix-run/server-runtime";
 
-import { ArrowUpTrayIcon, PencilIcon } from "@heroicons/react/24/solid";
-
 import { getAzureUsersWithRolesAsync } from "~/services/azure.server";
 import { getAssignedChaptersForUsersLookUpAsync } from "~/services/chapter.server";
+
+import { ArrowUpTrayIcon, PencilIcon } from "@heroicons/react/24/solid";
+
+import Title from "~/components/Title";
 
 export async function loader() {
   try {
@@ -37,7 +39,8 @@ export default function SelectChapter() {
 
   return (
     <>
-      <h3 className="mb-4 text-2xl font-bold">Users</h3>
+      <Title>Users</Title>
+
       <div className="overflow-auto">
         <table className="table w-full">
           <thead>
