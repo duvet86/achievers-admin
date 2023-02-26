@@ -181,10 +181,12 @@ export default function ImportFromFile() {
 
   return (
     <>
-      <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
-        <ArrowSmallLeftIcon className="w-6" />
-        Back
-      </Link>
+      <div>
+        <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
+          <ArrowSmallLeftIcon className="w-6" />
+          Back
+        </Link>
+      </div>
 
       <hr className="mb-4" />
 
@@ -221,7 +223,7 @@ export default function ImportFromFile() {
             disabled={isDisabled}
           >
             <ArrowUpTrayIcon className="h-6 w-6" />
-            Import users from file
+            Import
           </button>
           {isDisabled && <LoadingSpinner dark />}
         </div>

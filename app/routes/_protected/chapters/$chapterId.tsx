@@ -2,7 +2,7 @@ import type { LoaderArgs } from "@remix-run/server-runtime";
 import type { AzureUserWithRole } from "~/services/azure.server";
 
 import { redirect, json } from "@remix-run/server-runtime";
-import { Link, useCatch, useLoaderData } from "@remix-run/react";
+import { Form, Link, useCatch, useLoaderData } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
@@ -14,6 +14,9 @@ import { getAzureUsersWithRolesAsync, Roles } from "~/services/azure.server";
 
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 import UsersIcon from "@heroicons/react/24/solid/UsersIcon";
+
+import Title from "~/components/Title";
+import Input from "~/components/Input";
 
 export async function loader({ params }: LoaderArgs) {
   try {
@@ -51,11 +54,26 @@ export default function ChapterId() {
   const { chapter, mentorRoleId } = useLoaderData<typeof loader>();
 
   return (
-    <div>
-      <h3 className="text-2xl font-bold">{chapter.name}</h3>
-      <p className="py-6">{chapter.address}</p>
+    <>
+      <div>
+        <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
+          <ArrowSmallLeftIcon className="w-6" />
+          Back
+        </Link>
+      </div>
 
-      <hr className="my-4" />
+      <hr className="mb-4" />
+
+      <Title>Edit chapter</Title>
+
+      <Form method="post">
+        <Input defaultValue={chapter.name} label="Name" name="name" />
+        <Input defaultValue={chapter.address} label="Address" name="address" />
+      </Form>
+
+      <hr className="my-6" />
+
+      <Title>Mentors</Title>
 
       <div className="overflow-auto">
         <table className="table w-full">
@@ -103,12 +121,7 @@ export default function ChapterId() {
           </tbody>
         </table>
       </div>
-
-      <Link to="../" relative="path" className="btn-ghost btn mt-6 gap-2">
-        <ArrowSmallLeftIcon className="w-6" />
-        Back
-      </Link>
-    </div>
+    </>
   );
 }
 

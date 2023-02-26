@@ -45,19 +45,26 @@ export async function loader({ params }: LoaderArgs) {
 export default function Chapter() {
   const { user } = useLoaderData<typeof loader>();
 
+  const userRoles = user.appRoleAssignments.map(({ roleName }) => roleName);
+
   return (
     <>
-      <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
-        <ArrowSmallLeftIcon className="w-6" />
-        Back
-      </Link>
+      <div>
+        <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
+          <ArrowSmallLeftIcon className="w-6" />
+          Back
+        </Link>
+      </div>
 
       <hr className="mb-4" />
 
       <Title>Edit user info</Title>
 
       <div className="flex">
-        <Form method="post" className="flex-1">
+        <Form
+          method="post"
+          className="mr-8 flex-1 border-r border-primary pr-4"
+        >
           <Input
             defaultValue={user?.firstName || ""}
             label="First name"
@@ -97,17 +104,53 @@ export default function Chapter() {
             type="date"
           />
 
-          <p className="py-2">
-            Role:{" "}
-            {user.appRoleAssignments.length > 0 ? (
-              user.appRoleAssignments.map(({ roleName }) => roleName).join(", ")
-            ) : (
-              <i>No roles assigned</i>
-            )}
-          </p>
+          <label className="label mt-4">
+            <span className="label-text">Roles</span>
+          </label>
+
+          <div className="form-control max-w-xs">
+            <label className="label cursor-pointer">
+              <span className="label-text">Admin</span>
+              <input
+                type="checkbox"
+                className="checkbox-primary checkbox"
+                name="admin"
+                defaultChecked={userRoles.includes("Admin")}
+              />
+            </label>
+          </div>
+          <div className="form-control max-w-xs">
+            <label className="label cursor-pointer">
+              <span className="label-text">Mentor</span>
+              <input
+                type="checkbox"
+                className="checkbox-primary checkbox"
+                name="mentor"
+                defaultChecked={userRoles.includes("Mentor")}
+              />
+            </label>
+          </div>
+          <div className="form-control max-w-xs">
+            <label className="label cursor-pointer">
+              <span className="label-text">Student</span>
+              <input
+                type="checkbox"
+                className="checkbox-primary checkbox"
+                name="student"
+                defaultChecked={userRoles.includes("Student")}
+              />
+            </label>
+          </div>
+
+          <button
+            className="btn-primary btn float-right mt-6 w-28"
+            type="submit"
+          >
+            Save
+          </button>
         </Form>
 
-        <div className="w-2/5">
+        <div className="flex-1">
           <div className="overflow-auto">
             <table className="table w-full">
               <thead>

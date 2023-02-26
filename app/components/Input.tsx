@@ -18,7 +18,7 @@ export default function Input({
   readOnly = false,
 }: Props) {
   return (
-    <div className="form-control w-full max-w-xs">
+    <div className="form-control w-full">
       <label htmlFor={name} className="label">
         <span className="label-text">{label}</span>
       </label>
@@ -27,7 +27,7 @@ export default function Input({
         id={name}
         name={name}
         placeholder={placeholder}
-        className="input-bordered input w-full max-w-xs"
+        className="input-bordered input w-full"
         defaultValue={defaultValue}
         readOnly={readOnly}
       />

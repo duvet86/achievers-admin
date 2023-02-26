@@ -41,7 +41,7 @@ export default function AppLayout() {
       <div className="drawer-content flex flex-col">
         <Navbar isAdmin={isAdmin} />
 
-        <main className="mt-16 h-full overflow-y-auto bg-white p-4">
+        <main className="mt-16 flex h-full flex-col overflow-y-auto bg-white p-4">
           <Outlet />
         </main>
       </div>

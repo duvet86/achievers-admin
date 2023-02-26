@@ -11,7 +11,7 @@ interface Props {
 
 export default function Navbar({ isAdmin }: Props) {
   return (
-    <div className="navbar absolute top-0 left-0 h-16 bg-primary text-primary-content">
+    <div className="navbar absolute top-0 left-0 h-16 bg-primary text-primary-content shadow-md">
       <div className="flex-none lg:hidden">
         <label htmlFor="drawer" className="btn-ghost btn-square btn">
           <Bars3Icon className="inline-block h-6 w-6 stroke-current" />

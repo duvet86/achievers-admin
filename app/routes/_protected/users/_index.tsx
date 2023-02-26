@@ -92,9 +92,13 @@ export default function SelectChapter() {
                       <i className="text-sm">No chapters assigned</i>
                     )}
                   </td>
-                  <td className="border p-2" align="right">
-                    <Link to={id}>
-                      <PencilIcon className="mr-4 w-6 text-accent" />
+                  <td className="border p-2">
+                    <Link
+                      to={id}
+                      className="btn-xs btn flex gap-2 align-middle"
+                    >
+                      Edit
+                      <PencilIcon className="mr-4 h-4 w-4" />
                     </Link>
                   </td>
                 </tr>
@@ -103,7 +107,7 @@ export default function SelectChapter() {
           </tbody>
         </table>
       </div>
-      <div className="mt-4 flex justify-end">
+      <div className="mt-6 flex justify-end">
         <Link className="btn-primary btn gap-2" to="import-from-file">
           <ArrowUpTrayIcon className="h-6 w-6" />
           Import users from file
