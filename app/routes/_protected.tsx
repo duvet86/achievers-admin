@@ -8,7 +8,7 @@ import { getSessionUserAsync, logout } from "~/session.server";
 import { Roles } from "~/services/azure.server";
 
 import Navbar from "~/components/Navbar";
-import MobileDrawer from "~/components/MobileDrawer";
+import Drawer from "~/components/Drawer";
 
 export async function loader({ request }: LoaderArgs) {
   const sessionUser = await getSessionUserAsync(request);
@@ -36,15 +36,16 @@ export default function AppLayout() {
   const { isAdmin } = useLoaderData<typeof loader>();
 
   return (
-    <div className="drawer">
+    <div className="drawer drawer-mobile">
       <input id="drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
         <Navbar isAdmin={isAdmin} />
-        <main className="m-4 h-full bg-white">
+
+        <main className="mt-16 h-full overflow-y-auto bg-white p-4">
           <Outlet />
         </main>
       </div>
-      <MobileDrawer />
+      <Drawer />
     </div>
   );
 }
