@@ -5,17 +5,20 @@ import {
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
   json,
+  redirect,
 } from "@remix-run/server-runtime";
 import { Form, useActionData } from "@remix-run/react";
 
 import ArrowUpTrayIcon from "@heroicons/react/24/solid/ArrowUpTrayIcon";
 import { readExcelFileAsync } from "~/services/read-excel-file.server";
 
+import { getAzureUsersAsync } from "~/services/azure.server";
+
 export const action = async ({
   request,
 }: ActionArgs): Promise<
   TypedResponse<{
-    users: SpeadsheetUser[];
+    newUsers: SpeadsheetUser[];
     message: string | null;
   }>
 > => {
@@ -30,15 +33,38 @@ export const action = async ({
   const file = formData.get("usersSheet");
   if (!file) {
     return json({
-      users: [],
+      newUsers: [],
       message: "Choose a file",
     });
   }
 
-  return json({
-    users: await readExcelFileAsync(file as File),
-    message: null,
-  });
+  try {
+    const azureUsers = await getAzureUsersAsync();
+    const fileUsers = await readExcelFileAsync(file as File);
+
+    const azureUsersLookup = azureUsers.reduce<Record<string, string>>(
+      (res, { displayName }) => {
+        res[displayName.toLowerCase()] = displayName;
+
+        return res;
+      },
+      {}
+    );
+
+    const newUsers = fileUsers.filter(
+      (fileUser) =>
+        azureUsersLookup[
+          `${fileUser["First Name"]} ${fileUser["Last Name"]}`.toLowerCase()
+        ] === undefined
+    );
+
+    return json({
+      newUsers: newUsers,
+      message: null,
+    });
+  } catch (error) {
+    throw redirect("/logout");
+  }
 };
 
 export default function ImportFromFile() {
@@ -72,7 +98,7 @@ export default function ImportFromFile() {
         </button>
       </div>
       <div className="ml-4">
-        {data?.users.map((u, index) => (
+        {data?.newUsers.map((u, index) => (
           <ul key={index} className="list-disc">
             <li>{u["First Name"]}</li>
             <li>{u["Last Name"]}</li>

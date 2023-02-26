@@ -18,18 +18,18 @@ import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
 import { requireSessionUserAsync } from "~/session.server";
-import { getAzureUsersAsync, Roles } from "~/models/azure.server";
+import { getAzureUsersWithRolesAsync, Roles } from "~/services/azure.server";
 import {
   assignMenteeFromMentorAsync,
   getMenteesMentoredByAsync,
-} from "~/models/user.server";
+} from "~/services/user.server";
 
 export async function loader({ params }: LoaderArgs) {
   try {
     invariant(params.userId, "userId not found");
 
     const [azureUsers, mentoringStudents] = await Promise.all([
-      getAzureUsersAsync(),
+      getAzureUsersWithRolesAsync(),
       getMenteesMentoredByAsync(params.userId),
     ]);
 

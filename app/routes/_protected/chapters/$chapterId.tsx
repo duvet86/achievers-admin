@@ -1,5 +1,5 @@
 import type { LoaderArgs } from "@remix-run/server-runtime";
-import type { AzureUser } from "~/models/azure.server";
+import type { AzureUserWithRole } from "~/services/azure.server";
 
 import { redirect, json } from "@remix-run/server-runtime";
 import { Link, useCatch, useLoaderData } from "@remix-run/react";
@@ -9,8 +9,8 @@ import invariant from "tiny-invariant";
 import {
   getChapterByIdAsync,
   getUsersAtChapterByIdAsync,
-} from "~/models/chapter.server";
-import { getAzureUsersAsync, Roles } from "~/models/azure.server";
+} from "~/services/chapter.server";
+import { getAzureUsersWithRolesAsync, Roles } from "~/services/azure.server";
 
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 import UsersIcon from "@heroicons/react/24/solid/UsersIcon";
@@ -22,19 +22,18 @@ export async function loader({ params }: LoaderArgs) {
     const [chapter, usersAtChapter, azureUsers] = await Promise.all([
       getChapterByIdAsync(params.chapterId),
       getUsersAtChapterByIdAsync(params.chapterId),
-      getAzureUsersAsync(),
+      getAzureUsersWithRolesAsync(),
     ]);
 
     const userIds = usersAtChapter.map(({ userId }) => userId);
 
-    const azureUsersLookUp = azureUsers.reduce<Record<string, AzureUser>>(
-      (res, value) => {
-        res[value.id] = value;
+    const azureUsersLookUp = azureUsers.reduce<
+      Record<string, AzureUserWithRole>
+    >((res, value) => {
+      res[value.id] = value;
 
-        return res;
-      },
-      {}
-    );
+      return res;
+    }, {});
 
     return json({
       chapter: {

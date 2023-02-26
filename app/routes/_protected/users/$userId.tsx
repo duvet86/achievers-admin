@@ -5,8 +5,8 @@ import { json } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
 
-import { getAssignedChaptersToUserAsync } from "~/models/chapter.server";
-import { getAzureUserByIdAsync } from "~/models/azure.server";
+import { getAssignedChaptersToUserAsync } from "~/services/chapter.server";
+import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
 
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
@@ -16,7 +16,7 @@ export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
   const [azureUser, assignedChapters] = await Promise.all([
-    getAzureUserByIdAsync(params.userId),
+    getAzureUserWithRolesByIdAsync(params.userId),
     getAssignedChaptersToUserAsync(params.userId),
   ]);
 

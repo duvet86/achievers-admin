@@ -10,17 +10,16 @@ import invariant from "tiny-invariant";
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
-import { getAzureUserByIdAsync } from "~/models/azure.server";
-
-import { unassignMenteeFromMentorAsync } from "~/models/user.server";
+import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
+import { unassignMenteeFromMentorAsync } from "~/services/user.server";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
   invariant(params.menteeId, "menteeId not found");
 
   const [mentor, mentee] = await Promise.all([
-    getAzureUserByIdAsync(params.userId),
-    getAzureUserByIdAsync(params.menteeId),
+    getAzureUserWithRolesByIdAsync(params.userId),
+    getAzureUserWithRolesByIdAsync(params.menteeId),
   ]);
 
   return json({

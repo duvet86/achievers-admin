@@ -12,12 +12,12 @@ import {
 import invariant from "tiny-invariant";
 
 import { requireSessionUserAsync } from "~/session.server";
-import { getAzureUserByIdAsync } from "~/models/azure.server";
-import { assignChapterToUserAsync } from "~/models/user.server";
+import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
+import { assignChapterToUserAsync } from "~/services/user.server";
 import {
   getAssignedChaptersToUserAsync,
   getChaptersAsync,
-} from "~/models/chapter.server";
+} from "~/services/chapter.server";
 
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
@@ -26,7 +26,7 @@ export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
   const [user, chapters, assignedChapters] = await Promise.all([
-    getAzureUserByIdAsync(params.userId),
+    getAzureUserWithRolesByIdAsync(params.userId),
     getChaptersAsync(),
     getAssignedChaptersToUserAsync(params.userId, false),
   ]);

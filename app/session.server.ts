@@ -1,4 +1,4 @@
-import type { AzureUser } from "~/models/azure.server";
+import type { AzureUserWithRole } from "~/services/azure.server";
 
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import { Authenticator, AuthorizationError } from "remix-auth";
@@ -7,7 +7,7 @@ import invariant from "tiny-invariant";
 import { parseJwt } from "~/utils";
 import { MicrosoftStrategy } from "~/services/auth.server";
 import { setAzureToken } from "~/services/azure-token.server";
-import { getAzureUserByIdAsync } from "~/models/azure.server";
+import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");
@@ -26,7 +26,9 @@ export const sessionStorage = createCookieSessionStorage({
   },
 });
 
-export const authenticator = new Authenticator<AzureUser>(sessionStorage); // User is a custom user types you can define as you want
+export const authenticator = new Authenticator<AzureUserWithRole>(
+  sessionStorage
+); // User is a custom user types you can define as you want
 
 export async function getSession(request: Request) {
   const cookie = request.headers.get("Cookie");
@@ -35,7 +37,7 @@ export async function getSession(request: Request) {
 
 export async function getSessionUserAsync(
   request: Request
-): Promise<AzureUser | undefined> {
+): Promise<AzureUserWithRole | undefined> {
   const session = await getSession(request);
   const userSession = session.get(authenticator.sessionKey);
 
@@ -44,7 +46,7 @@ export async function getSessionUserAsync(
 
 export async function requireSessionUserAsync(
   request: Request
-): Promise<AzureUser> {
+): Promise<AzureUserWithRole> {
   const userSession = await getSessionUserAsync(request);
 
   if (!userSession) {
@@ -104,7 +106,7 @@ export async function getUserFromToken(idToken: string, accessToken: string) {
 
   setAzureToken(accessToken);
 
-  return await getAzureUserByIdAsync(userInfo.oid);
+  return await getAzureUserWithRolesByIdAsync(userInfo.oid);
 }
 
 const microsoftStrategy = new MicrosoftStrategy(

@@ -1,7 +1,7 @@
 import type { LoaderArgs } from "@remix-run/node";
 
 import { redirect } from "@remix-run/node";
-import { Roles } from "~/models/azure.server";
+import { Roles } from "~/services/azure.server";
 
 import { getSessionUserAsync } from "~/session.server";
 

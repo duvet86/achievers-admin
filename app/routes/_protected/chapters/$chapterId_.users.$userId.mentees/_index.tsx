@@ -7,9 +7,9 @@ import { json, redirect } from "@remix-run/server-runtime";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
-import { getAzureUsersAsync } from "~/models/azure.server";
-import { getAssignedChaptersToUserAsync } from "~/models/chapter.server";
-import { getMenteesMentoredByAsync } from "~/models/user.server";
+import { getAzureUsersWithRolesAsync } from "~/services/azure.server";
+import { getAssignedChaptersToUserAsync } from "~/services/chapter.server";
+import { getMenteesMentoredByAsync } from "~/services/user.server";
 
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
@@ -21,7 +21,7 @@ export async function loader({ params }: LoaderArgs) {
 
     const [azureUsers, mentoringStudents, assignedChapters] = await Promise.all(
       [
-        getAzureUsersAsync(),
+        getAzureUsersWithRolesAsync(),
         getMenteesMentoredByAsync(params.userId),
         getAssignedChaptersToUserAsync(params.userId),
       ]

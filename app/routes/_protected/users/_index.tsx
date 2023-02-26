@@ -4,12 +4,12 @@ import { json, redirect } from "@remix-run/server-runtime";
 
 import { ArrowUpTrayIcon, PencilIcon } from "@heroicons/react/24/solid";
 
-import { getAzureUsersAsync } from "~/models/azure.server";
-import { getAssignedChaptersForUsersLookUpAsync } from "~/models/chapter.server";
+import { getAzureUsersWithRolesAsync } from "~/services/azure.server";
+import { getAssignedChaptersForUsersLookUpAsync } from "~/services/chapter.server";
 
 export async function loader() {
   try {
-    const azureUsers = await getAzureUsersAsync();
+    const azureUsers = await getAzureUsersWithRolesAsync();
 
     const assignedChaptersLookUp = await getAssignedChaptersForUsersLookUpAsync(
       azureUsers.map(({ id }) => id)

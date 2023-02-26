@@ -27,6 +27,10 @@ export interface AzureUser {
   surname: string | null;
   mail: string | null;
   userPrincipalName: string;
+  appRoleAssignments: AppRoleAssignment[];
+}
+
+export interface AzureUserWithRole extends AzureUser {
   appRoleAssignments: AppRoleAssignmentWithRoleName[];
 }
 
@@ -46,15 +50,41 @@ export interface Application {
 
 export type AzureRolesLookUp = Record<string, AppRole>;
 
+export interface CreateAzureUserRequest {
+  accountEnabled: boolean;
+  displayName: string;
+  mailNickname: string;
+  userPrincipalName: string;
+  passwordProfile: {
+    forceChangePasswordNextSignIn: boolean;
+    password: string;
+  };
+}
+
+export interface CreateUserResponse {
+  id: string;
+  displayName: string;
+  givenName: string;
+  mail: string;
+  mobilePhone: string;
+  surname: string;
+  userPrincipalName: string;
+}
+
+function getHeaders(): HeadersInit {
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${getAzureToken()}`,
+  };
+}
+
 async function getAzureRolesLookUpAsync(): Promise<AzureRolesLookUp> {
   invariant(process.env.OBJECT_ID, "OBJECT_ID must be set");
 
   const response = await fetch(
     `https://graph.microsoft.com/v1.0/applications/${process.env.OBJECT_ID}?$select=appRoles`,
     {
-      headers: {
-        Authorization: `Bearer ${getAzureToken()}`,
-      },
+      headers: getHeaders(),
     }
   );
 
@@ -76,20 +106,24 @@ export async function getAzureUsersAsync(): Promise<AzureUser[]> {
   const response = await fetch(
     "https://graph.microsoft.com/v1.0/users?$expand=appRoleAssignments",
     {
-      headers: {
-        Authorization: `Bearer ${getAzureToken()}`,
-      },
+      headers: getHeaders(),
     }
   );
 
-  const azureUsersPromise: Promise<{ value: AzureUser[] }> = response.json();
+  const azureUsers: { value: AzureUser[] } = await response.json();
 
+  return azureUsers.value;
+}
+
+export async function getAzureUsersWithRolesAsync(): Promise<
+  AzureUserWithRole[]
+> {
   const [azureUsers, roles] = await Promise.all([
-    azureUsersPromise,
+    getAzureUsersAsync(),
     getAzureRolesLookUpAsync(),
   ]);
 
-  return azureUsers.value.map((user) => ({
+  return azureUsers.map((user) => ({
     ...user,
     appRoleAssignments: user.appRoleAssignments
       .filter(({ appRoleId }) => roles[appRoleId])
@@ -100,19 +134,17 @@ export async function getAzureUsersAsync(): Promise<AzureUser[]> {
   }));
 }
 
-export async function getAzureUserByIdAsync(
+export async function getAzureUserWithRolesByIdAsync(
   azureId: string
-): Promise<AzureUser> {
+): Promise<AzureUserWithRole> {
   const response = await fetch(
     `https://graph.microsoft.com/v1.0/users/${azureId}?$expand=appRoleAssignments`,
     {
-      headers: {
-        Authorization: `Bearer ${getAzureToken()}`,
-      },
+      headers: getHeaders(),
     }
   );
 
-  const azureUserPromise: Promise<AzureUser> = response.json();
+  const azureUserPromise: Promise<AzureUserWithRole> = response.json();
 
   const [azureUser, roles] = await Promise.all([
     azureUserPromise,
@@ -128,4 +160,16 @@ export async function getAzureUserByIdAsync(
         roleName: roles[roleAssignment.appRoleId].displayName,
       })),
   };
+}
+
+export async function createAzureUser(
+  createAzureUserRequest: CreateAzureUserRequest
+): Promise<CreateUserResponse> {
+  const response = await fetch(`https://graph.microsoft.com/v1.0/users`, {
+    method: "POST",
+    headers: getHeaders(),
+    body: JSON.stringify(createAzureUserRequest),
+  });
+
+  return response.json();
 }

@@ -5,7 +5,7 @@ import { redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 
 import { getSessionUserAsync, logout } from "~/session.server";
-import { Roles } from "~/models/azure.server";
+import { Roles } from "~/services/azure.server";
 
 import Navbar from "~/components/Navbar";
 import MobileDrawer from "~/components/MobileDrawer";

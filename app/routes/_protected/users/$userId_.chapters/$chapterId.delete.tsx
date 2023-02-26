@@ -5,9 +5,9 @@ import { json, redirect } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
 
-import { getAzureUserByIdAsync } from "~/models/azure.server";
-import { getChapterByIdAsync } from "~/models/chapter.server";
-import { unassignChapterFromUserAsync } from "~/models/user.server";
+import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
+import { getChapterByIdAsync } from "~/services/chapter.server";
+import { unassignChapterFromUserAsync } from "~/services/user.server";
 
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
@@ -17,7 +17,7 @@ export async function loader({ params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const [user, chapter] = await Promise.all([
-    getAzureUserByIdAsync(params.userId),
+    getAzureUserWithRolesByIdAsync(params.userId),
     getChapterByIdAsync(params.chapterId),
   ]);
 
