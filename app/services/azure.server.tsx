@@ -2,6 +2,9 @@ import invariant from "tiny-invariant";
 
 import { getAzureToken } from "~/services/azure-token.server";
 
+export const WEB_APP_URL = "https://achievers-webapp.azurewebsites.net";
+export const ACHIEVERS_DOMAIN = "achieversclubwa.org.au";
+
 export enum Roles {
   Admin = "e567add0-fec3-4c87-941a-05dd2e18cdfd",
   Mentor = "a2ed7b54-4379-465d-873d-2e182e0bd8ef",
@@ -69,6 +72,36 @@ export interface CreateUserResponse {
   mobilePhone: string;
   surname: string;
   userPrincipalName: string;
+}
+
+export interface AzureInviteRequest {
+  invitedUserEmailAddress: string;
+  inviteRedirectUrl: string;
+  sendInvitationMessage: boolean;
+}
+
+export interface AzureInviteResponse {
+  id: string;
+  inviteRedeemUrl: string;
+  invitedUserDisplayName: string;
+  invitedUserEmailAddress: string;
+  resetRedemption: boolean;
+  sendInvitationMessage: boolean;
+  invitedUserMessageInfo: {
+    messageLanguage: string | null;
+    ccRecipients: [
+      {
+        emailAddress: {
+          name: string | null;
+          address: string | null;
+        };
+      }
+    ];
+    customizedMessageBody: string | null;
+  };
+  inviteRedirectUrl: string;
+  status: string;
+  invitedUser: { id: string };
 }
 
 function getHeaders(): HeadersInit {
@@ -162,13 +195,25 @@ export async function getAzureUserWithRolesByIdAsync(
   };
 }
 
-export async function createAzureUser(
+export async function createAzureUserAsync(
   createAzureUserRequest: CreateAzureUserRequest
 ): Promise<CreateUserResponse> {
   const response = await fetch(`https://graph.microsoft.com/v1.0/users`, {
     method: "POST",
     headers: getHeaders(),
     body: JSON.stringify(createAzureUserRequest),
+  });
+
+  return response.json();
+}
+
+export async function inviteUserToAzureAsync(
+  azureInviteRequest: AzureInviteRequest
+): Promise<AzureInviteResponse> {
+  const response = await fetch(`https://graph.microsoft.com/v1.0/invitations`, {
+    method: "POST",
+    headers: getHeaders(),
+    body: JSON.stringify(azureInviteRequest),
   });
 
   return response.json();

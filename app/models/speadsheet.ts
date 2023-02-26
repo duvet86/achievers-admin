@@ -31,6 +31,12 @@ export interface SpeadsheetUser {
   "Emergency Contact Number": number;
   "Emergency Contact Address": string;
   "Emergency Contact Relationship": string;
+  "Director Identification Number": string;
+  "Board Term Expiry": string;
+  "End Date": string;
+  Occupation: string;
+  "Vaccination Status": string;
+  "WWC Check Number": string;
 }
 
 export interface DBUser {

@@ -1,4 +1,9 @@
-import type { User, MentoringStudent, UserAtChapter } from "@prisma/client";
+import type {
+  User,
+  MentoringStudent,
+  UserAtChapter,
+  Prisma,
+} from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
@@ -6,6 +11,12 @@ export interface AssignStudentToMentor {
   mentorId: User["id"];
   menteeeId: MentoringStudent["menteeId"];
   chapterId: MentoringStudent["chapterId"];
+}
+
+export async function createManyUsersAsync(data: Prisma.UserCreateManyInput[]) {
+  return await prisma.user.createMany({
+    data,
+  });
 }
 
 export async function getMenteesMentoredByAsync(mentorId: User["id"]) {

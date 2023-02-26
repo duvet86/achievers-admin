@@ -32,24 +32,24 @@ model User {
   firstName                    String
   lastName                     String
   email                        String             @unique
-  additionalEmail              String             @unique
+  additionalEmail              String?            @unique
   mobile                       String
   address                      String
   dateOfBirth                  DateTime
   isOver18                     Boolean
   isPublishPhotoApproved       Boolean
   isApprovedByMRC              Boolean
-  isCommiteeMemeber            Boolean
-  isCurrentMemeber             Boolean
-  inductionDate                DateTime
-  isActiveMentor               Boolean
+  isCommiteeMemeber            Boolean            @default(false)
+  isCurrentMemeber             Boolean            @default(true)
+  inductionDate                DateTime?
+  isActiveMentor               Boolean            @default(true)
   attendance                   Attendace?
   vaccinationStatus            VaccinationStatus?
-  policeCheckRenewalDate       DateTime
-  WWCCheckRenewalDate          DateTime
-  WWCCheckNumber               String
+  policeCheckRenewalDate       DateTime?
+  WWCCheckRenewalDate          DateTime?
+  WWCCheckNumber               String?
   isVolunteerAgreementComplete Boolean
-  isBoardMemeber               Boolean
+  isBoardMemeber               Boolean            @default(false)
 
   emergencyContactName         String
   emergencyContactNumber       String
