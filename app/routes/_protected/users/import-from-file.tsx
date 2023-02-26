@@ -75,13 +75,13 @@ export const action = async ({
     );
 
     for (let i = 0; i < newUsers.length; i++) {
-      responses.push(
-        await inviteUserToAzureAsync({
-          invitedUserEmailAddress: newUsers[i]["Email address"],
-          inviteRedirectUrl: WEB_APP_URL,
-          sendInvitationMessage: true,
-        })
-      );
+      const response = await inviteUserToAzureAsync({
+        invitedUserEmailAddress: newUsers[i]["Email address"],
+        inviteRedirectUrl: WEB_APP_URL,
+        sendInvitationMessage: true,
+      });
+
+      responses.push(response);
 
       dbUsers.push({
         address: newUsers[i]["Residential Address"],
@@ -112,7 +112,7 @@ export const action = async ({
           ? new Date(newUsers[i]["End Date"])
           : null,
         firstName: newUsers[i]["First Name"],
-        id: responses[i].id,
+        id: response.invitedUser.id,
         inductionDate: newUsers[i]["Induction Date"]
           ? new Date(newUsers[i]["Induction Date"])
           : newUsers[i]["Induction Date"],

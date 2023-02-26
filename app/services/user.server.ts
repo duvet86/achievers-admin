@@ -13,6 +13,14 @@ export interface AssignStudentToMentor {
   chapterId: MentoringStudent["chapterId"];
 }
 
+export async function getUserByIdAsync(id: string) {
+  return await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+}
+
 export async function createManyUsersAsync(data: Prisma.UserCreateManyInput[]) {
   return await prisma.user.createMany({
     data,

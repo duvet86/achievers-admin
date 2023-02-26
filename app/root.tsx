@@ -11,6 +11,7 @@ import {
 } from "@remix-run/react";
 
 import tailwindStylesheetUrl from "~/styles/tailwind.css";
+
 import LoadingSpinner from "~/components/LoadingSpinner";
 
 export const links: LinksFunction = () => {
