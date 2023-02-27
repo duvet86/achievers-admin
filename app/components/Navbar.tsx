@@ -7,9 +7,10 @@ import ArrowLeftOnRectangleIcon from "@heroicons/react/24/solid/ArrowLeftOnRecta
 
 interface Props {
   isAdmin: boolean;
+  version: string;
 }
 
-export default function Navbar({ isAdmin }: Props) {
+export default function Navbar({ isAdmin, version }: Props) {
   return (
     <div className="navbar absolute top-0 left-0 h-16 bg-primary text-primary-content shadow-md">
       <div className="flex-none lg:hidden">
@@ -54,6 +55,9 @@ export default function Navbar({ isAdmin }: Props) {
               <ArrowLeftOnRectangleIcon className="mr-2 w-6" />
               Logout
             </Link>
+          </li>
+          <li className="mx-2 mt-2 border-t border-base-300 italic">
+            Version {version}
           </li>
         </ul>
       </div>

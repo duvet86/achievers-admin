@@ -10,6 +10,8 @@ import { Roles } from "~/services/azure.server";
 import Navbar from "~/components/Navbar";
 import Drawer from "~/components/Drawer";
 
+import { version } from "~/services/version.server";
+
 export async function loader({ request }: LoaderArgs) {
   const sessionUser = await getSessionUserAsync(request);
 
@@ -29,17 +31,18 @@ export async function loader({ request }: LoaderArgs) {
 
   return json({
     isAdmin,
+    version,
   });
 }
 
 export default function AppLayout() {
-  const { isAdmin } = useLoaderData<typeof loader>();
+  const { isAdmin, version } = useLoaderData<typeof loader>();
 
   return (
-    <div className="drawer drawer-mobile">
+    <div className="drawer-mobile drawer">
       <input id="drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
-        <Navbar isAdmin={isAdmin} />
+        <Navbar isAdmin={isAdmin} version={version} />
 
         <main className="mt-16 flex h-full flex-col overflow-y-auto bg-white p-4">
           <Outlet />

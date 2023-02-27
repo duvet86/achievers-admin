@@ -8,7 +8,7 @@ import Navbar from "~/components/Navbar";
 test("Header snapshot", async () => {
   const { baseElement } = render(
     <MemoryRouter>
-      <Navbar isAdmin={true} />
+      <Navbar isAdmin={true} version="1" />
     </MemoryRouter>
   );
 
