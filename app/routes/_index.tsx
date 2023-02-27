@@ -1,8 +1,10 @@
 import type { LoaderArgs } from "@remix-run/node";
 
-import { redirect } from "@remix-run/node";
-import { Roles } from "~/services/azure.server";
+import { redirect, json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 
+import { Roles } from "~/services/azure.server";
+import { version } from "~/services/version.server";
 import { getSessionUserAsync } from "~/session.server";
 
 export async function loader({ request }: LoaderArgs) {
@@ -20,10 +22,14 @@ export async function loader({ request }: LoaderArgs) {
     return redirect("/roster");
   }
 
-  return null;
+  return json({
+    version,
+  });
 }
 
 export default function Index() {
+  const { version } = useLoaderData<typeof loader>();
+
   return (
     <main className="flex h-full flex-col bg-white">
       <img
@@ -36,17 +42,21 @@ export default function Index() {
           Achievers Admin
         </span>
       </h1>
-      <div className="mt-4 flex h-full flex-col items-center items-center justify-between">
+      <div className="mt-4 flex h-full flex-col items-center justify-between">
         <form action="/auth/microsoft" method="post">
           <button className="btn-primary btn mt-8 w-48 uppercase">Login</button>
         </form>
 
-        <a
-          className="mt-16 mb-8 font-medium underline underline-offset-4"
-          href="https://github.com/duvet86"
-        >
-          Made By Luca with &#x2764;
-        </a>
+        <div className="text-center">
+          <a
+            className="mt-16 mb-8 text-xs font-medium underline underline-offset-4"
+            href="https://github.com/duvet86"
+          >
+            Made with &#x2764; by Luca
+          </a>
+
+          <p className="text-xs">Version {version}</p>
+        </div>
       </div>
     </main>
   );
