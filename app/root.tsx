@@ -7,6 +7,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useCatch,
   useTransition,
 } from "@remix-run/react";
 
@@ -46,6 +47,25 @@ export default function App() {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
+      </body>
+    </html>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+  return (
+    <html>
+      <head>
+        <title>Oops!</title>
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <h1>
+          {caught.status} {caught.statusText}
+        </h1>
+        <Scripts />
       </body>
     </html>
   );
