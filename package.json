@@ -15,7 +15,8 @@
     "pretest:e2e:run": "npm run build",
     "test:e2e": "playwright test --project=chromium",
     "typecheck": "tsc -b",
-    "validate": "run-p \"test -- --run\" lint typecheck test:e2e:run"
+    "validate": "run-p \"test -- --run\" lint typecheck test:e2e:run",
+    "prepare": "husky install"
   },
   "prettier": {},
   "eslintIgnore": [
@@ -41,6 +42,8 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.4.4",
+    "@commitlint/config-conventional": "^17.4.4",
     "@faker-js/faker": "^7.6.0",
     "@playwright/test": "^1.31.1",
     "@remix-run/dev": "^1.13.0",
@@ -63,12 +66,14 @@
     "eslint": "^8.35.0",
     "eslint-config-prettier": "^8.6.0",
     "happy-dom": "^8.9.0",
+    "husky": "^8.0.0",
     "msw": "^1.1.0",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.21",
     "prettier": "^2.8.4",
     "prettier-plugin-tailwindcss": "^0.2.3",
     "prisma": "^4.10.1",
+    "semantic-release": "^20.1.1",
     "tailwindcss": "^3.2.7",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^3.14.2",
