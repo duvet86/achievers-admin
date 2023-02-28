@@ -92,5 +92,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/duvet86/achievers-admin.git"
+  },
+  "release": {
+    "branches": [
+      "master"
+    ]
   }
 }
