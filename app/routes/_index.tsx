@@ -1,7 +1,7 @@
 import type { LoaderArgs } from "@remix-run/node";
 
 import { redirect, json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 
 import { Roles } from "~/services/azure.server";
 import { version } from "~/services/version.server";
@@ -43,9 +43,11 @@ export default function Index() {
         </span>
       </h1>
       <div className="mt-4 flex h-full flex-col items-center justify-between">
-        <form action="/auth/microsoft" method="post">
-          <button className="btn-primary btn mt-8 w-48 uppercase">Login</button>
-        </form>
+        <Form action="/auth/microsoft" method="post">
+          <button type="submit" className="btn-primary btn mt-8 w-48 uppercase">
+            Login
+          </button>
+        </Form>
 
         <div className="text-center">
           <a
