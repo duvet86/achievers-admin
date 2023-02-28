@@ -2,3 +2,5 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 npm run typecheck
+npm run lint
+npm run format
