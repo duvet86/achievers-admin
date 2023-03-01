@@ -54,7 +54,4 @@ COPY --from=build /myapp/public /myapp/public
 COPY --from=build /myapp/package.json /myapp/package.json
 COPY --from=build /myapp/prisma /myapp/prisma
 
-COPY --from=build /myapp/start.sh /myapp/start.sh
-RUN chmod +x start.sh
-
 ENTRYPOINT [ "npm run start" ]
