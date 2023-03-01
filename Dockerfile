@@ -54,4 +54,4 @@ COPY --from=build /myapp/public /myapp/public
 COPY --from=build /myapp/package.json /myapp/package.json
 COPY --from=build /myapp/prisma /myapp/prisma
 
-ENTRYPOINT [ "npm run start" ]
+CMD ["npm", "start"]
