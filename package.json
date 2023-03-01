@@ -28,7 +28,7 @@
   ],
   "dependencies": {
     "@heroicons/react": "^2.0.16",
-    "@prisma/client": "^4.10.1",
+    "@prisma/client": "^4.11.0",
     "@remix-run/node": "^1.13.0",
     "@remix-run/react": "^1.13.0",
     "@remix-run/serve": "^1.13.0",
@@ -60,7 +60,7 @@
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^3.1.0",
-    "@vitest/coverage-c8": "^0.29.1",
+    "@vitest/coverage-c8": "^0.29.2",
     "autoprefixer": "^10.4.13",
     "binode": "^1.0.5",
     "c8": "^7.13.0",
@@ -75,7 +75,7 @@
     "postcss": "^8.4.21",
     "prettier": "^2.8.4",
     "prettier-plugin-tailwindcss": "^0.2.3",
-    "prisma": "^4.10.1",
+    "prisma": "^4.11.0",
     "semantic-release": "^20.1.1",
     "tailwindcss": "^3.2.7",
     "ts-node": "^10.9.1",
@@ -83,7 +83,7 @@
     "typescript": "^4.9.5",
     "vite": "^4.1.4",
     "vite-tsconfig-paths": "^4.0.5",
-    "vitest": "^0.29.1"
+    "vitest": "^0.29.2"
   },
   "engines": {
     "node": ">=14"
