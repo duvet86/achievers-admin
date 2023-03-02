@@ -1,7 +1,7 @@
 import type { LoaderArgs } from "@remix-run/server-runtime";
 import type { AzureUserWithRole } from "~/services/azure.server";
 
-import { redirect, json } from "@remix-run/server-runtime";
+import { json } from "@remix-run/server-runtime";
 import { Form, Link, useCatch, useLoaderData } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
@@ -19,35 +19,32 @@ import Title from "~/components/Title";
 import Input from "~/components/Input";
 
 export async function loader({ params }: LoaderArgs) {
-  try {
-    invariant(params.chapterId, "chapterId not found");
+  invariant(params.chapterId, "chapterId not found");
 
-    const [chapter, usersAtChapter, azureUsers] = await Promise.all([
-      getChapterByIdAsync(params.chapterId),
-      getUsersAtChapterByIdAsync(params.chapterId),
-      getAzureUsersWithRolesAsync(),
-    ]);
+  const [chapter, usersAtChapter, azureUsers] = await Promise.all([
+    getChapterByIdAsync(params.chapterId),
+    getUsersAtChapterByIdAsync(params.chapterId),
+    getAzureUsersWithRolesAsync(),
+  ]);
 
-    const userIds = usersAtChapter.map(({ userId }) => userId);
+  const userIds = usersAtChapter.map(({ userId }) => userId);
 
-    const azureUsersLookUp = azureUsers.reduce<
-      Record<string, AzureUserWithRole>
-    >((res, value) => {
+  const azureUsersLookUp = azureUsers.reduce<Record<string, AzureUserWithRole>>(
+    (res, value) => {
       res[value.id] = value;
 
       return res;
-    }, {});
+    },
+    {}
+  );
 
-    return json({
-      chapter: {
-        ...chapter,
-        assignedUsers: userIds.map((userId) => azureUsersLookUp[userId]),
-      },
-      mentorRoleId: Roles.Mentor,
-    });
-  } catch (error) {
-    throw redirect("/logout");
-  }
+  return json({
+    chapter: {
+      ...chapter,
+      assignedUsers: userIds.map((userId) => azureUsersLookUp[userId]),
+    },
+    mentorRoleId: Roles.Mentor,
+  });
 }
 
 export default function ChapterId() {

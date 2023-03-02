@@ -2,7 +2,7 @@ import type { MentoringStudent } from "@prisma/client";
 import type { LoaderArgs } from "@remix-run/server-runtime";
 
 import { Link, useCatch, useLoaderData } from "@remix-run/react";
-import { json, redirect } from "@remix-run/server-runtime";
+import { json } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
@@ -16,45 +16,39 @@ import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 export async function loader({ params }: LoaderArgs) {
-  try {
-    invariant(params.userId, "userId not found");
+  invariant(params.userId, "userId not found");
 
-    const [azureUsers, mentoringStudents, assignedChapters] = await Promise.all(
-      [
-        getAzureUsersWithRolesAsync(),
-        getMenteesMentoredByAsync(params.userId),
-        getAssignedChaptersToUserAsync(params.userId),
-      ]
-    );
+  const [azureUsers, mentoringStudents, assignedChapters] = await Promise.all([
+    getAzureUsersWithRolesAsync(),
+    getMenteesMentoredByAsync(params.userId),
+    getAssignedChaptersToUserAsync(params.userId),
+  ]);
 
-    const azureUser = azureUsers.find(({ id }) => id === params.userId);
-    invariant(azureUser, "azureUser not found");
+  const azureUser = azureUsers.find(({ id }) => id === params.userId);
+  invariant(azureUser, "azureUser not found");
 
-    const menteesLookUp = mentoringStudents.reduce<
-      Record<string, MentoringStudent>
-    >((res, value) => {
-      res[value.menteeId] = value;
+  const menteesLookUp = mentoringStudents.reduce<
+    Record<string, MentoringStudent>
+  >((res, value) => {
+    res[value.menteeId] = value;
 
-      return res;
-    }, {});
+    return res;
+  }, {});
 
-    const azureMentees = azureUsers
-      .filter(({ id }) => menteesLookUp[id] !== undefined)
-      .map((azureUser) => ({
-        ...azureUser,
-        ...menteesLookUp[azureUser.id],
-      }));
+  const azureMentees = azureUsers
+    .filter(({ id }) => menteesLookUp[id] !== undefined)
+    .map((azureUser) => ({
+      ...azureUser,
+      ...menteesLookUp[azureUser.id],
+    }));
 
-    return json({
-      user: {
-        ...azureUser,
-        mentoringStudents: azureMentees,
-      },
-      assignedChapters,
-    });
-  } catch (error) {
-    throw redirect("/logout");
-  }
+  return json({
+    user: {
+      ...azureUser,
+      mentoringStudents: azureMentees,
+    },
+    assignedChapters,
+  });
 }
 
 export default function ChapterUser() {

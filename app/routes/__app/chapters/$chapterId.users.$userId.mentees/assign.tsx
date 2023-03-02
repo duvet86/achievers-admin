@@ -25,40 +25,36 @@ import {
 } from "~/services/user.server";
 
 export async function loader({ params }: LoaderArgs) {
-  try {
-    invariant(params.userId, "userId not found");
+  invariant(params.userId, "userId not found");
 
-    const [azureUsers, mentoringStudents] = await Promise.all([
-      getAzureUsersWithRolesAsync(),
-      getMenteesMentoredByAsync(params.userId),
-    ]);
+  const [azureUsers, mentoringStudents] = await Promise.all([
+    getAzureUsersWithRolesAsync(),
+    getMenteesMentoredByAsync(params.userId),
+  ]);
 
-    const mentor = azureUsers.find(({ id }) => id === params.userId);
-    invariant(mentor, "azureUser not found");
+  const mentor = azureUsers.find(({ id }) => id === params.userId);
+  invariant(mentor, "azureUser not found");
 
-    const menteesLookUp = mentoringStudents.reduce<
-      Record<string, MentoringStudent>
-    >((res, value) => {
-      res[value.menteeId] = value;
+  const menteesLookUp = mentoringStudents.reduce<
+    Record<string, MentoringStudent>
+  >((res, value) => {
+    res[value.menteeId] = value;
 
-      return res;
-    }, {});
+    return res;
+  }, {});
 
-    const availableStudents = azureUsers
-      .filter(({ id }) => menteesLookUp[id] === undefined)
-      .filter(({ appRoleAssignments }) =>
-        appRoleAssignments
-          .map(({ appRoleId }) => appRoleId)
-          .includes(Roles.Student)
-      );
+  const availableStudents = azureUsers
+    .filter(({ id }) => menteesLookUp[id] === undefined)
+    .filter(({ appRoleAssignments }) =>
+      appRoleAssignments
+        .map(({ appRoleId }) => appRoleId)
+        .includes(Roles.Student)
+    );
 
-    return json({
-      mentor,
-      availableStudents,
-    });
-  } catch (error) {
-    throw redirect("/logout");
-  }
+  return json({
+    mentor,
+    availableStudents,
+  });
 }
 
 export async function action({ request, params }: ActionArgs) {

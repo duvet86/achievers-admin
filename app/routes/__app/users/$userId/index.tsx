@@ -1,8 +1,7 @@
 import type { LoaderArgs } from "@remix-run/server-runtime";
-import type { AzureUserWithRole } from "~/services/azure.server";
 
 import { Form, Link, useCatch, useLoaderData } from "@remix-run/react";
-import { json, redirect } from "@remix-run/server-runtime";
+import { json } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
 
@@ -21,12 +20,7 @@ import Title from "~/components/Title";
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
-  let azureUser: AzureUserWithRole;
-  try {
-    azureUser = await getAzureUserWithRolesByIdAsync(params.userId);
-  } catch (error) {
-    throw redirect("/logout");
-  }
+  const azureUser = await getAzureUserWithRolesByIdAsync(params.userId);
 
   const [user, assignedChapters] = await Promise.all([
     getUserByIdAsync(params.userId),
@@ -44,8 +38,6 @@ export async function loader({ params }: LoaderArgs) {
 
 export default function Chapter() {
   const { user } = useLoaderData<typeof loader>();
-
-  const userRoles = user.appRoleAssignments.map(({ roleName }) => roleName);
 
   return (
     <>
@@ -104,44 +96,6 @@ export default function Chapter() {
             type="date"
           />
 
-          <label className="label mt-4">
-            <span className="label-text">Roles</span>
-          </label>
-
-          <div className="form-control max-w-xs">
-            <label className="label cursor-pointer">
-              <span className="label-text">Admin</span>
-              <input
-                type="checkbox"
-                className="checkbox-primary checkbox"
-                name="admin"
-                defaultChecked={userRoles.includes("Admin")}
-              />
-            </label>
-          </div>
-          <div className="form-control max-w-xs">
-            <label className="label cursor-pointer">
-              <span className="label-text">Mentor</span>
-              <input
-                type="checkbox"
-                className="checkbox-primary checkbox"
-                name="mentor"
-                defaultChecked={userRoles.includes("Mentor")}
-              />
-            </label>
-          </div>
-          <div className="form-control max-w-xs">
-            <label className="label cursor-pointer">
-              <span className="label-text">Student</span>
-              <input
-                type="checkbox"
-                className="checkbox-primary checkbox"
-                name="student"
-                defaultChecked={userRoles.includes("Student")}
-              />
-            </label>
-          </div>
-
           <button
             className="btn-primary btn float-right mt-6 w-28"
             type="submit"
@@ -156,7 +110,61 @@ export default function Chapter() {
               <thead>
                 <tr>
                   <th align="left" className="p-2">
-                    Assigned to
+                    Roles
+                  </th>
+                  <th align="right" className="p-2">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {user.appRoleAssignments.length === 0 && (
+                  <tr>
+                    <td colSpan={2} className="border p-2">
+                      <i>No Roles assigned to this user</i>
+                    </td>
+                  </tr>
+                )}
+                {user.appRoleAssignments.map(({ id, roleName }) => (
+                  <tr key={id}>
+                    <td className="border p-2">
+                      <span className="font-semibold">{roleName}</span>
+                      <input type="hidden" name="roleIds" value={id} />
+                    </td>
+                    <td align="right" className="border p-2">
+                      <Link
+                        to={`roles/${id}/delete`}
+                        className="flex w-32 items-center justify-center rounded bg-red-600 px-3 py-1 text-white"
+                      >
+                        <XMarkIcon className="mr-2 w-5" />
+                        <span>Remove</span>
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="my-6 flex justify-end">
+            <Link
+              to="roles/assign"
+              relative="path"
+              className="btn-primary btn gap-2"
+            >
+              <PlusIcon className="w-6" />
+              Assign a Role
+            </Link>
+          </div>
+
+          <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700" />
+
+          <div className="overflow-auto">
+            <table className="table w-full">
+              <thead>
+                <tr>
+                  <th align="left" className="p-2">
+                    Assigned to Chapter
                   </th>
                   <th align="right" className="p-2">
                     Action
@@ -174,7 +182,7 @@ export default function Chapter() {
                 {user.assignedChapters.map(({ chapter: { id, name } }) => (
                   <tr key={id}>
                     <td className="border p-2">
-                      <span>{name}</span>
+                      <span className="font-semibold">{name}</span>
                       <input type="hidden" name="chapterIds" value={id} />
                     </td>
                     <td align="right" className="border p-2">
