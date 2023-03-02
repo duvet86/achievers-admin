@@ -16,6 +16,8 @@ import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 import Input from "~/components/Input";
 import Title from "~/components/Title";
+import Checkbox from "~/components/Checkbox";
+import Select from "~/components/Select";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -62,37 +64,221 @@ export default function Chapter() {
             label="First name"
             name="firstName"
           />
+
           <Input
             defaultValue={user?.lastName || ""}
             label="Last name"
             name="lastName"
           />
+
           <Input
             defaultValue={user?.email || ""}
             label="Email"
             name="email"
             readOnly={Boolean(user?.email)}
           />
+
           <Input
             defaultValue={user?.additionalEmail || ""}
             label="Additional email"
             name="additionalEmail"
             readOnly={Boolean(user?.additionalEmail)}
           />
+
           <Input
             defaultValue={user?.mobile || ""}
             label="Mobile"
             name="mobile"
           />
+
           <Input
             defaultValue={user?.address || ""}
             label="Address"
             name="address"
           />
+
           <Input
-            defaultValue={user?.dateOfBirth || ""}
+            defaultValue={
+              user && user.dateOfBirth
+                ? new Date(user.dateOfBirth).toISOString().substring(0, 10)
+                : ""
+            }
             label="Date of birth"
             name="dateOfBirth"
+            type="date"
+          />
+
+          <Checkbox
+            label="Is over 18?"
+            name="isOver18"
+            defaultChecked={user.isOver18 ?? false}
+          />
+
+          <Checkbox
+            label="Is Publish Photo Approved"
+            name="isPublishPhotoApproved"
+            defaultChecked={user.isPublishPhotoApproved ?? false}
+          />
+
+          <Checkbox
+            label="Is Approved By MRC"
+            name="isApprovedByMRC"
+            defaultChecked={user.isApprovedByMRC ?? false}
+          />
+
+          <Checkbox
+            label="Is Commitee Memeber"
+            name="isCommiteeMemeber"
+            defaultChecked={user.isCommiteeMemeber ?? false}
+          />
+
+          <Checkbox
+            label="Is Current Memeber"
+            name="isCurrentMemeber"
+            defaultChecked={user.isCurrentMemeber ?? false}
+          />
+
+          <Input
+            defaultValue={
+              user && user.inductionDate
+                ? new Date(user.inductionDate).toISOString().substring(0, 10)
+                : ""
+            }
+            label="Induction Date"
+            name="inductionDate"
+            type="date"
+          />
+
+          <Checkbox
+            label="Is Active Mentor"
+            name="isActiveMentor"
+            defaultChecked={user.isActiveMentor ?? false}
+          />
+
+          <Select
+            defaultValue={user?.attendance || ""}
+            label="Attendance"
+            name="attendance"
+            options={[
+              { label: "Select an Attendance", value: "" },
+              { label: "Weekly", value: "Weekly" },
+              { label: "Fortnightly", value: "Fortnightly" },
+              { label: "Other", value: "Other" },
+            ]}
+          />
+
+          <Select
+            defaultValue={user?.vaccinationStatus || ""}
+            label="Vaccination Status"
+            name="vaccinationStatus"
+            options={[
+              { label: "Select an Status", value: "" },
+              { label: "Confirmed", value: "Confirmed" },
+              { label: "Unconfirmed", value: "Unconfirmed" },
+            ]}
+          />
+
+          <Input
+            defaultValue={
+              user && user.policeCheckRenewalDate
+                ? new Date(user.policeCheckRenewalDate)
+                    .toISOString()
+                    .substring(0, 10)
+                : ""
+            }
+            label="Police Check Renewal Date"
+            name="policeCheckRenewalDate"
+            type="date"
+          />
+
+          <Input
+            defaultValue={
+              user && user.WWCCheckRenewalDate
+                ? new Date(user.WWCCheckRenewalDate)
+                    .toISOString()
+                    .substring(0, 10)
+                : ""
+            }
+            label="WWC Check Renewal Date"
+            name="WWCCheckRenewalDate"
+            type="date"
+          />
+
+          <Input
+            defaultValue={user?.WWCCheckNumber || ""}
+            label="WWC Check Number"
+            name="WWCCheckNumber"
+          />
+
+          <Checkbox
+            label="Is Volunteer Agreement Complete"
+            name="isVolunteerAgreementComplete"
+            defaultChecked={user.isVolunteerAgreementComplete ?? false}
+          />
+
+          <Checkbox
+            label="Is Board Memeber"
+            name="isBoardMemeber"
+            defaultChecked={user.isBoardMemeber ?? false}
+          />
+
+          <Input
+            defaultValue={user?.emergencyContactName || ""}
+            label="Emergency Contact Name"
+            name="emergencyContactName"
+          />
+
+          <Input
+            defaultValue={user?.emergencyContactNumber || ""}
+            label="Emergency Contact Number"
+            name="emergencyContactNumber"
+          />
+
+          <Input
+            defaultValue={user?.emergencyContactAddress || ""}
+            label="Emergency Contact Address"
+            name="emergencyContactAddress"
+          />
+
+          <Input
+            defaultValue={user?.emergencyContactRelationship || ""}
+            label="Emergency Contact Relationship"
+            name="emergencyContactRelationship"
+          />
+
+          <Input
+            defaultValue={user?.occupation || ""}
+            label="Occupation"
+            name="occupation"
+          />
+
+          <Input
+            defaultValue={
+              user && user.boardTermExpiryDate
+                ? new Date(user.boardTermExpiryDate)
+                    .toISOString()
+                    .substring(0, 10)
+                : ""
+            }
+            label="Board Term Expiry Date"
+            name="boardTermExpiryDate"
+            type="date"
+          />
+
+          <Input
+            defaultValue={user?.directorIdentificationNumber || ""}
+            label="Director Identification Number"
+            name="directorIdentificationNumber"
+          />
+
+          <Input
+            defaultValue={
+              user && user.endDate
+                ? new Date(user.endDate).toISOString().substring(0, 10)
+                : ""
+            }
+            label="End Date"
+            name="endDate"
             type="date"
           />
 

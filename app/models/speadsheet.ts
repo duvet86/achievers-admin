@@ -2,6 +2,7 @@ export type BooleanAnswer = "Yes" | "No";
 export type Chapter = "Girraween" | "Armadale";
 export type Roles = "Mentor" | "Mentee" | "Member" | "Unknown";
 export type Attendance = "Weekly" | "Fortnightly" | "Other";
+export type VaccinationStatus = "Confirmed" | "Unconfirmed";
 
 export interface SpeadsheetUser {
   "First Name": string;
@@ -35,7 +36,7 @@ export interface SpeadsheetUser {
   "Board Term Expiry": string;
   "End Date": string;
   Occupation: string;
-  "Vaccination Status": string;
+  "Vaccination Status": VaccinationStatus;
   "WWC Check Number": string;
 }
 

@@ -27,7 +27,8 @@ export const meta: MetaFunction = () => ({
 
 export default function App() {
   const transition = useTransition();
-  const isLoading = transition.state === "loading";
+  const isLoading =
+    transition.state === "loading" || transition.state === "submitting";
 
   return (
     <html lang="en" className="h-full" data-theme="bumblebee">
