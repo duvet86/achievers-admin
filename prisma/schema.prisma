@@ -56,9 +56,6 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userAtChapters   UserAtChapter[]
-  mentoringStudent MentoringStudent[]
-
   @@unique([firstName, lastName])
 }
 
@@ -87,7 +84,6 @@ model Chapter {
 }
 
 model UserAtChapter {
-  user   User   @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   userId String
 
   chapter   Chapter @relation(fields: [chapterId], references: [id], onUpdate: Cascade, onDelete: Cascade)
@@ -100,7 +96,6 @@ model UserAtChapter {
 }
 
 model MentoringStudent {
-  mentor User   @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   userId String
 
   mentee   Mentee @relation(fields: [menteeId], references: [id], onUpdate: Cascade, onDelete: Cascade)

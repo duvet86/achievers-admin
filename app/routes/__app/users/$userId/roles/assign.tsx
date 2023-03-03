@@ -21,6 +21,8 @@ import {
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
+import Select from "~/components/Select";
+
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
@@ -68,29 +70,21 @@ export default function Assign() {
   return (
     <Form method="post">
       <h1 className="mb-4 text-xl font-medium">
-        Assing a Role to the User{" "}
+        Assing a Role to the{" "}
         <span className="font-medium">'{user.displayName}'</span>
       </h1>
 
-      <label
-        htmlFor="roleId"
-        className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-      >
-        Select a Role
-      </label>
-      <select
+      <Select
+        label="Select a Role"
         name="roleId"
-        className="mb-2 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-        defaultValue=""
         disabled={isSubmitting}
-      >
-        <option value="">Select a Role</option>
-        {appRoles.map(({ id, displayName }) => (
-          <option key={id} value={id}>
-            {displayName}
-          </option>
-        ))}
-      </select>
+        options={[{ value: "", label: "Select a Role" }].concat(
+          appRoles.map(({ id, displayName }) => ({
+            label: displayName,
+            value: id,
+          }))
+        )}
+      />
 
       <p className="mt-4 text-red-600">{actionData?.error}</p>
 
@@ -104,8 +98,8 @@ export default function Assign() {
           <ArrowSmallLeftIcon className="w-6" />
           Back
         </Link>
-        <button className="btn gap-2">
-          <PlusIcon className="w-6 text-white" />
+        <button className="btn-primary btn gap-2">
+          <PlusIcon className="h-6 w-6" />
           Save
         </button>
       </div>

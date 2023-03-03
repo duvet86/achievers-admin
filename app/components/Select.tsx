@@ -5,8 +5,10 @@ export interface SelectOption {
 
 export interface Props {
   label?: string;
+  disabled?: boolean;
+  defaultValue?: string;
+  required?: boolean;
   name: string;
-  defaultValue: string;
   options: SelectOption[];
 }
 

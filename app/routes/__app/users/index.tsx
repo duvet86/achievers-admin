@@ -42,9 +42,6 @@ export default function SelectChapter() {
           <thead>
             <tr>
               <th align="left" className="p-2">
-                Username
-              </th>
-              <th align="left" className="p-2">
                 Email
               </th>
               <th align="left" className="p-2">
@@ -62,14 +59,13 @@ export default function SelectChapter() {
             {data.users.map(
               ({
                 id,
-                displayName,
                 mail,
+                userPrincipalName,
                 appRoleAssignments,
                 assignedChapters,
               }) => (
                 <tr key={id}>
-                  <td className="border p-2">{displayName}</td>
-                  <td className="border p-2">{mail ?? "-"}</td>
+                  <td className="border p-2">{mail ?? userPrincipalName}</td>
                   <td className="border p-2">
                     {appRoleAssignments.length > 0 ? (
                       appRoleAssignments

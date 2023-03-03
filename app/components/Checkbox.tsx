@@ -1,10 +1,16 @@
 export interface Props {
   label?: string;
   name: string;
-  defaultChecked: boolean;
+  defaultChecked?: boolean;
+  required?: boolean;
 }
 
-export default function Checkbox({ label, name, defaultChecked }: Props) {
+export default function Checkbox({
+  label,
+  name,
+  defaultChecked,
+  required,
+}: Props) {
   return (
     <div className="form-control">
       <label
@@ -18,6 +24,7 @@ export default function Checkbox({ label, name, defaultChecked }: Props) {
           id={name}
           name={name}
           defaultChecked={defaultChecked}
+          required={required}
         />
       </label>
     </div>

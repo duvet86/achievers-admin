@@ -22,6 +22,8 @@ import {
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
+import Select from "~/components/Select";
+
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
@@ -52,7 +54,7 @@ export async function action({ request, params }: ActionArgs) {
 
   const chapterId = formData.get("chapterId");
 
-  if (!chapterId) {
+  if (chapterId === null) {
     return json({
       error: "Select a Chapter please.",
     });
@@ -78,29 +80,21 @@ export default function Assign() {
   return (
     <Form method="post">
       <h1 className="mb-4 text-xl font-medium">
-        Assing Chapter to User{" "}
+        Assign a Chapter to{" "}
         <span className="font-medium">'{user.displayName}'</span>
       </h1>
 
-      <label
-        htmlFor="chapterId"
-        className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-      >
-        Select a Chapter
-      </label>
-      <select
+      <Select
+        label="Select a Chapter"
         name="chapterId"
-        className="mb-2 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-        defaultValue=""
         disabled={isSubmitting}
-      >
-        <option value="">Select a Chapter</option>
-        {availableChapters.map(({ id, name }) => (
-          <option key={id} value={id}>
-            {name}
-          </option>
-        ))}
-      </select>
+        options={[{ value: "", label: "Select a Chapter" }].concat(
+          availableChapters.map(({ id, name }) => ({
+            label: name,
+            value: id,
+          }))
+        )}
+      />
 
       <p className="mt-4 text-red-600">{actionData?.error}</p>
 
@@ -114,8 +108,8 @@ export default function Assign() {
           <ArrowSmallLeftIcon className="w-6" />
           Back
         </Link>
-        <button className="btn gap-2">
-          <PlusIcon className="w-6 text-white" />
+        <button className="btn-primary btn gap-2">
+          <PlusIcon className="h-6 w-6" />
           Save
         </button>
       </div>

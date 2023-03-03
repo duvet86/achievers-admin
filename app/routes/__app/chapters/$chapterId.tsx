@@ -66,6 +66,10 @@ export default function ChapterId() {
       <Form method="post">
         <Input defaultValue={chapter.name} label="Name" name="name" />
         <Input defaultValue={chapter.address} label="Address" name="address" />
+
+        <button className="btn-primary btn float-right mt-6 w-28" type="submit">
+          Save
+        </button>
       </Form>
 
       <hr className="my-6" />
@@ -101,12 +105,16 @@ export default function ChapterId() {
                       <i className="text-sm">No roles assigned</i>
                     )}
                   </td>
-                  <td className="border p-2" align="right">
+                  <td className="w-64 border" align="right">
                     {appRoleAssignments
                       .map(({ appRoleId }) => appRoleId)
                       .includes(mentorRoleId) ? (
-                      <Link to={`users/${id}`}>
-                        <UsersIcon className="mr-4 w-6 text-blue-500" />
+                      <Link
+                        to={id}
+                        className="btn-success btn-xs btn flex gap-2 align-middle"
+                      >
+                        Assign Student
+                        <UsersIcon className="mr-4 h-4 w-4" />
                       </Link>
                     ) : (
                       <span className="mr-4 w-6">-</span>

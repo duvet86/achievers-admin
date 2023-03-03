@@ -1,11 +1,12 @@
-import type { LoaderArgs } from "@remix-run/server-runtime";
+import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
+import type { Attendace, VaccinationStatus } from "@prisma/client";
 
 import { Form, Link, useCatch, useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
 
-import { getUserByIdAsync } from "~/services/user.server";
+import { getUserByIdAsync, updateUserByIdAsync } from "~/services/user.server";
 import { getAssignedChaptersToUserAsync } from "~/services/chapter.server";
 
 import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
@@ -18,6 +19,8 @@ import Input from "~/components/Input";
 import Title from "~/components/Title";
 import Checkbox from "~/components/Checkbox";
 import Select from "~/components/Select";
+import DateInput from "~/components/DateInput";
+import { isStringNullOrEmpty } from "~/services/string-utils.server";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -38,6 +41,116 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
+export async function action({ request, params }: ActionArgs) {
+  invariant(params.userId, "userId not found");
+
+  const formData = await request.formData();
+
+  const firstName = formData.get("firstName")?.toString();
+  const lastName = formData.get("lastName")?.toString();
+  const additionalEmail = formData.get("additionalEmail")?.toString();
+  const mobile = formData.get("mobile")?.toString();
+  const address = formData.get("address")?.toString();
+  const dateOfBirth = formData.get("dateOfBirth")?.toString();
+  const isOver18 = Boolean(formData.get("isOver18"));
+  const isPublishPhotoApproved = Boolean(
+    formData.get("isPublishPhotoApproved")
+  );
+  const isApprovedByMRC = Boolean(formData.get("isApprovedByMRC"));
+  const isCommiteeMemeber = Boolean(formData.get("isCommiteeMemeber"));
+  const isCurrentMemeber = Boolean(formData.get("isCurrentMemeber"));
+  const inductionDate = formData.get("inductionDate")?.toString();
+  const isActiveMentor = Boolean(formData.get("isActiveMentor"));
+  const attendance = formData.get("attendance")?.toString() as Attendace;
+  const vaccinationStatus = formData
+    .get("vaccinationStatus")
+    ?.toString() as VaccinationStatus;
+  const policeCheckRenewalDate = formData
+    .get("policeCheckRenewalDate")
+    ?.toString();
+  const WWCCheckRenewalDate = formData.get("WWCCheckRenewalDate")?.toString();
+  const WWCCheckNumber = formData.get("WWCCheckNumber")?.toString();
+  const isVolunteerAgreementComplete = Boolean(
+    formData.get("isVolunteerAgreementComplete")
+  );
+  const isBoardMemeber = Boolean(formData.get("isBoardMemeber"));
+  const emergencyContactName = formData.get("emergencyContactName")?.toString();
+  const emergencyContactNumber = formData
+    .get("emergencyContactNumber")
+    ?.toString();
+  const emergencyContactAddress = formData
+    .get("emergencyContactAddress")
+    ?.toString();
+  const emergencyContactRelationship = formData
+    .get("emergencyContactRelationship")
+    ?.toString();
+  const occupation = formData.get("occupation")?.toString();
+  const boardTermExpiryDate = formData.get("boardTermExpiryDate")?.toString();
+  const directorIdentificationNumber = formData
+    .get("directorIdentificationNumber")
+    ?.toString();
+  const endDate = formData.get("endDate")?.toString();
+
+  if (
+    isStringNullOrEmpty(firstName) ||
+    isStringNullOrEmpty(lastName) ||
+    isStringNullOrEmpty(mobile) ||
+    isStringNullOrEmpty(address) ||
+    isStringNullOrEmpty(dateOfBirth) ||
+    isStringNullOrEmpty(emergencyContactName) ||
+    isStringNullOrEmpty(emergencyContactNumber) ||
+    isStringNullOrEmpty(emergencyContactAddress) ||
+    isStringNullOrEmpty(emergencyContactRelationship)
+  ) {
+    return json({
+      message: "Missing required fields",
+    });
+  }
+
+  await updateUserByIdAsync(params.userId, {
+    firstName,
+    lastName,
+    additionalEmail,
+    mobile,
+    address,
+    dateOfBirth: new Date(dateOfBirth + "T00:00"),
+    isOver18,
+    isPublishPhotoApproved,
+    isApprovedByMRC,
+    isCommiteeMemeber,
+    isCurrentMemeber,
+    inductionDate: inductionDate ? new Date(inductionDate + "T00:00") : null,
+    isActiveMentor,
+    attendance,
+    vaccinationStatus: vaccinationStatus ? vaccinationStatus : null,
+    policeCheckRenewalDate: policeCheckRenewalDate
+      ? new Date(policeCheckRenewalDate + "T00:00")
+      : null,
+    WWCCheckRenewalDate: WWCCheckRenewalDate
+      ? new Date(WWCCheckRenewalDate + "T00:00")
+      : null,
+    WWCCheckNumber: WWCCheckNumber ? WWCCheckNumber : null,
+    isVolunteerAgreementComplete,
+    isBoardMemeber,
+    emergencyContactName,
+    emergencyContactNumber,
+    emergencyContactAddress,
+    emergencyContactRelationship,
+    occupation: occupation ? occupation : null,
+    boardTermExpiryDate: boardTermExpiryDate
+      ? new Date(boardTermExpiryDate + "T00:00")
+      : null,
+    directorIdentificationNumber: directorIdentificationNumber
+      ? directorIdentificationNumber
+      : null,
+    endDate: endDate ? new Date(endDate + "T00:00") : null,
+  });
+
+  return json({
+    message: null,
+  });
+}
+
 export default function Chapter() {
   const { user } = useLoaderData<typeof loader>();
 
@@ -52,7 +165,9 @@ export default function Chapter() {
 
       <hr className="mb-4" />
 
-      <Title>Edit user info</Title>
+      <Title>
+        Edit info for &ldquo;{user.mail ?? user.userPrincipalName}&rdquo;
+      </Title>
 
       <div className="flex">
         <Form
@@ -63,55 +178,57 @@ export default function Chapter() {
             defaultValue={user?.firstName || ""}
             label="First name"
             name="firstName"
+            required
           />
 
           <Input
             defaultValue={user?.lastName || ""}
             label="Last name"
             name="lastName"
+            required
           />
 
           <Input
             defaultValue={user?.email || ""}
             label="Email"
             name="email"
-            readOnly={Boolean(user?.email)}
+            readOnly
           />
 
           <Input
             defaultValue={user?.additionalEmail || ""}
             label="Additional email"
             name="additionalEmail"
-            readOnly={Boolean(user?.additionalEmail)}
           />
 
           <Input
             defaultValue={user?.mobile || ""}
             label="Mobile"
             name="mobile"
+            required
           />
 
           <Input
             defaultValue={user?.address || ""}
             label="Address"
             name="address"
+            required
           />
 
-          <Input
+          <DateInput
             defaultValue={
-              user && user.dateOfBirth
-                ? new Date(user.dateOfBirth).toISOString().substring(0, 10)
-                : ""
+              user && user.dateOfBirth ? new Date(user.dateOfBirth) : ""
             }
             label="Date of birth"
             name="dateOfBirth"
-            type="date"
+            required
           />
 
           <Checkbox
             label="Is over 18?"
             name="isOver18"
             defaultChecked={user.isOver18 ?? false}
+            required
           />
 
           <Checkbox
@@ -138,15 +255,12 @@ export default function Chapter() {
             defaultChecked={user.isCurrentMemeber ?? false}
           />
 
-          <Input
+          <DateInput
             defaultValue={
-              user && user.inductionDate
-                ? new Date(user.inductionDate).toISOString().substring(0, 10)
-                : ""
+              user && user.inductionDate ? new Date(user.inductionDate) : ""
             }
             label="Induction Date"
             name="inductionDate"
-            type="date"
           />
 
           <Checkbox
@@ -178,30 +292,24 @@ export default function Chapter() {
             ]}
           />
 
-          <Input
+          <DateInput
             defaultValue={
               user && user.policeCheckRenewalDate
                 ? new Date(user.policeCheckRenewalDate)
-                    .toISOString()
-                    .substring(0, 10)
                 : ""
             }
             label="Police Check Renewal Date"
             name="policeCheckRenewalDate"
-            type="date"
           />
 
-          <Input
+          <DateInput
             defaultValue={
               user && user.WWCCheckRenewalDate
                 ? new Date(user.WWCCheckRenewalDate)
-                    .toISOString()
-                    .substring(0, 10)
                 : ""
             }
             label="WWC Check Renewal Date"
             name="WWCCheckRenewalDate"
-            type="date"
           />
 
           <Input
@@ -226,24 +334,28 @@ export default function Chapter() {
             defaultValue={user?.emergencyContactName || ""}
             label="Emergency Contact Name"
             name="emergencyContactName"
+            required
           />
 
           <Input
             defaultValue={user?.emergencyContactNumber || ""}
             label="Emergency Contact Number"
             name="emergencyContactNumber"
+            required
           />
 
           <Input
             defaultValue={user?.emergencyContactAddress || ""}
             label="Emergency Contact Address"
             name="emergencyContactAddress"
+            required
           />
 
           <Input
             defaultValue={user?.emergencyContactRelationship || ""}
             label="Emergency Contact Relationship"
             name="emergencyContactRelationship"
+            required
           />
 
           <Input
@@ -252,17 +364,14 @@ export default function Chapter() {
             name="occupation"
           />
 
-          <Input
+          <DateInput
             defaultValue={
               user && user.boardTermExpiryDate
                 ? new Date(user.boardTermExpiryDate)
-                    .toISOString()
-                    .substring(0, 10)
                 : ""
             }
             label="Board Term Expiry Date"
             name="boardTermExpiryDate"
-            type="date"
           />
 
           <Input
@@ -271,15 +380,10 @@ export default function Chapter() {
             name="directorIdentificationNumber"
           />
 
-          <Input
-            defaultValue={
-              user && user.endDate
-                ? new Date(user.endDate).toISOString().substring(0, 10)
-                : ""
-            }
+          <DateInput
+            defaultValue={user && user.endDate ? new Date(user.endDate) : ""}
             label="End Date"
             name="endDate"
-            type="date"
           />
 
           <button
@@ -405,7 +509,14 @@ export default function Chapter() {
 export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error);
 
-  return <div>An unexpected error occurred: {error.message}</div>;
+  return (
+    <div className="card bg-error">
+      <div className="card-body">
+        <h2 className="card-title">Error!</h2>
+        <pre>{error.message}</pre>
+      </div>
+    </div>
+  );
 }
 
 export function CatchBoundary() {

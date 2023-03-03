@@ -1,38 +1,36 @@
-import type { HTMLInputTypeAttribute } from "react";
-
 export interface Props {
   name: string;
   label: string;
-  defaultValue: string;
-  type?: HTMLInputTypeAttribute;
+  defaultValue: Date | string;
   readOnly?: boolean;
-  disabled?: boolean;
   required?: boolean;
 }
 
-export default function Input({
+export default function DateInput({
   label,
   name,
   defaultValue,
-  type = "text",
   readOnly,
-  disabled,
   required,
 }: Props) {
+  const value =
+    defaultValue instanceof Date
+      ? defaultValue.toISOString().substring(0, 10)
+      : defaultValue;
+
   return (
     <div className="form-control w-full">
       <label htmlFor={name} className="label">
         <span className="label-text">{label}</span>
       </label>
       <input
-        type={type}
+        type="date"
         id={name}
         name={name}
         placeholder={label}
         className="input-bordered input w-full"
-        defaultValue={defaultValue}
+        defaultValue={value}
         readOnly={readOnly}
-        disabled={disabled || readOnly}
         required={required}
       />
     </div>

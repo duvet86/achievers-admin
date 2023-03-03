@@ -21,6 +21,18 @@ export async function getUserByIdAsync(id: string) {
   });
 }
 
+export async function updateUserByIdAsync(
+  id: string,
+  data: Prisma.XOR<Prisma.UserUpdateInput, Prisma.UserUncheckedUpdateInput>
+) {
+  return await prisma.user.update({
+    data,
+    where: {
+      id,
+    },
+  });
+}
+
 export async function createManyUsersAsync(data: Prisma.UserCreateManyInput[]) {
   return await prisma.user.createMany({
     data,
@@ -30,9 +42,7 @@ export async function createManyUsersAsync(data: Prisma.UserCreateManyInput[]) {
 export async function getMenteesMentoredByAsync(mentorId: User["id"]) {
   return await prisma.mentoringStudent.findMany({
     where: {
-      mentor: {
-        id: mentorId,
-      },
+      userId: mentorId,
     },
   });
 }
