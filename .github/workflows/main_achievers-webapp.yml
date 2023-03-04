@@ -99,7 +99,7 @@ jobs:
   restart-app:
     name: Restart Web App
     runs-on: ubuntu-latest
-    environment: Production
+    environment: production
 
     steps:
       - name: "Az CLI login"
