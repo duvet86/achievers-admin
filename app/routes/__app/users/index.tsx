@@ -20,10 +20,11 @@ export async function loader() {
     users: azureUsers
       .map((user) => ({
         ...user,
+        email: user.mail ?? user.userPrincipalName,
         assignedChapters: assignedChaptersLookUp[user.id] ?? [],
       }))
       .sort((a, b) =>
-        a.displayName.localeCompare(b.displayName, undefined, {
+        a.email.localeCompare(b.email, undefined, {
           sensitivity: "base",
         })
       ),
@@ -57,15 +58,9 @@ export default function SelectChapter() {
           </thead>
           <tbody>
             {data.users.map(
-              ({
-                id,
-                mail,
-                userPrincipalName,
-                appRoleAssignments,
-                assignedChapters,
-              }) => (
+              ({ id, email, appRoleAssignments, assignedChapters }) => (
                 <tr key={id}>
-                  <td className="border p-2">{mail ?? userPrincipalName}</td>
+                  <td className="border p-2">{email}</td>
                   <td className="border p-2">
                     {appRoleAssignments.length > 0 ? (
                       appRoleAssignments

@@ -1,7 +1,13 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
 import type { Attendace, VaccinationStatus } from "@prisma/client";
 
-import { Form, Link, useCatch, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useCatch,
+  useLoaderData,
+  useTransition,
+} from "@remix-run/react";
 import { json } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
@@ -11,7 +17,9 @@ import { getSessionUserAsync } from "~/session.server";
 import { getUserByIdAsync, updateUserByIdAsync } from "~/services/user.server";
 import { getAssignedChaptersToUserAsync } from "~/services/chapter.server";
 import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
-import { isStringNullOrEmpty } from "~/services/string-utils.server";
+
+import { isStringNullOrEmpty } from "~/services/utils/string.utils.server";
+import { readFormDataAsStringsAsync } from "~/services/utils/form.utils.server";
 
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
@@ -49,52 +57,42 @@ export async function loader({ request, params }: LoaderArgs) {
 export async function action({ request, params }: ActionArgs) {
   invariant(params.userId, "userId not found");
 
-  const formData = await request.formData();
+  const formValues = await readFormDataAsStringsAsync(request);
 
-  const firstName = formData.get("firstName")?.toString();
-  const lastName = formData.get("lastName")?.toString();
-  const additionalEmail = formData.get("additionalEmail")?.toString();
-  const mobile = formData.get("mobile")?.toString();
-  const address = formData.get("address")?.toString();
-  const dateOfBirth = formData.get("dateOfBirth")?.toString();
-  const isOver18 = Boolean(formData.get("isOver18"));
-  const isPublishPhotoApproved = Boolean(
-    formData.get("isPublishPhotoApproved")
-  );
-  const isApprovedByMRC = Boolean(formData.get("isApprovedByMRC"));
-  const isCommiteeMemeber = Boolean(formData.get("isCommiteeMemeber"));
-  const isCurrentMemeber = Boolean(formData.get("isCurrentMemeber"));
-  const inductionDate = formData.get("inductionDate")?.toString();
-  const isActiveMentor = Boolean(formData.get("isActiveMentor"));
-  const attendance = formData.get("attendance")?.toString() as Attendace;
-  const vaccinationStatus = formData
-    .get("vaccinationStatus")
-    ?.toString() as VaccinationStatus;
-  const policeCheckRenewalDate = formData
-    .get("policeCheckRenewalDate")
-    ?.toString();
-  const WWCCheckRenewalDate = formData.get("WWCCheckRenewalDate")?.toString();
-  const WWCCheckNumber = formData.get("WWCCheckNumber")?.toString();
+  const firstName = formValues["firstName"];
+  const lastName = formValues["lastName"];
+  const additionalEmail = formValues["additionalEmail"];
+  const mobile = formValues["mobile"];
+  const address = formValues["address"];
+  const dateOfBirth = formValues["dateOfBirth"];
+  const isOver18 = Boolean(formValues["isOver18"]);
+  const isPublishPhotoApproved = Boolean(formValues["isPublishPhotoApproved"]);
+  const isApprovedByMRC = Boolean(formValues["isApprovedByMRC"]);
+  const isCommiteeMemeber = Boolean(formValues["isCommiteeMemeber"]);
+  const isCurrentMemeber = Boolean(formValues["isCurrentMemeber"]);
+  const inductionDate = formValues["inductionDate"];
+  const isActiveMentor = Boolean(formValues["isActiveMentor"]);
+  const attendance = formValues["attendance"] as Attendace;
+  const vaccinationStatus = formValues[
+    "vaccinationStatus"
+  ] as VaccinationStatus;
+  const policeCheckRenewalDate = formValues["policeCheckRenewalDate"];
+  const WWCCheckRenewalDate = formValues["WWCCheckRenewalDate"];
+  const WWCCheckNumber = formValues["WWCCheckNumber"];
   const isVolunteerAgreementComplete = Boolean(
-    formData.get("isVolunteerAgreementComplete")
+    formValues["isVolunteerAgreementComplete"]
   );
-  const isBoardMemeber = Boolean(formData.get("isBoardMemeber"));
-  const emergencyContactName = formData.get("emergencyContactName")?.toString();
-  const emergencyContactNumber = formData
-    .get("emergencyContactNumber")
-    ?.toString();
-  const emergencyContactAddress = formData
-    .get("emergencyContactAddress")
-    ?.toString();
-  const emergencyContactRelationship = formData
-    .get("emergencyContactRelationship")
-    ?.toString();
-  const occupation = formData.get("occupation")?.toString();
-  const boardTermExpiryDate = formData.get("boardTermExpiryDate")?.toString();
-  const directorIdentificationNumber = formData
-    .get("directorIdentificationNumber")
-    ?.toString();
-  const endDate = formData.get("endDate")?.toString();
+  const isBoardMemeber = Boolean(formValues["isBoardMemeber"]);
+  const emergencyContactName = formValues["emergencyContactName"];
+  const emergencyContactNumber = formValues["emergencyContactNumber"];
+  const emergencyContactAddress = formValues["emergencyContactAddress"];
+  const emergencyContactRelationship =
+    formValues["emergencyContactRelationship"];
+  const occupation = formValues["occupation"];
+  const boardTermExpiryDate = formValues["boardTermExpiryDate"];
+  const directorIdentificationNumber =
+    formValues["directorIdentificationNumber"];
+  const endDate = formValues["endDate"];
 
   if (
     isStringNullOrEmpty(firstName) ||
@@ -157,6 +155,7 @@ export async function action({ request, params }: ActionArgs) {
 }
 
 export default function Chapter() {
+  const transition = useTransition();
   const { user, isLoggedUser } = useLoaderData<typeof loader>();
 
   return (
@@ -181,224 +180,226 @@ export default function Chapter() {
           method="post"
           className="mr-8 flex-1 border-r border-primary pr-4"
         >
-          <Input
-            defaultValue={user?.firstName || ""}
-            label="First name"
-            name="firstName"
-            required
-          />
+          <fieldset disabled={transition.state === "submitting"}>
+            <Input
+              defaultValue={user?.firstName ?? ""}
+              label="First name"
+              name="firstName"
+              required
+            />
 
-          <Input
-            defaultValue={user?.lastName || ""}
-            label="Last name"
-            name="lastName"
-            required
-          />
+            <Input
+              defaultValue={user?.lastName ?? ""}
+              label="Last name"
+              name="lastName"
+              required
+            />
 
-          <Input
-            defaultValue={user.email}
-            label="Email"
-            name="email"
-            readOnly
-          />
+            <Input
+              defaultValue={user.email}
+              label="Email"
+              name="email"
+              readOnly
+            />
 
-          <Input
-            defaultValue={user?.additionalEmail || ""}
-            label="Additional email"
-            name="additionalEmail"
-          />
+            <Input
+              defaultValue={user?.additionalEmail ?? ""}
+              label="Additional email"
+              name="additionalEmail"
+            />
 
-          <Input
-            defaultValue={user?.mobile || ""}
-            label="Mobile"
-            name="mobile"
-            required
-          />
+            <Input
+              defaultValue={user?.mobile ?? ""}
+              label="Mobile"
+              name="mobile"
+              required
+            />
 
-          <Input
-            defaultValue={user?.address || ""}
-            label="Address"
-            name="address"
-            required
-          />
+            <Input
+              defaultValue={user?.address ?? ""}
+              label="Address"
+              name="address"
+              required
+            />
 
-          <DateInput
-            defaultValue={
-              user && user.dateOfBirth ? new Date(user.dateOfBirth) : ""
-            }
-            label="Date of birth"
-            name="dateOfBirth"
-            required
-          />
+            <DateInput
+              defaultValue={
+                user && user.dateOfBirth ? new Date(user.dateOfBirth) : ""
+              }
+              label="Date of birth"
+              name="dateOfBirth"
+              required
+            />
 
-          <Checkbox
-            label="Is over 18?"
-            name="isOver18"
-            defaultChecked={user.isOver18 ?? false}
-            required
-          />
+            <Checkbox
+              label="Is over 18?"
+              name="isOver18"
+              defaultChecked={user.isOver18 ?? false}
+              required
+            />
 
-          <Checkbox
-            label="Is Publish Photo Approved"
-            name="isPublishPhotoApproved"
-            defaultChecked={user.isPublishPhotoApproved ?? false}
-          />
+            <Checkbox
+              label="Is Publish Photo Approved"
+              name="isPublishPhotoApproved"
+              defaultChecked={user.isPublishPhotoApproved ?? false}
+            />
 
-          <Checkbox
-            label="Is Approved By MRC"
-            name="isApprovedByMRC"
-            defaultChecked={user.isApprovedByMRC ?? false}
-          />
+            <Checkbox
+              label="Is Approved By MRC"
+              name="isApprovedByMRC"
+              defaultChecked={user.isApprovedByMRC ?? false}
+            />
 
-          <Checkbox
-            label="Is Commitee Memeber"
-            name="isCommiteeMemeber"
-            defaultChecked={user.isCommiteeMemeber ?? false}
-          />
+            <Checkbox
+              label="Is Commitee Memeber"
+              name="isCommiteeMemeber"
+              defaultChecked={user.isCommiteeMemeber ?? false}
+            />
 
-          <Checkbox
-            label="Is Current Memeber"
-            name="isCurrentMemeber"
-            defaultChecked={user.isCurrentMemeber ?? false}
-          />
+            <Checkbox
+              label="Is Current Memeber"
+              name="isCurrentMemeber"
+              defaultChecked={user.isCurrentMemeber ?? false}
+            />
 
-          <DateInput
-            defaultValue={
-              user && user.inductionDate ? new Date(user.inductionDate) : ""
-            }
-            label="Induction Date"
-            name="inductionDate"
-          />
+            <DateInput
+              defaultValue={
+                user && user.inductionDate ? new Date(user.inductionDate) : ""
+              }
+              label="Induction Date"
+              name="inductionDate"
+            />
 
-          <Checkbox
-            label="Is Active Mentor"
-            name="isActiveMentor"
-            defaultChecked={user.isActiveMentor ?? false}
-          />
+            <Checkbox
+              label="Is Active Mentor"
+              name="isActiveMentor"
+              defaultChecked={user.isActiveMentor ?? false}
+            />
 
-          <Select
-            defaultValue={user?.attendance || ""}
-            label="Attendance"
-            name="attendance"
-            options={[
-              { label: "Select an Attendance", value: "" },
-              { label: "Weekly", value: "Weekly" },
-              { label: "Fortnightly", value: "Fortnightly" },
-              { label: "Other", value: "Other" },
-            ]}
-          />
+            <Select
+              defaultValue={user?.attendance ?? ""}
+              label="Attendance"
+              name="attendance"
+              options={[
+                { label: "Select an Attendance", value: "" },
+                { label: "Weekly", value: "Weekly" },
+                { label: "Fortnightly", value: "Fortnightly" },
+                { label: "Other", value: "Other" },
+              ]}
+            />
 
-          <Select
-            defaultValue={user?.vaccinationStatus || ""}
-            label="Vaccination Status"
-            name="vaccinationStatus"
-            options={[
-              { label: "Select an Status", value: "" },
-              { label: "Confirmed", value: "Confirmed" },
-              { label: "Unconfirmed", value: "Unconfirmed" },
-            ]}
-          />
+            <Select
+              defaultValue={user?.vaccinationStatus ?? ""}
+              label="Vaccination Status"
+              name="vaccinationStatus"
+              options={[
+                { label: "Select an Status", value: "" },
+                { label: "Confirmed", value: "Confirmed" },
+                { label: "Unconfirmed", value: "Unconfirmed" },
+              ]}
+            />
 
-          <DateInput
-            defaultValue={
-              user && user.policeCheckRenewalDate
-                ? new Date(user.policeCheckRenewalDate)
-                : ""
-            }
-            label="Police Check Renewal Date"
-            name="policeCheckRenewalDate"
-          />
+            <DateInput
+              defaultValue={
+                user && user.policeCheckRenewalDate
+                  ? new Date(user.policeCheckRenewalDate)
+                  : ""
+              }
+              label="Police Check Renewal Date"
+              name="policeCheckRenewalDate"
+            />
 
-          <DateInput
-            defaultValue={
-              user && user.WWCCheckRenewalDate
-                ? new Date(user.WWCCheckRenewalDate)
-                : ""
-            }
-            label="WWC Check Renewal Date"
-            name="WWCCheckRenewalDate"
-          />
+            <DateInput
+              defaultValue={
+                user && user.WWCCheckRenewalDate
+                  ? new Date(user.WWCCheckRenewalDate)
+                  : ""
+              }
+              label="WWC Check Renewal Date"
+              name="WWCCheckRenewalDate"
+            />
 
-          <Input
-            defaultValue={user?.WWCCheckNumber || ""}
-            label="WWC Check Number"
-            name="WWCCheckNumber"
-          />
+            <Input
+              defaultValue={user?.WWCCheckNumber ?? ""}
+              label="WWC Check Number"
+              name="WWCCheckNumber"
+            />
 
-          <Checkbox
-            label="Is Volunteer Agreement Complete"
-            name="isVolunteerAgreementComplete"
-            defaultChecked={user.isVolunteerAgreementComplete ?? false}
-          />
+            <Checkbox
+              label="Is Volunteer Agreement Complete"
+              name="isVolunteerAgreementComplete"
+              defaultChecked={user.isVolunteerAgreementComplete ?? false}
+            />
 
-          <Checkbox
-            label="Is Board Memeber"
-            name="isBoardMemeber"
-            defaultChecked={user.isBoardMemeber ?? false}
-          />
+            <Checkbox
+              label="Is Board Memeber"
+              name="isBoardMemeber"
+              defaultChecked={user.isBoardMemeber ?? false}
+            />
 
-          <Input
-            defaultValue={user?.emergencyContactName || ""}
-            label="Emergency Contact Name"
-            name="emergencyContactName"
-            required
-          />
+            <Input
+              defaultValue={user?.emergencyContactName ?? ""}
+              label="Emergency Contact Name"
+              name="emergencyContactName"
+              required
+            />
 
-          <Input
-            defaultValue={user?.emergencyContactNumber || ""}
-            label="Emergency Contact Number"
-            name="emergencyContactNumber"
-            required
-          />
+            <Input
+              defaultValue={user?.emergencyContactNumber ?? ""}
+              label="Emergency Contact Number"
+              name="emergencyContactNumber"
+              required
+            />
 
-          <Input
-            defaultValue={user?.emergencyContactAddress || ""}
-            label="Emergency Contact Address"
-            name="emergencyContactAddress"
-            required
-          />
+            <Input
+              defaultValue={user?.emergencyContactAddress ?? ""}
+              label="Emergency Contact Address"
+              name="emergencyContactAddress"
+              required
+            />
 
-          <Input
-            defaultValue={user?.emergencyContactRelationship || ""}
-            label="Emergency Contact Relationship"
-            name="emergencyContactRelationship"
-            required
-          />
+            <Input
+              defaultValue={user?.emergencyContactRelationship ?? ""}
+              label="Emergency Contact Relationship"
+              name="emergencyContactRelationship"
+              required
+            />
 
-          <Input
-            defaultValue={user?.occupation || ""}
-            label="Occupation"
-            name="occupation"
-          />
+            <Input
+              defaultValue={user?.occupation ?? ""}
+              label="Occupation"
+              name="occupation"
+            />
 
-          <DateInput
-            defaultValue={
-              user && user.boardTermExpiryDate
-                ? new Date(user.boardTermExpiryDate)
-                : ""
-            }
-            label="Board Term Expiry Date"
-            name="boardTermExpiryDate"
-          />
+            <DateInput
+              defaultValue={
+                user && user.boardTermExpiryDate
+                  ? new Date(user.boardTermExpiryDate)
+                  : ""
+              }
+              label="Board Term Expiry Date"
+              name="boardTermExpiryDate"
+            />
 
-          <Input
-            defaultValue={user?.directorIdentificationNumber || ""}
-            label="Director Identification Number"
-            name="directorIdentificationNumber"
-          />
+            <Input
+              defaultValue={user?.directorIdentificationNumber ?? ""}
+              label="Director Identification Number"
+              name="directorIdentificationNumber"
+            />
 
-          <DateInput
-            defaultValue={user && user.endDate ? new Date(user.endDate) : ""}
-            label="End Date"
-            name="endDate"
-          />
+            <DateInput
+              defaultValue={user && user.endDate ? new Date(user.endDate) : ""}
+              label="End Date"
+              name="endDate"
+            />
 
-          <button
-            className="btn-primary btn float-right mt-6 w-28"
-            type="submit"
-          >
-            Save
-          </button>
+            <button
+              className="btn-primary btn float-right mt-6 w-28"
+              type="submit"
+            >
+              Save
+            </button>
+          </fieldset>
         </Form>
 
         <div className="flex-1">
