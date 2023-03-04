@@ -1,5 +1,5 @@
 import type { LoaderArgs } from "@remix-run/server-runtime";
-import type { AzureUserWithRole } from "~/services/azure.server";
+import type { AzureUserWebAppWithRole } from "~/services/azure.server";
 
 import { json } from "@remix-run/server-runtime";
 import { Form, Link, useCatch, useLoaderData } from "@remix-run/react";
@@ -29,14 +29,13 @@ export async function loader({ params }: LoaderArgs) {
 
   const userIds = usersAtChapter.map(({ userId }) => userId);
 
-  const azureUsersLookUp = azureUsers.reduce<Record<string, AzureUserWithRole>>(
-    (res, value) => {
-      res[value.id] = value;
+  const azureUsersLookUp = azureUsers.reduce<
+    Record<string, AzureUserWebAppWithRole>
+  >((res, value) => {
+    res[value.id] = value;
 
-      return res;
-    },
-    {}
-  );
+    return res;
+  }, {});
 
   return json({
     chapter: {
@@ -92,37 +91,35 @@ export default function ChapterId() {
             </tr>
           </thead>
           <tbody>
-            {chapter.assignedUsers.map(
-              ({ id, displayName, appRoleAssignments }) => (
-                <tr key={id}>
-                  <td className="border p-2">{displayName}</td>
-                  <td className="border p-2">
-                    {appRoleAssignments.length > 0 ? (
-                      appRoleAssignments
-                        .map(({ roleName }) => roleName)
-                        .join(", ")
-                    ) : (
-                      <i className="text-sm">No roles assigned</i>
-                    )}
-                  </td>
-                  <td className="w-64 border" align="right">
-                    {appRoleAssignments
-                      .map(({ appRoleId }) => appRoleId)
-                      .includes(mentorRoleId) ? (
-                      <Link
-                        to={id}
-                        className="btn-success btn-xs btn flex gap-2 align-middle"
-                      >
-                        Assign Student
-                        <UsersIcon className="mr-4 h-4 w-4" />
-                      </Link>
-                    ) : (
-                      <span className="mr-4 w-6">-</span>
-                    )}
-                  </td>
-                </tr>
-              )
-            )}
+            {chapter.assignedUsers.map(({ id, email, appRoleAssignments }) => (
+              <tr key={id}>
+                <td className="border p-2">{email}</td>
+                <td className="border p-2">
+                  {appRoleAssignments.length > 0 ? (
+                    appRoleAssignments
+                      .map(({ roleName }) => roleName)
+                      .join(", ")
+                  ) : (
+                    <i className="text-sm">No roles assigned</i>
+                  )}
+                </td>
+                <td className="w-64 border" align="right">
+                  {appRoleAssignments
+                    .map(({ appRoleId }) => appRoleId)
+                    .includes(mentorRoleId) ? (
+                    <Link
+                      to={id}
+                      className="btn-success btn-xs btn flex gap-2 align-middle"
+                    >
+                      Assign Student
+                      <UsersIcon className="mr-4 h-4 w-4" />
+                    </Link>
+                  ) : (
+                    <span className="mr-4 w-6">-</span>
+                  )}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

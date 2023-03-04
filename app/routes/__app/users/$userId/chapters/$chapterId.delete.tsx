@@ -45,7 +45,7 @@ export default function Delete() {
       <div className="mb-6">
         Are you sure you want to unassign the chapter{" "}
         <span className="font-medium">'{chapter.name}'</span> from the user{" "}
-        <span className="font-medium">'{user.displayName}'</span>?
+        <span className="font-medium">'{user.email}'</span>?
       </div>
 
       <div className="mt-6 flex items-center space-x-6">

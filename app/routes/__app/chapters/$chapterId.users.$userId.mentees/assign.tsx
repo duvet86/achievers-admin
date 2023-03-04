@@ -81,7 +81,7 @@ export async function action({ request, params }: ActionArgs) {
     params.chapterId,
     Number(frequencyInDays),
     dayjs(startDate.toString(), "YYYY-MM-DD").toDate(),
-    sessionUser.displayName
+    sessionUser.email
   );
 
   return redirect(`/chapters/${params.chapterId}/users/${params.userId}`);
@@ -99,7 +99,7 @@ export default function Assign() {
     <Form method="post">
       <h1 className="mb-4 text-xl font-medium">
         Assign Mentee to Mentor{" "}
-        <span className="font-medium">'{mentor.displayName}'</span>
+        <span className="font-medium">'{mentor.email}'</span>
       </h1>
 
       <label
@@ -115,9 +115,9 @@ export default function Assign() {
         disabled={isSubmitting}
       >
         <option value="">Select a Mentee</option>
-        {availableStudents.map(({ id, displayName }) => (
+        {availableStudents.map(({ id, email }) => (
           <option key={id} value={id}>
-            {displayName}
+            {email}
           </option>
         ))}
       </select>

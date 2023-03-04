@@ -19,6 +19,7 @@ test("Header snapshot", async () => {
           mail: "",
           surname: "",
           userPrincipalName: "",
+          email: "",
         }}
       />
     </MemoryRouter>

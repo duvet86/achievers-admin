@@ -50,7 +50,7 @@ export default function Delete() {
       <div className="mb-6">
         Are you sure you want to remove the role{" "}
         <span className="font-medium">'{roleAssignment.roleName}'</span> from
-        the user <span className="font-medium">'{user.displayName}'</span>?
+        the user <span className="font-medium">'{user.email}'</span>?
       </div>
 
       <div className="mt-6 flex items-center space-x-6">

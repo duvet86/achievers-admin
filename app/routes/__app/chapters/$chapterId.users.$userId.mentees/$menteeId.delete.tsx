@@ -50,8 +50,8 @@ export default function MenteesDelete() {
       <h1 className="mb-4 text-xl font-medium">Unassign Mentee from Mentor</h1>
       <div className="mb-6">
         Are you sure you want to unassign the mentee{" "}
-        <span className="font-medium">'{mentee.displayName}'</span> from the
-        mentor <span className="font-medium">'{mentor.displayName}'</span>?
+        <span className="font-medium">'{mentee.email}'</span> from the mentor{" "}
+        <span className="font-medium">'{mentor.email}'</span>?
       </div>
 
       <div className="mt-6 flex items-center space-x-6">

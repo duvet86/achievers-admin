@@ -63,7 +63,7 @@ export async function action({ request, params }: ActionArgs) {
   await assignChapterToUserAsync(
     params.userId,
     chapterId.toString(),
-    sessionUser.displayName
+    sessionUser.email
   );
 
   return redirect(`/users/${params.userId}`);
@@ -80,8 +80,7 @@ export default function Assign() {
   return (
     <Form method="post">
       <h1 className="mb-4 text-xl font-medium">
-        Assign a Chapter to{" "}
-        <span className="font-medium">'{user.displayName}'</span>
+        Assign a Chapter to <span className="font-medium">'{user.email}'</span>
       </h1>
 
       <Select

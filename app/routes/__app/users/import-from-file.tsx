@@ -58,8 +58,8 @@ export const action = async ({
   const fileUsers = await readExcelFileAsync(file as File);
 
   const azureUsersLookup = azureUsers.reduce<Record<string, string>>(
-    (res, { displayName }) => {
-      res[displayName.toLowerCase()] = displayName;
+    (res, { email }) => {
+      res[email.toLowerCase()] = email;
 
       return res;
     },

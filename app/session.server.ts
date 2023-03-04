@@ -1,4 +1,4 @@
-import type { AzureUserWithRole } from "~/services/azure.server";
+import type { AzureUserWebAppWithRole } from "~/services/azure.server";
 
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import { Authenticator, AuthorizationError } from "remix-auth";
@@ -26,7 +26,7 @@ export const sessionStorage = createCookieSessionStorage({
   },
 });
 
-export const authenticator = new Authenticator<AzureUserWithRole>(
+export const authenticator = new Authenticator<AzureUserWebAppWithRole>(
   sessionStorage
 ); // User is a custom user types you can define as you want
 
@@ -37,7 +37,7 @@ export async function getSession(request: Request) {
 
 export async function getSessionUserAsync(
   request: Request
-): Promise<AzureUserWithRole | undefined> {
+): Promise<AzureUserWebAppWithRole | undefined> {
   const session = await getSession(request);
   const userSession = session.get(authenticator.sessionKey);
 
@@ -46,7 +46,7 @@ export async function getSessionUserAsync(
 
 export async function requireSessionUserAsync(
   request: Request
-): Promise<AzureUserWithRole> {
+): Promise<AzureUserWebAppWithRole> {
   const userSession = await getSessionUserAsync(request);
 
   if (!userSession) {

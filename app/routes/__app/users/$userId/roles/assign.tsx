@@ -70,8 +70,7 @@ export default function Assign() {
   return (
     <Form method="post">
       <h1 className="mb-4 text-xl font-medium">
-        Assing a Role to the{" "}
-        <span className="font-medium">'{user.displayName}'</span>
+        Assing a Role to the <span className="font-medium">'{user.email}'</span>
       </h1>
 
       <Select

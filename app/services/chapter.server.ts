@@ -1,5 +1,5 @@
 import type { Chapter, UserAtChapter } from "@prisma/client";
-import type { AzureUserWithRole } from "~/services/azure.server";
+import type { AzureUserWebAppWithRole } from "~/services/azure.server";
 
 import { prisma } from "~/db.server";
 
@@ -7,7 +7,7 @@ export async function getChaptersAsync() {
   return prisma.chapter.findMany();
 }
 
-export async function getChapterByIdAsync(id: AzureUserWithRole["id"]) {
+export async function getChapterByIdAsync(id: AzureUserWebAppWithRole["id"]) {
   return prisma.chapter.findUniqueOrThrow({
     where: {
       id,
@@ -24,7 +24,7 @@ export async function getUsersAtChapterByIdAsync(chapterId: Chapter["id"]) {
 }
 
 export async function getAssignedChaptersToUserAsync(
-  id: AzureUserWithRole["id"],
+  id: AzureUserWebAppWithRole["id"],
   includeChapters = true
 ) {
   return prisma.userAtChapter.findMany({
@@ -38,7 +38,7 @@ export async function getAssignedChaptersToUserAsync(
 }
 
 export async function getAssignedChaptersForUsersLookUpAsync(
-  userIds: AzureUserWithRole["id"][]
+  userIds: AzureUserWebAppWithRole["id"][]
 ) {
   const userAtChapter = await prisma.userAtChapter.findMany({
     where: {

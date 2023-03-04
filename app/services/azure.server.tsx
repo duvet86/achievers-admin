@@ -15,7 +15,7 @@ export enum Roles {
   Student = "ee1650fe-387b-40c3-bb73-e8d54fbe09a6",
 }
 
-export interface AppRoleAssignment {
+interface AppRoleAssignment {
   id: string;
   appRoleId: string;
   principalDisplayName: string;
@@ -23,11 +23,11 @@ export interface AppRoleAssignment {
   resourceDisplayName: string;
 }
 
-export interface AppRoleAssignmentWithRoleName extends AppRoleAssignment {
-  roleName: string;
+interface AzureUserWithRole extends AzureUser {
+  appRoleAssignments: AppRoleAssignmentWithRoleName[];
 }
 
-export interface AzureUser {
+interface AzureUser {
   id: string;
   displayName: string;
   givenName: string | null;
@@ -37,7 +37,15 @@ export interface AzureUser {
   appRoleAssignments: AppRoleAssignment[];
 }
 
-export interface AzureUserWithRole extends AzureUser {
+export interface AppRoleAssignmentWithRoleName extends AppRoleAssignment {
+  roleName: string;
+}
+
+export interface AzureUserWebApp extends AzureUser {
+  email: string;
+}
+
+export interface AzureUserWebAppWithRole extends AzureUserWebApp {
   appRoleAssignments: AppRoleAssignmentWithRoleName[];
 }
 
@@ -168,7 +176,7 @@ export async function getAzureRolesAsync(): Promise<AppRole[]> {
   }
 }
 
-export async function getAzureUsersAsync(): Promise<AzureUser[]> {
+export async function getAzureUsersAsync(): Promise<AzureUserWebApp[]> {
   try {
     const response = await fetch(
       `${MICROSOFT_GRAPH_V1_BASEURL}/users?$expand=appRoleAssignments`,
@@ -179,14 +187,17 @@ export async function getAzureUsersAsync(): Promise<AzureUser[]> {
 
     const azureUsers: { value: AzureUser[] } = await response.json();
 
-    return azureUsers.value;
+    return azureUsers.value.map((user) => ({
+      ...user,
+      email: user.mail ?? user.userPrincipalName,
+    }));
   } catch (e) {
     throw redirect("/logout");
   }
 }
 
 export async function getAzureUsersWithRolesAsync(): Promise<
-  AzureUserWithRole[]
+  AzureUserWebAppWithRole[]
 > {
   try {
     const [azureUsers, roles] = await Promise.all([
@@ -196,6 +207,7 @@ export async function getAzureUsersWithRolesAsync(): Promise<
 
     return azureUsers.map((user) => ({
       ...user,
+      email: user.mail ?? user.userPrincipalName,
       appRoleAssignments: user.appRoleAssignments
         .filter(({ appRoleId }) => roles[appRoleId])
         .map((roleAssignment) => ({
@@ -210,7 +222,7 @@ export async function getAzureUsersWithRolesAsync(): Promise<
 
 export async function getAzureUserWithRolesByIdAsync(
   azureId: string
-): Promise<AzureUserWithRole> {
+): Promise<AzureUserWebAppWithRole> {
   try {
     const response = await fetch(
       `${MICROSOFT_GRAPH_V1_BASEURL}/users/${azureId}?$expand=appRoleAssignments`,
@@ -228,6 +240,7 @@ export async function getAzureUserWithRolesByIdAsync(
 
     return {
       ...azureUser,
+      email: azureUser.mail ?? azureUser.userPrincipalName,
       appRoleAssignments: azureUser.appRoleAssignments
         .filter(({ appRoleId }) => roles[appRoleId])
         .map((roleAssignment) => ({
