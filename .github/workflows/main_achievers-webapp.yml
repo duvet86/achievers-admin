@@ -5,6 +5,7 @@ name: Build and deploy Node.js app to Azure Web App - achievers-admin
 
 permissions:
   id-token: write
+  contents: read
 
 on:
   push:
