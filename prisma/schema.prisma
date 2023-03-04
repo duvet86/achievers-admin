@@ -23,7 +23,6 @@ model User {
 
   firstName                    String
   lastName                     String
-  email                        String             @unique
   additionalEmail              String?            @unique
   mobile                       String
   address                      String

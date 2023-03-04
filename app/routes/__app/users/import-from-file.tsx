@@ -99,7 +99,6 @@ export const action = async ({
       ]
         ? newUsers[i]["Director Identification Number"]
         : null,
-      email: newUsers[i]["Email address"],
       emergencyContactAddress: newUsers[i]["Emergency Contact Address"],
       emergencyContactName: newUsers[i]["Emergency Contact Name"],
       emergencyContactNumber: newUsers[i]["Emergency Contact Name"],

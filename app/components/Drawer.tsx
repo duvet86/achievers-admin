@@ -15,9 +15,9 @@ const links = [
 
 export default function Drawer() {
   return (
-    <div className="drawer-side">
+    <div className="drawer-side mt-16">
       <label htmlFor="drawer" className="drawer-overlay"></label>
-      <ul className="menu mt-16 w-80 border-r border-primary bg-base-200 p-4 text-base-content">
+      <ul className="menu w-80 border-r border-primary bg-base-200 p-4 text-base-content">
         {links.map(({ label, value }, index) => (
           <li key={index}>
             <NavLink

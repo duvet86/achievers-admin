@@ -6,10 +6,12 @@ import { json } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
 
+import { getSessionUserAsync } from "~/session.server";
+
 import { getUserByIdAsync, updateUserByIdAsync } from "~/services/user.server";
 import { getAssignedChaptersToUserAsync } from "~/services/chapter.server";
-
 import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
+import { isStringNullOrEmpty } from "~/services/string-utils.server";
 
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
@@ -20,22 +22,25 @@ import Title from "~/components/Title";
 import Checkbox from "~/components/Checkbox";
 import Select from "~/components/Select";
 import DateInput from "~/components/DateInput";
-import { isStringNullOrEmpty } from "~/services/string-utils.server";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
-  const azureUser = await getAzureUserWithRolesByIdAsync(params.userId);
-
-  const [user, assignedChapters] = await Promise.all([
+  const [sessionUser, azureUser, user, assignedChapters] = await Promise.all([
+    getSessionUserAsync(request),
+    getAzureUserWithRolesByIdAsync(params.userId),
     getUserByIdAsync(params.userId),
     getAssignedChaptersToUserAsync(params.userId),
   ]);
 
+  const email = azureUser?.mail ?? azureUser?.userPrincipalName;
+
   return json({
+    isLoggedUser: sessionUser?.id === azureUser.id,
     user: {
       ...azureUser,
       ...user,
+      email,
       assignedChapters,
     },
   });
@@ -152,7 +157,7 @@ export async function action({ request, params }: ActionArgs) {
 }
 
 export default function Chapter() {
-  const { user } = useLoaderData<typeof loader>();
+  const { user, isLoggedUser } = useLoaderData<typeof loader>();
 
   return (
     <>
@@ -165,9 +170,11 @@ export default function Chapter() {
 
       <hr className="mb-4" />
 
-      <Title>
-        Edit info for &ldquo;{user.mail ?? user.userPrincipalName}&rdquo;
-      </Title>
+      {isLoggedUser ? (
+        <Title>Edit Profile</Title>
+      ) : (
+        <Title>Edit info for &ldquo;{user.email}&rdquo;</Title>
+      )}
 
       <div className="flex">
         <Form
@@ -189,7 +196,7 @@ export default function Chapter() {
           />
 
           <Input
-            defaultValue={user?.email || ""}
+            defaultValue={user.email}
             label="Email"
             name="email"
             readOnly

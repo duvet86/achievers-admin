@@ -1,3 +1,5 @@
+import type { AzureUserWithRole } from "~/services/azure.server";
+
 import { Link } from "@remix-run/react";
 
 import UserCircleIcon from "@heroicons/react/24/solid/UserCircleIcon";
@@ -8,9 +10,12 @@ import ArrowLeftOnRectangleIcon from "@heroicons/react/24/solid/ArrowLeftOnRecta
 interface Props {
   isAdmin: boolean;
   version: string;
+  sessionUser: AzureUserWithRole;
 }
 
-export default function Navbar({ isAdmin, version }: Props) {
+export default function Navbar({ isAdmin, version, sessionUser }: Props) {
+  const displayName = sessionUser.mail ?? sessionUser.userPrincipalName;
+
   return (
     <nav className="navbar absolute top-0 left-0 h-16 bg-primary text-primary-content shadow-md">
       <div className="flex-none lg:hidden">
@@ -35,17 +40,20 @@ export default function Navbar({ isAdmin, version }: Props) {
       </div>
 
       <div className="dropdown-end dropdown hidden lg:block">
-        <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
-          <div className="w-10 rounded-full">
-            <UserCircleIcon />
-          </div>
-        </label>
+        <div className="flex items-center gap-2">
+          <div className="font-semibold">{displayName}</div>
+          <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
+            <div className="w-10 rounded-full">
+              <UserCircleIcon />
+            </div>
+          </label>
+        </div>
         <ul
           tabIndex={0}
           className="dropdown-content menu rounded-box w-52 bg-base-100 p-2 shadow"
         >
           <li>
-            <Link className="font-semibold" to="/profile">
+            <Link className="font-semibold" to={`/users/${sessionUser.id}`}>
               <UserIcon className="mr-2 w-6" />
               Profile
             </Link>
