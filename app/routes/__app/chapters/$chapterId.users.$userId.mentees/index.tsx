@@ -1,4 +1,3 @@
-import type { MentoringStudent } from "@prisma/client";
 import type { LoaderArgs } from "@remix-run/server-runtime";
 
 import { Link, useCatch, useLoaderData } from "@remix-run/react";
@@ -7,9 +6,11 @@ import { json } from "@remix-run/server-runtime";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
-import { getAzureUsersWithRolesAsync } from "~/services/azure.server";
-import { getAssignedChaptersToUserAsync } from "~/services/chapter.server";
-import { getMenteesMentoredByAsync } from "~/services/user.server";
+import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
+import {
+  getMenteesMentoredByAsync,
+  getUserByIdAsync,
+} from "~/services/user.server";
 
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
@@ -18,62 +19,42 @@ import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
-  const [azureUsers, mentoringStudents, assignedChapters] = await Promise.all([
-    getAzureUsersWithRolesAsync(),
+  const [azureUser, user, assignedMentees] = await Promise.all([
+    getAzureUserWithRolesByIdAsync(params.userId),
+    getUserByIdAsync(params.userId),
     getMenteesMentoredByAsync(params.userId),
-    getAssignedChaptersToUserAsync(params.userId),
   ]);
-
-  const azureUser = azureUsers.find(({ id }) => id === params.userId);
-  invariant(azureUser, "azureUser not found");
-
-  const menteesLookUp = mentoringStudents.reduce<
-    Record<string, MentoringStudent>
-  >((res, value) => {
-    res[value.menteeId] = value;
-
-    return res;
-  }, {});
-
-  const azureMentees = azureUsers
-    .filter(({ id }) => menteesLookUp[id] !== undefined)
-    .map((azureUser) => ({
-      ...azureUser,
-      ...menteesLookUp[azureUser.id],
-    }));
 
   return json({
     user: {
       ...azureUser,
-      mentoringStudents: azureMentees,
+      ...user,
+      assignedMentees,
     },
-    assignedChapters,
   });
 }
 
-export default function ChapterUser() {
-  const {
-    user,
-
-    assignedChapters,
-  } = useLoaderData<typeof loader>();
+export default function Mentees() {
+  const { user } = useLoaderData<typeof loader>();
 
   return (
     <div>
-      <h3 className="text-2xl font-bold">{user.userPrincipalName}</h3>
-      <p className="mt-4 py-2">Email: {user.mail ?? "-"}</p>
+      <h3 className="text-2xl font-bold">{user.email}</h3>
       <p className="py-2">
         Role:{" "}
         {user.appRoleAssignments.length > 0 ? (
           user.appRoleAssignments.map(({ roleName }) => roleName).join(", ")
         ) : (
-          <i>No roles assigned</i>
+          <i>No Roles assigned</i>
         )}
       </p>
-      <p>
-        Assigned Chapter:{" "}
-        {assignedChapters.map(({ chapter: { name } }) => name).join(", ")}
-      </p>
+      {user.Chapter ? (
+        <p>Assigned Chapter: {user.Chapter.name}</p>
+      ) : (
+        <p>
+          <i>No Chapters assigned</i>
+        </p>
+      )}
 
       <hr className="my-4" />
 
@@ -96,17 +77,23 @@ export default function ChapterUser() {
             </tr>
           </thead>
           <tbody>
-            {user.mentoringStudents.length === 0 && (
+            {user.assignedMentees.length === 0 && (
               <tr>
                 <td colSpan={3} className="border p-2">
                   <i>No Mentees assigned to this Mentor</i>
                 </td>
               </tr>
             )}
-            {user.mentoringStudents.map(
-              ({ id, userPrincipalName, frequencyInDays, startDate }) => (
+            {user.assignedMentees.map(
+              ({
+                frequencyInDays,
+                startDate,
+                Mentee: { id, firstName, lastName },
+              }) => (
                 <tr key={id}>
-                  <td className="border p-2">{userPrincipalName}</td>
+                  <td className="border p-2">
+                    {firstName} {lastName}
+                  </td>
                   <td className="border p-2">Every {frequencyInDays} days</td>
                   <td className="border p-2">
                     {dayjs(startDate).format("DD/MM/YYYY")}

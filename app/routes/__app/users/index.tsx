@@ -3,7 +3,7 @@ import { useLoaderData, Link } from "@remix-run/react";
 import { json } from "@remix-run/server-runtime";
 
 import { getAzureUsersWithRolesAsync } from "~/services/azure.server";
-import { getAssignedChaptersForUsersLookUpAsync } from "~/services/chapter.server";
+import { getAssignedChapterToUsersLookUpAsync } from "~/services/chapter.server";
 
 import { ArrowUpTrayIcon, PencilIcon } from "@heroicons/react/24/solid";
 
@@ -12,7 +12,7 @@ import Title from "~/components/Title";
 export async function loader() {
   const azureUsers = await getAzureUsersWithRolesAsync();
 
-  const assignedChaptersLookUp = await getAssignedChaptersForUsersLookUpAsync(
+  const assignedChapterLookUp = await getAssignedChapterToUsersLookUpAsync(
     azureUsers.map(({ id }) => id)
   );
 
@@ -21,7 +21,7 @@ export async function loader() {
       .map((user) => ({
         ...user,
         email: user.mail ?? user.userPrincipalName,
-        assignedChapters: assignedChaptersLookUp[user.id] ?? [],
+        assignedChapter: assignedChapterLookUp[user.id],
       }))
       .sort((a, b) =>
         a.email.localeCompare(b.email, undefined, {
@@ -58,7 +58,7 @@ export default function SelectChapter() {
           </thead>
           <tbody>
             {data.users.map(
-              ({ id, email, appRoleAssignments, assignedChapters }) => (
+              ({ id, email, appRoleAssignments, assignedChapter }) => (
                 <tr key={id}>
                   <td className="border p-2">{email}</td>
                   <td className="border p-2">
@@ -71,12 +71,10 @@ export default function SelectChapter() {
                     )}
                   </td>
                   <td className="border p-2">
-                    {assignedChapters.length > 0 ? (
-                      assignedChapters
-                        .map(({ chapter: { name } }) => name)
-                        .join(", ")
+                    {assignedChapter ? (
+                      assignedChapter.name
                     ) : (
-                      <i className="text-sm">No chapters assigned</i>
+                      <i className="text-sm">No chapter assigned</i>
                     )}
                   </td>
                   <td className="border p-2">

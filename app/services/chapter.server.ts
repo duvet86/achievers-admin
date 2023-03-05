@@ -1,4 +1,4 @@
-import type { Chapter, UserAtChapter } from "@prisma/client";
+import type { Chapter } from "@prisma/client";
 import type { AzureUserWebAppWithRole } from "~/services/azure.server";
 
 import { prisma } from "~/db.server";
@@ -16,55 +16,31 @@ export async function getChapterByIdAsync(id: AzureUserWebAppWithRole["id"]) {
 }
 
 export async function getUsersAtChapterByIdAsync(chapterId: Chapter["id"]) {
-  return await prisma.userAtChapter.findMany({
+  return await prisma.user.findMany({
     where: {
       chapterId,
     },
   });
 }
 
-export async function getAssignedChaptersToUserAsync(
-  id: AzureUserWebAppWithRole["id"],
-  includeChapters = true
-) {
-  return prisma.userAtChapter.findMany({
-    where: {
-      userId: id,
-    },
-    include: {
-      chapter: includeChapters,
-    },
-  });
-}
-
-export async function getAssignedChaptersForUsersLookUpAsync(
+export async function getAssignedChapterToUsersLookUpAsync(
   userIds: AzureUserWebAppWithRole["id"][]
 ) {
-  const userAtChapter = await prisma.userAtChapter.findMany({
+  const userWithChapter = await prisma.user.findMany({
     where: {
-      userId: {
+      id: {
         in: userIds,
       },
     },
     include: {
-      chapter: true,
+      Chapter: true,
     },
   });
 
-  const assignedChaptersLookUp = userAtChapter.reduce<
-    Record<
-      string,
-      | Array<
-          UserAtChapter & {
-            chapter: Chapter;
-          }
-        >
-      | undefined
-    >
-  >((res, value) => {
-    res[value.userId] = res[value.userId]
-      ? [...res[value.userId]!, value]
-      : [value];
+  const assignedChaptersLookUp = userWithChapter.reduce<
+    Record<string, Chapter | null>
+  >((res, user) => {
+    res[user.id] = user.Chapter;
 
     return res;
   }, {});

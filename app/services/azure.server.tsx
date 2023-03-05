@@ -12,7 +12,6 @@ export const ACHIEVERS_DOMAIN = "achieversclubwa.org.au";
 export enum Roles {
   Admin = "e567add0-fec3-4c87-941a-05dd2e18cdfd",
   Mentor = "a2ed7b54-4379-465d-873d-2e182e0bd8ef",
-  Student = "ee1650fe-387b-40c3-bb73-e8d54fbe09a6",
 }
 
 interface AppRoleAssignment {

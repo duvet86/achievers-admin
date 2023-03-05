@@ -1,22 +1,20 @@
-import type {
-  User,
-  MentoringStudent,
-  UserAtChapter,
-  Prisma,
-} from "@prisma/client";
+import type { User, MentoringMentee, Prisma } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
 export interface AssignStudentToMentor {
   mentorId: User["id"];
-  menteeeId: MentoringStudent["menteeId"];
-  chapterId: MentoringStudent["chapterId"];
+  menteeeId: MentoringMentee["menteeId"];
+  chapterId: MentoringMentee["chapterId"];
 }
 
 export async function getUserByIdAsync(id: string) {
   return await prisma.user.findUnique({
     where: {
       id,
+    },
+    include: {
+      Chapter: true,
     },
   });
 }
@@ -40,50 +38,50 @@ export async function createManyUsersAsync(data: Prisma.UserCreateManyInput[]) {
 }
 
 export async function getMenteesMentoredByAsync(mentorId: User["id"]) {
-  return await prisma.mentoringStudent.findMany({
+  return await prisma.mentoringMentee.findMany({
     where: {
       userId: mentorId,
+    },
+    include: {
+      Mentee: true,
     },
   });
 }
 
 export async function assignChapterToUserAsync(
-  userId: UserAtChapter["userId"],
-  chapterId: UserAtChapter["chapterId"],
-  assignedBy: UserAtChapter["assignedBy"]
+  userId: User["id"],
+  chapterId: User["chapterId"]
 ) {
-  await prisma.userAtChapter.create({
+  await prisma.user.update({
+    where: {
+      id: userId,
+    },
     data: {
-      assignedBy,
-      userId,
       chapterId,
     },
   });
 }
 
-export async function unassignChapterFromUserAsync(
-  userId: UserAtChapter["userId"],
-  chapterId: UserAtChapter["chapterId"]
-) {
-  await prisma.userAtChapter.delete({
+export async function unassignChapterFromUserAsync(userId: User["id"]) {
+  await prisma.user.update({
     where: {
-      userId_chapterId: {
-        chapterId,
-        userId,
-      },
+      id: userId,
+    },
+    data: {
+      chapterId: null,
     },
   });
 }
 
 export async function assignMenteeFromMentorAsync(
-  userId: MentoringStudent["userId"],
-  menteeId: MentoringStudent["menteeId"],
-  chapterId: MentoringStudent["chapterId"],
-  frequencyInDays: MentoringStudent["frequencyInDays"],
-  startDate: MentoringStudent["startDate"],
-  assignedBy: MentoringStudent["assignedBy"]
+  userId: MentoringMentee["userId"],
+  menteeId: MentoringMentee["menteeId"],
+  chapterId: MentoringMentee["chapterId"],
+  frequencyInDays: MentoringMentee["frequencyInDays"],
+  startDate: MentoringMentee["startDate"],
+  assignedBy: MentoringMentee["assignedBy"]
 ) {
-  await prisma.mentoringStudent.create({
+  await prisma.mentoringMentee.create({
     data: {
       userId,
       menteeId,
@@ -96,11 +94,11 @@ export async function assignMenteeFromMentorAsync(
 }
 
 export async function unassignMenteeFromMentorAsync(
-  userId: MentoringStudent["userId"],
-  menteeId: MentoringStudent["menteeId"],
-  chapterId: MentoringStudent["chapterId"]
+  userId: MentoringMentee["userId"],
+  menteeId: MentoringMentee["menteeId"],
+  chapterId: MentoringMentee["chapterId"]
 ) {
-  await prisma.mentoringStudent.delete({
+  await prisma.mentoringMentee.delete({
     where: {
       userId_menteeId_chapterId: {
         chapterId,

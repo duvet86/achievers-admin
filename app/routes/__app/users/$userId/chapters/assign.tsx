@@ -11,13 +11,12 @@ import {
 
 import invariant from "tiny-invariant";
 
-import { requireSessionUserAsync } from "~/session.server";
 import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
-import { assignChapterToUserAsync } from "~/services/user.server";
 import {
-  getAssignedChaptersToUserAsync,
-  getChaptersAsync,
-} from "~/services/chapter.server";
+  assignChapterToUserAsync,
+  getUserByIdAsync,
+} from "~/services/user.server";
+import { getChaptersAsync } from "~/services/chapter.server";
 
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
@@ -27,28 +26,24 @@ import Select from "~/components/Select";
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
-  const [user, chapters, assignedChapters] = await Promise.all([
+  const [azureUser, user, chapters] = await Promise.all([
     getAzureUserWithRolesByIdAsync(params.userId),
+    getUserByIdAsync(params.userId),
     getChaptersAsync(),
-    getAssignedChaptersToUserAsync(params.userId, false),
   ]);
 
-  const assignedChapterIds = assignedChapters.map(({ chapterId }) => chapterId);
-
-  const availableChapters = chapters.filter(
-    ({ id }) => !assignedChapterIds.includes(id)
-  );
+  if (user?.Chapter) {
+    throw new Error("User already has a chapter assigned.");
+  }
 
   return json({
-    user,
-    availableChapters,
+    azureUser,
+    chapters,
   });
 }
 
 export async function action({ request, params }: ActionArgs) {
   invariant(params.userId, "userId not found");
-
-  const sessionUser = await requireSessionUserAsync(request);
 
   const formData = await request.formData();
 
@@ -60,17 +55,13 @@ export async function action({ request, params }: ActionArgs) {
     });
   }
 
-  await assignChapterToUserAsync(
-    params.userId,
-    chapterId.toString(),
-    sessionUser.email
-  );
+  await assignChapterToUserAsync(params.userId, chapterId.toString());
 
   return redirect(`/users/${params.userId}`);
 }
 
 export default function Assign() {
-  const { user, availableChapters } = useLoaderData<typeof loader>();
+  const { azureUser, chapters } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   const transition = useTransition();
@@ -80,7 +71,8 @@ export default function Assign() {
   return (
     <Form method="post">
       <h1 className="mb-4 text-xl font-medium">
-        Assign a Chapter to <span className="font-medium">'{user.email}'</span>
+        Assign a Chapter to{" "}
+        <span className="font-medium">'{azureUser.email}'</span>
       </h1>
 
       <Select
@@ -88,7 +80,7 @@ export default function Assign() {
         name="chapterId"
         disabled={isSubmitting}
         options={[{ value: "", label: "Select a Chapter" }].concat(
-          availableChapters.map(({ id, name }) => ({
+          chapters.map(({ id, name }) => ({
             label: name,
             value: id,
           }))

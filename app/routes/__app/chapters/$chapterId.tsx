@@ -27,7 +27,7 @@ export async function loader({ params }: LoaderArgs) {
     getAzureUsersWithRolesAsync(),
   ]);
 
-  const userIds = usersAtChapter.map(({ userId }) => userId);
+  const userIds = usersAtChapter.map(({ id }) => id);
 
   const azureUsersLookUp = azureUsers.reduce<
     Record<string, AzureUserWebAppWithRole>

@@ -1,7 +1,6 @@
 import type { LoaderArgs } from "@remix-run/server-runtime";
 
 import { json } from "@remix-run/server-runtime";
-import { redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 
 import { getSessionUserAsync, logout } from "~/session.server";
@@ -15,17 +14,13 @@ import { version } from "~/services/version.server";
 export async function loader({ request }: LoaderArgs) {
   const sessionUser = await getSessionUserAsync(request);
 
-  if (!sessionUser) {
+  if (sessionUser === undefined) {
     return logout(request);
   }
 
   const sessionUserRoles = sessionUser.appRoleAssignments.map(
     ({ appRoleId }) => appRoleId
   );
-
-  if (sessionUserRoles.includes(Roles.Student)) {
-    throw redirect("/401");
-  }
 
   const isAdmin = sessionUserRoles.includes(Roles.Admin);
 

@@ -1,7 +1,5 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
 
-import type { MentoringStudent } from "@prisma/client";
-
 import { json, redirect } from "@remix-run/server-runtime";
 import {
   Form,
@@ -18,7 +16,7 @@ import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
 import { requireSessionUserAsync } from "~/session.server";
-import { getAzureUsersWithRolesAsync, Roles } from "~/services/azure.server";
+import { getAzureUsersWithRolesAsync } from "~/services/azure.server";
 import {
   assignMenteeFromMentorAsync,
   getMenteesMentoredByAsync,
@@ -35,25 +33,9 @@ export async function loader({ params }: LoaderArgs) {
   const mentor = azureUsers.find(({ id }) => id === params.userId);
   invariant(mentor, "azureUser not found");
 
-  const menteesLookUp = mentoringStudents.reduce<
-    Record<string, MentoringStudent>
-  >((res, value) => {
-    res[value.menteeId] = value;
-
-    return res;
-  }, {});
-
-  const availableStudents = azureUsers
-    .filter(({ id }) => menteesLookUp[id] === undefined)
-    .filter(({ appRoleAssignments }) =>
-      appRoleAssignments
-        .map(({ appRoleId }) => appRoleId)
-        .includes(Roles.Student)
-    );
-
   return json({
     mentor,
-    availableStudents,
+    availableStudents: [],
   });
 }
 

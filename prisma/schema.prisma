@@ -55,6 +55,9 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  Chapter   Chapter? @relation(fields: [chapterId], references: [id])
+  chapterId String?
+
   @@unique([firstName, lastName])
 }
 
@@ -65,7 +68,10 @@ model Mentee {
   lastName  String
   yearLevel String
 
-  mentoringStudent MentoringStudent[]
+  chapter   Chapter? @relation(fields: [chapterId], references: [id])
+  chapterId String?
+
+  Mentors MentoringMentee[]
 
   @@unique([firstName, lastName])
 }
@@ -78,29 +84,18 @@ model Chapter {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userAtChapters    UserAtChapter[]
-  mentoringStudents MentoringStudent[]
+  MentoringMentees MentoringMentee[]
+  User             User[]
+  Mentee           Mentee[]
 }
 
-model UserAtChapter {
+model MentoringMentee {
   userId String
 
-  chapter   Chapter @relation(fields: [chapterId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  chapterId String
-
-  assignedAt DateTime @default(now())
-  assignedBy String
-
-  @@id([userId, chapterId])
-}
-
-model MentoringStudent {
-  userId String
-
-  mentee   Mentee @relation(fields: [menteeId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  Mentee   Mentee @relation(fields: [menteeId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   menteeId String
 
-  chapter   Chapter @relation(fields: [chapterId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  Chapter   Chapter @relation(fields: [chapterId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   chapterId String
 
   assignedAt DateTime @default(now())

@@ -15,7 +15,6 @@ import invariant from "tiny-invariant";
 import { getSessionUserAsync } from "~/session.server";
 
 import { getUserByIdAsync, updateUserByIdAsync } from "~/services/user.server";
-import { getAssignedChaptersToUserAsync } from "~/services/chapter.server";
 import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
 
 import { isStringNullOrEmpty } from "~/services/utils/string.utils.server";
@@ -34,11 +33,10 @@ import DateInput from "~/components/DateInput";
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
-  const [sessionUser, azureUser, user, assignedChapters] = await Promise.all([
+  const [sessionUser, azureUser, user] = await Promise.all([
     getSessionUserAsync(request),
     getAzureUserWithRolesByIdAsync(params.userId),
     getUserByIdAsync(params.userId),
-    getAssignedChaptersToUserAsync(params.userId),
   ]);
 
   const email = azureUser?.mail ?? azureUser?.userPrincipalName;
@@ -49,7 +47,6 @@ export async function loader({ request, params }: LoaderArgs) {
       ...azureUser,
       ...user,
       email,
-      assignedChapters,
     },
   });
 }
@@ -470,22 +467,19 @@ export default function Chapter() {
                 </tr>
               </thead>
               <tbody>
-                {user.assignedChapters.length === 0 && (
+                {user.Chapter ? (
                   <tr>
-                    <td colSpan={2} className="border p-2">
-                      <i>No Chapters assigned to this user</i>
-                    </td>
-                  </tr>
-                )}
-                {user.assignedChapters.map(({ chapter: { id, name } }) => (
-                  <tr key={id}>
                     <td className="border p-2">
-                      <span className="font-semibold">{name}</span>
-                      <input type="hidden" name="chapterIds" value={id} />
+                      <span className="font-semibold">{user.Chapter.name}</span>
+                      <input
+                        type="hidden"
+                        name="chapterIds"
+                        value={user.Chapter.id}
+                      />
                     </td>
                     <td align="right" className="border p-2">
                       <Link
-                        to={`chapters/${id}/delete`}
+                        to={`chapters/${user.Chapter.id}/delete`}
                         className="flex w-32 items-center justify-center rounded bg-red-600 px-3 py-1 text-white"
                       >
                         <XMarkIcon className="mr-2 w-5" />
@@ -493,7 +487,13 @@ export default function Chapter() {
                       </Link>
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  <tr>
+                    <td colSpan={2} className="border p-2">
+                      <i>No Chapter assigned to this user</i>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
