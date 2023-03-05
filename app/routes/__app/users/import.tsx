@@ -8,7 +8,13 @@ import {
   unstable_parseMultipartFormData,
   json,
 } from "@remix-run/server-runtime";
-import { Form, Link, useActionData, useTransition } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useActionData,
+  useCatch,
+  useTransition,
+} from "@remix-run/react";
 
 import { readExcelFileAsync } from "~/services/read-excel-file.server";
 import {
@@ -24,6 +30,10 @@ import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 import LoadingSpinner from "~/components/LoadingSpinner";
 import Title from "~/components/Title";
+import {
+  isEmail,
+  isStringNullOrEmpty,
+} from "~/services/utils/string.utils.server";
 
 export const action = async ({
   request,
@@ -43,7 +53,7 @@ export const action = async ({
   );
 
   const file = formData.get("usersSheet");
-  if (!file) {
+  if (file === null || !(file instanceof File)) {
     return json({
       newUsers: [],
       responses: [],
@@ -51,11 +61,30 @@ export const action = async ({
     });
   }
 
+  const fileUsers = await readExcelFileAsync(file);
+
+  const incorrectEmails = fileUsers.reduce<string[]>((res, fileUser, index) => {
+    if (
+      isStringNullOrEmpty(fileUser["Email address"]) ||
+      !isEmail(fileUser["Email address"])
+    ) {
+      res.push(`row number: ${index + 1}, email: ${fileUser["Email address"]}`);
+    }
+    return res;
+  }, []);
+
+  if (incorrectEmails.length > 0) {
+    return json({
+      newUsers: [],
+      responses: [],
+      message: `Incorrect emails: \n- ${incorrectEmails.join("\n- ")}`,
+    });
+  }
+
   const dbUsers: Prisma.UserCreateManyInput[] = [];
   const responses: AzureInviteResponse[] = [];
 
   const azureUsers = await getAzureUsersAsync();
-  const fileUsers = await readExcelFileAsync(file as File);
 
   const azureUsersLookup = azureUsers.reduce<Record<string, string>>(
     (res, { email }) => {
@@ -68,9 +97,7 @@ export const action = async ({
 
   const newUsers = fileUsers.filter(
     (fileUser) =>
-      azureUsersLookup[
-        `${fileUser["First Name"]} ${fileUser["Last Name"]}`.toLowerCase()
-      ] === undefined
+      azureUsersLookup[fileUser["Email address"].toLowerCase()] === undefined
   );
 
   for (let i = 0; i < newUsers.length; i++) {
@@ -157,7 +184,7 @@ export const action = async ({
   });
 };
 
-export default function ImportFromFile() {
+export default function Import() {
   const data = useActionData<typeof action>();
   const transition = useTransition();
 
@@ -198,9 +225,6 @@ export default function ImportFromFile() {
             accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             disabled={isDisabled}
           />
-          <label className="label">
-            <span className="label-text-alt">{data?.message}</span>
-          </label>
         </div>
 
         <div className="flex items-center gap-4">
@@ -214,6 +238,16 @@ export default function ImportFromFile() {
           </button>
           {isDisabled && <LoadingSpinner dark />}
         </div>
+
+        {data?.message && (
+          <div className="card bg-error">
+            <div className="card-body">
+              <h2 className="card-title">Error!</h2>
+              <pre className="whitespace-pre-wrap">{data.message}</pre>
+            </div>
+          </div>
+        )}
+
         <div className="text-info">
           {!data?.message && data?.newUsers.length === 0 && (
             <p>No new users to import.</p>
@@ -230,10 +264,38 @@ export default function ImportFromFile() {
         </div>
         <div>
           {data?.responses.map((r) => (
-            <p key={r.id}>{JSON.stringify(r)}</p>
+            <div key={r.id} className="card bg-error">
+              <div className="card-body">
+                <h2 className="card-title">Error!</h2>
+                <pre>{JSON.stringify(r)}</pre>
+              </div>
+            </div>
           ))}
         </div>
       </Form>
     </>
   );
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
+
+  return (
+    <div className="card bg-error">
+      <div className="card-body">
+        <h2 className="card-title">Error!</h2>
+        <pre className="whitespace-pre-wrap">{error.message}</pre>
+      </div>
+    </div>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+
+  if (caught.status === 404) {
+    return <div>Note not found</div>;
+  }
+
+  throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }

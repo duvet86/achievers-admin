@@ -272,17 +272,17 @@ export async function createAzureUserAsync(
 export async function inviteUserToAzureAsync(
   azureInviteRequest: AzureInviteRequest
 ): Promise<AzureInviteResponse> {
-  try {
-    const response = await fetch(`${MICROSOFT_GRAPH_V1_BASEURL}/invitations`, {
-      method: "POST",
-      headers: getHeaders(),
-      body: JSON.stringify(azureInviteRequest),
-    });
+  const response = await fetch(`${MICROSOFT_GRAPH_V1_BASEURL}/invitations`, {
+    method: "POST",
+    headers: getHeaders(),
+    body: JSON.stringify(azureInviteRequest),
+  });
 
-    return response.json();
-  } catch (e) {
-    throw redirect("/logout");
+  if (!response.ok) {
+    throw new Error(await response.text());
   }
+
+  return response.json();
 }
 
 export async function assignRoleToUserAsync(

@@ -95,7 +95,7 @@ export default function SelectChapter() {
         </table>
       </div>
       <div className="mt-6 flex justify-end">
-        <Link className="btn-primary btn gap-2" to="import-from-file">
+        <Link className="btn-primary btn gap-2" to="import">
           <ArrowUpTrayIcon className="h-6 w-6" />
           Import users from file
         </Link>
