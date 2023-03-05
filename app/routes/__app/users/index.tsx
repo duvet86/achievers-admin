@@ -3,7 +3,7 @@ import { useLoaderData, Link } from "@remix-run/react";
 import { json } from "@remix-run/server-runtime";
 
 import { getAzureUsersWithRolesAsync } from "~/services/azure.server";
-import { getAssignedChapterToUsersLookUpAsync } from "~/services/chapter.server";
+import { getAssignedChapterToUsersLookUpAsync } from "~/services/user.server";
 
 import { ArrowUpTrayIcon, PencilIcon } from "@heroicons/react/24/solid";
 

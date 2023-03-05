@@ -7,10 +7,8 @@ import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
 import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
-import {
-  getMenteesMentoredByAsync,
-  getUserByIdAsync,
-} from "~/services/user.server";
+import { getUserByIdAsync } from "~/services/user.server";
+import { getMenteesMentoredByAsync } from "~/services/mentoring.server";
 
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
@@ -129,7 +127,7 @@ export default function Mentees() {
           className="my-8 flex w-64 items-center justify-center space-x-2 rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600"
         >
           <PlusIcon className="w-5 text-white" />
-          <span>Assign new Student</span>
+          <span>Assign new Mentee</span>
         </Link>
       </div>
     </div>

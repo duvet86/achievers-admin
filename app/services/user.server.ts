@@ -1,12 +1,6 @@
-import type { User, MentoringMentee, Prisma } from "@prisma/client";
+import type { User, Prisma, Chapter } from "@prisma/client";
 
 import { prisma } from "~/db.server";
-
-export interface AssignStudentToMentor {
-  mentorId: User["id"];
-  menteeeId: MentoringMentee["menteeId"];
-  chapterId: MentoringMentee["chapterId"];
-}
 
 export async function getUserByIdAsync(id: string) {
   return await prisma.user.findUnique({
@@ -37,15 +31,37 @@ export async function createManyUsersAsync(data: Prisma.UserCreateManyInput[]) {
   });
 }
 
-export async function getMenteesMentoredByAsync(mentorId: User["id"]) {
-  return await prisma.mentoringMentee.findMany({
+export async function getUsersAtChapterByIdAsync(chapterId: Chapter["id"]) {
+  return await prisma.user.findMany({
     where: {
-      userId: mentorId,
-    },
-    include: {
-      Mentee: true,
+      chapterId,
     },
   });
+}
+
+export async function getAssignedChapterToUsersLookUpAsync(
+  userIds: User["id"][]
+) {
+  const userWithChapter = await prisma.user.findMany({
+    where: {
+      id: {
+        in: userIds,
+      },
+    },
+    include: {
+      Chapter: true,
+    },
+  });
+
+  const assignedChaptersLookUp = userWithChapter.reduce<
+    Record<string, Chapter | null>
+  >((res, user) => {
+    res[user.id] = user.Chapter;
+
+    return res;
+  }, {});
+
+  return assignedChaptersLookUp;
 }
 
 export async function assignChapterToUserAsync(
@@ -69,42 +85,6 @@ export async function unassignChapterFromUserAsync(userId: User["id"]) {
     },
     data: {
       chapterId: null,
-    },
-  });
-}
-
-export async function assignMenteeFromMentorAsync(
-  userId: MentoringMentee["userId"],
-  menteeId: MentoringMentee["menteeId"],
-  chapterId: MentoringMentee["chapterId"],
-  frequencyInDays: MentoringMentee["frequencyInDays"],
-  startDate: MentoringMentee["startDate"],
-  assignedBy: MentoringMentee["assignedBy"]
-) {
-  await prisma.mentoringMentee.create({
-    data: {
-      userId,
-      menteeId,
-      chapterId,
-      frequencyInDays,
-      startDate,
-      assignedBy,
-    },
-  });
-}
-
-export async function unassignMenteeFromMentorAsync(
-  userId: MentoringMentee["userId"],
-  menteeId: MentoringMentee["menteeId"],
-  chapterId: MentoringMentee["chapterId"]
-) {
-  await prisma.mentoringMentee.delete({
-    where: {
-      userId_menteeId_chapterId: {
-        chapterId,
-        userId,
-        menteeId,
-      },
     },
   });
 }

@@ -11,7 +11,7 @@ import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
-import { unassignMenteeFromMentorAsync } from "~/services/user.server";
+import { unassignMenteeFromMentorAsync } from "~/services/mentoring.server";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");

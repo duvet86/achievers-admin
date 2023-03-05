@@ -9,33 +9,54 @@ import {
   useTransition,
 } from "@remix-run/react";
 
-import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
-import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
-
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
 import { requireSessionUserAsync } from "~/session.server";
-import { getAzureUsersWithRolesAsync } from "~/services/azure.server";
+import { getAzureUserWithRolesByIdAsync, Roles } from "~/services/azure.server";
 import {
   assignMenteeFromMentorAsync,
   getMenteesMentoredByAsync,
-} from "~/services/user.server";
+} from "~/services/mentoring.server";
+import { getMenteesInChapterAsync } from "~/services/mentee.server";
+
+import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
+import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 export async function loader({ params }: LoaderArgs) {
+  invariant(params.chapterId, "chapterId not found");
   invariant(params.userId, "userId not found");
 
-  const [azureUsers, mentoringStudents] = await Promise.all([
-    getAzureUsersWithRolesAsync(),
-    getMenteesMentoredByAsync(params.userId),
-  ]);
+  const [azureUser, currentMentoredMentees, allMenteesInChapter] =
+    await Promise.all([
+      getAzureUserWithRolesByIdAsync(params.userId),
+      getMenteesMentoredByAsync(params.userId),
+      getMenteesInChapterAsync(params.chapterId),
+    ]);
 
-  const mentor = azureUsers.find(({ id }) => id === params.userId);
-  invariant(mentor, "azureUser not found");
+  if (
+    azureUser.appRoleAssignments.find(
+      ({ appRoleId }) => appRoleId === Roles.Mentor
+    ) === undefined
+  ) {
+    throw new Error("Selected user is not a mentor.");
+  }
+
+  const currentMentoredMenteesLookup = currentMentoredMentees.reduce<
+    Record<string, boolean>
+  >((res, { menteeId }) => {
+    res[menteeId] = true;
+    return res;
+  }, {});
+
+  const availableMentees = allMenteesInChapter.filter(
+    ({ id }) => !currentMentoredMenteesLookup[id]
+  );
 
   return json({
-    mentor,
-    availableStudents: [],
+    mentor: azureUser,
+    currentMentoredMentees,
+    availableMentees,
   });
 }
 
@@ -70,7 +91,7 @@ export async function action({ request, params }: ActionArgs) {
 }
 
 export default function Assign() {
-  const { mentor, availableStudents } = useLoaderData<typeof loader>();
+  const { mentor, availableMentees } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   const transition = useTransition();
@@ -97,9 +118,9 @@ export default function Assign() {
         disabled={isSubmitting}
       >
         <option value="">Select a Mentee</option>
-        {availableStudents.map(({ id, email }) => (
+        {availableMentees.map(({ id, firstName, lastName }) => (
           <option key={id} value={id}>
-            {email}
+            {firstName} {lastName}
           </option>
         ))}
       </select>

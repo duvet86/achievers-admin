@@ -68,7 +68,7 @@ model Mentee {
   lastName  String
   yearLevel String
 
-  chapter   Chapter? @relation(fields: [chapterId], references: [id])
+  Chapter   Chapter? @relation(fields: [chapterId], references: [id])
   chapterId String?
 
   Mentors MentoringMentee[]

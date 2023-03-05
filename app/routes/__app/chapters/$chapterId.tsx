@@ -6,10 +6,8 @@ import { Form, Link, useCatch, useLoaderData } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
-import {
-  getChapterByIdAsync,
-  getUsersAtChapterByIdAsync,
-} from "~/services/chapter.server";
+import { getChapterByIdAsync } from "~/services/chapter.server";
+import { getUsersAtChapterByIdAsync } from "~/services/user.server";
 import { getAzureUsersWithRolesAsync, Roles } from "~/services/azure.server";
 
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
@@ -86,7 +84,7 @@ export default function ChapterId() {
                 Role
               </th>
               <th align="right" className="p-2">
-                Assign Students
+                Assign Mentees
               </th>
             </tr>
           </thead>
@@ -111,7 +109,7 @@ export default function ChapterId() {
                       to={id}
                       className="btn-success btn-xs btn flex gap-2 align-middle"
                     >
-                      Assign Student
+                      Assign Mentee
                       <UsersIcon className="mr-4 h-4 w-4" />
                     </Link>
                   ) : (
