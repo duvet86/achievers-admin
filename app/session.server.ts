@@ -50,17 +50,19 @@ const sessionStorage = createSessionStorage({
     };
   },
   async updateData(id, data, expires) {
+    const user = data["user"];
+
     if (
-      data["user"] &&
-      data["user"]["userId"] &&
-      data["user"]["accessToken"] &&
-      data["user"]["refreshToken"] &&
-      data["user"]["expiresIn"]
+      user &&
+      user["userId"] &&
+      user["accessToken"] &&
+      user["refreshToken"] &&
+      user["expiresIn"]
     ) {
-      const userId = data["user"]["userId"];
-      const accessToken = data["user"]["accessToken"];
-      const refreshToken = data["user"]["refreshToken"];
-      const expiresIn = data["user"]["expiresIn"];
+      const userId = user["userId"];
+      const accessToken = user["accessToken"];
+      const refreshToken = user["refreshToken"];
+      const expiresIn = user["expiresIn"];
 
       await prisma.session.upsert({
         where: {
