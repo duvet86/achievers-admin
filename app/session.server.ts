@@ -50,12 +50,18 @@ const sessionStorage = createSessionStorage({
     };
   },
   async updateData(id, data, expires) {
-    const userId = data["user"]["userId"];
-    const accessToken = data["user"]["accessToken"];
-    const refreshToken = data["user"]["refreshToken"];
-    const expiresIn = data["user"]["expiresIn"];
+    if (
+      data["user"] &&
+      data["user"]["userId"] &&
+      data["user"]["accessToken"] &&
+      data["user"]["refreshToken"] &&
+      data["user"]["expiresIn"]
+    ) {
+      const userId = data["user"]["userId"];
+      const accessToken = data["user"]["accessToken"];
+      const refreshToken = data["user"]["refreshToken"];
+      const expiresIn = data["user"]["expiresIn"];
 
-    if (userId && accessToken && refreshToken && expiresIn) {
       await prisma.session.upsert({
         where: {
           id,
@@ -77,11 +83,13 @@ const sessionStorage = createSessionStorage({
     }
   },
   async deleteData(id) {
-    await prisma.session.delete({
-      where: {
-        id,
-      },
-    });
+    try {
+      await prisma.session.delete({
+        where: {
+          id,
+        },
+      });
+    } catch {}
   },
 });
 
