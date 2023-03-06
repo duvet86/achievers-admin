@@ -6,6 +6,7 @@ import { Form, Link, useCatch, useLoaderData } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
+import { getSessionUserAsync } from "~/session.server";
 import { getChapterByIdAsync } from "~/services/chapter.server";
 import { getUsersAtChapterByIdAsync } from "~/services/user.server";
 import { getAzureUsersWithRolesAsync, Roles } from "~/services/azure.server";
@@ -16,13 +17,15 @@ import UsersIcon from "@heroicons/react/24/solid/UsersIcon";
 import Title from "~/components/Title";
 import Input from "~/components/Input";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
+
+  const sessionUser = await getSessionUserAsync(request);
 
   const [chapter, usersAtChapter, azureUsers] = await Promise.all([
     getChapterByIdAsync(params.chapterId),
     getUsersAtChapterByIdAsync(params.chapterId),
-    getAzureUsersWithRolesAsync(),
+    getAzureUsersWithRolesAsync(sessionUser.accessToken),
   ]);
 
   const userIds = usersAtChapter.map(({ id }) => id);

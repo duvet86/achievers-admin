@@ -12,7 +12,7 @@ import {
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
-import { requireSessionUserAsync } from "~/session.server";
+import { getSessionUserAsync } from "~/session.server";
 import { getAzureUserWithRolesByIdAsync, Roles } from "~/services/azure.server";
 import {
   assignMenteeFromMentorAsync,
@@ -23,13 +23,15 @@ import { getMenteesInChapterAsync } from "~/services/mentee.server";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.userId, "userId not found");
 
+  const sessionUser = await getSessionUserAsync(request);
+
   const [azureUser, currentMentoredMentees, allMenteesInChapter] =
     await Promise.all([
-      getAzureUserWithRolesByIdAsync(params.userId),
+      getAzureUserWithRolesByIdAsync(sessionUser.accessToken, params.userId),
       getMenteesMentoredByAsync(params.userId),
       getMenteesInChapterAsync(params.chapterId),
     ]);
@@ -64,15 +66,14 @@ export async function action({ request, params }: ActionArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.userId, "userId not found");
 
-  const sessionUser = await requireSessionUserAsync(request);
-
   const formData = await request.formData();
 
   const menteeId = formData.get("menteeId");
   const frequencyInDays = formData.get("frequencyInDays");
   const startDate = formData.get("startDate");
+  const assignedBy = formData.get("assignedBy");
 
-  if (!menteeId || !frequencyInDays || !startDate) {
+  if (!menteeId || !frequencyInDays || !startDate || !assignedBy) {
     return json({
       error: "Select a Mentee, a Frequency and a Start Date please.",
     });
@@ -84,7 +85,7 @@ export async function action({ request, params }: ActionArgs) {
     params.chapterId,
     Number(frequencyInDays),
     dayjs(startDate.toString(), "YYYY-MM-DD").toDate(),
-    sessionUser.email
+    assignedBy.toString()
   );
 
   return redirect(`/chapters/${params.chapterId}/users/${params.userId}`);
@@ -104,6 +105,8 @@ export default function Assign() {
         Assign Mentee to Mentor{" "}
         <span className="font-medium">'{mentor.email}'</span>
       </h1>
+
+      <input type="hidden" name="assignedBy" value={mentor.email} />
 
       <label
         htmlFor="menteeId"

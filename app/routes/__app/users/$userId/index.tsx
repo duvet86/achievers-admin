@@ -13,7 +13,6 @@ import { json } from "@remix-run/server-runtime";
 import invariant from "tiny-invariant";
 
 import { getSessionUserAsync } from "~/session.server";
-
 import { getUserByIdAsync, updateUserByIdAsync } from "~/services/user.server";
 import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
 
@@ -33,16 +32,18 @@ import DateInput from "~/components/DateInput";
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
-  const [sessionUser, azureUser, user] = await Promise.all([
-    getSessionUserAsync(request),
-    getAzureUserWithRolesByIdAsync(params.userId),
+  const sessionUser = await getSessionUserAsync(request);
+
+  const [currentAzureUser, azureUser, user] = await Promise.all([
+    getAzureUserWithRolesByIdAsync(sessionUser.accessToken, sessionUser.userId),
+    getAzureUserWithRolesByIdAsync(sessionUser.accessToken, params.userId),
     getUserByIdAsync(params.userId),
   ]);
 
-  const email = azureUser?.mail ?? azureUser?.userPrincipalName;
+  const email = azureUser.mail ?? azureUser.userPrincipalName;
 
   return json({
-    isLoggedUser: sessionUser?.id === azureUser.id,
+    isLoggedUser: currentAzureUser.id === azureUser.id,
     user: {
       ...azureUser,
       ...user,

@@ -5,6 +5,7 @@ import { json, redirect } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
 
+import { getSessionUserAsync } from "~/session.server";
 import {
   getAzureUserWithRolesByIdAsync,
   removeRoleFromUserAsync,
@@ -13,11 +14,16 @@ import {
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
   invariant(params.roleId, "roleId not found");
 
-  const user = await getAzureUserWithRolesByIdAsync(params.userId);
+  const sessionUser = await getSessionUserAsync(request);
+
+  const user = await getAzureUserWithRolesByIdAsync(
+    sessionUser.accessToken,
+    params.userId
+  );
 
   const roleAssignment = user.appRoleAssignments.find(
     ({ id }) => id === params.roleId
@@ -32,11 +38,13 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
-export async function action({ params }: ActionArgs) {
+export async function action({ request, params }: ActionArgs) {
   invariant(params.userId, "userId not found");
   invariant(params.roleId, "roleId not found");
 
-  await removeRoleFromUserAsync(params.roleId);
+  const sessionUser = await getSessionUserAsync(request);
+
+  await removeRoleFromUserAsync(sessionUser.accessToken, params.roleId);
 
   return redirect(`/users/${params.userId}`);
 }

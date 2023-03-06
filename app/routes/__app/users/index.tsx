@@ -1,7 +1,10 @@
+import type { LoaderArgs } from "@remix-run/node";
+
 import { useLoaderData, Link } from "@remix-run/react";
 
 import { json } from "@remix-run/server-runtime";
 
+import { getSessionUserAsync } from "~/session.server";
 import { getAzureUsersWithRolesAsync } from "~/services/azure.server";
 import { getAssignedChapterToUsersLookUpAsync } from "~/services/user.server";
 
@@ -9,8 +12,10 @@ import { ArrowUpTrayIcon, PencilIcon } from "@heroicons/react/24/solid";
 
 import Title from "~/components/Title";
 
-export async function loader() {
-  const azureUsers = await getAzureUsersWithRolesAsync();
+export async function loader({ request }: LoaderArgs) {
+  const sessionUser = await getSessionUserAsync(request);
+
+  const azureUsers = await getAzureUsersWithRolesAsync(sessionUser.accessToken);
 
   const assignedChapterLookUp = await getAssignedChapterToUsersLookUpAsync(
     azureUsers.map(({ id }) => id)

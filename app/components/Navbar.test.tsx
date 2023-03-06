@@ -11,7 +11,7 @@ test("Header snapshot", async () => {
       <Navbar
         isAdmin={true}
         version="1"
-        sessionUser={{
+        currentUser={{
           appRoleAssignments: [],
           displayName: "",
           givenName: "",

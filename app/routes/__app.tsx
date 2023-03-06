@@ -3,8 +3,8 @@ import type { LoaderArgs } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { Outlet, useLoaderData } from "@remix-run/react";
 
-import { getSessionUserAsync, logout } from "~/session.server";
-import { Roles } from "~/services/azure.server";
+import { getSessionUserAsync } from "~/session.server";
+import { getAzureUserWithRolesByIdAsync, Roles } from "~/services/azure.server";
 
 import Navbar from "~/components/Navbar";
 import Drawer from "~/components/Drawer";
@@ -14,11 +14,12 @@ import { version } from "~/services/version.server";
 export async function loader({ request }: LoaderArgs) {
   const sessionUser = await getSessionUserAsync(request);
 
-  if (sessionUser === undefined) {
-    return logout(request);
-  }
+  const azureUser = await getAzureUserWithRolesByIdAsync(
+    sessionUser.accessToken,
+    sessionUser.userId
+  );
 
-  const sessionUserRoles = sessionUser.appRoleAssignments.map(
+  const sessionUserRoles = azureUser.appRoleAssignments.map(
     ({ appRoleId }) => appRoleId
   );
 
@@ -26,19 +27,19 @@ export async function loader({ request }: LoaderArgs) {
 
   return json({
     isAdmin,
-    sessionUser,
+    azureUser,
     version,
   });
 }
 
 export default function AppLayout() {
-  const { isAdmin, version, sessionUser } = useLoaderData<typeof loader>();
+  const { isAdmin, version, azureUser } = useLoaderData<typeof loader>();
 
   return (
     <div className="drawer-mobile drawer">
       <input id="drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
-        <Navbar isAdmin={isAdmin} version={version} sessionUser={sessionUser} />
+        <Navbar isAdmin={isAdmin} version={version} currentUser={azureUser} />
 
         <main className="mt-16 flex h-full flex-col overflow-y-auto bg-white p-4">
           <Outlet />

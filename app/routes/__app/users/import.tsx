@@ -23,6 +23,7 @@ import {
   WEB_APP_URL,
 } from "~/services/azure.server";
 import { createManyUsersAsync } from "~/services/user.server";
+import { getSessionUserAsync } from "~/session.server";
 
 import ArrowUpTrayIcon from "@heroicons/react/24/solid/ArrowUpTrayIcon";
 
@@ -44,6 +45,8 @@ export const action = async ({
     message: string | null;
   }>
 > => {
+  const sessionUser = await getSessionUserAsync(request);
+
   const uploadHandler = unstable_createMemoryUploadHandler({
     maxPartSize: 500_000,
   });
@@ -84,7 +87,7 @@ export const action = async ({
   const dbUsers: Prisma.UserCreateManyInput[] = [];
   const responses: AzureInviteResponse[] = [];
 
-  const azureUsers = await getAzureUsersAsync();
+  const azureUsers = await getAzureUsersAsync(sessionUser.accessToken);
 
   const azureUsersLookup = azureUsers.reduce<Record<string, string>>(
     (res, { email }) => {
@@ -101,7 +104,7 @@ export const action = async ({
   );
 
   for (let i = 0; i < newUsers.length; i++) {
-    const response = await inviteUserToAzureAsync({
+    const response = await inviteUserToAzureAsync(sessionUser.accessToken, {
       invitedUserEmailAddress: newUsers[i]["Email address"],
       inviteRedirectUrl: WEB_APP_URL,
       sendInvitationMessage: true,

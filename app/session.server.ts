@@ -1,13 +1,15 @@
 import type { AzureUserWebAppWithRole } from "~/services/azure.server";
 
-import { createCookieSessionStorage, redirect } from "@remix-run/node";
+import { createSessionStorage, redirect } from "@remix-run/node";
 import { Authenticator, AuthorizationError } from "remix-auth";
 import invariant from "tiny-invariant";
 
+import { prisma } from "~/db.server";
 import { parseJwt } from "~/utils";
-import { MicrosoftStrategy } from "~/services/auth.server";
-import { setAzureToken } from "~/services/azure-token.server";
+
+import { MicrosoftStrategy, SCOPE } from "~/services/auth.server";
 import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
+import { refreshTokenAsync } from "~/services/auth.server";
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");
@@ -15,7 +17,14 @@ invariant(process.env.CLIENT_SECRET, "CLIENT_SECRET must be set");
 invariant(process.env.TENANT_ID, "TENANT_ID must be set");
 invariant(process.env.REDIRECT_URI, "REDIRECT_URI must be set");
 
-export const sessionStorage = createCookieSessionStorage({
+export interface SessionUser {
+  userId: string;
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+}
+
+const sessionStorage = createSessionStorage({
   cookie: {
     name: "__session", // use any name you want here
     sameSite: "lax", // this helps with CSRF
@@ -24,35 +33,124 @@ export const sessionStorage = createCookieSessionStorage({
     secrets: [process.env.SESSION_SECRET], // replace this with an actual secret
     secure: process.env.NODE_ENV === "production", // enable this in prod only
   },
+  async createData(data, expires) {
+    return data["oauth2:state"];
+  },
+  async readData(id) {
+    const session = await prisma.session.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return {
+      "oauth2:state": id,
+      user: session,
+      strategy: "microsoft",
+    };
+  },
+  async updateData(id, data, expires) {
+    const userId = data["user"]["userId"];
+    const accessToken = data["user"]["accessToken"];
+    const refreshToken = data["user"]["refreshToken"];
+    const expiresIn = data["user"]["expiresIn"];
+
+    if (userId && accessToken && refreshToken && expiresIn) {
+      await prisma.session.upsert({
+        where: {
+          id,
+        },
+        create: {
+          id,
+          userId,
+          accessToken,
+          refreshToken,
+          expiresIn,
+        },
+        update: {
+          userId,
+          accessToken,
+          refreshToken,
+          expiresIn,
+        },
+      });
+    }
+  },
+  async deleteData(id) {
+    await prisma.session.delete({
+      where: {
+        id,
+      },
+    });
+  },
 });
 
-export const authenticator = new Authenticator<AzureUserWebAppWithRole>(
-  sessionStorage
-); // User is a custom user types you can define as you want
+export const authenticator = new Authenticator<SessionUser>(sessionStorage, {
+  sessionKey: "user",
+});
 
-export async function getSession(request: Request) {
+async function getSession(request: Request) {
   const cookie = request.headers.get("Cookie");
+
   return sessionStorage.getSession(cookie);
 }
 
 export async function getSessionUserAsync(
   request: Request
-): Promise<AzureUserWebAppWithRole | undefined> {
+): Promise<SessionUser> {
   const session = await getSession(request);
-  const userSession = session.get(authenticator.sessionKey);
 
-  return userSession;
-}
+  const sessionUser = session.get(authenticator.sessionKey);
 
-export async function requireSessionUserAsync(
-  request: Request
-): Promise<AzureUserWebAppWithRole> {
-  const userSession = await getSessionUserAsync(request);
-
-  if (!userSession) {
+  if (
+    !sessionUser.accessToken ||
+    !sessionUser.expiresIn ||
+    !sessionUser.refreshToken ||
+    !sessionUser.userId
+  ) {
     throw redirect("/logout");
   }
-  return userSession;
+
+  const currentSession: SessionUser = {
+    accessToken: sessionUser.accessToken,
+    expiresIn: sessionUser.expiresIn,
+    refreshToken: sessionUser.refreshToken,
+    userId: sessionUser.userId,
+  };
+
+  const expiresInDate = new Date(
+    new Date().setSeconds(new Date().getSeconds() + sessionUser.expiresIn)
+  );
+
+  if (expiresInDate >= new Date()) {
+    return currentSession;
+  }
+
+  invariant(process.env.TENANT_ID, "TENANT_ID must be set");
+  invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");
+  invariant(process.env.CLIENT_SECRET, "CLIENT_SECRET must be set");
+  invariant(process.env.REDIRECT_URI, "REDIRECT_URI must be set");
+
+  let { access_token, refresh_token, expires_in } = await refreshTokenAsync(
+    process.env.TENANT_ID,
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
+    sessionUser.refreshToken,
+    process.env.REDIRECT_URI
+  );
+
+  const newSessionUser: SessionUser = {
+    userId: sessionUser.userId,
+    accessToken: access_token,
+    refreshToken: refresh_token,
+    expiresIn: expires_in,
+  };
+
+  session.set(authenticator.sessionKey, newSessionUser);
+
+  await sessionStorage.commitSession(session);
+
+  return newSessionUser;
 }
 
 export async function getSessionError(request: Request) {
@@ -61,78 +159,40 @@ export async function getSessionError(request: Request) {
 
   return error;
 }
-
-export async function logout(request: Request) {
-  const session = await getSession(request);
-
-  return redirect("/", {
-    headers: {
-      "Set-Cookie": await sessionStorage.destroySession(session),
-    },
-  });
-}
-
-export async function createUserSession({
-  request,
-  userId,
-  remember,
-  redirectTo,
-}: {
-  request: Request;
-  userId: string;
-  remember: boolean;
-  redirectTo: string;
-}) {
-  const session = await getSession(request);
-  session.set(authenticator.sessionKey, userId);
-  return redirect(redirectTo, {
-    headers: {
-      "Set-Cookie": await sessionStorage.commitSession(session, {
-        maxAge: remember
-          ? 60 * 60 * 24 * 7 // 7 days
-          : undefined,
-      }),
-    },
-  });
-}
-
-export async function getUserFromToken(idToken: string, accessToken: string) {
-  const userInfo = parseJwt<{
-    email?: string;
-    preferred_username: string;
-    roles: string[];
-    oid: string;
-  }>(idToken);
-
-  setAzureToken(accessToken);
-
-  return await getAzureUserWithRolesByIdAsync(userInfo.oid);
-}
-
 const microsoftStrategy = new MicrosoftStrategy(
   {
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     redirectUri: process.env.REDIRECT_URI,
     tenantId: process.env.TENANT_ID, // optional - necessary for organization without multitenant (see below)
-    scope: "openid profile email", // optional
+    scope: SCOPE, // optional
     prompt: "login", // optional
   },
-  async ({ accessToken, extraParams }) => {
+  async ({ extraParams, accessToken, refreshToken }) => {
+    const userInfo = parseJwt<{
+      oid: string;
+    }>(extraParams.id_token);
+
+    let azureUser: AzureUserWebAppWithRole;
     try {
-      const azureUser = await getUserFromToken(
-        extraParams.id_token,
-        accessToken
+      azureUser = await getAzureUserWithRolesByIdAsync(
+        accessToken,
+        userInfo.oid
       );
-
-      if (azureUser.appRoleAssignments.length === 0) {
-        throw new AuthorizationError("nopermissions");
-      }
-
-      return azureUser;
     } catch (e: any) {
-      throw new AuthorizationError(e.Message);
+      throw new AuthorizationError(e);
     }
+
+    if (azureUser.appRoleAssignments.length === 0) {
+      throw new AuthorizationError("NoPermissions");
+    }
+
+    return {
+      userId: userInfo.oid,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      expiresIn: extraParams.expires_in,
+    };
   }
 );
 

@@ -7,19 +7,23 @@ import { json } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
 
-import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
-import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
+import { getSessionUserAsync } from "~/session.server";
 
 import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
 import { unassignMenteeFromMentorAsync } from "~/services/mentoring.server";
 
-export async function loader({ params }: LoaderArgs) {
+import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
+import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
+
+export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
   invariant(params.menteeId, "menteeId not found");
 
+  const sessionUser = await getSessionUserAsync(request);
+
   const [mentor, mentee] = await Promise.all([
-    getAzureUserWithRolesByIdAsync(params.userId),
-    getAzureUserWithRolesByIdAsync(params.menteeId),
+    getAzureUserWithRolesByIdAsync(sessionUser.accessToken, params.userId),
+    getAzureUserWithRolesByIdAsync(sessionUser.accessToken, params.menteeId),
   ]);
 
   return json({

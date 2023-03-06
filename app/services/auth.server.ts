@@ -6,6 +6,8 @@ import type {
 
 import { OAuth2Strategy } from "remix-auth-oauth2";
 
+export const SCOPE = "openid profile email offline_access";
+
 interface MicrosoftStrategyOptions {
   clientId: string;
   clientSecret: string;
@@ -39,8 +41,16 @@ interface MicrosoftExtraParams extends Record<string, string | number> {
   id_token: string;
 }
 
-export class MicrosoftStrategy<User> extends OAuth2Strategy<
-  User,
+export interface RefreshTokenResponse {
+  token_type: string;
+  scope: string;
+  expires_in: number;
+  access_token: string;
+  refresh_token: string;
+}
+
+export class MicrosoftStrategy<TUser> extends OAuth2Strategy<
+  TUser,
   MicrosoftProfile,
   MicrosoftExtraParams
 > {
@@ -59,7 +69,7 @@ export class MicrosoftStrategy<User> extends OAuth2Strategy<
       tenantId = "common",
     }: MicrosoftStrategyOptions,
     verify: StrategyVerifyCallback<
-      User,
+      TUser,
       OAuth2StrategyVerifyParams<MicrosoftProfile, MicrosoftExtraParams>
     >
   ) {
@@ -73,7 +83,7 @@ export class MicrosoftStrategy<User> extends OAuth2Strategy<
       },
       verify
     );
-    this.scope = scope ?? "openid profile email";
+    this.scope = scope ?? SCOPE;
     this.prompt = prompt ?? "none";
   }
 
@@ -83,4 +93,34 @@ export class MicrosoftStrategy<User> extends OAuth2Strategy<
       prompt: this.prompt,
     });
   }
+}
+
+export async function refreshTokenAsync(
+  tenantId: string,
+  clientId: string,
+  clientSecret: string,
+  refreshToken: string,
+  redirectURI: string
+): Promise<RefreshTokenResponse> {
+  const body = {
+    client_id: clientId,
+    scope: SCOPE,
+    code: refreshToken,
+    redirect_uri: redirectURI,
+    grant_type: "authorization_code",
+    client_secret: clientSecret,
+  };
+
+  const response = await fetch(
+    `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: JSON.stringify(body),
+    }
+  );
+
+  return await response.json();
 }

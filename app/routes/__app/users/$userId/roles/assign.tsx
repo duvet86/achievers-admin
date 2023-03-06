@@ -17,18 +17,21 @@ import {
   getAzureRolesAsync,
   getAzureUserWithRolesByIdAsync,
 } from "~/services/azure.server";
+import { getSessionUserAsync } from "~/session.server";
 
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 import Select from "~/components/Select";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
+  const sessionUser = await getSessionUserAsync(request);
+
   const [user, appRoles] = await Promise.all([
-    getAzureUserWithRolesByIdAsync(params.userId),
-    getAzureRolesAsync(),
+    getAzureUserWithRolesByIdAsync(sessionUser.accessToken, params.userId),
+    getAzureRolesAsync(sessionUser.accessToken),
   ]);
 
   return json({
@@ -40,6 +43,8 @@ export async function loader({ params }: LoaderArgs) {
 export async function action({ request, params }: ActionArgs) {
   invariant(params.userId, "userId not found");
 
+  const sessionUser = await getSessionUserAsync(request);
+
   const formData = await request.formData();
 
   const roleId = formData.get("roleId");
@@ -50,7 +55,7 @@ export async function action({ request, params }: ActionArgs) {
     });
   }
 
-  await assignRoleToUserAsync({
+  await assignRoleToUserAsync(sessionUser.accessToken, {
     principalId: params.userId,
     appRoleId: roleId.toString(),
     resourceId: APP_ID,

@@ -18,6 +18,14 @@ enum VaccinationStatus {
   Uncofirmed
 }
 
+model Session {
+  id           String  @id
+  userId       String?
+  accessToken  String? @db.LongText
+  refreshToken String? @db.LongText
+  expiresIn    Int?
+}
+
 model User {
   id String @id // Defined by Azure Active Directory.
 

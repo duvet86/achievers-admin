@@ -10,10 +10,10 @@ import ArrowLeftOnRectangleIcon from "@heroicons/react/24/solid/ArrowLeftOnRecta
 interface Props {
   isAdmin: boolean;
   version: string;
-  sessionUser: AzureUserWebAppWithRole;
+  currentUser: AzureUserWebAppWithRole;
 }
 
-export default function Navbar({ isAdmin, version, sessionUser }: Props) {
+export default function Navbar({ isAdmin, version, currentUser }: Props) {
   return (
     <nav className="navbar absolute top-0 left-0 h-16 bg-primary text-primary-content shadow-md">
       <div className="flex-none lg:hidden">
@@ -39,7 +39,7 @@ export default function Navbar({ isAdmin, version, sessionUser }: Props) {
 
       <div className="dropdown-end dropdown hidden lg:block">
         <div className="flex items-center gap-2">
-          <div className="font-semibold">{sessionUser.email}</div>
+          <div className="font-semibold">{currentUser.email}</div>
           <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
             <div className="w-10 rounded-full">
               <UserCircleIcon />
@@ -51,7 +51,7 @@ export default function Navbar({ isAdmin, version, sessionUser }: Props) {
           className="dropdown-content menu rounded-box w-52 bg-base-100 p-2 shadow"
         >
           <li>
-            <Link className="font-semibold" to={`/users/${sessionUser.id}`}>
+            <Link className="font-semibold" to={`/users/${currentUser.id}`}>
               <UserIcon className="mr-2 w-6" />
               Profile
             </Link>

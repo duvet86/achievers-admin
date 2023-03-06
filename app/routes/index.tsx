@@ -3,28 +3,39 @@ import type { LoaderArgs } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 
-import { Roles } from "~/services/azure.server";
+import { getAzureUserWithRolesByIdAsync, Roles } from "~/services/azure.server";
 import { version } from "~/services/version.server";
-import { getSessionUserAsync } from "~/session.server";
+import { authenticator, getSessionUserAsync } from "~/session.server";
 
 export async function loader({ request }: LoaderArgs) {
+  const isAuthenticated = await authenticator.isAuthenticated(request);
+
+  if (!isAuthenticated) {
+    return json({
+      version,
+    });
+  }
+
   const sessionUser = await getSessionUserAsync(request);
 
-  const userRoles = sessionUser?.appRoleAssignments.map(
+  const azureUser = await getAzureUserWithRolesByIdAsync(
+    sessionUser.accessToken,
+    sessionUser.userId
+  );
+
+  const userRoles = azureUser.appRoleAssignments.map(
     ({ appRoleId }) => appRoleId
   );
 
-  if (userRoles?.includes(Roles.Admin)) {
+  if (userRoles.includes(Roles.Admin)) {
     return redirect("/users");
   }
 
-  if (userRoles?.includes(Roles.Mentor)) {
+  if (userRoles.includes(Roles.Mentor)) {
     return redirect("/roster");
   }
 
-  return json({
-    version,
-  });
+  throw redirect("/401");
 }
 
 export default function Index() {
