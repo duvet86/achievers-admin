@@ -169,6 +169,7 @@ export async function getSessionError(request: Request) {
 
   return error;
 }
+
 const microsoftStrategy = new MicrosoftStrategy(
   {
     clientId: process.env.CLIENT_ID,

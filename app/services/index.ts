@@ -7,4 +7,4 @@ export * from "./session.server";
 export * from "./azure.server";
 export * from "./chapter.server";
 export * from "./mentoring.server";
-export * from "./user.server";
+export * from "./userAtChapter.server";
