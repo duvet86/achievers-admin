@@ -5,13 +5,16 @@ import { json, redirect } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
 
-import { getSessionUserAsync } from "~/session.server";
-import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
-import { getChapterByIdAsync } from "~/services/chapter.server";
-import { unassignChapterFromUserAsync } from "~/services/user.server";
+import {
+  getSessionUserAsync,
+  getAzureUserWithRolesByIdAsync,
+  getChapterByIdAsync,
+} from "~/services";
 
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
+
+import { unassignChapterFromUserAsync } from "./services.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");

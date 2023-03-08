@@ -12,16 +12,20 @@ import {
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
-import { getSessionUserAsync } from "~/session.server";
-import { getAzureUserWithRolesByIdAsync, Roles } from "~/services/azure.server";
 import {
-  assignMenteeFromMentorAsync,
+  getSessionUserAsync,
+  getAzureUserWithRolesByIdAsync,
+  Roles,
   getMenteesMentoredByAsync,
-} from "~/services/mentoring.server";
-import { getMenteesInChapterAsync } from "~/services/mentee.server";
+} from "~/services";
 
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
+
+import {
+  getMenteesInChapterAsync,
+  assignMenteeFromMentorAsync,
+} from "./services.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");

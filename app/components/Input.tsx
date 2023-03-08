@@ -1,6 +1,6 @@
 import type { HTMLInputTypeAttribute } from "react";
 
-export interface Props {
+interface Props {
   name: string;
   label: string;
   defaultValue: string;

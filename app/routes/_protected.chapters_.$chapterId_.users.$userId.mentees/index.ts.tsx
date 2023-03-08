@@ -6,14 +6,17 @@ import { json } from "@remix-run/server-runtime";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
-import { getSessionUserAsync } from "~/session.server";
-import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
-import { getUserAtChapterByIdAsync } from "~/services/user.server";
-import { getMenteesMentoredByAsync } from "~/services/mentoring.server";
+import {
+  getSessionUserAsync,
+  getAzureUserWithRolesByIdAsync,
+  getMenteesMentoredByAsync,
+} from "~/services";
 
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
+
+import { getUserAtChapterByIdAsync } from "./services.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");

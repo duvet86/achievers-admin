@@ -1,4 +1,4 @@
-export interface Props {
+interface Props {
   name: string;
   label: string;
   defaultValue: Date | string;

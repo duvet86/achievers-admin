@@ -13,16 +13,17 @@ import invariant from "tiny-invariant";
 
 import {
   APP_ID,
-  assignRoleToUserAsync,
   getAzureRolesAsync,
   getAzureUserWithRolesByIdAsync,
-} from "~/services/azure.server";
-import { getSessionUserAsync } from "~/session.server";
+  getSessionUserAsync,
+} from "~/services";
 
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 import Select from "~/components/Select";
+
+import { assignRoleToUserAsync } from "./services.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");

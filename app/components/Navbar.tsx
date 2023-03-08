@@ -1,4 +1,4 @@
-import type { AzureUserWebAppWithRole } from "~/services/azure.server";
+import type { AzureUserWebAppWithRole } from "~/services";
 
 import { Link } from "@remix-run/react";
 

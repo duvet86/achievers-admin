@@ -1,9 +1,9 @@
-export interface SelectOption {
+interface SelectOption {
   label: string;
   value: string;
 }
 
-export interface Props {
+interface Props {
   label?: string;
   disabled?: boolean;
   defaultValue?: string;

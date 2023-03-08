@@ -1,5 +1,6 @@
-import { ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import { Link } from "@remix-run/react";
+
+import { ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 
 export default function Forbidden() {
   return (

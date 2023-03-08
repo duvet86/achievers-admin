@@ -1,4 +1,4 @@
-import type { AzureUserWebAppWithRole } from "~/services/azure.server";
+import type { AzureUserWebAppWithRole } from "./azure.server";
 
 import { createSessionStorage, redirect } from "@remix-run/node";
 import { Authenticator, AuthorizationError } from "remix-auth";
@@ -7,9 +7,9 @@ import invariant from "tiny-invariant";
 import { prisma } from "~/db.server";
 import { parseJwt } from "~/utils";
 
-import { MicrosoftStrategy, SCOPE } from "~/services/auth.server";
-import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
-import { refreshTokenAsync } from "~/services/auth.server";
+import { MicrosoftStrategy, SCOPE } from "./auth.server";
+import { getAzureUserWithRolesByIdAsync } from "./azure.server";
+import { refreshTokenAsync } from "./auth.server";
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");

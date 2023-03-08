@@ -1,4 +1,4 @@
-export interface Props {
+interface Props {
   label?: string;
   name: string;
   defaultChecked?: boolean;

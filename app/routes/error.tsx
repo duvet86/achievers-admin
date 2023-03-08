@@ -3,7 +3,7 @@ import type { LoaderArgs } from "@remix-run/server-runtime";
 import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/server-runtime";
 
-import { getSessionError } from "~/session.server";
+import { getSessionError } from "~/services";
 
 export async function loader({ request }: LoaderArgs) {
   const error = await getSessionError(request);

@@ -1,7 +1,8 @@
 import type { ActionArgs, TypedResponse } from "@remix-run/server-runtime";
 import type { Prisma } from "@prisma/client";
 import type { SpeadsheetUser } from "~/models/speadsheet";
-import type { AzureInviteResponse } from "~/services/azure.server";
+
+import type { AzureInviteResponse } from "./services.server";
 
 import {
   unstable_createMemoryUploadHandler,
@@ -16,14 +17,13 @@ import {
   useTransition,
 } from "@remix-run/react";
 
-import { readExcelFileAsync } from "~/services/read-excel-file.server";
 import {
+  isEmail,
+  isStringNullOrEmpty,
   getAzureUsersAsync,
-  inviteUserToAzureAsync,
   WEB_APP_URL,
-} from "~/services/azure.server";
-import { createManyUsersAsync } from "~/services/user.server";
-import { getSessionUserAsync } from "~/session.server";
+  getSessionUserAsync,
+} from "~/services";
 
 import ArrowUpTrayIcon from "@heroicons/react/24/solid/ArrowUpTrayIcon";
 
@@ -31,10 +31,12 @@ import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 import LoadingSpinner from "~/components/LoadingSpinner";
 import Title from "~/components/Title";
+
 import {
-  isEmail,
-  isStringNullOrEmpty,
-} from "~/services/utils/string.utils.server";
+  readExcelFileAsync,
+  inviteUserToAzureAsync,
+  createManyUsersAsync,
+} from "./services.server";
 
 export const action = async ({
   request,

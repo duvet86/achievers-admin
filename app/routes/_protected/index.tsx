@@ -3,13 +3,15 @@ import type { LoaderArgs } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { Outlet, useLoaderData } from "@remix-run/react";
 
-import { getSessionUserAsync } from "~/session.server";
-import { getAzureUserWithRolesByIdAsync, Roles } from "~/services/azure.server";
+import {
+  getSessionUserAsync,
+  getAzureUserWithRolesByIdAsync,
+  Roles,
+  version,
+} from "~/services";
 
 import Navbar from "~/components/Navbar";
 import Drawer from "~/components/Drawer";
-
-import { version } from "~/services/version.server";
 
 export async function loader({ request }: LoaderArgs) {
   const sessionUser = await getSessionUserAsync(request);

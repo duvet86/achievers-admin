@@ -2,8 +2,12 @@ import type { LoaderArgs } from "@remix-run/node";
 
 import { redirect } from "@remix-run/node";
 
-import { getAzureUserWithRolesByIdAsync, Roles } from "~/services/azure.server";
-import { authenticator, getSessionUserAsync } from "~/session.server";
+import {
+  authenticator,
+  getSessionUserAsync,
+  getAzureUserWithRolesByIdAsync,
+  Roles,
+} from "~/services";
 
 export async function loader({ request }: LoaderArgs) {
   const isAuthenticated = await authenticator.isAuthenticated(request);

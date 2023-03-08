@@ -59,7 +59,7 @@ export default function RosterCalendar({
                 {week.map((day, dayIndex) => (
                   <div
                     key={`day-${dayIndex}`}
-                    className="ease h-24 basis-4/12 cursor-pointer overflow-auto border-r border-b p-1 p-4 transition duration-500 hover:bg-gray-300"
+                    className="ease h-24 basis-4/12 cursor-pointer overflow-auto border-r border-b p-4 transition duration-500 hover:bg-gray-300"
                   >
                     <div className="lmx-auto mx-auto flex flex-col overflow-hidden sm:w-full">
                       <div className="top w-full">

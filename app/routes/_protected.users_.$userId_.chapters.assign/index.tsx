@@ -11,18 +11,19 @@ import {
 
 import invariant from "tiny-invariant";
 
-import { getSessionUserAsync } from "~/session.server";
-import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
 import {
-  assignChapterToUserAsync,
+  getSessionUserAsync,
+  getAzureUserWithRolesByIdAsync,
   getUserAtChaptersByIdAsync,
-} from "~/services/user.server";
-import { getChaptersAsync } from "~/services/chapter.server";
+  getChaptersAsync,
+} from "~/services";
 
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 import Select from "~/components/Select";
+
+import { assignChapterToUserAsync } from "./services.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -66,7 +67,6 @@ export async function action({ request, params }: ActionArgs) {
 export default function Assign() {
   const { azureUser, availableChapters } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
-
   const transition = useTransition();
 
   const isSubmitting = transition.state === "submitting";

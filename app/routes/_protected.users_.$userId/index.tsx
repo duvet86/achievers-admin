@@ -12,16 +12,13 @@ import { json } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
 
-import { getSessionUserAsync } from "~/session.server";
 import {
+  getSessionUserAsync,
   getUserAtChaptersByIdAsync,
-  updateUserByIdAsync,
-  getUserByIdAsync,
-} from "~/services/user.server";
-import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
-
-import { isStringNullOrEmpty } from "~/services/utils/string.utils.server";
-import { readFormDataAsStringsAsync } from "~/services/utils/form.utils.server";
+  getAzureUserWithRolesByIdAsync,
+  isStringNullOrEmpty,
+  readFormDataAsStringsAsync,
+} from "~/services";
 
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
@@ -32,6 +29,8 @@ import Title from "~/components/Title";
 import Checkbox from "~/components/Checkbox";
 import Select from "~/components/Select";
 import DateInput from "~/components/DateInput";
+
+import { getUserByIdAsync, updateUserByIdAsync } from "./services.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
