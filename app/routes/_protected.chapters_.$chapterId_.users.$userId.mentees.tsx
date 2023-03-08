@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 
 import { getSessionUserAsync } from "~/session.server";
 import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
-import { getUserByIdAsync } from "~/services/user.server";
+import { getUserAtChapterByIdAsync } from "~/services/user.server";
 import { getMenteesMentoredByAsync } from "~/services/mentoring.server";
 
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
@@ -16,20 +16,21 @@ import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 export async function loader({ request, params }: LoaderArgs) {
+  invariant(params.chapterId, "chapterId not found");
   invariant(params.userId, "userId not found");
 
   const sessionUser = await getSessionUserAsync(request);
 
-  const [azureUser, user, assignedMentees] = await Promise.all([
+  const [azureUser, userAtChapters, assignedMentees] = await Promise.all([
     getAzureUserWithRolesByIdAsync(sessionUser.accessToken, params.userId),
-    getUserByIdAsync(params.userId),
+    getUserAtChapterByIdAsync(params.chapterId, params.userId),
     getMenteesMentoredByAsync(params.userId),
   ]);
 
   return json({
     user: {
       ...azureUser,
-      ...user,
+      chapter: userAtChapters?.Chapter ?? null,
       assignedMentees,
     },
   });
@@ -49,8 +50,8 @@ export default function Mentees() {
           <i>No Roles assigned</i>
         )}
       </p>
-      {user.Chapter ? (
-        <p>Assigned Chapter: {user.Chapter.name}</p>
+      {user.chapter ? (
+        <p>Assigned Chapter: {user.chapter.name}</p>
       ) : (
         <p>
           <i>No Chapters assigned</i>

@@ -28,7 +28,7 @@ export async function loader({ request, params }: LoaderArgs) {
     getAzureUsersWithRolesAsync(sessionUser.accessToken),
   ]);
 
-  const userIds = usersAtChapter.map(({ id }) => id);
+  const userIds = usersAtChapter.map(({ userId }) => userId);
 
   const azureUsersLookUp = azureUsers.reduce<
     Record<string, AzureUserWebAppWithRole>
@@ -109,7 +109,7 @@ export default function ChapterId() {
                     .map(({ appRoleId }) => appRoleId)
                     .includes(mentorRoleId) ? (
                     <Link
-                      to={id}
+                      to={`users/${id}/mentees/assign`}
                       className="btn-success btn-xs btn flex gap-2 align-middle"
                     >
                       Assign Mentee

@@ -13,7 +13,11 @@ import { json } from "@remix-run/server-runtime";
 import invariant from "tiny-invariant";
 
 import { getSessionUserAsync } from "~/session.server";
-import { getUserByIdAsync, updateUserByIdAsync } from "~/services/user.server";
+import {
+  getUserAtChaptersByIdAsync,
+  updateUserByIdAsync,
+  getUserByIdAsync,
+} from "~/services/user.server";
 import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
 
 import { isStringNullOrEmpty } from "~/services/utils/string.utils.server";
@@ -34,11 +38,17 @@ export async function loader({ request, params }: LoaderArgs) {
 
   const sessionUser = await getSessionUserAsync(request);
 
-  const [currentAzureUser, azureUser, user] = await Promise.all([
-    getAzureUserWithRolesByIdAsync(sessionUser.accessToken, sessionUser.userId),
-    getAzureUserWithRolesByIdAsync(sessionUser.accessToken, params.userId),
-    getUserByIdAsync(params.userId),
-  ]);
+  const [currentAzureUser, azureUser, user, userAtChapters] = await Promise.all(
+    [
+      getAzureUserWithRolesByIdAsync(
+        sessionUser.accessToken,
+        sessionUser.userId
+      ),
+      getAzureUserWithRolesByIdAsync(sessionUser.accessToken, params.userId),
+      getUserByIdAsync(params.userId),
+      getUserAtChaptersByIdAsync(params.userId),
+    ]
+  );
 
   const email = azureUser.mail ?? azureUser.userPrincipalName;
 
@@ -47,6 +57,7 @@ export async function loader({ request, params }: LoaderArgs) {
     user: {
       ...azureUser,
       ...user,
+      chapters: userAtChapters.map(({ Chapter }) => Chapter),
       email,
     },
   });
@@ -468,19 +479,23 @@ export default function Chapter() {
                 </tr>
               </thead>
               <tbody>
-                {user.Chapter ? (
+                {user.chapters.length === 0 && (
                   <tr>
+                    <td colSpan={2} className="border p-2">
+                      <i>No chapters assigned to this user</i>
+                    </td>
+                  </tr>
+                )}
+
+                {user.chapters.map(({ id, name }) => (
+                  <tr key={id}>
                     <td className="border p-2">
-                      <span className="font-semibold">{user.Chapter.name}</span>
-                      <input
-                        type="hidden"
-                        name="chapterIds"
-                        value={user.Chapter.id}
-                      />
+                      <span className="font-semibold">{name}</span>
+                      <input type="hidden" name="chapterIds" value={id} />
                     </td>
                     <td align="right" className="border p-2">
                       <Link
-                        to={`chapters/${user.Chapter.id}/delete`}
+                        to={`chapters/${id}/delete`}
                         className="flex w-32 items-center justify-center rounded bg-red-600 px-3 py-1 text-white"
                       >
                         <XMarkIcon className="mr-2 w-5" />
@@ -488,13 +503,7 @@ export default function Chapter() {
                       </Link>
                     </td>
                   </tr>
-                ) : (
-                  <tr>
-                    <td colSpan={2} className="border p-2">
-                      <i>No Chapter assigned to this user</i>
-                    </td>
-                  </tr>
-                )}
+                ))}
               </tbody>
             </table>
           </div>

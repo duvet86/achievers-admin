@@ -15,7 +15,7 @@ import { getSessionUserAsync } from "~/session.server";
 import { getAzureUserWithRolesByIdAsync } from "~/services/azure.server";
 import {
   assignChapterToUserAsync,
-  getUserByIdAsync,
+  getUserAtChaptersByIdAsync,
 } from "~/services/user.server";
 import { getChaptersAsync } from "~/services/chapter.server";
 
@@ -29,19 +29,19 @@ export async function loader({ request, params }: LoaderArgs) {
 
   const sessionUser = await getSessionUserAsync(request);
 
-  const [azureUser, user, chapters] = await Promise.all([
+  const [azureUser, userAtChapter, chapters] = await Promise.all([
     getAzureUserWithRolesByIdAsync(sessionUser.accessToken, params.userId),
-    getUserByIdAsync(params.userId),
+    getUserAtChaptersByIdAsync(params.userId),
     getChaptersAsync(),
   ]);
 
-  if (user?.Chapter) {
-    throw new Error("User already has a chapter assigned.");
-  }
+  const assignedChapterIds = userAtChapter.map(({ Chapter }) => Chapter.id);
 
   return json({
     azureUser,
-    chapters,
+    availableChapters: chapters.filter(
+      ({ id }) => !assignedChapterIds.includes(id)
+    ),
   });
 }
 
@@ -58,13 +58,13 @@ export async function action({ request, params }: ActionArgs) {
     });
   }
 
-  await assignChapterToUserAsync(params.userId, chapterId.toString());
+  await assignChapterToUserAsync(params.userId, chapterId.toString(), "");
 
   return redirect(`/users/${params.userId}`);
 }
 
 export default function Assign() {
-  const { azureUser, chapters } = useLoaderData<typeof loader>();
+  const { azureUser, availableChapters } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   const transition = useTransition();
@@ -83,7 +83,7 @@ export default function Assign() {
         name="chapterId"
         disabled={isSubmitting}
         options={[{ value: "", label: "Select a Chapter" }].concat(
-          chapters.map(({ id, name }) => ({
+          availableChapters.map(({ id, name }) => ({
             label: name,
             value: id,
           }))

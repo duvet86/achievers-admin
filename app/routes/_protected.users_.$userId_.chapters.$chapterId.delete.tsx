@@ -32,8 +32,9 @@ export async function loader({ request, params }: LoaderArgs) {
 
 export async function action({ params }: ActionArgs) {
   invariant(params.userId, "userId not found");
+  invariant(params.chapterId, "chapterId not found");
 
-  await unassignChapterFromUserAsync(params.userId);
+  await unassignChapterFromUserAsync(params.userId, params.chapterId);
 
   return redirect(`/users/${params.userId}`);
 }

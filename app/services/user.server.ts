@@ -1,4 +1,4 @@
-import type { User, Prisma, Chapter } from "@prisma/client";
+import type { User, Prisma, Chapter, UserAtChapter } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
@@ -6,9 +6,6 @@ export async function getUserByIdAsync(id: string) {
   return await prisma.user.findUnique({
     where: {
       id,
-    },
-    include: {
-      Chapter: true,
     },
   });
 }
@@ -31,8 +28,38 @@ export async function createManyUsersAsync(data: Prisma.UserCreateManyInput[]) {
   });
 }
 
+export async function getUserAtChapterByIdAsync(
+  chapterId: UserAtChapter["chapterId"],
+  userId: UserAtChapter["userId"]
+) {
+  return await prisma.userAtChapter.findUnique({
+    where: {
+      userId_chapterId: {
+        chapterId,
+        userId,
+      },
+    },
+    include: {
+      Chapter: true,
+    },
+  });
+}
+
+export async function getUserAtChaptersByIdAsync(
+  userId: UserAtChapter["userId"]
+) {
+  return await prisma.userAtChapter.findMany({
+    where: {
+      userId,
+    },
+    include: {
+      Chapter: true,
+    },
+  });
+}
+
 export async function getUsersAtChapterByIdAsync(chapterId: Chapter["id"]) {
-  return await prisma.user.findMany({
+  return await prisma.userAtChapter.findMany({
     where: {
       chapterId,
     },
@@ -42,9 +69,9 @@ export async function getUsersAtChapterByIdAsync(chapterId: Chapter["id"]) {
 export async function getAssignedChapterToUsersLookUpAsync(
   userIds: User["id"][]
 ) {
-  const userWithChapter = await prisma.user.findMany({
+  const userAtChapters = await prisma.userAtChapter.findMany({
     where: {
-      id: {
+      userId: {
         in: userIds,
       },
     },
@@ -53,10 +80,10 @@ export async function getAssignedChapterToUsersLookUpAsync(
     },
   });
 
-  const assignedChaptersLookUp = userWithChapter.reduce<
+  const assignedChaptersLookUp = userAtChapters.reduce<
     Record<string, Chapter | null>
-  >((res, user) => {
-    res[user.id] = user.Chapter;
+  >((res, userAtChapter) => {
+    res[userAtChapter.userId] = userAtChapter.Chapter;
 
     return res;
   }, {});
@@ -65,26 +92,29 @@ export async function getAssignedChapterToUsersLookUpAsync(
 }
 
 export async function assignChapterToUserAsync(
-  userId: User["id"],
-  chapterId: User["chapterId"]
+  userId: UserAtChapter["userId"],
+  chapterId: UserAtChapter["chapterId"],
+  assignedBy: UserAtChapter["assignedBy"]
 ) {
-  await prisma.user.update({
-    where: {
-      id: userId,
-    },
+  await prisma.userAtChapter.create({
     data: {
       chapterId,
+      userId,
+      assignedBy,
     },
   });
 }
 
-export async function unassignChapterFromUserAsync(userId: User["id"]) {
-  await prisma.user.update({
+export async function unassignChapterFromUserAsync(
+  userId: UserAtChapter["userId"],
+  chapterId: UserAtChapter["chapterId"]
+) {
+  await prisma.userAtChapter.delete({
     where: {
-      id: userId,
-    },
-    data: {
-      chapterId: null,
+      userId_chapterId: {
+        userId,
+        chapterId,
+      },
     },
   });
 }
