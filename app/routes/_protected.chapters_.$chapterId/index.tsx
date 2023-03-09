@@ -55,7 +55,7 @@ export default function ChapterId() {
       <div className="mb-6">
         <Link
           to="mentors"
-          className="btn-success btn-outline btn mb-2 w-3/12 justify-around"
+          className="btn-outline btn-success btn mb-2 w-3/12 justify-around"
         >
           <UserGroupIcon className="h-6 w-6" />
           Go to the list of Users
