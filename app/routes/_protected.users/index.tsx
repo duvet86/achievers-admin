@@ -10,14 +10,14 @@ import { ArrowUpTrayIcon, PencilIcon } from "@heroicons/react/24/solid";
 
 import Title from "~/components/Title";
 
-import { getAssignedChapterToUsersLookUpAsync } from "./services.server";
+import { getAssignedChaptersToUsersLookUpAsync } from "./services.server";
 
 export async function loader({ request }: LoaderArgs) {
   const sessionUser = await getSessionUserAsync(request);
 
   const azureUsers = await getAzureUsersWithRolesAsync(sessionUser.accessToken);
 
-  const assignedChapterLookUp = await getAssignedChapterToUsersLookUpAsync(
+  const assignedChapterLookUp = await getAssignedChaptersToUsersLookUpAsync(
     azureUsers.map(({ id }) => id)
   );
 
@@ -26,7 +26,7 @@ export async function loader({ request }: LoaderArgs) {
       .map((user) => ({
         ...user,
         email: user.mail ?? user.userPrincipalName,
-        assignedChapter: assignedChapterLookUp[user.id],
+        assignedChapters: assignedChapterLookUp[user.id] ?? [],
       }))
       .sort((a, b) =>
         a.email.localeCompare(b.email, undefined, {
@@ -37,7 +37,7 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export default function SelectChapter() {
-  const data = useLoaderData<typeof loader>();
+  const { users } = useLoaderData<typeof loader>();
 
   return (
     <>
@@ -62,8 +62,8 @@ export default function SelectChapter() {
             </tr>
           </thead>
           <tbody>
-            {data.users.map(
-              ({ id, email, appRoleAssignments, assignedChapter }) => (
+            {users.map(
+              ({ id, email, appRoleAssignments, assignedChapters }) => (
                 <tr key={id}>
                   <td className="border p-2">{email}</td>
                   <td className="border p-2">
@@ -76,8 +76,8 @@ export default function SelectChapter() {
                     )}
                   </td>
                   <td className="border p-2">
-                    {assignedChapter ? (
-                      assignedChapter.name
+                    {assignedChapters.length > 0 ? (
+                      assignedChapters.map(({ name }) => name).join(", ")
                     ) : (
                       <i className="text-sm">No chapter assigned</i>
                     )}

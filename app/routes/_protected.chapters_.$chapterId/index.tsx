@@ -1,58 +1,32 @@
 import type { LoaderArgs } from "@remix-run/server-runtime";
-import type { AzureUserWebAppWithRole } from "~/services";
 
 import { json } from "@remix-run/server-runtime";
 import { Form, Link, useCatch, useLoaderData } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
-import {
-  getSessionUserAsync,
-  getChapterByIdAsync,
-  getAzureUsersWithRolesAsync,
-  Roles,
-} from "~/services";
+import { getChapterByIdAsync } from "~/services";
 
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
-import UsersIcon from "@heroicons/react/24/solid/UsersIcon";
+import AcademicCapIcon from "@heroicons/react/24/solid/AcademicCapIcon";
+import ArrowSmallRightIcon from "@heroicons/react/24/solid/ArrowSmallRightIcon";
+import UserGroupIcon from "@heroicons/react/24/solid/UserGroupIcon";
 
 import Title from "~/components/Title";
 import Input from "~/components/Input";
 
-import { getUsersAtChapterByIdAsync } from "./services.server";
-
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
 
-  const sessionUser = await getSessionUserAsync(request);
-
-  const [chapter, usersAtChapter, azureUsers] = await Promise.all([
-    getChapterByIdAsync(params.chapterId),
-    getUsersAtChapterByIdAsync(params.chapterId),
-    getAzureUsersWithRolesAsync(sessionUser.accessToken),
-  ]);
-
-  const userIds = usersAtChapter.map(({ userId }) => userId);
-
-  const azureUsersLookUp = azureUsers.reduce<
-    Record<string, AzureUserWebAppWithRole>
-  >((res, value) => {
-    res[value.id] = value;
-
-    return res;
-  }, {});
+  const chapter = await getChapterByIdAsync(params.chapterId);
 
   return json({
-    chapter: {
-      ...chapter,
-      assignedUsers: userIds.map((userId) => azureUsersLookUp[userId]),
-    },
-    mentorRoleId: Roles.Mentor,
+    chapter,
   });
 }
 
 export default function ChapterId() {
-  const { chapter, mentorRoleId } = useLoaderData<typeof loader>();
+  const { chapter } = useLoaderData<typeof loader>();
 
   return (
     <>
@@ -78,55 +52,26 @@ export default function ChapterId() {
 
       <hr className="my-6" />
 
-      <Title>Mentors</Title>
+      <div className="mb-6">
+        <Link
+          to="mentors"
+          className="btn-success btn-outline btn mb-2 w-3/12 justify-around"
+        >
+          <UserGroupIcon className="h-6 w-6" />
+          Go to the list of Users
+          <ArrowSmallRightIcon className="h-6 w-6" />
+        </Link>
+      </div>
 
-      <div className="overflow-auto">
-        <table className="table w-full">
-          <thead>
-            <tr>
-              <th align="left" className="p-2">
-                Email
-              </th>
-              <th align="left" className="p-2">
-                Role
-              </th>
-              <th align="right" className="p-2">
-                Assign Mentees
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {chapter.assignedUsers.map(({ id, email, appRoleAssignments }) => (
-              <tr key={id}>
-                <td className="border p-2">{email}</td>
-                <td className="border p-2">
-                  {appRoleAssignments.length > 0 ? (
-                    appRoleAssignments
-                      .map(({ roleName }) => roleName)
-                      .join(", ")
-                  ) : (
-                    <i className="text-sm">No roles assigned</i>
-                  )}
-                </td>
-                <td className="w-64 border" align="right">
-                  {appRoleAssignments
-                    .map(({ appRoleId }) => appRoleId)
-                    .includes(mentorRoleId) ? (
-                    <Link
-                      to={`users/${id}/mentees/assign`}
-                      className="btn-success btn-xs btn flex gap-2 align-middle"
-                    >
-                      Assign Mentee
-                      <UsersIcon className="mr-4 h-4 w-4" />
-                    </Link>
-                  ) : (
-                    <span className="mr-4 w-6">-</span>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div>
+        <Link
+          to="mentees"
+          className="btn-outline btn-info btn mb-2 w-3/12 justify-around"
+        >
+          <AcademicCapIcon className="h-6 w-6" />
+          Go to the list of Mentees
+          <ArrowSmallRightIcon className="h-6 w-6" />
+        </Link>
       </div>
     </>
   );

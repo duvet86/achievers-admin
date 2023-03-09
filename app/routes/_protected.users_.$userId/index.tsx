@@ -167,7 +167,7 @@ export default function Chapter() {
   const { user, isLoggedUser } = useLoaderData<typeof loader>();
 
   return (
-    <>
+    <div className="flex h-full flex-col pb-28">
       <div>
         <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
           <ArrowSmallLeftIcon className="w-6" />
@@ -183,10 +183,10 @@ export default function Chapter() {
         <Title>Edit info for &ldquo;{user.email}&rdquo;</Title>
       )}
 
-      <div className="flex">
+      <div className="flex h-full">
         <Form
           method="post"
-          className="mr-8 flex-1 border-r border-primary pr-4"
+          className="relative mr-8 flex-1 overflow-y-auto border-r border-primary pr-4"
         >
           <fieldset disabled={transition.state === "submitting"}>
             <Input
@@ -402,7 +402,7 @@ export default function Chapter() {
             />
 
             <button
-              className="btn-primary btn float-right mt-6 w-28"
+              className="btn-primary btn sticky bottom-0 float-right mt-6 w-28"
               type="submit"
             >
               Save
@@ -519,7 +519,7 @@ export default function Chapter() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

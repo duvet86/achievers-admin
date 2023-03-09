@@ -2,7 +2,7 @@ import type { Chapter, User } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
-export async function getAssignedChapterToUsersLookUpAsync(
+export async function getAssignedChaptersToUsersLookUpAsync(
   userIds: User["id"][]
 ) {
   const userAtChapters = await prisma.userAtChapter.findMany({
@@ -17,9 +17,13 @@ export async function getAssignedChapterToUsersLookUpAsync(
   });
 
   const assignedChaptersLookUp = userAtChapters.reduce<
-    Record<string, Chapter | null>
+    Record<string, Chapter[]>
   >((res, userAtChapter) => {
-    res[userAtChapter.userId] = userAtChapter.Chapter;
+    if (res[userAtChapter.userId]) {
+      res[userAtChapter.userId].push(userAtChapter.Chapter);
+    } else {
+      res[userAtChapter.userId] = [userAtChapter.Chapter];
+    }
 
     return res;
   }, {});
