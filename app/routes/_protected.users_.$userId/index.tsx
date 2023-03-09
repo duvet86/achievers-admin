@@ -80,7 +80,7 @@ export async function action({ request, params }: ActionArgs) {
   const isCurrentMemeber = Boolean(formValues["isCurrentMemeber"]);
   const inductionDate = formValues["inductionDate"];
   const isActiveMentor = Boolean(formValues["isActiveMentor"]);
-  const attendance = formValues["attendance"] as Attendace;
+  const defaultAttendance = formValues["attendance"] as Attendace;
   const vaccinationStatus = formValues[
     "vaccinationStatus"
   ] as VaccinationStatus;
@@ -132,7 +132,7 @@ export async function action({ request, params }: ActionArgs) {
     isCurrentMemeber,
     inductionDate: inductionDate ? new Date(inductionDate + "T00:00") : null,
     isActiveMentor,
-    attendance,
+    defaultAttendance,
     vaccinationStatus: vaccinationStatus ? vaccinationStatus : null,
     policeCheckRenewalDate: policeCheckRenewalDate
       ? new Date(policeCheckRenewalDate + "T00:00")
@@ -285,7 +285,7 @@ export default function Chapter() {
             />
 
             <Select
-              defaultValue={user?.attendance ?? ""}
+              defaultValue={user?.defaultAttendance ?? ""}
               label="Attendance"
               name="attendance"
               options={[

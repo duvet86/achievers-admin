@@ -58,7 +58,7 @@ export default function ChapterId() {
           className="btn-outline btn-success btn mb-2 w-3/12 justify-around"
         >
           <UserGroupIcon className="h-6 w-6" />
-          Go to the list of Users
+          Go to the list of Mentors
           <ArrowSmallRightIcon className="h-6 w-6" />
         </Link>
       </div>

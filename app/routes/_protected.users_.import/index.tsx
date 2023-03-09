@@ -121,7 +121,9 @@ export const action = async ({
       ]
         ? newUsers[i]["Additional email addresses (for intranet access)"]
         : null,
-      attendance: newUsers[i]["Attendance"] ? newUsers[i]["Attendance"] : null,
+      defaultAttendance: newUsers[i]["Attendance"]
+        ? newUsers[i]["Attendance"]
+        : null,
       boardTermExpiryDate: newUsers[i]["Board Term Expiry"]
         ? new Date(newUsers[i]["Board Term Expiry"])
         : null,

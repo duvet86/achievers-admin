@@ -26,6 +26,9 @@ import {
   getMenteesInChapterAsync,
   assignMenteeFromMentorAsync,
 } from "./services.server";
+import Title from "~/components/Title";
+import Select from "~/components/Select";
+import DateInput from "~/components/DateInput";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -63,6 +66,7 @@ export async function loader({ request, params }: LoaderArgs) {
     mentor: azureUser,
     currentMentoredMentees,
     availableMentees,
+    assignedBy: sessionUser.userId,
   });
 }
 
@@ -104,82 +108,61 @@ export default function Assign() {
   const isSubmitting = transition.state === "submitting";
 
   return (
-    <Form method="post">
-      <h1 className="mb-4 text-xl font-medium">
-        Assign Mentee to Mentor{" "}
-        <span className="font-medium">'{mentor.email}'</span>
-      </h1>
-
-      <input type="hidden" name="assignedBy" value={mentor.email} />
-
-      <label
-        htmlFor="menteeId"
-        className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-      >
-        Mentee
-      </label>
-      <select
-        name="menteeId"
-        className="mb-4 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-        defaultValue=""
-        disabled={isSubmitting}
-      >
-        <option value="">Select a Mentee</option>
-        {availableMentees.map(({ id, firstName, lastName }) => (
-          <option key={id} value={id}>
-            {firstName} {lastName}
-          </option>
-        ))}
-      </select>
-
-      <label
-        htmlFor="frequency"
-        className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-      >
-        Frequency
-      </label>
-      <select
-        name="frequencyInDays"
-        className="mb-4 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-        defaultValue=""
-        disabled={isSubmitting}
-      >
-        <option value="">Select a Frequency</option>
-        <option value="7">Every Week</option>
-        <option value="14">Quarterly</option>
-      </select>
-
-      <label
-        htmlFor="startDate"
-        className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-      >
-        Start Date
-      </label>
-      <input
-        className="mb-2 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-        type="date"
-        name="startDate"
-        defaultValue={dayjs().format("YYYY-MM-DD")}
-        min={dayjs().format("YYYY-MM-DD")}
-      />
-
-      <p className="mt-4 text-red-600">{actionData?.error}</p>
-
-      <div className="mt-6 flex items-center space-x-6">
-        <Link
-          to="../../"
-          relative="path"
-          className="btn-ghost btn gap-2"
-          type="submit"
-        >
+    <>
+      <div>
+        <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
           <ArrowSmallLeftIcon className="w-6" />
           Back
         </Link>
-        <button className="btn gap-2">
-          <PlusIcon className="w-6 text-white" />
+      </div>
+
+      <hr className="mb-4" />
+
+      <Title>Assign Mentee to Mentor "{mentor.email}"</Title>
+
+      <Form method="post">
+        <input type="hidden" name="assignedBy" value={mentor.email} />
+
+        <Select
+          label="Select a Mentee"
+          name="menteeId"
+          disabled={isSubmitting}
+          options={[{ value: "", label: "Select a Mentee" }].concat(
+            availableMentees.map(({ id, firstName, lastName }) => ({
+              label: `${firstName} ${lastName}`,
+              value: id,
+            }))
+          )}
+        />
+
+        <Select
+          label="Select a Frequency"
+          name="frequency"
+          disabled={isSubmitting}
+          options={[
+            { value: "", label: "Select a Frequency" },
+            { value: "7", label: "Every Week" },
+            { value: "14", label: "Quarterly" },
+          ]}
+        />
+
+        <DateInput
+          defaultValue={dayjs().format("YYYY-MM-DD")}
+          label="Start Date"
+          name="startDate"
+          min={dayjs().format("YYYY-MM-DD")}
+        />
+
+        <p className="mt-4 text-red-600">{actionData?.error}</p>
+
+        <button
+          className="btn-primary btn float-right mt-6 w-28 gap-2"
+          type="submit"
+        >
+          <PlusIcon className="h-6 w-6" />
           Save
         </button>
-      </div>
-    </Form>
+      </Form>
+    </>
   );
 }

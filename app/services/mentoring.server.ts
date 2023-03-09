@@ -8,6 +8,10 @@ export async function getMenteesMentoredByAsync(
   return await prisma.mentoringMentee.findMany({
     where: {
       userId: mentorId,
+      isActive: true,
+    },
+    orderBy: {
+      startDate: "desc",
     },
     include: {
       Mentee: true,

@@ -45,7 +45,7 @@ model User {
   isCurrentMemeber             Boolean            @default(true)
   inductionDate                DateTime?
   isActiveMentor               Boolean            @default(true)
-  attendance                   Attendace?
+  defaultAttendance            Attendace?
   vaccinationStatus            VaccinationStatus?
   policeCheckRenewalDate       DateTime?
   WWCCheckRenewalDate          DateTime?
@@ -123,6 +123,7 @@ model MentoringMentee {
 
   frequencyInDays Int
   startDate       DateTime?
+  isActive        Boolean   @default(true)
 
   @@id([userId, menteeId, chapterId])
 }

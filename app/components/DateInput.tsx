@@ -4,6 +4,8 @@ interface Props {
   defaultValue: Date | string;
   readOnly?: boolean;
   required?: boolean;
+  min?: string;
+  max?: string;
 }
 
 export default function DateInput({
@@ -12,6 +14,8 @@ export default function DateInput({
   defaultValue,
   readOnly,
   required,
+  min,
+  max,
 }: Props) {
   const value =
     defaultValue instanceof Date
@@ -32,6 +36,8 @@ export default function DateInput({
         defaultValue={value}
         readOnly={readOnly}
         required={required}
+        min={min}
+        max={max}
       />
     </div>
   );

@@ -1,67 +1,46 @@
 import type { LoaderArgs } from "@remix-run/server-runtime";
-import type { AzureUserWebAppWithRole } from "~/services";
+
+import { Link, useCatch, useLoaderData } from "@remix-run/react";
 
 import { json } from "@remix-run/server-runtime";
-import { Link, useCatch, useLoaderData } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
 import {
-  getAzureUsersWithRolesAsync,
-  getChapterByIdAsync,
   getSessionUserAsync,
-  Roles,
+  getMenteesMentoredByAsync,
+  getAzureUserWithRolesByIdAsync,
 } from "~/services";
 
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
+import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import AcademicCapIcon from "@heroicons/react/24/solid/AcademicCapIcon";
 
 import Title from "~/components/Title";
 
-import { getUsersAtChapterByIdAsync } from "./services.server";
-
 export async function loader({ request, params }: LoaderArgs) {
-  invariant(params.chapterId, "chapterId not found");
+  invariant(params.userId, "userId not found");
 
   const sessionUser = await getSessionUserAsync(request);
 
-  const [chapter, usersAtChapter, azureUsers] = await Promise.all([
-    getChapterByIdAsync(params.chapterId),
-    getUsersAtChapterByIdAsync(params.chapterId),
-    getAzureUsersWithRolesAsync(sessionUser.accessToken),
+  const [mentor, mentees] = await Promise.all([
+    getAzureUserWithRolesByIdAsync(sessionUser.accessToken, params.userId),
+    getMenteesMentoredByAsync(params.userId),
   ]);
 
-  const userIds = usersAtChapter.map(({ userId }) => userId);
-
-  const azureMentorsLookUp = azureUsers
-    .filter(({ appRoleAssignments }) =>
-      appRoleAssignments
-        .map(({ appRoleId }) => appRoleId)
-        .includes(Roles.Mentor)
-    )
-    .reduce<Record<string, AzureUserWebAppWithRole>>((res, value) => {
-      res[value.id] = value;
-
-      return res;
-    }, {});
-
   return json({
-    chapter: {
-      ...chapter,
-      mentors: userIds
-        .filter((userId) => azureMentorsLookUp[userId])
-        .map((userId) => azureMentorsLookUp[userId]),
-    },
+    mentor,
+    mentees,
   });
 }
 
-export default function ChapterId() {
-  const { chapter } = useLoaderData<typeof loader>();
+export default function Index() {
+  const { mentor, mentees } = useLoaderData<typeof loader>();
 
   return (
     <>
       <div>
-        <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
+        <Link to="../../" relative="path" className="btn-ghost btn mb-2 gap-2">
           <ArrowSmallLeftIcon className="w-6" />
           Back
         </Link>
@@ -69,38 +48,54 @@ export default function ChapterId() {
 
       <hr className="mb-4" />
 
-      <Title>Mentors in {chapter.name}</Title>
+      <Title>Mentees mentored by {mentor.email}</Title>
 
       <div className="overflow-auto">
         <table className="table w-full">
           <thead>
             <tr>
               <th align="left" className="p-2">
-                Mentor Email
+                Full Name
               </th>
               <th align="right" className="p-2">
-                Mentees
+                Actions
               </th>
             </tr>
           </thead>
           <tbody>
-            {chapter.mentors.map(({ id, email }) => (
+            {mentees.length === 0 && (
+              <tr>
+                <td colSpan={2} className="border p-2">
+                  <i>No mentees assigned to this mentor</i>
+                </td>
+              </tr>
+            )}
+            {mentees.map(({ Mentee: { id, firstName, lastName } }) => (
               <tr key={id}>
-                <td className="border p-2">{email}</td>
+                <td className="border p-2">
+                  {firstName} {lastName}
+                </td>
                 <td className="w-64 border" align="right">
                   <Link
                     to={`${id}/mentees`}
                     relative="path"
-                    className="btn-success btn-xs btn flex gap-2 align-middle"
+                    className="btn-error btn-xs btn flex gap-2 align-middle"
                   >
-                    <AcademicCapIcon className="mr-4 h-4 w-4" />
-                    View Mentee
+                    <XMarkIcon className="h-6 w-6" />
+                    Remove Mentee
                   </Link>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="mt-6 flex justify-end">
+        <Link className="btn-primary btn gap-2" to="assign" relative="path">
+          <AcademicCapIcon className="h-6 w-6" />
+          Assign Mentee
+        </Link>
       </div>
     </>
   );
