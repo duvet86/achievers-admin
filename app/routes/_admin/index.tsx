@@ -1,7 +1,8 @@
 import type { LoaderArgs } from "@remix-run/server-runtime";
 
+import { redirect } from "@remix-run/node";
 import { json } from "@remix-run/server-runtime";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 
 import {
   getSessionUserAsync,
@@ -10,8 +11,7 @@ import {
   version,
 } from "~/services";
 
-import Navbar from "~/components/Navbar";
-import Drawer from "~/components/Drawer";
+import Body from "~/components/Body";
 
 export async function loader({ request }: LoaderArgs) {
   const sessionUser = await getSessionUserAsync(request);
@@ -27,27 +27,19 @@ export async function loader({ request }: LoaderArgs) {
 
   const isAdmin = sessionUserRoles.includes(Roles.Admin);
 
+  if (!isAdmin) {
+    throw redirect("/401");
+  }
+
   return json({
-    isAdmin,
-    azureUser,
+    isAdmin: true,
+    currentUser: azureUser,
     version,
   });
 }
 
 export default function AppLayout() {
-  const { isAdmin, version, azureUser } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
 
-  return (
-    <div className="drawer-mobile drawer">
-      <input id="drawer" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content flex flex-col">
-        <Navbar isAdmin={isAdmin} version={version} currentUser={azureUser} />
-
-        <main className="mt-16 flex h-full flex-col overflow-y-auto bg-white p-4">
-          <Outlet />
-        </main>
-      </div>
-      <Drawer />
-    </div>
-  );
+  return <Body {...data} />;
 }
