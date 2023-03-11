@@ -65,7 +65,8 @@ export async function getUserAtChaptersByIdAsync(
 
 export async function saveProfilePicture(
   userId: string,
-  profilePictureFile: File | null
+  profilePictureFile: File | null,
+  existingProfilePicturePath: string | null
 ): Promise<string | null> {
   invariant(
     process.env.BLOB_STORAGE_ACCOUNT_NAME,
@@ -76,11 +77,12 @@ export async function saveProfilePicture(
     "BLOB_STORAGE_ACCOUNT_KEY not found"
   );
 
-  if (!profilePictureFile) {
+  if (
+    !existingProfilePicturePath &&
+    (!profilePictureFile || profilePictureFile.size === 0)
+  ) {
     return null;
   }
-
-  const profilePicturePath = `${userId}/${profilePictureFile.name}`;
 
   const account = process.env.BLOB_STORAGE_ACCOUNT_NAME;
   const accountKey = process.env.BLOB_STORAGE_ACCOUNT_KEY;
@@ -97,12 +99,28 @@ export async function saveProfilePicture(
   const containerClient =
     blobServiceClient.getContainerClient(BLOB_CONTAINER_NAME);
 
-  const blockBlobClient =
-    containerClient.getBlockBlobClient(profilePicturePath);
+  if (existingProfilePicturePath) {
+    const existingBlockBlobClient = containerClient.getBlockBlobClient(
+      existingProfilePicturePath
+    );
 
-  await blockBlobClient.uploadData(await profilePictureFile.arrayBuffer());
+    await existingBlockBlobClient.deleteIfExists({
+      deleteSnapshots: "include",
+    });
+  }
 
-  return profilePicturePath;
+  if (profilePictureFile && profilePictureFile.size > 0) {
+    const profilePicturePath = `${userId}/${profilePictureFile.name}`;
+
+    const blockBlobClient =
+      containerClient.getBlockBlobClient(profilePicturePath);
+
+    await blockBlobClient.uploadData(await profilePictureFile.arrayBuffer());
+
+    return profilePicturePath;
+  }
+
+  return null;
 }
 
 export async function getProfilePictureUrl(

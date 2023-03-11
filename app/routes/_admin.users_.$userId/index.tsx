@@ -157,7 +157,8 @@ export async function action({ request, params }: ActionArgs) {
 
   const profilePicturePath = await saveProfilePicture(
     params.userId,
-    formData.get("profilePicture") as File | null
+    formData.get("profilePicture") as File | null,
+    formData.get("existingProfilePicturePath") as string | null
   );
 
   const dataCreate = {
@@ -236,7 +237,13 @@ export default function Chapter() {
           className="relative mr-8 flex-1 overflow-y-auto border-r border-primary pr-4"
         >
           <fieldset disabled={transition.state === "submitting"}>
-            <ProfileInput profilePicturePath={user.profilePicturePath} />
+            <input
+              type="hidden"
+              name="existingProfilePicturePath"
+              value={user.profilePicturePath ?? ""}
+            />
+
+            <ProfileInput initProfilePicturePath={user.profilePicturePath} />
 
             <Input
               defaultValue={user?.firstName ?? ""}

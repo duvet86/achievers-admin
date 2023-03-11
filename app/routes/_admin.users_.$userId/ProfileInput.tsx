@@ -3,17 +3,21 @@ import { useRef, useState } from "react";
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 
 interface Props {
-  profilePicturePath: string | null;
+  initProfilePicturePath: string | null;
 }
 
-export default function ProfileInput({ profilePicturePath }: Props) {
+export default function ProfileInput({ initProfilePicturePath }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const [profilePicturePath, setProfilePicturePath] = useState<string | null>(
+    initProfilePicturePath
+  );
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   return (
     <div className="card card-side m-8 bg-base-100 shadow-xl">
       <figure className="relative">
-        {selectedImage && (
+        {(selectedImage || profilePicturePath) && (
           <button
             className="btn-error btn-square btn-sm btn absolute right-1 top-1"
             onClick={(e) => {
@@ -23,6 +27,7 @@ export default function ProfileInput({ profilePicturePath }: Props) {
                 inputRef.current.value = "";
               }
               setSelectedImage(null);
+              setProfilePicturePath(null);
             }}
           >
             <XMarkIcon />
