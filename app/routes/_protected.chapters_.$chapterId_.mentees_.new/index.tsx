@@ -12,7 +12,7 @@ import {
 
 import invariant from "tiny-invariant";
 
-import { getChapterByIdAsync, readFormDataAsStringsAsync } from "~/services";
+import { readFormDataAsStringsAsync } from "~/services";
 
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
@@ -21,7 +21,7 @@ import Title from "~/components/Title";
 import Input from "~/components/Input";
 import Select from "~/components/Select";
 
-import { createNewMentee } from "./services.server";
+import { createNewMentee, getChapterByIdAsync } from "./services.server";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -38,11 +38,21 @@ export async function action({ request, params }: ActionArgs) {
 
   const formValues = await readFormDataAsStringsAsync(request);
 
+  const firstName = formValues["firstName"];
+  const lastName = formValues["lastName"];
+  const yearLevel = formValues["yearLevel"];
+
+  if (!firstName || !lastName || !yearLevel) {
+    return json({
+      message: "Missing fields.",
+    });
+  }
+
   await createNewMentee({
     chapterId: params.chapterId,
-    firstName: formValues["firstName"],
-    lastName: formValues["lastName"],
-    yearLevel: formValues["yearLevel"],
+    firstName,
+    lastName,
+    yearLevel,
   });
 
   return redirect(`/chapters/${params.chapterId}/mentees`);

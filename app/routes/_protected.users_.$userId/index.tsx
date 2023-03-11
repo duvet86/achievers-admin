@@ -14,7 +14,6 @@ import invariant from "tiny-invariant";
 
 import {
   getSessionUserAsync,
-  getUserAtChaptersByIdAsync,
   getAzureUserWithRolesByIdAsync,
   isStringNullOrEmpty,
   readFormDataAsStringsAsync,
@@ -30,7 +29,11 @@ import Checkbox from "~/components/Checkbox";
 import Select from "~/components/Select";
 import DateInput from "~/components/DateInput";
 
-import { getUserByIdAsync, updateUserByIdAsync } from "./services.server";
+import {
+  getUserByIdAsync,
+  updateUserByIdAsync,
+  getUserAtChaptersByIdAsync,
+} from "./services.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");

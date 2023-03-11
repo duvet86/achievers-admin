@@ -85,7 +85,7 @@ export default function SelectChapter() {
                   <td className="border p-2">
                     <Link
                       to={id}
-                      className="btn-success btn-xs btn flex gap-2 align-middle"
+                      className="btn-success btn-xs btn gap-2 align-middle"
                     >
                       Edit
                       <PencilIcon className="mr-4 h-4 w-4" />

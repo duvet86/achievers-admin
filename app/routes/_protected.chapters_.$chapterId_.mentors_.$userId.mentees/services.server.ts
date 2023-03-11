@@ -13,7 +13,7 @@ export async function getMenteesMentoredByAsync(
     orderBy: {
       startDate: "desc",
     },
-    include: {
+    select: {
       Mentee: true,
     },
   });

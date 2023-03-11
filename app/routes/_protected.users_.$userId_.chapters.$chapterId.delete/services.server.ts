@@ -1,4 +1,4 @@
-import type { UserAtChapter } from "@prisma/client";
+import type { Chapter, UserAtChapter } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
@@ -12,6 +12,17 @@ export async function unassignChapterFromUserAsync(
         userId,
         chapterId,
       },
+    },
+  });
+}
+
+export async function getChapterByIdAsync(id: Chapter["id"]) {
+  return prisma.chapter.findUniqueOrThrow({
+    where: {
+      id,
+    },
+    select: {
+      name: true,
     },
   });
 }

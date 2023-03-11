@@ -13,8 +13,9 @@ import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
 import {
+  getAzureUsersAsync,
   getSessionUserAsync,
-  getAzureUserWithRolesByIdAsync,
+  readFormDataAsStringsAsync,
   Roles,
 } from "~/services";
 
@@ -26,82 +27,86 @@ import Select from "~/components/Select";
 import DateInput from "~/components/DateInput";
 
 import {
-  getMenteesInChapterAsync,
-  assignMenteeToMentorAsync,
-  getMenteesMentoredByAsync,
+  getgMenteeByIdAsync,
+  getMentorsMentoringMenteeAtChapterAsync,
+  getMentorsAtChapterAsync,
+  assignMentorToMenteeAsync,
 } from "./services.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
-  invariant(params.userId, "userId not found");
+  invariant(params.menteeId, "menteeId not found");
 
   const sessionUser = await getSessionUserAsync(request);
 
-  const [azureUser, currentMentoredMentees, allMenteesInChapter] =
-    await Promise.all([
-      getAzureUserWithRolesByIdAsync(sessionUser.accessToken, params.userId),
-      getMenteesMentoredByAsync(params.userId),
-      getMenteesInChapterAsync(params.chapterId),
-    ]);
+  const [mentee, mentorsMentoringMentee, mentorsAtChapter] = await Promise.all([
+    getgMenteeByIdAsync(params.menteeId),
+    getMentorsMentoringMenteeAtChapterAsync(params.chapterId, params.menteeId),
+    getMentorsAtChapterAsync(params.chapterId),
+  ]);
 
-  if (
-    azureUser.appRoleAssignments.find(
-      ({ appRoleId }) => appRoleId === Roles.Mentor
-    ) === undefined
-  ) {
-    throw new Error("Selected user is not a mentor.");
-  }
+  const mentorsMentoringMenteeLookup = mentorsMentoringMentee.reduce<
+    Record<string, string>
+  >((res, { userId }) => {
+    res[userId] = userId;
 
-  const currentMentoredMenteesLookup = currentMentoredMentees.reduce<
-    Record<string, boolean>
-  >((res, { menteeId }) => {
-    res[menteeId] = true;
     return res;
   }, {});
 
-  const availableMentees = allMenteesInChapter.filter(
-    ({ id }) => !currentMentoredMenteesLookup[id]
+  const availableMentorIds = mentorsAtChapter
+    .filter(({ userId }) => !mentorsMentoringMenteeLookup[userId])
+    .map(({ userId }) => userId);
+
+  const availableMentors = await getAzureUsersAsync(
+    sessionUser.accessToken,
+    availableMentorIds
   );
 
   return json({
-    mentor: azureUser,
-    currentMentoredMentees,
-    availableMentees,
+    mentee,
+    availableMentors: availableMentors.filter(({ appRoleAssignments }) =>
+      appRoleAssignments
+        .map(({ appRoleId }) => appRoleId)
+        .includes(Roles.Mentor)
+    ),
     assignedBy: sessionUser.userId,
   });
 }
 
 export async function action({ request, params }: ActionArgs) {
   invariant(params.chapterId, "chapterId not found");
-  invariant(params.userId, "userId not found");
+  invariant(params.menteeId, "menteeId not found");
 
-  const formData = await request.formData();
+  const formData = await readFormDataAsStringsAsync(request);
 
-  const menteeId = formData.get("menteeId");
-  const frequencyInDays = formData.get("frequencyInDays");
-  const startDate = formData.get("startDate");
-  const assignedBy = formData.get("assignedBy");
+  const mentorId = formData["mentorId"];
+  const frequencyInDays = formData["frequencyInDays"];
+  const startDate = formData["startDate"];
+  const assignedBy = formData["assignedBy"];
 
-  if (!menteeId || !frequencyInDays || !startDate || !assignedBy) {
+  if (!mentorId || !frequencyInDays || !startDate || !assignedBy) {
     return json({
       error: "Select a Mentee, a Frequency and a Start Date please.",
     });
   }
 
-  await assignMenteeToMentorAsync(
-    params.userId,
-    menteeId.toString(),
+  await assignMentorToMenteeAsync(
+    mentorId,
+    params.menteeId,
     params.chapterId,
     Number(frequencyInDays),
-    dayjs(startDate.toString(), "YYYY-MM-DD").toDate(),
-    assignedBy.toString()
+    dayjs(startDate, "YYYY-MM-DD").toDate(),
+    assignedBy
   );
 
-  return redirect(`/chapters/${params.chapterId}/users/${params.userId}`);
+  return redirect(
+    `/chapters/${params.chapterId}/mentees/${params.menteeId}/mentors`
+  );
 }
 
 export default function Assign() {
-  const { mentor, availableMentees } = useLoaderData<typeof loader>();
+  const { mentee, availableMentors, assignedBy } =
+    useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   const transition = useNavigation();
@@ -119,18 +124,20 @@ export default function Assign() {
 
       <hr className="mb-4" />
 
-      <Title>Assign Mentee to Mentor "{mentor.email}"</Title>
+      <Title>
+        Assign Mentor to Mentee "{mentee.firstName} {mentee.lastName}"
+      </Title>
 
       <Form method="post">
-        <input type="hidden" name="assignedBy" value={mentor.email} />
+        <input type="hidden" name="assignedBy" value={assignedBy} />
 
         <Select
-          label="Select a Mentee"
-          name="menteeId"
+          label="Select a Mentor"
+          name="mentorId"
           disabled={isSubmitting}
-          options={[{ value: "", label: "Select a Mentee" }].concat(
-            availableMentees.map(({ id, firstName, lastName }) => ({
-              label: `${firstName} ${lastName}`,
+          options={[{ value: "", label: "Select a Mentor" }].concat(
+            availableMentors.map(({ id, email }) => ({
+              label: email,
               value: id,
             }))
           )}
@@ -138,7 +145,7 @@ export default function Assign() {
 
         <Select
           label="Select a Frequency"
-          name="frequency"
+          name="frequencyInDays"
           disabled={isSubmitting}
           options={[
             { value: "", label: "Select a Frequency" },

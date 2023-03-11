@@ -108,11 +108,21 @@ async function getAzureRolesLookUpAsync(
 }
 
 export async function getAzureUsersAsync(
-  accessToken: string
+  accessToken: string,
+  azureIds?: string[]
 ): Promise<AzureUserWebApp[]> {
+  if (azureIds && azureIds.length === 0) {
+    return [];
+  }
+
+  const filter =
+    azureIds && azureIds.length > 0
+      ? `&$filter=id in (${azureIds.map((id) => `'${id}'`).join(", ")})`
+      : "";
+
   try {
     const response = await fetch(
-      `${MICROSOFT_GRAPH_V1_BASEURL}/users?$expand=appRoleAssignments`,
+      `${MICROSOFT_GRAPH_V1_BASEURL}/users?$expand=appRoleAssignments` + filter,
       {
         headers: getHeaders(accessToken),
       }
@@ -130,11 +140,12 @@ export async function getAzureUsersAsync(
 }
 
 export async function getAzureUsersWithRolesAsync(
-  accessToken: string
+  accessToken: string,
+  azureIds?: string[]
 ): Promise<AzureUserWebAppWithRole[]> {
   try {
     const [azureUsers, roles] = await Promise.all([
-      getAzureUsersAsync(accessToken),
+      getAzureUsersAsync(accessToken, azureIds),
       getAzureRolesLookUpAsync(accessToken),
     ]);
 

@@ -8,7 +8,6 @@ import invariant from "tiny-invariant";
 
 import {
   getAzureUsersWithRolesAsync,
-  getChapterByIdAsync,
   getSessionUserAsync,
   Roles,
 } from "~/services";
@@ -18,7 +17,10 @@ import AcademicCapIcon from "@heroicons/react/24/solid/AcademicCapIcon";
 
 import Title from "~/components/Title";
 
-import { getUsersAtChapterByIdAsync } from "./services.server";
+import {
+  getUsersAtChapterByIdAsync,
+  getChapterByIdAsync,
+} from "./services.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -84,6 +86,13 @@ export default function ChapterId() {
             </tr>
           </thead>
           <tbody>
+            {chapter.mentors.length === 0 && (
+              <tr>
+                <td colSpan={3} className="border p-2">
+                  <i></i>No mentors in this chapter
+                </td>
+              </tr>
+            )}
             {chapter.mentors.map(({ id, email }) => (
               <tr key={id}>
                 <td className="border p-2">{email}</td>

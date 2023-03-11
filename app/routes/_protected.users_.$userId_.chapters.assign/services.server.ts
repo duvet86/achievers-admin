@@ -15,3 +15,25 @@ export async function assignChapterToUserAsync(
     },
   });
 }
+
+export async function getChaptersAsync() {
+  return prisma.chapter.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+}
+
+export async function getUserAtChaptersByIdAsync(
+  userId: UserAtChapter["userId"]
+) {
+  return await prisma.userAtChapter.findMany({
+    where: {
+      userId,
+    },
+    select: {
+      Chapter: true,
+    },
+  });
+}

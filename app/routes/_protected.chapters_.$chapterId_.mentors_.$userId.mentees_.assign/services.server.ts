@@ -10,7 +10,7 @@ export async function getMenteesInChapterAsync(chapterId: Chapter["id"]) {
   });
 }
 
-export async function assignMenteeFromMentorAsync(
+export async function assignMenteeToMentorAsync(
   userId: MentoringMentee["userId"],
   menteeId: MentoringMentee["menteeId"],
   chapterId: MentoringMentee["chapterId"],
@@ -26,6 +26,23 @@ export async function assignMenteeFromMentorAsync(
       frequencyInDays,
       startDate,
       assignedBy,
+    },
+  });
+}
+
+export async function getMenteesMentoredByAsync(
+  mentorId: MentoringMentee["userId"]
+) {
+  return await prisma.mentoringMentee.findMany({
+    where: {
+      userId: mentorId,
+      isActive: true,
+    },
+    orderBy: {
+      startDate: "desc",
+    },
+    include: {
+      Mentee: true,
     },
   });
 }

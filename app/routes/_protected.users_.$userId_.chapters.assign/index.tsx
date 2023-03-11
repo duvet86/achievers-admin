@@ -14,8 +14,6 @@ import invariant from "tiny-invariant";
 import {
   getSessionUserAsync,
   getAzureUserWithRolesByIdAsync,
-  getUserAtChaptersByIdAsync,
-  getChaptersAsync,
 } from "~/services";
 
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
@@ -23,7 +21,11 @@ import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 import Select from "~/components/Select";
 
-import { assignChapterToUserAsync } from "./services.server";
+import {
+  assignChapterToUserAsync,
+  getChaptersAsync,
+  getUserAtChaptersByIdAsync,
+} from "./services.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");

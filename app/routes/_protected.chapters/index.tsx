@@ -1,7 +1,7 @@
 import { useLoaderData, Link } from "@remix-run/react";
 import { json } from "@remix-run/server-runtime";
 
-import { getChaptersAsync } from "~/services";
+import { getChaptersAsync } from "./services.server";
 
 export async function loader() {
   const chapters = await getChaptersAsync();

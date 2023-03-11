@@ -8,13 +8,15 @@ import invariant from "tiny-invariant";
 import {
   getSessionUserAsync,
   getAzureUserWithRolesByIdAsync,
-  getChapterByIdAsync,
 } from "~/services";
 
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
-import { unassignChapterFromUserAsync } from "./services.server";
+import {
+  unassignChapterFromUserAsync,
+  getChapterByIdAsync,
+} from "./services.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");

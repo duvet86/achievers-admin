@@ -1,6 +1,6 @@
 export async function readFormDataAsStringsAsync(
   request: Request
-): Promise<Record<string, string>> {
+): Promise<Record<string, string | undefined>> {
   const formData = await request.formData();
 
   return Object.entries(Object.fromEntries(formData)).reduce<

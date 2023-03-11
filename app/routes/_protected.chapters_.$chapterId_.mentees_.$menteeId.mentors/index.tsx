@@ -1,15 +1,11 @@
 import type { LoaderArgs } from "@remix-run/server-runtime";
 
 import { Link, useCatch, useLoaderData } from "@remix-run/react";
-
 import { json } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
 
-import {
-  getSessionUserAsync,
-  getAzureUserWithRolesByIdAsync,
-} from "~/services";
+import { getSessionUserAsync, getAzureUsersWithRolesAsync } from "~/services";
 
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
@@ -17,26 +13,30 @@ import AcademicCapIcon from "@heroicons/react/24/solid/AcademicCapIcon";
 
 import Title from "~/components/Title";
 
-import { getMenteesMentoredByAsync } from "./services.server";
+import { getMenteeById } from "./services.server";
 
 export async function loader({ request, params }: LoaderArgs) {
-  invariant(params.userId, "userId not found");
+  invariant(params.menteeId, "menteeId not found");
 
   const sessionUser = await getSessionUserAsync(request);
 
-  const [mentor, mentees] = await Promise.all([
-    getAzureUserWithRolesByIdAsync(sessionUser.accessToken, params.userId),
-    getMenteesMentoredByAsync(params.userId),
-  ]);
+  const mentee = await getMenteeById(params.menteeId);
+
+  const mentorIds = mentee.Mentors.map(({ userId }) => userId);
+
+  const azureMentors = await getAzureUsersWithRolesAsync(
+    sessionUser.accessToken,
+    mentorIds
+  );
 
   return json({
-    mentor,
-    mentees,
+    mentee,
+    assignedMentors: azureMentors,
   });
 }
 
 export default function Index() {
-  const { mentor, mentees } = useLoaderData<typeof loader>();
+  const { mentee, assignedMentors } = useLoaderData<typeof loader>();
 
   return (
     <>
@@ -49,14 +49,16 @@ export default function Index() {
 
       <hr className="mb-4" />
 
-      <Title>Mentees mentored by "{mentor.email}"</Title>
+      <Title>
+        Mentors assigned to "{mentee.firstName} {mentee.lastName}"
+      </Title>
 
       <div className="overflow-auto">
         <table className="table w-full">
           <thead>
             <tr>
               <th align="left" className="p-2">
-                Mentees
+                Email
               </th>
               <th align="right" className="p-2">
                 Actions
@@ -64,26 +66,24 @@ export default function Index() {
             </tr>
           </thead>
           <tbody>
-            {mentees.length === 0 && (
+            {assignedMentors.length === 0 && (
               <tr>
                 <td colSpan={2} className="border p-2">
-                  <i>No mentees assigned to this mentor</i>
+                  <i>No mentors assigned to this mentee</i>
                 </td>
               </tr>
             )}
-            {mentees.map(({ Mentee: { id, firstName, lastName } }) => (
+            {assignedMentors.map(({ id, email }) => (
               <tr key={id}>
-                <td className="border p-2">
-                  {firstName} {lastName}
-                </td>
+                <td className="border p-2">{email}</td>
                 <td className="w-64 border" align="right">
                   <Link
-                    to={`${id}/mentees`}
+                    to={`${id}/mentor/delete`}
                     relative="path"
                     className="btn-error btn-xs btn flex gap-2 align-middle"
                   >
-                    <XMarkIcon className="h-4 w-4" />
-                    Remove Mentee
+                    <XMarkIcon className="h-6 w-6" />
+                    Remove Mentor
                   </Link>
                 </td>
               </tr>
@@ -95,7 +95,7 @@ export default function Index() {
       <div className="mt-6 flex justify-end">
         <Link className="btn-primary btn gap-2" to="assign" relative="path">
           <AcademicCapIcon className="h-6 w-6" />
-          Assign Mentee
+          Assign a Mentor
         </Link>
       </div>
     </>

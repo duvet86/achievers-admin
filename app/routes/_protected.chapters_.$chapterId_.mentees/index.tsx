@@ -5,14 +5,16 @@ import { Link, useCatch, useLoaderData } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
-import { getChapterByIdAsync } from "~/services";
-
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 import AcademicCapIcon from "@heroicons/react/24/solid/AcademicCapIcon";
+import UserGroupIcon from "@heroicons/react/24/solid/UserGroupIcon";
 
 import Title from "~/components/Title";
 
-import { getMenteesAtChapterByIdAsync } from "./services.server";
+import {
+  getMenteesAtChapterByIdAsync,
+  getChapterByIdAsync,
+} from "./services.server";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -57,7 +59,7 @@ export default function ChapterId() {
                 Last name
               </th>
               <th align="left" className="p-2 text-right">
-                Assigned mentors
+                Actions
               </th>
             </tr>
           </thead>
@@ -69,15 +71,19 @@ export default function ChapterId() {
                 </td>
               </tr>
             )}
-            {chapter.mentees.map(({ id, firstName, lastName, Mentors }) => (
+            {chapter.mentees.map(({ id, firstName, lastName }) => (
               <tr key={id}>
                 <td className="border p-2">{firstName}</td>
                 <td className="border p-2">{lastName}</td>
                 <td className="border p-2 text-right">
-                  {Mentors.length === 0 && (
-                    <i>No mentors assigned to this Mentee</i>
-                  )}
-                  {Mentors.map(({ userId }) => userId).join(", ")}
+                  <Link
+                    to={`${id}/mentors`}
+                    className="btn-success btn-xs btn gap-2 align-middle"
+                    relative="path"
+                  >
+                    <UserGroupIcon className="mr-4 h-4 w-4" />
+                    View Mentors
+                  </Link>
                 </td>
               </tr>
             ))}

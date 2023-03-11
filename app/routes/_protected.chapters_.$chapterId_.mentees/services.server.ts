@@ -12,3 +12,14 @@ export async function getMenteesAtChapterByIdAsync(chapterId: Chapter["id"]) {
     },
   });
 }
+
+export async function getChapterByIdAsync(id: Chapter["id"]) {
+  return prisma.chapter.findUniqueOrThrow({
+    where: {
+      id,
+    },
+    select: {
+      name: true,
+    },
+  });
+}
