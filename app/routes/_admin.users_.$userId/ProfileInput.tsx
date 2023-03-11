@@ -42,7 +42,7 @@ export default function ProfileInput({ initProfilePicturePath }: Props) {
               : "/images/profile-picture.webp"
           }
           alt="profile"
-          className="h-52 w-52"
+          className="h-44 w-44"
         />
       </figure>
       <div className="card-body">

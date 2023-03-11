@@ -20,6 +20,8 @@ import {
   getSessionUserAsync,
   getAzureUserWithRolesByIdAsync,
   isStringNullOrEmpty,
+  getProfilePictureUrl,
+  saveProfilePicture,
 } from "~/services";
 
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
@@ -36,8 +38,6 @@ import {
   getUserByIdAsync,
   updateUserByIdAsync,
   getUserAtChaptersByIdAsync,
-  getProfilePictureUrl,
-  saveProfilePicture,
 } from "./services.server";
 import ProfileInput from "./ProfileInput";
 
