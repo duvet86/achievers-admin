@@ -14,3 +14,6 @@ storageState.json
 /test-results/
 /playwright-report/
 /playwright/.cache/
+
+__azurite*
+__blobstorage__

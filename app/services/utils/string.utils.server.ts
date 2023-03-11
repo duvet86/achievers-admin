@@ -1,4 +1,6 @@
-export function isStringNullOrEmpty(value: string | null | undefined): boolean {
+export function isStringNullOrEmpty(
+  value: string | null | undefined
+): value is null | undefined {
   return value === undefined || value === null || value.trim() === "";
 }
 

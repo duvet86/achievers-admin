@@ -2,6 +2,10 @@ import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
 import type { Attendace, VaccinationStatus } from "@prisma/client";
 
 import {
+  unstable_createMemoryUploadHandler,
+  unstable_parseMultipartFormData,
+} from "@remix-run/node";
+import {
   Form,
   Link,
   useCatch,
@@ -16,7 +20,6 @@ import {
   getSessionUserAsync,
   getAzureUserWithRolesByIdAsync,
   isStringNullOrEmpty,
-  readFormDataAsStringsAsync,
 } from "~/services";
 
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
@@ -33,7 +36,10 @@ import {
   getUserByIdAsync,
   updateUserByIdAsync,
   getUserAtChaptersByIdAsync,
+  getProfilePictureUrl,
+  saveProfilePicture,
 } from "./services.server";
+import ProfileInput from "./ProfileInput";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -52,6 +58,10 @@ export async function loader({ request, params }: LoaderArgs) {
     ]
   );
 
+  const profilePicturePath = await getProfilePictureUrl(
+    user?.profilePicturePath ?? undefined
+  );
+
   const email = azureUser.mail ?? azureUser.userPrincipalName;
 
   return json({
@@ -61,6 +71,7 @@ export async function loader({ request, params }: LoaderArgs) {
       ...user,
       chapters: userAtChapters.map(({ Chapter }) => Chapter),
       email,
+      profilePicturePath,
     },
   });
 }
@@ -68,42 +79,65 @@ export async function loader({ request, params }: LoaderArgs) {
 export async function action({ request, params }: ActionArgs) {
   invariant(params.userId, "userId not found");
 
-  const formValues = await readFormDataAsStringsAsync(request);
+  const uploadHandler = unstable_createMemoryUploadHandler({
+    maxPartSize: 500_000,
+  });
 
-  const firstName = formValues["firstName"];
-  const lastName = formValues["lastName"];
-  const additionalEmail = formValues["additionalEmail"];
-  const mobile = formValues["mobile"];
-  const address = formValues["address"];
-  const dateOfBirth = formValues["dateOfBirth"];
-  const isOver18 = Boolean(formValues["isOver18"]);
-  const isPublishPhotoApproved = Boolean(formValues["isPublishPhotoApproved"]);
-  const isApprovedByMRC = Boolean(formValues["isApprovedByMRC"]);
-  const isCommiteeMemeber = Boolean(formValues["isCommiteeMemeber"]);
-  const isCurrentMemeber = Boolean(formValues["isCurrentMemeber"]);
-  const inductionDate = formValues["inductionDate"];
-  const isActiveMentor = Boolean(formValues["isActiveMentor"]);
-  const defaultAttendance = formValues["attendance"] as Attendace;
-  const vaccinationStatus = formValues[
-    "vaccinationStatus"
-  ] as VaccinationStatus;
-  const policeCheckRenewalDate = formValues["policeCheckRenewalDate"];
-  const WWCCheckRenewalDate = formValues["WWCCheckRenewalDate"];
-  const WWCCheckNumber = formValues["WWCCheckNumber"];
-  const isVolunteerAgreementComplete = Boolean(
-    formValues["isVolunteerAgreementComplete"]
+  const formData = await unstable_parseMultipartFormData(
+    request,
+    uploadHandler
   );
-  const isBoardMemeber = Boolean(formValues["isBoardMemeber"]);
-  const emergencyContactName = formValues["emergencyContactName"];
-  const emergencyContactNumber = formValues["emergencyContactNumber"];
-  const emergencyContactAddress = formValues["emergencyContactAddress"];
-  const emergencyContactRelationship =
-    formValues["emergencyContactRelationship"];
-  const occupation = formValues["occupation"];
-  const boardTermExpiryDate = formValues["boardTermExpiryDate"];
-  const directorIdentificationNumber =
-    formValues["directorIdentificationNumber"];
-  const endDate = formValues["endDate"];
+
+  const firstName = formData.get("firstName")?.toString();
+  const lastName = formData.get("lastName")?.toString();
+  const additionalEmail = formData.get("additionalEmail")?.toString();
+  const mobile = formData.get("mobile")?.toString();
+  const address = formData.get("address")?.toString();
+  const dateOfBirth = formData.get("dateOfBirth")?.toString();
+  const isOver18 = Boolean(formData.get("isOver18")?.toString());
+  const isPublishPhotoApproved = Boolean(
+    formData.get("isPublishPhotoApproved")?.toString()
+  );
+  const isApprovedByMRC = Boolean(formData.get("isApprovedByMRC")?.toString());
+  const isCommiteeMemeber = Boolean(
+    formData.get("isCommiteeMemeber")?.toString()
+  );
+  const isCurrentMemeber = Boolean(
+    formData.get("isCurrentMemeber")?.toString()
+  );
+  const inductionDate = formData.get("inductionDate")?.toString();
+  const isActiveMentor = Boolean(formData.get("isActiveMentor")?.toString());
+  const defaultAttendance = formData.get("attendance")
+    ? (formData.get("attendance")?.toString() as Attendace)
+    : null;
+  const vaccinationStatus = formData
+    .get("vaccinationStatus")
+    ?.toString() as VaccinationStatus;
+  const policeCheckRenewalDate = formData
+    .get("policeCheckRenewalDate")
+    ?.toString();
+  const WWCCheckRenewalDate = formData.get("WWCCheckRenewalDate")?.toString();
+  const WWCCheckNumber = formData.get("WWCCheckNumber")?.toString();
+  const isVolunteerAgreementComplete = Boolean(
+    formData.get("isVolunteerAgreementComplete")?.toString()
+  );
+  const isBoardMemeber = Boolean(formData.get("isBoardMemeber")?.toString());
+  const emergencyContactName = formData.get("emergencyContactName")?.toString();
+  const emergencyContactNumber = formData
+    .get("emergencyContactNumber")
+    ?.toString();
+  const emergencyContactAddress = formData
+    .get("emergencyContactAddress")
+    ?.toString();
+  const emergencyContactRelationship = formData
+    .get("emergencyContactRelationship")
+    ?.toString();
+  const occupation = formData.get("occupation")?.toString();
+  const boardTermExpiryDate = formData.get("boardTermExpiryDate")?.toString();
+  const directorIdentificationNumber = formData
+    .get("directorIdentificationNumber")
+    ?.toString();
+  const endDate = formData.get("endDate")?.toString();
 
   if (
     isStringNullOrEmpty(firstName) ||
@@ -121,7 +155,13 @@ export async function action({ request, params }: ActionArgs) {
     });
   }
 
-  await updateUserByIdAsync(params.userId, {
+  const profilePicturePath = await saveProfilePicture(
+    params.userId,
+    formData.get("profilePicture") as File | null
+  );
+
+  const dataCreate = {
+    id: params.userId,
     firstName,
     lastName,
     additionalEmail,
@@ -158,7 +198,10 @@ export async function action({ request, params }: ActionArgs) {
       ? directorIdentificationNumber
       : null,
     endDate: endDate ? new Date(endDate + "T00:00") : null,
-  });
+    profilePicturePath,
+  };
+
+  await updateUserByIdAsync(params.userId, dataCreate, dataCreate);
 
   return json({
     message: null,
@@ -189,9 +232,12 @@ export default function Chapter() {
       <div className="flex h-full">
         <Form
           method="post"
+          encType="multipart/form-data"
           className="relative mr-8 flex-1 overflow-y-auto border-r border-primary pr-4"
         >
           <fieldset disabled={transition.state === "submitting"}>
+            <ProfileInput profilePicturePath={user.profilePicturePath} />
+
             <Input
               defaultValue={user?.firstName ?? ""}
               label="First name"
@@ -210,7 +256,7 @@ export default function Chapter() {
               defaultValue={user.email}
               label="Email"
               name="email"
-              readOnly
+              disabled
             />
 
             <Input
