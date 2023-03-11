@@ -5,12 +5,7 @@ interface Props {
   required?: boolean;
 }
 
-export default function Checkbox({
-  label,
-  name,
-  defaultChecked,
-  required,
-}: Props) {
+export default function Checkbox({ label, name, ...props }: Props) {
   return (
     <div className="form-control">
       <label
@@ -23,8 +18,7 @@ export default function Checkbox({
           className="checkbox"
           id={name}
           name={name}
-          defaultChecked={defaultChecked}
-          required={required}
+          {...props}
         />
       </label>
     </div>

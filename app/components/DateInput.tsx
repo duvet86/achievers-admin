@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 interface Props {
   name: string;
   label: string;
@@ -12,14 +14,11 @@ export default function DateInput({
   label,
   name,
   defaultValue,
-  readOnly,
-  required,
-  min,
-  max,
+  ...props
 }: Props) {
   const value =
     defaultValue instanceof Date
-      ? defaultValue.toISOString().substring(0, 10)
+      ? dayjs(defaultValue).format("YYYY-MM-DD")
       : defaultValue;
 
   return (
@@ -34,10 +33,7 @@ export default function DateInput({
         placeholder={label}
         className="input-bordered input w-full"
         defaultValue={value}
-        readOnly={readOnly}
-        required={required}
-        min={min}
-        max={max}
+        {...props}
       />
     </div>
   );

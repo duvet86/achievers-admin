@@ -6,7 +6,7 @@ import {
   Link,
   useActionData,
   useLoaderData,
-  useTransition,
+  useNavigation,
 } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
@@ -103,7 +103,7 @@ export default function Assign() {
   const { mentor, availableMentees } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
-  const transition = useTransition();
+  const transition = useNavigation();
 
   const isSubmitting = transition.state === "submitting";
 

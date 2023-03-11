@@ -6,7 +6,7 @@ import {
   Link,
   useCatch,
   useLoaderData,
-  useTransition,
+  useNavigation,
 } from "@remix-run/react";
 import { json } from "@remix-run/server-runtime";
 
@@ -163,7 +163,7 @@ export async function action({ request, params }: ActionArgs) {
 }
 
 export default function Chapter() {
-  const transition = useTransition();
+  const transition = useNavigation();
   const { user, isLoggedUser } = useLoaderData<typeof loader>();
 
   return (

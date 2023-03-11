@@ -8,7 +8,7 @@ import {
   Scripts,
   ScrollRestoration,
   useCatch,
-  useTransition,
+  useNavigation,
 } from "@remix-run/react";
 
 import tailwindStylesheetUrl from "~/styles/tailwind.css";
@@ -26,7 +26,7 @@ export const meta: MetaFunction = () => ({
 });
 
 export default function App() {
-  const transition = useTransition();
+  const transition = useNavigation();
   const isLoading =
     transition.state === "loading" || transition.state === "submitting";
 

@@ -3,22 +3,14 @@ import type { HTMLInputTypeAttribute } from "react";
 interface Props {
   name: string;
   label: string;
-  defaultValue: string;
+  defaultValue?: string;
   type?: HTMLInputTypeAttribute;
   readOnly?: boolean;
   disabled?: boolean;
   required?: boolean;
 }
 
-export default function Input({
-  label,
-  name,
-  defaultValue,
-  type = "text",
-  readOnly,
-  disabled,
-  required,
-}: Props) {
+export default function Input({ label, name, type = "text", ...props }: Props) {
   return (
     <div className="form-control w-full">
       <label htmlFor={name} className="label">
@@ -30,10 +22,7 @@ export default function Input({
         name={name}
         placeholder={label}
         className="input-bordered input w-full"
-        defaultValue={defaultValue}
-        readOnly={readOnly}
-        disabled={disabled || readOnly}
-        required={required}
+        {...props}
       />
     </div>
   );

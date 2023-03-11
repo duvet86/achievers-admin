@@ -14,7 +14,7 @@ import {
   Link,
   useActionData,
   useCatch,
-  useTransition,
+  useNavigation,
 } from "@remix-run/react";
 
 import {
@@ -193,7 +193,7 @@ export const action = async ({
 
 export default function Import() {
   const data = useActionData<typeof action>();
-  const transition = useTransition();
+  const transition = useNavigation();
 
   const isLoading = transition.state === "loading";
   const isSubmitting = transition.state === "submitting";

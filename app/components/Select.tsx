@@ -12,7 +12,7 @@ interface Props {
   options: SelectOption[];
 }
 
-export default function Select({ label, name, defaultValue, options }: Props) {
+export default function Select({ label, name, options, ...props }: Props) {
   return (
     <div className="form-control w-full">
       <label htmlFor={name} className="label">
@@ -22,7 +22,7 @@ export default function Select({ label, name, defaultValue, options }: Props) {
         name={name}
         id={name}
         className="select-bordered select"
-        defaultValue={defaultValue}
+        {...props}
       >
         {options.map(({ label, value }, index) => (
           <option key={index} value={value}>
