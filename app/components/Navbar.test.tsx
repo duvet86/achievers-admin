@@ -9,8 +9,6 @@ test("Header snapshot", async () => {
   const { baseElement } = render(
     <MemoryRouter>
       <Navbar
-        isAdmin={true}
-        version="1"
         currentUser={{
           appRoleAssignments: [],
           displayName: "",

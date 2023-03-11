@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import Calendar from "~/components/Calendar";
 import RosterCalendar from "~/components/RosterCalendar";
 
-export default function Roster() {
+export default function Index() {
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
 
   const currentDay = useMemo(() => dayjs().toDate(), []);

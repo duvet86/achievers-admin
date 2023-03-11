@@ -11,18 +11,19 @@ interface Props {
   currentUser: AzureUserWebAppWithRole;
 }
 
-export default function Body(props: Props) {
+export default function Body({ currentUser, version, isAdmin }: Props) {
   return (
     <div className="drawer-mobile drawer">
       <input id="drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
-        <Navbar {...props} />
+        <Navbar currentUser={currentUser} />
 
         <main className="mt-16 flex h-full flex-col overflow-y-auto bg-white p-4">
           <Outlet />
         </main>
       </div>
-      <Drawer />
+
+      <Drawer isAdmin={isAdmin} version={version} />
     </div>
   );
 }

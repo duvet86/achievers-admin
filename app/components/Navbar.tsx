@@ -8,12 +8,10 @@ import UserIcon from "@heroicons/react/24/solid/UserIcon";
 import ArrowLeftOnRectangleIcon from "@heroicons/react/24/solid/ArrowLeftOnRectangleIcon";
 
 interface Props {
-  isAdmin: boolean;
-  version: string;
   currentUser: AzureUserWebAppWithRole;
 }
 
-export default function Navbar({ isAdmin, version, currentUser }: Props) {
+export default function Navbar({ currentUser }: Props) {
   return (
     <nav className="navbar absolute top-0 left-0 h-16 bg-primary text-primary-content shadow-md">
       <div className="flex-none lg:hidden">
@@ -22,10 +20,7 @@ export default function Navbar({ isAdmin, version, currentUser }: Props) {
         </label>
       </div>
       <div className="flex-1">
-        <Link
-          to={isAdmin ? "/users" : "/roster"}
-          className="btn-ghost btn text-xl normal-case"
-        >
+        <Link to="/" className="btn-ghost btn text-xl normal-case">
           <img
             className="mr-4 w-16 rounded"
             src="/images/logo.png"
@@ -61,9 +56,6 @@ export default function Navbar({ isAdmin, version, currentUser }: Props) {
               <ArrowLeftOnRectangleIcon className="mr-2 w-6" />
               Logout
             </Link>
-          </li>
-          <li className="mx-2 mt-2 border-t border-base-300 italic">
-            Version {version}
           </li>
         </ul>
       </div>

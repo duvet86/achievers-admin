@@ -2,20 +2,40 @@ import { NavLink } from "@remix-run/react";
 
 import ChevronRightIcon from "@heroicons/react/24/solid/ChevronRightIcon";
 
-const links = [
-  {
-    value: "/users",
-    label: "Users",
-  },
-  {
-    value: "/chapters",
-    label: "Chapters",
-  },
-];
+interface Props {
+  isAdmin: boolean;
+  version: string;
+}
 
-export default function Drawer() {
+function getLinks(isAdmin: boolean) {
+  return isAdmin
+    ? [
+        {
+          value: "/users",
+          label: "Users",
+        },
+        {
+          value: "/chapters",
+          label: "Chapters",
+        },
+      ]
+    : [
+        {
+          value: "/roster",
+          label: "Roster",
+        },
+        {
+          value: "/mentees",
+          label: "My Mentees",
+        },
+      ];
+}
+
+export default function Drawer({ isAdmin, version }: Props) {
+  const links = getLinks(isAdmin);
+
   return (
-    <div className="drawer-side mt-16">
+    <div className="drawer-side relative mt-16">
       <label htmlFor="drawer" className="drawer-overlay"></label>
       <ul className="menu w-80 border-r border-primary bg-base-200 p-4 text-base-content">
         {links.map(({ label, value }, index) => (
@@ -34,6 +54,9 @@ export default function Drawer() {
           </li>
         ))}
       </ul>
+      <div className="absolute bottom-0 right-2 z-10 text-sm italic">
+        Version {version}
+      </div>
     </div>
   );
 }
