@@ -1,5 +1,5 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
-import type { Attendace, VaccinationStatus } from "@prisma/client";
+import type { Attendace, Prisma, VaccinationStatus } from "@prisma/client";
 
 import {
   unstable_createMemoryUploadHandler,
@@ -139,6 +139,10 @@ export async function action({ request, params }: ActionArgs) {
     ?.toString();
   const endDate = formData.get("endDate")?.toString();
 
+  const deleteProfilePicture = JSON.parse(
+    formData.get("deleteProfilePicture") as string
+  );
+
   if (
     isStringNullOrEmpty(firstName) ||
     isStringNullOrEmpty(lastName) ||
@@ -155,17 +159,17 @@ export async function action({ request, params }: ActionArgs) {
     });
   }
 
-  const profilePicturePath = await saveProfilePicture(
-    params.userId,
-    formData.get("profilePicture") as File | null
-  );
-
-  const dataCreate = {
+  const dataCreate: Prisma.XOR<
+    Prisma.UserCreateInput,
+    Prisma.UserUncheckedCreateInput
+  > = {
     id: params.userId,
     firstName,
     lastName,
     additionalEmail:
-      additionalEmail?.trim() === "" ? null : additionalEmail?.trim(),
+      !additionalEmail || additionalEmail.trim() === ""
+        ? null
+        : additionalEmail.trim(),
     mobile,
     address,
     dateOfBirth: new Date(dateOfBirth + "T00:00"),
@@ -199,8 +203,19 @@ export async function action({ request, params }: ActionArgs) {
       ? directorIdentificationNumber
       : null,
     endDate: endDate ? new Date(endDate + "T00:00") : null,
-    profilePicturePath,
   };
+
+  const profilePictureFile = formData.get("profilePicture") as File | null;
+
+  if (profilePictureFile && profilePictureFile.size > 0) {
+    dataCreate.profilePicturePath = await saveProfilePicture(
+      params.userId,
+      profilePictureFile
+    );
+  } else if (deleteProfilePicture) {
+    // TODO: delete picture in storage.
+    dataCreate.profilePicturePath = null;
+  }
 
   await updateUserByIdAsync(params.userId, dataCreate, dataCreate);
 
@@ -237,7 +252,7 @@ export default function Chapter() {
           className="relative mr-8 flex-1 overflow-y-auto border-r border-primary pr-4"
         >
           <fieldset disabled={transition.state === "submitting"}>
-            <ProfileInput initProfilePicturePath={user.profilePicturePath} />
+            <ProfileInput defaultValue={user.profilePicturePath} />
 
             <Input
               defaultValue={user.email}
@@ -319,6 +334,12 @@ export default function Chapter() {
               required
             />
 
+            <Checkbox
+              label="Is Active Mentor"
+              name="isActiveMentor"
+              defaultChecked={user.isActiveMentor ?? true}
+            />
+
             <Input
               defaultValue={user?.additionalEmail ?? ""}
               label="Additional email"
@@ -355,12 +376,6 @@ export default function Chapter() {
               }
               label="Induction Date"
               name="inductionDate"
-            />
-
-            <Checkbox
-              label="Is Active Mentor"
-              name="isActiveMentor"
-              defaultChecked={user.isActiveMentor ?? false}
             />
 
             <Select

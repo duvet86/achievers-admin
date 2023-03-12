@@ -52,29 +52,25 @@ export async function getUserAtChaptersByIdAsync(
 
 export async function saveProfilePicture(
   userId: string,
-  profilePictureFile: File | null
+  profilePictureFile: File
 ): Promise<string | null> {
-  if (!profilePictureFile || profilePictureFile.size === 0) {
-    return null;
+  if (profilePictureFile.size === 0) {
+    throw new Error();
   }
 
   const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
 
-  if (profilePictureFile && profilePictureFile.size > 0) {
-    const profilePicturePath = `${userId}/profile-picture.${getExtension(
-      profilePictureFile.name
-    )}`;
+  const profilePicturePath = `${userId}/profile-picture.${getExtension(
+    profilePictureFile.name
+  )}`;
 
-    await uploadBlobAsync(
-      containerClient,
-      profilePictureFile,
-      profilePicturePath
-    );
+  await uploadBlobAsync(
+    containerClient,
+    profilePictureFile,
+    profilePicturePath
+  );
 
-    return profilePicturePath;
-  }
-
-  return null;
+  return profilePicturePath;
 }
 
 export async function getProfilePictureUrl(

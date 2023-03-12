@@ -14,6 +14,7 @@ export default function DateInput({
   label,
   name,
   defaultValue,
+  required,
   ...props
 }: Props) {
   const value =
@@ -22,9 +23,14 @@ export default function DateInput({
       : defaultValue;
 
   return (
-    <div className="form-control w-full">
+    <div className="form-control relative w-full">
       <label htmlFor={name} className="label">
         <span className="label-text">{label}</span>
+        {required && (
+          <span className="label-text-alt absolute top-9 right-1 text-2xl text-error">
+            *
+          </span>
+        )}
       </label>
       <input
         type="date"
@@ -33,6 +39,7 @@ export default function DateInput({
         placeholder={label}
         className="input-bordered input w-full"
         defaultValue={value}
+        required={required}
         {...props}
       />
     </div>
