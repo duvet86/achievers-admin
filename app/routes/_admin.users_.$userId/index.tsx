@@ -240,6 +240,13 @@ export default function Chapter() {
             <ProfileInput initProfilePicturePath={user.profilePicturePath} />
 
             <Input
+              defaultValue={user.email}
+              label="Email"
+              name="email"
+              disabled
+            />
+
+            <Input
               defaultValue={user?.firstName ?? ""}
               label="First name"
               name="firstName"
@@ -310,13 +317,6 @@ export default function Chapter() {
               name="isOver18"
               defaultChecked={user.isOver18 ?? false}
               required
-            />
-
-            <Input
-              defaultValue={user.email}
-              label="Email"
-              name="email"
-              disabled
             />
 
             <Input
