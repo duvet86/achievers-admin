@@ -8,6 +8,7 @@ import {
   BlobSASPermissions,
   BlobServiceClient,
   StorageSharedKeyCredential,
+  generateBlobSASQueryParameters,
 } from "@azure/storage-blob";
 import invariant from "tiny-invariant";
 
@@ -52,23 +53,26 @@ export function getContainerClient(containerName: string): ContainerClient {
   return containerClient;
 }
 
-export async function getSASUrlAsync(
+export async function getSASQueryStringAsync(
   containerClient: ContainerClient,
   blobPath: string,
   expiresOnMinutes: number
 ): Promise<string> {
-  const blobClient = containerClient.getBlobClient(blobPath);
-
   const startsOn = new Date();
   const expiresOn = new Date(startsOn);
 
   expiresOn.setMinutes(startsOn.getMinutes() + expiresOnMinutes);
 
-  return await blobClient.generateSasUrl({
-    permissions: BlobSASPermissions.parse("read"),
-    startsOn,
-    expiresOn,
-  });
+  return generateBlobSASQueryParameters(
+    {
+      blobName: blobPath,
+      containerName: containerClient.containerName,
+      permissions: BlobSASPermissions.parse("read"),
+      startsOn,
+      expiresOn,
+    },
+    containerClient.credential as StorageSharedKeyCredential
+  ).toString();
 }
 
 export async function deleteBlobAsync(
@@ -89,5 +93,9 @@ export async function uploadBlobAsync(
 ): Promise<BlobUploadCommonResponse> {
   const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
 
-  return await blockBlobClient.uploadData(await fileToUpload.arrayBuffer());
+  return await blockBlobClient.uploadData(await fileToUpload.arrayBuffer(), {
+    blobHTTPHeaders: {
+      blobContentType: fileToUpload.type,
+    },
+  });
 }

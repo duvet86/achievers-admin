@@ -58,9 +58,9 @@ export async function loader({ request, params }: LoaderArgs) {
     ]
   );
 
-  const profilePicturePath = await getProfilePictureUrl(
-    user?.profilePicturePath ?? undefined
-  );
+  const profilePicturePath = user?.profilePicturePath
+    ? await getProfilePictureUrl(user.profilePicturePath)
+    : null;
 
   const email = azureUser.mail ?? azureUser.userPrincipalName;
 

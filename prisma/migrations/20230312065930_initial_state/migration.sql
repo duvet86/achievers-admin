@@ -27,7 +27,7 @@ CREATE TABLE `User` (
     `isCurrentMemeber` BOOLEAN NOT NULL DEFAULT true,
     `inductionDate` DATETIME(3) NULL,
     `isActiveMentor` BOOLEAN NOT NULL DEFAULT true,
-    `attendance` ENUM('Weekly', 'Fortnightly', 'Other') NULL,
+    `defaultAttendance` ENUM('Weekly', 'Fortnightly', 'Other') NULL,
     `vaccinationStatus` ENUM('Confirmed', 'Uncofirmed') NULL,
     `policeCheckRenewalDate` DATETIME(3) NULL,
     `WWCCheckRenewalDate` DATETIME(3) NULL,
@@ -42,9 +42,9 @@ CREATE TABLE `User` (
     `boardTermExpiryDate` DATETIME(3) NULL,
     `directorIdentificationNumber` VARCHAR(191) NULL,
     `endDate` DATETIME(3) NULL,
+    `profilePicturePath` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
-    `chapterId` VARCHAR(191) NULL,
 
     UNIQUE INDEX `User_additionalEmail_key`(`additionalEmail`),
     UNIQUE INDEX `User_firstName_lastName_key`(`firstName`, `lastName`),
@@ -76,6 +76,16 @@ CREATE TABLE `Chapter` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `UserAtChapter` (
+    `userId` VARCHAR(191) NOT NULL,
+    `chapterId` VARCHAR(191) NOT NULL,
+    `assignedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `assignedBy` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`userId`, `chapterId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `MentoringMentee` (
     `userId` VARCHAR(191) NOT NULL,
     `menteeId` VARCHAR(191) NOT NULL,
@@ -84,15 +94,16 @@ CREATE TABLE `MentoringMentee` (
     `assignedBy` VARCHAR(191) NOT NULL,
     `frequencyInDays` INTEGER NOT NULL,
     `startDate` DATETIME(3) NULL,
+    `isActive` BOOLEAN NOT NULL DEFAULT true,
 
     PRIMARY KEY (`userId`, `menteeId`, `chapterId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `User` ADD CONSTRAINT `User_chapterId_fkey` FOREIGN KEY (`chapterId`) REFERENCES `Chapter`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Mentee` ADD CONSTRAINT `Mentee_chapterId_fkey` FOREIGN KEY (`chapterId`) REFERENCES `Chapter`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Mentee` ADD CONSTRAINT `Mentee_chapterId_fkey` FOREIGN KEY (`chapterId`) REFERENCES `Chapter`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `UserAtChapter` ADD CONSTRAINT `UserAtChapter_chapterId_fkey` FOREIGN KEY (`chapterId`) REFERENCES `Chapter`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `MentoringMentee` ADD CONSTRAINT `MentoringMentee_menteeId_fkey` FOREIGN KEY (`menteeId`) REFERENCES `Mentee`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

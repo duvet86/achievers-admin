@@ -3,8 +3,7 @@ import type { Prisma, User, UserAtChapter } from "@prisma/client";
 import { prisma } from "~/db.server";
 import {
   getContainerClient,
-  getExtension,
-  getSASUrlAsync,
+  getSASQueryStringAsync,
   uploadBlobAsync,
   USER_DATA_BLOB_CONTAINER_NAME,
 } from "~/services";
@@ -60,9 +59,7 @@ export async function saveProfilePicture(
 
   const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
 
-  const profilePicturePath = `${userId}/profile-picture.${getExtension(
-    profilePictureFile.name
-  )}`;
+  const profilePicturePath = `${userId}/profile-picture`;
 
   await uploadBlobAsync(
     containerClient,
@@ -74,13 +71,17 @@ export async function saveProfilePicture(
 }
 
 export async function getProfilePictureUrl(
-  profilePicturePath?: string
-): Promise<string | null> {
-  if (!profilePicturePath) {
-    return null;
-  }
-
+  profilePicturePath: string
+): Promise<string> {
   const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
 
-  return await getSASUrlAsync(containerClient, profilePicturePath, 60);
+  const blob = containerClient.getBlobClient(profilePicturePath);
+
+  const sasQueryString = await getSASQueryStringAsync(
+    containerClient,
+    profilePicturePath,
+    60
+  );
+
+  return `${blob.url}?${sasQueryString}`;
 }
