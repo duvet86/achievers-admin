@@ -20,8 +20,6 @@ import {
   getSessionUserAsync,
   getAzureUserWithRolesByIdAsync,
   isStringNullOrEmpty,
-  getProfilePictureUrl,
-  saveProfilePicture,
 } from "~/services";
 
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
@@ -38,6 +36,8 @@ import {
   getUserByIdAsync,
   updateUserByIdAsync,
   getUserAtChaptersByIdAsync,
+  getProfilePictureUrl,
+  saveProfilePicture,
 } from "./services.server";
 import ProfileInput from "./ProfileInput";
 
@@ -157,15 +157,15 @@ export async function action({ request, params }: ActionArgs) {
 
   const profilePicturePath = await saveProfilePicture(
     params.userId,
-    formData.get("profilePicture") as File | null,
-    formData.get("existingProfilePicturePath") as string | null
+    formData.get("profilePicture") as File | null
   );
 
   const dataCreate = {
     id: params.userId,
     firstName,
     lastName,
-    additionalEmail,
+    additionalEmail:
+      additionalEmail?.trim() === "" ? null : additionalEmail?.trim(),
     mobile,
     address,
     dateOfBirth: new Date(dateOfBirth + "T00:00"),
@@ -237,12 +237,6 @@ export default function Chapter() {
           className="relative mr-8 flex-1 overflow-y-auto border-r border-primary pr-4"
         >
           <fieldset disabled={transition.state === "submitting"}>
-            <input
-              type="hidden"
-              name="existingProfilePicturePath"
-              value={user.profilePicturePath ?? ""}
-            />
-
             <ProfileInput initProfilePicturePath={user.profilePicturePath} />
 
             <Input
@@ -260,20 +254,8 @@ export default function Chapter() {
             />
 
             <Input
-              defaultValue={user.email}
-              label="Email"
-              name="email"
-              disabled
-            />
-
-            <Input
-              defaultValue={user?.additionalEmail ?? ""}
-              label="Additional email"
-              name="additionalEmail"
-            />
-
-            <Input
               defaultValue={user?.mobile ?? ""}
+              type="number"
               label="Mobile"
               name="mobile"
               required
@@ -295,11 +277,52 @@ export default function Chapter() {
               required
             />
 
+            <Input
+              defaultValue={user?.emergencyContactName ?? ""}
+              label="Emergency Contact Name"
+              name="emergencyContactName"
+              required
+            />
+
+            <Input
+              defaultValue={user?.emergencyContactNumber ?? ""}
+              label="Emergency Contact Number"
+              name="emergencyContactNumber"
+              required
+            />
+
+            <Input
+              defaultValue={user?.emergencyContactAddress ?? ""}
+              label="Emergency Contact Address"
+              name="emergencyContactAddress"
+              required
+            />
+
+            <Input
+              defaultValue={user?.emergencyContactRelationship ?? ""}
+              label="Emergency Contact Relationship"
+              name="emergencyContactRelationship"
+              required
+            />
+
             <Checkbox
               label="Is over 18?"
               name="isOver18"
               defaultChecked={user.isOver18 ?? false}
               required
+            />
+
+            <Input
+              defaultValue={user.email}
+              label="Email"
+              name="email"
+              disabled
+            />
+
+            <Input
+              defaultValue={user?.additionalEmail ?? ""}
+              label="Additional email"
+              name="additionalEmail"
             />
 
             <Checkbox
@@ -399,34 +422,6 @@ export default function Chapter() {
               label="Is Board Memeber"
               name="isBoardMemeber"
               defaultChecked={user.isBoardMemeber ?? false}
-            />
-
-            <Input
-              defaultValue={user?.emergencyContactName ?? ""}
-              label="Emergency Contact Name"
-              name="emergencyContactName"
-              required
-            />
-
-            <Input
-              defaultValue={user?.emergencyContactNumber ?? ""}
-              label="Emergency Contact Number"
-              name="emergencyContactNumber"
-              required
-            />
-
-            <Input
-              defaultValue={user?.emergencyContactAddress ?? ""}
-              label="Emergency Contact Address"
-              name="emergencyContactAddress"
-              required
-            />
-
-            <Input
-              defaultValue={user?.emergencyContactRelationship ?? ""}
-              label="Emergency Contact Relationship"
-              name="emergencyContactRelationship"
-              required
             />
 
             <Input

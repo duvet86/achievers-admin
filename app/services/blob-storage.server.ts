@@ -1,3 +1,9 @@
+import type {
+  BlobDeleteIfExistsResponse,
+  BlobUploadCommonResponse,
+  ContainerClient,
+} from "@azure/storage-blob";
+
 import {
   BlobSASPermissions,
   BlobServiceClient,
@@ -5,7 +11,7 @@ import {
 } from "@azure/storage-blob";
 import invariant from "tiny-invariant";
 
-const BLOB_CONTAINER_NAME = "user-data";
+export const USER_DATA_BLOB_CONTAINER_NAME = "user-data";
 
 function getBlobUrl(): string {
   invariant(
@@ -18,11 +24,7 @@ function getBlobUrl(): string {
     : "http://127.0.0.1:10000/devstoreaccount1";
 }
 
-export async function saveProfilePicture(
-  userId: string,
-  profilePictureFile: File | null,
-  existingProfilePicturePath: string | null
-): Promise<string | null> {
+export function getContainerClient(containerName: string): ContainerClient {
   invariant(
     process.env.BLOB_STORAGE_ACCOUNT_NAME,
     "BLOB_STORAGE_ACCOUNT_NAME not found"
@@ -31,13 +33,6 @@ export async function saveProfilePicture(
     process.env.BLOB_STORAGE_ACCOUNT_KEY,
     "BLOB_STORAGE_ACCOUNT_KEY not found"
   );
-
-  if (
-    !existingProfilePicturePath &&
-    (!profilePictureFile || profilePictureFile.size === 0)
-  ) {
-    return null;
-  }
 
   const account = process.env.BLOB_STORAGE_ACCOUNT_NAME;
   const accountKey = process.env.BLOB_STORAGE_ACCOUNT_KEY;
@@ -51,75 +46,48 @@ export async function saveProfilePicture(
     getBlobUrl(),
     sharedKeyCredential
   );
-  const containerClient =
-    blobServiceClient.getContainerClient(BLOB_CONTAINER_NAME);
 
-  if (existingProfilePicturePath) {
-    const existingBlockBlobClient = containerClient.getBlockBlobClient(
-      existingProfilePicturePath
-    );
+  const containerClient = blobServiceClient.getContainerClient(containerName);
 
-    await existingBlockBlobClient.deleteIfExists({
-      deleteSnapshots: "include",
-    });
-  }
-
-  if (profilePictureFile && profilePictureFile.size > 0) {
-    const profilePicturePath = `${userId}/${profilePictureFile.name}`;
-
-    const blockBlobClient =
-      containerClient.getBlockBlobClient(profilePicturePath);
-
-    await blockBlobClient.uploadData(await profilePictureFile.arrayBuffer());
-
-    return profilePicturePath;
-  }
-
-  return null;
+  return containerClient;
 }
 
-export async function getProfilePictureUrl(
-  profilePicturePath?: string
-): Promise<string | null> {
-  invariant(
-    process.env.BLOB_STORAGE_ACCOUNT_NAME,
-    "BLOB_STORAGE_ACCOUNT_NAME not found"
-  );
-  invariant(
-    process.env.BLOB_STORAGE_ACCOUNT_KEY,
-    "BLOB_STORAGE_ACCOUNT_KEY not found"
-  );
-
-  if (!profilePicturePath) {
-    return null;
-  }
-
-  const account = process.env.BLOB_STORAGE_ACCOUNT_NAME;
-  const accountKey = process.env.BLOB_STORAGE_ACCOUNT_KEY;
-
-  const sharedKeyCredential = new StorageSharedKeyCredential(
-    account,
-    accountKey
-  );
-
-  const blobServiceClient = new BlobServiceClient(
-    getBlobUrl(),
-    sharedKeyCredential
-  );
-
-  const containerClient =
-    blobServiceClient.getContainerClient(BLOB_CONTAINER_NAME);
-
-  const blobClient = containerClient.getBlobClient(profilePicturePath);
+export async function getSASUrlAsync(
+  containerClient: ContainerClient,
+  blobPath: string,
+  expiresOnMinutes: number
+): Promise<string> {
+  const blobClient = containerClient.getBlobClient(blobPath);
 
   const startsOn = new Date();
   const expiresOn = new Date(startsOn);
 
-  expiresOn.setMinutes(startsOn.getMinutes() + 60);
+  expiresOn.setMinutes(startsOn.getMinutes() + expiresOnMinutes);
 
   return await blobClient.generateSasUrl({
     permissions: BlobSASPermissions.parse("read"),
     startsOn,
     expiresOn,
   });
+}
+
+export async function deleteBlobAsync(
+  containerClient: ContainerClient,
+  blobPath: string
+): Promise<BlobDeleteIfExistsResponse> {
+  const existingBlockBlobClient = containerClient.getBlockBlobClient(blobPath);
+
+  return await existingBlockBlobClient.deleteIfExists({
+    deleteSnapshots: "include",
+  });
+}
+
+export async function uploadBlobAsync(
+  containerClient: ContainerClient,
+  fileToUpload: File,
+  blobPath: string
+): Promise<BlobUploadCommonResponse> {
+  const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
+
+  return await blockBlobClient.uploadData(await fileToUpload.arrayBuffer());
 }
