@@ -51,23 +51,53 @@ export async function getUserAtChaptersByIdAsync(
 
 export async function saveProfilePicture(
   userId: string,
-  profilePictureFile: File
+  file: File
 ): Promise<string | null> {
-  if (profilePictureFile.size === 0) {
+  if (file.size === 0) {
     throw new Error();
   }
 
   const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
 
-  const profilePicturePath = `${userId}/profile-picture`;
+  const path = `${userId}/profile-picture`;
 
-  await uploadBlobAsync(
-    containerClient,
-    profilePictureFile,
-    profilePicturePath
-  );
+  await uploadBlobAsync(containerClient, file, path);
 
-  return profilePicturePath;
+  return path;
+}
+
+export async function savePoliceCheck(
+  userId: string,
+  file: File
+): Promise<string | null> {
+  if (file.size === 0) {
+    throw new Error();
+  }
+
+  const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
+
+  const path = `${userId}/police-check`;
+
+  await uploadBlobAsync(containerClient, file, path);
+
+  return path;
+}
+
+export async function saveWWCCheck(
+  userId: string,
+  file: File
+): Promise<string | null> {
+  if (file.size === 0) {
+    throw new Error();
+  }
+
+  const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
+
+  const path = `${userId}/wwc-check`;
+
+  await uploadBlobAsync(containerClient, file, path);
+
+  return path;
 }
 
 export async function getProfilePictureUrl(

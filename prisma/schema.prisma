@@ -62,7 +62,10 @@ model User {
   boardTermExpiryDate          DateTime?
   directorIdentificationNumber String?
   endDate                      DateTime?
-  profilePicturePath           String?
+
+  profilePicturePath String?
+  policeCheckPath    String?
+  WWCCheckPath       String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

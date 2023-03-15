@@ -3,8 +3,8 @@ import type { Dayjs } from "dayjs";
 import { useCallback, useMemo, useState } from "react";
 import dayjs from "dayjs";
 
-import Calendar from "~/components/Calendar";
-import RosterCalendar from "~/components/RosterCalendar";
+import RosterCalendar from "./RosterCalendar";
+import Calendar from "./Calendar";
 
 export default function Index() {
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());

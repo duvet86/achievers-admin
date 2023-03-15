@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `User` ADD COLUMN `WWCCheckPath` VARCHAR(191) NULL,
+    ADD COLUMN `policeCheckPath` VARCHAR(191) NULL;

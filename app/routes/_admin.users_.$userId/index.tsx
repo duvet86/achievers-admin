@@ -1,6 +1,7 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
 import type { Attendace, Prisma, VaccinationStatus } from "@prisma/client";
 
+import { json } from "@remix-run/server-runtime";
 import {
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
@@ -12,7 +13,6 @@ import {
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
-import { json } from "@remix-run/server-runtime";
 
 import invariant from "tiny-invariant";
 
@@ -25,12 +25,14 @@ import {
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
+import CheckCircleIcon from "@heroicons/react/24/solid/CheckCircleIcon";
 
 import Input from "~/components/Input";
 import Title from "~/components/Title";
 import Checkbox from "~/components/Checkbox";
 import Select from "~/components/Select";
 import DateInput from "~/components/DateInput";
+import FileInput from "~/components/FileInput";
 
 import {
   getUserByIdAsync,
@@ -38,8 +40,12 @@ import {
   getUserAtChaptersByIdAsync,
   getProfilePictureUrl,
   saveProfilePicture,
+  savePoliceCheck,
+  saveWWCCheck,
 } from "./services.server";
+
 import ProfileInput from "./ProfileInput";
+import Modal from "./Modal";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -143,6 +149,12 @@ export async function action({ request, params }: ActionArgs) {
     formData.get("deleteProfilePicture") as string
   );
 
+  const profilePictureFile = formData.get("profilePicture") as File | null;
+
+  const policeCheckFile = formData.get("policeCheckFile") as File | null;
+
+  const WWCCheckNumberFile = formData.get("WWCCheckNumberFile") as File | null;
+
   if (
     isStringNullOrEmpty(firstName) ||
     isStringNullOrEmpty(lastName) ||
@@ -205,8 +217,6 @@ export async function action({ request, params }: ActionArgs) {
     endDate: endDate ? new Date(endDate + "T00:00") : null,
   };
 
-  const profilePictureFile = formData.get("profilePicture") as File | null;
-
   if (profilePictureFile && profilePictureFile.size > 0) {
     dataCreate.profilePicturePath = await saveProfilePicture(
       params.userId,
@@ -215,6 +225,20 @@ export async function action({ request, params }: ActionArgs) {
   } else if (deleteProfilePicture) {
     // TODO: delete picture in storage.
     dataCreate.profilePicturePath = null;
+  }
+
+  if (policeCheckFile && policeCheckFile.size > 0) {
+    dataCreate.policeCheckPath = await savePoliceCheck(
+      params.userId,
+      policeCheckFile
+    );
+  }
+
+  if (WWCCheckNumberFile && WWCCheckNumberFile.size > 0) {
+    dataCreate.WWCCheckPath = await saveWWCCheck(
+      params.userId,
+      WWCCheckNumberFile
+    );
   }
 
   await updateUserByIdAsync(params.userId, dataCreate, dataCreate);
@@ -411,6 +435,18 @@ export default function Chapter() {
               name="policeCheckRenewalDate"
             />
 
+            <div className="flex items-end gap-6">
+              <FileInput label="Police Check" name="policeCheckFile" />
+              {user.policeCheckPath && (
+                <>
+                  <label htmlFor="police-check-modal" className="btn">
+                    View uploaded
+                  </label>
+                  <CheckCircleIcon className="h-14 w-14 text-success" />
+                </>
+              )}
+            </div>
+
             <DateInput
               defaultValue={
                 user && user.WWCCheckRenewalDate
@@ -426,6 +462,18 @@ export default function Chapter() {
               label="WWC Check Number"
               name="WWCCheckNumber"
             />
+
+            <div className="flex items-end gap-6">
+              <FileInput label="WWC Check" name="WWCCheckNumberFile" />
+              {user.policeCheckPath && (
+                <>
+                  <label htmlFor="police-check-modal" className="btn">
+                    View uploaded
+                  </label>
+                  <CheckCircleIcon className="h-14 w-14 text-success" />
+                </>
+              )}
+            </div>
 
             <Checkbox
               label="Is Volunteer Agreement Complete"
@@ -585,6 +633,8 @@ export default function Chapter() {
           </div>
         </div>
       </div>
+
+      <Modal />
     </div>
   );
 }
