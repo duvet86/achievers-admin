@@ -100,7 +100,6 @@ export async function action({ request, params }: ActionArgs) {
   const mobile = formData.get("mobile")?.toString();
   const address = formData.get("address")?.toString();
   const dateOfBirth = formData.get("dateOfBirth")?.toString();
-  const isOver18 = Boolean(formData.get("isOver18")?.toString());
   const isPublishPhotoApproved = Boolean(
     formData.get("isPublishPhotoApproved")?.toString()
   );
@@ -112,7 +111,7 @@ export async function action({ request, params }: ActionArgs) {
     formData.get("isCurrentMemeber")?.toString()
   );
   const inductionDate = formData.get("inductionDate")?.toString();
-  const isActiveMentor = Boolean(formData.get("isActiveMentor")?.toString());
+  const isActive = Boolean(formData.get("isActiveMentor")?.toString());
   const defaultAttendance = formData.get("attendance")
     ? (formData.get("attendance")?.toString() as Attendace)
     : null;
@@ -185,13 +184,12 @@ export async function action({ request, params }: ActionArgs) {
     mobile,
     address,
     dateOfBirth: new Date(dateOfBirth + "T00:00"),
-    isOver18,
     isPublishPhotoApproved,
     isApprovedByMRC,
     isCommiteeMemeber,
     isCurrentMemeber,
     inductionDate: inductionDate ? new Date(inductionDate + "T00:00") : null,
-    isActiveMentor,
+    isActive,
     defaultAttendance,
     vaccinationStatus: vaccinationStatus ? vaccinationStatus : null,
     policeCheckRenewalDate: policeCheckRenewalDate
@@ -352,16 +350,9 @@ export default function Chapter() {
             />
 
             <Checkbox
-              label="Is over 18?"
-              name="isOver18"
-              defaultChecked={user.isOver18 ?? false}
-              required
-            />
-
-            <Checkbox
               label="Is Active Mentor"
               name="isActiveMentor"
-              defaultChecked={user.isActiveMentor ?? true}
+              defaultChecked={user.isActive ?? true}
             />
 
             <Input

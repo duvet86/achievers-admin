@@ -146,12 +146,11 @@ export const action = async ({
       inductionDate: newUsers[i]["Induction Date"]
         ? new Date(newUsers[i]["Induction Date"])
         : newUsers[i]["Induction Date"],
-      isActiveMentor: newUsers[i]["Active Mentor"] === "Yes",
+      isActive: newUsers[i]["Active Mentor"] === "Yes",
       isApprovedByMRC: newUsers[i]["Approved by MRC?"] === "Yes",
       isBoardMemeber: newUsers[i]["Board Member"] === "Yes",
       isCommiteeMemeber: newUsers[i]["Committee Member"] === "Yes",
       isCurrentMemeber: newUsers[i]["Current Member"] === "Yes",
-      isOver18: newUsers[i]["Over the age of 18 years?"] === "Yes",
       isPublishPhotoApproved:
         newUsers[i]["Approval to publish Potographs?"] === "Yes",
       isVolunteerAgreementComplete:
