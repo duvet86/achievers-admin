@@ -77,7 +77,7 @@ model User {
 }
 
 model UserEOIForm {
-  id String @id // Defined by Azure Active Directory.
+  id Int @id @default(autoincrement())
 
   bestTimeToContact   String
   occupation          String
