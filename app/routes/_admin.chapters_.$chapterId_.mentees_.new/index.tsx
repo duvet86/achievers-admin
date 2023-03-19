@@ -1,7 +1,7 @@
-import type { LoaderArgs } from "@remix-run/server-runtime";
+import type { LoaderArgs } from "@remix-run/node";
 import type { ActionArgs } from "@remix-run/node";
 
-import { json, redirect } from "@remix-run/server-runtime";
+import { json, redirect } from "@remix-run/node";
 import { Form, useCatch, useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";

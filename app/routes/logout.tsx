@@ -1,4 +1,4 @@
-import type { LoaderArgs } from "@remix-run/server-runtime";
+import type { LoaderArgs } from "@remix-run/node";
 
 import { authenticator } from "~/services";
 

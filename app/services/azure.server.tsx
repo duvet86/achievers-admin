@@ -1,4 +1,4 @@
-import { redirect } from "@remix-run/server-runtime";
+import { redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
 export const MICROSOFT_GRAPH_V1_BASEURL = "https://graph.microsoft.com/v1.0";

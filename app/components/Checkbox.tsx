@@ -3,6 +3,8 @@ interface Props {
   name: string;
   defaultChecked?: boolean;
   required?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
 }
 
 export default function Checkbox({ label, name, required, ...props }: Props) {

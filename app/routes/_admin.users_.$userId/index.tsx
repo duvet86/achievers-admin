@@ -1,7 +1,7 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import type { Attendace, Prisma, VaccinationStatus } from "@prisma/client";
 
-import { json } from "@remix-run/server-runtime";
+import { json } from "@remix-run/node";
 import {
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,

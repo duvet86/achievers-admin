@@ -2,7 +2,7 @@ import type { LoaderArgs } from "@remix-run/node";
 
 import { useLoaderData, Link } from "@remix-run/react";
 
-import { json } from "@remix-run/server-runtime";
+import { json } from "@remix-run/node";
 
 import { getSessionUserAsync, getAzureUsersWithRolesAsync } from "~/services";
 
@@ -91,7 +91,7 @@ export default function SelectChapter() {
                   <td className="border p-2">
                     <Link
                       to={id}
-                      className="btn-success btn-xs btn flex gap-2 align-middle"
+                      className="btn-success btn-xs btn w-full gap-2 align-middle"
                     >
                       <PencilIcon className="mr-4 h-4 w-4" />
                       Edit

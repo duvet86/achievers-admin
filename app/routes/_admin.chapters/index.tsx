@@ -1,5 +1,5 @@
 import { useLoaderData, Link } from "@remix-run/react";
-import { json } from "@remix-run/server-runtime";
+import { json } from "@remix-run/node";
 
 import { getChaptersAsync } from "./services.server";
 
