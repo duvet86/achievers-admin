@@ -5,7 +5,6 @@ import { Link, useCatch, useLoaderData } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
-import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 import AcademicCapIcon from "@heroicons/react/24/solid/AcademicCapIcon";
 import UserGroupIcon from "@heroicons/react/24/solid/UserGroupIcon";
 
@@ -15,6 +14,7 @@ import {
   getMenteesAtChapterByIdAsync,
   getChapterByIdAsync,
 } from "./services.server";
+import BackHeader from "~/components/BackHeader";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -37,14 +37,7 @@ export default function ChapterId() {
 
   return (
     <>
-      <div>
-        <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
-          <ArrowSmallLeftIcon className="w-6" />
-          Back
-        </Link>
-      </div>
-
-      <hr className="mb-4" />
+      <BackHeader />
 
       <Title>Mentees in {chapter.name}</Title>
 

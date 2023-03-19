@@ -2,19 +2,12 @@ import type { LoaderArgs } from "@remix-run/server-runtime";
 import type { ActionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/server-runtime";
-import {
-  Form,
-  Link,
-  useCatch,
-  useLoaderData,
-  useNavigation,
-} from "@remix-run/react";
+import { Form, useCatch, useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
 import { readFormDataAsStringsAsync } from "~/services";
 
-import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 
 import Title from "~/components/Title";
@@ -22,6 +15,7 @@ import Input from "~/components/Input";
 import Select from "~/components/Select";
 
 import { createNewMentee, getChapterByIdAsync } from "./services.server";
+import BackHeader from "~/components/BackHeader";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -64,14 +58,7 @@ export default function ChapterId() {
 
   return (
     <>
-      <div>
-        <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
-          <ArrowSmallLeftIcon className="w-6" />
-          Back
-        </Link>
-      </div>
-
-      <hr className="mb-4" />
+      <BackHeader />
 
       <Title>New Mentee at Chapter "{chapter.name}"</Title>
 

@@ -6,11 +6,16 @@ import { json } from "@remix-run/server-runtime";
 
 import { getSessionUserAsync, getAzureUsersWithRolesAsync } from "~/services";
 
-import { ArrowUpTrayIcon, PencilIcon } from "@heroicons/react/24/solid";
+import ArrowUpTrayIcon from "@heroicons/react/24/solid/ArrowUpTrayIcon";
+import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
+import UserPlusIcon from "@heroicons/react/24/solid/UserPlusIcon";
 
 import Title from "~/components/Title";
 
-import { getAssignedChaptersToUsersLookUpAsync } from "./services.server";
+import {
+  getAssignedChaptersToUsersLookUpAsync,
+  getEOIUsersCounterAsync,
+} from "./services.server";
 
 export async function loader({ request }: LoaderArgs) {
   const sessionUser = await getSessionUserAsync(request);
@@ -33,11 +38,12 @@ export async function loader({ request }: LoaderArgs) {
           sensitivity: "base",
         })
       ),
+    expressionOfInterestCounter: await getEOIUsersCounterAsync(),
   });
 }
 
 export default function SelectChapter() {
-  const { users } = useLoaderData<typeof loader>();
+  const { users, expressionOfInterestCounter } = useLoaderData<typeof loader>();
 
   return (
     <>
@@ -85,7 +91,7 @@ export default function SelectChapter() {
                   <td className="border p-2">
                     <Link
                       to={id}
-                      className="btn-success btn-xs btn flex gap-1 align-middle"
+                      className="btn-success btn-xs btn flex gap-2 align-middle"
                     >
                       <PencilIcon className="mr-4 h-4 w-4" />
                       Edit
@@ -97,8 +103,16 @@ export default function SelectChapter() {
           </tbody>
         </table>
       </div>
-      <div className="mt-6 flex justify-end">
-        <Link className="btn-primary btn gap-2" to="import">
+      <div className="mt-10 flex flex-col gap-6">
+        <Link className="btn w-96 gap-2" to="expression-of-interest">
+          <UserPlusIcon className="h-6 w-6" />
+          Expression of interest
+          <span className="badge-primary badge-outline badge">
+            {expressionOfInterestCounter}
+          </span>
+        </Link>
+
+        <Link className="btn-primary btn w-96 gap-2" to="import">
           <ArrowUpTrayIcon className="h-6 w-6" />
           Import users from file
         </Link>

@@ -30,3 +30,7 @@ export async function getAssignedChaptersToUsersLookUpAsync(
 
   return assignedChaptersLookUp;
 }
+
+export async function getEOIUsersCounterAsync() {
+  return await prisma.userEOIForm.count();
+}

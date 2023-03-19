@@ -12,7 +12,6 @@ import {
   Roles,
 } from "~/services";
 
-import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 import AcademicCapIcon from "@heroicons/react/24/solid/AcademicCapIcon";
 
 import Title from "~/components/Title";
@@ -21,6 +20,7 @@ import {
   getUsersAtChapterByIdAsync,
   getChapterByIdAsync,
 } from "./services.server";
+import BackHeader from "~/components/BackHeader";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -62,14 +62,7 @@ export default function ChapterId() {
 
   return (
     <>
-      <div>
-        <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
-          <ArrowSmallLeftIcon className="w-6" />
-          Back
-        </Link>
-      </div>
-
-      <hr className="mb-4" />
+      <BackHeader />
 
       <Title>Mentors in {chapter.name}</Title>
 

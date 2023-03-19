@@ -79,6 +79,11 @@ model User {
 model UserEOIForm {
   id Int @id @default(autoincrement())
 
+  firstName           String
+  lastName            String
+  mobile              String
+  email               String
+  address             String
   bestTimeToContact   String
   occupation          String
   volunteerExperience String

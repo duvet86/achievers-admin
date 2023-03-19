@@ -3,7 +3,6 @@ import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
 import { json, redirect } from "@remix-run/server-runtime";
 import {
   Form,
-  Link,
   useActionData,
   useLoaderData,
   useNavigation,
@@ -20,7 +19,6 @@ import {
 } from "~/services";
 
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
-import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 import Title from "~/components/Title";
 import Select from "~/components/Select";
@@ -32,6 +30,7 @@ import {
   getMentorsAtChapterAsync,
   assignMentorToMenteeAsync,
 } from "./services.server";
+import BackHeader from "~/components/BackHeader";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -115,14 +114,7 @@ export default function Assign() {
 
   return (
     <>
-      <div>
-        <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
-          <ArrowSmallLeftIcon className="w-6" />
-          Back
-        </Link>
-      </div>
-
-      <hr className="mb-4" />
+      <BackHeader />
 
       <Title>
         Assign Mentor to Mentee "{mentee.firstName} {mentee.lastName}"

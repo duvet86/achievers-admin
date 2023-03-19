@@ -9,13 +9,7 @@ import {
   unstable_parseMultipartFormData,
   json,
 } from "@remix-run/server-runtime";
-import {
-  Form,
-  Link,
-  useActionData,
-  useCatch,
-  useNavigation,
-} from "@remix-run/react";
+import { Form, useActionData, useCatch, useNavigation } from "@remix-run/react";
 
 import {
   isEmail,
@@ -27,8 +21,6 @@ import {
 
 import ArrowUpTrayIcon from "@heroicons/react/24/solid/ArrowUpTrayIcon";
 
-import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
-
 import LoadingSpinner from "~/components/LoadingSpinner";
 import Title from "~/components/Title";
 
@@ -37,6 +29,7 @@ import {
   inviteUserToAzureAsync,
   createManyUsersAsync,
 } from "./services.server";
+import BackHeader from "~/components/BackHeader";
 
 export const action = async ({
   request,
@@ -201,14 +194,7 @@ export default function Import() {
 
   return (
     <>
-      <div>
-        <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
-          <ArrowSmallLeftIcon className="w-6" />
-          Back
-        </Link>
-      </div>
-
-      <hr className="mb-4" />
+      <BackHeader />
 
       <Title>Import from file</Title>
 

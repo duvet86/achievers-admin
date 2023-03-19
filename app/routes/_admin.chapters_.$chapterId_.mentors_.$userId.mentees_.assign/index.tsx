@@ -19,11 +19,11 @@ import {
 } from "~/services";
 
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
-import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 import Title from "~/components/Title";
 import Select from "~/components/Select";
 import DateInput from "~/components/DateInput";
+import BackHeader from "~/components/BackHeader";
 
 import {
   getMenteesInChapterAsync,
@@ -110,14 +110,7 @@ export default function Assign() {
 
   return (
     <>
-      <div>
-        <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
-          <ArrowSmallLeftIcon className="w-6" />
-          Back
-        </Link>
-      </div>
-
-      <hr className="mb-4" />
+      <BackHeader to="../" />
 
       <Title>Assign Mentee to Mentor "{mentor.email}"</Title>
 

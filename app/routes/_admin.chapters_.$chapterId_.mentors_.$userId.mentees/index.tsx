@@ -11,13 +11,13 @@ import {
   getAzureUserWithRolesByIdAsync,
 } from "~/services";
 
-import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import AcademicCapIcon from "@heroicons/react/24/solid/AcademicCapIcon";
 
 import Title from "~/components/Title";
 
 import { getMenteesMentoredByAsync } from "./services.server";
+import BackHeader from "~/components/BackHeader";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -40,14 +40,7 @@ export default function Index() {
 
   return (
     <>
-      <div>
-        <Link to="../../" relative="path" className="btn-ghost btn mb-2 gap-2">
-          <ArrowSmallLeftIcon className="w-6" />
-          Back
-        </Link>
-      </div>
-
-      <hr className="mb-4" />
+      <BackHeader to="../../" />
 
       <Title>Mentees mentored by "{mentor.email}"</Title>
 

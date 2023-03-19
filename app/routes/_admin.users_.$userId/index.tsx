@@ -24,7 +24,6 @@ import {
 
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
-import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 import CheckCircleIcon from "@heroicons/react/24/solid/CheckCircleIcon";
 
 import Input from "~/components/Input";
@@ -46,6 +45,7 @@ import {
 
 import ProfileInput from "./ProfileInput";
 import Modal from "./Modal";
+import BackHeader from "~/components/BackHeader";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -252,14 +252,7 @@ export default function Chapter() {
 
   return (
     <div className="flex h-full flex-col pb-28">
-      <div>
-        <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
-          <ArrowSmallLeftIcon className="w-6" />
-          Back
-        </Link>
-      </div>
-
-      <hr className="mb-4" />
+      <BackHeader />
 
       {isLoggedUser ? (
         <Title>Edit Profile</Title>
@@ -545,10 +538,10 @@ export default function Chapter() {
                     <td align="right" className="border p-2">
                       <Link
                         to={`roles/${id}/delete`}
-                        className="flex w-32 items-center justify-center rounded bg-red-600 px-3 py-1 text-white"
+                        className="btn-error btn-xs btn flex gap-2 align-middle"
                       >
                         <XMarkIcon className="mr-2 w-5" />
-                        <span>Remove</span>
+                        Remove
                       </Link>
                     </td>
                   </tr>
@@ -600,10 +593,10 @@ export default function Chapter() {
                     <td align="right" className="border p-2">
                       <Link
                         to={`chapters/${id}/delete`}
-                        className="flex w-32 items-center justify-center rounded bg-red-600 px-3 py-1 text-white"
+                        className="btn-error btn-xs btn flex gap-2 align-middle"
                       >
                         <XMarkIcon className="mr-2 w-5" />
-                        <span>Remove</span>
+                        Remove
                       </Link>
                     </td>
                   </tr>

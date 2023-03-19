@@ -3,7 +3,6 @@ import type { ActionArgs, LoaderArgs } from "@remix-run/server-runtime";
 import { json, redirect } from "@remix-run/server-runtime";
 import {
   Form,
-  Link,
   useActionData,
   useLoaderData,
   useNavigation,
@@ -19,11 +18,11 @@ import {
 } from "~/services";
 
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
-import ArrowSmallLeftIcon from "@heroicons/react/24/solid/ArrowSmallLeftIcon";
 
 import Select from "~/components/Select";
 
 import { assignRoleToUserAsync } from "./services.server";
+import BackHeader from "~/components/BackHeader";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -74,40 +73,36 @@ export default function Assign() {
   const isSubmitting = transition.state === "submitting";
 
   return (
-    <Form method="post">
-      <h1 className="mb-4 text-xl font-medium">
-        Assing a Role to the <span className="font-medium">'{user.email}'</span>
-      </h1>
+    <>
+      <BackHeader to="../../" />
 
-      <Select
-        label="Select a Role"
-        name="roleId"
-        disabled={isSubmitting}
-        options={[{ value: "", label: "Select a Role" }].concat(
-          appRoles.map(({ id, displayName }) => ({
-            label: displayName,
-            value: id,
-          }))
-        )}
-      />
+      <Form method="post">
+        <h1 className="mb-4 text-xl font-medium">
+          Assing a Role to the{" "}
+          <span className="font-medium">'{user.email}'</span>
+        </h1>
 
-      <p className="mt-4 text-red-600">{actionData?.error}</p>
+        <Select
+          label="Select a Role"
+          name="roleId"
+          disabled={isSubmitting}
+          options={[{ value: "", label: "Select a Role" }].concat(
+            appRoles.map(({ id, displayName }) => ({
+              label: displayName,
+              value: id,
+            }))
+          )}
+        />
 
-      <div className="mt-6 flex items-center space-x-6">
-        <Link
-          to="../../"
-          relative="path"
-          className="btn-ghost btn"
-          type="submit"
-        >
-          <ArrowSmallLeftIcon className="w-6" />
-          Back
-        </Link>
-        <button className="btn-primary btn gap-2">
-          <PlusIcon className="h-6 w-6" />
-          Save
-        </button>
-      </div>
-    </Form>
+        <p className="mt-4 text-red-600">{actionData?.error}</p>
+
+        <div className="mt-6">
+          <button className="btn-primary btn gap-2">
+            <PlusIcon className="h-6 w-6" />
+            Save
+          </button>
+        </div>
+      </Form>
+    </>
   );
 }
