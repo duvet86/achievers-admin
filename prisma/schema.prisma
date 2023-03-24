@@ -43,13 +43,13 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  eoIProfile       EoIProfile?
-  welcomeCallAck   WelcomeCall?
-  references       Reference[]
-  inductionAck     Induction?
-  policeCheckAck   PoliceCheck?
-  wwcCheckAck      WWCCheck?
-  approvalbyMRCAck ApprovalbyMRC?
+  eoIProfile    EoIProfile?
+  welcomeCall   WelcomeCall?
+  references    Reference[]
+  induction     Induction?
+  policeCheck   PoliceCheck?
+  wwcCheck      WWCCheck?
+  approvalbyMRC ApprovalbyMRC?
 
   chapter   Chapter @relation(fields: [chapterId], references: [id])
   chapterId String

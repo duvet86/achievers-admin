@@ -3,7 +3,7 @@ import { useLoaderData, Link } from "@remix-run/react";
 import { json } from "@remix-run/node";
 
 import ArrowUpTrayIcon from "@heroicons/react/24/solid/ArrowUpTrayIcon";
-import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
+import PencilSquareIcon from "@heroicons/react/24/solid/PencilSquareIcon";
 
 import Title from "~/components/Title";
 
@@ -53,9 +53,9 @@ export default function SelectChapter() {
                 <td className="border p-2">
                   <Link
                     to={id.toString()}
-                    className="btn-success btn-xs btn w-full gap-2 align-middle"
+                    className="btn-success btn-xs btn w-full gap-2"
                   >
-                    <PencilIcon className="mr-4 h-4 w-4" />
+                    <PencilSquareIcon className="mr-4 h-4 w-4" />
                     Edit
                   </Link>
                 </td>

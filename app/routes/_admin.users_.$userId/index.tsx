@@ -18,7 +18,16 @@ import {
 } from "~/services";
 
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
-import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
+import HomeModernIcon from "@heroicons/react/24/solid/HomeModernIcon";
+import ServerIcon from "@heroicons/react/24/solid/ServerIcon";
+import EnvelopeIcon from "@heroicons/react/24/solid/EnvelopeIcon";
+import UserCircleIcon from "@heroicons/react/24/solid/UserCircleIcon";
+import PhoneIcon from "@heroicons/react/24/solid/PhoneIcon";
+import ChatBubbleLeftRightIcon from "@heroicons/react/24/solid/ChatBubbleLeftRightIcon";
+import NewspaperIcon from "@heroicons/react/24/solid/NewspaperIcon";
+import ShieldCheckIcon from "@heroicons/react/24/solid/ShieldCheckIcon";
+import UserGroupIcon from "@heroicons/react/24/solid/UserGroupIcon";
+import CheckIcon from "@heroicons/react/24/solid/CheckIcon";
 
 import Input from "~/components/Input";
 import Title from "~/components/Title";
@@ -272,9 +281,10 @@ export default function Chapter() {
             />
 
             <button
-              className="btn-primary btn sticky bottom-0 float-right mt-6 w-28"
+              className="btn-primary btn sticky bottom-0 float-right mt-6 w-64 gap-4"
               type="submit"
             >
+              <ServerIcon className="h-6 w-6" />
               Save
             </button>
           </fieldset>
@@ -317,9 +327,9 @@ export default function Chapter() {
                     <td align="right" className="border p-2">
                       <Link
                         to={`roles/${id}/delete`}
-                        className="btn-error btn-xs btn flex gap-2 align-middle"
+                        className="btn-error btn-xs btn w-full gap-2"
                       >
-                        <XMarkIcon className="mr-2 w-5" />
+                        <XMarkIcon className="h-4 w-4" />
                         Remove
                       </Link>
                     </td>
@@ -330,19 +340,14 @@ export default function Chapter() {
           </div>
 
           <div className="my-6 flex justify-end">
-            {azureUserInfo === null ? (
-              <button className="btn-primary btn gap-2" disabled>
-                <PlusIcon className="w-6" />
-                Assign a Role
-              </button>
-            ) : (
+            {azureUserInfo === null && (
               <Link
-                to="roles/assign"
+                to="invite"
                 relative="path"
-                className="btn-primary btn gap-2"
+                className="btn-primary btn w-64 gap-4"
               >
-                <PlusIcon className="w-6" />
-                Assign a Role
+                <EnvelopeIcon className="h-6 w-6" />
+                Invite
               </Link>
             )}
           </div>
@@ -372,10 +377,51 @@ export default function Chapter() {
             <Link
               to="chapters/assign"
               relative="path"
-              className="btn-primary btn gap-2"
+              className="btn-primary btn w-64 gap-4"
             >
-              <PlusIcon className="w-6" />
+              <HomeModernIcon className="h-6 w-6" />
               Assign to a Chapter
+            </Link>
+          </div>
+
+          <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700" />
+
+          <div className="flex flex-wrap gap-4">
+            <Link
+              className="btn-outline btn w-52 justify-start gap-4"
+              to="eoiProfile"
+              relative="path"
+            >
+              <UserCircleIcon className="h-6 w-6" />
+              EoI Profile
+            </Link>
+            <Link
+              className="btn-outline btn w-52 justify-start gap-4"
+              to="welcomeCall"
+              relative="path"
+            >
+              <PhoneIcon className="h-6 w-6" />
+              Welcome Call
+            </Link>
+            <Link className="btn-outline btn w-52 justify-start gap-4" to="/">
+              <ChatBubbleLeftRightIcon className="h-6 w-6" />
+              References
+            </Link>
+            <Link className="btn-outline btn w-52 justify-start gap-4" to="/">
+              <NewspaperIcon className="h-6 w-6" />
+              Induction
+            </Link>
+            <Link className="btn-outline btn w-52 justify-start gap-4" to="/">
+              <ShieldCheckIcon className="h-6 w-6" />
+              Police Check
+            </Link>
+            <Link className="btn-outline btn w-52 justify-start gap-4" to="/">
+              <UserGroupIcon className="h-6 w-6" />
+              WWC Check
+            </Link>
+            <Link className="btn-outline btn w-52 justify-start gap-4" to="/">
+              <CheckIcon className="h-6 w-6" />
+              Approval by MRC
             </Link>
           </div>
         </div>

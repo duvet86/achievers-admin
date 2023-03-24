@@ -1,13 +1,9 @@
 import type { LoaderArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Form, Link, useCatch, useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
-
-import AcademicCapIcon from "@heroicons/react/24/solid/AcademicCapIcon";
-import ArrowSmallRightIcon from "@heroicons/react/24/solid/ArrowSmallRightIcon";
-import UserGroupIcon from "@heroicons/react/24/solid/UserGroupIcon";
 
 import Title from "~/components/Title";
 import Input from "~/components/Input";
@@ -42,46 +38,6 @@ export default function ChapterId() {
           Save
         </button>
       </Form>
-
-      <hr className="my-6" />
-
-      <div className="mb-6">
-        <Link
-          to="mentors"
-          className="btn-outline btn-success btn mb-2 w-3/12 justify-around"
-        >
-          <UserGroupIcon className="h-6 w-6" />
-          Go to the list of Mentors
-          <ArrowSmallRightIcon className="h-6 w-6" />
-        </Link>
-      </div>
-
-      <div>
-        <Link
-          to="mentees"
-          className="btn-outline btn-info btn mb-2 w-3/12 justify-around"
-        >
-          <AcademicCapIcon className="h-6 w-6" />
-          Go to the list of Mentees
-          <ArrowSmallRightIcon className="h-6 w-6" />
-        </Link>
-      </div>
     </>
   );
-}
-
-export function ErrorBoundary({ error }: { error: Error }) {
-  console.error(error);
-
-  return <div>An unexpected error occurred: {error.message}</div>;
-}
-
-export function CatchBoundary() {
-  const caught = useCatch();
-
-  if (caught.status === 404) {
-    return <div>Note not found</div>;
-  }
-
-  throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }
