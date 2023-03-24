@@ -1,36 +1,9 @@
-import type { Chapter, User } from "@prisma/client";
-
 import { prisma } from "~/db.server";
 
-export async function getAssignedChaptersToUsersLookUpAsync(
-  userIds: User["id"][]
-) {
-  const userAtChapters = await prisma.userAtChapter.findMany({
-    where: {
-      userId: {
-        in: userIds,
-      },
-    },
+export async function getUsersAsync() {
+  return await prisma.user.findMany({
     include: {
-      Chapter: true,
+      chapter: true,
     },
   });
-
-  const assignedChaptersLookUp = userAtChapters.reduce<
-    Record<string, Chapter[]>
-  >((res, userAtChapter) => {
-    if (res[userAtChapter.userId]) {
-      res[userAtChapter.userId].push(userAtChapter.Chapter);
-    } else {
-      res[userAtChapter.userId] = [userAtChapter.Chapter];
-    }
-
-    return res;
-  }, {});
-
-  return assignedChaptersLookUp;
-}
-
-export async function getEOIUsersCounterAsync() {
-  return await prisma.userEOIForm.count();
 }

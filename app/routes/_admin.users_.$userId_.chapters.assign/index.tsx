@@ -10,11 +10,6 @@ import {
 
 import invariant from "tiny-invariant";
 
-import {
-  getSessionUserAsync,
-  getAzureUserWithRolesByIdAsync,
-} from "~/services";
-
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 
 import Select from "~/components/Select";
@@ -22,28 +17,21 @@ import Select from "~/components/Select";
 import {
   assignChapterToUserAsync,
   getChaptersAsync,
-  getUserAtChaptersByIdAsync,
+  getUserAtChapterByIdAsync,
 } from "./services.server";
 import BackHeader from "~/components/BackHeader";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
-  const sessionUser = await getSessionUserAsync(request);
-
-  const [azureUser, userAtChapter, chapters] = await Promise.all([
-    getAzureUserWithRolesByIdAsync(sessionUser.accessToken, params.userId),
-    getUserAtChaptersByIdAsync(params.userId),
+  const [user, chapters] = await Promise.all([
+    getUserAtChapterByIdAsync(Number(params.userId)),
     getChaptersAsync(),
   ]);
 
-  const assignedChapterIds = userAtChapter.map(({ Chapter }) => Chapter.id);
-
   return json({
-    azureUser,
-    availableChapters: chapters.filter(
-      ({ id }) => !assignedChapterIds.includes(id)
-    ),
+    user,
+    availableChapters: chapters.filter(({ id }) => user.chapter.id !== id),
   });
 }
 
@@ -60,13 +48,13 @@ export async function action({ request, params }: ActionArgs) {
     });
   }
 
-  await assignChapterToUserAsync(params.userId, chapterId.toString(), "");
+  await assignChapterToUserAsync(Number(params.userId), chapterId.toString());
 
   return redirect(`/users/${params.userId}`);
 }
 
 export default function Assign() {
-  const { azureUser, availableChapters } = useLoaderData<typeof loader>();
+  const { user, availableChapters } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const transition = useNavigation();
 
@@ -79,7 +67,7 @@ export default function Assign() {
       <Form method="post">
         <h1 className="mb-4 text-xl font-medium">
           Assign a Chapter to{" "}
-          <span className="font-medium">'{azureUser.email}'</span>
+          <span className="font-medium">'{user.email}'</span>
         </h1>
 
         <Select

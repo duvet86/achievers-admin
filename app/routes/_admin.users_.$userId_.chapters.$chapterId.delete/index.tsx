@@ -12,11 +12,9 @@ import {
 
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 
-import {
-  unassignChapterFromUserAsync,
-  getChapterByIdAsync,
-} from "./services.server";
 import BackHeader from "~/components/BackHeader";
+
+import { getChapterByIdAsync } from "./services.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -39,7 +37,7 @@ export async function action({ params }: ActionArgs) {
   invariant(params.userId, "userId not found");
   invariant(params.chapterId, "chapterId not found");
 
-  await unassignChapterFromUserAsync(params.userId, params.chapterId);
+  // await unassignChapterFromUserAsync(params.userId, params.chapterId);
 
   return redirect(`/users/${params.userId}`);
 }

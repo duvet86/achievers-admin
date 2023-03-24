@@ -1,20 +1,6 @@
-import type { UserAtChapter } from "@prisma/client";
+import type { User, Chapter } from "@prisma/client";
 
 import { prisma } from "~/db.server";
-
-export async function assignChapterToUserAsync(
-  userId: UserAtChapter["userId"],
-  chapterId: UserAtChapter["chapterId"],
-  assignedBy: UserAtChapter["assignedBy"]
-) {
-  await prisma.userAtChapter.create({
-    data: {
-      chapterId,
-      userId,
-      assignedBy,
-    },
-  });
-}
 
 export async function getChaptersAsync() {
   return prisma.chapter.findMany({
@@ -25,15 +11,28 @@ export async function getChaptersAsync() {
   });
 }
 
-export async function getUserAtChaptersByIdAsync(
-  userId: UserAtChapter["userId"]
-) {
-  return await prisma.userAtChapter.findMany({
+export async function getUserAtChapterByIdAsync(userId: User["id"]) {
+  return await prisma.user.findUniqueOrThrow({
     where: {
-      userId,
+      id: userId,
     },
     select: {
-      Chapter: true,
+      email: true,
+      chapter: true,
+    },
+  });
+}
+
+export async function assignChapterToUserAsync(
+  userId: User["id"],
+  chapterId: Chapter["id"]
+) {
+  await prisma.user.update({
+    data: {
+      chapterId,
+    },
+    where: {
+      id: userId,
     },
   });
 }

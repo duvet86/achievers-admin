@@ -1,16 +1,9 @@
 import type { LoaderArgs } from "@remix-run/node";
-import type { AzureUserWebAppWithRole } from "~/services";
 
 import { json } from "@remix-run/node";
-import { Link, useCatch, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
-
-import {
-  getAzureUsersWithRolesAsync,
-  getSessionUserAsync,
-  Roles,
-} from "~/services";
 
 import AcademicCapIcon from "@heroicons/react/24/solid/AcademicCapIcon";
 
@@ -22,37 +15,18 @@ import {
 } from "./services.server";
 import BackHeader from "~/components/BackHeader";
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
 
-  const sessionUser = await getSessionUserAsync(request);
-
-  const [chapter, usersAtChapter, azureUsers] = await Promise.all([
+  const [chapter, users] = await Promise.all([
     getChapterByIdAsync(params.chapterId),
     getUsersAtChapterByIdAsync(params.chapterId),
-    getAzureUsersWithRolesAsync(sessionUser.accessToken),
   ]);
-
-  const userIds = usersAtChapter.map(({ userId }) => userId);
-
-  const azureMentorsLookUp = azureUsers
-    .filter(({ appRoleAssignments }) =>
-      appRoleAssignments
-        .map(({ appRoleId }) => appRoleId)
-        .includes(Roles.Mentor)
-    )
-    .reduce<Record<string, AzureUserWebAppWithRole>>((res, value) => {
-      res[value.id] = value;
-
-      return res;
-    }, {});
 
   return json({
     chapter: {
       ...chapter,
-      mentors: userIds
-        .filter((userId) => azureMentorsLookUp[userId])
-        .map((userId) => azureMentorsLookUp[userId]),
+      mentors: users,
     },
   });
 }
@@ -106,20 +80,4 @@ export default function ChapterId() {
       </div>
     </>
   );
-}
-
-export function ErrorBoundary({ error }: { error: Error }) {
-  console.error(error);
-
-  return <div>An unexpected error occurred: {error.message}</div>;
-}
-
-export function CatchBoundary() {
-  const caught = useCatch();
-
-  if (caught.status === 404) {
-    return <div>Note not found</div>;
-  }
-
-  throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }

@@ -1,8 +1,9 @@
 import type { ActionArgs, TypedResponse } from "@remix-run/node";
 import type { Prisma } from "@prisma/client";
 import type { SpeadsheetUser } from "~/models/speadsheet";
-
 import type { AzureInviteResponse } from "./services.server";
+
+import { getChaptersAsync } from "./services.server";
 
 import {
   unstable_createMemoryUploadHandler,
@@ -61,6 +62,16 @@ export const action = async ({
 
   const fileUsers = await readExcelFileAsync(file);
 
+  if (fileUsers.length === 0) {
+    return json({
+      newUsers: [],
+      responses: [],
+      message: "Nothing to import",
+    });
+  }
+
+  const chapters = await getChaptersAsync();
+
   const incorrectEmails = fileUsers.reduce<string[]>((res, fileUser, index) => {
     if (
       isStringNullOrEmpty(fileUser["Email address"]) ||
@@ -107,25 +118,32 @@ export const action = async ({
 
     responses.push(response);
 
+    const chapter = chapters.find((c) => c.name === newUsers[i]["Chapter"]);
+
     dbUsers.push({
-      address: newUsers[i]["Residential Address"],
+      addressPostcode: "",
+      addressState: "",
+      addressSuburb: "",
+      email: newUsers[i]["Email address"],
+      chapterId: chapter?.id ?? chapters[0].id,
+      addressStreet: newUsers[i]["Residential Address"],
       additionalEmail: newUsers[i][
         "Additional email addresses (for intranet access)"
       ]
         ? newUsers[i]["Additional email addresses (for intranet access)"]
         : null,
-      defaultAttendance: newUsers[i]["Attendance"]
-        ? newUsers[i]["Attendance"]
-        : null,
-      boardTermExpiryDate: newUsers[i]["Board Term Expiry"]
-        ? new Date(newUsers[i]["Board Term Expiry"])
-        : null,
+      // defaultAttendance: newUsers[i]["Attendance"]
+      //   ? newUsers[i]["Attendance"]
+      //   : null,
+      // boardTermExpiryDate: newUsers[i]["Board Term Expiry"]
+      //   ? new Date(newUsers[i]["Board Term Expiry"])
+      //   : null,
       dateOfBirth: new Date(newUsers[i]["Date of Birth"]),
-      directorIdentificationNumber: newUsers[i][
-        "Director Identification Number"
-      ]
-        ? newUsers[i]["Director Identification Number"]
-        : null,
+      // directorIdentificationNumber: newUsers[i][
+      //   "Director Identification Number"
+      // ]
+      //   ? newUsers[i]["Director Identification Number"]
+      //   : null,
       emergencyContactAddress: newUsers[i]["Emergency Contact Address"],
       emergencyContactName: newUsers[i]["Emergency Contact Name"],
       emergencyContactNumber: newUsers[i]["Emergency Contact Name"],
@@ -135,32 +153,32 @@ export const action = async ({
         ? new Date(newUsers[i]["End Date"])
         : null,
       firstName: newUsers[i]["First Name"],
-      id: response.invitedUser.id,
-      inductionDate: newUsers[i]["Induction Date"]
-        ? new Date(newUsers[i]["Induction Date"])
-        : newUsers[i]["Induction Date"],
-      isActive: newUsers[i]["Active Mentor"] === "Yes",
-      isApprovedByMRC: newUsers[i]["Approved by MRC?"] === "Yes",
-      isBoardMemeber: newUsers[i]["Board Member"] === "Yes",
-      isCommiteeMemeber: newUsers[i]["Committee Member"] === "Yes",
-      isCurrentMemeber: newUsers[i]["Current Member"] === "Yes",
-      isPublishPhotoApproved:
-        newUsers[i]["Approval to publish Potographs?"] === "Yes",
-      isVolunteerAgreementComplete:
-        newUsers[i]["Volunteer Agreement Complete"] === "Yes",
+      azureADId: response.invitedUser.id,
+      // inductionDate: newUsers[i]["Induction Date"]
+      //   ? new Date(newUsers[i]["Induction Date"])
+      //   : newUsers[i]["Induction Date"],
+      // isActive: newUsers[i]["Active Mentor"] === "Yes",
+      // isApprovedByMRC: newUsers[i]["Approved by MRC?"] === "Yes",
+      // isBoardMemeber: newUsers[i]["Board Member"] === "Yes",
+      // isCommiteeMemeber: newUsers[i]["Committee Member"] === "Yes",
+      // isCurrentMemeber: newUsers[i]["Current Member"] === "Yes",
+      // isPublishPhotoApproved:
+      //   newUsers[i]["Approval to publish Potographs?"] === "Yes",
+      // isVolunteerAgreementComplete:
+      //   newUsers[i]["Volunteer Agreement Complete"] === "Yes",
       lastName: newUsers[i]["Last Name"],
       mobile: newUsers[i]["Mobile"].toString(),
-      occupation: newUsers[i]["Occupation"] ? newUsers[i]["Occupation"] : null,
-      policeCheckRenewalDate: newUsers[i]["Police Check Renewal Date"]
-        ? new Date(newUsers[i]["Police Check Renewal Date"])
-        : null,
-      vaccinationStatus: null,
-      WWCCheckNumber: newUsers[i]["WWC Check Number"]
-        ? newUsers[i]["WWC Check Number"]
-        : null,
-      WWCCheckRenewalDate: newUsers[i]["WWC Check Renewal Date"]
-        ? new Date(newUsers[i]["WWC Check Renewal Date"])
-        : null,
+      // occupation: newUsers[i]["Occupation"] ? newUsers[i]["Occupation"] : null,
+      // policeCheckRenewalDate: newUsers[i]["Police Check Renewal Date"]
+      //   ? new Date(newUsers[i]["Police Check Renewal Date"])
+      //   : null,
+      // vaccinationStatus: null,
+      // WWCCheckNumber: newUsers[i]["WWC Check Number"]
+      //   ? newUsers[i]["WWC Check Number"]
+      //   : null,
+      // WWCCheckRenewalDate: newUsers[i]["WWC Check Renewal Date"]
+      //   ? new Date(newUsers[i]["WWC Check Renewal Date"])
+      //   : null,
     });
   }
 

@@ -1,49 +1,24 @@
-import type { LoaderArgs } from "@remix-run/node";
-
 import { useLoaderData, Link } from "@remix-run/react";
 
 import { json } from "@remix-run/node";
 
-import { getSessionUserAsync, getAzureUsersWithRolesAsync } from "~/services";
-
 import ArrowUpTrayIcon from "@heroicons/react/24/solid/ArrowUpTrayIcon";
 import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
-import UserPlusIcon from "@heroicons/react/24/solid/UserPlusIcon";
 
 import Title from "~/components/Title";
 
-import {
-  getAssignedChaptersToUsersLookUpAsync,
-  getEOIUsersCounterAsync,
-} from "./services.server";
+import { getUsersAsync } from "./services.server";
 
-export async function loader({ request }: LoaderArgs) {
-  const sessionUser = await getSessionUserAsync(request);
-
-  const azureUsers = await getAzureUsersWithRolesAsync(sessionUser.accessToken);
-
-  const assignedChapterLookUp = await getAssignedChaptersToUsersLookUpAsync(
-    azureUsers.map(({ id }) => id)
-  );
+export async function loader() {
+  const users = await getUsersAsync();
 
   return json({
-    users: azureUsers
-      .map((user) => ({
-        ...user,
-        email: user.mail ?? user.userPrincipalName,
-        assignedChapters: assignedChapterLookUp[user.id] ?? [],
-      }))
-      .sort((a, b) =>
-        a.email.localeCompare(b.email, undefined, {
-          sensitivity: "base",
-        })
-      ),
-    expressionOfInterestCounter: await getEOIUsersCounterAsync(),
+    users,
   });
 }
 
 export default function SelectChapter() {
-  const { users, expressionOfInterestCounter } = useLoaderData<typeof loader>();
+  const { users } = useLoaderData<typeof loader>();
 
   return (
     <>
@@ -54,13 +29,13 @@ export default function SelectChapter() {
           <thead>
             <tr>
               <th align="left" className="p-2">
+                Full Name
+              </th>
+              <th align="left" className="p-2">
                 Email
               </th>
               <th align="left" className="p-2">
-                Role
-              </th>
-              <th align="left" className="p-2">
-                Chapters
+                Assigned Chapter
               </th>
               <th align="right" className="p-2">
                 Action
@@ -68,50 +43,29 @@ export default function SelectChapter() {
             </tr>
           </thead>
           <tbody>
-            {users.map(
-              ({ id, email, appRoleAssignments, assignedChapters }) => (
-                <tr key={id}>
-                  <td className="border p-2">{email}</td>
-                  <td className="border p-2">
-                    {appRoleAssignments.length > 0 ? (
-                      appRoleAssignments
-                        .map(({ roleName }) => roleName)
-                        .join(", ")
-                    ) : (
-                      <i className="text-sm">No roles assigned</i>
-                    )}
-                  </td>
-                  <td className="border p-2">
-                    {assignedChapters.length > 0 ? (
-                      assignedChapters.map(({ name }) => name).join(", ")
-                    ) : (
-                      <i className="text-sm">No chapter assigned</i>
-                    )}
-                  </td>
-                  <td className="border p-2">
-                    <Link
-                      to={id}
-                      className="btn-success btn-xs btn w-full gap-2 align-middle"
-                    >
-                      <PencilIcon className="mr-4 h-4 w-4" />
-                      Edit
-                    </Link>
-                  </td>
-                </tr>
-              )
-            )}
+            {users.map(({ id, firstName, lastName, email, chapter }) => (
+              <tr key={id}>
+                <td className="border p-2">
+                  {firstName} {lastName}
+                </td>
+                <td className="border p-2">{email}</td>
+                <td className="border p-2">{chapter.name}</td>
+                <td className="border p-2">
+                  <Link
+                    to={id.toString()}
+                    className="btn-success btn-xs btn w-full gap-2 align-middle"
+                  >
+                    <PencilIcon className="mr-4 h-4 w-4" />
+                    Edit
+                  </Link>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
-      <div className="mt-10 flex flex-col gap-6">
-        <Link className="btn w-96 gap-2" to="expression-of-interest">
-          <UserPlusIcon className="h-6 w-6" />
-          Expression of interest
-          <span className="badge-primary badge-outline badge">
-            {expressionOfInterestCounter}
-          </span>
-        </Link>
 
+      <div className="mt-10">
         <Link className="btn-primary btn w-96 gap-2" to="import">
           <ArrowUpTrayIcon className="h-6 w-6" />
           Import users from file

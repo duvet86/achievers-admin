@@ -7,17 +7,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum Attendace {
-  Weekly
-  Fortnightly
-  Other
-}
-
-enum VaccinationStatus {
-  Confirmed
-  Uncofirmed
-}
-
 model Session {
   id           String @id
   userId       String
@@ -30,102 +19,158 @@ model Session {
 }
 
 model User {
-  id String @id // Defined by Azure Active Directory.
+  id        Int     @id @default(autoincrement())
+  azureADId String? @unique // Defined by Azure Active Directory.
 
-  firstName              String
-  lastName               String
-  additionalEmail        String?
-  mobile                 String
-  address                String
-  dateOfBirth            DateTime
-  isPublishPhotoApproved Boolean
-  isApprovedByMRC        Boolean
-  isBoardMemeber         Boolean   @default(false)
-  isCommiteeMemeber      Boolean   @default(false)
-  isCurrentMemeber       Boolean   @default(false)
-  inductionDate          DateTime?
+  email           String @unique
+  firstName       String
+  lastName        String
+  mobile          String
+  addressStreet   String
+  addressSuburb   String
+  addressState    String
+  addressPostcode String
 
-  defaultAttendance            Attendace?
-  vaccinationStatus            VaccinationStatus?
-  policeCheckRenewalDate       DateTime?
-  WWCCheckRenewalDate          DateTime?
-  WWCCheckNumber               String?
-  isVolunteerAgreementComplete Boolean
-
-  emergencyContactName         String
-  emergencyContactNumber       String
-  emergencyContactAddress      String
-  emergencyContactRelationship String
-
-  occupation                   String?
-  boardTermExpiryDate          DateTime?
-  directorIdentificationNumber String?
-
-  isActive Boolean   @default(true)
-  endDate  DateTime?
-
-  profilePicturePath String?
-  policeCheckPath    String?
-  WWCCheckPath       String?
+  additionalEmail              String?
+  dateOfBirth                  DateTime?
+  emergencyContactName         String?
+  emergencyContactNumber       String?
+  emergencyContactAddress      String?
+  emergencyContactRelationship String?
+  profilePicturePath           String?
+  endDate                      DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  UserEOIForm UserEOIForm?
+  eoIProfile       EoIProfile?
+  welcomeCallAck   WelcomeCall?
+  references       Reference[]
+  inductionAck     Induction?
+  policeCheckAck   PoliceCheck?
+  wwcCheckAck      WWCCheck?
+  approvalbyMRCAck ApprovalbyMRC?
 
-  @@unique([firstName, lastName])
+  chapter   Chapter @relation(fields: [chapterId], references: [id])
+  chapterId String
 }
 
-model UserEOIForm {
+model EoIProfile {
   id Int @id @default(autoincrement())
 
-  firstName           String
-  lastName            String
-  mobile              String
-  email               String
-  address             String
   bestTimeToContact   String
   occupation          String
   volunteerExperience String
-  interestedInRole    String
+  role                String
   mentoringLevel      String
-  hearAboutUs         String
-  mentorOrVolunteer   String
-  preferredLocation   String
+  heardAboutUs        String
   preferredFrequency  String
   isOver18            Boolean
+  comment             String  @db.Text
 
-  referee1FirstName         String
-  referee1Surname           String
-  referee1Mobile            String
-  referee1Email             String
-  referee1BestTimeToContact String
-  referee1Relationship      String
+  aboutMe String? @db.Text
 
-  referee2FirstName         String
-  referee2Surname           String
-  referee2Mobile            String
-  referee2Email             String
-  referee2BestTimeToContact String
-  referee2Relationship      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  User   User?   @relation(fields: [userId], references: [id])
-  userId String? @unique
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
 }
 
-model Mentee {
-  id String @id @default(cuid())
+model WelcomeCall {
+  id Int @id @default(autoincrement())
 
-  firstName String
-  lastName  String
-  yearLevel String
+  calledBy     String
+  calledOnDate DateTime
+  comment      String?  @db.Text
 
-  Chapter   Chapter? @relation(fields: [chapterId], references: [id])
-  chapterId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  Mentors MentoringMentee[]
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
+}
 
-  @@unique([firstName, lastName])
+model Reference {
+  id Int @id @default(autoincrement())
+
+  firstName         String
+  lastName          String
+  mobile            String
+  email             String
+  bestTimeToContact String
+  relationship      String
+
+  generalComment String? @db.Text
+  outcomeComment String? @db.Text
+
+  hasKnowApplicantForAYear Boolean?
+  isRelated                Boolean?
+  isMentorRecommended      Boolean?
+
+  calledBy     String?
+  calledOndate DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+}
+
+model Induction {
+  id Int @id @default(autoincrement())
+
+  runBy           String
+  completedOnDate DateTime
+  comment         String?  @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
+}
+
+model PoliceCheck {
+  id Int @id @default(autoincrement())
+
+  filePath   String
+  expiryDate DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
+}
+
+model WWCCheck {
+  id Int @id @default(autoincrement())
+
+  wwcNumber  String
+  filePath   String
+  expiryDate DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
+}
+
+model ApprovalbyMRC {
+  id Int @id @default(autoincrement())
+
+  completedBy   String
+  submittedDate DateTime?
+  comment       String?   @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
 }
 
 model Chapter {
@@ -136,38 +181,5 @@ model Chapter {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  MentoringMentees MentoringMentee[]
-  Mentee           Mentee[]
-  UserAtChapter    UserAtChapter[]
-}
-
-model UserAtChapter {
-  userId String
-
-  Chapter   Chapter @relation(fields: [chapterId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  chapterId String
-
-  assignedAt DateTime @default(now())
-  assignedBy String
-
-  @@id([userId, chapterId])
-}
-
-model MentoringMentee {
-  userId String
-
-  Mentee   Mentee @relation(fields: [menteeId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  menteeId String
-
-  Chapter   Chapter @relation(fields: [chapterId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  chapterId String
-
-  assignedAt DateTime @default(now())
-  assignedBy String
-
-  frequencyInDays Int
-  startDate       DateTime?
-  isActive        Boolean   @default(true)
-
-  @@id([userId, menteeId, chapterId])
+  User User[]
 }
