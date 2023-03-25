@@ -28,6 +28,7 @@ import NewspaperIcon from "@heroicons/react/24/solid/NewspaperIcon";
 import ShieldCheckIcon from "@heroicons/react/24/solid/ShieldCheckIcon";
 import UserGroupIcon from "@heroicons/react/24/solid/UserGroupIcon";
 import CheckIcon from "@heroicons/react/24/solid/CheckIcon";
+import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
 
 import Input from "~/components/Input";
 import Title from "~/components/Title";
@@ -388,7 +389,7 @@ export default function Chapter() {
 
           <div className="flex flex-wrap gap-4">
             <Link
-              className="btn-outline btn w-52 justify-start gap-4"
+              className="btn-outline btn w-60 gap-4"
               to="eoiProfile"
               relative="path"
             >
@@ -396,32 +397,52 @@ export default function Chapter() {
               EoI Profile
             </Link>
             <Link
-              className="btn-outline btn w-52 justify-start gap-4"
+              className="btn-outline btn w-60 gap-4"
               to="welcomeCall"
               relative="path"
             >
               <PhoneIcon className="h-6 w-6" />
               Welcome Call
             </Link>
-            <Link className="btn-outline btn w-52 justify-start gap-4" to="/">
+            <Link
+              className="btn-outline btn w-60 gap-4"
+              to="references"
+              relative="path"
+            >
               <ChatBubbleLeftRightIcon className="h-6 w-6" />
               References
             </Link>
-            <Link className="btn-outline btn w-52 justify-start gap-4" to="/">
+            <Link
+              className="btn-outline btn w-60 gap-4"
+              to="induction"
+              relative="path"
+            >
               <NewspaperIcon className="h-6 w-6" />
               Induction
             </Link>
-            <Link className="btn-outline btn w-52 justify-start gap-4" to="/">
+            <Link
+              className="btn-outline btn w-60 gap-4"
+              to="police-check"
+              relative="path"
+            >
               <ShieldCheckIcon className="h-6 w-6" />
               Police Check
             </Link>
-            <Link className="btn-outline btn w-52 justify-start gap-4" to="/">
+            <Link className="btn-outline btn w-60 gap-4" to="/">
               <UserGroupIcon className="h-6 w-6" />
               WWC Check
             </Link>
-            <Link className="btn-outline btn w-52 justify-start gap-4" to="/">
+            <Link className="btn-outline btn w-60 gap-4" to="/">
               <CheckIcon className="h-6 w-6" />
               Approval by MRC
+            </Link>
+            <Link
+              className="btn-outline btn w-60 gap-4"
+              to="volounteer-agreement"
+              relative="path"
+            >
+              <PencilIcon className="h-6 w-6" />
+              Volunteer Agreement
             </Link>
           </div>
         </div>

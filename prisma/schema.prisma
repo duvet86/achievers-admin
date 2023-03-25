@@ -31,25 +31,34 @@ model User {
   addressState    String
   addressPostcode String
 
-  additionalEmail              String?
-  dateOfBirth                  DateTime?
+  additionalEmail String?
+  dateOfBirth     DateTime?
+
   emergencyContactName         String?
   emergencyContactNumber       String?
   emergencyContactAddress      String?
   emergencyContactRelationship String?
-  profilePicturePath           String?
-  endDate                      DateTime?
+
+  nextOfKinName         String?
+  nextOfKinNumber       String?
+  nextOfKinAddress      String?
+  nextOfKinRelationship String?
+
+  profilePicturePath         String?
+  hasApprovedToPublishPhotos Boolean?
+  endDate                    DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  eoIProfile    EoIProfile?
-  welcomeCall   WelcomeCall?
-  references    Reference[]
-  induction     Induction?
-  policeCheck   PoliceCheck?
-  wwcCheck      WWCCheck?
-  approvalbyMRC ApprovalbyMRC?
+  eoIProfile         EoIProfile?
+  welcomeCall        WelcomeCall?
+  references         Reference[]
+  induction          Induction?
+  volunteerAgreement VolunteerAgreement?
+  policeCheck        PoliceCheck?
+  wwcCheck           WWCCheck?
+  approvalbyMRC      ApprovalbyMRC?
 
   chapter   Chapter @relation(fields: [chapterId], references: [id])
   chapterId String
@@ -124,6 +133,21 @@ model Induction {
   runBy           String
   completedOnDate DateTime
   comment         String?  @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
+}
+
+model VolunteerAgreement {
+  id Int @id @default(autoincrement())
+
+  isInformedOfConstitution    Boolean
+  hasApprovedSafetyDirections Boolean
+  hasAcceptedNoLegalResp      Boolean
+  signedOn                    DateTime
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

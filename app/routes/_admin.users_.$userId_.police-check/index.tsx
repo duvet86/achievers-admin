@@ -8,19 +8,25 @@ import ServerIcon from "@heroicons/react/24/solid/ServerIcon";
 
 import BackHeader from "~/components/BackHeader";
 import DateInput from "~/components/DateInput";
-import Input from "~/components/Input";
-import Textarea from "~/components/Textarea";
 import Title from "~/components/Title";
 
-import { getUserByIdAsync } from "./services.server";
+import { getFileUrl, getUserByIdAsync } from "./services.server";
+import FileInput from "~/components/FileInput";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
 
+  const filePath = user?.policeCheck?.filePath
+    ? await getFileUrl(user.policeCheck.filePath)
+    : null;
+
   return json({
-    user,
+    user: {
+      ...user,
+      filePath,
+    },
   });
 }
 
@@ -35,29 +41,17 @@ export default function Index() {
         Welcome call acknowledgement for "{user.firstName} {user.lastName}"
       </Title>
 
-      <Form>
-        <Input
-          label="Called by"
-          name="calledBy"
-          defaultValue={user.welcomeCall?.calledBy ?? ""}
-          required
-        />
+      <Form method="post" encType="multipart/form-data">
+        <FileInput label="Police check file" name="filePath" required />
 
         <DateInput
           defaultValue={
-            user.welcomeCall && user.welcomeCall.calledOnDate
-              ? new Date(user.welcomeCall.calledOnDate)
+            user.policeCheck && user.policeCheck.expiryDate
+              ? new Date(user.policeCheck.expiryDate)
               : ""
           }
-          label="Called on date"
-          name="calledOnDate"
-          required
-        />
-
-        <Textarea
-          label="Comment"
-          name="comment"
-          defaultValue={user.welcomeCall?.comment ?? ""}
+          label="Expiry date"
+          name="expiryDate"
           required
         />
 
@@ -69,6 +63,12 @@ export default function Index() {
           Save
         </button>
       </Form>
+
+      {user.filePath && (
+        <a href={user.filePath} className="link-primary link p-2" download>
+          Downlod file
+        </a>
+      )}
     </>
   );
 }

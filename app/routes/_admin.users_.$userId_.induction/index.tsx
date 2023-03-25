@@ -37,28 +37,27 @@ export default function Index() {
 
       <Form>
         <Input
-          label="Called by"
-          name="calledBy"
-          defaultValue={user.welcomeCall?.calledBy ?? ""}
+          label="Run by"
+          name="runBy"
+          defaultValue={user.induction?.runBy ?? ""}
           required
         />
 
         <DateInput
           defaultValue={
-            user.welcomeCall && user.welcomeCall.calledOnDate
-              ? new Date(user.welcomeCall.calledOnDate)
+            user.induction && user.induction.completedOnDate
+              ? new Date(user.induction.completedOnDate)
               : ""
           }
-          label="Called on date"
-          name="calledOnDate"
+          label="Completed on date"
+          name="completedOnDate"
           required
         />
 
         <Textarea
           label="Comment"
           name="comment"
-          defaultValue={user.welcomeCall?.comment ?? ""}
-          required
+          defaultValue={user.induction?.comment ?? ""}
         />
 
         <button
