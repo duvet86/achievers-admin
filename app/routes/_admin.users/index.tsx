@@ -43,6 +43,13 @@ export default function SelectChapter() {
             </tr>
           </thead>
           <tbody>
+            {users.length === 0 && (
+              <tr>
+                <td className="border p-2" colSpan={4}>
+                  <i>No users</i>
+                </td>
+              </tr>
+            )}
             {users.map(({ id, firstName, lastName, email, chapter }) => (
               <tr key={id}>
                 <td className="border p-2">
