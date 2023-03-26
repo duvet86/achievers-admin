@@ -197,7 +197,7 @@ export const action = async ({
 };
 
 export default function Import() {
-  const data = useActionData<typeof action>();
+  const actionData = useActionData<typeof action>();
   const transition = useNavigation();
 
   const isLoading = transition.state === "loading";
@@ -244,22 +244,22 @@ export default function Import() {
           {isDisabled && <LoadingSpinner dark />}
         </div>
 
-        {data?.message && (
+        {actionData?.message && (
           <div className="card bg-error">
             <div className="card-body">
               <h2 className="card-title">Error!</h2>
-              <pre className="whitespace-pre-wrap">{data.message}</pre>
+              <pre className="whitespace-pre-wrap">{actionData.message}</pre>
             </div>
           </div>
         )}
 
         <div className="text-info">
-          {!data?.message && data?.newUsers.length === 0 && (
+          {!actionData?.message && actionData?.newUsers.length === 0 && (
             <p>No new users to import.</p>
           )}
         </div>
         <div className="ml-4">
-          {data?.newUsers.map((u, index) => (
+          {actionData?.newUsers.map((u, index) => (
             <ul key={index} className="list-disc">
               <li>{u["First Name"]}</li>
               <li>{u["Last Name"]}</li>
@@ -268,7 +268,7 @@ export default function Import() {
           ))}
         </div>
         <div>
-          {data?.responses.map((r) => (
+          {actionData?.responses.map((r) => (
             <div key={r.id} className="card bg-error">
               <div className="card-body">
                 <h2 className="card-title">Error!</h2>

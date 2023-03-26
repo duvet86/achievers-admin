@@ -12,9 +12,9 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export default function Error() {
-  const data = useLoaderData();
+  const loaderData = useLoaderData();
 
-  console.error(data);
+  console.error(loaderData);
 
-  return <div>{JSON.stringify(data, null, 2)}</div>;
+  return <div>{JSON.stringify(loaderData, null, 2)}</div>;
 }

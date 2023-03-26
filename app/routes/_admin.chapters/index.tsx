@@ -10,11 +10,11 @@ export async function loader() {
 }
 
 export default function Chapters() {
-  const data = useLoaderData<typeof loader>();
+  const loaderData = useLoaderData<typeof loader>();
 
   return (
     <div className="mt-8 flex flex-wrap justify-center font-mono font-bold text-white lg:space-x-24">
-      {data.chapters.map(({ id, name }) => (
+      {loaderData.chapters.map(({ id, name }) => (
         <Link
           key={id}
           to={id}

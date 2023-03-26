@@ -114,7 +114,7 @@ export async function action({ request, params }: ActionArgs) {
 export default function Index() {
   const transition = useNavigation();
   const { user } = useLoaderData<typeof loader>();
-  const data = useActionData<typeof action>();
+  const actionData = useActionData<typeof action>();
 
   const reference = user.references[0];
 
@@ -219,7 +219,7 @@ export default function Index() {
             defaultValue={reference.generalComment ?? ""}
           />
 
-          <SubmitFormButton message={data?.message} sticky />
+          <SubmitFormButton message={actionData?.message} sticky />
         </fieldset>
       </Form>
     </>

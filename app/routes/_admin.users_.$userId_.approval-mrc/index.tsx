@@ -1,7 +1,13 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { UpdateApprovalByMRCCommand } from "./services.server";
 
 import { json } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import {
@@ -13,7 +19,7 @@ import {
   Title,
 } from "~/components";
 
-import { getUserByIdAsync } from "./services.server";
+import { getUserByIdAsync, updateApprovalByMRCAsync } from "./services.server";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -25,8 +31,42 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
+export async function action({ request, params }: ActionArgs) {
+  invariant(params.userId, "userId not found");
+
+  const formData = await request.formData();
+
+  const completedBy = formData.get("completedBy")?.toString();
+  const submittedDate = formData.get("submittedDate")?.toString();
+  const comment = formData.get("comment")?.toString() ?? null;
+
+  if (completedBy === undefined || submittedDate === undefined) {
+    return json<{
+      message: string | null;
+    }>({
+      message: "Missing required fields",
+    });
+  }
+
+  const data: UpdateApprovalByMRCCommand = {
+    completedBy,
+    submittedDate,
+    comment,
+  };
+
+  await updateApprovalByMRCAsync(Number(params.userId), data);
+
+  return json<{
+    message: string | null;
+  }>({
+    message: null,
+  });
+}
+
 export default function Index() {
+  const transition = useNavigation();
   const { user } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
 
   return (
     <>
@@ -37,27 +77,29 @@ export default function Index() {
       </Title>
 
       <Form method="post">
-        <Input
-          label="Completed by"
-          name="completedBy"
-          defaultValue={user.approvalbyMRC?.completedBy ?? ""}
-          required
-        />
+        <fieldset disabled={transition.state === "submitting"}>
+          <Input
+            label="Completed by"
+            name="completedBy"
+            defaultValue={user.approvalbyMRC?.completedBy ?? ""}
+            required
+          />
 
-        <DateInput
-          label="Submitted date"
-          name="submittedDate"
-          defaultValue={user.approvalbyMRC?.submittedDate ?? ""}
-          required
-        />
+          <DateInput
+            label="Submitted date"
+            name="submittedDate"
+            defaultValue={user.approvalbyMRC?.submittedDate ?? ""}
+            required
+          />
 
-        <Textarea
-          label="Comment"
-          name="comment"
-          defaultValue={user.approvalbyMRC?.comment ?? ""}
-        />
+          <Textarea
+            label="Comment"
+            name="comment"
+            defaultValue={user.approvalbyMRC?.comment ?? ""}
+          />
 
-        <SubmitFormButton />
+          <SubmitFormButton message={actionData?.message} />
+        </fieldset>
       </Form>
     </>
   );

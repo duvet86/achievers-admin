@@ -1,7 +1,17 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { UpdateWWCCheckCommand } from "./services.server";
 
-import { json } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import {
+  json,
+  unstable_createMemoryUploadHandler,
+  unstable_parseMultipartFormData,
+} from "@remix-run/node";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import {
@@ -13,7 +23,12 @@ import {
   SubmitFormButton,
 } from "~/components";
 
-import { getFileUrl, getUserByIdAsync } from "./services.server";
+import {
+  getFileUrl,
+  getUserByIdAsync,
+  saveFileAsync,
+  updateWWCCheckAsync,
+} from "./services.server";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -32,8 +47,54 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
+export async function action({ request, params }: ActionArgs) {
+  invariant(params.userId, "userId not found");
+
+  const uploadHandler = unstable_createMemoryUploadHandler({
+    maxPartSize: 500_000,
+  });
+
+  const formData = await unstable_parseMultipartFormData(
+    request,
+    uploadHandler
+  );
+
+  const file = formData.get("file") as File | null;
+  const expiryDate = formData.get("expiryDate")?.toString();
+  const wwcNumber = formData.get("wwcNumber")?.toString();
+
+  if (
+    file === null ||
+    file.size === 0 ||
+    expiryDate === undefined ||
+    wwcNumber === undefined
+  ) {
+    return json<{
+      message: string | null;
+    }>({
+      message: "Missing required fields",
+    });
+  }
+
+  const data: UpdateWWCCheckCommand = {
+    expiryDate,
+    wwcNumber,
+    filePath: await saveFileAsync(params.userId, file),
+  };
+
+  await updateWWCCheckAsync(Number(params.userId), data);
+
+  return json<{
+    message: string | null;
+  }>({
+    message: null,
+  });
+}
+
 export default function Index() {
+  const transition = useNavigation();
   const { user } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
 
   return (
     <>
@@ -44,23 +105,25 @@ export default function Index() {
       </Title>
 
       <Form method="post" encType="multipart/form-data">
-        <FileInput label="Police check file" name="filePath" required />
+        <fieldset disabled={transition.state === "submitting"}>
+          <FileInput label="Police check file" name="filePath" required />
 
-        <Input
-          defaultValue={user?.wwcCheck?.wwcNumber ?? ""}
-          label="WWC number"
-          name="wwcNumber"
-          required
-        />
+          <Input
+            defaultValue={user?.wwcCheck?.wwcNumber ?? ""}
+            label="WWC number"
+            name="wwcNumber"
+            required
+          />
 
-        <DateInput
-          defaultValue={user.wwcCheck?.expiryDate ?? ""}
-          label="Expiry date"
-          name="expiryDate"
-          required
-        />
+          <DateInput
+            defaultValue={user.wwcCheck?.expiryDate ?? ""}
+            label="Expiry date"
+            name="expiryDate"
+            required
+          />
 
-        <SubmitFormButton />
+          <SubmitFormButton message={actionData?.message} />
+        </fieldset>
       </Form>
 
       {user.filePath && (

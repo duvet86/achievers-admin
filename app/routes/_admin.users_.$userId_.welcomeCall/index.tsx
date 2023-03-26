@@ -66,7 +66,7 @@ export async function action({ request, params }: ActionArgs) {
 export default function Index() {
   const transition = useNavigation();
   const { user } = useLoaderData<typeof loader>();
-  const data = useActionData<typeof action>();
+  const actionData = useActionData<typeof action>();
 
   return (
     <>
@@ -99,7 +99,7 @@ export default function Index() {
             required
           />
 
-          <SubmitFormButton message={data?.message} />
+          <SubmitFormButton message={actionData?.message} />
         </fieldset>
       </Form>
     </>

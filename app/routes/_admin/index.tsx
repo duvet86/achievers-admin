@@ -39,7 +39,7 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export default function AppLayout() {
-  const data = useLoaderData<typeof loader>();
+  const loaderData = useLoaderData<typeof loader>();
 
-  return <Body {...data} />;
+  return <Body {...loaderData} />;
 }
