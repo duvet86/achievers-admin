@@ -1,19 +1,29 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ReferenceUpdateCommand } from "./services.server";
 
 import { json } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import ServerIcon from "@heroicons/react/24/solid/ServerIcon";
+import {
+  BackHeader,
+  Title,
+  Input,
+  DateInput,
+  Textarea,
+  Checkbox,
+  SubmitFormButton,
+} from "~/components";
 
-import BackHeader from "~/components/BackHeader";
-import Title from "~/components/Title";
-import Input from "~/components/Input";
-import DateInput from "~/components/DateInput";
-import Textarea from "~/components/Textarea";
-
-import { getUserWithReferenceByIdAsync } from "./services.server";
-import Checkbox from "~/components/Checkbox";
+import {
+  getUserWithReferenceByIdAsync,
+  updateReferenceByIdAsync,
+} from "./services.server";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -29,8 +39,82 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
+export async function action({ request, params }: ActionArgs) {
+  invariant(params.userId, "userId not found");
+  invariant(params.referenceId, "referenceId not found");
+
+  const formData = await request.formData();
+
+  const firstName = formData.get("firstName")?.toString();
+  const lastName = formData.get("lastName")?.toString();
+  const mobile = formData.get("mobile")?.toString();
+  const email = formData.get("email")?.toString();
+  const bestTimeToContact = formData.get("bestTimeToContact")?.toString();
+  const relationship = formData.get("relationship")?.toString();
+  const hasKnowApplicantForAYear = formData
+    .get("hasKnowApplicantForAYear")
+    ?.toString();
+  const isRelated = formData.get("isRelated")?.toString();
+  const isMentorRecommended = formData.get("isMentorRecommended")?.toString();
+  const calledBy = formData.get("calledBy")?.toString();
+  const calledOndate = formData.get("calledOndate")?.toString();
+  const outcomeComment = formData.get("outcomeComment")?.toString();
+  const generalComment = formData.get("generalComment")?.toString() ?? null;
+
+  if (
+    firstName === undefined ||
+    lastName === undefined ||
+    mobile === undefined ||
+    email === undefined ||
+    bestTimeToContact === undefined ||
+    relationship === undefined ||
+    hasKnowApplicantForAYear === undefined ||
+    isRelated === undefined ||
+    isMentorRecommended === undefined ||
+    calledBy === undefined ||
+    calledOndate === undefined ||
+    outcomeComment === undefined
+  ) {
+    return json<{
+      message: string | null;
+    }>({
+      message: "Missing required fields",
+    });
+  }
+
+  const data: ReferenceUpdateCommand = {
+    bestTimeToContact,
+    email,
+    firstName,
+    lastName,
+    mobile,
+    relationship,
+    calledBy,
+    calledOndate,
+    generalComment,
+    hasKnowApplicantForAYear: hasKnowApplicantForAYear === "true",
+    isMentorRecommended: isMentorRecommended === "true",
+    isRelated: isRelated === "true",
+    outcomeComment,
+  };
+
+  await updateReferenceByIdAsync(
+    Number(params.userId),
+    Number(params.referenceId),
+    data
+  );
+
+  return json<{
+    message: string | null;
+  }>({
+    message: null,
+  });
+}
+
 export default function Index() {
+  const transition = useNavigation();
   const { user } = useLoaderData<typeof loader>();
+  const data = useActionData<typeof action>();
 
   const reference = user.references[0];
 
@@ -43,104 +127,100 @@ export default function Index() {
         {user.firstName} {user.lastName}"
       </Title>
 
-      <Form>
-        <Input
-          label="First name"
-          name="firstName"
-          defaultValue={reference.firstName ?? ""}
-          required
-        />
+      <Form className="relative" method="post">
+        <fieldset disabled={transition.state === "submitting"}>
+          <Input
+            label="First name"
+            name="firstName"
+            defaultValue={reference.firstName ?? ""}
+            required
+          />
 
-        <Input
-          label="Last name"
-          name="lastName"
-          defaultValue={reference.lastName ?? ""}
-          required
-        />
+          <Input
+            label="Last name"
+            name="lastName"
+            defaultValue={reference.lastName ?? ""}
+            required
+          />
 
-        <Input
-          label="Mobile"
-          name="mobile"
-          defaultValue={reference.mobile ?? ""}
-          required
-        />
+          <Input
+            label="Mobile"
+            name="mobile"
+            defaultValue={reference.mobile ?? ""}
+            required
+          />
 
-        <Input
-          label="Email"
-          name="email"
-          defaultValue={reference.email ?? ""}
-          required
-        />
+          <Input
+            label="Email"
+            name="email"
+            defaultValue={reference.email ?? ""}
+            required
+          />
 
-        <Input
-          label="Best time to contact"
-          name="bestTimeToContact"
-          defaultValue={reference.bestTimeToContact ?? ""}
-          required
-        />
+          <Input
+            label="Best time to contact"
+            name="bestTimeToContact"
+            defaultValue={reference.bestTimeToContact ?? ""}
+            required
+          />
 
-        <Input
-          label="Relationship"
-          name="relationship"
-          defaultValue={reference.relationship ?? ""}
-          required
-        />
+          <Input
+            label="Relationship"
+            name="relationship"
+            defaultValue={reference.relationship ?? ""}
+            required
+          />
 
-        <Checkbox
-          label="Has know the applicant for a year?"
-          name="hasKnowApplicantForAYear"
-          defaultChecked={reference.hasKnowApplicantForAYear ?? false}
-          required
-        />
+          <Checkbox
+            label="Has know the applicant for a year?"
+            name="hasKnowApplicantForAYear"
+            defaultChecked={reference.hasKnowApplicantForAYear ?? false}
+            required
+          />
 
-        <Checkbox
-          label="Is related?"
-          name="isRelated"
-          defaultChecked={reference.isRelated ?? false}
-          required
-        />
+          <Checkbox
+            label="Is related?"
+            name="isRelated"
+            defaultChecked={reference.isRelated ?? false}
+            required
+          />
 
-        <Checkbox
-          label="Is mentor recommended?"
-          name="isMentorRecommended"
-          defaultChecked={reference.isMentorRecommended ?? false}
-          required
-        />
+          <Checkbox
+            label="Is mentor recommended?"
+            name="isMentorRecommended"
+            defaultChecked={reference.isMentorRecommended ?? false}
+            required
+          />
 
-        <Input
-          label="Called by"
-          name="calledBy"
-          defaultValue={reference.calledBy ?? ""}
-          required
-        />
+          <Input
+            label="Called by"
+            name="calledBy"
+            defaultValue={reference.calledBy ?? ""}
+            required
+          />
 
-        <DateInput
-          defaultValue={reference.calledOndate ?? ""}
-          label="Called on"
-          name="calledOndate"
-          required
-        />
+          <DateInput
+            defaultValue={reference.calledOndate ?? ""}
+            label="Called on"
+            name="calledOndate"
+            required
+          />
 
-        <Textarea
-          label="Outcome comment"
-          name="outcomeComment"
-          defaultValue={reference.outcomeComment ?? ""}
-          required
-        />
+          <Textarea
+            label="Outcome comment"
+            name="outcomeComment"
+            defaultValue={reference.outcomeComment ?? ""}
+            required
+          />
 
-        <Textarea
-          label="General comment"
-          name="generalComment"
-          defaultValue={reference.generalComment ?? ""}
-        />
+          <Textarea
+            label="General comment"
+            name="generalComment"
+            defaultValue={reference.generalComment ?? ""}
+          />
 
-        <button
-          className="btn-primary btn float-right mt-6 w-52 gap-4"
-          type="submit"
-        >
-          <ServerIcon className="h-6 w-6" />
-          Save
-        </button>
+          <SubmitFormButton message={data?.message} sticky />
+        </fieldset>
       </Form>
     </>
   );

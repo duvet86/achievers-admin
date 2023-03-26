@@ -3,7 +3,7 @@ interface Props {
   text: string;
 }
 
-export default function Text({ label, text }: Props) {
+export function Text({ label, text }: Props) {
   return (
     <div className="mb-4 w-full border-b border-l border-base-300 p-1">
       <div className="label">

@@ -10,7 +10,7 @@ interface Props {
   required?: boolean;
 }
 
-export default function Input({
+export function Input({
   label,
   name,
   type = "text",

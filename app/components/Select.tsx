@@ -12,7 +12,7 @@ interface Props {
   options: SelectOption[];
 }
 
-export default function Select({ label, name, options, ...props }: Props) {
+export function Select({ label, name, options, ...props }: Props) {
   return (
     <div className="form-control w-full">
       <label htmlFor={name} className="label">

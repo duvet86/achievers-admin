@@ -13,7 +13,7 @@ import {
 
 import tailwindStylesheetUrl from "~/styles/tailwind.css";
 
-import LoadingSpinner from "~/components/LoadingSpinner";
+import { LoadingSpinner } from "~/components";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: tailwindStylesheetUrl }];

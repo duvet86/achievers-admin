@@ -5,11 +5,9 @@ import { Form, useLoaderData } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
-import Title from "~/components/Title";
-import Input from "~/components/Input";
+import { Title, Input, BackHeader, SubmitFormButton } from "~/components";
 
 import { getChapterByIdAsync } from "./services.server";
-import BackHeader from "~/components/BackHeader";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -34,9 +32,7 @@ export default function ChapterId() {
         <Input defaultValue={chapter.name} label="Name" name="name" />
         <Input defaultValue={chapter.address} label="Address" name="address" />
 
-        <button className="btn-primary btn float-right mt-6 w-28" type="submit">
-          Save
-        </button>
+        <SubmitFormButton />
       </Form>
     </>
   );

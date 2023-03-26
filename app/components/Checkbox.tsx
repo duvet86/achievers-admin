@@ -7,7 +7,7 @@ interface Props {
   readOnly?: boolean;
 }
 
-export default function Checkbox({ label, name, required, ...props }: Props) {
+export function Checkbox({ label, name, required, ...props }: Props) {
   return (
     <div className="form-control relative">
       <label

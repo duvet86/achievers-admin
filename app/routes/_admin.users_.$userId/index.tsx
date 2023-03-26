@@ -3,10 +3,6 @@ import type { Prisma } from "@prisma/client";
 import type { AzureUserWebAppWithRole } from "~/services";
 
 import { json } from "@remix-run/node";
-import {
-  unstable_createMemoryUploadHandler,
-  unstable_parseMultipartFormData,
-} from "@remix-run/node";
 import { Form, Link, useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
@@ -19,7 +15,6 @@ import {
 
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import HomeModernIcon from "@heroicons/react/24/solid/HomeModernIcon";
-import ServerIcon from "@heroicons/react/24/solid/ServerIcon";
 import EnvelopeIcon from "@heroicons/react/24/solid/EnvelopeIcon";
 import UserCircleIcon from "@heroicons/react/24/solid/UserCircleIcon";
 import PhoneIcon from "@heroicons/react/24/solid/PhoneIcon";
@@ -30,19 +25,21 @@ import UserGroupIcon from "@heroicons/react/24/solid/UserGroupIcon";
 import CheckIcon from "@heroicons/react/24/solid/CheckIcon";
 import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
 
-import Input from "~/components/Input";
-import Title from "~/components/Title";
-import DateInput from "~/components/DateInput";
-import BackHeader from "~/components/BackHeader";
+import {
+  Input,
+  Title,
+  DateInput,
+  BackHeader,
+  SubmitFormButton,
+} from "~/components";
 
 import {
   getUserByIdAsync,
   getProfilePictureUrl,
-  saveProfilePicture,
   updateUserByIdAsync,
 } from "./services.server";
 
-import ProfileInput from "./ProfileInput";
+import ProfilePicture from "./ProfilePicture";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -75,14 +72,7 @@ export async function loader({ request, params }: LoaderArgs) {
 export async function action({ request, params }: ActionArgs) {
   invariant(params.userId, "userId not found");
 
-  const uploadHandler = unstable_createMemoryUploadHandler({
-    maxPartSize: 500_000,
-  });
-
-  const formData = await unstable_parseMultipartFormData(
-    request,
-    uploadHandler
-  );
+  const formData = await request.formData();
 
   const firstName = formData.get("firstName")?.toString();
   const lastName = formData.get("lastName")?.toString();
@@ -106,12 +96,6 @@ export async function action({ request, params }: ActionArgs) {
   const emergencyContactRelationship = formData
     .get("emergencyContactRelationship")
     ?.toString();
-
-  const deleteProfilePicture = JSON.parse(
-    formData.get("deleteProfilePicture") as string
-  );
-
-  const profilePictureFile = formData.get("profilePicture") as File | null;
 
   if (
     isStringNullOrEmpty(firstName) ||
@@ -150,16 +134,6 @@ export async function action({ request, params }: ActionArgs) {
     emergencyContactRelationship,
   };
 
-  if (profilePictureFile && profilePictureFile.size > 0) {
-    dataCreate.profilePicturePath = await saveProfilePicture(
-      params.userId,
-      profilePictureFile
-    );
-  } else if (deleteProfilePicture) {
-    // TODO: delete picture in storage.
-    dataCreate.profilePicturePath = null;
-  }
-
   await updateUserByIdAsync(Number(params.userId), dataCreate);
 
   return json({
@@ -175,16 +149,17 @@ export default function Chapter() {
     <div className="flex h-full flex-col pb-28">
       <BackHeader />
 
-      <Title>Edit info for "{user.email}"</Title>
+      <Title>
+        Edit info for "{user.firstName} {user.lastName}"
+      </Title>
 
       <div className="flex h-full">
         <Form
           method="post"
-          encType="multipart/form-data"
           className="relative mr-8 flex-1 overflow-y-auto border-r border-primary pr-4"
         >
           <fieldset disabled={transition.state === "submitting"}>
-            <ProfileInput defaultValue={user.profilePicturePath} />
+            <ProfilePicture profilePicturePath={user.profilePicturePath} />
 
             <Input
               defaultValue={user.email}
@@ -194,21 +169,21 @@ export default function Chapter() {
             />
 
             <Input
-              defaultValue={user?.firstName ?? ""}
+              defaultValue={user.firstName ?? ""}
               label="First name"
               name="firstName"
               required
             />
 
             <Input
-              defaultValue={user?.lastName ?? ""}
+              defaultValue={user.lastName ?? ""}
               label="Last name"
               name="lastName"
               required
             />
 
             <Input
-              defaultValue={user?.mobile ?? ""}
+              defaultValue={user.mobile ?? ""}
               type="number"
               label="Mobile"
               name="mobile"
@@ -216,78 +191,70 @@ export default function Chapter() {
             />
 
             <Input
-              defaultValue={user?.addressStreet ?? ""}
+              defaultValue={user.addressStreet ?? ""}
               label="Address street"
               name="addressStreet"
               required
             />
 
             <Input
-              defaultValue={user?.addressSuburb ?? ""}
+              defaultValue={user.addressSuburb ?? ""}
               label="Address suburb"
               name="addressSuburb"
               required
             />
 
             <Input
-              defaultValue={user?.addressState ?? ""}
+              defaultValue={user.addressState ?? ""}
               label="Address state"
               name="addressState"
               required
             />
 
             <Input
-              defaultValue={user?.addressPostcode ?? ""}
+              defaultValue={user.addressPostcode ?? ""}
               label="Address postcode"
               name="addressPostcode"
               required
             />
 
             <DateInput
-              defaultValue={
-                user && user.dateOfBirth ? new Date(user.dateOfBirth) : ""
-              }
+              defaultValue={user.dateOfBirth ?? ""}
               label="Date of birth"
               name="dateOfBirth"
             />
 
             <Input
-              defaultValue={user?.emergencyContactName ?? ""}
+              defaultValue={user.emergencyContactName ?? ""}
               label="Emergency Contact Name"
               name="emergencyContactName"
             />
 
             <Input
-              defaultValue={user?.emergencyContactNumber ?? ""}
+              defaultValue={user.emergencyContactNumber ?? ""}
               label="Emergency Contact Number"
               name="emergencyContactNumber"
             />
 
             <Input
-              defaultValue={user?.emergencyContactAddress ?? ""}
+              defaultValue={user.emergencyContactAddress ?? ""}
               label="Emergency Contact Address"
               name="emergencyContactAddress"
             />
 
             <Input
-              defaultValue={user?.emergencyContactRelationship ?? ""}
+              defaultValue={user.emergencyContactRelationship ?? ""}
               label="Emergency Contact Relationship"
               name="emergencyContactRelationship"
             />
 
             <Input
-              defaultValue={user?.additionalEmail ?? ""}
+              defaultValue={user.additionalEmail ?? ""}
               label="Additional email"
               name="additionalEmail"
             />
 
-            <button
-              className="btn-primary btn sticky bottom-0 float-right mt-6 w-64 gap-4"
-              type="submit"
-            >
-              <ServerIcon className="h-6 w-6" />
-              Save
-            </button>
+            <SubmitFormButton sticky />
           </fieldset>
         </Form>
 
@@ -428,11 +395,19 @@ export default function Chapter() {
               <ShieldCheckIcon className="h-6 w-6" />
               Police Check
             </Link>
-            <Link className="btn-outline btn w-60 gap-4" to="/">
+            <Link
+              className="btn-outline btn w-60 gap-4"
+              to="wwc-check"
+              relative="path"
+            >
               <UserGroupIcon className="h-6 w-6" />
               WWC Check
             </Link>
-            <Link className="btn-outline btn w-60 gap-4" to="/">
+            <Link
+              className="btn-outline btn w-60 gap-4"
+              to="approval-mrc"
+              relative="path"
+            >
               <CheckIcon className="h-6 w-6" />
               Approval by MRC
             </Link>

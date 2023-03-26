@@ -37,7 +37,7 @@ export async function updateUserByIdAsync(
 export async function saveProfilePicture(
   userId: string,
   file: File
-): Promise<string | null> {
+): Promise<string> {
   if (file.size === 0) {
     throw new Error();
   }

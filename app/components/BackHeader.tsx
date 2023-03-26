@@ -6,7 +6,7 @@ interface Props {
   to?: string;
 }
 
-export default function BackHeader({ to = "../" }: Props) {
+export function BackHeader({ to = "../" }: Props) {
   return (
     <>
       <div>

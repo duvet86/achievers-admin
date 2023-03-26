@@ -1,17 +1,33 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { PoliceCheckUpdateCommand } from "./services.server";
 
-import { json } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import {
+  json,
+  unstable_createMemoryUploadHandler,
+  unstable_parseMultipartFormData,
+} from "@remix-run/node";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import ServerIcon from "@heroicons/react/24/solid/ServerIcon";
+import {
+  BackHeader,
+  DateInput,
+  Title,
+  FileInput,
+  SubmitFormButton,
+} from "~/components";
 
-import BackHeader from "~/components/BackHeader";
-import DateInput from "~/components/DateInput";
-import Title from "~/components/Title";
-
-import { getFileUrl, getUserByIdAsync } from "./services.server";
-import FileInput from "~/components/FileInput";
+import {
+  getFileUrlAsync,
+  getUserByIdAsync,
+  updatePoliceCheckAsync,
+  saveFileAsync,
+} from "./services.server";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -19,7 +35,7 @@ export async function loader({ params }: LoaderArgs) {
   const user = await getUserByIdAsync(Number(params.userId));
 
   const filePath = user?.policeCheck?.filePath
-    ? await getFileUrl(user.policeCheck.filePath)
+    ? await getFileUrlAsync(user.policeCheck.filePath)
     : null;
 
   return json({
@@ -30,38 +46,69 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
+export async function action({ request, params }: ActionArgs) {
+  invariant(params.userId, "userId not found");
+
+  const uploadHandler = unstable_createMemoryUploadHandler({
+    maxPartSize: 500_000,
+  });
+
+  const formData = await unstable_parseMultipartFormData(
+    request,
+    uploadHandler
+  );
+
+  const file = formData.get("file") as File | null;
+  const expiryDate = formData.get("expiryDate")?.toString();
+
+  if (file === null || file.size === 0 || expiryDate === undefined) {
+    return json<{
+      message: string | null;
+    }>({
+      message: "Missing required fields",
+    });
+  }
+
+  const data: PoliceCheckUpdateCommand = {
+    expiryDate,
+    filePath: await saveFileAsync(params.userId, file),
+  };
+
+  await updatePoliceCheckAsync(Number(params.userId), data);
+
+  return json<{
+    message: string | null;
+  }>({
+    message: null,
+  });
+}
+
 export default function Index() {
+  const transition = useNavigation();
   const { user } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
 
   return (
     <>
       <BackHeader />
 
       <Title>
-        Welcome call acknowledgement for "{user.firstName} {user.lastName}"
+        Police check for "{user.firstName} {user.lastName}"
       </Title>
 
       <Form method="post" encType="multipart/form-data">
-        <FileInput label="Police check file" name="filePath" required />
+        <fieldset disabled={transition.state === "submitting"}>
+          <FileInput label="Police check file" name="file" required />
 
-        <DateInput
-          defaultValue={
-            user.policeCheck && user.policeCheck.expiryDate
-              ? new Date(user.policeCheck.expiryDate)
-              : ""
-          }
-          label="Expiry date"
-          name="expiryDate"
-          required
-        />
+          <DateInput
+            defaultValue={user.policeCheck?.expiryDate ?? ""}
+            label="Expiry date"
+            name="expiryDate"
+            required
+          />
 
-        <button
-          className="btn-primary btn float-right mt-6 w-52 gap-4"
-          type="submit"
-        >
-          <ServerIcon className="h-6 w-6" />
-          Save
-        </button>
+          <SubmitFormButton message={actionData?.message} />
+        </fieldset>
       </Form>
 
       {user.filePath && (

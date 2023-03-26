@@ -33,6 +33,36 @@ interface AzureUser {
   appRoleAssignments: AppRoleAssignment[];
 }
 
+export interface AzureInviteRequest {
+  invitedUserEmailAddress: string;
+  inviteRedirectUrl: string;
+  sendInvitationMessage: boolean;
+}
+
+export interface AzureInviteResponse {
+  id: string;
+  inviteRedeemUrl: string;
+  invitedUserDisplayName: string;
+  invitedUserEmailAddress: string;
+  resetRedemption: boolean;
+  sendInvitationMessage: boolean;
+  invitedUserMessageInfo: {
+    messageLanguage: string | null;
+    ccRecipients: [
+      {
+        emailAddress: {
+          name: string | null;
+          address: string | null;
+        };
+      }
+    ];
+    customizedMessageBody: string | null;
+  };
+  inviteRedirectUrl: string;
+  status: string;
+  invitedUser: { id: string };
+}
+
 export interface AppRoleAssignmentWithRoleName extends AppRoleAssignment {
   roleName: string;
 }
@@ -196,4 +226,21 @@ export async function getAzureUserWithRolesByIdAsync(
   } catch (e) {
     throw redirect("/logout");
   }
+}
+
+export async function inviteUserToAzureAsync(
+  accessToken: string,
+  azureInviteRequest: AzureInviteRequest
+): Promise<AzureInviteResponse> {
+  const response = await fetch(`${MICROSOFT_GRAPH_V1_BASEURL}/invitations`, {
+    method: "POST",
+    headers: getHeaders(accessToken),
+    body: JSON.stringify(azureInviteRequest),
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  return response.json();
 }

@@ -11,7 +11,7 @@ import {
   version,
 } from "~/services";
 
-import Body from "~/components/Body";
+import { Body } from "~/components";
 
 export async function loader({ request }: LoaderArgs) {
   const sessionUser = await getSessionUserAsync(request);

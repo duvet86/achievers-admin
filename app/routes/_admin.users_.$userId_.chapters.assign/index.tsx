@@ -7,21 +7,17 @@ import {
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
-
 import invariant from "tiny-invariant";
 
-import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
-
-import Select from "~/components/Select";
+import { Select, BackHeader, SubmitFormButton } from "~/components";
 
 import {
   assignChapterToUserAsync,
   getChaptersAsync,
   getUserAtChapterByIdAsync,
 } from "./services.server";
-import BackHeader from "~/components/BackHeader";
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
   const [user, chapters] = await Promise.all([
@@ -82,14 +78,7 @@ export default function Assign() {
           )}
         />
 
-        <p className="mt-4 text-red-600">{actionData?.error}</p>
-
-        <div className="mt-6">
-          <button className="btn-primary btn gap-2">
-            <PlusIcon className="h-6 w-6" />
-            Save
-          </button>
-        </div>
+        <SubmitFormButton message={actionData?.error} />
       </Form>
     </>
   );

@@ -1,7 +1,7 @@
 import type { ActionArgs, TypedResponse } from "@remix-run/node";
 import type { Prisma } from "@prisma/client";
 import type { SpeadsheetUser } from "~/models/speadsheet";
-import type { AzureInviteResponse } from "./services.server";
+import type { AzureInviteResponse } from "~/services";
 
 import { getChaptersAsync } from "./services.server";
 
@@ -10,7 +10,7 @@ import {
   unstable_parseMultipartFormData,
   json,
 } from "@remix-run/node";
-import { Form, useActionData, useCatch, useNavigation } from "@remix-run/react";
+import { Form, useActionData, useNavigation } from "@remix-run/react";
 
 import {
   isEmail,
@@ -18,19 +18,14 @@ import {
   getAzureUsersAsync,
   WEB_APP_URL,
   getSessionUserAsync,
+  inviteUserToAzureAsync,
 } from "~/services";
 
 import ArrowUpTrayIcon from "@heroicons/react/24/solid/ArrowUpTrayIcon";
 
-import LoadingSpinner from "~/components/LoadingSpinner";
-import Title from "~/components/Title";
+import { LoadingSpinner, Title, BackHeader } from "~/components";
 
-import {
-  readExcelFileAsync,
-  inviteUserToAzureAsync,
-  createManyUsersAsync,
-} from "./services.server";
-import BackHeader from "~/components/BackHeader";
+import { readExcelFileAsync, createManyUsersAsync } from "./services.server";
 
 export const action = async ({
   request,
@@ -285,27 +280,4 @@ export default function Import() {
       </Form>
     </>
   );
-}
-
-export function ErrorBoundary({ error }: { error: Error }) {
-  console.error(error);
-
-  return (
-    <div className="card bg-error">
-      <div className="card-body">
-        <h2 className="card-title">Error!</h2>
-        <pre className="whitespace-pre-wrap">{error.message}</pre>
-      </div>
-    </div>
-  );
-}
-
-export function CatchBoundary() {
-  const caught = useCatch();
-
-  if (caught.status === 404) {
-    return <div>Note not found</div>;
-  }
-
-  throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }

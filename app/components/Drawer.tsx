@@ -31,7 +31,7 @@ function getLinks(isAdmin: boolean) {
       ];
 }
 
-export default function Drawer({ isAdmin, version }: Props) {
+export function Drawer({ isAdmin, version }: Props) {
   const links = getLinks(isAdmin);
 
   return (

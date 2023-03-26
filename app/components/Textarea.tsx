@@ -10,7 +10,7 @@ interface Props {
   required?: boolean;
 }
 
-export default function Textarea({
+export function Textarea({
   label,
   name,
   type = "text",

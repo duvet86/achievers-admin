@@ -11,7 +11,7 @@ interface Props {
   currentUser: AzureUserWebAppWithRole;
 }
 
-export default function Navbar({ currentUser }: Props) {
+export function Navbar({ currentUser }: Props) {
   return (
     <nav className="navbar absolute top-0 left-0 h-16 bg-primary text-primary-content shadow-md">
       <div className="flex-none lg:hidden">

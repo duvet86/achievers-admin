@@ -5,7 +5,7 @@ import { json } from "@remix-run/node";
 import ArrowUpTrayIcon from "@heroicons/react/24/solid/ArrowUpTrayIcon";
 import PencilSquareIcon from "@heroicons/react/24/solid/PencilSquareIcon";
 
-import Title from "~/components/Title";
+import { Title } from "~/components";
 
 import { getUsersAsync } from "./services.server";
 

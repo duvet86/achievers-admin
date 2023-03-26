@@ -3,7 +3,7 @@ interface Props {
   large?: boolean;
 }
 
-export default function LoadingSpinner({ dark = false, large = false }: Props) {
+export function LoadingSpinner({ dark = false, large = false }: Props) {
   return (
     <svg
       className={

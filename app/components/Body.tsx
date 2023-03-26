@@ -2,8 +2,8 @@ import type { AzureUserWebAppWithRole } from "~/services";
 
 import { Outlet } from "@remix-run/react";
 
-import Drawer from "./Drawer";
-import Navbar from "./Navbar";
+import { Drawer } from "./Drawer";
+import { Navbar } from "./Navbar";
 
 interface Props {
   isAdmin: boolean;
@@ -11,7 +11,7 @@ interface Props {
   currentUser: AzureUserWebAppWithRole;
 }
 
-export default function Body({ currentUser, version, isAdmin }: Props) {
+export function Body({ currentUser, version, isAdmin }: Props) {
   return (
     <div className="drawer-mobile drawer">
       <input id="drawer" type="checkbox" className="drawer-toggle" />

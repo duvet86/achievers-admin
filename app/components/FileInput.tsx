@@ -7,7 +7,7 @@ interface Props {
   required?: boolean;
 }
 
-export default function FileInput({ name, label, required, ...props }: Props) {
+export function FileInput({ name, label, required, ...props }: Props) {
   return (
     <div className="form-control relative w-full">
       <label htmlFor={name} className="label">

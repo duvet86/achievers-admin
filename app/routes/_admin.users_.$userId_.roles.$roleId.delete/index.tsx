@@ -12,8 +12,9 @@ import {
 
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 
+import { BackHeader } from "~/components";
+
 import { removeRoleFromUserAsync } from "./services.server";
-import BackHeader from "~/components/BackHeader";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");

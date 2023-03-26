@@ -10,7 +10,7 @@ interface Props {
   max?: string;
 }
 
-export default function DateInput({
+export function DateInput({
   label,
   name,
   defaultValue,
@@ -18,7 +18,7 @@ export default function DateInput({
   ...props
 }: Props) {
   const value =
-    defaultValue instanceof Date
+    defaultValue instanceof Date || defaultValue.trim() !== ""
       ? dayjs(defaultValue).format("YYYY-MM-DD")
       : defaultValue;
 

@@ -5,12 +5,10 @@ import { Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import ChatBubbleLeftRightIcon from "@heroicons/react/24/solid/ChatBubbleLeftRightIcon";
-import UserPlusIcon from "@heroicons/react/24/solid/UserPlusIcon";
 import CheckIcon from "@heroicons/react/24/solid/CheckIcon";
 import ExclamationTriangleIcon from "@heroicons/react/24/solid/ExclamationTriangleIcon";
 
-import BackHeader from "~/components/BackHeader";
-import Title from "~/components/Title";
+import { BackHeader, Title } from "~/components";
 
 import { getUserByIdAsync } from "./services.server";
 
@@ -86,17 +84,6 @@ export default function Index() {
             )}
           </tbody>
         </table>
-      </div>
-
-      <div className="mt-6 flex justify-end">
-        <Link
-          to="chapters/assign"
-          relative="path"
-          className="btn-primary btn w-64 gap-4"
-        >
-          <UserPlusIcon className="h-6 w-6" />
-          Add reference
-        </Link>
       </div>
     </>
   );

@@ -4,9 +4,7 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import BackHeader from "~/components/BackHeader";
-import Text from "~/components/Text";
-import Title from "~/components/Title";
+import { BackHeader, Text, Title } from "~/components";
 
 import { getUserByIdAsync } from "./services.server";
 

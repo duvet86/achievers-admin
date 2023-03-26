@@ -1,18 +1,25 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { UpdateWelcomeCallCommand } from "./services.server";
 
 import { json } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import ServerIcon from "@heroicons/react/24/solid/ServerIcon";
+import {
+  BackHeader,
+  DateInput,
+  Input,
+  Textarea,
+  Title,
+  SubmitFormButton,
+} from "~/components";
 
-import BackHeader from "~/components/BackHeader";
-import DateInput from "~/components/DateInput";
-import Input from "~/components/Input";
-import Textarea from "~/components/Textarea";
-import Title from "~/components/Title";
-
-import { getUserByIdAsync } from "./services.server";
+import { getUserByIdAsync, updateWelcomeCallAsync } from "./services.server";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -24,8 +31,42 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
+export async function action({ request, params }: ActionArgs) {
+  invariant(params.userId, "userId not found");
+
+  const formData = await request.formData();
+
+  const calledBy = formData.get("calledBy")?.toString();
+  const calledOnDate = formData.get("calledOnDate")?.toString();
+  const comment = formData.get("comment")?.toString() ?? null;
+
+  if (calledBy === undefined || calledOnDate === undefined) {
+    return json<{
+      message: string | null;
+    }>({
+      message: "Missing required fields",
+    });
+  }
+
+  const data: UpdateWelcomeCallCommand = {
+    calledBy,
+    calledOnDate: new Date(calledOnDate),
+    comment,
+  };
+
+  await updateWelcomeCallAsync(Number(params.userId), data);
+
+  return json<{
+    message: string | null;
+  }>({
+    message: null,
+  });
+}
+
 export default function Index() {
+  const transition = useNavigation();
   const { user } = useLoaderData<typeof loader>();
+  const data = useActionData<typeof action>();
 
   return (
     <>
@@ -36,38 +77,30 @@ export default function Index() {
       </Title>
 
       <Form>
-        <Input
-          label="Called by"
-          name="calledBy"
-          defaultValue={user.welcomeCall?.calledBy ?? ""}
-          required
-        />
+        <fieldset disabled={transition.state === "submitting"}>
+          <Input
+            label="Called by"
+            name="calledBy"
+            defaultValue={user.welcomeCall?.calledBy ?? ""}
+            required
+          />
 
-        <DateInput
-          defaultValue={
-            user.welcomeCall && user.welcomeCall.calledOnDate
-              ? new Date(user.welcomeCall.calledOnDate)
-              : ""
-          }
-          label="Called on date"
-          name="calledOnDate"
-          required
-        />
+          <DateInput
+            defaultValue={user.welcomeCall?.calledOnDate ?? ""}
+            label="Called on date"
+            name="calledOnDate"
+            required
+          />
 
-        <Textarea
-          label="Comment"
-          name="comment"
-          defaultValue={user.welcomeCall?.comment ?? ""}
-          required
-        />
+          <Textarea
+            label="Comment"
+            name="comment"
+            defaultValue={user.welcomeCall?.comment ?? ""}
+            required
+          />
 
-        <button
-          className="btn-primary btn float-right mt-6 w-52 gap-4"
-          type="submit"
-        >
-          <ServerIcon className="h-6 w-6" />
-          Save
-        </button>
+          <SubmitFormButton message={data?.message} />
+        </fieldset>
       </Form>
     </>
   );

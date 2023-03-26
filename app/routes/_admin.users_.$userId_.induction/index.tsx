@@ -1,18 +1,25 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { UpdateInductionCommand } from "./services.server";
 
 import { json } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import ServerIcon from "@heroicons/react/24/solid/ServerIcon";
+import {
+  BackHeader,
+  DateInput,
+  Input,
+  Textarea,
+  Title,
+  SubmitFormButton,
+} from "~/components";
 
-import BackHeader from "~/components/BackHeader";
-import DateInput from "~/components/DateInput";
-import Input from "~/components/Input";
-import Textarea from "~/components/Textarea";
-import Title from "~/components/Title";
-
-import { getUserByIdAsync } from "./services.server";
+import { getUserByIdAsync, updateInductionAsync } from "./services.server";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -24,49 +31,75 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
+export async function action({ request, params }: ActionArgs) {
+  invariant(params.userId, "userId not found");
+
+  const formData = await request.formData();
+
+  const runBy = formData.get("runBy")?.toString();
+  const completedOnDate = formData.get("completedOnDate")?.toString();
+  const comment = formData.get("comment")?.toString() ?? null;
+
+  if (runBy === undefined || completedOnDate === undefined) {
+    return json<{
+      message: string | null;
+    }>({
+      message: "Missing required fields",
+    });
+  }
+
+  const data: UpdateInductionCommand = {
+    runBy,
+    completedOnDate: new Date(completedOnDate),
+    comment,
+  };
+
+  await updateInductionAsync(Number(params.userId), data);
+
+  return json<{
+    message: string | null;
+  }>({
+    message: null,
+  });
+}
+
 export default function Index() {
+  const transition = useNavigation();
   const { user } = useLoaderData<typeof loader>();
+  const data = useActionData<typeof action>();
 
   return (
     <>
       <BackHeader />
 
       <Title>
-        Welcome call acknowledgement for "{user.firstName} {user.lastName}"
+        Induction acknowledgement for "{user.firstName} {user.lastName}"
       </Title>
 
       <Form>
-        <Input
-          label="Run by"
-          name="runBy"
-          defaultValue={user.induction?.runBy ?? ""}
-          required
-        />
+        <fieldset disabled={transition.state === "submitting"}>
+          <Input
+            label="Run by"
+            name="runBy"
+            defaultValue={user.induction?.runBy ?? ""}
+            required
+          />
 
-        <DateInput
-          defaultValue={
-            user.induction && user.induction.completedOnDate
-              ? new Date(user.induction.completedOnDate)
-              : ""
-          }
-          label="Completed on date"
-          name="completedOnDate"
-          required
-        />
+          <DateInput
+            defaultValue={user.induction?.completedOnDate ?? ""}
+            label="Completed on date"
+            name="completedOnDate"
+            required
+          />
 
-        <Textarea
-          label="Comment"
-          name="comment"
-          defaultValue={user.induction?.comment ?? ""}
-        />
+          <Textarea
+            label="Comment"
+            name="comment"
+            defaultValue={user.induction?.comment ?? ""}
+          />
 
-        <button
-          className="btn-primary btn float-right mt-6 w-52 gap-4"
-          type="submit"
-        >
-          <ServerIcon className="h-6 w-6" />
-          Save
-        </button>
+          <SubmitFormButton message={data?.message} />
+        </fieldset>
       </Form>
     </>
   );
