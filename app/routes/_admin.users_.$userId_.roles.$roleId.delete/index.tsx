@@ -8,13 +8,12 @@ import invariant from "tiny-invariant";
 import {
   getSessionUserAsync,
   getAzureUserWithRolesByIdAsync,
+  removeRoleFromUserAsync,
 } from "~/services";
 
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 
 import { BackHeader } from "~/components";
-
-import { removeRoleFromUserAsync } from "./services.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");

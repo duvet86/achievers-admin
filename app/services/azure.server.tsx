@@ -89,6 +89,24 @@ export interface Application {
   appRoles: AppRole[];
 }
 
+export interface AzureAppRoleRequest {
+  principalId: string;
+  resourceId: string;
+  appRoleId: string;
+}
+
+export interface AzureAppRoleResponse {
+  id: string;
+  deletedDateTime: string;
+  appRoleId: string;
+  createdDateTime: string;
+  principalDisplayName: string;
+  principalId: string;
+  principalType: string;
+  resourceDisplayName: string;
+  resourceId: string;
+}
+
 export type AzureRolesLookUp = Record<string, AppRole>;
 
 export function getHeaders(accessToken: string): HeadersInit {
@@ -194,22 +212,27 @@ export async function getAzureUsersWithRolesAsync(
   }
 }
 
+async function getAzureUserByIdAsync(
+  accessToken: string,
+  azureId: string
+): Promise<AzureUserWithRole> {
+  const response = await fetch(
+    `${MICROSOFT_GRAPH_V1_BASEURL}/users/${azureId}?$expand=appRoleAssignments`,
+    {
+      headers: getHeaders(accessToken),
+    }
+  );
+
+  return await response.json();
+}
+
 export async function getAzureUserWithRolesByIdAsync(
   accessToken: string,
   azureId: string
 ): Promise<AzureUserWebAppWithRole> {
   try {
-    const response = await fetch(
-      `${MICROSOFT_GRAPH_V1_BASEURL}/users/${azureId}?$expand=appRoleAssignments`,
-      {
-        headers: getHeaders(accessToken),
-      }
-    );
-
-    const azureUserPromise: Promise<AzureUserWithRole> = response.json();
-
     const [azureUser, roles] = await Promise.all([
-      azureUserPromise,
+      getAzureUserByIdAsync(accessToken, azureId),
       getAzureRolesLookUpAsync(accessToken),
     ]);
 
@@ -243,4 +266,42 @@ export async function inviteUserToAzureAsync(
   }
 
   return response.json();
+}
+
+export async function assignRoleToUserAsync(
+  accessToken: string,
+  azureId: string,
+  azureAppRoleRequest: AzureAppRoleRequest
+): Promise<AzureAppRoleResponse> {
+  try {
+    const response = await fetch(
+      `${MICROSOFT_GRAPH_V1_BASEURL}/users/${azureId}/appRoleAssignments`,
+      {
+        method: "POST",
+        headers: getHeaders(accessToken),
+        body: JSON.stringify(azureAppRoleRequest),
+      }
+    );
+
+    return response.json();
+  } catch (e) {
+    throw redirect("/logout");
+  }
+}
+
+export async function removeRoleFromUserAsync(
+  accessToken: string,
+  appRoleAssignmentId: string
+): Promise<void> {
+  try {
+    await fetch(
+      `${MICROSOFT_GRAPH_V1_BASEURL}/servicePrincipals/${APP_ID}/appRoleAssignedTo/${appRoleAssignmentId}`,
+      {
+        method: "DELETE",
+        headers: getHeaders(accessToken),
+      }
+    );
+  } catch (e) {
+    throw redirect("/logout");
+  }
 }

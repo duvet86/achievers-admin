@@ -52,7 +52,7 @@ export async function loader({ request, params }: LoaderArgs) {
 
     azureUserInfo = await getAzureUserWithRolesByIdAsync(
       sessionUser.accessToken,
-      sessionUser.userId
+      user.azureADId
     );
   }
 

@@ -9,8 +9,14 @@ import EnvelopeIcon from "@heroicons/react/24/solid/EnvelopeIcon";
 
 import { Title, BackHeader } from "~/components";
 
-import { getUserByIdAsync } from "./services.server";
-import { getSessionUserAsync, inviteUserToAzureAsync } from "~/services";
+import { getUserByIdAsync, updateAzureIdAsync } from "./services.server";
+import {
+  APP_ID,
+  assignRoleToUserAsync,
+  getSessionUserAsync,
+  inviteUserToAzureAsync,
+  Roles,
+} from "~/services";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -27,16 +33,27 @@ export async function loader({ params }: LoaderArgs) {
 
 export async function action({ request, params }: ActionArgs) {
   invariant(params.userId, "userId not found");
+  invariant(process.env.WEB_APP_URL, "WEB_APP_URL not found");
 
   const sessionUser = await getSessionUserAsync(request);
 
   const user = await getUserByIdAsync(Number(params.userId));
 
-  await inviteUserToAzureAsync(sessionUser.accessToken, {
+  const {
+    invitedUser: { id: azureUserId },
+  } = await inviteUserToAzureAsync(sessionUser.accessToken, {
     invitedUserEmailAddress: user.email,
-    inviteRedirectUrl: "https://achievers-webapp.azurewebsites.net",
+    inviteRedirectUrl: process.env.WEB_APP_URL,
     sendInvitationMessage: true,
   });
+
+  await assignRoleToUserAsync(sessionUser.accessToken, azureUserId, {
+    principalId: azureUserId,
+    appRoleId: Roles.Mentor,
+    resourceId: APP_ID,
+  });
+
+  await updateAzureIdAsync(Number(params.userId), azureUserId);
 
   return redirect(`/users/${params.userId}`);
 }
@@ -70,5 +87,18 @@ export default function Chapter() {
         </fieldset>
       </Form>
     </>
+  );
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  return (
+    <div className="card bg-base-100">
+      <div className="card-body">
+        <h2 className="card-title">Error</h2>
+        <p>{error.message}</p>
+        <p>The stack trace is:</p>
+        <pre>{error.stack}</pre>
+      </div>
+    </div>
   );
 }

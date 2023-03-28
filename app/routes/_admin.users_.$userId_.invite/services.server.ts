@@ -14,3 +14,14 @@ export async function getUserByIdAsync(id: number) {
     },
   });
 }
+
+export async function updateAzureIdAsync(userId: number, azureId: string) {
+  return await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      azureADId: azureId,
+    },
+  });
+}

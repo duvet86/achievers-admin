@@ -15,11 +15,11 @@ import {
   getAzureRolesAsync,
   getAzureUserWithRolesByIdAsync,
   getSessionUserAsync,
+  assignRoleToUserAsync,
 } from "~/services";
 
 import { Select, BackHeader, SubmitFormButton } from "~/components";
-
-import { assignRoleToUserAsync } from "./services.server";
+import { getUserByIdAsync } from "./services.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -40,8 +40,6 @@ export async function loader({ request, params }: LoaderArgs) {
 export async function action({ request, params }: ActionArgs) {
   invariant(params.userId, "userId not found");
 
-  const sessionUser = await getSessionUserAsync(request);
-
   const formData = await request.formData();
 
   const roleId = formData.get("roleId");
@@ -52,8 +50,15 @@ export async function action({ request, params }: ActionArgs) {
     });
   }
 
-  await assignRoleToUserAsync(sessionUser.accessToken, {
-    principalId: params.userId,
+  const { azureADId } = await getUserByIdAsync(Number(params.userId));
+  if (azureADId === null) {
+    throw new Error();
+  }
+
+  const sessionUser = await getSessionUserAsync(request);
+
+  await assignRoleToUserAsync(sessionUser.accessToken, azureADId, {
+    principalId: azureADId,
     appRoleId: roleId.toString(),
     resourceId: APP_ID,
   });

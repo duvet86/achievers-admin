@@ -128,11 +128,12 @@ export async function getSessionUserAsync(
     userId: sessionUser.userId,
   };
 
+  const now = new Date();
   const expiresInDate = new Date(
     new Date().setSeconds(new Date().getSeconds() + sessionUser.expiresIn)
   );
 
-  if (expiresInDate >= new Date()) {
+  if (expiresInDate.getTime() >= now.getTime()) {
     return currentSession;
   }
 
