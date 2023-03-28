@@ -266,7 +266,7 @@ export default function Chapter() {
                   <th align="left" className="p-2">
                     Roles
                   </th>
-                  <th align="right" className="p-2">
+                  <th align="right" className="w-3/12 p-2">
                     Action
                   </th>
                 </tr>

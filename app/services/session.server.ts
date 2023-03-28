@@ -18,7 +18,7 @@ invariant(process.env.TENANT_ID, "TENANT_ID must be set");
 invariant(process.env.REDIRECT_URI, "REDIRECT_URI must be set");
 
 export interface SessionUser {
-  userId: string;
+  azureADId: string;
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
@@ -54,12 +54,12 @@ const sessionStorage = createSessionStorage({
 
     if (
       user &&
-      user["userId"] &&
+      user["azureADId"] &&
       user["accessToken"] &&
       user["refreshToken"] &&
       user["expiresIn"]
     ) {
-      const userId = user["userId"];
+      const azureADId = user["azureADId"];
       const accessToken = user["accessToken"];
       const refreshToken = user["refreshToken"];
       const expiresIn = user["expiresIn"];
@@ -70,13 +70,13 @@ const sessionStorage = createSessionStorage({
         },
         create: {
           id,
-          userId,
+          azureADId,
           accessToken,
           refreshToken,
           expiresIn,
         },
         update: {
-          userId,
+          azureADId,
           accessToken,
           refreshToken,
           expiresIn,
@@ -116,7 +116,7 @@ export async function getSessionUserAsync(
     !sessionUser.accessToken ||
     !sessionUser.expiresIn ||
     !sessionUser.refreshToken ||
-    !sessionUser.userId
+    !sessionUser.azureADId
   ) {
     throw redirect("/logout");
   }
@@ -125,7 +125,7 @@ export async function getSessionUserAsync(
     accessToken: sessionUser.accessToken,
     expiresIn: sessionUser.expiresIn,
     refreshToken: sessionUser.refreshToken,
-    userId: sessionUser.userId,
+    azureADId: sessionUser.azureADId,
   };
 
   const now = new Date();
@@ -151,7 +151,7 @@ export async function getSessionUserAsync(
   );
 
   const newSessionUser: SessionUser = {
-    userId: sessionUser.userId,
+    azureADId: sessionUser.azureADId,
     accessToken: access_token,
     refreshToken: refresh_token,
     expiresIn: expires_in,
@@ -200,7 +200,7 @@ const microsoftStrategy = new MicrosoftStrategy(
     }
 
     return {
-      userId: userInfo.oid,
+      azureADId: userInfo.oid,
       accessToken: accessToken,
       refreshToken: refreshToken,
       expiresIn: extraParams.expires_in,

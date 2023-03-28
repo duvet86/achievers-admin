@@ -18,7 +18,7 @@ export async function loader({ request }: LoaderArgs) {
 
   const azureUser = await getAzureUserWithRolesByIdAsync(
     sessionUser.accessToken,
-    sessionUser.userId
+    sessionUser.azureADId
   );
 
   const sessionUserRoles = azureUser.appRoleAssignments.map(

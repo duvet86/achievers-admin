@@ -8,8 +8,8 @@ generator client {
 }
 
 model Session {
-  id           String @id
-  userId       String
+  id           String @id // Auth state id.
+  azureADId    String @unique // Defined by Azure Active Directory.
   accessToken  String @db.LongText
   refreshToken String @db.LongText
   expiresIn    Int

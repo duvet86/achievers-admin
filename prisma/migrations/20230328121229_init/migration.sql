@@ -1,13 +1,14 @@
 -- CreateTable
 CREATE TABLE `Session` (
-    `id` VARCHAR(191) NOT NULL,
-    `userId` VARCHAR(191) NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `azureADId` VARCHAR(191) NOT NULL,
     `accessToken` LONGTEXT NOT NULL,
     `refreshToken` LONGTEXT NOT NULL,
     `expiresIn` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
+    UNIQUE INDEX `Session_azureADId_key`(`azureADId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -29,7 +30,12 @@ CREATE TABLE `User` (
     `emergencyContactNumber` VARCHAR(191) NULL,
     `emergencyContactAddress` VARCHAR(191) NULL,
     `emergencyContactRelationship` VARCHAR(191) NULL,
+    `nextOfKinName` VARCHAR(191) NULL,
+    `nextOfKinNumber` VARCHAR(191) NULL,
+    `nextOfKinAddress` VARCHAR(191) NULL,
+    `nextOfKinRelationship` VARCHAR(191) NULL,
     `profilePicturePath` VARCHAR(191) NULL,
+    `hasApprovedToPublishPhotos` BOOLEAN NULL,
     `endDate` DATETIME(3) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -113,6 +119,21 @@ CREATE TABLE `Induction` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `VolunteerAgreement` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `isInformedOfConstitution` BOOLEAN NOT NULL,
+    `hasApprovedSafetyDirections` BOOLEAN NOT NULL,
+    `hasAcceptedNoLegalResp` BOOLEAN NOT NULL,
+    `signedOn` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+    `userId` INTEGER NOT NULL,
+
+    UNIQUE INDEX `VolunteerAgreement_userId_key`(`userId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `PoliceCheck` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `filePath` VARCHAR(191) NOT NULL,
@@ -179,6 +200,9 @@ ALTER TABLE `Reference` ADD CONSTRAINT `Reference_userId_fkey` FOREIGN KEY (`use
 
 -- AddForeignKey
 ALTER TABLE `Induction` ADD CONSTRAINT `Induction_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `VolunteerAgreement` ADD CONSTRAINT `VolunteerAgreement_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `PoliceCheck` ADD CONSTRAINT `PoliceCheck_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
