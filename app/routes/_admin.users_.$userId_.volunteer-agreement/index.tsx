@@ -26,7 +26,7 @@ export default function Index() {
       <BackHeader />
 
       <Title>
-        Volounteer agreement for "{user.firstName} {user.lastName}"
+        Volunteer agreement for "{user.firstName} {user.lastName}"
       </Title>
 
       <Text

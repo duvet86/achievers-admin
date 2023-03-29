@@ -67,7 +67,7 @@ export default function Index() {
         label="Is over 18?"
       />
 
-      <Text text={user.eoIProfile?.comment ?? "-"} label="Why a volounteer?" />
+      <Text text={user.eoIProfile?.comment ?? "-"} label="Why a volunteer?" />
 
       <Text text={user.eoIProfile?.aboutMe ?? "-"} label="About me" />
     </>

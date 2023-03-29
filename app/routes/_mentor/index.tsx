@@ -9,6 +9,7 @@ import {
   getAzureUserWithRolesByIdAsync,
   Roles,
   version,
+  getUserByAzureADIdAsync,
 } from "~/services";
 
 import { Body } from "~/components";
@@ -31,8 +32,11 @@ export async function loader({ request }: LoaderArgs) {
     throw redirect("/401");
   }
 
+  const user = await getUserByAzureADIdAsync(sessionUser.azureADId);
+
   return json({
     isAdmin: false,
+    hasCompletedVolunteerAgreement: user.volunteerAgreement !== null,
     currentUser: azureUser,
     version,
   });

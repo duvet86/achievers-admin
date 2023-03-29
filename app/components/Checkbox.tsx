@@ -14,9 +14,9 @@ export function Checkbox({ label, name, required, ...props }: Props) {
         htmlFor={name}
         className="label cursor-pointer flex-col items-start"
       >
-        <span className="label-text mb-1">{label}</span>
+        {label && <span className="label-text mb-1">{label}</span>}
         {required && (
-          <span className="label-text-alt absolute top-6 left-8 text-2xl text-error">
+          <span className="label-text-alt absolute bottom-2 left-8 text-2xl text-error">
             *
           </span>
         )}

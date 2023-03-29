@@ -7,6 +7,7 @@ import {
   getSessionUserAsync,
   getAzureUserWithRolesByIdAsync,
   Roles,
+  getUserByAzureADIdAsync,
 } from "~/services";
 
 export async function loader({ request }: LoaderArgs) {
@@ -29,6 +30,14 @@ export async function loader({ request }: LoaderArgs) {
 
   if (userRoles.includes(Roles.Admin)) {
     return redirect("/users");
+  }
+
+  const { volunteerAgreement } = await getUserByAzureADIdAsync(
+    sessionUser.azureADId
+  );
+
+  if (volunteerAgreement === null) {
+    return redirect("/volunteer-agreement");
   }
 
   if (userRoles.includes(Roles.Mentor)) {

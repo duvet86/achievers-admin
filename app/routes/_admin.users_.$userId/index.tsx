@@ -413,7 +413,7 @@ export default function Chapter() {
             </Link>
             <Link
               className="btn-outline btn w-60 gap-4"
-              to="volounteer-agreement"
+              to="volunteer-agreement"
               relative="path"
             >
               <PencilIcon className="h-6 w-6" />

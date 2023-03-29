@@ -7,11 +7,19 @@ import { Navbar } from "./Navbar";
 
 interface Props {
   isAdmin: boolean;
+  hasCompletedVolunteerAgreement?: boolean;
   version: string;
   currentUser: AzureUserWebAppWithRole;
 }
 
-export function Body({ currentUser, version, isAdmin }: Props) {
+export function Body({
+  currentUser,
+  hasCompletedVolunteerAgreement,
+  isAdmin,
+  version,
+}: Props) {
+  const showDrawer = isAdmin || hasCompletedVolunteerAgreement;
+
   return (
     <div className="drawer-mobile drawer">
       <input id="drawer" type="checkbox" className="drawer-toggle" />
@@ -23,7 +31,7 @@ export function Body({ currentUser, version, isAdmin }: Props) {
         </main>
       </div>
 
-      <Drawer isAdmin={isAdmin} version={version} />
+      {showDrawer && <Drawer isAdmin={isAdmin} version={version} />}
     </div>
   );
 }
