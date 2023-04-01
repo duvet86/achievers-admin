@@ -18,6 +18,7 @@ import {
   Textarea,
   Checkbox,
   SubmitFormButton,
+  SubTitle,
 } from "~/components";
 
 import {
@@ -129,6 +130,8 @@ export default function Index() {
 
       <Form className="relative" method="post">
         <fieldset disabled={transition.state === "submitting"}>
+          <SubTitle>Details</SubTitle>
+
           <Input
             label="First name"
             name="firstName"
@@ -171,46 +174,42 @@ export default function Index() {
             required
           />
 
+          <SubTitle>Outcome</SubTitle>
+
           <Checkbox
             label="Has know the applicant for a year?"
             name="hasKnowApplicantForAYear"
             defaultChecked={reference.hasKnowApplicantForAYear ?? false}
-            required
           />
 
           <Checkbox
             label="Is related?"
             name="isRelated"
             defaultChecked={reference.isRelated ?? false}
-            required
           />
 
           <Checkbox
             label="Is mentor recommended?"
             name="isMentorRecommended"
             defaultChecked={reference.isMentorRecommended ?? false}
-            required
           />
 
           <Input
             label="Called by"
             name="calledBy"
             defaultValue={reference.calledBy ?? ""}
-            required
           />
 
           <DateInput
             defaultValue={reference.calledOndate ?? ""}
             label="Called on"
             name="calledOndate"
-            required
           />
 
           <Textarea
             label="Outcome comment"
             name="outcomeComment"
             defaultValue={reference.outcomeComment ?? ""}
-            required
           />
 
           <Textarea

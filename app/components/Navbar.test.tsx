@@ -5,23 +5,25 @@ import { MemoryRouter } from "react-router";
 
 import { Navbar } from "~/components";
 
-test("Header snapshot", async () => {
-  const { baseElement } = render(
-    <MemoryRouter>
-      <Navbar
-        currentUser={{
-          appRoleAssignments: [],
-          displayName: "",
-          givenName: "",
-          id: "",
-          mail: "",
-          surname: "",
-          userPrincipalName: "",
-          email: "",
-        }}
-      />
-    </MemoryRouter>
-  );
+describe("Navbar", () => {
+  test("Navbar snapshot", async () => {
+    const { baseElement } = render(
+      <MemoryRouter>
+        <Navbar
+          currentUser={{
+            appRoleAssignments: [],
+            displayName: "",
+            givenName: "",
+            id: "1",
+            mail: "test@test.com",
+            surname: "",
+            userPrincipalName: "",
+            email: "",
+          }}
+        />
+      </MemoryRouter>
+    );
 
-  expect(baseElement).toMatchSnapshot();
+    expect(baseElement).toMatchSnapshot();
+  });
 });

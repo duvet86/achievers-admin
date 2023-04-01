@@ -4,7 +4,7 @@ interface Props {
 
 export function SubTitle({ children }: Props) {
   return (
-    <h3 className="mb-4 border-b border-primary font-bold uppercase">
+    <h3 className="my-4 border-b border-primary font-bold uppercase">
       {children}
     </h3>
   );

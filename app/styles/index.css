@@ -1,0 +1,4 @@
+/* Override drawer translation. */
+.drawer-toggle:checked ~ .drawer-content {
+  --tw-translate-x: 0;
+}

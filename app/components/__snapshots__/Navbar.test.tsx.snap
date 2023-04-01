@@ -1,10 +1,10 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Header snapshot 1`] = `
+exports[`Navbar > Navbar snapshot 1`] = `
 <body>
   <div>
     <nav
-      class="navbar absolute top-0 left-0 h-16 bg-primary text-primary-content shadow-md"
+      class="navbar absolute left-0 top-0 h-16 bg-primary text-primary-content shadow-md"
     >
       <div
         class="flex-none lg:hidden"
@@ -33,7 +33,7 @@ exports[`Header snapshot 1`] = `
       >
         <a
           class="btn-ghost btn text-xl normal-case"
-          href="/users"
+          href="/"
         >
           <img
             alt="Logo"
@@ -50,52 +50,38 @@ exports[`Header snapshot 1`] = `
       <div
         class="dropdown-end dropdown hidden lg:block"
       >
-        <label
-          class="btn-ghost btn-circle avatar btn"
+        <div
+          class="flex cursor-pointer items-center gap-2"
           tabindex="0"
         >
           <div
-            class="w-10 rounded-full"
+            class="font-semibold"
+          />
+          <label
+            class="btn-ghost btn-circle avatar btn"
           >
-            <svg
-              aria-hidden="true"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                clip-rule="evenodd"
-                d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-                fill-rule="evenodd"
-              />
-            </svg>
-          </div>
-        </label>
-        <ul
-          class="dropdown-content menu rounded-box w-52 bg-base-100 p-2 shadow"
-          tabindex="0"
-        >
-          <li>
-            <a
-              class="font-semibold"
-              href="/profile"
+            <div
+              class="w-10 rounded-full"
             >
               <svg
                 aria-hidden="true"
-                class="mr-2 w-6"
                 fill="currentColor"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
                   clip-rule="evenodd"
-                  d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z"
+                  d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
                   fill-rule="evenodd"
                 />
               </svg>
-              Profile
-            </a>
-          </li>
+            </div>
+          </label>
+        </div>
+        <ul
+          class="dropdown-content menu rounded-box w-52 bg-base-100 p-2 shadow"
+          tabindex="0"
+        >
           <li>
             <a
               class="font-semibold"
@@ -116,12 +102,6 @@ exports[`Header snapshot 1`] = `
               </svg>
               Logout
             </a>
-          </li>
-          <li
-            class="mx-2 mt-2 border-t border-base-300 italic"
-          >
-            Version 
-            1
           </li>
         </ul>
       </div>

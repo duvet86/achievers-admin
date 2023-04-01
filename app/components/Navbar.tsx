@@ -4,7 +4,6 @@ import { Link } from "@remix-run/react";
 
 import UserCircleIcon from "@heroicons/react/24/solid/UserCircleIcon";
 import Bars3Icon from "@heroicons/react/24/solid/Bars3Icon";
-import UserIcon from "@heroicons/react/24/solid/UserIcon";
 import ArrowLeftOnRectangleIcon from "@heroicons/react/24/solid/ArrowLeftOnRectangleIcon";
 
 interface Props {
@@ -33,9 +32,9 @@ export function Navbar({ currentUser }: Props) {
       </div>
 
       <div className="dropdown-end dropdown hidden lg:block">
-        <div className="flex items-center gap-2">
+        <div tabIndex={0} className="flex cursor-pointer items-center gap-2">
           <div className="font-semibold">{currentUser.email}</div>
-          <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
+          <label className="btn-ghost btn-circle avatar btn">
             <div className="w-10 rounded-full">
               <UserCircleIcon />
             </div>
@@ -45,12 +44,6 @@ export function Navbar({ currentUser }: Props) {
           tabIndex={0}
           className="dropdown-content menu rounded-box w-52 bg-base-100 p-2 shadow"
         >
-          <li>
-            <Link className="font-semibold" to={`/users/${currentUser.id}`}>
-              <UserIcon className="mr-2 w-6" />
-              Profile
-            </Link>
-          </li>
           <li>
             <Link className="font-semibold" to="/logout">
               <ArrowLeftOnRectangleIcon className="mr-2 w-6" />

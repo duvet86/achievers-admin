@@ -13,11 +13,15 @@ import {
 } from "@remix-run/react";
 
 import tailwindStylesheetUrl from "~/styles/tailwind.css";
+import indexStylesheetUrl from "~/styles/index.css";
 
 import { LoadingSpinner } from "~/components";
 
 export const links: LinksFunction = () => {
-  return [{ rel: "stylesheet", href: tailwindStylesheetUrl }];
+  return [
+    { rel: "stylesheet", href: tailwindStylesheetUrl },
+    { rel: "stylesheet", href: indexStylesheetUrl },
+  ];
 };
 
 export default function App() {
