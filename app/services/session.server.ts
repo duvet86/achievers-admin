@@ -5,7 +5,7 @@ import { Authenticator, AuthorizationError } from "remix-auth";
 import invariant from "tiny-invariant";
 
 import { prisma } from "~/db.server";
-import { parseJwt } from "~/utils";
+import { parseJwt } from "~/services";
 
 import { MicrosoftStrategy, SCOPE } from "./auth.server";
 import { getAzureUserWithRolesByIdAsync } from "./azure.server";

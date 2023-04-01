@@ -1,7 +1,13 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
-import { Form, useLoaderData, useNavigation } from "@remix-run/react";
+import {
+  Form,
+  isRouteErrorResponse,
+  useLoaderData,
+  useNavigation,
+  useRouteError,
+} from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
@@ -15,6 +21,7 @@ import {
   assignRoleToUserAsync,
   getSessionUserAsync,
   inviteUserToAzureAsync,
+  isError,
   Roles,
 } from "~/services";
 
@@ -90,14 +97,31 @@ export default function Chapter() {
   );
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  // when true, this is what used to go to `CatchBoundary`
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div>
+        <h1>Something went wrong</h1>
+        <p>Status: {error.status}</p>
+        <p>{error.data.message}</p>
+      </div>
+    );
+  }
+
+  // Don't forget to typecheck with your own logic.
+  // Any value can be thrown, not just errors!
+  const errorCaught = isError(error) ? error : new Error("Unknown error");
+
   return (
     <div className="card bg-base-100">
       <div className="card-body">
         <h2 className="card-title">Error</h2>
-        <p>{error.message}</p>
+        <p>{errorCaught.message}</p>
         <p>The stack trace is:</p>
-        <pre>{error.stack}</pre>
+        <pre>{errorCaught.stack}</pre>
       </div>
     </div>
   );

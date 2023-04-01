@@ -1,4 +1,4 @@
-import type { LinksFunction, MetaFunction } from "@remix-run/node";
+import type { LinksFunction } from "@remix-run/node";
 
 import {
   Links,
@@ -7,23 +7,19 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useCatch,
+  isRouteErrorResponse,
   useNavigation,
+  useRouteError,
 } from "@remix-run/react";
 
 import tailwindStylesheetUrl from "~/styles/tailwind.css";
 
 import { LoadingSpinner } from "~/components";
+import { isError } from "./services";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: tailwindStylesheetUrl }];
 };
-
-export const meta: MetaFunction = () => ({
-  charset: "utf-8",
-  title: "Achievers WA",
-  viewport: "width=device-width,initial-scale=1",
-});
 
 export default function App() {
   const transition = useNavigation();
@@ -33,6 +29,9 @@ export default function App() {
   return (
     <html lang="en" className="h-full" data-theme="bumblebee">
       <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Achievers WA</title>
         <Meta />
         <Links />
       </head>
@@ -53,8 +52,33 @@ export default function App() {
   );
 }
 
-export function CatchBoundary() {
-  const caught = useCatch();
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  // when true, this is what used to go to `CatchBoundary`
+  if (isRouteErrorResponse(error)) {
+    return (
+      <html>
+        <head>
+          <title>Oops!</title>
+          <Meta />
+          <Links />
+        </head>
+        <body>
+          <h1>
+            {error.status} {error.statusText}
+          </h1>
+          <p>{error.data.message}</p>
+          <Scripts />
+        </body>
+      </html>
+    );
+  }
+
+  // Don't forget to typecheck with your own logic.
+  // Any value can be thrown, not just errors!
+  const errorCaught = isError(error) ? error : new Error("Unknown error");
+
   return (
     <html>
       <head>
@@ -63,9 +87,14 @@ export function CatchBoundary() {
         <Links />
       </head>
       <body>
-        <h1>
-          {caught.status} {caught.statusText}
-        </h1>
+        <div className="card bg-base-100">
+          <div className="card-body">
+            <h2 className="card-title">Error</h2>
+            <p>{errorCaught.message}</p>
+            <p>The stack trace is:</p>
+            <pre>{errorCaught.stack}</pre>
+          </div>
+        </div>
         <Scripts />
       </body>
     </html>
