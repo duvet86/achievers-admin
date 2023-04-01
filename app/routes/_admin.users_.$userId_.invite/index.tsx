@@ -22,6 +22,7 @@ import {
   getSessionUserAsync,
   inviteUserToAzureAsync,
   Roles,
+  trackTrace,
 } from "~/services";
 
 export async function loader({ params }: LoaderArgs) {
@@ -45,18 +46,35 @@ export async function action({ request, params }: ActionArgs) {
 
   const user = await getUserByIdAsync(Number(params.userId));
 
-  const {
-    invitedUser: { id: azureUserId },
-  } = await inviteUserToAzureAsync(sessionUser.accessToken, {
-    invitedUserEmailAddress: user.email,
-    inviteRedirectUrl: process.env.WEB_APP_URL,
-    sendInvitationMessage: true,
+  const inviteUserToAzureResponse = await inviteUserToAzureAsync(
+    sessionUser.accessToken,
+    {
+      invitedUserEmailAddress: user.email,
+      inviteRedirectUrl: process.env.WEB_APP_URL,
+      sendInvitationMessage: true,
+    }
+  );
+
+  trackTrace({
+    message: "inviteUserToAzureResponse",
+    properties: inviteUserToAzureResponse,
   });
 
-  await assignRoleToUserAsync(sessionUser.accessToken, azureUserId, {
-    principalId: azureUserId,
-    appRoleId: Roles.Mentor,
-    resourceId: APP_ID,
+  const azureUserId = inviteUserToAzureResponse.invitedUser.id;
+
+  const assignRoleResponse = await assignRoleToUserAsync(
+    sessionUser.accessToken,
+    azureUserId,
+    {
+      principalId: azureUserId,
+      appRoleId: Roles.Mentor,
+      resourceId: APP_ID,
+    }
+  );
+
+  trackTrace({
+    message: "assignRoleResponse",
+    properties: assignRoleResponse,
   });
 
   await updateAzureIdAsync(Number(params.userId), azureUserId);

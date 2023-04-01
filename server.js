@@ -2,6 +2,8 @@ let appInsights = require("applicationinsights");
 
 if (process.env.NODE_ENV === "production") {
   appInsights.setup().start();
+
+  global.__appinsightsClient__ = appInsights.defaultClient;
 }
 
 const path = require("path");
