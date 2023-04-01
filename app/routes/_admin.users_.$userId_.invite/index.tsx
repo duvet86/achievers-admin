@@ -21,7 +21,6 @@ import {
   assignRoleToUserAsync,
   getSessionUserAsync,
   inviteUserToAzureAsync,
-  isError,
   Roles,
 } from "~/services";
 
@@ -113,14 +112,15 @@ export function ErrorBoundary() {
 
   // Don't forget to typecheck with your own logic.
   // Any value can be thrown, not just errors!
-  const errorCaught = isError(error) ? error : new Error("Unknown error");
+  const errorCaught =
+    error instanceof Error ? error : new Error("Unknown error");
 
   return (
     <div className="card bg-base-100">
       <div className="card-body">
         <h2 className="card-title">Error</h2>
-        <p>{errorCaught.message}</p>
-        <p>The stack trace is:</p>
+        <p>Message: {errorCaught.message}</p>
+
         <pre>{errorCaught.stack}</pre>
       </div>
     </div>

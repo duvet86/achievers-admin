@@ -15,7 +15,6 @@ import {
 import tailwindStylesheetUrl from "~/styles/tailwind.css";
 
 import { LoadingSpinner } from "~/components";
-import { isError } from "./services";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: tailwindStylesheetUrl }];
@@ -77,7 +76,8 @@ export function ErrorBoundary() {
 
   // Don't forget to typecheck with your own logic.
   // Any value can be thrown, not just errors!
-  const errorCaught = isError(error) ? error : new Error("Unknown error");
+  const errorCaught =
+    error instanceof Error ? error : new Error("Unknown error");
 
   return (
     <html>
