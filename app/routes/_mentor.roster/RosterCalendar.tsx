@@ -42,7 +42,7 @@ export default function RosterCalendar({
               {generateWeeksOfTheMonth[0].map((day, index) => (
                 <div
                   key={`week-day-${index}`}
-                  className="flex h-10 basis-4/12 justify-center border-r border-b p-2 text-xs xl:text-sm"
+                  className="flex h-10 basis-4/12 justify-center border-b border-r p-2 text-xs xl:text-sm"
                 >
                   <span className="hidden font-medium text-gray-800 sm:block md:block lg:block xl:block">
                     {dayjs(day).format("dddd")}
@@ -60,7 +60,7 @@ export default function RosterCalendar({
                 {week.map((day, dayIndex) => (
                   <div
                     key={`day-${dayIndex}`}
-                    className="ease h-24 basis-4/12 cursor-pointer overflow-auto border-r border-b p-4 transition duration-500 hover:bg-gray-300"
+                    className="ease h-24 basis-4/12 cursor-pointer overflow-auto border-b border-r p-4 transition duration-500 hover:bg-gray-300"
                   >
                     <div className="lmx-auto mx-auto flex flex-col overflow-hidden sm:w-full">
                       <div className="top w-full">

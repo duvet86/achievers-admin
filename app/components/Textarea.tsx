@@ -22,7 +22,7 @@ export function Textarea({
       <label htmlFor={name} className="label">
         <span className="label-text">{label}</span>
         {required && (
-          <span className="label-text-alt absolute top-9 right-1 text-2xl text-error">
+          <span className="label-text-alt absolute right-1 top-9 text-2xl text-error">
             *
           </span>
         )}
