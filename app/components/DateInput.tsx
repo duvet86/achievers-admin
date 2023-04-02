@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 interface Props {
   name: string;
   label: string;
-  defaultValue: Date | string;
+  defaultValue?: Date | string;
   readOnly?: boolean;
   required?: boolean;
   min?: string;
@@ -18,7 +18,8 @@ export function DateInput({
   ...props
 }: Props) {
   const value =
-    defaultValue instanceof Date || defaultValue.trim() !== ""
+    defaultValue !== undefined &&
+    (defaultValue instanceof Date || defaultValue.trim() !== "")
       ? dayjs(defaultValue).format("YYYY-MM-DD")
       : defaultValue;
 
@@ -27,12 +28,16 @@ export function DateInput({
       <label htmlFor={name} className="label">
         <span className="label-text">{label}</span>
         {required && (
-          <span className="label-text-alt absolute right-1 top-9 text-2xl text-error">
+          <span
+            data-testid="required"
+            className="label-text-alt absolute right-1 top-9 text-2xl text-error"
+          >
             *
           </span>
         )}
       </label>
       <input
+        data-testid="dateinput"
         type="date"
         id={name}
         name={name}

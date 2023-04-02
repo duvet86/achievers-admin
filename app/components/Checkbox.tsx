@@ -16,7 +16,10 @@ export function Checkbox({ label, name, required, ...props }: Props) {
       >
         {label && <span className="label-text mb-1">{label}</span>}
         {required && (
-          <span className="label-text-alt absolute bottom-2 left-8 text-2xl text-error">
+          <span
+            data-testid="required"
+            className="label-text-alt absolute bottom-2 left-8 text-2xl text-error"
+          >
             *
           </span>
         )}

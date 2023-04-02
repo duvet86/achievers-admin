@@ -1,0 +1,13 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Title > should display component 1`] = `
+<body>
+  <div>
+    <h3
+      class="mb-4 text-2xl font-bold uppercase"
+    >
+      Test
+    </h3>
+  </div>
+</body>
+`;

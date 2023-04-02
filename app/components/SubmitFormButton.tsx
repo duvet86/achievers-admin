@@ -10,8 +10,11 @@ export function SubmitFormButton({ message, sticky, label = "Save" }: Props) {
   const className = "mt-6 flex items-center justify-between";
 
   return (
-    <div className={sticky ? className + " sticky bottom-0" : className}>
-      <div className={message ? "bg-white p-2 font-medium text-error" : ""}>
+    <div data-testid="container" className={sticky ? className + " sticky bottom-0" : className}>
+      <div
+        data-testid="message"
+        className={message ? "bg-white p-2 font-medium text-error" : ""}
+      >
         {message}
       </div>
 

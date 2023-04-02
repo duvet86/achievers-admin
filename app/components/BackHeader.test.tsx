@@ -6,7 +6,7 @@ import { MemoryRouter } from "react-router";
 import { BackHeader } from "~/components";
 
 describe("BackHeader", () => {
-  test("BackHeader snapshot", async () => {
+  it("BackHeader snapshot", async () => {
     const { baseElement } = render(
       <MemoryRouter>
         <BackHeader />
@@ -16,7 +16,7 @@ describe("BackHeader", () => {
     expect(baseElement).toMatchSnapshot();
   });
 
-  test("should have href defined via prop", async () => {
+  it("should have href defined via prop", async () => {
     render(
       <MemoryRouter>
         <BackHeader to="/test" />

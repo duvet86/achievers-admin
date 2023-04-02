@@ -22,12 +22,16 @@ export function Textarea({
       <label htmlFor={name} className="label">
         <span className="label-text">{label}</span>
         {required && (
-          <span className="label-text-alt absolute right-1 top-9 text-2xl text-error">
+          <span
+            data-testid="required"
+            className="label-text-alt absolute right-1 top-9 text-2xl text-error"
+          >
             *
           </span>
         )}
       </label>
       <textarea
+        data-testid="textarea"
         id={name}
         name={name}
         placeholder={label}

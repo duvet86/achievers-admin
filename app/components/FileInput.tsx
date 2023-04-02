@@ -13,12 +13,16 @@ export function FileInput({ name, label, required, ...props }: Props) {
       <label htmlFor={name} className="label">
         <span className="label-text">{label}</span>
         {required && (
-          <span className="label-text-alt absolute right-1 top-9 text-2xl text-error">
+          <span
+            data-testid="required"
+            className="label-text-alt absolute right-1 top-9 text-2xl text-error"
+          >
             *
           </span>
         )}
       </label>
       <input
+        data-testid="fileinput"
         type="file"
         className="file-input-bordered file-input-primary file-input w-full"
         id={name}

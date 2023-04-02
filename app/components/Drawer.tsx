@@ -54,7 +54,10 @@ export function Drawer({ isAdmin, version }: Props) {
           </li>
         ))}
       </ul>
-      <div className="absolute bottom-0 right-2 z-10 text-sm italic">
+      <div
+        data-testid="version"
+        className="absolute bottom-0 right-2 z-10 text-sm italic"
+      >
         Version {version}
       </div>
     </div>

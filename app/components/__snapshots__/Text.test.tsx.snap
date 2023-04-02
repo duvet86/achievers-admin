@@ -1,0 +1,26 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Text > should display component 1`] = `
+<body>
+  <div>
+    <div
+      class="mb-4 w-full border-b border-l border-base-300 p-1"
+    >
+      <div
+        class="label"
+      >
+        <span
+          class="label-text font-semibold"
+        >
+          test label
+        </span>
+      </div>
+      <p
+        class="w-full p-1"
+      >
+        test text
+      </p>
+    </div>
+  </div>
+</body>
+`;
