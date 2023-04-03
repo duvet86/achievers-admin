@@ -74,7 +74,7 @@
     "cross-env": "^7.0.3",
     "eslint": "^8.37.0",
     "eslint-config-prettier": "^8.8.0",
-    "happy-dom": "^8.9.0",
+    "happy-dom": "^9.1.0",
     "husky": "^8.0.0",
     "msw": "^1.2.1",
     "nodemon": "^2.0.22",
