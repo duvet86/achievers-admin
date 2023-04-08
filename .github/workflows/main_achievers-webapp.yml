@@ -16,20 +16,23 @@ jobs:
     name: End to end tests
     runs-on: ubuntu-latest
     env:
-      MYSQL_DATABASE: achievers
-      MYSQL_ROOT_USER: root
-      MYSQL_ROOT_PASSWORD: my-secret-pw
+      DB_DATABASE: achievers
+      DB_USER: root
+      DB_PASSWORD: my-secret-pw
 
     services:
       mysql:
         image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ env.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.DB_DATABASE }}
         ports:
           - "3306:3306"
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Set up DB
-        run: mysql -h 127.0.0.1 --port 3306 -u ${{ env.MYSQL_ROOT_USER }} -p${{ env.MYSQL_ROOT_PASSWORD }}'
+        run: mysql -h 127.0.0.1 --port 3306 -u ${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}'
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Node.js
@@ -38,10 +41,9 @@ jobs:
           node-version: "lts/*"
       - name: Install dependencies
         env:
-          DATABASE_URL: mysql://${{ env.MYSQL_ROOT_USER }}:${{ env.MYSQL_ROOT_PASSWORD }}@127.0.0.1:3306/${{ env.MYSQL_DATABASE }}
+          DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
         run: |
           npm ci
-          npm run setup
           npm run test:e2e
       - uses: actions/upload-artifact@v3
         if: always()
