@@ -31,7 +31,7 @@ jobs:
 
     steps:
       - name: Set up DB
-        run: mysql -h 127.0.0.1 --port 3306 -u ${{ env.DB_USER }} -p ${{ env.DB_PASSWORD }} -e 'CREATE DATABASE IF NOT EXISTS ${{ env.DB_DATABASE }}'
+        run: mysql -h 127.0.0.1 --port 8888 -u ${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} -e 'CREATE DATABASE IF NOT EXISTS ${{ env.DB_DATABASE }};'
         # run: |
         #   sudo /etc/init.d/mysql start
         # mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u ${{ env.DB_USER }} -p ${{ env.DB_PASSWORD }}
