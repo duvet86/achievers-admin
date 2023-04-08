@@ -11,14 +11,17 @@ on:
     branches:
       - main
 
+env:
+  DB_USER: root
+  DB_PASSWORD: my-secret-pw
+  DB_DATABASE: achievers
+
 jobs:
   e2etests:
     name: End to end tests
     runs-on: ubuntu-latest
     env:
-      DB_DATABASE: achievers
-      DB_USER: root
-      DB_PASSWORD: my-secret-pw
+      DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
       WEB_APP_URL: "https://achievers-webapp.azurewebsites.net"
       TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
       TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
@@ -56,14 +59,10 @@ jobs:
       - name: Build
         run: npm run build
       - name: Migrate test DB
-        env:
-          DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
         run: npm run setup
       - name: Install E2E
         run: npx playwright install --with-deps chromium
       - name: E2E
-        env:
-          DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
         run: npm run test:e2e
       - uses: actions/upload-artifact@v3
         if: always()
