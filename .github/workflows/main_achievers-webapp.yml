@@ -11,26 +11,23 @@ on:
     branches:
       - main
 
-env:
-  DB_USER: root
-  DB_PASSWORD: my-secret-pw
-  DB_DATABASE: achievers
-  TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
-  TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
-  SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-  CLIENT_ID: ${{ secrets.CLIENT_ID }}
-  CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-  TENANT_ID: ${{ secrets.TENANT_ID }}
-  REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
-  OBJECT_ID: ${{ secrets.OBJECT_ID }}
-
 jobs:
   e2etests:
     name: End to end tests
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
+      DB_DATABASE: achievers
+      DB_USER: root
+      DB_PASSWORD: my-secret-pw
       WEB_APP_URL: "https://achievers-webapp.azurewebsites.net"
+      TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+      TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+      TENANT_ID: ${{ secrets.TENANT_ID }}
+      REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
+      OBJECT_ID: ${{ secrets.OBJECT_ID }}
 
     services:
       mysql:
@@ -55,14 +52,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Unit Test
+        env:
+          DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
         run: npm run test:ci
       - name: Build
         run: npm run build
       - name: Migrate test DB
+        env:
+          DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
         run: npm run setup
       - name: Install E2E
         run: npx playwright install --with-deps chromium
       - name: E2E
+        env:
+          DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
         run: npm run test:e2e
       - uses: actions/upload-artifact@v3
         if: always()
@@ -79,6 +82,14 @@ jobs:
     needs: e2etests
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+      TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+      TENANT_ID: ${{ secrets.TENANT_ID }}
+      REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
+      OBJECT_ID: ${{ secrets.OBJECT_ID }}
 
     steps:
       - name: Checkout
