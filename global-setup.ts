@@ -8,9 +8,6 @@ async function globalSetup(config: FullConfig) {
 
   await page.goto("http://localhost:3000/");
 
-  const loginButton = page.locator("button");
-  await loginButton.click();
-
   const usernameInput = page.locator("input[type='email']");
   await usernameInput.fill(process.env.TEST_USERNAME!);
 
@@ -25,6 +22,8 @@ async function globalSetup(config: FullConfig) {
 
   const remindMe = page.locator("input[type='button']");
   await remindMe.click();
+
+  await page.waitForEvent("requestfinished");
 
   // Save signed-in state to 'storageState.json'.
   await page.context().storageState({ path: "storageState.json" });
