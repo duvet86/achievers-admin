@@ -74,9 +74,19 @@ jobs:
           retention-days: 30
 
   migrate:
-    name: Migrate and Seed
+    name: Migrate and Seed Production
     runs-on: ubuntu-latest
     needs: e2etests
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+      TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+      TENANT_ID: ${{ secrets.TENANT_ID }}
+      REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
+      OBJECT_ID: ${{ secrets.OBJECT_ID }}
 
     steps:
       - name: Checkout
@@ -90,8 +100,6 @@ jobs:
       - name: Test
         run: npm run test:ci
       - name: Migrate
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npm run setup
 
   release:
