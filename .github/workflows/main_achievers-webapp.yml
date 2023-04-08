@@ -43,15 +43,14 @@ jobs:
           node-version: "lts/*"
       - name: Install dependencies
         run: npm ci
+      - name: Unit Test
+        run: npm run test:ci
       - name: Build
         run: npm run build
-      - name: Migrate DB
+      - name: Migrate test DB
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-        run: |
-          npx prisma generate
-          npx prisma migrate deploy
-          npx prisma db seed
+        run: npm run setup
       - name: Install E2E
         run: npx playwright install --with-deps chromium
       - name: E2E
@@ -97,8 +96,6 @@ jobs:
           node-version: "lts/*"
       - name: Install dependencies
         run: npm ci
-      - name: Test
-        run: npm run test:ci
       - name: Migrate
         run: npm run setup
 
