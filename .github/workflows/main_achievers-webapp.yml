@@ -55,7 +55,8 @@ jobs:
         run: |
           npm ci
           npm run build
-          npx playwright install --with-deps
+          npm run setup
+          npx playwright install --with-deps chromium
           npm run test:e2e
       - uses: actions/upload-artifact@v3
         if: always()
