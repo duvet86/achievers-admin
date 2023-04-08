@@ -19,6 +19,7 @@ jobs:
       DB_DATABASE: achievers
       DB_USER: root
       DB_PASSWORD: my-secret-pw
+      WEB_APP_URL: "https://achievers-webapp.azurewebsites.net"
 
     services:
       mysql:
@@ -39,7 +40,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "lts/*"
-      - name: Install dependencies
+      - name: E2E
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
         run: |
