@@ -19,12 +19,21 @@ jobs:
       DB_DATABASE: achievers
       DB_USER: root
       DB_PASSWORD: my-secret-pw
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: my-secret-pw
+          MYSQL_DATABASE: achievers
+        ports:
+          - "3306:3306"
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - name: Set up DB
-        run: |
-          sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u ${{ env.DB_USER }} -p ${{ env.DB_PASSWORD }}
+      # - name: Set up DB
+      #   run: |
+      #     sudo /etc/init.d/mysql start
+      #     mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u ${{ env.DB_USER }} -p ${{ env.DB_PASSWORD }}
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Node.js
@@ -35,7 +44,7 @@ jobs:
         run: npm ci
       - name: Migrate
         env:
-          DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@localhost:3306/${{ env.DB_DATABASE }}
+          DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
         run: npm run setup
       - name: "E2E"
         run: |
