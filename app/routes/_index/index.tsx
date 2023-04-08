@@ -44,5 +44,5 @@ export async function loader({ request }: LoaderArgs) {
     return redirect("/roster");
   }
 
-  throw redirect("/401");
+  throw redirect("/error");
 }

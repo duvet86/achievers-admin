@@ -6,9 +6,9 @@
   "scripts": {
     "build": "remix build",
     "dev": "npm-run-all build --parallel \"dev:*\"",
-    "dev:node": "cross-env NODE_ENV=development nodemon ./server.ts --watch ./server.ts",
+    "dev:node": "cross-env NODE_ENV=development nodemon ./app/server.ts --watch ./app/server.ts",
     "dev:remix": "remix watch",
-    "start": "ts-node ./server.ts",
+    "start": "ts-node -r tsconfig-paths/register ./app/server.ts",
     "format": "prettier --write .",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "seed": "prisma db seed",
@@ -23,7 +23,6 @@
     "prepare": "husky install",
     "semantic-release": "semantic-release"
   },
-  "prettier": {},
   "eslintIgnore": [
     "/node_modules",
     "/build",
@@ -57,6 +56,7 @@
     "@playwright/test": "^1.32.2",
     "@remix-run/dev": "^1.15.0",
     "@remix-run/eslint-config": "^1.15.0",
+    "@remix-run/testing": "^1.15.0",
     "@semantic-release/git": "^10.0.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
@@ -75,9 +75,9 @@
     "c8": "^7.13.0",
     "cookie": "^0.5.0",
     "cross-env": "^7.0.3",
-    "eslint": "^8.37.0",
+    "eslint": "^8.38.0",
     "eslint-config-prettier": "^8.8.0",
-    "happy-dom": "^9.1.7",
+    "happy-dom": "^9.1.9",
     "husky": "^8.0.0",
     "msw": "^1.2.1",
     "nodemon": "^2.0.22",
@@ -90,7 +90,7 @@
     "tailwindcss": "^3.3.1",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.0.3",
+    "typescript": "^5.0.4",
     "vite": "^4.2.1",
     "vite-tsconfig-paths": "^4.0.8",
     "vitest": "^0.29.8"
@@ -99,7 +99,7 @@
     "node": ">=14"
   },
   "prisma": {
-    "seed": "ts-node --require tsconfig-paths/register prisma/seed.ts"
+    "seed": "ts-node -r tsconfig-paths/register prisma/seed.ts"
   },
   "repository": {
     "type": "git",
