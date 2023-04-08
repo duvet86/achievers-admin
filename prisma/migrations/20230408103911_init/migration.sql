@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE `Session` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `azureADId` VARCHAR(191) NOT NULL,
     `accessToken` LONGTEXT NOT NULL,
     `refreshToken` LONGTEXT NOT NULL,
