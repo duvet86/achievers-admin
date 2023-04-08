@@ -20,6 +20,14 @@ jobs:
       DB_USER: root
       DB_PASSWORD: my-secret-pw
       WEB_APP_URL: "https://achievers-webapp.azurewebsites.net"
+      TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+      TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+      TENANT_ID: ${{ secrets.TENANT_ID }}
+      REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
+      OBJECT_ID: ${{ secrets.OBJECT_ID }}
 
     services:
       mysql:
@@ -56,21 +64,15 @@ jobs:
       - name: E2E
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-          TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
-          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
-          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-          TENANT_ID: ${{ secrets.TENANT_ID }}
-          REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
-          OBJECT_ID: ${{ secrets.OBJECT_ID }}
         run: npm run test:e2e
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
+          name: report
+          path: |
+            playwright-report/
+            coverage/
+          retention-days: 1
 
   migrate:
     name: Migrate and Seed Production
