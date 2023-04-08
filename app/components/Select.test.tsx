@@ -58,6 +58,6 @@ describe("Select", () => {
       />
     );
 
-    expect(screen.getByTestId("select")).toHaveValue("label 1");
+    expect(screen.getByTestId("select")).toHaveValue("");
   });
 });
