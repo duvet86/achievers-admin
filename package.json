@@ -14,7 +14,7 @@
     "seed": "prisma db seed",
     "setup": "prisma generate && prisma migrate deploy && prisma db seed",
     "test": "vitest",
-    "test:ci": "vitest run --coverage",
+    "test:ci": "vitest run --coverage --no-threads",
     "test:watch": "vitest dev",
     "pretest:e2e:run": "npm run build",
     "test:e2e": "playwright test --project=chromium",
