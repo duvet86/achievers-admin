@@ -40,6 +40,16 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "lts/*"
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Build
+        env:
+          DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
+        run: npm run setup
+      - name: Install E2E
+        run: npx playwright install --with-deps chromium
       - name: E2E
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
@@ -51,13 +61,7 @@ jobs:
           TENANT_ID: ${{ secrets.TENANT_ID }}
           REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
           OBJECT_ID: ${{ secrets.OBJECT_ID }}
-
-        run: |
-          npm ci
-          npm run build
-          npm run setup
-          npx playwright install --with-deps chromium
-          npm run test:e2e
+        run: npm run test:e2e
       - uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -78,9 +82,9 @@ jobs:
         with:
           node-version: "lts/*"
       - name: Install dependencies
-        run: |
-          npm ci
-          npm run test:ci
+        run: npm ci
+      - name: Test
+        run: npm run test:ci
       - name: Migrate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
