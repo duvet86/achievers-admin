@@ -16,25 +16,20 @@ jobs:
     name: End to end tests
     runs-on: ubuntu-latest
     env:
-      DB_DATABASE: achievers
-      DB_USER: root
-      DB_PASSWORD: my-secret-pw
+      MYSQL_DATABASE: achievers
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: my-secret-pw
+
     services:
       mysql:
         image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: my-secret-pw
-          MYSQL_DATABASE: achievers
         ports:
           - "3306:3306"
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Set up DB
-        run: mysql -h 127.0.0.1 --port 3306 -u ${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} -e 'CREATE DATABASE IF NOT EXISTS ${{ env.DB_DATABASE }};'
-        # run: |
-        #   sudo /etc/init.d/mysql start
-        # mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u ${{ env.DB_USER }} -p ${{ env.DB_PASSWORD }}
+        run: mysql -h 127.0.0.1 --port 3306 -u ${{ env.MYSQL_ROOT_USER }} -p${{ env.MYSQL_ROOT_PASSWORD }}'
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Node.js
@@ -42,14 +37,11 @@ jobs:
         with:
           node-version: "lts/*"
       - name: Install dependencies
-        run: npm ci
-      - name: Migrate
         env:
-          DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-        run: npm run setup
-      - name: "E2E"
+          DATABASE_URL: mysql://${{ env.MYSQL_ROOT_USER }}:${{ env.MYSQL_ROOT_PASSWORD }}@127.0.0.1:3306/${{ env.MYSQL_DATABASE }}
         run: |
           npm ci
+          npm run setup
           npm run test:e2e
       - uses: actions/upload-artifact@v3
         if: always()
