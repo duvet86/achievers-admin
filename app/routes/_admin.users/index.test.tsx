@@ -80,7 +80,6 @@ describe("Admin /users", () => {
 
     const rows = await screen.findAllByRole("row");
 
-    
     expect(rows[0]).toHaveTextContent(/Full NameEmailAssigned ChapterAction/);
     expect(rows[1]).toHaveTextContent(/Test Usertest@test.comChapter 1Edit/);
   });
