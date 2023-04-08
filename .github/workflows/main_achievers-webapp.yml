@@ -44,10 +44,13 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
-      - name: Build
+      - name: Migrate DB
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-        run: npm run setup
+        run: |
+          npx prisma generate
+          npx prisma migrate deploy
+          npx prisma db seed
       - name: Install E2E
         run: npx playwright install --with-deps chromium
       - name: E2E
