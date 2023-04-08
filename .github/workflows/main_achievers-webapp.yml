@@ -44,6 +44,7 @@ jobs:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
         run: |
           npm ci
+          npm run build
           npm run test:e2e
       - uses: actions/upload-artifact@v3
         if: always()
