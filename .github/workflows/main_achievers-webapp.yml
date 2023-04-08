@@ -15,6 +15,14 @@ env:
   DB_USER: root
   DB_PASSWORD: my-secret-pw
   DB_DATABASE: achievers
+  TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+  TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+  SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+  CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+  TENANT_ID: ${{ secrets.TENANT_ID }}
+  REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
+  OBJECT_ID: ${{ secrets.OBJECT_ID }}
 
 jobs:
   e2etests:
@@ -23,14 +31,6 @@ jobs:
     env:
       DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
       WEB_APP_URL: "https://achievers-webapp.azurewebsites.net"
-      TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
-      TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
-      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-      CLIENT_ID: ${{ secrets.CLIENT_ID }}
-      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-      TENANT_ID: ${{ secrets.TENANT_ID }}
-      REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
-      OBJECT_ID: ${{ secrets.OBJECT_ID }}
 
     services:
       mysql:
@@ -79,14 +79,6 @@ jobs:
     needs: e2etests
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
-      TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
-      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-      CLIENT_ID: ${{ secrets.CLIENT_ID }}
-      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-      TENANT_ID: ${{ secrets.TENANT_ID }}
-      REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
-      OBJECT_ID: ${{ secrets.OBJECT_ID }}
 
     steps:
       - name: Checkout
