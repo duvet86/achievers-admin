@@ -43,14 +43,14 @@ jobs:
       - name: E2E
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-          TEST_USERNAME: ${{ env.TEST_USERNAME }}
-          TEST_PASSWORD: ${{ env.TEST_PASSWORD }}
-          SESSION_SECRET: ${{ env.SESSION_SECRET }}
-          CLIENT_ID: ${{ env.CLIENT_ID }}
-          CLIENT_SECRET: ${{ env.CLIENT_SECRET }}
-          TENANT_ID: ${{ env.TENANT_ID }}
-          REDIRECT_URI: ${{ env.REDIRECT_URI }}
-          OBJECT_ID: ${{ env.OBJECT_ID }}
+          TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          TENANT_ID: ${{ secrets.TENANT_ID }}
+          REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
+          OBJECT_ID: ${{ secrets.OBJECT_ID }}
 
         run: |
           npm ci
