@@ -85,13 +85,19 @@ const sessionStorage = createSessionStorage({
     }
   },
   async deleteData(id) {
-    try {
+    const sessionCount = await prisma.session.count({
+      where: {
+        id,
+      },
+    });
+
+    if (sessionCount > 0) {
       await prisma.session.delete({
         where: {
           id,
         },
       });
-    } catch {}
+    }
   },
 });
 

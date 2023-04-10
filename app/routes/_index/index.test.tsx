@@ -16,6 +16,7 @@ vi.mock("~/services", async () => {
     ...actual,
     authenticator: {
       isAuthenticated: vi.fn(),
+      logout: vi.fn(),
     },
     getSessionUserAsync: vi.fn(),
     getAzureUserWithRolesByIdAsync: vi.fn(),
@@ -34,13 +35,18 @@ describe("Loader", () => {
   it("should redirect to auth for unauthenticated user", async () => {
     vi.mocked(authenticator.isAuthenticated).mockResolvedValueOnce(null);
 
-    const response = await loader({
+    await loader({
       request: new Request("http://app.com/test"),
       params: {},
       context: {},
     });
 
-    expect(response).toEqual(redirect("/auth/microsoft"));
+    expect(authenticator.logout).toBeCalledWith(
+      new Request("http://app.com/auth/microsoft"),
+      {
+        redirectTo: "/auth/microsoft",
+      }
+    );
   });
 
   it("should redirect to users for admin user", async () => {

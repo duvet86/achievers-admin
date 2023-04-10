@@ -12,8 +12,8 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: ["./test/setup-test-env.ts"],
-    exclude: [...configDefaults.exclude, "integration-tests/*"],
-    minThreads: 1,
-    maxThreads: 1,
+    exclude: [...configDefaults.exclude, "integration-tests/tests/*"],
+    minThreads: process.env.CI ? 1 : undefined,
+    maxThreads: process.env.CI ? 1 : undefined,
   },
 });

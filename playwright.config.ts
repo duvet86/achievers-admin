@@ -14,8 +14,9 @@ dotenv.config();
  * See https://playwright.dev/docs/test-configuration.
  */
 const config: PlaywrightTestConfig = {
-  globalSetup: require.resolve("./global-setup"),
-  testDir: "./integration-tests",
+  globalSetup: require.resolve("./integration-tests/global-setup"),
+  globalTeardown: require.resolve("./integration-tests/global-teardown"),
+  testDir: "./integration-tests/tests",
   /* Maximum time one test can run for. */
   timeout: 30 * 1000,
   expect: {
@@ -103,10 +104,6 @@ const config: PlaywrightTestConfig = {
   // outputDir: 'test-results/',
 
   /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   port: 3000,
-  // },
   webServer: {
     command: "npm start",
     port: 3000,
