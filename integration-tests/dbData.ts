@@ -42,7 +42,11 @@ export async function createUserAsync() {
       endDate: null,
       createdAt: new Date(),
       updatedAt: new Date(),
-      chapterId: "clg7ufw0t0000w2w0bs6ikic1",
+      chapter: {
+        connect: {
+          id: (await prisma.chapter.findFirst())?.id,
+        },
+      },
       eoIProfile: {
         create: {
           bestTimeToContact: "",
