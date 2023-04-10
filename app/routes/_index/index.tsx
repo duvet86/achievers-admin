@@ -14,7 +14,9 @@ export async function loader({ request }: LoaderArgs) {
   const isAuthenticated = await authenticator.isAuthenticated(request);
 
   if (!isAuthenticated) {
-    return await authenticator.logout(request, { redirectTo: "/auth/microsoft" });
+    return await authenticator.logout(request, {
+      redirectTo: "/auth/microsoft",
+    });
   }
 
   const sessionUser = await getSessionUserAsync(request);
