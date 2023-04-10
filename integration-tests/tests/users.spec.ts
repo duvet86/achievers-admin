@@ -31,7 +31,5 @@ test.describe("when you ARE logged in", () => {
     await expect(page.getByRole("cell", { name: "EDIT" })).toBeVisible();
 
     await expect(page.getByRole("link", { name: "EDIT" })).toBeVisible();
-
-    page.getByRole("link", { name: "Import users from file" }).click();
   });
 });
