@@ -334,7 +334,11 @@ export default function Chapter() {
               <tbody>
                 <tr>
                   <td className="border p-2">
-                    <span className="font-semibold">{user.chapter.name}</span>
+                    <span className="font-semibold">
+                      {user.userAtChapter
+                        .map(({ chapter }) => chapter.name)
+                        .join(", ")}
+                    </span>
                   </td>
                 </tr>
               </tbody>

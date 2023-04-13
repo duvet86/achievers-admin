@@ -12,7 +12,7 @@ import { getChapterByIdAsync } from "./services.server";
 export async function loader({ params }: LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
 
-  const chapter = await getChapterByIdAsync(params.chapterId);
+  const chapter = await getChapterByIdAsync(Number(params.chapterId));
 
   return json({
     chapter,

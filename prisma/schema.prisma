@@ -60,8 +60,7 @@ model User {
   wwcCheck           WWCCheck?
   approvalbyMRC      ApprovalbyMRC?
 
-  chapter   Chapter @relation(fields: [chapterId], references: [id])
-  chapterId String
+  userAtChapter UserAtChapter[]
 }
 
 model EoIProfile {
@@ -197,13 +196,25 @@ model ApprovalbyMRC {
   userId Int  @unique
 }
 
+model UserAtChapter {
+  chapter   Chapter @relation(fields: [chapterId], references: [id])
+  chapterId Int
+  user      User    @relation(fields: [userId], references: [id])
+  userId    Int
+
+  assignedAt DateTime @default(now())
+  assignedBy String
+
+  @@id([chapterId, userId])
+}
+
 model Chapter {
-  id      String @id @default(cuid())
+  id      Int    @id @default(autoincrement())
   name    String @unique
   address String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  User User[]
+  userAtChapter UserAtChapter[]
 }

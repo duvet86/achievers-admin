@@ -17,7 +17,7 @@ export default function Chapters() {
       {loaderData.chapters.map(({ id, name }) => (
         <Link
           key={id}
-          to={id}
+          to={id.toString()}
           className="mb-8 flex h-32 w-full items-center justify-center rounded-lg bg-neutral-content text-xl shadow-lg hover:bg-primary lg:w-1/3"
         >
           {name}

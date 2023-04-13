@@ -7,5 +7,9 @@ export async function getChapterByIdAsync(id: Chapter["id"]) {
     where: {
       id,
     },
+    select: {
+      name: true,
+      address: true,
+    },
   });
 }

@@ -16,6 +16,7 @@ import {
   getChaptersAsync,
   getUserAtChapterByIdAsync,
 } from "./services.server";
+import { getSessionUserAsync } from "~/services";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -25,9 +26,13 @@ export async function loader({ params }: LoaderArgs) {
     getChaptersAsync(),
   ]);
 
+  const userAtChapterIds = user.userAtChapter.map(({ chapter }) => chapter.id);
+
   return json({
     user,
-    availableChapters: chapters.filter(({ id }) => user.chapter.id !== id),
+    availableChapters: chapters.filter(
+      ({ id }) => !userAtChapterIds.includes(id)
+    ),
   });
 }
 
@@ -40,11 +45,17 @@ export async function action({ request, params }: ActionArgs) {
 
   if (chapterId === null) {
     return json({
-      error: "Select a Chapter please.",
+      error: "Select a chapter please.",
     });
   }
 
-  await assignChapterToUserAsync(Number(params.userId), chapterId.toString());
+  const sessionUser = await getSessionUserAsync(request);
+
+  await assignChapterToUserAsync(
+    Number(params.userId),
+    Number(chapterId),
+    sessionUser.azureADId
+  );
 
   return redirect(`/users/${params.userId}`);
 }
@@ -73,7 +84,7 @@ export default function Assign() {
           options={[{ value: "", label: "Select a Chapter" }].concat(
             availableChapters.map(({ id, name }) => ({
               label: name,
-              value: id,
+              value: id.toString(),
             }))
           )}
         />

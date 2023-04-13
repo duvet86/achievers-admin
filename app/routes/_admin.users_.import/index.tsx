@@ -86,6 +86,7 @@ export const action = async ({
   }
 
   const dbUsers: Prisma.UserCreateManyInput[] = [];
+  const dbUsersAtChapters: Prisma.UserAtChapterCreateManyInput[] = [];
   const responses: AzureInviteResponse[] = [];
 
   const azureUsers = await getAzureUsersAsync(sessionUser.accessToken);
@@ -120,7 +121,7 @@ export const action = async ({
       addressState: "",
       addressSuburb: "",
       email: newUsers[i]["Email address"],
-      chapterId: chapter?.id ?? chapters[0].id,
+      // chapterId: chapter?.id ?? chapters[0].id,
       addressStreet: newUsers[i]["Residential Address"],
       additionalEmail: newUsers[i][
         "Additional email addresses (for intranet access)"

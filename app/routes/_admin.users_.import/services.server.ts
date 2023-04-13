@@ -17,8 +17,25 @@ export async function readExcelFileAsync(file: File) {
   return sheetUsers;
 }
 
-export async function createManyUsersAsync(data: Prisma.UserCreateManyInput[]) {
-  return await prisma.user.createMany({
+export async function createManyUsersAsync(
+  newUsers: Prisma.XOR<
+    Prisma.UserCreateInput,
+    Prisma.UserUncheckedCreateInput
+  >[]
+) {
+  await prisma.$transaction(
+    newUsers.map((newUser) =>
+      prisma.user.create({
+        data: newUser,
+      })
+    )
+  );
+}
+
+export async function createManyUsersAtChaptersAsync(
+  data: Prisma.UserAtChapterCreateManyInput[]
+) {
+  return await prisma.userAtChapter.createMany({
     data,
   });
 }

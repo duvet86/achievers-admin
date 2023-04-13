@@ -13,8 +13,32 @@ export async function getUserByIdAsync(id: number) {
     where: {
       id,
     },
-    include: {
-      chapter: true,
+    select: {
+      azureADId: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      mobile: true,
+      addressStreet: true,
+      addressSuburb: true,
+      addressState: true,
+      addressPostcode: true,
+      dateOfBirth: true,
+      emergencyContactName: true,
+      emergencyContactNumber: true,
+      emergencyContactAddress: true,
+      emergencyContactRelationship: true,
+      additionalEmail: true,
+      profilePicturePath: true,
+      userAtChapter: {
+        select: {
+          chapter: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
     },
   });
 }

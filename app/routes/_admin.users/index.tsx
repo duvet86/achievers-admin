@@ -50,13 +50,15 @@ export default function SelectChapter() {
                 </td>
               </tr>
             )}
-            {users.map(({ id, firstName, lastName, email, chapter }) => (
+            {users.map(({ id, firstName, lastName, email, userAtChapter }) => (
               <tr key={id}>
                 <td className="border p-2">
                   {firstName} {lastName}
                 </td>
                 <td className="border p-2">{email}</td>
-                <td className="border p-2">{chapter.name}</td>
+                <td className="border p-2">
+                  {userAtChapter.map(({ chapter }) => chapter.name).join(", ")}
+                </td>
                 <td className="border p-2">
                   <Link
                     to={id.toString()}

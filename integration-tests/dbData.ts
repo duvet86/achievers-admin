@@ -42,11 +42,6 @@ export async function createUserAsync() {
       endDate: null,
       createdAt: new Date(),
       updatedAt: new Date(),
-      chapter: {
-        connect: {
-          id: (await prisma.chapter.findFirst())?.id,
-        },
-      },
       eoIProfile: {
         create: {
           bestTimeToContact: "",
@@ -155,6 +150,12 @@ export async function createUserAsync() {
           comment: null,
           createdAt: new Date(),
           updatedAt: new Date(),
+        },
+      },
+      userAtChapter: {
+        create: {
+          assignedBy: "test-data",
+          chapterId: (await prisma.chapter.findFirstOrThrow()).id,
         },
       },
     },
