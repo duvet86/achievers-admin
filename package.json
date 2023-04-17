@@ -50,7 +50,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.5.1",
+    "@commitlint/cli": "^17.6.1",
     "@commitlint/config-conventional": "^17.4.4",
     "@faker-js/faker": "^7.6.0",
     "@playwright/test": "^1.32.3",
