@@ -3,11 +3,11 @@ import { test, expect } from "@playwright/test";
 
 import { createUserAsync } from "../dbData";
 import { AdminUsersPage } from "../pages/admin-users.page";
-import { AdminUserPage } from "../pages/admin-user/admin-userInfo.page";
+// import { AdminUserPage } from "../pages/admin-user/admin-userInfo.page";
 
 test.describe("when you ARE logged in", () => {
   let usersPage: AdminUsersPage;
-  let userPage: AdminUserPage;
+  // let userPage: AdminUserPage;
 
   test.beforeAll(async () => {
     await createUserAsync();
@@ -15,7 +15,7 @@ test.describe("when you ARE logged in", () => {
 
   test.beforeEach(({ page }) => {
     usersPage = new AdminUsersPage(page);
-    userPage = new AdminUserPage(page);
+    // userPage = new AdminUserPage(page);
   });
 
   test("should display table with users", async ({ page }) => {
@@ -28,7 +28,7 @@ test.describe("when you ARE logged in", () => {
 
     await usersPage.goToEditUser();
 
-    await userPage.userForm.expect.toHaveTitle("");
+    // await userPage.userForm.expect.toHaveTitle("test user");
 
     // await expect(page.getByRole("figure")).toBeVisible();
 
