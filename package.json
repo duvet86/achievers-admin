@@ -29,7 +29,7 @@
     "/public/build"
   ],
   "dependencies": {
-    "@azure/storage-blob": "^12.13.0",
+    "@azure/storage-blob": "^12.14.0",
     "@heroicons/react": "^2.0.17",
     "@prisma/client": "^4.12.0",
     "@remix-run/express": "^1.15.0",
@@ -50,8 +50,8 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.5.1",
-    "@commitlint/config-conventional": "^17.4.4",
+    "@commitlint/cli": "^17.6.1",
+    "@commitlint/config-conventional": "^17.6.1",
     "@faker-js/faker": "^7.6.0",
     "@playwright/test": "^1.32.3",
     "@remix-run/dev": "^1.15.0",

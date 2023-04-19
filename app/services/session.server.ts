@@ -36,20 +36,20 @@ const sessionStorage = createSessionStorage({
   async createData(data, expires) {
     return data["oauth2:state"];
   },
-  async readData(id) {
+  async readData(oauth2State) {
     const session = await prisma.session.findUnique({
       where: {
-        id,
+        oauth2State,
       },
     });
 
     return {
-      "oauth2:state": id,
+      "oauth2:state": oauth2State,
       user: session,
       strategy: "microsoft",
     };
   },
-  async updateData(id, data, expires) {
+  async updateData(oauth2State, data, expires) {
     const user = data["user"];
 
     if (
@@ -66,17 +66,17 @@ const sessionStorage = createSessionStorage({
 
       await prisma.session.upsert({
         where: {
-          id,
+          oauth2State,
         },
         create: {
-          id,
           azureADId,
+          oauth2State,
           accessToken,
           refreshToken,
           expiresIn,
         },
         update: {
-          azureADId,
+          oauth2State,
           accessToken,
           refreshToken,
           expiresIn,
@@ -84,17 +84,17 @@ const sessionStorage = createSessionStorage({
       });
     }
   },
-  async deleteData(id) {
+  async deleteData(oauth2State) {
     const sessionCount = await prisma.session.count({
       where: {
-        id,
+        oauth2State,
       },
     });
 
     if (sessionCount > 0) {
       await prisma.session.delete({
         where: {
-          id,
+          oauth2State,
         },
       });
     }
@@ -119,6 +119,7 @@ export async function getSessionUserAsync(
   const sessionUser = session.get(authenticator.sessionKey);
 
   if (
+    !sessionUser ||
     !sessionUser.accessToken ||
     !sessionUser.expiresIn ||
     !sessionUser.refreshToken ||

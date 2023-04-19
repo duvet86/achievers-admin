@@ -1,7 +1,16 @@
-node_modules
+/test-results
+/coverage
+/playwright-report
+
+/__blobstorage__
+__azurite_db_blob__.json
+__azurite_db_blob_extent__.json
 
 /build
 /public/build
 .env
+.husky
+.vscode
+*.prisma
 
 /app/styles/tailwind.css

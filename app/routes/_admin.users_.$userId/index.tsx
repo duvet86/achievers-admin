@@ -162,6 +162,7 @@ export default function Chapter() {
             <ProfilePicture profilePicturePath={user.profilePicturePath} />
 
             <Input
+              type="email"
               defaultValue={user.email}
               label="Email"
               name="email"
@@ -226,29 +227,30 @@ export default function Chapter() {
 
             <Input
               defaultValue={user.emergencyContactName ?? ""}
-              label="Emergency Contact Name"
+              label="Emergency contact name"
               name="emergencyContactName"
             />
 
             <Input
               defaultValue={user.emergencyContactNumber ?? ""}
-              label="Emergency Contact Number"
+              label="Emergency contact number"
               name="emergencyContactNumber"
             />
 
             <Input
               defaultValue={user.emergencyContactAddress ?? ""}
-              label="Emergency Contact Address"
+              label="Emergency contact address"
               name="emergencyContactAddress"
             />
 
             <Input
               defaultValue={user.emergencyContactRelationship ?? ""}
-              label="Emergency Contact Relationship"
+              label="Emergency contact relationship"
               name="emergencyContactRelationship"
             />
 
             <Input
+              type="email"
               defaultValue={user.additionalEmail ?? ""}
               label="Additional email"
               name="additionalEmail"

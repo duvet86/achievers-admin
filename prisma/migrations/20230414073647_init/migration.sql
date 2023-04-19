@@ -1,15 +1,15 @@
 -- CreateTable
 CREATE TABLE `Session` (
-    `id` VARCHAR(191) NOT NULL,
     `azureADId` VARCHAR(191) NOT NULL,
+    `oauth2State` VARCHAR(191) NOT NULL,
     `accessToken` LONGTEXT NOT NULL,
     `refreshToken` LONGTEXT NOT NULL,
     `expiresIn` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `Session_azureADId_key`(`azureADId`),
-    PRIMARY KEY (`id`)
+    UNIQUE INDEX `Session_oauth2State_key`(`oauth2State`),
+    PRIMARY KEY (`azureADId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable

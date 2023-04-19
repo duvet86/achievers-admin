@@ -13,6 +13,7 @@ export async function createUserAsync() {
     prisma.volunteerAgreement.deleteMany(),
     prisma.welcomeCall.deleteMany(),
     prisma.wWCCheck.deleteMany(),
+    prisma.userAtChapter.deleteMany(),
     prisma.user.deleteMany(),
   ]);
 
