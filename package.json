@@ -8,7 +8,7 @@
     "dev": "npm-run-all build --parallel \"dev:*\"",
     "dev:node": "cross-env NODE_ENV=development nodemon ./server.ts --watch ./server.ts",
     "dev:remix": "remix watch",
-    "start": "ts-node ./server.ts",
+    "start": "ts-node-transpile-only ./server.ts",
     "format": "prettier --write .",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "seed": "prisma db seed",
