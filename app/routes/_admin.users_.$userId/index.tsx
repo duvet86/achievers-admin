@@ -13,17 +13,19 @@ import {
   isStringNullOrEmpty,
 } from "~/services";
 
-import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
-import HomeModernIcon from "@heroicons/react/24/solid/HomeModernIcon";
-import EnvelopeIcon from "@heroicons/react/24/solid/EnvelopeIcon";
-import UserCircleIcon from "@heroicons/react/24/solid/UserCircleIcon";
-import PhoneIcon from "@heroicons/react/24/solid/PhoneIcon";
-import ChatBubbleLeftRightIcon from "@heroicons/react/24/solid/ChatBubbleLeftRightIcon";
-import NewspaperIcon from "@heroicons/react/24/solid/NewspaperIcon";
-import ShieldCheckIcon from "@heroicons/react/24/solid/ShieldCheckIcon";
-import UserGroupIcon from "@heroicons/react/24/solid/UserGroupIcon";
-import CheckIcon from "@heroicons/react/24/solid/CheckIcon";
-import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
+import {
+  Cancel,
+  HomeSimpleDoor,
+  MailOut,
+  ProfileCircle,
+  Phone,
+  MultiBubble,
+  Journal,
+  ShieldCheck,
+  Group,
+  Check,
+  VerifiedUser,
+} from "iconoir-react";
 
 import {
   Input,
@@ -299,7 +301,7 @@ export default function Chapter() {
                         to={`roles/${id}/delete`}
                         className="btn-error btn-xs btn w-full gap-2"
                       >
-                        <XMarkIcon className="h-4 w-4" />
+                        <Cancel className="h-4 w-4" />
                         Remove
                       </Link>
                     </td>
@@ -316,7 +318,7 @@ export default function Chapter() {
                 relative="path"
                 className="btn-primary btn w-64 gap-4"
               >
-                <EnvelopeIcon className="h-6 w-6" />
+                <MailOut className="h-6 w-6" />
                 Invite
               </Link>
             )}
@@ -353,7 +355,7 @@ export default function Chapter() {
               relative="path"
               className="btn-primary btn w-64 gap-4"
             >
-              <HomeModernIcon className="h-6 w-6" />
+              <HomeSimpleDoor className="h-6 w-6" />
               Assign to a Chapter
             </Link>
           </div>
@@ -366,7 +368,7 @@ export default function Chapter() {
               to="eoiProfile"
               relative="path"
             >
-              <UserCircleIcon className="h-6 w-6" />
+              <ProfileCircle className="h-6 w-6" />
               EoI Profile
             </Link>
             <Link
@@ -374,7 +376,7 @@ export default function Chapter() {
               to="welcomeCall"
               relative="path"
             >
-              <PhoneIcon className="h-6 w-6" />
+              <Phone className="h-6 w-6" />
               Welcome Call
             </Link>
             <Link
@@ -382,7 +384,7 @@ export default function Chapter() {
               to="references"
               relative="path"
             >
-              <ChatBubbleLeftRightIcon className="h-6 w-6" />
+              <MultiBubble className="h-6 w-6" />
               References
             </Link>
             <Link
@@ -390,7 +392,7 @@ export default function Chapter() {
               to="induction"
               relative="path"
             >
-              <NewspaperIcon className="h-6 w-6" />
+              <Journal className="h-6 w-6" />
               Induction
             </Link>
             <Link
@@ -398,7 +400,7 @@ export default function Chapter() {
               to="police-check"
               relative="path"
             >
-              <ShieldCheckIcon className="h-6 w-6" />
+              <ShieldCheck className="h-6 w-6" />
               Police Check
             </Link>
             <Link
@@ -406,7 +408,7 @@ export default function Chapter() {
               to="wwc-check"
               relative="path"
             >
-              <UserGroupIcon className="h-6 w-6" />
+              <Group className="h-6 w-6" />
               WWC Check
             </Link>
             <Link
@@ -414,7 +416,7 @@ export default function Chapter() {
               to="approval-mrc"
               relative="path"
             >
-              <CheckIcon className="h-6 w-6" />
+              <Check className="h-6 w-6" />
               Approval by MRC
             </Link>
             <Link
@@ -422,7 +424,7 @@ export default function Chapter() {
               to="volunteer-agreement"
               relative="path"
             >
-              <PencilIcon className="h-6 w-6" />
+              <VerifiedUser className="h-6 w-6" />
               Volunteer Agreement
             </Link>
           </div>

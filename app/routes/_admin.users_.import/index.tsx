@@ -21,7 +21,7 @@ import {
   inviteUserToAzureAsync,
 } from "~/services";
 
-import ArrowUpTrayIcon from "@heroicons/react/24/solid/ArrowUpTrayIcon";
+import { Import } from "iconoir-react";
 
 import { LoadingSpinner, Title, BackHeader } from "~/components";
 
@@ -197,7 +197,7 @@ export const action = async ({
   });
 };
 
-export default function Import() {
+export default function Index() {
   const actionData = useActionData<typeof action>();
   const transition = useNavigation();
 
@@ -239,7 +239,7 @@ export default function Import() {
             className="btn-primary btn gap-2"
             disabled={isDisabled}
           >
-            <ArrowUpTrayIcon className="h-6 w-6" />
+            <Import className="h-6 w-6" />
             Import
           </button>
           {isDisabled && <LoadingSpinner dark />}

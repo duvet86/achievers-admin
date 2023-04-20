@@ -2,10 +2,7 @@ import type { Dayjs } from "dayjs";
 
 import dayjs from "dayjs";
 
-import {
-  ArrowRightCircleIcon,
-  ArrowLeftCircleIcon,
-} from "@heroicons/react/24/solid";
+import { ArrowLeftCircle, ArrowRightCircle } from "iconoir-react";
 
 interface Props {
   selectedDate: Dayjs;
@@ -29,10 +26,10 @@ export default function RosterCalendar({
           </span>
           <div className="buttons">
             <button className="p-1" onClick={previousMonth}>
-              <ArrowLeftCircleIcon className="w-8 text-blue-600" />
+              <ArrowLeftCircle className="w-8 text-blue-600" />
             </button>
             <button className="p-1" onClick={nextMonth}>
-              <ArrowRightCircleIcon className="w-8 text-blue-600" />
+              <ArrowRightCircle className="w-8 text-blue-600" />
             </button>
           </div>
         </div>

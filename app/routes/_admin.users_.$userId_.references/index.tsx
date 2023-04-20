@@ -4,9 +4,7 @@ import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import ChatBubbleLeftRightIcon from "@heroicons/react/24/solid/ChatBubbleLeftRightIcon";
-import CheckIcon from "@heroicons/react/24/solid/CheckIcon";
-import ExclamationTriangleIcon from "@heroicons/react/24/solid/ExclamationTriangleIcon";
+import { ChatBubbleEmpty, Check, WarningTriangle } from "iconoir-react";
 
 import { BackHeader, Title } from "~/components";
 
@@ -64,9 +62,9 @@ export default function Index() {
                   </td>
                   <td className="border p-2" align="center">
                     {calledOndate !== null ? (
-                      <CheckIcon className="h-6 w-6 text-success" />
+                      <Check className="h-6 w-6 text-success" />
                     ) : (
-                      <ExclamationTriangleIcon className="h-6 w-6 text-warning" />
+                      <WarningTriangle className="h-6 w-6 text-warning" />
                     )}
                   </td>
                   <td align="right" className="border p-2">
@@ -75,7 +73,7 @@ export default function Index() {
                       relative="path"
                       className="btn-success btn-xs btn w-full gap-2"
                     >
-                      <ChatBubbleLeftRightIcon className="h-4 w-4" />
+                      <ChatBubbleEmpty className="h-4 w-4" />
                       View
                     </Link>
                   </td>

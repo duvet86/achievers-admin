@@ -11,7 +11,8 @@ import {
   removeRoleFromUserAsync,
 } from "~/services";
 
-import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
+
+import { Cancel } from "iconoir-react";
 
 import { BackHeader } from "~/components";
 
@@ -67,7 +68,7 @@ export default function Delete() {
 
         <div className="mt-6">
           <button className="btn-error btn gap-2">
-            <XMarkIcon className="mr-2 w-6" />
+            <Cancel className="mr-2 w-6" />
             Confirm
           </button>
         </div>

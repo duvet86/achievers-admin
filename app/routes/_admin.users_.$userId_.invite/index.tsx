@@ -11,7 +11,7 @@ import {
 
 import invariant from "tiny-invariant";
 
-import EnvelopeIcon from "@heroicons/react/24/solid/EnvelopeIcon";
+import { MailOut } from "iconoir-react";
 
 import { Title, BackHeader } from "~/components";
 
@@ -105,7 +105,7 @@ export default function Chapter() {
             className="btn-primary btn float-right mt-6 w-64 gap-4"
             type="submit"
           >
-            <EnvelopeIcon className="h-6 w-6" />
+            <MailOut className="h-6 w-6" />
             Invite
           </button>
         </fieldset>

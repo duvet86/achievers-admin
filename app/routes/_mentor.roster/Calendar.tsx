@@ -1,7 +1,7 @@
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 
-import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/solid";
+import { NavArrowLeft, NavArrowRight } from "iconoir-react";
 
 interface Props {
   selectedDate: Dayjs;
@@ -34,14 +34,14 @@ export default function Calendar({
               className="text-gray-800 hover:text-gray-400 focus:text-gray-400"
               onClick={previousMonth}
             >
-              <ArrowLeftIcon className="w-6 text-blue-600" />
+              <NavArrowLeft className="w-6 text-blue-600" />
             </button>
             <button
               aria-label="calendar forward"
               className="ml-3 text-gray-800 hover:text-gray-400 focus:text-gray-400"
               onClick={nextMonth}
             >
-              <ArrowRightIcon className="w-6 text-blue-600" />
+              <NavArrowRight className="w-6 text-blue-600" />
             </button>
           </div>
         </div>

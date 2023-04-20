@@ -2,9 +2,7 @@ import type { AzureUserWebAppWithRole } from "~/services";
 
 import { Link } from "@remix-run/react";
 
-import UserCircleIcon from "@heroicons/react/24/solid/UserCircleIcon";
-import Bars3Icon from "@heroicons/react/24/solid/Bars3Icon";
-import ArrowLeftOnRectangleIcon from "@heroicons/react/24/solid/ArrowLeftOnRectangleIcon";
+import { ProfileCircle, Menu, LogOut } from "iconoir-react";
 
 interface Props {
   currentUser: AzureUserWebAppWithRole;
@@ -15,7 +13,7 @@ export function Navbar({ currentUser }: Props) {
     <nav className="navbar absolute left-0 top-0 h-16 bg-primary text-primary-content shadow-md">
       <div className="flex-none lg:hidden">
         <label htmlFor="drawer" className="btn-ghost btn-square btn">
-          <Bars3Icon className="inline-block h-6 w-6 stroke-current" />
+          <Menu className="inline-block h-6 w-6 stroke-current" />
         </label>
       </div>
       <div className="flex-1">
@@ -36,7 +34,7 @@ export function Navbar({ currentUser }: Props) {
           <div className="font-semibold">{currentUser.email}</div>
           <label className="btn-ghost btn-circle avatar btn">
             <div className="w-10 rounded-full">
-              <UserCircleIcon />
+              <ProfileCircle />
             </div>
           </label>
         </div>
@@ -46,7 +44,7 @@ export function Navbar({ currentUser }: Props) {
         >
           <li>
             <Link className="font-semibold" to="/logout">
-              <ArrowLeftOnRectangleIcon className="mr-2 w-6" />
+              <LogOut className="mr-2 w-6" />
               Logout
             </Link>
           </li>

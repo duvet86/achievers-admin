@@ -1,4 +1,4 @@
-import ServerIcon from "@heroicons/react/24/solid/ServerIcon";
+import { SaveActionFloppy } from "iconoir-react";
 
 interface Props {
   label?: string;
@@ -22,7 +22,7 @@ export function SubmitFormButton({ message, sticky, label = "Save" }: Props) {
       </div>
 
       <button className="btn-primary btn w-52 gap-5" type="submit">
-        <ServerIcon className="h-6 w-6" />
+        <SaveActionFloppy className="h-6 w-6" />
         {label}
       </button>
     </div>

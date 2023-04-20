@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 
-import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
+import { Cancel } from "iconoir-react";
 
 interface Props {
   defaultValue: string | null;
@@ -47,7 +47,7 @@ export default function ProfileInput({ defaultValue }: Props) {
               setProfilePicturePath(null);
             }}
           >
-            <XMarkIcon className="h-6 w-6" />
+            <Cancel className="h-6 w-6" />
             Remove
           </button>
         )}

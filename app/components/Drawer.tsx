@@ -1,6 +1,6 @@
 import { NavLink } from "@remix-run/react";
 
-import ChevronRightIcon from "@heroicons/react/24/solid/ChevronRightIcon";
+import { NavArrowRight } from "iconoir-react";
 
 interface Props {
   isAdmin: boolean;
@@ -49,7 +49,7 @@ export function Drawer({ isAdmin, version }: Props) {
               }
             >
               {label}
-              <ChevronRightIcon className="h-6 w-6" />
+              <NavArrowRight className="h-6 w-6" />
             </NavLink>
           </li>
         ))}

@@ -2,8 +2,7 @@ import { useLoaderData, Link } from "@remix-run/react";
 
 import { json } from "@remix-run/node";
 
-import ArrowUpTrayIcon from "@heroicons/react/24/solid/ArrowUpTrayIcon";
-import PencilSquareIcon from "@heroicons/react/24/solid/PencilSquareIcon";
+import { Import, PageEdit } from "iconoir-react";
 
 import { Title } from "~/components";
 
@@ -64,7 +63,7 @@ export default function SelectChapter() {
                     to={id.toString()}
                     className="btn-success btn-xs btn w-full gap-2"
                   >
-                    <PencilSquareIcon className="mr-4 h-4 w-4" />
+                    <PageEdit className="mr-4 h-4 w-4" />
                     Edit
                   </Link>
                 </td>
@@ -76,7 +75,7 @@ export default function SelectChapter() {
 
       <div className="mt-10">
         <Link className="btn-primary btn w-96 gap-2" to="import">
-          <ArrowUpTrayIcon className="h-6 w-6" />
+          <Import className="h-6 w-6" />
           Import users from file
         </Link>
       </div>
