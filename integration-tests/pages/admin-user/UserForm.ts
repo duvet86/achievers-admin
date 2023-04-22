@@ -55,6 +55,38 @@ export class UserForm {
     this.expect = new UserFormAssertions(this);
   }
 
+  async updateUserForm(
+    firstNameValue: string,
+    lastNameValue: string,
+    mobileValue: string,
+    addressStreetValue: string,
+    addressSuburbValue: string,
+    addressStateValue: string,
+    addressPostcodeValue: string,
+    dateOfBirthValue: string,
+    emergencyContactNameValue: string,
+    emergencyContactNumberValue: string,
+    emergencyContactAddressValue: string,
+    emergencyContactRelationshipValue: string,
+    additionalEmailValue: string
+  ): Promise<void> {
+    await this.firstNameInput.fill(firstNameValue);
+    await this.lastNameInput.fill(lastNameValue);
+    await this.mobileInput.fill(mobileValue);
+    await this.addressStreetInput.fill(addressStreetValue);
+    await this.addressSuburbInput.fill(addressSuburbValue);
+    await this.addressStateInput.fill(addressStateValue);
+    await this.addressPostcodeInput.fill(addressPostcodeValue);
+    await this.dateOfBirthInput.fill(dateOfBirthValue);
+    await this.emergencyContactNameInput.fill(emergencyContactNameValue);
+    await this.emergencyContactNumberInput.fill(emergencyContactNumberValue);
+    await this.emergencyContactAddressInput.fill(emergencyContactAddressValue);
+    await this.emergencyContactRelationshipInput.fill(
+      emergencyContactRelationshipValue
+    );
+    await this.additionalEmailInput.fill(additionalEmailValue);
+  }
+
   async saveForm(): Promise<void> {
     await this.page.getByRole("button", { name: "SAVE" }).click();
   }
@@ -63,13 +95,13 @@ export class UserForm {
 class UserFormAssertions {
   constructor(private userForm: UserForm) {}
 
-  async toHaveTitle(userName: string): Promise<void> {
+  async toHaveTitleForUser(userName: string): Promise<void> {
     await expect(this.userForm.label).toContainText(
-      `EDIT INFO FOR "${userName}"`
+      new RegExp(`Edit info for "${userName}"`, "g")
     );
   }
 
-  async toProfilePicture(): Promise<void> {
+  async toHaveProfilePicture(): Promise<void> {
     await expect(this.userForm.profilePicture).toBeVisible();
   }
 

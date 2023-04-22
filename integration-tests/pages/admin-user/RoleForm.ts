@@ -18,15 +18,15 @@ export class RoleForm {
   constructor(page: Page) {
     this.page = page;
 
-    this.rolesHeaderCell = page.getByRole("cell", { name: "ROLES" });
-    this.actionHeaderCell = page.getByRole("cell", { name: "ACTION" });
+    this.rolesHeaderCell = page.getByRole("cell", { name: "Roles", exact: true });
+    this.actionHeaderCell = page.getByRole("cell", { name: "ROLES ACTION" });
 
     this.noRolesCell = page.getByRole("cell", {
       name: "Mentor hasn't been invited into the system yet",
     });
 
     this.rolesCell = page.getByRole("cell", { name: "Mentor" });
-    this.actionCell = page.getByRole("cell", { name: "Remove" });
+    this.actionCell = page.getByRole("cell", { name: "Remove role" });
 
     this.expect = new RoleFormAssertions(this);
   }

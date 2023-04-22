@@ -73,10 +73,10 @@ exports[`Body > Body snapshot admin 1`] = `
                 class="font-semibold"
               />
               <label
-                class="btn-ghost btn-circle avatar btn"
+                class="btn-ghost btn-circle btn"
               >
                 <div
-                  class="w-10 rounded-full"
+                  class="flex w-10 content-center justify-center rounded-full"
                 >
                   <svg
                     color="currentColor"
@@ -286,10 +286,10 @@ exports[`Body > Body snapshot mentor 1`] = `
                 class="font-semibold"
               />
               <label
-                class="btn-ghost btn-circle avatar btn"
+                class="btn-ghost btn-circle btn"
               >
                 <div
-                  class="w-10 rounded-full"
+                  class="flex w-10 content-center justify-center rounded-full"
                 >
                   <svg
                     color="currentColor"

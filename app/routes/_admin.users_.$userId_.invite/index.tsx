@@ -30,7 +30,7 @@ export async function loader({ params }: LoaderArgs) {
 
   const user = await getUserByIdAsync(Number(params.userId));
   if (user.azureADId !== null) {
-    throw new Error();
+    throw new Error("User already part of Azure AD.");
   }
 
   return json({

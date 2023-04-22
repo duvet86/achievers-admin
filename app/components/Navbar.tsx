@@ -32,8 +32,8 @@ export function Navbar({ currentUser }: Props) {
       <div className="dropdown-end dropdown hidden lg:block">
         <div tabIndex={0} className="flex cursor-pointer items-center gap-2">
           <div className="font-semibold">{currentUser.email}</div>
-          <label className="btn-ghost btn-circle avatar btn">
-            <div className="w-10 rounded-full">
+          <label className="btn-ghost btn-circle btn">
+            <div className="flex w-10 content-center justify-center rounded-full">
               <ProfileCircle />
             </div>
           </label>

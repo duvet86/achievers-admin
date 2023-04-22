@@ -3,7 +3,7 @@ import type { Prisma } from "@prisma/client";
 import type { AzureUserWebAppWithRole } from "~/services";
 
 import { json } from "@remix-run/node";
-import { Form, Link, useLoaderData, useNavigation } from "@remix-run/react";
+import { Link, useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
@@ -14,9 +14,6 @@ import {
 } from "~/services";
 
 import {
-  Cancel,
-  HomeSimpleDoor,
-  MailOut,
   ProfileCircle,
   Phone,
   MultiBubble,
@@ -27,13 +24,7 @@ import {
   VerifiedUser,
 } from "iconoir-react";
 
-import {
-  Input,
-  Title,
-  DateInput,
-  BackHeader,
-  SubmitFormButton,
-} from "~/components";
+import { Title, BackHeader } from "~/components";
 
 import {
   getUserByIdAsync,
@@ -41,7 +32,9 @@ import {
   updateUserByIdAsync,
 } from "./services.server";
 
-import ProfilePicture from "./ProfilePicture";
+import { EditUserInfoForm } from "./EditUserInfoForm";
+import { RolesForm } from "./RolesForm";
+import { ChaptersForm } from "./ChaptersForm";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -144,221 +137,26 @@ export async function action({ request, params }: ActionArgs) {
 }
 
 export default function Chapter() {
+  const loaderData = useLoaderData<typeof loader>();
   const transition = useNavigation();
-  const { user, azureUserInfo } = useLoaderData<typeof loader>();
 
   return (
     <div className="flex h-full flex-col pb-28">
       <BackHeader />
 
       <Title>
-        Edit info for "{user.firstName} {user.lastName}"
+        Edit info for "{loaderData.user.firstName} {loaderData.user.lastName}"
       </Title>
 
       <div className="flex h-full">
-        <Form
-          method="post"
-          className="relative mr-8 flex-1 overflow-y-auto border-r border-primary pr-4"
-        >
-          <fieldset disabled={transition.state === "submitting"}>
-            <ProfilePicture profilePicturePath={user.profilePicturePath} />
-
-            <Input
-              type="email"
-              defaultValue={user.email}
-              label="Email"
-              name="email"
-              disabled
-            />
-
-            <Input
-              defaultValue={user.firstName ?? ""}
-              label="First name"
-              name="firstName"
-              required
-            />
-
-            <Input
-              defaultValue={user.lastName ?? ""}
-              label="Last name"
-              name="lastName"
-              required
-            />
-
-            <Input
-              defaultValue={user.mobile ?? ""}
-              type="number"
-              label="Mobile"
-              name="mobile"
-              required
-            />
-
-            <Input
-              defaultValue={user.addressStreet ?? ""}
-              label="Address street"
-              name="addressStreet"
-              required
-            />
-
-            <Input
-              defaultValue={user.addressSuburb ?? ""}
-              label="Address suburb"
-              name="addressSuburb"
-              required
-            />
-
-            <Input
-              defaultValue={user.addressState ?? ""}
-              label="Address state"
-              name="addressState"
-              required
-            />
-
-            <Input
-              defaultValue={user.addressPostcode ?? ""}
-              label="Address postcode"
-              name="addressPostcode"
-              required
-            />
-
-            <DateInput
-              defaultValue={user.dateOfBirth ?? ""}
-              label="Date of birth"
-              name="dateOfBirth"
-            />
-
-            <Input
-              defaultValue={user.emergencyContactName ?? ""}
-              label="Emergency contact name"
-              name="emergencyContactName"
-            />
-
-            <Input
-              defaultValue={user.emergencyContactNumber ?? ""}
-              label="Emergency contact number"
-              name="emergencyContactNumber"
-            />
-
-            <Input
-              defaultValue={user.emergencyContactAddress ?? ""}
-              label="Emergency contact address"
-              name="emergencyContactAddress"
-            />
-
-            <Input
-              defaultValue={user.emergencyContactRelationship ?? ""}
-              label="Emergency contact relationship"
-              name="emergencyContactRelationship"
-            />
-
-            <Input
-              type="email"
-              defaultValue={user.additionalEmail ?? ""}
-              label="Additional email"
-              name="additionalEmail"
-            />
-
-            <SubmitFormButton sticky />
-          </fieldset>
-        </Form>
+        <EditUserInfoForm loaderData={loaderData} transition={transition} />
 
         <div className="flex-1">
-          <div className="overflow-auto">
-            <table className="table w-full">
-              <thead>
-                <tr>
-                  <th align="left" className="p-2">
-                    Roles
-                  </th>
-                  <th align="right" className="w-3/12 p-2">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {azureUserInfo === null && (
-                  <tr>
-                    <td colSpan={2} className="border p-2">
-                      <i>Mentor hasn't been invited into the system yet</i>
-                    </td>
-                  </tr>
-                )}
-                {azureUserInfo?.appRoleAssignments.length === 0 && (
-                  <tr>
-                    <td colSpan={2} className="border p-2">
-                      <i>No Roles assigned to this user</i>
-                    </td>
-                  </tr>
-                )}
-                {azureUserInfo?.appRoleAssignments.map(({ id, roleName }) => (
-                  <tr key={id}>
-                    <td className="border p-2">
-                      <span className="font-semibold">{roleName}</span>
-                      <input type="hidden" name="roleIds" value={id} />
-                    </td>
-                    <td align="right" className="border p-2">
-                      <Link
-                        to={`roles/${id}/delete`}
-                        className="btn-error btn-xs btn w-full gap-2"
-                      >
-                        <Cancel className="h-4 w-4" />
-                        Remove
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="my-6 flex justify-end">
-            {azureUserInfo === null && (
-              <Link
-                to="invite"
-                relative="path"
-                className="btn-primary btn w-64 gap-4"
-              >
-                <MailOut className="h-6 w-6" />
-                Invite
-              </Link>
-            )}
-          </div>
+          <RolesForm loaderData={loaderData} />
 
           <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700" />
 
-          <div className="overflow-auto">
-            <table className="table w-full">
-              <thead>
-                <tr>
-                  <th align="left" className="p-2">
-                    Assigned to Chapter
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border p-2">
-                    <span className="font-semibold">
-                      {user.userAtChapter
-                        .map(({ chapter }) => chapter.name)
-                        .join(", ")}
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div className="mt-6 flex justify-end">
-            <Link
-              to="chapters/assign"
-              relative="path"
-              className="btn-primary btn w-64 gap-4"
-            >
-              <HomeSimpleDoor className="h-6 w-6" />
-              Assign to a Chapter
-            </Link>
-          </div>
+          <ChaptersForm loaderData={loaderData} />
 
           <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700" />
 
@@ -369,7 +167,7 @@ export default function Chapter() {
               relative="path"
             >
               <ProfileCircle className="h-6 w-6" />
-              EoI Profile
+              EoI profile
             </Link>
             <Link
               className="btn-outline btn w-60 gap-4"
@@ -377,7 +175,7 @@ export default function Chapter() {
               relative="path"
             >
               <Phone className="h-6 w-6" />
-              Welcome Call
+              Welcome call
             </Link>
             <Link
               className="btn-outline btn w-60 gap-4"
@@ -401,7 +199,7 @@ export default function Chapter() {
               relative="path"
             >
               <ShieldCheck className="h-6 w-6" />
-              Police Check
+              Police check
             </Link>
             <Link
               className="btn-outline btn w-60 gap-4"
@@ -409,7 +207,7 @@ export default function Chapter() {
               relative="path"
             >
               <Group className="h-6 w-6" />
-              WWC Check
+              WWC check
             </Link>
             <Link
               className="btn-outline btn w-60 gap-4"
@@ -425,7 +223,7 @@ export default function Chapter() {
               relative="path"
             >
               <VerifiedUser className="h-6 w-6" />
-              Volunteer Agreement
+              Volunteer agreement
             </Link>
           </div>
         </div>
