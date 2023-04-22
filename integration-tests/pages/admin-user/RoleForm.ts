@@ -18,7 +18,10 @@ export class RoleForm {
   constructor(page: Page) {
     this.page = page;
 
-    this.rolesHeaderCell = page.getByRole("cell", { name: "Roles", exact: true });
+    this.rolesHeaderCell = page.getByRole("cell", {
+      name: "Roles",
+      exact: true,
+    });
     this.actionHeaderCell = page.getByRole("cell", { name: "ROLES ACTION" });
 
     this.noRolesCell = page.getByRole("cell", {

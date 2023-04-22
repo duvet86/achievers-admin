@@ -17,7 +17,7 @@ export function ChaptersForm({ loaderData: { user } }: Props) {
           <thead>
             <tr>
               <th align="left" className="p-2">
-                Assigned to chapter
+                Chapters
               </th>
               <th align="right" className="w-3/12 p-2">
                 Chapters action

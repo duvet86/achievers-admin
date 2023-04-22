@@ -17,7 +17,8 @@ export class ChapterForm {
     this.page = page;
 
     this.chapterHeaderCell = page.getByRole("cell", {
-      name: "ASSIGNED TO CHAPTER",
+      name: "Chapters",
+      exact: true,
     });
     this.actionHeaderCell = page.getByRole("cell", { name: "CHAPTERS ACTION" });
 
