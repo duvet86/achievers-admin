@@ -11,6 +11,8 @@ export class ChapterForm {
   chapterCell: Locator;
   actionCell: Locator;
 
+  noChaptersCell: Locator;
+
   expect: ChapterFormAssertions;
 
   constructor(page: Page) {
@@ -22,6 +24,10 @@ export class ChapterForm {
     });
     this.actionHeaderCell = page.getByRole("cell", { name: "CHAPTERS ACTION" });
 
+    this.noChaptersCell = page.getByRole("cell", {
+      name: "No chapters assigned to this user",
+    });
+
     this.chapterCell = page.getByRole("cell", { name: "Girrawheen" });
     this.actionCell = page.getByRole("cell", { name: "Remove chapter" });
 
@@ -29,7 +35,11 @@ export class ChapterForm {
   }
 
   async assignToChapter(): Promise<void> {
-    await this.page.getByRole("link", { name: "ASSIGN TO A CHAPTER" }).click();
+    await this.page.getByRole("link", { name: "ASSIGN A CHAPTER" }).click();
+  }
+
+  async removeChapter(): Promise<void> {
+    await this.page.getByRole("link", { name: "Remove chapter" }).click();
   }
 }
 
