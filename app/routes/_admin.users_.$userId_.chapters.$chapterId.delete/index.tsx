@@ -47,7 +47,7 @@ export default function Assign() {
 
       <Form method="post">
         <fieldset disabled={transition.state === "submitting"}>
-          <h1 className="mb-4 text-xl">
+          <h1 className="mb-4 text-xl" data-testid="cofirmation-text">
             Are you sure you want to remove chapter{" "}
             <span className="font-medium">'{chapter.chapter.name}'</span> from
             user{" "}

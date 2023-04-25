@@ -72,7 +72,7 @@ export default function Assign() {
       <BackHeader to="../../" />
 
       <Form method="post">
-        <h1 className="mb-4 text-xl font-medium">
+        <h1 className="mb-4 text-xl font-medium" data-testid="title">
           Assign a Chapter to{" "}
           <span className="font-medium">'{user.email}'</span>
         </h1>

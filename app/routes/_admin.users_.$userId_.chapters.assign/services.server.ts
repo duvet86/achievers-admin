@@ -37,20 +37,11 @@ export async function assignChapterToUserAsync(
   chapterId: UserAtChapter["chapterId"],
   azureADId: string
 ) {
-  const user = await prisma.user.findUniqueOrThrow({
-    where: {
-      azureADId,
-    },
-    select: {
-      email: true,
-    },
-  });
-
   await prisma.userAtChapter.create({
     data: {
       userId,
       chapterId,
-      assignedBy: user.email,
+      assignedBy: azureADId,
     },
   });
 }

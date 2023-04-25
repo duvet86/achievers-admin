@@ -34,11 +34,11 @@ export class ChapterForm {
     this.expect = new ChapterFormAssertions(this);
   }
 
-  async assignToChapter(): Promise<void> {
+  async gotToAssignToChapter(): Promise<void> {
     await this.page.getByRole("link", { name: "ASSIGN A CHAPTER" }).click();
   }
 
-  async removeChapter(): Promise<void> {
+  async gotToRemoveChapter(): Promise<void> {
     await this.page.getByRole("link", { name: "Remove chapter" }).click();
   }
 }
@@ -52,5 +52,9 @@ class ChapterFormAssertions {
 
   async toHaveTableRow(): Promise<void> {
     await expect(this.roleForm.chapterCell).toBeVisible();
+  }
+
+  async toHaveNoChaptersRow(): Promise<void> {
+    await expect(this.roleForm.noChaptersCell).toBeVisible();
   }
 }

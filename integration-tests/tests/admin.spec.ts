@@ -4,33 +4,37 @@ import { test, expect } from "@playwright/test";
 import { createUserAsync } from "../dbData";
 import { AdminUsersPage } from "../pages/admin-users.page";
 import { AdminUserPage } from "../pages/admin-user/admin-userInfo.page";
+import { RemoveUserChapterPage } from "../pages/remove-user-chapter.page";
+import { AssignUserChapterPage } from "../pages/assign-user-chapter.page";
 
-test.describe("Admin role", () => {
-  let usersPage: AdminUsersPage;
-  let userPage: AdminUserPage;
+test.describe("Admin", () => {
+  let usersListPage: AdminUsersPage;
+  let userInfoPage: AdminUserPage;
+  let removeUserChapterPage: RemoveUserChapterPage;
+  let assignUserChapterPage: AssignUserChapterPage;
 
-  test.beforeAll(async () => {
+  test.beforeEach(async ({ page }) => {
     await createUserAsync();
+
+    usersListPage = new AdminUsersPage(page);
+    userInfoPage = new AdminUserPage(page);
+    removeUserChapterPage = new RemoveUserChapterPage(page);
+    assignUserChapterPage = new AssignUserChapterPage(page);
   });
 
-  test.beforeEach(({ page }) => {
-    usersPage = new AdminUsersPage(page);
-    userPage = new AdminUserPage(page);
-  });
-
-  test("should enroll user", async ({ page }) => {
+  test("should edit user info", async ({ page }) => {
     await page.goto("/");
 
     await expect(page).toHaveTitle(/Achievers WA/);
 
-    await usersPage.expect.toHaveTableHeaders();
-    await usersPage.expect.toHaveTableCells();
+    await usersListPage.expect.toHaveTableHeaders();
+    await usersListPage.expect.toHaveTableCells();
 
-    await usersPage.goToEditUser();
+    await usersListPage.goToEditUser();
 
-    await userPage.userForm.expect.toHaveTitleForUser("test user");
-    await userPage.userForm.expect.toHaveProfilePicture();
-    await userPage.userForm.expect.toHaveValues(
+    await userInfoPage.userForm.expect.toHaveTitleForUser("test user");
+    await userInfoPage.userForm.expect.toHaveProfilePicture();
+    await userInfoPage.userForm.expect.toHaveValues(
       "test@test.com",
       "test",
       "user",
@@ -47,14 +51,14 @@ test.describe("Admin role", () => {
       ""
     );
 
-    await userPage.roleForm.expect.toHaveTableHeaders();
-    await userPage.roleForm.expect.toHaveNoRolesCell();
+    await userInfoPage.roleForm.expect.toHaveTableHeaders();
+    await userInfoPage.roleForm.expect.toHaveNoRolesCell();
 
-    await userPage.chapterForm.expect.toHaveTableHeaders();
-    await userPage.chapterForm.expect.toHaveTableRow();
+    await userInfoPage.chapterForm.expect.toHaveTableHeaders();
+    await userInfoPage.chapterForm.expect.toHaveTableRow();
 
     // Update user info.
-    await userPage.userForm.updateUserForm(
+    await userInfoPage.userForm.updateUserForm(
       "Luca",
       "Mara",
       "1111111",
@@ -70,11 +74,11 @@ test.describe("Admin role", () => {
       "Luca@luca.com"
     );
 
-    await userPage.userForm.saveForm();
+    await userInfoPage.userForm.saveForm();
 
     await page.reload();
 
-    await userPage.userForm.expect.toHaveValues(
+    await userInfoPage.userForm.expect.toHaveValues(
       "test@test.com",
       "Luca",
       "Mara",
@@ -90,5 +94,24 @@ test.describe("Admin role", () => {
       "Luca",
       "Luca@luca.com"
     );
+  });
+
+  test("should edit chapter", async ({ page }) => {
+    await page.goto("/");
+
+    await usersListPage.goToEditUser();
+    await userInfoPage.chapterForm.gotToRemoveChapter();
+
+    await removeUserChapterPage.expect.toHaveConfirmationText();
+
+    await removeUserChapterPage.removeChapterClick();
+
+    await userInfoPage.chapterForm.expect.toHaveNoChaptersRow();
+
+    await userInfoPage.chapterForm.gotToAssignToChapter();
+    await assignUserChapterPage.selectChapter("Girrawheen");
+    await assignUserChapterPage.assignChapter();
+
+    await userInfoPage.chapterForm.expect.toHaveTableRow();
   });
 });
