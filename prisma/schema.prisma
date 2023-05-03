@@ -10,8 +10,8 @@ generator client {
 model Session {
   azureADId    String @id
   oauth2State  String @unique
-  accessToken  String @db.LongText
-  refreshToken String @db.LongText
+  accessToken  String @db.Text
+  refreshToken String @db.Text
   expiresIn    Int
 
   createdAt DateTime @default(now())
@@ -66,9 +66,9 @@ model User {
 model EoIProfile {
   id Int @id @default(autoincrement())
 
-  bestTimeToContact   String
+  bestTimeToContact   String  @db.Text
   occupation          String
-  volunteerExperience String
+  volunteerExperience String  @db.Text
   role                String
   mentoringLevel      String
   heardAboutUs        String
