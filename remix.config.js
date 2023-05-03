@@ -6,7 +6,7 @@ module.exports = {
   ignoredRouteFiles: ["**/.*", "**/*.css", "**/*.test.{js,jsx,ts,tsx}"],
   tailwind: true,
   postcss: true,
-  serverModuleFormat: "esm",
+  serverModuleFormat: "cjs",
   future: {
     v2_routeConvention: true,
     v2_errorBoundary: true,
