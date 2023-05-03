@@ -1,7 +1,7 @@
 -- AlterTable
-ALTER TABLE `eoiprofile` MODIFY `bestTimeToContact` TEXT NOT NULL,
+ALTER TABLE `EoIProfile` MODIFY `bestTimeToContact` TEXT NOT NULL,
     MODIFY `volunteerExperience` TEXT NOT NULL;
 
 -- AlterTable
-ALTER TABLE `session` MODIFY `accessToken` TEXT NOT NULL,
+ALTER TABLE `Session` MODIFY `accessToken` TEXT NOT NULL,
     MODIFY `refreshToken` TEXT NOT NULL;
