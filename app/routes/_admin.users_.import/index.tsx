@@ -3,7 +3,7 @@ import type { Prisma } from "@prisma/client";
 import type { SpeadsheetUser } from "~/models/speadsheet";
 import type { AzureInviteResponse } from "~/services";
 
-import { getChaptersAsync } from "./services.server";
+// import { getChaptersAsync } from "./services.server";
 
 import {
   unstable_createMemoryUploadHandler,
@@ -65,7 +65,7 @@ export const action = async ({
     });
   }
 
-  const chapters = await getChaptersAsync();
+  // const chapters = await getChaptersAsync();
 
   const incorrectEmails = fileUsers.reduce<string[]>((res, fileUser, index) => {
     if (
@@ -86,7 +86,7 @@ export const action = async ({
   }
 
   const dbUsers: Prisma.UserCreateManyInput[] = [];
-  const dbUsersAtChapters: Prisma.UserAtChapterCreateManyInput[] = [];
+  // const dbUsersAtChapters: Prisma.UserAtChapterCreateManyInput[] = [];
   const responses: AzureInviteResponse[] = [];
 
   const azureUsers = await getAzureUsersAsync(sessionUser.accessToken);
@@ -114,7 +114,7 @@ export const action = async ({
 
     responses.push(response);
 
-    const chapter = chapters.find((c) => c.name === newUsers[i]["Chapter"]);
+    // const chapter = chapters.find((c) => c.name === newUsers[i]["Chapter"]);
 
     dbUsers.push({
       addressPostcode: "",

@@ -151,7 +151,7 @@ export default function Chapter() {
       <div className="flex h-full">
         <EditUserInfoForm loaderData={loaderData} transition={transition} />
 
-        <div className="flex-1">
+        <div className="flex-1 overflow-y-auto">
           <RolesForm loaderData={loaderData} />
 
           <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700" />
@@ -160,7 +160,7 @@ export default function Chapter() {
 
           <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700" />
 
-          <div className="flex flex-wrap gap-4">
+          <div className="mb-4 flex flex-wrap gap-4">
             <Link
               className="btn-outline btn w-60 gap-4"
               to="eoiProfile"

@@ -76,7 +76,7 @@ export default function Index() {
         Induction acknowledgement for "{user.firstName} {user.lastName}"
       </Title>
 
-      <Form>
+      <Form method="post">
         <fieldset disabled={transition.state === "submitting"}>
           <Input
             label="Run by"

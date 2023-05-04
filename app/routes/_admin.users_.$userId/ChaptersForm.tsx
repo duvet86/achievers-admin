@@ -19,7 +19,7 @@ export function ChaptersForm({ loaderData: { user } }: Props) {
               <th align="left" className="p-2">
                 Chapters
               </th>
-              <th align="right" className="w-3/12 p-2">
+              <th align="right" className="w-5/12 p-2">
                 Chapters action
               </th>
             </tr>
