@@ -64,12 +64,20 @@ export class EOIInfoPage {
     aboutMeText: string
   ) {
     return {
-      bestTimeToContactText: this.page.getByText(bestTimeToContactText, { exact: true }),
+      bestTimeToContactText: this.page.getByText(bestTimeToContactText, {
+        exact: true,
+      }),
       occupationText: this.page.getByText(occupationText, { exact: true }),
-      volunteerExperienceText: this.page.getByText(volunteerExperienceText, { exact: true }),
+      volunteerExperienceText: this.page.getByText(volunteerExperienceText, {
+        exact: true,
+      }),
       roleText: this.page.getByText(roleText, { exact: true }),
-      mentoringLevelText: this.page.getByText(mentoringLevelText, { exact: true }),
-      preferredFrequencyText: this.page.getByText(preferredFrequencyText, { exact: true }),
+      mentoringLevelText: this.page.getByText(mentoringLevelText, {
+        exact: true,
+      }),
+      preferredFrequencyText: this.page.getByText(preferredFrequencyText, {
+        exact: true,
+      }),
       hearAboutUsText: this.page.getByText(hearAboutUsText, { exact: true }),
       over18Text: this.page.getByText(over18Text, { exact: true }),
       whyVolunteerText: this.page.getByText(whyVolunteerText, { exact: true }),
@@ -83,7 +91,7 @@ export class EOIInfoPage {
 }
 
 export class EOIInfoPageAssertions {
-  constructor(private eoiChapterPage: EOIInfoPage) { }
+  constructor(private eoiChapterPage: EOIInfoPage) {}
 
   async toHaveHeadings(): Promise<void> {
     await expect(this.eoiChapterPage.bestTimeToContactHeading).toBeVisible();

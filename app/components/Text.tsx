@@ -9,9 +9,7 @@ export function Text({ label, text }: Props) {
       <h6 className="label">
         <span className="label-text font-semibold">{label}</span>
       </h6>
-      <p className="w-full p-1">
-        {text}
-      </p>
+      <p className="w-full p-1">{text}</p>
     </section>
   );
 }

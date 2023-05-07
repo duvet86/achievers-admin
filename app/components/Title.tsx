@@ -3,9 +3,5 @@ interface Props {
 }
 
 export function Title({ children }: Props) {
-  return (
-    <h1 className="mb-4 text-2xl font-bold uppercase">
-      {children}
-    </h1>
-  );
+  return <h1 className="mb-4 text-2xl font-bold uppercase">{children}</h1>;
 }

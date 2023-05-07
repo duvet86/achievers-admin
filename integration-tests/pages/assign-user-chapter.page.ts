@@ -33,7 +33,7 @@ export class AssignUserChapterPage {
 }
 
 export class AssignUserChapterPageAssertions {
-  constructor(private assignUserChapterPage: AssignUserChapterPage) { }
+  constructor(private assignUserChapterPage: AssignUserChapterPage) {}
 
   async toHavePageTitle(): Promise<void> {
     await expect(this.assignUserChapterPage.title).toBeVisible();

@@ -93,7 +93,7 @@ export class UserForm {
 }
 
 class UserFormAssertions {
-  constructor(private userForm: UserForm) { }
+  constructor(private userForm: UserForm) {}
 
   async toHaveTitleForUser(userName: string): Promise<void> {
     await expect(this.userForm.label).toContainText(
