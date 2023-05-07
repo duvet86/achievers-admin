@@ -12,7 +12,7 @@ export class AssignUserChapterPage {
   constructor(page: Page) {
     this.page = page;
 
-    this.title = page.getByTestId("title");
+    this.title = page.getByRole("heading", { name: "Assign a Chapter to" });
 
     this.expect = new AssignUserChapterPageAssertions(this);
   }
@@ -33,7 +33,7 @@ export class AssignUserChapterPage {
 }
 
 export class AssignUserChapterPageAssertions {
-  constructor(private assignUserChapterPage: AssignUserChapterPage) {}
+  constructor(private assignUserChapterPage: AssignUserChapterPage) { }
 
   async toHavePageTitle(): Promise<void> {
     await expect(this.assignUserChapterPage.title).toBeVisible();

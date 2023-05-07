@@ -4,8 +4,8 @@ interface Props {
 
 export function Title({ children }: Props) {
   return (
-    <h3 data-testid="title" className="mb-4 text-2xl font-bold uppercase">
+    <h1 className="mb-4 text-2xl font-bold uppercase">
       {children}
-    </h3>
+    </h1>
   );
 }

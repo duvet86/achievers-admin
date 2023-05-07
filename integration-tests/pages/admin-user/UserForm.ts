@@ -28,7 +28,7 @@ export class UserForm {
   constructor(page: Page) {
     this.page = page;
 
-    this.label = page.getByTestId("title");
+    this.label = page.getByRole("heading", { name: "edit info for" });
     this.profilePicture = page.getByRole("figure");
 
     this.emailInput = page.getByLabel("Email", { exact: true });
@@ -93,7 +93,7 @@ export class UserForm {
 }
 
 class UserFormAssertions {
-  constructor(private userForm: UserForm) {}
+  constructor(private userForm: UserForm) { }
 
   async toHaveTitleForUser(userName: string): Promise<void> {
     await expect(this.userForm.label).toContainText(

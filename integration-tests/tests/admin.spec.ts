@@ -6,12 +6,14 @@ import { AdminUsersPage } from "../pages/admin-users.page";
 import { AdminUserPage } from "../pages/admin-user/admin-userInfo.page";
 import { RemoveUserChapterPage } from "../pages/remove-user-chapter.page";
 import { AssignUserChapterPage } from "../pages/assign-user-chapter.page";
+import { EOIInfoPage } from "../pages/eoi.page";
 
 test.describe("Admin", () => {
   let usersListPage: AdminUsersPage;
   let userInfoPage: AdminUserPage;
   let removeUserChapterPage: RemoveUserChapterPage;
   let assignUserChapterPage: AssignUserChapterPage;
+  let eoiInfoPage: EOIInfoPage;
 
   test.beforeEach(async ({ page }) => {
     await createUserAsync();
@@ -20,6 +22,7 @@ test.describe("Admin", () => {
     userInfoPage = new AdminUserPage(page);
     removeUserChapterPage = new RemoveUserChapterPage(page);
     assignUserChapterPage = new AssignUserChapterPage(page);
+    eoiInfoPage = new EOIInfoPage(page);
   });
 
   test("should edit user info", async ({ page }) => {
@@ -113,5 +116,26 @@ test.describe("Admin", () => {
     await assignUserChapterPage.assignChapter();
 
     await userInfoPage.chapterForm.expect.toHaveTableRow();
+  });
+
+  test("should display eoi info", async ({ page }) => {
+    await page.goto("/");
+
+    await usersListPage.goToEditUser();
+    await userInfoPage.goToEOIProfile();
+
+    await eoiInfoPage.expect.toHaveHeadings();
+    await eoiInfoPage.expect.toHaveText(
+      "Afternoon after 3pm",
+      "Retired",
+      "None",
+      "Mentor",
+      "2 years at Curtin university",
+      "every week",
+      "Linkid",
+      "true",
+      "I am ready to rock",
+      "I have a lot of energy and I want to share it with everyone"
+    );
   });
 });

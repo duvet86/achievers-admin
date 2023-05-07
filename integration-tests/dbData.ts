@@ -52,8 +52,8 @@ export async function createUserAsync() {
             volunteerExperience: "None",
             role: "Mentor",
             mentoringLevel: "2 years at Curtin university",
-            heardAboutUs: "Linkid",
             preferredFrequency: "every week",
+            heardAboutUs: "Linkid",
             isOver18: true,
             comment: "I am ready to rock",
             aboutMe:
