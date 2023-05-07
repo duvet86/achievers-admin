@@ -3,12 +3,11 @@
 exports[`Title > should display component 1`] = `
 <body>
   <div>
-    <h3
+    <h1
       class="mb-4 text-2xl font-bold uppercase"
-      data-testid="title"
     >
       Test
-    </h3>
+    </h1>
   </div>
 </body>
 `;

@@ -80,9 +80,9 @@ describe("Admin /users", () => {
 
     render(<RemixStub />);
 
-    const title = await screen.findByTestId("title");
+    const title = await screen.findByRole("heading", { name: "Users" });
 
-    expect(title).toHaveTextContent(/Users/);
+    expect(title).toBeVisible();
   });
 
   it("should have link to 'import from file'", async () => {
@@ -101,8 +101,8 @@ describe("Admin /users", () => {
 
     render(<RemixStub />);
 
-    const link = await screen.findByRole("link");
+    const link = await screen.findByRole("link", { name: "Import users from file" });
 
-    expect(link).toHaveTextContent(/Import users from file/);
+    expect(link).toBeVisible();
   });
 });

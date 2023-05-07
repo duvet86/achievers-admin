@@ -9,7 +9,7 @@ import {
 } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import { Select, BackHeader, SubmitFormButton } from "~/components";
+import { Select, BackHeader, SubmitFormButton, Title } from "~/components";
 
 import {
   assignChapterToUserAsync,
@@ -72,10 +72,7 @@ export default function Assign() {
       <BackHeader to="../../" />
 
       <Form method="post">
-        <h1 className="mb-4 text-xl font-medium" data-testid="title">
-          Assign a Chapter to{" "}
-          <span className="font-medium">'{user.email}'</span>
-        </h1>
+        <Title>Assign a Chapter to "{user.email}"</Title>
 
         <Select
           label="Select a Chapter"

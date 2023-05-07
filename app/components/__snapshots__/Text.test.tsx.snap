@@ -3,10 +3,10 @@
 exports[`Text > should display component 1`] = `
 <body>
   <div>
-    <div
+    <section
       class="mb-4 w-full border-b border-l border-base-300 p-1"
     >
-      <div
+      <h6
         class="label"
       >
         <span
@@ -14,13 +14,13 @@ exports[`Text > should display component 1`] = `
         >
           test label
         </span>
-      </div>
+      </h6>
       <p
         class="w-full p-1"
       >
         test text
       </p>
-    </div>
+    </section>
   </div>
 </body>
 `;
