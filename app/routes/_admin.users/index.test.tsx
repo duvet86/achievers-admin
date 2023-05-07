@@ -13,6 +13,7 @@ describe("Admin /users", () => {
         element: <Page />,
         loader() {
           return json({
+            count: 0,
             users: [],
           });
         },
@@ -34,6 +35,7 @@ describe("Admin /users", () => {
         element: <Page />,
         loader() {
           return json({
+            count: 1,
             users: [
               {
                 id: 1,
@@ -69,6 +71,7 @@ describe("Admin /users", () => {
         element: <Page />,
         loader() {
           return json({
+            count: 0,
             users: [],
           });
         },
@@ -89,6 +92,7 @@ describe("Admin /users", () => {
         element: <Page />,
         loader() {
           return json({
+            count: 0,
             users: [],
           });
         },

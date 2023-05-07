@@ -39,7 +39,7 @@ export class RoleForm {
   }
 
   async removeRole(): Promise<void> {
-    await this.page.getByRole("link", { name: "Remove chapter" }).click();
+    await this.page.getByRole("link", { name: "Remove" }).click();
   }
 }
 
