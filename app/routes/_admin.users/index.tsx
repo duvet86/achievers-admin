@@ -77,8 +77,10 @@ export default function SelectChapter() {
       <Title>Users</Title>
 
       <Form ref={formRef} method="post">
-        <div className="mb-6 flex w-2/5 gap-6 align-middle">
-          <Input name="searchTerm" placeholder="Search" />
+        <div className="mb-6 flex gap-6 align-middle">
+          <div className="w-96">
+            <Input name="searchTerm" placeholder="Search" />
+          </div>
           <button
             className="btn-primary btn w-32"
             type="submit"

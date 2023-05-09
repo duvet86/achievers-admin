@@ -8,8 +8,8 @@ generator client {
 }
 
 model Session {
-  azureADId    String @id
-  oauth2State  String @unique
+  oauth2State  String @id
+  azureADId    String
   accessToken  String @db.Text
   refreshToken String @db.Text
   expiresIn    Int
