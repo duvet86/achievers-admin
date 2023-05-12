@@ -184,3 +184,6 @@ jobs:
 
       - name: "Run az commands"
         run: az webapp restart --name achievers-webapp --resource-group achievers-rg
+
+      - name: "Make request"
+        run: curl -X GET "https://achievers-webapp.azurewebsites.net/"
