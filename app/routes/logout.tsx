@@ -6,7 +6,9 @@ import { authenticator_dev } from "~/services/session-dev.server";
 
 export async function loader({ request }: LoaderArgs) {
   if (isProduction()) {
-    return redirect(getCurrentHost(request) + "/.auth/logout?post_logout_redirect_uri=/");
+    return redirect(
+      getCurrentHost(request) + "/.auth/logout?post_logout_redirect_uri=/"
+    );
   } else {
     return await authenticator_dev.logout(request, { redirectTo: "/" });
   }

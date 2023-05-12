@@ -19,7 +19,7 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
       throw redirect(getCurrentHost(request) + "/.auth/login/aad?post_login_redirect_uri=/");
     }
 
-    if (new Date(expiresOn) >= new Date()) {
+    if (new Date() >= new Date(expiresOn)) {
       await fetch(getCurrentHost(request) + "/.auth/refresh")
     }
 
