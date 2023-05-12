@@ -1,5 +1,6 @@
 import type { TokenInfo } from "./models";
 
+import { redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
 import { parseJwt } from "./utils";
@@ -13,6 +14,10 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
     const accessToken = request.headers.get("X-MS-TOKEN-AAD-ACCESS-TOKEN");
     const expiresOn = request.headers.get("X-MS-TOKEN-AAD-EXPIRES-ON");
     const refreshToken = request.headers.get("X-MS-TOKEN-AAD-REFRESH-TOKEN");
+
+    if (idToken === null) {
+      throw redirect("/.auth/login/aad");
+    }
 
     invariant(idToken);
     invariant(accessToken);
