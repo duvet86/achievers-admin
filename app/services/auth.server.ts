@@ -44,7 +44,7 @@ interface MicrosoftExtraParams extends Record<string, string | number> {
 export interface RefreshTokenResponse {
   token_type: string;
   scope: string;
-  expires_in: number;
+  expires_in: string;
   access_token: string;
   refresh_token: string;
 }

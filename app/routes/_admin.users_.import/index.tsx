@@ -17,7 +17,6 @@ import {
   isStringNullOrEmpty,
   getAzureUsersAsync,
   WEB_APP_URL,
-  getSessionUserAsync,
   inviteUserToAzureAsync,
 } from "~/services";
 
@@ -36,8 +35,6 @@ export const action = async ({
     message: string | null;
   }>
 > => {
-  const sessionUser = await getSessionUserAsync(request);
-
   const uploadHandler = unstable_createMemoryUploadHandler({
     maxPartSize: 500_000,
   });
@@ -89,7 +86,7 @@ export const action = async ({
   // const dbUsersAtChapters: Prisma.UserAtChapterCreateManyInput[] = [];
   const responses: AzureInviteResponse[] = [];
 
-  const azureUsers = await getAzureUsersAsync(sessionUser.accessToken);
+  const azureUsers = await getAzureUsersAsync(request);
 
   const azureUsersLookup = azureUsers.reduce<Record<string, string>>(
     (res, { email }) => {
@@ -106,7 +103,7 @@ export const action = async ({
   );
 
   for (let i = 0; i < newUsers.length; i++) {
-    const response = await inviteUserToAzureAsync(sessionUser.accessToken, {
+    const response = await inviteUserToAzureAsync(request, {
       invitedUserEmailAddress: newUsers[i]["Email address"],
       inviteRedirectUrl: WEB_APP_URL,
       sendInvitationMessage: true,

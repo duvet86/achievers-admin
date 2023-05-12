@@ -6,7 +6,6 @@ import { json, redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
 import {
-  getSessionUserAsync,
   getAzureUserWithRolesByIdAsync,
   removeRoleFromUserAsync,
 } from "~/services";
@@ -19,12 +18,7 @@ export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
   invariant(params.roleId, "roleId not found");
 
-  const sessionUser = await getSessionUserAsync(request);
-
-  const user = await getAzureUserWithRolesByIdAsync(
-    sessionUser.accessToken,
-    params.userId
-  );
+  const user = await getAzureUserWithRolesByIdAsync(request, params.userId);
 
   const roleAssignment = user.appRoleAssignments.find(
     ({ id }) => id === params.roleId
@@ -43,9 +37,7 @@ export async function action({ request, params }: ActionArgs) {
   invariant(params.userId, "userId not found");
   invariant(params.roleId, "roleId not found");
 
-  const sessionUser = await getSessionUserAsync(request);
-
-  await removeRoleFromUserAsync(sessionUser.accessToken, params.roleId);
+  await removeRoleFromUserAsync(request, params.roleId);
 
   return redirect(`/users/${params.userId}`);
 }

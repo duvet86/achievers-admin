@@ -12,5 +12,7 @@ __azurite_db_blob_extent__.json
 .husky
 .vscode
 *.prisma
+*.snap
+package-lock.json
 
 /app/styles/tailwind.css

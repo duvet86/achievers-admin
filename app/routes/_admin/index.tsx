@@ -5,8 +5,8 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
 import {
-  getSessionUserAsync,
   getAzureUserWithRolesByIdAsync,
+  getCurrentUserADIdAsync,
   Roles,
   version,
 } from "~/services";
@@ -14,11 +14,11 @@ import {
 import { Body } from "~/components";
 
 export async function loader({ request }: LoaderArgs) {
-  const sessionUser = await getSessionUserAsync(request);
+  const currentAzureUserId = await getCurrentUserADIdAsync(request);
 
   const azureUser = await getAzureUserWithRolesByIdAsync(
-    sessionUser.accessToken,
-    sessionUser.azureADId
+    request,
+    currentAzureUserId
   );
 
   const sessionUserRoles = azureUser.appRoleAssignments.map(

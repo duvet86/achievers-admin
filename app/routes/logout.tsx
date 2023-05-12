@@ -1,7 +1,7 @@
 import type { LoaderArgs } from "@remix-run/node";
 
-import { authenticator } from "~/services";
+import { authenticator_dev } from "~/services/session-dev.server";
 
 export async function loader({ request }: LoaderArgs) {
-  await authenticator.logout(request, { redirectTo: "/" });
+  return await authenticator_dev.logout(request, { redirectTo: "/" });
 }

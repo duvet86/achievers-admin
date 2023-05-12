@@ -9,6 +9,7 @@ import {
 } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
+import { getCurrentUserADIdAsync } from "~/services";
 import { Select, BackHeader, SubmitFormButton, Title } from "~/components";
 
 import {
@@ -16,7 +17,6 @@ import {
   getChaptersAsync,
   getUserAtChapterByIdAsync,
 } from "./services.server";
-import { getSessionUserAsync } from "~/services";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -49,12 +49,12 @@ export async function action({ request, params }: ActionArgs) {
     });
   }
 
-  const sessionUser = await getSessionUserAsync(request);
+  const currentUserAzureId = await getCurrentUserADIdAsync(request);
 
   await assignChapterToUserAsync(
     Number(params.userId),
     Number(chapterId),
-    sessionUser.azureADId
+    currentUserAzureId
   );
 
   return redirect(`/users/${params.userId}`);

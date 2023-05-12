@@ -9,7 +9,6 @@ import invariant from "tiny-invariant";
 
 import {
   getAzureUserWithRolesByIdAsync,
-  getSessionUserAsync,
   isStringNullOrEmpty,
 } from "~/services";
 
@@ -43,10 +42,8 @@ export async function loader({ request, params }: LoaderArgs) {
 
   let azureUserInfo: AzureUserWebAppWithRole | null = null;
   if (user.azureADId !== null) {
-    const sessionUser = await getSessionUserAsync(request);
-
     azureUserInfo = await getAzureUserWithRolesByIdAsync(
-      sessionUser.accessToken,
+      request,
       user.azureADId
     );
   }

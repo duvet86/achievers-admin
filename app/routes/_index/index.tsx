@@ -3,28 +3,16 @@ import type { LoaderArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 
 import {
-  authenticator,
-  getSessionUserAsync,
   getAzureUserWithRolesByIdAsync,
   Roles,
   getUserByAzureADIdAsync,
+  getCurrentUserADIdAsync,
 } from "~/services";
 
 export async function loader({ request }: LoaderArgs) {
-  const isAuthenticated = await authenticator.isAuthenticated(request);
+  const userAzureId = await getCurrentUserADIdAsync(request);
 
-  if (!isAuthenticated) {
-    return await authenticator.logout(request, {
-      redirectTo: "/auth/microsoft",
-    });
-  }
-
-  const sessionUser = await getSessionUserAsync(request);
-
-  const azureUser = await getAzureUserWithRolesByIdAsync(
-    sessionUser.accessToken,
-    sessionUser.azureADId
-  );
+  const azureUser = await getAzureUserWithRolesByIdAsync(request, userAzureId);
 
   const userRoles = azureUser.appRoleAssignments.map(
     ({ appRoleId }) => appRoleId
@@ -34,9 +22,7 @@ export async function loader({ request }: LoaderArgs) {
     return redirect("/users");
   }
 
-  const { volunteerAgreement } = await getUserByAzureADIdAsync(
-    sessionUser.azureADId
-  );
+  const { volunteerAgreement } = await getUserByAzureADIdAsync(userAzureId);
 
   if (volunteerAgreement === null) {
     return redirect("/volunteer-agreement");
@@ -46,5 +32,5 @@ export async function loader({ request }: LoaderArgs) {
     return redirect("/roster");
   }
 
-  throw redirect("/error");
+  throw redirect("/401");
 }

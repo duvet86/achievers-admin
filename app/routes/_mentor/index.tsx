@@ -5,7 +5,7 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
 import {
-  getSessionUserAsync,
+  getCurrentUserADIdAsync,
   getAzureUserWithRolesByIdAsync,
   Roles,
   version,
@@ -15,12 +15,9 @@ import {
 import { Body } from "~/components";
 
 export async function loader({ request }: LoaderArgs) {
-  const sessionUser = await getSessionUserAsync(request);
+  const azureUserId = await getCurrentUserADIdAsync(request);
 
-  const azureUser = await getAzureUserWithRolesByIdAsync(
-    sessionUser.accessToken,
-    sessionUser.azureADId
-  );
+  const azureUser = await getAzureUserWithRolesByIdAsync(request, azureUserId);
 
   const sessionUserRoles = azureUser.appRoleAssignments.map(
     ({ appRoleId }) => appRoleId
@@ -32,7 +29,7 @@ export async function loader({ request }: LoaderArgs) {
     throw redirect("/401");
   }
 
-  const user = await getUserByAzureADIdAsync(sessionUser.azureADId);
+  const user = await getUserByAzureADIdAsync(azureUserId);
 
   return json({
     isAdmin: false,

@@ -14,7 +14,6 @@ import {
   APP_ID,
   getAzureRolesAsync,
   getAzureUserWithRolesByIdAsync,
-  getSessionUserAsync,
   assignRoleToUserAsync,
 } from "~/services";
 
@@ -24,11 +23,9 @@ import { getUserByIdAsync } from "./services.server";
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
-  const sessionUser = await getSessionUserAsync(request);
-
   const [user, appRoles] = await Promise.all([
-    getAzureUserWithRolesByIdAsync(sessionUser.accessToken, params.userId),
-    getAzureRolesAsync(sessionUser.accessToken),
+    getAzureUserWithRolesByIdAsync(request, params.userId),
+    getAzureRolesAsync(request),
   ]);
 
   return json({
@@ -55,9 +52,7 @@ export async function action({ request, params }: ActionArgs) {
     throw new Error();
   }
 
-  const sessionUser = await getSessionUserAsync(request);
-
-  await assignRoleToUserAsync(sessionUser.accessToken, azureADId, {
+  await assignRoleToUserAsync(request, azureADId, {
     principalId: azureADId,
     appRoleId: roleId.toString(),
     resourceId: APP_ID,

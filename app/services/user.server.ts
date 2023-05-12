@@ -5,7 +5,7 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
     where: {
       azureADId,
     },
-    select: {
+    include: {
       volunteerAgreement: true,
     },
   });

@@ -1,24 +1,25 @@
 import { redirect } from "@remix-run/node";
 
 import {
-  authenticator,
-  getSessionUserAsync,
   getAzureUserWithRolesByIdAsync,
+  getCurrentUserADIdAsync,
   getUserByAzureADIdAsync,
 } from "~/services";
 
 import { loader } from "./index";
 
 vi.mock("~/services", async () => {
+  process.env.SESSION_SECRET = "Test";
+  process.env.CLIENT_ID = "Test";
+  process.env.CLIENT_SECRET = "Test";
+  process.env.TENANT_ID = "Test";
+  process.env.REDIRECT_URI = "Test";
+
   const actual: any = await vi.importActual("~/services");
 
   return {
     ...actual,
-    authenticator: {
-      isAuthenticated: vi.fn(),
-      logout: vi.fn(),
-    },
-    getSessionUserAsync: vi.fn(),
+    getCurrentUserADIdAsync: vi.fn(),
     getAzureUserWithRolesByIdAsync: vi.fn(),
     getUserByAzureADIdAsync: vi.fn(),
   };
@@ -26,42 +27,13 @@ vi.mock("~/services", async () => {
 
 describe("Loader", () => {
   beforeEach(() => {
-    vi.mocked(authenticator.isAuthenticated).mockReset();
-    vi.mocked(getSessionUserAsync).mockReset();
+    vi.mocked(getCurrentUserADIdAsync).mockReset();
     vi.mocked(getAzureUserWithRolesByIdAsync).mockReset();
     vi.mocked(getUserByAzureADIdAsync).mockReset();
   });
 
-  it("should redirect to auth for unauthenticated user", async () => {
-    vi.mocked(authenticator.isAuthenticated).mockResolvedValueOnce(null);
-
-    await loader({
-      request: new Request("http://app.com/test"),
-      params: {},
-      context: {},
-    });
-
-    expect(authenticator.logout).toBeCalledWith(
-      new Request("http://app.com/auth/microsoft"),
-      {
-        redirectTo: "/auth/microsoft",
-      }
-    );
-  });
-
-  it("should redirect to users for admin user", async () => {
-    vi.mocked(authenticator.isAuthenticated).mockResolvedValueOnce({
-      azureADId: "",
-      accessToken: "",
-      refreshToken: "",
-      expiresIn: 1,
-    } as any);
-    vi.mocked(getSessionUserAsync).mockResolvedValueOnce({
-      azureADId: "",
-      accessToken: "",
-      refreshToken: "",
-      expiresIn: 1,
-    });
+  it("should redirect to users page for admin user", async () => {
+    vi.mocked(getCurrentUserADIdAsync).mockResolvedValueOnce("id");
     vi.mocked(getAzureUserWithRolesByIdAsync).mockResolvedValueOnce({
       id: "1",
       displayName: "1",
@@ -92,18 +64,7 @@ describe("Loader", () => {
   });
 
   it("should redirect to volunteer-agreement for mentor user", async () => {
-    vi.mocked(authenticator.isAuthenticated).mockResolvedValueOnce({
-      azureADId: "",
-      accessToken: "",
-      refreshToken: "",
-      expiresIn: 1,
-    } as any);
-    vi.mocked(getSessionUserAsync).mockResolvedValueOnce({
-      azureADId: "",
-      accessToken: "",
-      refreshToken: "",
-      expiresIn: 1,
-    });
+    vi.mocked(getCurrentUserADIdAsync).mockResolvedValueOnce("id");
     vi.mocked(getAzureUserWithRolesByIdAsync).mockResolvedValueOnce({
       id: "1",
       displayName: "1",
@@ -124,6 +85,31 @@ describe("Loader", () => {
       email: "",
     });
     vi.mocked(getUserByAzureADIdAsync).mockResolvedValueOnce({
+      id: 1,
+      azureADId: null,
+      email: "",
+      firstName: "",
+      lastName: "",
+      mobile: "",
+      addressStreet: "",
+      addressSuburb: "",
+      addressState: "",
+      addressPostcode: "",
+      additionalEmail: null,
+      dateOfBirth: null,
+      emergencyContactName: null,
+      emergencyContactNumber: null,
+      emergencyContactAddress: null,
+      emergencyContactRelationship: null,
+      nextOfKinName: null,
+      nextOfKinNumber: null,
+      nextOfKinAddress: null,
+      nextOfKinRelationship: null,
+      profilePicturePath: null,
+      hasApprovedToPublishPhotos: null,
+      endDate: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
       volunteerAgreement: null,
     });
 
@@ -137,18 +123,7 @@ describe("Loader", () => {
   });
 
   it("should redirect to roster for mentor user", async () => {
-    vi.mocked(authenticator.isAuthenticated).mockResolvedValueOnce({
-      azureADId: "",
-      accessToken: "",
-      refreshToken: "",
-      expiresIn: 1,
-    } as any);
-    vi.mocked(getSessionUserAsync).mockResolvedValueOnce({
-      azureADId: "",
-      accessToken: "",
-      refreshToken: "",
-      expiresIn: 1,
-    });
+    vi.mocked(getCurrentUserADIdAsync).mockResolvedValueOnce("id");
     vi.mocked(getAzureUserWithRolesByIdAsync).mockResolvedValueOnce({
       id: "1",
       displayName: "1",
@@ -169,6 +144,31 @@ describe("Loader", () => {
       email: "",
     });
     vi.mocked(getUserByAzureADIdAsync).mockResolvedValueOnce({
+      id: 1,
+      azureADId: null,
+      email: "",
+      firstName: "",
+      lastName: "",
+      mobile: "",
+      addressStreet: "",
+      addressSuburb: "",
+      addressState: "",
+      addressPostcode: "",
+      additionalEmail: null,
+      dateOfBirth: null,
+      emergencyContactName: null,
+      emergencyContactNumber: null,
+      emergencyContactAddress: null,
+      emergencyContactRelationship: null,
+      nextOfKinName: null,
+      nextOfKinNumber: null,
+      nextOfKinAddress: null,
+      nextOfKinRelationship: null,
+      profilePicturePath: null,
+      hasApprovedToPublishPhotos: null,
+      endDate: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
       volunteerAgreement: {
         createdAt: new Date(),
         hasAcceptedNoLegalResp: true,
