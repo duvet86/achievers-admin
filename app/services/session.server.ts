@@ -16,7 +16,12 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
     const refreshToken = request.headers.get("X-MS-TOKEN-AAD-REFRESH-TOKEN");
 
     if (idToken === null) {
-      throw redirect("/.auth/login/aad");
+      const host =
+        request.headers.get("X-Forwarded-Host") ?? request.headers.get("host");
+
+      const url = new URL("/", `http://${host}`);
+
+      throw redirect(url.toString() + "/.auth/login/aad");
     }
 
     invariant(idToken);
