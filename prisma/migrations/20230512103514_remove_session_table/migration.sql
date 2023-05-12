@@ -5,4 +5,4 @@
 
 */
 -- DropTable
-DROP TABLE `session`;
+DROP TABLE `Session`;
