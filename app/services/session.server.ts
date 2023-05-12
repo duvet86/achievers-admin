@@ -25,7 +25,6 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
       expiresOn,
       refreshToken,
     };
-
   }
 }
 
