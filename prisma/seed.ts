@@ -3,25 +3,38 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function seed() {
-  const chaptersCount = await prisma.chapter.count();
-
-  if (chaptersCount === 2) {
-    return;
-  }
-
-  await prisma.chapter.create({
-    data: {
+  await prisma.chapter.upsert({
+    where: {
+      name: "Girrawheen",
+    },
+    create: {
       name: "Girrawheen",
       address: "11 Patrick Court Girrawheen WA 6064",
     },
+    update: {},
   });
 
-  await prisma.chapter.create({
-    data: {
+  await prisma.chapter.upsert({
+    where: {
+      name: "Armadale",
+    },
+    create: {
       name: "Armadale",
       address:
         "Library, Westfield Park Primary School, Hemingway Drive Camillo WA 6111",
     },
+    update: {},
+  });
+
+  await prisma.chapter.upsert({
+    where: {
+      name: "Butler",
+    },
+    create: {
+      name: "Butler",
+      address: "East Butler Primary School, Amersham Crescent Butler 6036",
+    },
+    update: {},
   });
 
   console.info(`Database has been seeded. 🌱`);

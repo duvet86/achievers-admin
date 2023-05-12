@@ -1,6 +1,10 @@
 import { useLoaderData, Link } from "@remix-run/react";
 import { json } from "@remix-run/node";
 
+import { PageEdit } from "iconoir-react";
+
+import { Title } from "~/components";
+
 import { getChaptersAsync } from "./services.server";
 
 export async function loader() {
@@ -10,19 +14,46 @@ export async function loader() {
 }
 
 export default function Chapters() {
-  const loaderData = useLoaderData<typeof loader>();
+  const { chapters } = useLoaderData<typeof loader>();
 
   return (
-    <div className="mt-8 flex flex-wrap justify-center font-mono font-bold text-white lg:space-x-24">
-      {loaderData.chapters.map(({ id, name }) => (
-        <Link
-          key={id}
-          to={id.toString()}
-          className="mb-8 flex h-32 w-full items-center justify-center rounded-lg bg-neutral-content text-xl shadow-lg hover:bg-primary lg:w-1/3"
-        >
-          {name}
-        </Link>
-      ))}
-    </div>
+    <>
+      <Title>Chapters</Title>
+
+      <div className="overflow-auto">
+        <table className="table w-full">
+          <thead>
+            <tr>
+              <th align="left" className="p-2">
+                Name
+              </th>
+              <th align="left" className="p-2">
+                Address
+              </th>
+              <th align="right" className="p-2">
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {chapters.map(({ id, name, address }) => (
+              <tr key={id}>
+                <td className="border p-2">{name}</td>
+                <td className="border p-2">{address}</td>
+                <td className="border p-2">
+                  <Link
+                    to={id.toString()}
+                    className="btn-success btn-xs btn w-full gap-2"
+                  >
+                    <PageEdit className="h-4 w-4" />
+                    Edit
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
