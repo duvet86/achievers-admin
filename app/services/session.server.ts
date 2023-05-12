@@ -6,7 +6,9 @@ import { parseJwt } from "./utils";
 import { getSessionInfoAsync_dev } from "./session-dev.server";
 
 export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.CI || process.env.NODE_ENV !== "production") {
+    return await getSessionInfoAsync_dev(request);
+  } else {
     const idToken = request.headers.get("X-MS-TOKEN-AAD-ID-TOKEN");
     const accessToken = request.headers.get("X-MS-TOKEN-AAD-ACCESS-TOKEN");
     const expiresOn = request.headers.get("X-MS-TOKEN-AAD-EXPIRES-ON");
@@ -23,8 +25,7 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
       expiresOn,
       refreshToken,
     };
-  } else {
-    return await getSessionInfoAsync_dev(request);
+
   }
 }
 
