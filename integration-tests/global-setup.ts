@@ -20,7 +20,7 @@ async function globalSetup(config: FullConfig) {
   submit = page.locator("input[type='submit']");
   await submit.click();
 
-  const remindMe = page.locator("input[type='button']");
+  const remindMe = page.locator("input[type='submit']");
   await remindMe.click();
 
   await page.waitForEvent("requestfinished");
