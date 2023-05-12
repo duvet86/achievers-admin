@@ -5,7 +5,7 @@ import { Authenticator } from "remix-auth";
 import invariant from "tiny-invariant";
 
 import { MicrosoftStrategy, SCOPE } from "./auth.server";
-import { createMemorySessionStorageFactory } from "./memory-session.server"
+import { createMemorySessionStorageFactory } from "./memory-session.server";
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");
