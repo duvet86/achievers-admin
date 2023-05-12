@@ -17,3 +17,12 @@ export function getExtension(fileName: string): string {
 
   return fileNameSplit[fileNameSplit.length - 1];
 }
+
+export function getCurrentHost(request: Request): string {
+  const host =
+    request.headers.get("X-Forwarded-Host") ?? request.headers.get("host");
+
+  const url = new URL("/", `http://${host}`);
+
+  return url.toString();
+}

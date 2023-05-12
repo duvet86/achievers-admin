@@ -3,7 +3,7 @@ import type { TokenInfo } from "./models";
 import { redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
-import { parseJwt } from "./utils";
+import { getCurrentHost, parseJwt } from "./utils";
 import { getSessionInfoAsync_dev } from "./session-dev.server";
 
 export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
@@ -15,13 +15,12 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
     const expiresOn = request.headers.get("X-MS-TOKEN-AAD-EXPIRES-ON");
     const refreshToken = request.headers.get("X-MS-TOKEN-AAD-REFRESH-TOKEN");
 
-    if (idToken === null) {
-      const host =
-        request.headers.get("X-Forwarded-Host") ?? request.headers.get("host");
+    if (idToken === null || expiresOn === null) {
+      throw redirect(getCurrentHost(request) + "/.auth/login/aad?post_login_redirect_uri=/");
+    }
 
-      const url = new URL("/", `http://${host}`);
-
-      throw redirect(url.toString() + "/.auth/login/aad");
+    if (new Date(expiresOn) >= new Date()) {
+      await fetch(getCurrentHost(request) + "/.auth/refresh")
     }
 
     invariant(idToken);
