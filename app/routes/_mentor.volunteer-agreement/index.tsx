@@ -12,7 +12,7 @@ export async function loader({ request }: LoaderArgs) {
 
   const user = await getUserByAzureADIdAsync(azureUserId);
 
-  if (user.volunteerAgreement !== null) {
+  if (user.volunteerAgreementSignedOn !== null) {
     return redirect("/");
   }
 

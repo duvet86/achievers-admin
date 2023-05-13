@@ -12,7 +12,6 @@ export async function createUserAsync() {
       prisma.induction.deleteMany(),
       prisma.policeCheck.deleteMany(),
       prisma.reference.deleteMany(),
-      prisma.volunteerAgreement.deleteMany(),
       prisma.welcomeCall.deleteMany(),
       prisma.wWCCheck.deleteMany(),
       prisma.userAtChapter.deleteMany(),
@@ -43,6 +42,7 @@ export async function createUserAsync() {
         profilePicturePath: null,
         hasApprovedToPublishPhotos: null,
         endDate: null,
+        volunteerAgreementSignedOn: null,
         createdAt: new Date(),
         updatedAt: new Date(),
         eoIProfile: {
@@ -116,16 +116,6 @@ export async function createUserAsync() {
             runBy: "",
             completedOnDate: new Date(),
             comment: null,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-        },
-        volunteerAgreement: {
-          create: {
-            isInformedOfConstitution: true,
-            hasApprovedSafetyDirections: true,
-            hasAcceptedNoLegalResp: true,
-            signedOn: new Date(),
             createdAt: new Date(),
             updatedAt: new Date(),
           },

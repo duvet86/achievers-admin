@@ -110,7 +110,7 @@ describe("Loader", () => {
       endDate: null,
       createdAt: new Date(),
       updatedAt: new Date(),
-      volunteerAgreement: null,
+      volunteerAgreementSignedOn: null,
     });
 
     const response = await loader({
@@ -169,16 +169,7 @@ describe("Loader", () => {
       endDate: null,
       createdAt: new Date(),
       updatedAt: new Date(),
-      volunteerAgreement: {
-        createdAt: new Date(),
-        hasAcceptedNoLegalResp: true,
-        hasApprovedSafetyDirections: true,
-        id: 1,
-        isInformedOfConstitution: true,
-        signedOn: new Date(),
-        updatedAt: new Date(),
-        userId: 1,
-      },
+      volunteerAgreementSignedOn: new Date(),
     });
 
     const response = await loader({

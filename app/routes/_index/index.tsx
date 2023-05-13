@@ -22,9 +22,11 @@ export async function loader({ request }: LoaderArgs) {
     return redirect("/users");
   }
 
-  const { volunteerAgreement } = await getUserByAzureADIdAsync(userAzureId);
+  const { volunteerAgreementSignedOn } = await getUserByAzureADIdAsync(
+    userAzureId
+  );
 
-  if (volunteerAgreement === null) {
+  if (volunteerAgreementSignedOn === null) {
     return redirect("/volunteer-agreement");
   }
 

@@ -30,6 +30,7 @@ export async function getUserByIdAsync(id: number) {
       emergencyContactRelationship: true,
       additionalEmail: true,
       profilePicturePath: true,
+      volunteerAgreementSignedOn: true,
       userAtChapter: {
         select: {
           chapter: {
@@ -38,6 +39,36 @@ export async function getUserByIdAsync(id: number) {
               name: true,
             },
           },
+        },
+      },
+      approvalbyMRC: {
+        select: {
+          submittedDate: true,
+        },
+      },
+      induction: {
+        select: {
+          completedOnDate: true,
+        },
+      },
+      policeCheck: {
+        select: {
+          createdAt: true,
+        },
+      },
+      references: {
+        select: {
+          calledOndate: true,
+        },
+      },
+      welcomeCall: {
+        select: {
+          calledOnDate: true,
+        },
+      },
+      wwcCheck: {
+        select: {
+          createdAt: true,
         },
       },
     },

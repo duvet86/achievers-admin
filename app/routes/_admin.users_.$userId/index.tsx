@@ -3,7 +3,7 @@ import type { Prisma } from "@prisma/client";
 import type { AzureUserWebAppWithRole } from "~/services";
 
 import { json } from "@remix-run/node";
-import { Link, useLoaderData, useNavigation } from "@remix-run/react";
+import { useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
@@ -11,17 +11,6 @@ import {
   getAzureUserWithRolesByIdAsync,
   isStringNullOrEmpty,
 } from "~/services";
-
-import {
-  ProfileCircle,
-  Phone,
-  MultiBubble,
-  Journal,
-  ShieldCheck,
-  Group,
-  Check,
-  VerifiedUser,
-} from "iconoir-react";
 
 import { Title, BackHeader } from "~/components";
 
@@ -34,6 +23,7 @@ import {
 import { EditUserInfoForm } from "./EditUserInfoForm";
 import { RolesForm } from "./RolesForm";
 import { ChaptersForm } from "./ChaptersForm";
+import { CheckList } from "./CheckList";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -53,10 +43,16 @@ export async function loader({ request, params }: LoaderArgs) {
     : null;
 
   return json({
-    user: {
-      ...user,
-      profilePicturePath,
-    },
+    user,
+    profilePicturePath,
+    welcomeCallCompleted: user.welcomeCall !== null,
+    referencesCompleted:
+      user.references.filter((ref) => ref.calledOndate !== null).length >= 2,
+    inductionCompleted: user.induction !== null,
+    policeCheckCompleted: user.policeCheck !== null,
+    wwcCheckCompleted: user.wwcCheck !== null,
+    approvalbyMRCCompleted: user.approvalbyMRC !== null,
+    volunteerAgreementSignedOn: user.volunteerAgreementSignedOn,
     azureUserInfo,
   });
 }
@@ -149,80 +145,15 @@ export default function Chapter() {
         <EditUserInfoForm loaderData={loaderData} transition={transition} />
 
         <div className="flex-1 overflow-y-auto">
+          <CheckList loaderData={loaderData} />
+
+          <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700" />
+
           <RolesForm loaderData={loaderData} />
 
           <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700" />
 
           <ChaptersForm loaderData={loaderData} />
-
-          <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700" />
-
-          <div className="mb-4 flex flex-wrap gap-4">
-            <Link
-              className="btn-outline btn w-60 gap-4"
-              to="eoiProfile"
-              relative="path"
-            >
-              <ProfileCircle className="h-6 w-6" />
-              EoI profile
-            </Link>
-            <Link
-              className="btn-outline btn w-60 gap-4"
-              to="welcomeCall"
-              relative="path"
-            >
-              <Phone className="h-6 w-6" />
-              Welcome call
-            </Link>
-            <Link
-              className="btn-outline btn w-60 gap-4"
-              to="references"
-              relative="path"
-            >
-              <MultiBubble className="h-6 w-6" />
-              References
-            </Link>
-            <Link
-              className="btn-outline btn w-60 gap-4"
-              to="induction"
-              relative="path"
-            >
-              <Journal className="h-6 w-6" />
-              Induction
-            </Link>
-            <Link
-              className="btn-outline btn w-60 gap-4"
-              to="police-check"
-              relative="path"
-            >
-              <ShieldCheck className="h-6 w-6" />
-              Police check
-            </Link>
-            <Link
-              className="btn-outline btn w-60 gap-4"
-              to="wwc-check"
-              relative="path"
-            >
-              <Group className="h-6 w-6" />
-              WWC check
-            </Link>
-            <Link
-              className="btn-outline btn w-60 gap-4"
-              to="approval-mrc"
-              relative="path"
-            >
-              <Check className="h-6 w-6" />
-              Approval by MRC
-            </Link>
-            <Link
-              className="btn-outline btn w-60 gap-4"
-              to="volunteer-agreement"
-              relative="path"
-            >
-              <VerifiedUser className="h-6 w-6" />
-              Volunteer agreement
-            </Link>
-          </div>
         </div>
       </div>
     </div>

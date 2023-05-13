@@ -185,7 +185,9 @@ export default function SelectChapter() {
             name="nextBtn"
             value="nextBtn"
             className="btn-outline btn"
-            disabled={currentPageNumber === totalPageCount - 1}
+            disabled={
+              currentPageNumber === totalPageCount - 1 || totalPageCount === 0
+            }
           >
             <FastArrowRight />
           </button>

@@ -33,7 +33,7 @@ export async function loader({ request }: LoaderArgs) {
 
   return json({
     isAdmin: false,
-    hasCompletedVolunteerAgreement: user.volunteerAgreement !== null,
+    hasCompletedVolunteerAgreement: user.volunteerAgreementSignedOn !== null,
     currentUser: azureUser,
     version,
   });
