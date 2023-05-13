@@ -39,8 +39,8 @@ if (process.env.NODE_ENV === "production") {
     global.__db__ = new PrismaClient({
       log: [
         {
-          emit: 'stdout',
-          level: 'query',
+          emit: "stdout",
+          level: "query",
         },
       ],
     });

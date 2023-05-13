@@ -63,47 +63,47 @@ export async function getUsersAsync(
           welcomeCall: allUsers
             ? undefined
             : {
-              is: null
-            },
+                is: null,
+              },
         },
         {
           references: allUsers
             ? undefined
             : {
-              some: {
-                calledOndate: {
-                  equals: undefined,
+                some: {
+                  calledOndate: {
+                    equals: undefined,
+                  },
                 },
               },
-            },
         },
         {
           induction: allUsers
             ? undefined
             : {
-              is: null
-            },
+                is: null,
+              },
         },
         {
           policeCheck: allUsers
             ? undefined
             : {
-              is: null
-            },
+                is: null,
+              },
         },
         {
           wwcCheck: allUsers
             ? undefined
             : {
-              is: null
-            },
+                is: null,
+              },
         },
         {
           approvalbyMRC: allUsers
             ? undefined
             : {
-              is: null
-            },
+                is: null,
+              },
         },
         {
           firstName: {
@@ -113,7 +113,7 @@ export async function getUsersAsync(
             contains: searchTerm?.trim(),
           },
           email: { contains: searchTerm?.trim() },
-        }
+        },
       ],
     },
     orderBy: {
