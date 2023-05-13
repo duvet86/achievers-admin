@@ -154,7 +154,8 @@ export async function createUserAsync() {
         },
       },
     });
-  } catch {
+  } catch (e) {
+    console.log(e);
   } finally {
     await prisma.$disconnect();
   }

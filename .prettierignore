@@ -14,5 +14,6 @@ __azurite_db_blob_extent__.json
 *.prisma
 *.snap
 package-lock.json
+storageState.json
 
 /app/styles/tailwind.css

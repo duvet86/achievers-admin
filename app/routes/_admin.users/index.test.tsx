@@ -24,7 +24,9 @@ describe("Admin /users", () => {
 
     const rows = await screen.findAllByRole("row");
 
-    expect(rows[0]).toHaveTextContent(/Full NameEmailAssigned ChapterAction/);
+    expect(rows[0]).toHaveTextContent(
+      /Full NameEmailAssigned Chapter# Checks completedAction/
+    );
     expect(rows[1]).toHaveTextContent(/No users/);
   });
 
@@ -60,8 +62,10 @@ describe("Admin /users", () => {
 
     const rows = await screen.findAllByRole("row");
 
-    expect(rows[0]).toHaveTextContent(/Full NameEmailAssigned ChapterAction/);
-    expect(rows[1]).toHaveTextContent(/Test Usertest@test.comChapter 1Edit/);
+    expect(rows[0]).toHaveTextContent(
+      /Full NameEmailAssigned Chapter# Checks completedAction/
+    );
+    expect(rows[1]).toHaveTextContent(/Test Usertest@test.comChapter 1\/8Edit/);
   });
 
   it("should have title", async () => {
@@ -80,7 +84,7 @@ describe("Admin /users", () => {
 
     render(<RemixStub />);
 
-    const title = await screen.findByRole("heading", { name: "Users" });
+    const title = await screen.findByRole("heading", { name: "Mentors" });
 
     expect(title).toBeVisible();
   });
@@ -102,7 +106,7 @@ describe("Admin /users", () => {
     render(<RemixStub />);
 
     const link = await screen.findByRole("link", {
-      name: "Import users from file",
+      name: "Import mentors from file",
     });
 
     expect(link).toBeVisible();

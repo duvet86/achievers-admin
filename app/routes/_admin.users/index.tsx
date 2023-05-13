@@ -5,11 +5,46 @@ import { json } from "@remix-run/node";
 
 import { useRef } from "react";
 
-import { Import, PageEdit, FastArrowLeft, FastArrowRight } from "iconoir-react";
+import {
+  Import,
+  PageEdit,
+  FastArrowLeft,
+  FastArrowRight,
+  WarningTriangle,
+} from "iconoir-react";
 
 import { Input, Title } from "~/components";
 
 import { getUsersAsync, getUsersCountAsync } from "./services.server";
+
+function getNumberCompletedChecks(user: any): number {
+  let checks = 1;
+  if (user.welcomeCall !== null) {
+    checks++;
+  }
+  if (
+    user.references.filter((ref: any) => ref.calledOndate !== null).length >= 2
+  ) {
+    checks++;
+  }
+  if (user.induction !== null) {
+    checks++;
+  }
+  if (user.policeCheck !== null) {
+    checks++;
+  }
+  if (user.wwcCheck !== null) {
+    checks++;
+  }
+  if (user.approvalbyMRC !== null) {
+    checks++;
+  }
+  if (user.volunteerAgreementSignedOn !== null) {
+    checks++;
+  }
+
+  return checks;
+}
 
 export async function loader() {
   const [count, users] = await Promise.all([
@@ -19,7 +54,10 @@ export async function loader() {
 
   return json({
     count,
-    users,
+    users: users.map((user) => ({
+      ...user,
+      checksCompleted: getNumberCompletedChecks(user),
+    })),
   });
 }
 
@@ -34,6 +72,7 @@ export async function action({ request }: ActionArgs) {
 
   let searchTerm = formData.get("searchTerm")?.toString();
   const pageNumber = Number(formData.get("pageNumber")!.toString());
+  const includeAllUsers = formData.get("allUsers")?.toString() === "on";
 
   const count = await getUsersCountAsync();
   const totalPageCount = Math.ceil(count / 10);
@@ -52,11 +91,18 @@ export async function action({ request }: ActionArgs) {
     currentPageNumber = pageNumber;
   }
 
-  const users = await getUsersAsync(currentPageNumber, searchTerm);
+  const users = await getUsersAsync(
+    currentPageNumber,
+    searchTerm,
+    includeAllUsers
+  );
 
   return json({
     currentPageNumber,
-    users,
+    users: users.map((user) => ({
+      ...user,
+      checksCompleted: getNumberCompletedChecks(user),
+    })),
     searchTerm,
   });
 }
@@ -74,20 +120,38 @@ export default function SelectChapter() {
 
   return (
     <>
-      <Title>Users</Title>
+      <Title>Mentors</Title>
+
+      <p className="mb-8 flex items-center gap-2">
+        <WarningTriangle className="h-6 w-6 text-warning" />
+        Only mentors with incomplete checks are displayed. Toggle the "Include
+        all mentors" to include all of them.
+      </p>
 
       <Form ref={formRef} method="post">
         <div className="mb-6 flex gap-6 align-middle">
           <div className="w-96">
             <Input name="searchTerm" placeholder="Search" />
           </div>
+
+          <div className="form-control">
+            <label className="label cursor-pointer gap-6">
+              <span className="label-text">Include all mentors</span>
+              <input
+                type="checkbox"
+                name="allUsers"
+                className="checkbox-primary checkbox"
+              />
+            </label>
+          </div>
+
           <button
             className="btn-primary btn w-32"
             type="submit"
             name="searchBtn"
             value="searchBtn"
           >
-            Search
+            Submit
           </button>
           <button
             className="btn w-32"
@@ -113,6 +177,9 @@ export default function SelectChapter() {
                 <th align="left" className="p-2">
                   Assigned Chapter
                 </th>
+                <th align="left" className="p-2">
+                  # Checks completed
+                </th>
                 <th align="right" className="p-2">
                   Action
                 </th>
@@ -127,7 +194,14 @@ export default function SelectChapter() {
                 </tr>
               )}
               {pageUsers.map(
-                ({ id, firstName, lastName, email, userAtChapter }) => (
+                ({
+                  id,
+                  firstName,
+                  lastName,
+                  email,
+                  userAtChapter,
+                  checksCompleted,
+                }) => (
                   <tr key={id}>
                     <td className="border p-2">
                       {firstName} {lastName}
@@ -138,6 +212,7 @@ export default function SelectChapter() {
                         .map(({ chapter }) => chapter.name)
                         .join(", ")}
                     </td>
+                    <td className="border p-2">{checksCompleted}/8</td>
                     <td className="border p-2">
                       <Link
                         to={id.toString()}
@@ -197,7 +272,7 @@ export default function SelectChapter() {
       <div className="mt-10 flex justify-end">
         <Link className="btn-primary btn w-96 gap-2" to="import">
           <Import className="h-6 w-6" />
-          Import users from file
+          Import mentors from file
         </Link>
       </div>
     </>
