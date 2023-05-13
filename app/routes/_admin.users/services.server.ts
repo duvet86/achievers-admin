@@ -63,47 +63,49 @@ export async function getUsersAsync(
           welcomeCall: allUsers
             ? undefined
             : {
-                calledOnDate: {
-                  equals: undefined,
-                },
-              },
+              is: null
+            },
+        },
+        {
           references: allUsers
             ? undefined
             : {
-                some: {
-                  calledOndate: {
-                    equals: undefined,
-                  },
+              some: {
+                calledOndate: {
+                  equals: undefined,
                 },
               },
+            },
+        },
+        {
           induction: allUsers
             ? undefined
             : {
-                completedOnDate: {
-                  equals: undefined,
-                },
-              },
+              is: null
+            },
+        },
+        {
           policeCheck: allUsers
             ? undefined
             : {
-                createdAt: {
-                  equals: undefined,
-                },
-              },
+              is: null
+            },
+        },
+        {
           wwcCheck: allUsers
             ? undefined
             : {
-                createdAt: {
-                  equals: undefined,
-                },
-              },
+              is: null
+            },
+        },
+        {
           approvalbyMRC: allUsers
             ? undefined
             : {
-                completedBy: {
-                  equals: undefined,
-                },
-              },
+              is: null
+            },
+        },
+        {
           firstName: {
             contains: searchTerm?.trim(),
           },
@@ -111,7 +113,7 @@ export async function getUsersAsync(
             contains: searchTerm?.trim(),
           },
           email: { contains: searchTerm?.trim() },
-        },
+        }
       ],
     },
     orderBy: {
