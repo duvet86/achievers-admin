@@ -27,21 +27,49 @@ export class AdminUserPage {
     this.roleForm = new RoleForm(page);
     this.chapterForm = new ChapterForm(page);
 
-    this.eoiProfileLink = this.page.getByRole("link", { name: "EOI PROFILE" });
-    this.welcomeCallLink = this.page.getByRole("link", {
-      name: "WELCOME CALL",
-    });
-    this.referencesLink = this.page.getByRole("link", { name: "REFERENCES" });
-    this.inductionLink = this.page.getByRole("link", { name: "INDUCTION" });
-    this.policeCheckLink = this.page.getByRole("link", {
-      name: "POLICE CHECK",
-    });
-    this.wwcCheckLink = this.page.getByRole("link", { name: "WWC CHECK" });
-    this.approvalByMRCLink = this.page.getByRole("link", {
-      name: "APPROVAL BY MRC",
-    });
-    this.volunteerAgreementLink = this.page.getByRole("link", {
-      name: "VOLUNTEER AGREEMENT",
+    this.eoiProfileLink = this.page
+      .getByRole("row", { name: "Expression of interest" })
+      .getByRole("link", {
+        name: "View",
+      });
+    this.welcomeCallLink = this.page
+      .getByRole("row", {
+        name: "Welcome call",
+      })
+      .getByRole("link", {
+        name: "View",
+      });
+    this.referencesLink = this.page
+      .getByRole("row", { name: "References" })
+      .getByRole("link", {
+        name: "View",
+      });
+    this.inductionLink = this.page
+      .getByRole("row", { name: "Induction" })
+      .getByRole("link", {
+        name: "View",
+      });
+    this.policeCheckLink = this.page
+      .getByRole("row", {
+        name: "Police check",
+      })
+      .getByRole("link", {
+        name: "View",
+      });
+    this.wwcCheckLink = this.page
+      .getByRole("row", { name: "WWC check" })
+      .getByRole("link", {
+        name: "View",
+      });
+    this.approvalByMRCLink = this.page
+      .getByRole("row", {
+        name: "Approval by MRC",
+      })
+      .getByRole("link", {
+        name: "View",
+      });
+    this.volunteerAgreementLink = this.page.getByRole("row", {
+      name: "Volunteer agreement",
     });
   }
 
