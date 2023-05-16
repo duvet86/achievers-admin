@@ -21,7 +21,10 @@ export function EditUserInfoForm({ transition, loaderData: { user } }: Props) {
       className="relative mr-8 flex-1 overflow-y-auto border-r border-primary pr-4"
     >
       <fieldset disabled={transition.state === "submitting"}>
-        <ProfilePicture profilePicturePath={user.profilePicturePath} />
+        <ProfilePicture
+          profilePicturePath={user.profilePicturePath}
+          fullName={`${user.firstName} ${user.lastName}`}
+        />
 
         <Input
           type="email"

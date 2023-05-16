@@ -1,6 +1,7 @@
 import type { LinksFunction } from "@remix-run/node";
 
 import {
+  Link,
   Links,
   LiveReload,
   Meta,
@@ -60,6 +61,32 @@ export function ErrorBoundary() {
 
   // when true, this is what used to go to `CatchBoundary`
   if (isRouteErrorResponse(error)) {
+    if (error.status === 404) {
+      return (
+        <html>
+          <head>
+            <title>Oops!</title>
+            <Meta />
+            <Links />
+          </head>
+          <body>
+            <div className="hero min-h-screen bg-base-200">
+              <div className="hero-content text-center">
+                <div className="max-w-md">
+                  <h1 className="text-5xl font-bold">404</h1>
+                  <p className="py-6">We couldn't find that page!</p>
+                  <Link to="/" className="btn-primary btn">
+                    Home
+                  </Link>
+                </div>
+              </div>
+            </div>
+            <Scripts />
+          </body>
+        </html>
+      );
+    }
+
     return (
       <html>
         <head>

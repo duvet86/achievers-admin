@@ -9,7 +9,7 @@ import {
 } from "~/services";
 
 export async function getUserByIdAsync(id: number) {
-  return await prisma.user.findUniqueOrThrow({
+  return await prisma.user.findUnique({
     where: {
       id,
     },

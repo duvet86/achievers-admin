@@ -51,7 +51,7 @@ export function RolesForm({ loaderData: { azureUserInfo } }: Props) {
                     className="btn-error btn-xs btn w-full gap-2"
                   >
                     <Cancel className="h-4 w-4" />
-                    Remove role
+                    Remove
                   </Link>
                 </td>
               </tr>

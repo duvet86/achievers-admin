@@ -35,7 +35,7 @@ test.describe("Admin", () => {
 
     await usersListPage.goToEditUser();
 
-    await userInfoPage.userForm.expect.toHaveTitleForUser("test user");
+    await userInfoPage.userForm.expect.toHaveTitle();
     await userInfoPage.userForm.expect.toHaveProfilePicture();
     await userInfoPage.userForm.expect.toHaveValues(
       "test@test.com",

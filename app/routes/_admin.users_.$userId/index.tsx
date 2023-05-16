@@ -29,6 +29,11 @@ export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
+  if (user === null) {
+    throw new Response("Not Found", {
+      status: 404,
+    });
+  }
 
   let azureUserInfo: AzureUserWebAppWithRole | null = null;
   if (user.azureADId !== null) {
@@ -137,9 +142,7 @@ export default function Chapter() {
     <div className="flex h-full flex-col pb-28">
       <BackHeader />
 
-      <Title>
-        Edit info for "{loaderData.user.firstName} {loaderData.user.lastName}"
-      </Title>
+      <Title>Edit info</Title>
 
       <div className="flex h-full">
         <EditUserInfoForm loaderData={loaderData} transition={transition} />

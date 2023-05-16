@@ -1,4 +1,3 @@
-import { redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
 import { getTokenInfoAsync } from "./session.server";
@@ -112,42 +111,34 @@ export interface AzureAppRoleResponse {
 export type AzureRolesLookUp = Record<string, AppRole>;
 
 export async function getAzureRolesAsync(request: Request): Promise<AppRole[]> {
-  try {
-    invariant(process.env.OBJECT_ID, "OBJECT_ID must be set");
+  invariant(process.env.OBJECT_ID, "OBJECT_ID must be set");
 
-    const tokenInfo = await getTokenInfoAsync(request);
+  const tokenInfo = await getTokenInfoAsync(request);
 
-    const response = await fetch(
-      `${MICROSOFT_GRAPH_V1_BASEURL}/applications/${process.env.OBJECT_ID}?$select=appRoles`,
-      {
-        headers: getHeaders(tokenInfo.accessToken),
-      }
-    );
+  const response = await fetch(
+    `${MICROSOFT_GRAPH_V1_BASEURL}/applications/${process.env.OBJECT_ID}?$select=appRoles`,
+    {
+      headers: getHeaders(tokenInfo.accessToken),
+    }
+  );
 
-    const azureApplication: Application = await response.json();
+  const azureApplication: Application = await response.json();
 
-    return azureApplication.appRoles;
-  } catch (e) {
-    throw redirect("/logout");
-  }
+  return azureApplication.appRoles;
 }
 
 async function getAzureRolesLookUpAsync(
   request: Request
 ): Promise<AzureRolesLookUp> {
-  try {
-    const appRoles = await getAzureRolesAsync(request);
+  const appRoles = await getAzureRolesAsync(request);
 
-    const azureRolesLookUp = appRoles.reduce<AzureRolesLookUp>((res, value) => {
-      res[value.id] = value;
+  const azureRolesLookUp = appRoles.reduce<AzureRolesLookUp>((res, value) => {
+    res[value.id] = value;
 
-      return res;
-    }, {});
+    return res;
+  }, {});
 
-    return azureRolesLookUp;
-  } catch (e) {
-    throw redirect("/logout");
-  }
+  return azureRolesLookUp;
 }
 
 export async function getAzureUsersAsync(
@@ -165,48 +156,40 @@ export async function getAzureUsersAsync(
       ? `&$filter=id in (${azureIds.map((id) => `'${id}'`).join(", ")})`
       : "";
 
-  try {
-    const response = await fetch(
-      `${MICROSOFT_GRAPH_V1_BASEURL}/users?$expand=appRoleAssignments` + filter,
-      {
-        headers: getHeaders(tokenInfo.accessToken),
-      }
-    );
+  const response = await fetch(
+    `${MICROSOFT_GRAPH_V1_BASEURL}/users?$expand=appRoleAssignments` + filter,
+    {
+      headers: getHeaders(tokenInfo.accessToken),
+    }
+  );
 
-    const azureUsers: { value: AzureUser[] } = await response.json();
+  const azureUsers: { value: AzureUser[] } = await response.json();
 
-    return azureUsers.value.map((user) => ({
-      ...user,
-      email: user.mail ?? user.userPrincipalName,
-    }));
-  } catch (e) {
-    throw redirect("/logout");
-  }
+  return azureUsers.value.map((user) => ({
+    ...user,
+    email: user.mail ?? user.userPrincipalName,
+  }));
 }
 
 export async function getAzureUsersWithRolesAsync(
   request: Request,
   azureIds?: string[]
 ): Promise<AzureUserWebAppWithRole[]> {
-  try {
-    const [azureUsers, roles] = await Promise.all([
-      getAzureUsersAsync(request, azureIds),
-      getAzureRolesLookUpAsync(request),
-    ]);
+  const [azureUsers, roles] = await Promise.all([
+    getAzureUsersAsync(request, azureIds),
+    getAzureRolesLookUpAsync(request),
+  ]);
 
-    return azureUsers.map((user) => ({
-      ...user,
-      email: user.mail ?? user.userPrincipalName,
-      appRoleAssignments: user.appRoleAssignments
-        .filter(({ appRoleId }) => roles[appRoleId])
-        .map((roleAssignment) => ({
-          ...roleAssignment,
-          roleName: roles[roleAssignment.appRoleId].displayName,
-        })),
-    }));
-  } catch (e) {
-    throw redirect("/logout");
-  }
+  return azureUsers.map((user) => ({
+    ...user,
+    email: user.mail ?? user.userPrincipalName,
+    appRoleAssignments: user.appRoleAssignments
+      .filter(({ appRoleId }) => roles[appRoleId])
+      .map((roleAssignment) => ({
+        ...roleAssignment,
+        roleName: roles[roleAssignment.appRoleId].displayName,
+      })),
+  }));
 }
 
 async function getAzureUserByIdAsync(
@@ -229,25 +212,21 @@ export async function getAzureUserWithRolesByIdAsync(
   request: Request,
   azureId: string
 ): Promise<AzureUserWebAppWithRole> {
-  try {
-    const [azureUser, roles] = await Promise.all([
-      getAzureUserByIdAsync(request, azureId),
-      getAzureRolesLookUpAsync(request),
-    ]);
+  const [azureUser, roles] = await Promise.all([
+    getAzureUserByIdAsync(request, azureId),
+    getAzureRolesLookUpAsync(request),
+  ]);
 
-    return {
-      ...azureUser,
-      email: azureUser.mail ?? azureUser.userPrincipalName,
-      appRoleAssignments: azureUser.appRoleAssignments
-        .filter(({ appRoleId }) => roles[appRoleId])
-        .map((roleAssignment) => ({
-          ...roleAssignment,
-          roleName: roles[roleAssignment.appRoleId].displayName,
-        })),
-    };
-  } catch (e) {
-    throw redirect("/logout");
-  }
+  return {
+    ...azureUser,
+    email: azureUser.mail ?? azureUser.userPrincipalName,
+    appRoleAssignments: azureUser.appRoleAssignments
+      .filter(({ appRoleId }) => roles[appRoleId])
+      .map((roleAssignment) => ({
+        ...roleAssignment,
+        roleName: roles[roleAssignment.appRoleId].displayName,
+      })),
+  };
 }
 
 export async function inviteUserToAzureAsync(
@@ -274,41 +253,33 @@ export async function assignRoleToUserAsync(
   azureId: string,
   azureAppRoleRequest: AzureAppRoleRequest
 ): Promise<AzureAppRoleResponse> {
-  try {
-    const tokenInfo = await getTokenInfoAsync(request);
+  const tokenInfo = await getTokenInfoAsync(request);
 
-    const response = await fetch(
-      `${MICROSOFT_GRAPH_V1_BASEURL}/users/${azureId}/appRoleAssignments`,
-      {
-        method: "POST",
-        headers: getHeaders(tokenInfo.accessToken),
-        body: JSON.stringify(azureAppRoleRequest),
-      }
-    );
+  const response = await fetch(
+    `${MICROSOFT_GRAPH_V1_BASEURL}/users/${azureId}/appRoleAssignments`,
+    {
+      method: "POST",
+      headers: getHeaders(tokenInfo.accessToken),
+      body: JSON.stringify(azureAppRoleRequest),
+    }
+  );
 
-    return response.json();
-  } catch (e) {
-    throw redirect("/logout");
-  }
+  return response.json();
 }
 
 export async function removeRoleFromUserAsync(
   request: Request,
   appRoleAssignmentId: string
 ): Promise<void> {
-  try {
-    const tokenInfo = await getTokenInfoAsync(request);
+  const tokenInfo = await getTokenInfoAsync(request);
 
-    await fetch(
-      `${MICROSOFT_GRAPH_V1_BASEURL}/servicePrincipals/${APP_ID}/appRoleAssignedTo/${appRoleAssignmentId}`,
-      {
-        method: "DELETE",
-        headers: getHeaders(tokenInfo.accessToken),
-      }
-    );
-  } catch (e) {
-    throw redirect("/logout");
-  }
+  await fetch(
+    `${MICROSOFT_GRAPH_V1_BASEURL}/servicePrincipals/${APP_ID}/appRoleAssignedTo/${appRoleAssignmentId}`,
+    {
+      method: "DELETE",
+      headers: getHeaders(tokenInfo.accessToken),
+    }
+  );
 }
 
 function getHeaders(accessToken: string): HeadersInit {
