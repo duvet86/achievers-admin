@@ -110,7 +110,7 @@ exports[`Body > Body snapshot admin 1`] = `
               <li>
                 <a
                   class="font-semibold"
-                  href="/logout"
+                  href="/.auth/logout?post_logout_redirect_uri=/"
                 >
                   <svg
                     class="mr-2 w-6"
@@ -323,7 +323,7 @@ exports[`Body > Body snapshot mentor 1`] = `
               <li>
                 <a
                   class="font-semibold"
-                  href="/logout"
+                  href="/.auth/logout?post_logout_redirect_uri=/"
                 >
                   <svg
                     class="mr-2 w-6"
