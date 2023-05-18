@@ -20,6 +20,9 @@ env:
   TENANT_ID: ${{ secrets.TENANT_ID }}
   REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
   OBJECT_ID: ${{ secrets.OBJECT_ID }}
+  WEBAPP_NAME: "achievers-webapp"
+  SLOT_NAME: "stg"
+  RESOURCE_GROUP: "achievers-rg"
 
 jobs:
   e2etests:
@@ -166,8 +169,8 @@ jobs:
       - name: "Deploy to Azure Web App"
         uses: azure/webapps-deploy@v2
         with:
-          app-name: "achievers-webapp"
-          slot-name: "production"
+          app-name: ${{ env.WEBAPP_NAME }}
+          slot-name: ${{ env.SLOT_NAME }}
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_eaa9bb9acdc84aa8bd682ef8d6a3a78a }}
           images: duvet86/achievers-app:latest
 
@@ -182,8 +185,5 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: "Run az commands"
-        run: az webapp restart --name achievers-webapp --resource-group achievers-rg
-
-      - name: "Make request"
-        run: curl -X GET "https://achievers-webapp.azurewebsites.net/"
+      - name: "Swap slots"
+        run: az webapp deployment slot swap -s ${{ env.SLOT_NAME }} -n ${{ env.WEBAPP_NAME }} -g ${{ env.RESOURCE_GROUP }}
