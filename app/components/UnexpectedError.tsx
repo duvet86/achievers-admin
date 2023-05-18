@@ -20,8 +20,7 @@ export function UnexpectedError() {
             </Link>
             <Link
               className="btn w-40 gap-2"
-              to="/.auth/logout?post_logout_redirect_uri=/"
-              reloadDocument
+              to="/logout"
             >
               <LogOut className="h-6 w-6" />
               Logout

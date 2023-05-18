@@ -45,8 +45,7 @@ export function Navbar({ currentUser }: Props) {
           <li>
             <Link
               className="font-semibold"
-              to="/.auth/logout?post_logout_redirect_uri=/"
-              reloadDocument
+              to="/logout"
             >
               <LogOut className="mr-2 w-6" />
               Logout

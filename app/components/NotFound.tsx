@@ -11,8 +11,7 @@ export function NotFound() {
           <p className="py-6">We couldn't find that page!</p>
           <Link
             className="btn w-40 gap-2"
-            to="/.auth/logout?post_logout_redirect_uri=/"
-            reloadDocument
+            to="/logout"
           >
             <LogOut className="h-6 w-6" />
             Logout
