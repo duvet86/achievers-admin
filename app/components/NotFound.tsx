@@ -9,10 +9,7 @@ export function NotFound() {
         <div className="max-w-md">
           <h1 className="text-5xl font-bold">404</h1>
           <p className="py-6">We couldn't find that page!</p>
-          <Link
-            className="btn w-40 gap-2"
-            to="/logout"
-          >
+          <Link className="btn w-40 gap-2" to="/logout">
             <LogOut className="h-6 w-6" />
             Logout
           </Link>

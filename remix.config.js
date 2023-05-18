@@ -13,6 +13,6 @@ module.exports = {
     v2_meta: true,
     v2_normalizeFormMethod: true,
 
-    unstable_dev: true
+    unstable_dev: true,
   },
 };

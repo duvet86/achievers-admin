@@ -18,10 +18,7 @@ export function UnexpectedError() {
               <Home className="h-6 w-6" />
               Home
             </Link>
-            <Link
-              className="btn w-40 gap-2"
-              to="/logout"
-            >
+            <Link className="btn w-40 gap-2" to="/logout">
               <LogOut className="h-6 w-6" />
               Logout
             </Link>
