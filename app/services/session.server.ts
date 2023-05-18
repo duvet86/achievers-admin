@@ -4,6 +4,9 @@ import { redirect } from "@remix-run/node";
 
 import { getCurrentHost, parseJwt } from "./utils";
 import { getSessionInfoAsync_dev } from "./session-dev.server";
+import { trackException } from "./appinsights-logging.server";
+
+const loginPath = "/.auth/login/aad?post_login_redirect_uri=/";
 
 export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
   if (process.env.CI || process.env.NODE_ENV !== "production") {
@@ -21,12 +24,21 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
       refreshToken === null
     ) {
       throw redirect(
-        getCurrentHost(request) + "/.auth/login/aad?post_login_redirect_uri=/"
+        getCurrentHost(request) + loginPath
       );
     }
 
     if (new Date() >= new Date(expiresOn)) {
-      await fetch(getCurrentHost(request) + "/.auth/refresh");
+      const resp = await fetch(getCurrentHost(request) + "/.auth/refresh");
+      if (!resp.ok) {
+        trackException({
+          exception: new Error(await resp.text())
+        });
+
+        throw redirect(
+          getCurrentHost(request) + loginPath
+        );
+      }
     }
 
     return {
