@@ -43,7 +43,11 @@ export function Navbar({ currentUser }: Props) {
           className="dropdown-content menu rounded-box w-52 bg-base-100 p-2 shadow"
         >
           <li>
-            <Link className="font-semibold" to="/logout">
+            <Link
+              className="font-semibold"
+              to="/.auth/logout?post_logout_redirect_uri=/"
+              reloadDocument
+            >
               <LogOut className="mr-2 w-6" />
               Logout
             </Link>

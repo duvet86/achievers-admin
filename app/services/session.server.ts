@@ -23,21 +23,17 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
       expiresOn === null ||
       refreshToken === null
     ) {
-      throw redirect(
-        getCurrentHost(request) + loginPath
-      );
+      throw redirect(getCurrentHost(request) + loginPath);
     }
 
     if (new Date() >= new Date(expiresOn)) {
       const resp = await fetch(getCurrentHost(request) + "/.auth/refresh");
       if (!resp.ok) {
         trackException({
-          exception: new Error(await resp.text())
+          exception: new Error(await resp.text()),
         });
 
-        throw redirect(
-          getCurrentHost(request) + loginPath
-        );
+        throw redirect(getCurrentHost(request) + loginPath);
       }
     }
 

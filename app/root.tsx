@@ -1,7 +1,6 @@
 import type { LinksFunction } from "@remix-run/node";
 
 import {
-  Link,
   Links,
   LiveReload,
   Meta,
@@ -16,7 +15,12 @@ import {
 import tailwindStylesheetUrl from "~/styles/tailwind.css";
 import indexStylesheetUrl from "~/styles/index.css";
 
-import { LoadingSpinner } from "~/components";
+import {
+  Forbidden,
+  LoadingSpinner,
+  NotFound,
+  UnexpectedError,
+} from "~/components";
 
 export const links: LinksFunction = () => {
   return [
@@ -70,45 +74,29 @@ export function ErrorBoundary() {
             <Links />
           </head>
           <body>
-            <div className="hero min-h-screen bg-base-200">
-              <div className="hero-content text-center">
-                <div className="max-w-md">
-                  <h1 className="text-5xl font-bold">404</h1>
-                  <p className="py-6">We couldn't find that page!</p>
-                  <Link to="/" className="btn-primary btn">
-                    Home
-                  </Link>
-                </div>
-              </div>
-            </div>
+            <NotFound />
             <Scripts />
           </body>
         </html>
       );
     }
 
-    return (
-      <html>
-        <head>
-          <title>Oops!</title>
-          <Meta />
-          <Links />
-        </head>
-        <body>
-          <h1>
-            {error.status} {error.statusText}
-          </h1>
-          <p>{error.data.message}</p>
-          <Scripts />
-        </body>
-      </html>
-    );
+    if (error.status === 401) {
+      return (
+        <html>
+          <head>
+            <title>Oops!</title>
+            <Meta />
+            <Links />
+          </head>
+          <body>
+            <Forbidden />
+            <Scripts />
+          </body>
+        </html>
+      );
+    }
   }
-
-  // Don't forget to typecheck with your own logic.
-  // Any value can be thrown, not just errors!
-  const errorCaught =
-    error instanceof Error ? error : new Error("Unknown error");
 
   return (
     <html>
@@ -118,14 +106,7 @@ export function ErrorBoundary() {
         <Links />
       </head>
       <body>
-        <div className="card bg-base-100">
-          <div className="card-body">
-            <h2 className="card-title">Error</h2>
-            <p>{errorCaught.message}</p>
-            <p>The stack trace is:</p>
-            <pre>{errorCaught.stack}</pre>
-          </div>
-        </div>
+        <UnexpectedError />
         <Scripts />
       </body>
     </html>

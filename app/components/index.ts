@@ -15,3 +15,7 @@ export * from "./LoadingSpinner";
 export * from "./Navbar";
 export * from "./Drawer";
 export * from "./Body";
+
+export * from "./NotFound";
+export * from "./Forbidden";
+export * from "./UnexpectedError";
