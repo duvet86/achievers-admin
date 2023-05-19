@@ -12,7 +12,5 @@ module.exports = {
     v2_errorBoundary: true,
     v2_meta: true,
     v2_normalizeFormMethod: true,
-
-    unstable_dev: true,
   },
 };

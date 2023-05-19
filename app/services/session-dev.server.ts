@@ -1,12 +1,11 @@
 import type { TokenInfo } from "./models";
 
-import path from "node:path";
-
-import { createCookie, createFileSessionStorage } from "@remix-run/node";
+import { createCookie, createSessionStorage } from "@remix-run/node";
 import { Authenticator } from "remix-auth";
 import invariant from "tiny-invariant";
 
 import { MicrosoftStrategy, SCOPE } from "./auth.server";
+import { createMemorySessionStorageFactory } from "./memory-session.server";
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");
@@ -21,11 +20,11 @@ const sessionCookie = createCookie("__session", {
   secrets: [process.env.SESSION_SECRET], // replace this with an actual secret
 });
 
-const sessionStorage_dev = createFileSessionStorage({
+const createMemorySessionStorage =
+  createMemorySessionStorageFactory(createSessionStorage);
+
+const sessionStorage_dev = createMemorySessionStorage({
   cookie: sessionCookie,
-  dir: process.env.CI
-    ? "~/dev_sessions"
-    : path.join(process.cwd(), "dev_sessions"),
 });
 
 export const authenticator_dev = new Authenticator<TokenInfo>(

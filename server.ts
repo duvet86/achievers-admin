@@ -5,7 +5,6 @@ import express from "express";
 import compression from "compression";
 import morgan from "morgan";
 
-import { broadcastDevReady } from "@remix-run/node";
 import { createRequestHandler } from "@remix-run/express";
 
 declare global {
@@ -19,8 +18,6 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const BUILD_DIR = path.join(process.cwd(), "build");
-const build = require(BUILD_DIR);
-const port = process.env.PORT || 3000;
 
 const app = express();
 
@@ -48,22 +45,19 @@ app.all(
         purgeRequireCache();
 
         return createRequestHandler({
-          build,
+          build: require(BUILD_DIR),
           mode: process.env.NODE_ENV,
         })(req, res, next);
       }
     : createRequestHandler({
-        build,
+        build: require(BUILD_DIR),
         mode: process.env.NODE_ENV,
       })
 );
+const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
   console.log(`Express server listening on port ${port}`);
-
-  if (process.env.NODE_ENV === "development") {
-    broadcastDevReady(build);
-  }
 });
 
 function purgeRequireCache() {
