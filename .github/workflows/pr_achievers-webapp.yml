@@ -15,7 +15,7 @@ env:
   CLIENT_ID: ${{ secrets.CLIENT_ID }}
   CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
   TENANT_ID: ${{ secrets.TENANT_ID }}
-  REDIRECT_URI: ${{ secrets.REDIRECT_URI_STG }}
+  REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
   OBJECT_ID: ${{ secrets.OBJECT_ID }}
   WEBAPP_NAME: "achievers-webapp"
   SLOT_NAME: "stg"
@@ -29,7 +29,7 @@ jobs:
       DB_DATABASE: achievers
       DB_USER: root
       DB_PASSWORD: my-secret-pw
-      WEB_APP_URL: "https://achievers-webapp-stg.azurewebsites.net"
+      WEB_APP_URL: "https://achievers-webapp.azurewebsites.net"
 
     services:
       mysql:
@@ -76,7 +76,7 @@ jobs:
       - name: Run E2E tests
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-        run: npx playwright test
+        run: npm run test:e2e
 
       - uses: actions/upload-artifact@v3
         if: always()
@@ -88,7 +88,7 @@ jobs:
           retention-days: 1
 
   migrate:
-    name: Migrate and seed production DB
+    name: Migrate and seed staging DB
     runs-on: ubuntu-latest
     needs: e2etests
     env:
