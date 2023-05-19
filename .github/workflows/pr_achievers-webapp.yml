@@ -3,10 +3,6 @@
 
 name: PR
 
-permissions:
-  id-token: write
-  contents: write
-
 on:
   pull_request:
     branches:
@@ -80,9 +76,7 @@ jobs:
       - name: Run E2E tests
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-        run: |
-          mkdir ~/dev_sessions
-          npm run test:e2e
+        run: npm run test:e2e
 
       - uses: actions/upload-artifact@v3
         if: always()
