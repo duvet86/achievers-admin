@@ -16,11 +16,11 @@ env:
   TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
   TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-  CLIENT_ID: ${{ secrets.CLIENT_ID_STG }}
-  CLIENT_SECRET: ${{ secrets.CLIENT_SECRET_STG }}
+  CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
   TENANT_ID: ${{ secrets.TENANT_ID }}
   REDIRECT_URI: ${{ secrets.REDIRECT_URI_STG }}
-  OBJECT_ID: ${{ secrets.OBJECT_ID_STG }}
+  OBJECT_ID: ${{ secrets.OBJECT_ID }}
   WEBAPP_NAME: "achievers-webapp"
   SLOT_NAME: "stg"
   RESOURCE_GROUP: "achievers-rg"
