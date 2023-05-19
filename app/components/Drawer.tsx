@@ -35,7 +35,7 @@ export function Drawer({ isAdmin, version }: Props) {
   const links = getLinks(isAdmin);
 
   return (
-    <div className="drawer-side relative mt-16">
+    <div className="drawer-side mt-16">
       <label htmlFor="drawer" className="drawer-overlay"></label>
       <ul className="menu w-80 border-r border-primary bg-base-200 p-4 text-base-content">
         {links.map(({ label, value }, index) => (
@@ -56,7 +56,7 @@ export function Drawer({ isAdmin, version }: Props) {
       </ul>
       <div
         data-testid="version"
-        className="absolute bottom-0 right-2 z-10 text-sm italic"
+        className="absolute bottom-0 left-2 z-10 text-sm italic"
       >
         Version {version}
       </div>

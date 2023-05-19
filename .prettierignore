@@ -17,3 +17,4 @@ package-lock.json
 storageState.json
 
 /app/styles/tailwind.css
+/dev_sessions

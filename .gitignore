@@ -16,6 +16,7 @@ storageState*
 /playwright/.cache/
 /coverage/
 /app/sessions/
+/dev_sessions
 
 __azurite*
 __blobstorage__

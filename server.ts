@@ -19,6 +19,8 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const BUILD_DIR = path.join(process.cwd(), "build");
+const build = require(BUILD_DIR);
+const port = process.env.PORT || 3000;
 
 const app = express();
 
@@ -46,22 +48,21 @@ app.all(
         purgeRequireCache();
 
         return createRequestHandler({
-          build: require(BUILD_DIR),
+          build,
           mode: process.env.NODE_ENV,
         })(req, res, next);
       }
     : createRequestHandler({
-        build: require(BUILD_DIR),
+        build,
         mode: process.env.NODE_ENV,
       })
 );
-const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
   console.log(`Express server listening on port ${port}`);
 
   if (process.env.NODE_ENV === "development") {
-    broadcastDevReady(require(BUILD_DIR));
+    broadcastDevReady(build);
   }
 });
 
