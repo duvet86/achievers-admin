@@ -23,7 +23,9 @@ const sessionCookie = createCookie("__session", {
 
 const sessionStorage_dev = createFileSessionStorage({
   cookie: sessionCookie,
-  dir: process.env.CI ? "~/dev_sessions" : path.join(process.cwd(), "dev_sessions"),
+  dir: process.env.CI
+    ? "~/dev_sessions"
+    : path.join(process.cwd(), "dev_sessions"),
 });
 
 export const authenticator_dev = new Authenticator<TokenInfo>(
