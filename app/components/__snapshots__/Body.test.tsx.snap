@@ -140,7 +140,7 @@ exports[`Body > Body snapshot admin 1`] = `
         />
       </div>
       <div
-        class="drawer-side relative mt-16"
+        class="drawer-side mt-16"
       >
         <label
           class="drawer-overlay"
@@ -201,7 +201,7 @@ exports[`Body > Body snapshot admin 1`] = `
           </li>
         </ul>
         <div
-          class="absolute bottom-0 right-2 z-10 text-sm italic"
+          class="absolute bottom-0 left-2 z-10 text-sm italic"
           data-testid="version"
         >
           Version 
@@ -353,7 +353,7 @@ exports[`Body > Body snapshot mentor 1`] = `
         />
       </div>
       <div
-        class="drawer-side relative mt-16"
+        class="drawer-side mt-16"
       >
         <label
           class="drawer-overlay"
@@ -414,7 +414,7 @@ exports[`Body > Body snapshot mentor 1`] = `
           </li>
         </ul>
         <div
-          class="absolute bottom-0 right-2 z-10 text-sm italic"
+          class="absolute bottom-0 left-2 z-10 text-sm italic"
           data-testid="version"
         >
           Version 
