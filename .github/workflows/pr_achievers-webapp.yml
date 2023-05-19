@@ -76,13 +76,15 @@ jobs:
       - name: Run E2E tests
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-        run: npm run test:e2e
+        run: npx playwright test
 
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: playwright-report
-          path: playwright-report/
+          name: report
+          path: |
+            playwright-report/
+            coverage/
           retention-days: 1
 
   migrate:

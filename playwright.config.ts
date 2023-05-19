@@ -43,7 +43,7 @@ const config: PlaywrightTestConfig = {
     baseURL: "http://localhost:3000",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: "on-first-retry",
+    trace: "retain-on-failure",
     // Tell all tests to load signed-in state from 'storageState.json'.
     storageState: "storageState.json",
   },
