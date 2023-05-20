@@ -16,8 +16,8 @@ import {
   isEmail,
   isStringNullOrEmpty,
   getAzureUsersAsync,
-  WEB_APP_URL,
   inviteUserToAzureAsync,
+  getCurrentHost,
 } from "~/services";
 
 import { Import } from "iconoir-react";
@@ -102,10 +102,12 @@ export const action = async ({
       azureUsersLookup[fileUser["Email address"].toLowerCase()] === undefined
   );
 
+  const webUrl = getCurrentHost(request);
+
   for (let i = 0; i < newUsers.length; i++) {
     const response = await inviteUserToAzureAsync(request, {
       invitedUserEmailAddress: newUsers[i]["Email address"],
-      inviteRedirectUrl: WEB_APP_URL,
+      inviteRedirectUrl: webUrl,
       sendInvitationMessage: true,
     });
 

@@ -29,7 +29,6 @@ jobs:
       DB_DATABASE: achievers
       DB_USER: root
       DB_PASSWORD: my-secret-pw
-      WEB_APP_URL: "https://achievers-webapp.azurewebsites.net"
 
     services:
       mysql:

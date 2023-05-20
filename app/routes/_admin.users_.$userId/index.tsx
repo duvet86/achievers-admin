@@ -10,9 +10,8 @@ import invariant from "tiny-invariant";
 import {
   getAzureUserWithRolesByIdAsync,
   isStringNullOrEmpty,
+  Roles,
 } from "~/services";
-
-import { Title, BackHeader } from "~/components";
 
 import {
   getUserByIdAsync,
@@ -21,9 +20,9 @@ import {
 } from "./services.server";
 
 import { EditUserInfoForm } from "./EditUserInfoForm";
-import { RolesForm } from "./RolesForm";
 import { ChaptersForm } from "./ChaptersForm";
 import { CheckList } from "./CheckList";
+import Header from "./Header";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -58,7 +57,10 @@ export async function loader({ request, params }: LoaderArgs) {
     wwcCheckCompleted: user.wwcCheck !== null,
     approvalbyMRCCompleted: user.approvalbyMRC !== null,
     volunteerAgreementSignedOn: user.volunteerAgreementSignedOn,
-    azureUserInfo,
+    mentorAppRoleAssignmentId:
+      azureUserInfo?.appRoleAssignments.find(
+        ({ appRoleId }) => Roles.Mentor === appRoleId
+      )?.id ?? null,
   });
 }
 
@@ -140,9 +142,9 @@ export default function Chapter() {
 
   return (
     <div className="flex h-full flex-col pb-28">
-      <BackHeader />
-
-      <Title>Edit info</Title>
+      <Header
+        mentorAppRoleAssignmentId={loaderData.mentorAppRoleAssignmentId}
+      />
 
       <div className="h-full md:flex">
         <EditUserInfoForm loaderData={loaderData} transition={transition} />
@@ -151,10 +153,6 @@ export default function Chapter() {
 
         <div className="flex-1 overflow-y-auto">
           <CheckList loaderData={loaderData} />
-
-          <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700" />
-
-          <RolesForm loaderData={loaderData} />
 
           <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700" />
 
