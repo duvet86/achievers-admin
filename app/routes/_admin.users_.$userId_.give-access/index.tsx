@@ -1,13 +1,7 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
-import {
-  Form,
-  isRouteErrorResponse,
-  useLoaderData,
-  useNavigation,
-  useRouteError,
-} from "@remix-run/react";
+import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
@@ -19,6 +13,7 @@ import { getUserByIdAsync, updateAzureIdAsync } from "./services.server";
 import {
   APP_ID,
   assignRoleToUserAsync,
+  getCurrentHost,
   inviteUserToAzureAsync,
   Roles,
   trackTrace,
@@ -39,18 +34,17 @@ export async function loader({ params }: LoaderArgs) {
 
 export async function action({ request, params }: ActionArgs) {
   invariant(params.userId, "userId not found");
-  invariant(process.env.WEB_APP_URL, "WEB_APP_URL not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
 
   const inviteUserToAzureResponse = await inviteUserToAzureAsync(request, {
     invitedUserEmailAddress: user.email,
-    inviteRedirectUrl: process.env.WEB_APP_URL,
+    inviteRedirectUrl: getCurrentHost(request),
     sendInvitationMessage: true,
   });
 
   trackTrace({
-    message: "inviteUserToAzureResponse",
+    message: "GIVE_ACCESS_MENTOR",
     properties: inviteUserToAzureResponse,
   });
 
@@ -63,7 +57,7 @@ export async function action({ request, params }: ActionArgs) {
   });
 
   trackTrace({
-    message: "assignRoleResponse",
+    message: "ASSIGN_ROLE_TO_MENTOR",
     properties: assignRoleResponse,
   });
 
@@ -92,45 +86,14 @@ export default function Chapter() {
           </p>
 
           <button
-            className="btn-primary btn float-right mt-6 w-64 gap-4"
+            className="btn-success btn float-right mt-6 w-64 gap-4"
             type="submit"
           >
             <MailOut className="h-6 w-6" />
-            Invite
+            Give access
           </button>
         </fieldset>
       </Form>
     </>
-  );
-}
-
-export function ErrorBoundary() {
-  const error = useRouteError();
-
-  // when true, this is what used to go to `CatchBoundary`
-  if (isRouteErrorResponse(error)) {
-    return (
-      <div>
-        <h1>Something went wrong</h1>
-        <p>Status: {error.status}</p>
-        <p>{error.data.message}</p>
-      </div>
-    );
-  }
-
-  // Don't forget to typecheck with your own logic.
-  // Any value can be thrown, not just errors!
-  const errorCaught =
-    error instanceof Error ? error : new Error("Unknown error");
-
-  return (
-    <div className="card bg-base-100">
-      <div className="card-body">
-        <h2 className="card-title">Error</h2>
-        <p>Message: {errorCaught.message}</p>
-
-        <pre>{errorCaught.stack}</pre>
-      </div>
-    </div>
   );
 }

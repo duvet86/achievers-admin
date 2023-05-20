@@ -5,7 +5,6 @@ import { expect } from "@playwright/test";
 export class UserForm {
   private page: Page;
 
-  label: Locator;
   profilePicture: Locator;
 
   emailInput: Locator;
@@ -28,7 +27,6 @@ export class UserForm {
   constructor(page: Page) {
     this.page = page;
 
-    this.label = page.getByRole("heading", { name: "edit info" });
     this.profilePicture = page.getByRole("figure");
 
     this.emailInput = page.getByLabel("Email", { exact: true });
@@ -94,10 +92,6 @@ export class UserForm {
 
 class UserFormAssertions {
   constructor(private userForm: UserForm) {}
-
-  async toHaveTitle(): Promise<void> {
-    await expect(this.userForm.label).toBeVisible();
-  }
 
   async toHaveProfilePicture(): Promise<void> {
     await expect(this.userForm.profilePicture).toBeVisible();

@@ -4,7 +4,6 @@ import { getTokenInfoAsync } from "./session.server";
 
 export const MICROSOFT_GRAPH_V1_BASEURL = "https://graph.microsoft.com/v1.0";
 export const APP_ID = "35499ecd-d259-4e81-9a12-e503a69b91b1";
-export const WEB_APP_URL = "https://achievers-webapp.azurewebsites.net";
 export const ACHIEVERS_DOMAIN = "achieversclubwa.org.au";
 
 export enum Roles {

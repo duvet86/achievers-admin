@@ -12,7 +12,7 @@ function getLinks(isAdmin: boolean) {
     ? [
         {
           value: "/users",
-          label: "Users",
+          label: "Mentors",
         },
         {
           value: "/chapters",

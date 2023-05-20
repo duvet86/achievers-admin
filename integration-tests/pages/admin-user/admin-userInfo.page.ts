@@ -1,15 +1,18 @@
 import type { Locator, Page } from "@playwright/test";
 
+import { expect } from "@playwright/test";
+
 import { UserForm } from "./UserForm";
-import { RoleForm } from "./RoleForm";
 import { ChapterForm } from "./ChapterForm";
 
 export class AdminUserPage {
   private page: Page;
 
   userForm: UserForm;
-  roleForm: RoleForm;
   chapterForm: ChapterForm;
+
+  label: Locator;
+  noAccessText: Locator;
 
   eoiProfileLink: Locator;
   welcomeCallLink: Locator;
@@ -20,12 +23,16 @@ export class AdminUserPage {
   approvalByMRCLink: Locator;
   volunteerAgreementLink: Locator;
 
+  expect: AdminUserPageAssertions;
+
   constructor(page: Page) {
     this.page = page;
 
     this.userForm = new UserForm(page);
-    this.roleForm = new RoleForm(page);
     this.chapterForm = new ChapterForm(page);
+
+    this.label = this.page.getByRole("heading", { name: "Edit mentor info" });
+    this.noAccessText = this.page.getByTitle("No access");
 
     this.eoiProfileLink = this.page
       .getByRole("row", { name: "Expression of interest" })
@@ -71,6 +78,8 @@ export class AdminUserPage {
     this.volunteerAgreementLink = this.page.getByRole("row", {
       name: "Volunteer agreement",
     });
+
+    this.expect = new AdminUserPageAssertions(this);
   }
 
   async goToEOIProfile(): Promise<void> {
@@ -103,5 +112,26 @@ export class AdminUserPage {
 
   async goToVolunteerAgreementLink(): Promise<void> {
     await this.volunteerAgreementLink.click();
+  }
+
+  async goToGiveAccessLink(): Promise<void> {
+    await this.page.getByTitle("actions").click();
+    await this.page
+      .getByRole("link", {
+        name: "Give access",
+      })
+      .click();
+  }
+}
+
+class AdminUserPageAssertions {
+  constructor(private adminUserPage: AdminUserPage) {}
+
+  async toHaveTitle(): Promise<void> {
+    await expect(this.adminUserPage.label).toBeVisible();
+  }
+
+  async toHaveNoAccessWarning(): Promise<void> {
+    await expect(this.adminUserPage.noAccessText).toBeVisible();
   }
 }

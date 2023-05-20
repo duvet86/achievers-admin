@@ -88,7 +88,7 @@ export async function action({ request }: ActionArgs) {
   } else if (nextPageSubmit !== undefined && pageNumber < totalPageCount) {
     currentPageNumber = pageNumber + 1;
   } else if (pageNumberSubmit !== undefined) {
-    currentPageNumber = pageNumber;
+    currentPageNumber = Number(pageNumberSubmit);
   }
 
   const users = await getUsersAsync(
@@ -246,7 +246,7 @@ export default function SelectChapter() {
               <button
                 key={index}
                 name="pageNumberBtn"
-                value="pageNumberBtn"
+                value={index}
                 className={
                   currentPageNumber === index
                     ? "btn-outline btn-active btn "

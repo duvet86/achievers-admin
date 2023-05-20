@@ -35,7 +35,8 @@ test.describe("Admin", () => {
 
     await usersListPage.goToEditUser();
 
-    await userInfoPage.userForm.expect.toHaveTitle();
+    await userInfoPage.expect.toHaveTitle();
+
     await userInfoPage.userForm.expect.toHaveProfilePicture();
     await userInfoPage.userForm.expect.toHaveValues(
       "test@test.com",
@@ -54,8 +55,7 @@ test.describe("Admin", () => {
       ""
     );
 
-    await userInfoPage.roleForm.expect.toHaveTableHeaders();
-    await userInfoPage.roleForm.expect.toHaveNoRolesCell();
+    await userInfoPage.expect.toHaveNoAccessWarning();
 
     await userInfoPage.chapterForm.expect.toHaveTableHeaders();
     await userInfoPage.chapterForm.expect.toHaveTableRow();
