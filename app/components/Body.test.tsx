@@ -12,6 +12,7 @@ describe("Body", () => {
         <Body
           isAdmin
           version="1"
+          environment="local"
           currentUser={{
             appRoleAssignments: [],
             displayName: "",
@@ -35,6 +36,7 @@ describe("Body", () => {
         <Body
           isAdmin
           version="1"
+          environment="local"
           currentUser={{
             appRoleAssignments: [],
             displayName: "",

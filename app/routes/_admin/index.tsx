@@ -9,6 +9,7 @@ import {
   getCurrentUserADIdAsync,
   Roles,
   version,
+  getEnvironment,
 } from "~/services";
 
 import { Body } from "~/components";
@@ -33,6 +34,7 @@ export async function loader({ request }: LoaderArgs) {
 
   return json({
     isAdmin: true,
+    environment: getEnvironment(request),
     currentUser: azureUser,
     version,
   });

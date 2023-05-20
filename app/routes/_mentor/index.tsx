@@ -10,6 +10,7 @@ import {
   Roles,
   version,
   getUserByAzureADIdAsync,
+  getEnvironment,
 } from "~/services";
 
 import { Body } from "~/components";
@@ -36,6 +37,7 @@ export async function loader({ request }: LoaderArgs) {
     hasCompletedVolunteerAgreement: user.volunteerAgreementSignedOn !== null,
     currentUser: azureUser,
     version,
+    environment: getEnvironment(request),
   });
 }
 
