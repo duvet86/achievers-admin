@@ -49,6 +49,11 @@ exports[`Navbar > Navbar snapshot 1`] = `
           >
             Achievers WA
           </span>
+          <span
+            class="badge badge-lg ml-2"
+          >
+            local
+          </span>
         </a>
       </div>
       <div

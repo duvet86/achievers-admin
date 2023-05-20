@@ -8,3 +8,5 @@ export interface TokenInfo {
   expiresOn: string;
   refreshToken: string | null;
 }
+
+export type Environment = "local" | "staging" | "production";

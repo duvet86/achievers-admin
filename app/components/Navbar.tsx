@@ -1,4 +1,4 @@
-import type { AzureUserWebAppWithRole } from "~/services";
+import type { AzureUserWebAppWithRole, Environment } from "~/services";
 
 import { Link } from "@remix-run/react";
 
@@ -6,9 +6,12 @@ import { ProfileCircle, Menu, LogOut } from "iconoir-react";
 
 interface Props {
   currentUser: AzureUserWebAppWithRole;
+  environment: Environment;
 }
 
-export function Navbar({ currentUser }: Props) {
+export function Navbar({ currentUser, environment }: Props) {
+  const showEnvBadge = environment === "local" || environment === "staging";
+
   return (
     <nav className="navbar absolute left-0 top-0 h-16 bg-primary text-primary-content shadow-md">
       <div className="flex-none lg:hidden">
@@ -26,6 +29,9 @@ export function Navbar({ currentUser }: Props) {
           <span className="text-xl font-semibold tracking-tight">
             Achievers WA
           </span>
+          {showEnvBadge && (
+            <span className="badge badge-lg ml-2">{environment}</span>
+          )}
         </Link>
       </div>
 

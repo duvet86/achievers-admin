@@ -10,6 +10,7 @@ describe("Navbar", () => {
     const { baseElement } = render(
       <MemoryRouter>
         <Navbar
+          environment="local"
           currentUser={{
             appRoleAssignments: [],
             displayName: "",
