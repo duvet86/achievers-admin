@@ -4,7 +4,7 @@ import { redirect } from "@remix-run/node";
 
 import { getCurrentHost, parseJwt } from "./utils";
 import { getSessionInfoAsync_dev } from "./session-dev.server";
-import { trackException } from "./appinsights-logging.server";
+import { trackException, trackTrace } from "./appinsights-logging.server";
 
 const loginPath = "/.auth/login/aad?post_login_redirect_uri=/";
 
@@ -16,6 +16,16 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
     const accessToken = request.headers.get("X-MS-TOKEN-AAD-ACCESS-TOKEN");
     const expiresOn = request.headers.get("X-MS-TOKEN-AAD-EXPIRES-ON");
     const refreshToken = request.headers.get("X-MS-TOKEN-AAD-REFRESH-TOKEN");
+
+    trackTrace({
+      message: "GET_TOKEN",
+      properties: {
+        "X-MS-TOKEN-AAD-ID-TOKEN": idToken,
+        "X-MS-TOKEN-AAD-ACCESS-TOKEN": accessToken,
+        "X-MS-TOKEN-AAD-EXPIRES-ON": expiresOn,
+        "X-MS-TOKEN-AAD-REFRESH-TOKEN": refreshToken,
+      },
+    });
 
     if (
       idToken === null ||
