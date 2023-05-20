@@ -159,7 +159,7 @@ exports[`Body > Body snapshot admin 1`] = `
               class="mb-2 justify-between rounded bg-base-300 font-semibold"
               href="/users"
             >
-              Users
+              Mentors
               <svg
                 class="h-6 w-6"
                 color="currentColor"
@@ -377,7 +377,7 @@ exports[`Body > Body snapshot mentor 1`] = `
               class="mb-2 justify-between rounded bg-base-300 font-semibold"
               href="/users"
             >
-              Users
+              Mentors
               <svg
                 class="h-6 w-6"
                 color="currentColor"

@@ -6,7 +6,7 @@ import { MemoryRouter } from "react-router";
 import { Drawer } from "~/components";
 
 describe("Drawer", () => {
-  it("should links for admin", async () => {
+  it("should display links for admin", async () => {
     render(
       <MemoryRouter>
         <Drawer isAdmin version="1" />
@@ -16,14 +16,14 @@ describe("Drawer", () => {
     const links: HTMLAnchorElement[] = screen.getAllByRole("link");
 
     expect(links.length).toBe(2);
-    expect(links[0]).toHaveTextContent("Users");
+    expect(links[0]).toHaveTextContent("Mentors");
     expect(links[0]).toHaveAttribute("href", "/users");
 
     expect(links[1]).toHaveTextContent("Chapters");
     expect(links[1]).toHaveAttribute("href", "/chapters");
   });
 
-  it("should links for mentor", async () => {
+  it("should display links for mentor", async () => {
     render(
       <MemoryRouter>
         <Drawer isAdmin={false} version="1" />
