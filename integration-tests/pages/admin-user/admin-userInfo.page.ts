@@ -116,9 +116,11 @@ export class AdminUserPage {
 
   async goToGiveAccessLink(): Promise<void> {
     await this.page.getByTitle("actions").click();
-    await this.page.getByRole("link", {
-      name: "Give access"
-    }).click();
+    await this.page
+      .getByRole("link", {
+        name: "Give access",
+      })
+      .click();
   }
 }
 

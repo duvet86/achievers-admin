@@ -27,7 +27,6 @@ export class UserForm {
   constructor(page: Page) {
     this.page = page;
 
-    
     this.profilePicture = page.getByRole("figure");
 
     this.emailInput = page.getByLabel("Email", { exact: true });
