@@ -60,6 +60,11 @@ exports[`Body > Body snapshot admin 1`] = `
               >
                 Achievers WA
               </span>
+              <span
+                class="badge badge-lg ml-2"
+              >
+                local
+              </span>
             </a>
           </div>
           <div
@@ -272,6 +277,11 @@ exports[`Body > Body snapshot mentor 1`] = `
                 class="text-xl font-semibold tracking-tight"
               >
                 Achievers WA
+              </span>
+              <span
+                class="badge badge-lg ml-2"
+              >
+                local
               </span>
             </a>
           </div>
