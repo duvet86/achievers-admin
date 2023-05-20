@@ -144,8 +144,10 @@ export default function Chapter() {
 
       <Title>Edit info</Title>
 
-      <div className="flex h-full">
+      <div className="h-full md:flex">
         <EditUserInfoForm loaderData={loaderData} transition={transition} />
+
+        <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700 md:hidden" />
 
         <div className="flex-1 overflow-y-auto">
           <CheckList loaderData={loaderData} />

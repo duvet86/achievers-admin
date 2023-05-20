@@ -88,7 +88,7 @@ export class UserForm {
   }
 
   async saveForm(): Promise<void> {
-    await this.page.getByRole("button", { name: "SAVE" }).click();
+    await this.page.getByRole("button", { name: "Save" }).click();
   }
 }
 

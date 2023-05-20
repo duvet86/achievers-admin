@@ -6,5 +6,5 @@ export interface TokenInfo {
   idToken: string;
   accessToken: string;
   expiresOn: string;
-  refreshToken: string;
+  refreshToken: string | null;
 }

@@ -3,8 +3,8 @@ import type { TokenInfo } from "./models";
 import { redirect } from "@remix-run/node";
 
 import { getCurrentHost, parseJwt } from "./utils";
-import { getSessionInfoAsync_dev } from "./session-dev.server";
 import { trackException } from "./appinsights-logging.server";
+import { getSessionInfoAsync_dev } from "./session-dev.server";
 
 const loginPath = "/.auth/login/aad?post_login_redirect_uri=/";
 
@@ -17,16 +17,19 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
     const expiresOn = request.headers.get("X-MS-TOKEN-AAD-EXPIRES-ON");
     const refreshToken = request.headers.get("X-MS-TOKEN-AAD-REFRESH-TOKEN");
 
-    if (
-      idToken === null ||
-      accessToken === null ||
-      expiresOn === null ||
-      refreshToken === null
-    ) {
+    if (refreshToken === null) {
+      trackException({
+        exception: new Error(
+          "Missing refresh token. See: https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-oauth-tokens#refresh-auth-tokens"
+        ),
+      });
+    }
+
+    if (idToken === null || accessToken === null || expiresOn === null) {
       throw redirect(getCurrentHost(request) + loginPath);
     }
 
-    if (new Date() >= new Date(expiresOn)) {
+    if (refreshToken !== null && new Date() >= new Date(expiresOn)) {
       const resp = await fetch(getCurrentHost(request) + "/.auth/refresh");
       if (!resp.ok) {
         trackException({

@@ -188,7 +188,7 @@ export default function SelectChapter() {
             <tbody>
               {pageUsers.length === 0 && (
                 <tr>
-                  <td className="border p-2" colSpan={4}>
+                  <td className="border p-2" colSpan={5}>
                     <i>No users</i>
                   </td>
                 </tr>
