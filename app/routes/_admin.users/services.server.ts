@@ -58,63 +58,59 @@ export async function getUsersAsync(
       },
     },
     where: {
-      OR: [
-        {
-          welcomeCall: allUsers
-            ? undefined
-            : {
+      OR: allUsers
+        ? undefined
+        : [
+            {
+              welcomeCall: {
                 is: null,
               },
-        },
-        {
-          references: allUsers
-            ? undefined
-            : {
+            },
+            {
+              references: {
                 some: {
                   calledOndate: {
-                    equals: undefined,
+                    equals: null,
                   },
                 },
               },
-        },
-        {
-          induction: allUsers
-            ? undefined
-            : {
+            },
+            {
+              induction: {
                 is: null,
               },
-        },
-        {
-          policeCheck: allUsers
-            ? undefined
-            : {
+            },
+            {
+              policeCheck: {
                 is: null,
               },
-        },
-        {
-          wwcCheck: allUsers
-            ? undefined
-            : {
+            },
+            {
+              wwcCheck: {
                 is: null,
               },
-        },
-        {
-          approvalbyMRC: allUsers
-            ? undefined
-            : {
+            },
+            {
+              approvalbyMRC: {
                 is: null,
               },
-        },
-        {
-          firstName: {
-            contains: searchTerm?.trim(),
+            },
+          ],
+      AND: {
+        OR: [
+          {
+            firstName: {
+              contains: searchTerm?.trim(),
+            },
           },
-          lastName: {
-            contains: searchTerm?.trim(),
+          {
+            lastName: {
+              contains: searchTerm?.trim(),
+            },
           },
-          email: { contains: searchTerm?.trim() },
-        },
-      ],
+          { email: { contains: searchTerm?.trim() } },
+        ],
+      },
     },
     orderBy: {
       firstName: "desc",

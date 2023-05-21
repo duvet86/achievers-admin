@@ -106,7 +106,7 @@ describe("Admin /users", () => {
     render(<RemixStub />);
 
     const link = await screen.findByRole("link", {
-      name: "Import mentors from file",
+      name: "Import mentors",
     });
 
     expect(link).toBeVisible();

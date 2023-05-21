@@ -2,7 +2,11 @@ import type { TokenInfo } from "./models";
 
 import path from "node:path";
 
-import { createCookie, createFileSessionStorage } from "@remix-run/node";
+import {
+  createCookie,
+  createFileSessionStorage,
+  redirect,
+} from "@remix-run/node";
 import { Authenticator } from "remix-auth";
 import invariant from "tiny-invariant";
 
@@ -37,6 +41,13 @@ export async function getSessionInfoAsync_dev(
     failureRedirect: "/auth/microsoft",
   });
 
+  if (
+    new Date(tokenInfo.issuedAt) >=
+    new Date(new Date().setSeconds(Number(tokenInfo.expiresOn)))
+  ) {
+    throw redirect("/logout");
+  }
+
   return tokenInfo;
 }
 
@@ -63,6 +74,7 @@ const microsoftStrategy = new MicrosoftStrategy(
     accessToken: accessToken,
     expiresOn: extraParams.expires_in.toString(),
     refreshToken: refreshToken,
+    issuedAt: new Date().toISOString(),
   })
 );
 

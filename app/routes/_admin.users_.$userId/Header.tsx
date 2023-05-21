@@ -32,14 +32,14 @@ export default function Header({ mentorAppRoleAssignmentId }: Props) {
           </label>
           <ul
             tabIndex={0}
-            className="dropdown-content menu rounded-box w-56 bg-base-100 p-2 shadow"
+            className="dropdown-content menu rounded-box w-56 border border-base-300 bg-base-100 p-2 shadow"
           >
             <li>
               {mentorAppRoleAssignmentId === null ? (
                 <Link
                   to="give-access"
                   relative="path"
-                  className="gap-4 font-semibold uppercase text-success"
+                  className="gap-4 font-semibold text-success"
                 >
                   <MailOut className="h-6 w-6" />
                   Give access
@@ -48,7 +48,7 @@ export default function Header({ mentorAppRoleAssignmentId }: Props) {
                 <Link
                   to={`revoke-access/${mentorAppRoleAssignmentId}`}
                   relative="path"
-                  className="gap-4 font-semibold uppercase text-error"
+                  className="gap-4 font-semibold text-error"
                 >
                   <Cancel className="h-6 w-6" />
                   Archive mentor

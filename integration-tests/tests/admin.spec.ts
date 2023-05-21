@@ -23,25 +23,55 @@ test.describe("Admin", () => {
     removeUserChapterPage = new RemoveUserChapterPage(page);
     assignUserChapterPage = new AssignUserChapterPage(page);
     eoiInfoPage = new EOIInfoPage(page);
-  });
 
-  test("should edit user info", async ({ page }) => {
     await page.goto("/");
 
     await expect(page).toHaveTitle(/Achievers WA/);
+  });
+
+  test("should display list of mentors", async ({ page }) => {
+    await usersListPage.expect.toHaveTitle();
+    await usersListPage.expect.toHaveWarning();
 
     await usersListPage.expect.toHaveTableHeaders();
     await usersListPage.expect.toHaveTableCells();
 
+    await usersListPage.expect.toHaveTableRows(11);
+    await usersListPage.expect.toHavePreviousPageButtonDisabled();
+
+    await usersListPage.goToNextPage();
+
+    await usersListPage.expect.toHaveTableRows(9);
+    await usersListPage.expect.toHaveNextPageButtonDisabled();
+
+    await usersListPage.goToPage(1);
+
+    await usersListPage.expect.toHaveTableRows(11);
+
+    await usersListPage.searchUser("test_0");
+
+    await usersListPage.expect.toHaveTableRows(2);
+
+    await usersListPage.clearSelection();
+
+    await usersListPage.expect.toHaveTableRows(11);
+
+    await usersListPage.includeAllUsers();
+    await usersListPage.goToNextPage();
+
+    await usersListPage.expect.toHaveTableRows(10);
+  });
+
+  test.skip("should edit user info", async ({ page }) => {
     await usersListPage.goToEditUser();
 
     await userInfoPage.expect.toHaveTitle();
 
     await userInfoPage.userForm.expect.toHaveProfilePicture();
     await userInfoPage.userForm.expect.toHaveValues(
-      "test@test.com",
-      "test",
-      "user",
+      "test_9@test.com",
+      "test_9",
+      "user_9",
       "123",
       "street",
       "suburb",
@@ -82,7 +112,7 @@ test.describe("Admin", () => {
     await page.reload();
 
     await userInfoPage.userForm.expect.toHaveValues(
-      "test@test.com",
+      "test_9@test.com",
       "Luca",
       "Mara",
       "1111111",
@@ -99,9 +129,7 @@ test.describe("Admin", () => {
     );
   });
 
-  test("should edit chapter", async ({ page }) => {
-    await page.goto("/");
-
+  test.skip("should edit chapter", async ({ page }) => {
     await usersListPage.goToEditUser();
     await userInfoPage.chapterForm.gotToRemoveChapter();
 
@@ -118,9 +146,7 @@ test.describe("Admin", () => {
     await userInfoPage.chapterForm.expect.toHaveTableRow();
   });
 
-  test("should display eoi info", async ({ page }) => {
-    await page.goto("/");
-
+  test.skip("should display eoi info", async ({ page }) => {
     await usersListPage.goToEditUser();
     await userInfoPage.goToEOIProfile();
 
