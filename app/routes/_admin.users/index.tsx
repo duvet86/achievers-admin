@@ -11,6 +11,7 @@ import {
   FastArrowLeft,
   FastArrowRight,
   WarningTriangle,
+  NavArrowDown,
 } from "iconoir-react";
 
 import { Input, Title } from "~/components";
@@ -77,6 +78,10 @@ export async function action({ request }: ActionArgs) {
   const count = await getUsersCountAsync();
   const totalPageCount = Math.ceil(count / 10);
 
+  if (searchTerm?.trim() === "") {
+    searchTerm = undefined;
+  }
+
   let currentPageNumber = 0;
   if (searchTermSubmit !== undefined) {
     currentPageNumber = 0;
@@ -120,13 +125,35 @@ export default function SelectChapter() {
 
   return (
     <>
-      <Title>Mentors</Title>
+      <div className="flex items-center">
+        <Title>Mentors</Title>
+        <div className="flex-1"></div>
+        <div className="dropdown-end dropdown">
+          <label title="actions" tabIndex={0} className="btn w-40 gap-2">
+            Actions
+            <NavArrowDown className="h-6 w-6" />
+          </label>
+          <ul
+            tabIndex={0}
+            className="dropdown-content menu rounded-box w-52 border border-base-300 bg-base-100 p-2 shadow"
+          >
+            <li>
+              <Link className="gap-4" to="import" relative="path">
+                <Import className="h-6 w-6" />
+                Import mentors
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </div>
 
-      <p className="mb-8 flex items-center gap-2">
+      <p title="checkWarning" className="mb-4 flex items-center gap-2">
         <WarningTriangle className="h-6 w-6 text-warning" />
         Only mentors with incomplete checks are displayed. Toggle the "Include
         all mentors" to include all of them.
       </p>
+
+      <hr className="mb-4" />
 
       <Form ref={formRef} method="post">
         <div className="mb-6 flex gap-6 align-middle">
@@ -164,10 +191,13 @@ export default function SelectChapter() {
           </button>
         </div>
 
-        <div className="h-96 overflow-auto">
+        <div className="overflow-auto">
           <table className="table w-full">
             <thead>
               <tr>
+                <th align="left" className="w-12 p-2">
+                  #
+                </th>
                 <th align="left" className="p-2">
                   Full Name
                 </th>
@@ -188,21 +218,27 @@ export default function SelectChapter() {
             <tbody>
               {pageUsers.length === 0 && (
                 <tr>
-                  <td className="border p-2" colSpan={5}>
+                  <td className="border p-2" colSpan={6}>
                     <i>No users</i>
                   </td>
                 </tr>
               )}
               {pageUsers.map(
-                ({
-                  id,
-                  firstName,
-                  lastName,
-                  email,
-                  userAtChapter,
-                  checksCompleted,
-                }) => (
+                (
+                  {
+                    id,
+                    firstName,
+                    lastName,
+                    email,
+                    userAtChapter,
+                    checksCompleted,
+                  },
+                  index
+                ) => (
                   <tr key={id}>
+                    <td className="border p-2">
+                      {index + 1 + 10 * currentPageNumber}
+                    </td>
                     <td className="border p-2">
                       {firstName} {lastName}
                     </td>
@@ -233,10 +269,12 @@ export default function SelectChapter() {
 
         <div className="btn-group mt-4">
           <button
+            type="submit"
             name="previousBtn"
             value="previousBtn"
             className="btn-outline btn"
             disabled={currentPageNumber === 0}
+            title="previous"
           >
             <FastArrowLeft />
           </button>
@@ -245,6 +283,7 @@ export default function SelectChapter() {
             .map((_, index) => (
               <button
                 key={index}
+                type="submit"
                 name="pageNumberBtn"
                 value={index}
                 className={
@@ -257,24 +296,19 @@ export default function SelectChapter() {
               </button>
             ))}
           <button
+            type="submit"
             name="nextBtn"
             value="nextBtn"
             className="btn-outline btn"
             disabled={
               currentPageNumber === totalPageCount - 1 || totalPageCount === 0
             }
+            title="next"
           >
             <FastArrowRight />
           </button>
         </div>
       </Form>
-
-      <div className="mt-10 flex justify-end">
-        <Link className="btn-primary btn w-96 gap-2" to="import">
-          <Import className="h-6 w-6" />
-          Import mentors from file
-        </Link>
-      </div>
     </>
   );
 }

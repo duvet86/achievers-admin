@@ -6,6 +6,7 @@ export interface TokenInfo {
   idToken: string;
   accessToken: string;
   expiresOn: string;
+  issuedAt: string;
   refreshToken: string | null;
 }
 

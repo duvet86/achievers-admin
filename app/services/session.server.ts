@@ -45,6 +45,7 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
       accessToken,
       expiresOn,
       refreshToken,
+      issuedAt: new Date().toISOString(),
     };
   }
 }
