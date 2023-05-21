@@ -42,8 +42,10 @@ export async function getSessionInfoAsync_dev(
   });
 
   if (
-    new Date(tokenInfo.issuedAt) >=
-    new Date(new Date().setSeconds(Number(tokenInfo.expiresOn)))
+    new Date() >=
+    new Date(
+      new Date(tokenInfo.issuedAt).setSeconds(Number(tokenInfo.expiresOn))
+    )
   ) {
     throw redirect("/logout");
   }
