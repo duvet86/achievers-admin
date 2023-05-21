@@ -82,7 +82,6 @@ export const action = async ({ request }: ActionArgs) => {
     // await prisma.$transaction(async (tx) => {
     //   for (let i = 0; i < newUsers.length; i++) {
     //     const chapter = chapters.find((c) => c.name === newUsers[i]["Chapter"]);
-
     //     await tx.user.create({
     //       addressPostcode: "",
     //       addressState: "",
