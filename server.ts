@@ -1,12 +1,15 @@
+import path from "node:path";
+
 import * as appInsights from "applicationinsights";
 
-import path from "path";
 import express from "express";
 import compression from "compression";
 import morgan from "morgan";
 
 import { broadcastDevReady } from "@remix-run/node";
 import { createRequestHandler } from "@remix-run/express";
+
+import { prisma } from "./app/db.server";
 
 declare global {
   var __appinsightsClient__: appInsights.TelemetryClient | undefined;
@@ -58,13 +61,25 @@ app.all(
       })
 );
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Express server listening on port ${port}`);
 
   if (process.env.NODE_ENV === "development") {
     broadcastDevReady(build);
   }
 });
+
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received: closing HTTP server');
+  
+  server.close(() => {
+    console.log('HTTP server closed');
+    
+    prisma.$disconnect().then(() => {
+      console.log('DB connection closed');
+    });
+  })
+})
 
 function purgeRequireCache() {
   // purge require cache on requests for "server side HMR" this won't let
