@@ -9,8 +9,6 @@ import morgan from "morgan";
 import { broadcastDevReady } from "@remix-run/node";
 import { createRequestHandler } from "@remix-run/express";
 
-import { prisma } from "./app/db.server";
-
 declare global {
   var __appinsightsClient__: appInsights.TelemetryClient | undefined;
 }
@@ -74,10 +72,6 @@ process.on("SIGTERM", () => {
 
   server.close(() => {
     console.log("HTTP server closed");
-
-    prisma.$disconnect().then(() => {
-      console.log("DB connection closed");
-    });
   });
 });
 
