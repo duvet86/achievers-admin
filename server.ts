@@ -1,6 +1,7 @@
+import path from "node:path";
+
 import * as appInsights from "applicationinsights";
 
-import path from "path";
 import express from "express";
 import compression from "compression";
 import morgan from "morgan";
@@ -58,12 +59,20 @@ app.all(
       })
 );
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Express server listening on port ${port}`);
 
   if (process.env.NODE_ENV === "development") {
     broadcastDevReady(build);
   }
+});
+
+process.on("SIGTERM", () => {
+  console.log("SIGTERM signal received: closing HTTP server");
+
+  server.close(() => {
+    console.log("HTTP server closed");
+  });
 });
 
 function purgeRequireCache() {
