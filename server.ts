@@ -69,17 +69,17 @@ const server = app.listen(port, () => {
   }
 });
 
-process.on('SIGTERM', () => {
-  console.log('SIGTERM signal received: closing HTTP server');
-  
+process.on("SIGTERM", () => {
+  console.log("SIGTERM signal received: closing HTTP server");
+
   server.close(() => {
-    console.log('HTTP server closed');
-    
+    console.log("HTTP server closed");
+
     prisma.$disconnect().then(() => {
-      console.log('DB connection closed');
+      console.log("DB connection closed");
     });
-  })
-})
+  });
+});
 
 function purgeRequireCache() {
   // purge require cache on requests for "server side HMR" this won't let
