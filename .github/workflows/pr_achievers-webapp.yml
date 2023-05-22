@@ -18,7 +18,7 @@ env:
   REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
   OBJECT_ID: ${{ secrets.OBJECT_ID }}
   WEBAPP_NAME: "achievers-webapp"
-  SLOT_NAME: "stg"
+  SLOT_NAME: "dev"
   RESOURCE_GROUP: "achievers-rg"
 
 jobs:
