@@ -18,7 +18,7 @@ env:
   REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
   OBJECT_ID: ${{ secrets.OBJECT_ID }}
   WEBAPP_NAME: "achievers-webapp"
-  SLOT_NAME: "dev"
+  SLOT_NAME: "stg"
   RESOURCE_GROUP: "achievers-rg"
 
 jobs:
@@ -145,7 +145,7 @@ jobs:
         with:
           app-name: ${{ env.WEBAPP_NAME }}
           slot-name: ${{ env.SLOT_NAME }}
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_c953878f48444a0a8b3c06bde1a73ce4 }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_f041e0974b7749aba5de0a00160f71dd }}
           images: duvet86/achievers-app:latest
 
   restart-app:
