@@ -17,60 +17,25 @@ export interface SpeadsheetUser {
   "Approved by MRC?": BooleanAnswer;
   Chapter: Chapter;
   "Role(s)": Roles[];
-  "Committee Member": BooleanAnswer;
-  "Current Member": BooleanAnswer;
+  "Committee Member": BooleanAnswer; // Not used.
+  "Current Member": BooleanAnswer; // Not used.
   "Induction Date": string;
-  "Active Mentor": BooleanAnswer;
-  Attendance: Attendance;
-  Mentee: string;
-  "Mentee Year Level": string;
+  "Active Mentor": BooleanAnswer; // Not used.
+  Attendance: Attendance; // Not used.
+  Mentee: string; // Not used.
+  "Mentee Year Level": string; // Not used.
   "Police Check Renewal Date": string;
   "WWC Check Renewal Date": string;
   "Volunteer Agreement Complete": BooleanAnswer;
-  "Board Member": BooleanAnswer;
+  "Board Member": BooleanAnswer; // Not used.
   "Emergency Contact Name": string;
   "Emergency Contact Number": number;
   "Emergency Contact Address": string;
   "Emergency Contact Relationship": string;
-  "Director Identification Number": string;
-  "Board Term Expiry": string;
+  "Director Identification Number": string; // Not used.
+  "Board Term Expiry": string; // Not used.
   "End Date": string;
   Occupation: string;
-  "Vaccination Status": VaccinationStatus;
+  "Vaccination Status": VaccinationStatus; // Not used.
   "WWC Check Number": string;
-}
-
-export interface DBUser {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  additionalEmail: string;
-  mobile: string;
-  address: string;
-  dateOfBirth: Date;
-  isOver18: boolean;
-  isPublishPhotoApproved: boolean;
-  isApprovedByMRC: boolean;
-  isCommiteeMemeber: boolean;
-  isCurrentMemeber: boolean;
-  inductionDate: Date;
-  isActiveMentor: boolean;
-  attendance: string | null;
-  vaccinationStatus: string | null;
-  policeCheckRenewalDate: Date;
-  WWCCheckRenewalDate: Date;
-  WWCCheckNumber: string;
-  isVolunteerAgreementComplete: boolean;
-  isBoardMemeber: boolean;
-  emergencyContactName: string;
-  emergencyContactNumber: string;
-  emergencyContactAddress: string;
-  emergencyContactRelationship: string;
-  occupation: string | null;
-  boardTermExpiryDate: Date | null;
-  directorIdentificationNumber: string | null;
-  endDate: Date;
-  createdAt: Date;
-  updatedAt: Date;
 }

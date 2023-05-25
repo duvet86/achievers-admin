@@ -5,16 +5,19 @@ import {
   unstable_parseMultipartFormData,
   json,
 } from "@remix-run/node";
-import { Form, useActionData, useNavigation } from "@remix-run/react";
+import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 
-import { isEmail, isStringNullOrEmpty, getAzureUsersAsync } from "~/services";
+import { isEmail, isStringNullOrEmpty } from "~/services";
 
-import { Import } from "iconoir-react";
+import { Import, PageEdit } from "iconoir-react";
 
-import { LoadingSpinner, Title, BackHeader } from "~/components";
+import { LoadingSpinner, Title, BackHeader, SubTitle } from "~/components";
 
-import { readExcelFileAsync, getChaptersAsync } from "./services.server";
-import { prisma } from "~/db.server";
+import {
+  readExcelFileAsync,
+  getCurrentMentorsAsync,
+  importSpreadsheetMentorsAsync,
+} from "./services.server";
 
 export const action = async ({ request }: ActionArgs) => {
   const uploadHandler = unstable_createMemoryUploadHandler({
@@ -43,7 +46,7 @@ export const action = async ({ request }: ActionArgs) => {
     });
   }
 
-  const chapters = await getChaptersAsync();
+  const currentMentors = await getCurrentMentorsAsync();
 
   const incorrectEmails = fileUsers.reduce<string[]>((res, fileUser, index) => {
     if (
@@ -62,9 +65,7 @@ export const action = async ({ request }: ActionArgs) => {
     });
   }
 
-  const azureUsers = await getAzureUsersAsync(request);
-
-  const azureUsersLookup = azureUsers.reduce<Record<string, string>>(
+  const existingMentorsLookup = currentMentors.reduce<Record<string, string>>(
     (res, { email }) => {
       res[email.toLowerCase()] = email.toLowerCase();
 
@@ -75,46 +76,17 @@ export const action = async ({ request }: ActionArgs) => {
 
   const newUsers = fileUsers.filter(
     (fileUser) =>
-      azureUsersLookup[fileUser["Email address"].toLowerCase()] === undefined
+      existingMentorsLookup[fileUser["Email address"].toLowerCase()] ===
+      undefined
   );
 
   try {
-    // await prisma.$transaction(async (tx) => {
-    //   for (let i = 0; i < newUsers.length; i++) {
-    //     const chapter = chapters.find((c) => c.name === newUsers[i]["Chapter"]);
-    //     await tx.user.create({
-    //       addressPostcode: "",
-    //       addressState: "",
-    //       addressSuburb: "",
-    //       email: newUsers[i]["Email address"],
-    //       addressStreet: newUsers[i]["Residential Address"],
-    //       additionalEmail: newUsers[i][
-    //         "Additional email addresses (for intranet access)"
-    //       ]
-    //         ? newUsers[i]["Additional email addresses (for intranet access)"]
-    //         : null,
-    //       dateOfBirth: new Date(newUsers[i]["Date of Birth"]),
-    //       emergencyContactAddress: newUsers[i]["Emergency Contact Address"],
-    //       emergencyContactName: newUsers[i]["Emergency Contact Name"],
-    //       emergencyContactNumber: newUsers[i]["Emergency Contact Name"],
-    //       emergencyContactRelationship:
-    //         newUsers[i]["Emergency Contact Relationship"],
-    //       endDate: newUsers[i]["End Date"]
-    //         ? new Date(newUsers[i]["End Date"])
-    //         : null,
-    //       firstName: newUsers[i]["First Name"],
-    //       azureADId: null,
-    //       lastName: newUsers[i]["Last Name"],
-    //       mobile: newUsers[i]["Mobile"].toString(),
-    //       userAtChapter: {
-    //         create: {
-    //           assignedBy: "import",
-    //           chapterId: chapter?.id ?? chapters[0].id,
-    //         },
-    //       },
-    //     });
-    //   }
-    // });
+    const users = await importSpreadsheetMentorsAsync(newUsers);
+
+    return json({
+      newUsers: users,
+      message: null,
+    });
   } catch (e: any) {
     console.error(e);
 
@@ -123,11 +95,6 @@ export const action = async ({ request }: ActionArgs) => {
       message: e.message,
     });
   }
-
-  return json({
-    newUsers,
-    message: null,
-  });
 };
 
 export default function Index() {
@@ -192,14 +159,57 @@ export default function Index() {
             <p>No new users to import.</p>
           )}
         </div>
-        <div className="ml-4">
-          {actionData?.newUsers.map((u, index) => (
-            <ul key={index} className="list-disc">
-              <li>{u["First Name"]}</li>
-              <li>{u["Last Name"]}</li>
-              <li>{u["Email address"]}</li>
-            </ul>
-          ))}
+
+        <SubTitle>Imported mentors</SubTitle>
+
+        <div className="overflow-auto">
+          <table className="table w-full">
+            <thead>
+              <tr>
+                <th align="left" className="w-12 p-2">
+                  #
+                </th>
+                <th align="left" className="p-2">
+                  Full Name
+                </th>
+                <th align="left" className="p-2">
+                  Email
+                </th>
+                <th align="right" className="p-2">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {!actionData && (
+                <tr>
+                  <td colSpan={3} className="border p-2">
+                    <i>No mentors imported</i>
+                  </td>
+                </tr>
+              )}
+              {actionData?.newUsers.map(
+                ({ id, firstName, lastName, email }, index) => (
+                  <tr key={id}>
+                    <td className="border p-2">{index + 1}</td>
+                    <td className="border p-2">
+                      {firstName} {lastName}
+                    </td>
+                    <td className="border p-2">{email}</td>
+                    <td className="border p-2">
+                      <Link
+                        to={`/users/${id.toString()}`}
+                        className="btn-success btn-xs btn w-full gap-2"
+                      >
+                        <PageEdit className="h-4 w-4" />
+                        Edit
+                      </Link>
+                    </td>
+                  </tr>
+                )
+              )}
+            </tbody>
+          </table>
         </div>
       </Form>
     </>
