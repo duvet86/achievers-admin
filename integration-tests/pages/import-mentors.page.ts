@@ -42,7 +42,7 @@ export class ImportMentorsPage {
   }
 
   async uploadFile(filePath: string) {
-    const fileChooserPromise = this.page.waitForEvent('filechooser');
+    const fileChooserPromise = this.page.waitForEvent("filechooser");
 
     await this.page.getByLabel("Upload a spreadsheet with new users").click();
 
@@ -55,7 +55,7 @@ export class ImportMentorsPage {
 }
 
 export class ImportMentorsPageAssertions {
-  constructor(private importMentorsPage: ImportMentorsPage) { }
+  constructor(private importMentorsPage: ImportMentorsPage) {}
 
   async toHaveTitle(): Promise<void> {
     await expect(this.importMentorsPage.title).toBeVisible();

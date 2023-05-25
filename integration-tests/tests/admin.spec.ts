@@ -70,7 +70,9 @@ test.describe("Admin", () => {
 
     await importMentorsPage.expect.toHaveTitle();
 
-    await importMentorsPage.uploadFile("./integration-tests/test-data/VolunteerDatabaseInfo.xlsx");
+    await importMentorsPage.uploadFile(
+      "./integration-tests/test-data/VolunteerDatabaseInfo.xlsx"
+    );
 
     await importMentorsPage.expect.toHaveTableHeaders();
     await importMentorsPage.expect.toHaveTableCells();
