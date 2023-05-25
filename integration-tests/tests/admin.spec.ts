@@ -7,6 +7,7 @@ import { AdminUserPage } from "../pages/admin-user/admin-userInfo.page";
 import { RemoveUserChapterPage } from "../pages/remove-user-chapter.page";
 import { AssignUserChapterPage } from "../pages/assign-user-chapter.page";
 import { EOIInfoPage } from "../pages/eoi.page";
+import { ImportMentorsPage } from "../pages/import-mentors.page";
 
 test.describe("Admin", () => {
   let usersListPage: AdminUsersPage;
@@ -14,6 +15,7 @@ test.describe("Admin", () => {
   let removeUserChapterPage: RemoveUserChapterPage;
   let assignUserChapterPage: AssignUserChapterPage;
   let eoiInfoPage: EOIInfoPage;
+  let importMentorsPage: ImportMentorsPage;
 
   test.beforeEach(async ({ page }) => {
     await createUserAsync();
@@ -23,6 +25,7 @@ test.describe("Admin", () => {
     removeUserChapterPage = new RemoveUserChapterPage(page);
     assignUserChapterPage = new AssignUserChapterPage(page);
     eoiInfoPage = new EOIInfoPage(page);
+    importMentorsPage = new ImportMentorsPage(page);
 
     await page.goto("/");
 
@@ -62,7 +65,20 @@ test.describe("Admin", () => {
     await usersListPage.expect.toHaveTableRows(10);
   });
 
-  test.skip("should edit user info", async ({ page }) => {
+  test("should import mentors from file", async ({ page }) => {
+    await usersListPage.goToImportMentorsFromFile();
+
+    await importMentorsPage.expect.toHaveTitle();
+
+    await importMentorsPage.uploadFile("./integration-tests/test-data/VolunteerDatabaseInfo.xlsx");
+
+    await importMentorsPage.expect.toHaveTableHeaders();
+    await importMentorsPage.expect.toHaveTableCells();
+
+    await importMentorsPage.expect.toHaveTableRows(4);
+  });
+
+  test("should edit user info", async ({ page }) => {
     await usersListPage.goToEditUser();
 
     await userInfoPage.expect.toHaveTitle();
@@ -129,7 +145,7 @@ test.describe("Admin", () => {
     );
   });
 
-  test.skip("should edit chapter", async ({ page }) => {
+  test("should edit chapter", async ({ page }) => {
     await usersListPage.goToEditUser();
     await userInfoPage.chapterForm.gotToRemoveChapter();
 
@@ -146,7 +162,7 @@ test.describe("Admin", () => {
     await userInfoPage.chapterForm.expect.toHaveTableRow();
   });
 
-  test.skip("should display eoi info", async ({ page }) => {
+  test("should display eoi info", async ({ page }) => {
     await usersListPage.goToEditUser();
     await userInfoPage.goToEOIProfile();
 
