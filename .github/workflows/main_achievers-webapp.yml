@@ -170,7 +170,7 @@ jobs:
         with:
           app-name: ${{ env.WEBAPP_NAME }}
           slot-name: ${{ env.SLOT_NAME }}
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_722c9c2985d84baaa2a748341874a71c }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_e4f1458d614f40f5947f467bb0e3f8a0 }}
           images: duvet86/achievers-app:latest
 
   swap-slots:
