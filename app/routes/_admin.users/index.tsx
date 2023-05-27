@@ -6,7 +6,8 @@ import { json } from "@remix-run/node";
 import { useRef } from "react";
 
 import {
-  Import,
+  DatabaseRestore,
+  DatabaseExport,
   PageEdit,
   FastArrowLeft,
   FastArrowRight,
@@ -138,10 +139,16 @@ export default function SelectChapter() {
             className="dropdown-content menu rounded-box w-52 border border-base-300 bg-base-100 p-2 shadow"
           >
             <li>
-              <Link className="gap-4" to="import" relative="path">
-                <Import className="h-6 w-6" />
+              <Link className="gap-4" to="import">
+                <DatabaseRestore className="h-6 w-6" />
                 Import mentors
               </Link>
+            </li>
+            <li>
+              <a className="gap-4" href="/users/export" download>
+                <DatabaseExport className="h-6 w-6" />
+                Export mentors
+              </a>
             </li>
           </ul>
         </div>

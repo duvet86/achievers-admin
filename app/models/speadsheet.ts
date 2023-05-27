@@ -1,5 +1,5 @@
 export type BooleanAnswer = "Yes" | "No";
-export type Chapter = "Girraween" | "Armadale";
+export type Chapter = "Girraween" | "Armadale" | "Butler";
 export type Roles = "Mentor" | "Mentee" | "Member" | "Unknown";
 export type Attendance = "Weekly" | "Fortnightly" | "Other";
 export type VaccinationStatus = "Confirmed" | "Unconfirmed";
@@ -16,7 +16,7 @@ export interface SpeadsheetUser {
   "Approval to publish Potographs?": BooleanAnswer;
   "Approved by MRC?": BooleanAnswer;
   Chapter: Chapter;
-  "Role(s)": Roles[];
+  "Role(s)": Roles;
   "Committee Member": BooleanAnswer; // Not used.
   "Current Member": BooleanAnswer; // Not used.
   "Induction Date": string;
@@ -29,7 +29,7 @@ export interface SpeadsheetUser {
   "Volunteer Agreement Complete": BooleanAnswer;
   "Board Member": BooleanAnswer; // Not used.
   "Emergency Contact Name": string;
-  "Emergency Contact Number": number;
+  "Emergency Contact Number": string;
   "Emergency Contact Address": string;
   "Emergency Contact Relationship": string;
   "Director Identification Number": string; // Not used.
