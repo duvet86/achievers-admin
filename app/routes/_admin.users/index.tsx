@@ -100,7 +100,7 @@ export async function action({ request }: ActionArgs) {
   const users = await getUsersAsync(
     currentPageNumber,
     searchTerm,
-    includeAllUsers
+    includeAllUsers,
   );
 
   return json({
@@ -240,7 +240,7 @@ export default function SelectChapter() {
                     userAtChapter,
                     checksCompleted,
                   },
-                  index
+                  index,
                 ) => (
                   <tr key={id}>
                     <td className="border p-2">
@@ -266,7 +266,7 @@ export default function SelectChapter() {
                       </Link>
                     </td>
                   </tr>
-                )
+                ),
               )}
             </tbody>
           </table>

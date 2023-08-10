@@ -10,7 +10,7 @@ describe("BackHeader", () => {
     const { baseElement } = render(
       <MemoryRouter>
         <BackHeader />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(baseElement).toMatchSnapshot();
@@ -20,7 +20,7 @@ describe("BackHeader", () => {
     render(
       <MemoryRouter>
         <BackHeader to="/test" />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText("Back")).toHaveAttribute("href", "/test");

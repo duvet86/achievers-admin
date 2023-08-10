@@ -38,7 +38,7 @@ export async function loader({ request, params }: LoaderArgs) {
   if (user.azureADId !== null) {
     azureUserInfo = await getAzureUserWithRolesByIdAsync(
       request,
-      user.azureADId
+      user.azureADId,
     );
   }
 
@@ -59,7 +59,7 @@ export async function loader({ request, params }: LoaderArgs) {
     volunteerAgreementSignedOn: user.volunteerAgreementSignedOn,
     mentorAppRoleAssignmentId:
       azureUserInfo?.appRoleAssignments.find(
-        ({ appRoleId }) => Roles.Mentor === appRoleId
+        ({ appRoleId }) => Roles.Mentor === appRoleId,
       )?.id ?? null,
   });
 }

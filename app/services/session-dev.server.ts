@@ -31,11 +31,11 @@ const sessionStorage_dev = createFileSessionStorage({
 });
 
 export const authenticator_dev = new Authenticator<TokenInfo>(
-  sessionStorage_dev
+  sessionStorage_dev,
 );
 
 export async function getSessionInfoAsync_dev(
-  request: Request
+  request: Request,
 ): Promise<TokenInfo> {
   const tokenInfo = await authenticator_dev.isAuthenticated(request, {
     failureRedirect: "/auth/microsoft",
@@ -44,7 +44,7 @@ export async function getSessionInfoAsync_dev(
   if (
     new Date() >=
     new Date(
-      new Date(tokenInfo.issuedAt).setSeconds(Number(tokenInfo.expiresOn))
+      new Date(tokenInfo.issuedAt).setSeconds(Number(tokenInfo.expiresOn)),
     )
   ) {
     throw redirect("/logout");
@@ -77,7 +77,7 @@ const microsoftStrategy = new MicrosoftStrategy(
     expiresOn: extraParams.expires_in.toString(),
     refreshToken: refreshToken,
     issuedAt: new Date().toISOString(),
-  })
+  }),
 );
 
 authenticator_dev.use(microsoftStrategy);

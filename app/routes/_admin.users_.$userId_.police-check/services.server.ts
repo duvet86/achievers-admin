@@ -26,7 +26,7 @@ export async function getUserByIdAsync(id: number) {
 
 export async function updatePoliceCheckAsync(
   userId: number,
-  data: PoliceCheckUpdateCommand
+  data: PoliceCheckUpdateCommand,
 ) {
   return await prisma.policeCheck.upsert({
     where: {
@@ -52,7 +52,7 @@ export async function getFileUrlAsync(path: string): Promise<string> {
   const sasQueryString = await getSASQueryStringAsync(
     containerClient,
     path,
-    60
+    60,
   );
 
   return `${blob.url}?${sasQueryString}`;
@@ -60,7 +60,7 @@ export async function getFileUrlAsync(path: string): Promise<string> {
 
 export async function saveFileAsync(
   userId: string,
-  file: File
+  file: File,
 ): Promise<string> {
   if (file.size === 0) {
     throw new Error();

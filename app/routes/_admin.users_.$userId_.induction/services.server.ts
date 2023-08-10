@@ -21,7 +21,7 @@ export async function getUserByIdAsync(id: number) {
 
 export async function updateInductionAsync(
   userId: number,
-  data: UpdateInductionCommand
+  data: UpdateInductionCommand,
 ) {
   return await prisma.induction.upsert({
     where: {

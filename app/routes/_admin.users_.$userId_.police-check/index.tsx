@@ -55,7 +55,7 @@ export async function action({ request, params }: ActionArgs) {
 
   const formData = await unstable_parseMultipartFormData(
     request,
-    uploadHandler
+    uploadHandler,
   );
 
   const file = formData.get("file") as File | null;

@@ -24,7 +24,7 @@ describe("Body", () => {
             email: "",
           }}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(baseElement).toMatchSnapshot();
@@ -48,7 +48,7 @@ describe("Body", () => {
             email: "",
           }}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(baseElement).toMatchSnapshot();

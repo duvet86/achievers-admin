@@ -71,7 +71,7 @@ export class MicrosoftStrategy<TUser> extends OAuth2Strategy<
     verify: StrategyVerifyCallback<
       TUser,
       OAuth2StrategyVerifyParams<MicrosoftProfile, MicrosoftExtraParams>
-    >
+    >,
   ) {
     super(
       {
@@ -81,7 +81,7 @@ export class MicrosoftStrategy<TUser> extends OAuth2Strategy<
         authorizationURL: `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/authorize`,
         tokenURL: `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
       },
-      verify
+      verify,
     );
     this.scope = scope ?? SCOPE;
     this.prompt = prompt ?? "none";
@@ -100,7 +100,7 @@ export async function refreshTokenAsync(
   clientId: string,
   clientSecret: string,
   refreshToken: string,
-  redirectURI: string
+  redirectURI: string,
 ): Promise<RefreshTokenResponse> {
   const body = {
     client_id: clientId,
@@ -119,7 +119,7 @@ export async function refreshTokenAsync(
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: JSON.stringify(body),
-    }
+    },
   );
 
   return await response.json();

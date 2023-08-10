@@ -8,7 +8,7 @@ export async function getUsersAsync(
   pageNumber: number,
   searchTerm?: string,
   allUsers = false,
-  numberItems = 10
+  numberItems = 10,
 ) {
   return await prisma.user.findMany({
     select: {

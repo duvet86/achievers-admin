@@ -11,7 +11,7 @@ describe("Select", () => {
         name="select"
         label="test"
         options={[{ value: "value", label: "label" }]}
-      />
+      />,
     );
 
     expect(screen.getByTestId("select")).toBeInTheDocument();
@@ -25,7 +25,7 @@ describe("Select", () => {
         label="test"
         required
         options={[{ value: "value", label: "label" }]}
-      />
+      />,
     );
 
     expect(screen.getByTestId("select")).toBeInTheDocument();
@@ -39,7 +39,7 @@ describe("Select", () => {
         label="test"
         defaultValue="value"
         options={[{ value: "value", label: "label" }]}
-      />
+      />,
     );
 
     expect(screen.getByTestId("select")).toHaveValue("value");
@@ -55,7 +55,7 @@ describe("Select", () => {
           { value: "", label: "label 1" },
           { value: "value", label: "label 2" },
         ]}
-      />
+      />,
     );
 
     expect(screen.getByTestId("select")).toHaveValue("");

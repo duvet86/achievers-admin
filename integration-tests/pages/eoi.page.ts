@@ -61,7 +61,7 @@ export class EOIInfoPage {
     hearAboutUsText: string,
     over18Text: string,
     whyVolunteerText: string,
-    aboutMeText: string
+    aboutMeText: string,
   ) {
     return {
       bestTimeToContactText: this.page.getByText(bestTimeToContactText, {
@@ -116,7 +116,7 @@ export class EOIInfoPageAssertions {
     hearAboutUsText: string,
     over18Text: string,
     whyVolunteerText: string,
-    aboutMeText: string
+    aboutMeText: string,
   ): Promise<void> {
     const locators = await this.eoiChapterPage.getTextLocators(
       bestTimeToContactText,
@@ -128,7 +128,7 @@ export class EOIInfoPageAssertions {
       hearAboutUsText,
       over18Text,
       whyVolunteerText,
-      aboutMeText
+      aboutMeText,
     );
 
     await expect(locators.bestTimeToContactText).toBeVisible();

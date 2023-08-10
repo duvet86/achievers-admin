@@ -10,7 +10,7 @@ export default function ProfileInput({ defaultValue }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [profilePicturePath, setProfilePicturePath] = useState<string | null>(
-    defaultValue
+    defaultValue,
   );
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 

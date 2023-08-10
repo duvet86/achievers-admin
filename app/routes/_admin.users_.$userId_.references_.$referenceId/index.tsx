@@ -32,7 +32,7 @@ export async function loader({ params }: LoaderArgs) {
 
   const user = await getUserWithReferenceByIdAsync(
     Number(params.userId),
-    Number(params.referenceId)
+    Number(params.referenceId),
   );
 
   return json({
@@ -102,7 +102,7 @@ export async function action({ request, params }: ActionArgs) {
   await updateReferenceByIdAsync(
     Number(params.userId),
     Number(params.referenceId),
-    data
+    data,
   );
 
   return json<{

@@ -54,7 +54,7 @@ export interface AzureInviteResponse {
           name: string | null;
           address: string | null;
         };
-      }
+      },
     ];
     customizedMessageBody: string | null;
   };
@@ -118,7 +118,7 @@ export async function getAzureRolesAsync(request: Request): Promise<AppRole[]> {
     `${MICROSOFT_GRAPH_V1_BASEURL}/applications/${process.env.OBJECT_ID}?$select=appRoles`,
     {
       headers: getHeaders(tokenInfo.accessToken),
-    }
+    },
   );
 
   const azureApplication: Application = await response.json();
@@ -127,7 +127,7 @@ export async function getAzureRolesAsync(request: Request): Promise<AppRole[]> {
 }
 
 async function getAzureRolesLookUpAsync(
-  request: Request
+  request: Request,
 ): Promise<AzureRolesLookUp> {
   const appRoles = await getAzureRolesAsync(request);
 
@@ -142,7 +142,7 @@ async function getAzureRolesLookUpAsync(
 
 export async function getAzureUsersAsync(
   request: Request,
-  azureIds?: string[]
+  azureIds?: string[],
 ): Promise<AzureUserWebApp[]> {
   if (azureIds && azureIds.length === 0) {
     return [];
@@ -159,7 +159,7 @@ export async function getAzureUsersAsync(
     `${MICROSOFT_GRAPH_V1_BASEURL}/users?$expand=appRoleAssignments` + filter,
     {
       headers: getHeaders(tokenInfo.accessToken),
-    }
+    },
   );
 
   const azureUsers: { value: AzureUser[] } = await response.json();
@@ -172,7 +172,7 @@ export async function getAzureUsersAsync(
 
 export async function getAzureUsersWithRolesAsync(
   request: Request,
-  azureIds?: string[]
+  azureIds?: string[],
 ): Promise<AzureUserWebAppWithRole[]> {
   const [azureUsers, roles] = await Promise.all([
     getAzureUsersAsync(request, azureIds),
@@ -193,7 +193,7 @@ export async function getAzureUsersWithRolesAsync(
 
 async function getAzureUserByIdAsync(
   request: Request,
-  azureId: string
+  azureId: string,
 ): Promise<AzureUserWithRole> {
   const tokenInfo = await getTokenInfoAsync(request);
 
@@ -201,7 +201,7 @@ async function getAzureUserByIdAsync(
     `${MICROSOFT_GRAPH_V1_BASEURL}/users/${azureId}?$expand=appRoleAssignments`,
     {
       headers: getHeaders(tokenInfo.accessToken),
-    }
+    },
   );
 
   return await response.json();
@@ -209,7 +209,7 @@ async function getAzureUserByIdAsync(
 
 export async function getAzureUserWithRolesByIdAsync(
   request: Request,
-  azureId: string
+  azureId: string,
 ): Promise<AzureUserWebAppWithRole> {
   const [azureUser, roles] = await Promise.all([
     getAzureUserByIdAsync(request, azureId),
@@ -230,7 +230,7 @@ export async function getAzureUserWithRolesByIdAsync(
 
 export async function inviteUserToAzureAsync(
   request: Request,
-  azureInviteRequest: AzureInviteRequest
+  azureInviteRequest: AzureInviteRequest,
 ): Promise<AzureInviteResponse> {
   const tokenInfo = await getTokenInfoAsync(request);
 
@@ -250,7 +250,7 @@ export async function inviteUserToAzureAsync(
 export async function assignRoleToUserAsync(
   request: Request,
   azureId: string,
-  azureAppRoleRequest: AzureAppRoleRequest
+  azureAppRoleRequest: AzureAppRoleRequest,
 ): Promise<AzureAppRoleResponse> {
   const tokenInfo = await getTokenInfoAsync(request);
 
@@ -260,7 +260,7 @@ export async function assignRoleToUserAsync(
       method: "POST",
       headers: getHeaders(tokenInfo.accessToken),
       body: JSON.stringify(azureAppRoleRequest),
-    }
+    },
   );
 
   return response.json();
@@ -268,7 +268,7 @@ export async function assignRoleToUserAsync(
 
 export async function removeRoleFromUserAsync(
   request: Request,
-  appRoleAssignmentId: string
+  appRoleAssignmentId: string,
 ): Promise<void> {
   const tokenInfo = await getTokenInfoAsync(request);
 
@@ -277,7 +277,7 @@ export async function removeRoleFromUserAsync(
     {
       method: "DELETE",
       headers: getHeaders(tokenInfo.accessToken),
-    }
+    },
   );
 }
 

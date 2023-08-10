@@ -78,7 +78,7 @@ export default function Index() {
                     </Link>
                   </td>
                 </tr>
-              )
+              ),
             )}
           </tbody>
         </table>

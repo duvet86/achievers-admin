@@ -25,7 +25,7 @@ describe("DateInput", () => {
         name="date"
         label="test"
         defaultValue={new Date(1995, 11, 17)}
-      />
+      />,
     );
 
     expect(screen.getByTestId("dateinput")).toHaveValue("1995-12-17");

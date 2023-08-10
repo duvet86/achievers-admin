@@ -10,7 +10,7 @@ describe("Drawer", () => {
     render(
       <MemoryRouter>
         <Drawer isAdmin version="1" />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const links: HTMLAnchorElement[] = screen.getAllByRole("link");
@@ -27,7 +27,7 @@ describe("Drawer", () => {
     render(
       <MemoryRouter>
         <Drawer isAdmin={false} version="1" />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const links: HTMLAnchorElement[] = screen.getAllByRole("link");
@@ -44,7 +44,7 @@ describe("Drawer", () => {
     render(
       <MemoryRouter>
         <Drawer isAdmin={false} version="1" />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByTestId("version")).toHaveTextContent("Version 1");

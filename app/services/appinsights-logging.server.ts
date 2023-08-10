@@ -11,7 +11,7 @@ export function trackTrace(telemetry: appInsights.Contracts.TraceTelemetry) {
 }
 
 export function trackException(
-  telemetry: appInsights.Contracts.ExceptionTelemetry
+  telemetry: appInsights.Contracts.ExceptionTelemetry,
 ) {
   client?.trackException(telemetry);
 }

@@ -17,7 +17,7 @@ export async function loader({ params }: LoaderArgs) {
 
   const chapter = await getChapterByIdAsync(
     Number(params.userId),
-    Number(params.chapterId)
+    Number(params.chapterId),
   );
 
   return json({
@@ -31,7 +31,7 @@ export async function action({ params }: ActionArgs) {
 
   await removeChapterFromUserAsync(
     Number(params.userId),
-    Number(params.chapterId)
+    Number(params.chapterId),
   );
 
   return redirect(`/users/${params.userId}`);

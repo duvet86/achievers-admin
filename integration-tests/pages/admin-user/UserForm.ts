@@ -40,13 +40,13 @@ export class UserForm {
     this.dateOfBirthInput = page.getByLabel("Date of birth");
     this.emergencyContactNameInput = page.getByLabel("Emergency contact name");
     this.emergencyContactNumberInput = page.getByLabel(
-      "Emergency contact number"
+      "Emergency contact number",
     );
     this.emergencyContactAddressInput = page.getByLabel(
-      "Emergency contact address"
+      "Emergency contact address",
     );
     this.emergencyContactRelationshipInput = page.getByLabel(
-      "Emergency contact relationship"
+      "Emergency contact relationship",
     );
     this.additionalEmailInput = page.getByLabel("Additional email");
 
@@ -66,7 +66,7 @@ export class UserForm {
     emergencyContactNumberValue: string,
     emergencyContactAddressValue: string,
     emergencyContactRelationshipValue: string,
-    additionalEmailValue: string
+    additionalEmailValue: string,
   ): Promise<void> {
     await this.firstNameInput.fill(firstNameValue);
     await this.lastNameInput.fill(lastNameValue);
@@ -80,7 +80,7 @@ export class UserForm {
     await this.emergencyContactNumberInput.fill(emergencyContactNumberValue);
     await this.emergencyContactAddressInput.fill(emergencyContactAddressValue);
     await this.emergencyContactRelationshipInput.fill(
-      emergencyContactRelationshipValue
+      emergencyContactRelationshipValue,
     );
     await this.additionalEmailInput.fill(additionalEmailValue);
   }
@@ -111,7 +111,7 @@ class UserFormAssertions {
     emergencyContactNumberValue: string,
     emergencyContactAddressValue: string,
     emergencyContactRelationshipValue: string,
-    additionalEmailValue: string
+    additionalEmailValue: string,
   ): Promise<void> {
     await expect(this.userForm.emailInput).toHaveValue(emailValue);
     await expect(this.userForm.emailInput).toHaveAttribute("disabled", "");
@@ -120,32 +120,32 @@ class UserFormAssertions {
     await expect(this.userForm.lastNameInput).toHaveValue(lastNameValue);
     await expect(this.userForm.mobileInput).toHaveValue(mobileValue);
     await expect(this.userForm.addressStreetInput).toHaveValue(
-      addressStreetValue
+      addressStreetValue,
     );
     await expect(this.userForm.addressSuburbInput).toHaveValue(
-      addressSuburbValue
+      addressSuburbValue,
     );
     await expect(this.userForm.addressStateInput).toHaveValue(
-      addressStateValue
+      addressStateValue,
     );
     await expect(this.userForm.addressPostcodeInput).toHaveValue(
-      addressPostcodeValue
+      addressPostcodeValue,
     );
     await expect(this.userForm.dateOfBirthInput).toHaveValue(dateOfBirthValue);
     await expect(this.userForm.emergencyContactNameInput).toHaveValue(
-      emergencyContactNameValue
+      emergencyContactNameValue,
     );
     await expect(this.userForm.emergencyContactNumberInput).toHaveValue(
-      emergencyContactNumberValue
+      emergencyContactNumberValue,
     );
     await expect(this.userForm.emergencyContactAddressInput).toHaveValue(
-      emergencyContactAddressValue
+      emergencyContactAddressValue,
     );
     await expect(this.userForm.emergencyContactRelationshipInput).toHaveValue(
-      emergencyContactRelationshipValue
+      emergencyContactRelationshipValue,
     );
     await expect(this.userForm.additionalEmailInput).toHaveValue(
-      additionalEmailValue
+      additionalEmailValue,
     );
   }
 }

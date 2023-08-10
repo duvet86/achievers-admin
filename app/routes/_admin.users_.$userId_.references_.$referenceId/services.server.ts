@@ -18,7 +18,7 @@ export interface ReferenceUpdateCommand {
 
 export async function getUserWithReferenceByIdAsync(
   userId: number,
-  referenceId: number
+  referenceId: number,
 ) {
   return await prisma.user.findUniqueOrThrow({
     where: {
@@ -39,7 +39,7 @@ export async function getUserWithReferenceByIdAsync(
 export async function updateReferenceByIdAsync(
   userId: number,
   referenceId: number,
-  data: ReferenceUpdateCommand
+  data: ReferenceUpdateCommand,
 ) {
   return await prisma.reference.upsert({
     where: {

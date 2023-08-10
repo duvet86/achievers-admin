@@ -80,7 +80,7 @@ export async function updateUserByIdAsync(
   dataUpdate: Prisma.XOR<
     Prisma.UserUpdateInput,
     Prisma.UserUncheckedUpdateInput
-  >
+  >,
 ) {
   return await prisma.user.update({
     data: dataUpdate,
@@ -92,7 +92,7 @@ export async function updateUserByIdAsync(
 
 export async function saveProfilePicture(
   userId: string,
-  file: File
+  file: File,
 ): Promise<string> {
   if (file.size === 0) {
     throw new Error();
@@ -108,7 +108,7 @@ export async function saveProfilePicture(
 }
 
 export async function getProfilePictureUrl(
-  profilePicturePath: string
+  profilePicturePath: string,
 ): Promise<string> {
   const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
 
@@ -117,7 +117,7 @@ export async function getProfilePictureUrl(
   const sasQueryString = await getSASQueryStringAsync(
     containerClient,
     profilePicturePath,
-    60
+    60,
   );
 
   return `${blob.url}?${sasQueryString}`;

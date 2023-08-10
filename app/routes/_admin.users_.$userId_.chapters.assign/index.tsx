@@ -31,7 +31,7 @@ export async function loader({ params }: LoaderArgs) {
   return json({
     user,
     availableChapters: chapters.filter(
-      ({ id }) => !userAtChapterIds.includes(id)
+      ({ id }) => !userAtChapterIds.includes(id),
     ),
   });
 }
@@ -54,7 +54,7 @@ export async function action({ request, params }: ActionArgs) {
   await assignChapterToUserAsync(
     Number(params.userId),
     Number(chapterId),
-    currentUserAzureId
+    currentUserAzureId,
   );
 
   return redirect(`/users/${params.userId}`);
@@ -82,7 +82,7 @@ export default function Assign() {
             availableChapters.map(({ id, name }) => ({
               label: name,
               value: id.toString(),
-            }))
+            })),
           )}
         />
 
