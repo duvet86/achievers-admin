@@ -23,7 +23,7 @@ export function Body({
   const showDrawer = isAdmin || hasCompletedVolunteerAgreement;
 
   return (
-    <div className="drawer-mobile drawer">
+    <div className="drawer lg:drawer-open">
       <input id="drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
         <Navbar currentUser={currentUser} environment={environment} />

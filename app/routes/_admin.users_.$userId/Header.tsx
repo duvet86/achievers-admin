@@ -14,7 +14,7 @@ interface Props {
   mentorAppRoleAssignmentId: string | null;
 }
 
-export default function Header({ mentorAppRoleAssignmentId }: Props) {
+export function Header({ mentorAppRoleAssignmentId }: Props) {
   return (
     <>
       <div className="flex">

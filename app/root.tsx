@@ -13,7 +13,6 @@ import {
 } from "@remix-run/react";
 
 import tailwindStylesheetUrl from "~/styles/tailwind.css";
-import indexStylesheetUrl from "~/styles/index.css";
 
 import {
   Forbidden,
@@ -23,10 +22,7 @@ import {
 } from "~/components";
 
 export const links: LinksFunction = () => {
-  return [
-    { rel: "stylesheet", href: tailwindStylesheetUrl },
-    { rel: "stylesheet", href: indexStylesheetUrl },
-  ];
+  return [{ rel: "stylesheet", href: tailwindStylesheetUrl }];
 };
 
 export default function App() {

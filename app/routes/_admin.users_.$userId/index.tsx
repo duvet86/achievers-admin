@@ -22,7 +22,7 @@ import {
 import { EditUserInfoForm } from "./EditUserInfoForm";
 import { ChaptersForm } from "./ChaptersForm";
 import { CheckList } from "./CheckList";
-import Header from "./Header";
+import { Header } from "./Header";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -141,7 +141,7 @@ export default function Chapter() {
   const transition = useNavigation();
 
   return (
-    <div className="flex h-full flex-col pb-28">
+    <div className="flex h-full flex-col">
       <Header
         mentorAppRoleAssignmentId={loaderData.mentorAppRoleAssignmentId}
       />

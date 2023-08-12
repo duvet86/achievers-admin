@@ -35,9 +35,9 @@ export function Drawer({ isAdmin, version }: Props) {
   const links = getLinks(isAdmin);
 
   return (
-    <div className="drawer-side mt-16">
+    <div className="drawer-side pt-16">
       <label htmlFor="drawer" className="drawer-overlay"></label>
-      <ul className="menu w-80 border-r border-primary bg-base-200 p-4 text-base-content">
+      <ul className="menu w-80 border-r border-primary bg-base-200 p-4 text-base-content h-full">
         {links.map(({ label, value }, index) => (
           <li key={index}>
             <NavLink

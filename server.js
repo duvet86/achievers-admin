@@ -1,17 +1,18 @@
-import path from "node:path";
+import { statSync } from "node:fs";
 
 import * as appInsights from "applicationinsights";
 
+import chokidar from "chokidar";
 import express from "express";
 import compression from "compression";
 import morgan from "morgan";
 
-import { broadcastDevReady } from "@remix-run/node";
+import { broadcastDevReady, installGlobals } from "@remix-run/node";
 import { createRequestHandler } from "@remix-run/express";
+import sourceMapSupport from "source-map-support";
 
-declare global {
-  var __appinsightsClient__: appInsights.TelemetryClient | undefined;
-}
+sourceMapSupport.install();
+installGlobals();
 
 if (process.env.NODE_ENV === "production") {
   appInsights.setup().start();
@@ -19,9 +20,9 @@ if (process.env.NODE_ENV === "production") {
   global.__appinsightsClient__ = appInsights.defaultClient;
 }
 
-const BUILD_DIR = path.join(process.cwd(), "build");
-const build = require(BUILD_DIR);
 const port = process.env.PORT || 3000;
+const BUILD_PATH = "./build/index.js";
+let build = await import(BUILD_PATH);
 
 const app = express();
 
@@ -45,21 +46,14 @@ app.use(morgan("tiny"));
 app.all(
   "*",
   process.env.NODE_ENV === "development"
-    ? (req, res, next) => {
-        purgeRequireCache();
-
-        return createRequestHandler({
-          build,
-          mode: process.env.NODE_ENV,
-        })(req, res, next);
-      }
+    ? createDevRequestHandler()
     : createRequestHandler({
         build,
         mode: process.env.NODE_ENV,
       }),
 );
 
-const server = app.listen(port, () => {
+app.listen(port, async () => {
   console.log(`Express server listening on port ${port}`);
 
   if (process.env.NODE_ENV === "development") {
@@ -67,23 +61,25 @@ const server = app.listen(port, () => {
   }
 });
 
-process.on("SIGTERM", () => {
-  console.log("SIGTERM signal received: closing HTTP server");
+function createDevRequestHandler() {
+  const watcher = chokidar.watch(BUILD_PATH, { ignoreInitial: true });
 
-  server.close(() => {
-    console.log("HTTP server closed");
+  watcher.on("all", async () => {
+    // 1. purge require cache && load updated server build
+    const stat = statSync(BUILD_PATH);
+    build = import(BUILD_PATH + "?t=" + stat.mtimeMs);
+    // 2. tell dev server that this app server is now ready
+    broadcastDevReady(await build);
   });
-});
 
-function purgeRequireCache() {
-  // purge require cache on requests for "server side HMR" this won't let
-  // you have in-memory objects between requests in development,
-  // alternatively you can set up nodemon/pm2-dev to restart the server on
-  // file changes, but then you'll have to reconnect to databases/etc on each
-  // change. We prefer the DX of this, so we've included it for you by default
-  for (const key in require.cache) {
-    if (key.startsWith(BUILD_DIR)) {
-      delete require.cache[key];
+  return async (req, res, next) => {
+    try {
+      return createRequestHandler({
+        build: await build,
+        mode: "development",
+      })(req, res, next);
+    } catch (error) {
+      next(error);
     }
-  }
+  };
 }
