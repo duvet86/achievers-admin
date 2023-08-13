@@ -100,7 +100,7 @@ export async function action({ request }: ActionArgs) {
   const users = await getUsersAsync(
     currentPageNumber,
     searchTerm,
-    includeAllUsers
+    includeAllUsers,
   );
 
   return json({
@@ -240,7 +240,7 @@ export default function SelectChapter() {
                     userAtChapter,
                     checksCompleted,
                   },
-                  index
+                  index,
                 ) => (
                   <tr key={id}>
                     <td className="border p-2">
@@ -266,7 +266,7 @@ export default function SelectChapter() {
                       </Link>
                     </td>
                   </tr>
-                )
+                ),
               )}
             </tbody>
           </table>
@@ -274,12 +274,12 @@ export default function SelectChapter() {
 
         <input type="hidden" name="pageNumber" value={currentPageNumber} />
 
-        <div className="btn-group mt-4">
+        <div className="join mt-4">
           <button
             type="submit"
             name="previousBtn"
             value="previousBtn"
-            className="btn-outline btn"
+            className="join-item btn-outline btn"
             disabled={currentPageNumber === 0}
             title="previous"
           >
@@ -295,8 +295,8 @@ export default function SelectChapter() {
                 value={index}
                 className={
                   currentPageNumber === index
-                    ? "btn-outline btn-active btn "
-                    : "btn-outline btn"
+                    ? "join-item btn-outline btn-active btn "
+                    : "join-item btn-outline btn"
                 }
               >
                 {index + 1}
@@ -306,7 +306,7 @@ export default function SelectChapter() {
             type="submit"
             name="nextBtn"
             value="nextBtn"
-            className="btn-outline btn"
+            className="join-item btn-outline btn"
             disabled={
               currentPageNumber === totalPageCount - 1 || totalPageCount === 0
             }

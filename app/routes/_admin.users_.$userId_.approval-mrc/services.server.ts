@@ -21,7 +21,7 @@ export async function getUserByIdAsync(id: number) {
 
 export async function updateApprovalByMRCAsync(
   userId: number,
-  data: UpdateApprovalByMRCCommand
+  data: UpdateApprovalByMRCCommand,
 ) {
   return await prisma.approvalbyMRC.upsert({
     where: {

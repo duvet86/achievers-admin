@@ -26,7 +26,7 @@ export const action = async ({ request }: ActionArgs) => {
 
   const formData = await unstable_parseMultipartFormData(
     request,
-    uploadHandler
+    uploadHandler,
   );
 
   const file = formData.get("usersSheet");
@@ -71,13 +71,13 @@ export const action = async ({ request }: ActionArgs) => {
 
       return res;
     },
-    {}
+    {},
   );
 
   const newUsers = fileUsers.filter(
     (fileUser) =>
       existingMentorsLookup[fileUser["Email address"].toLowerCase()] ===
-      undefined
+      undefined,
   );
 
   try {
@@ -206,7 +206,7 @@ export default function Index() {
                       </Link>
                     </td>
                   </tr>
-                )
+                ),
               )}
             </tbody>
           </table>

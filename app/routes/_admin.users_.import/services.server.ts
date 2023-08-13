@@ -5,6 +5,7 @@ import { Readable } from "stream";
 
 import { stream, read, utils } from "xlsx";
 import { prisma } from "~/db.server";
+import { isValidDate } from "~/services";
 
 export async function readExcelFileAsync(file: File) {
   stream.set_readable(Readable);
@@ -26,7 +27,7 @@ export async function getCurrentMentorsAsync() {
 }
 
 export async function importSpreadsheetMentorsAsync(
-  newUsers: SpeadsheetUser[]
+  newUsers: SpeadsheetUser[],
 ): Promise<User[]> {
   const users: User[] = [];
 
@@ -41,6 +42,13 @@ export async function importSpreadsheetMentorsAsync(
     for (let i = 0; i < newUsers.length; i++) {
       const chapter = chapters.find((c) => c.name === newUsers[i]["Chapter"]);
 
+      console.log(
+        "------------------",
+        i,
+        new Date(newUsers[i]["Police Check Renewal Date"]),
+        isValidDate(new Date(newUsers[i]["Police Check Renewal Date"])),
+      );
+
       const user = await tx.user.create({
         data: {
           addressPostcode: "",
@@ -53,7 +61,9 @@ export async function importSpreadsheetMentorsAsync(
           ]
             ? newUsers[i]["Additional email addresses (for intranet access)"]
             : null,
-          dateOfBirth: new Date(newUsers[i]["Date of Birth"]),
+          dateOfBirth: newUsers[i]["Date of Birth"]
+            ? new Date(newUsers[i]["Date of Birth"])
+            : null,
           emergencyContactAddress: newUsers[i]["Emergency Contact Address"],
           emergencyContactName: newUsers[i]["Emergency Contact Name"],
           emergencyContactNumber: newUsers[i]["Emergency Contact Name"],
@@ -103,19 +113,27 @@ export async function importSpreadsheetMentorsAsync(
                   },
                 }
               : undefined,
-          induction: {
-            create: {
-              completedOnDate: new Date(newUsers[i]["Induction Date"]),
-              runBy: "imported mentor",
-              comment: "Imported mentor",
-            },
-          },
-          policeCheck: {
-            create: {
-              expiryDate: new Date(newUsers[i]["Police Check Renewal Date"]),
-              filePath: "",
-            },
-          },
+          induction: newUsers[i]["Induction Date"]
+            ? {
+                create: {
+                  completedOnDate: new Date(newUsers[i]["Induction Date"]),
+                  runBy: "imported mentor",
+                  comment: "Imported mentor",
+                },
+              }
+            : undefined,
+          policeCheck:
+            newUsers[i]["Police Check Renewal Date"] &&
+            isValidDate(new Date(newUsers[i]["Police Check Renewal Date"]))
+              ? {
+                  create: {
+                    expiryDate: new Date(
+                      newUsers[i]["Police Check Renewal Date"],
+                    ),
+                    filePath: "",
+                  },
+                }
+              : undefined,
           references: {
             createMany: {
               data: [
@@ -151,15 +169,19 @@ export async function importSpreadsheetMentorsAsync(
               comment: "Imported mentor",
             },
           },
-          wwcCheck: {
-            create: {
-              expiryDate: new Date(newUsers[i]["WWC Check Renewal Date"]),
-              filePath: "",
-              wwcNumber: newUsers[i]["WWC Check Number"]
-                ? newUsers[i]["WWC Check Number"]
-                : "Not specified",
-            },
-          },
+          wwcCheck:
+            newUsers[i]["WWC Check Renewal Date"] &&
+            isValidDate(new Date(newUsers[i]["WWC Check Renewal Date"]))
+              ? {
+                  create: {
+                    expiryDate: new Date(newUsers[i]["WWC Check Renewal Date"]),
+                    filePath: "",
+                    wwcNumber: newUsers[i]["WWC Check Number"]
+                      ? newUsers[i]["WWC Check Number"].toString()
+                      : "Not specified",
+                  },
+                }
+              : undefined,
         },
       });
 

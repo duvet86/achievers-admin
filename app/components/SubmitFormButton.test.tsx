@@ -11,7 +11,7 @@ describe("SubmitFormButton", () => {
     expect(screen.getByRole("button")).toHaveTextContent("Save");
     expect(screen.getByTestId("message")).not.toHaveClass();
     expect(screen.getByTestId("container")).toHaveClass(
-      "mt-6 flex items-center justify-between"
+      "mt-6 flex items-center justify-between",
     );
   });
 
@@ -19,7 +19,7 @@ describe("SubmitFormButton", () => {
     render(<SubmitFormButton sticky />);
 
     expect(screen.getByTestId("container")).toHaveClass(
-      "mt-6 flex items-center justify-between sticky bottom-0"
+      "mt-6 flex items-center justify-between sticky bottom-0",
     );
   });
 

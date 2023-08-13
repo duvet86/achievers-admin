@@ -1,7 +1,8 @@
+import { createRequire } from "node:module";
+
 import type { PlaywrightTestConfig } from "@playwright/test";
 
 import { devices } from "@playwright/test";
-
 import dotenv from "dotenv";
 
 /**
@@ -10,11 +11,14 @@ import dotenv from "dotenv";
  */
 dotenv.config();
 
+const require = createRequire(import.meta.url);
+const globalSetup = require.resolve("./integration-tests/global-setup");
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 const config: PlaywrightTestConfig = {
-  globalSetup: require.resolve("./integration-tests/global-setup"),
+  globalSetup,
   testDir: "./integration-tests/tests",
   /* Maximum time one test can run for. */
   timeout: 30 * 1000,

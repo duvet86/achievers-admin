@@ -22,7 +22,7 @@ describe("Navbar", () => {
             email: "",
           }}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(baseElement).toMatchSnapshot();

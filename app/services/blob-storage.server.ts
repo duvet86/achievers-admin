@@ -17,7 +17,7 @@ export const USER_DATA_BLOB_CONTAINER_NAME = "user-data";
 function getBlobUrl(): string {
   invariant(
     process.env.BLOB_STORAGE_ACCOUNT_NAME,
-    "BLOB_STORAGE_ACCOUNT_NAME not found"
+    "BLOB_STORAGE_ACCOUNT_NAME not found",
   );
 
   return process.env.NODE_ENV === "production"
@@ -28,11 +28,11 @@ function getBlobUrl(): string {
 export function getContainerClient(containerName: string): ContainerClient {
   invariant(
     process.env.BLOB_STORAGE_ACCOUNT_NAME,
-    "BLOB_STORAGE_ACCOUNT_NAME not found"
+    "BLOB_STORAGE_ACCOUNT_NAME not found",
   );
   invariant(
     process.env.BLOB_STORAGE_ACCOUNT_KEY,
-    "BLOB_STORAGE_ACCOUNT_KEY not found"
+    "BLOB_STORAGE_ACCOUNT_KEY not found",
   );
 
   const account = process.env.BLOB_STORAGE_ACCOUNT_NAME;
@@ -40,12 +40,12 @@ export function getContainerClient(containerName: string): ContainerClient {
 
   const sharedKeyCredential = new StorageSharedKeyCredential(
     account,
-    accountKey
+    accountKey,
   );
 
   const blobServiceClient = new BlobServiceClient(
     getBlobUrl(),
-    sharedKeyCredential
+    sharedKeyCredential,
   );
 
   const containerClient = blobServiceClient.getContainerClient(containerName);
@@ -56,7 +56,7 @@ export function getContainerClient(containerName: string): ContainerClient {
 export async function getSASQueryStringAsync(
   containerClient: ContainerClient,
   blobPath: string,
-  expiresOnMinutes: number
+  expiresOnMinutes: number,
 ): Promise<string> {
   const startsOn = new Date();
   const expiresOn = new Date(startsOn);
@@ -71,13 +71,13 @@ export async function getSASQueryStringAsync(
       startsOn,
       expiresOn,
     },
-    containerClient.credential as StorageSharedKeyCredential
+    containerClient.credential as StorageSharedKeyCredential,
   ).toString();
 }
 
 export async function deleteBlobAsync(
   containerClient: ContainerClient,
-  blobPath: string
+  blobPath: string,
 ): Promise<BlobDeleteIfExistsResponse> {
   const existingBlockBlobClient = containerClient.getBlockBlobClient(blobPath);
 
@@ -89,7 +89,7 @@ export async function deleteBlobAsync(
 export async function uploadBlobAsync(
   containerClient: ContainerClient,
   fileToUpload: File,
-  blobPath: string
+  blobPath: string,
 ): Promise<BlobUploadCommonResponse> {
   const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
 

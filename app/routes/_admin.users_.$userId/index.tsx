@@ -22,7 +22,7 @@ import {
 import { EditUserInfoForm } from "./EditUserInfoForm";
 import { ChaptersForm } from "./ChaptersForm";
 import { CheckList } from "./CheckList";
-import Header from "./Header";
+import { Header } from "./Header";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -38,7 +38,7 @@ export async function loader({ request, params }: LoaderArgs) {
   if (user.azureADId !== null) {
     azureUserInfo = await getAzureUserWithRolesByIdAsync(
       request,
-      user.azureADId
+      user.azureADId,
     );
   }
 
@@ -59,7 +59,7 @@ export async function loader({ request, params }: LoaderArgs) {
     volunteerAgreementSignedOn: user.volunteerAgreementSignedOn,
     mentorAppRoleAssignmentId:
       azureUserInfo?.appRoleAssignments.find(
-        ({ appRoleId }) => Roles.Mentor === appRoleId
+        ({ appRoleId }) => Roles.Mentor === appRoleId,
       )?.id ?? null,
   });
 }
@@ -141,7 +141,7 @@ export default function Chapter() {
   const transition = useNavigation();
 
   return (
-    <div className="flex h-full flex-col pb-28">
+    <div className="flex h-full flex-col">
       <Header
         mentorAppRoleAssignmentId={loaderData.mentorAppRoleAssignmentId}
       />

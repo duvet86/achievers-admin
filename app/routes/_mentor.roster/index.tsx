@@ -13,12 +13,12 @@ export default function Index() {
 
   const firstDayOfTheMonth = useMemo(
     () => selectedDate.clone().startOf("month"),
-    [selectedDate]
+    [selectedDate],
   );
 
   const firstDayOfFirstWeekOfMonth = useMemo(
     () => dayjs(firstDayOfTheMonth).startOf("week"),
-    [firstDayOfTheMonth]
+    [firstDayOfTheMonth],
   );
 
   const generateFirstDayOfEachWeek = useCallback((day: Dayjs): Dayjs[] => {
@@ -41,7 +41,7 @@ export default function Index() {
 
   const generateWeeksOfTheMonth = useMemo((): Date[][] => {
     const firstDayOfEachWeek = generateFirstDayOfEachWeek(
-      firstDayOfFirstWeekOfMonth
+      firstDayOfFirstWeekOfMonth,
     );
     return firstDayOfEachWeek.map((date) => generateWeek(date));
   }, [generateFirstDayOfEachWeek, firstDayOfFirstWeekOfMonth, generateWeek]);

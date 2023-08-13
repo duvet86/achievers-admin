@@ -35,7 +35,7 @@ export async function getUserAtChapterByIdAsync(userId: User["id"]) {
 export async function assignChapterToUserAsync(
   userId: UserAtChapter["userId"],
   chapterId: UserAtChapter["chapterId"],
-  azureADId: string
+  azureADId: string,
 ) {
   await prisma.userAtChapter.create({
     data: {

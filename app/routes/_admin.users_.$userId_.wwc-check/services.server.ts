@@ -27,7 +27,7 @@ export async function getUserByIdAsync(id: number) {
 
 export async function updateWWCCheckAsync(
   userId: number,
-  data: UpdateWWCCheckCommand
+  data: UpdateWWCCheckCommand,
 ) {
   return await prisma.wWCCheck.upsert({
     where: {
@@ -55,7 +55,7 @@ export async function getFileUrl(path: string): Promise<string> {
   const sasQueryString = await getSASQueryStringAsync(
     containerClient,
     path,
-    60
+    60,
   );
 
   return `${blob.url}?${sasQueryString}`;
@@ -63,7 +63,7 @@ export async function getFileUrl(path: string): Promise<string> {
 
 export async function saveFileAsync(
   userId: string,
-  file: File
+  file: File,
 ): Promise<string> {
   if (file.size === 0) {
     throw new Error();

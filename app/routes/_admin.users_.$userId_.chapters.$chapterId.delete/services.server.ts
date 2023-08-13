@@ -4,7 +4,7 @@ import { prisma } from "~/db.server";
 
 export async function getChapterByIdAsync(
   userId: UserAtChapter["userId"],
-  chapterId: UserAtChapter["chapterId"]
+  chapterId: UserAtChapter["chapterId"],
 ) {
   return prisma.userAtChapter.findUniqueOrThrow({
     where: {
@@ -31,7 +31,7 @@ export async function getChapterByIdAsync(
 
 export async function removeChapterFromUserAsync(
   userId: UserAtChapter["userId"],
-  chapterId: UserAtChapter["chapterId"]
+  chapterId: UserAtChapter["chapterId"],
 ) {
   await prisma.userAtChapter.delete({
     where: {

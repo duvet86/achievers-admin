@@ -4,7 +4,7 @@ exports[`Body > Body snapshot admin 1`] = `
 <body>
   <div>
     <div
-      class="drawer-mobile drawer"
+      class="drawer lg:drawer-open"
     >
       <input
         class="drawer-toggle"
@@ -15,7 +15,7 @@ exports[`Body > Body snapshot admin 1`] = `
         class="drawer-content flex flex-col"
       >
         <nav
-          class="navbar absolute left-0 top-0 h-16 bg-primary text-primary-content shadow-md"
+          class="navbar fixed left-0 top-0 h-16 bg-primary text-primary-content shadow-md z-10"
         >
           <div
             class="flex-none lg:hidden"
@@ -145,14 +145,14 @@ exports[`Body > Body snapshot admin 1`] = `
         />
       </div>
       <div
-        class="drawer-side mt-16"
+        class="drawer-side pt-16"
       >
         <label
           class="drawer-overlay"
           for="drawer"
         />
         <ul
-          class="menu w-80 border-r border-primary bg-base-200 p-4 text-base-content"
+          class="menu w-80 border-r border-primary bg-base-200 p-4 text-base-content h-full"
         >
           <li>
             <a
@@ -222,7 +222,7 @@ exports[`Body > Body snapshot mentor 1`] = `
 <body>
   <div>
     <div
-      class="drawer-mobile drawer"
+      class="drawer lg:drawer-open"
     >
       <input
         class="drawer-toggle"
@@ -233,7 +233,7 @@ exports[`Body > Body snapshot mentor 1`] = `
         class="drawer-content flex flex-col"
       >
         <nav
-          class="navbar absolute left-0 top-0 h-16 bg-primary text-primary-content shadow-md"
+          class="navbar fixed left-0 top-0 h-16 bg-primary text-primary-content shadow-md z-10"
         >
           <div
             class="flex-none lg:hidden"
@@ -363,14 +363,14 @@ exports[`Body > Body snapshot mentor 1`] = `
         />
       </div>
       <div
-        class="drawer-side mt-16"
+        class="drawer-side pt-16"
       >
         <label
           class="drawer-overlay"
           for="drawer"
         />
         <ul
-          class="menu w-80 border-r border-primary bg-base-200 p-4 text-base-content"
+          class="menu w-80 border-r border-primary bg-base-200 p-4 text-base-content h-full"
         >
           <li>
             <a

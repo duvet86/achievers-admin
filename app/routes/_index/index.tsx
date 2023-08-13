@@ -15,7 +15,7 @@ export async function loader({ request }: LoaderArgs) {
   const azureUser = await getAzureUserWithRolesByIdAsync(request, userAzureId);
 
   const userRoles = azureUser.appRoleAssignments.map(
-    ({ appRoleId }) => appRoleId
+    ({ appRoleId }) => appRoleId,
   );
 
   if (userRoles.includes(Roles.Admin)) {
@@ -23,7 +23,7 @@ export async function loader({ request }: LoaderArgs) {
   }
 
   const { volunteerAgreementSignedOn } = await getUserByAzureADIdAsync(
-    userAzureId
+    userAzureId,
   );
 
   if (volunteerAgreementSignedOn === null) {

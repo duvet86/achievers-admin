@@ -21,7 +21,7 @@ export async function getUserByIdAsync(id: number) {
 
 export async function updateWelcomeCallAsync(
   userId: number,
-  data: UpdateWelcomeCallCommand
+  data: UpdateWelcomeCallCommand,
 ) {
   return await prisma.welcomeCall.upsert({
     where: {

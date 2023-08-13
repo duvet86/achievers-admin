@@ -72,7 +72,7 @@ export async function exportMentorsToSpreadsheetAsync() {
 
   utils.book_append_sheet(
     wb,
-    utils.json_to_sheet<SpeadsheetUser>(speadsheetMentors)
+    utils.json_to_sheet<SpeadsheetUser>(speadsheetMentors),
   );
 
   const buf = write(wb, { type: "buffer", bookType: "xlsx" });

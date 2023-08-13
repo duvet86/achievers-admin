@@ -71,7 +71,7 @@ test.describe("Admin", () => {
     await importMentorsPage.expect.toHaveTitle();
 
     await importMentorsPage.uploadFile(
-      "./integration-tests/test-data/VolunteerDatabaseInfo.xlsx"
+      "./integration-tests/test-data/VolunteerDatabaseInfo.xlsx",
     );
 
     await importMentorsPage.expect.toHaveTableHeaders();
@@ -100,7 +100,7 @@ test.describe("Admin", () => {
       "",
       "",
       "",
-      ""
+      "",
     );
 
     await userInfoPage.expect.toHaveNoAccessWarning();
@@ -122,7 +122,7 @@ test.describe("Admin", () => {
       "Luca",
       "Luca",
       "Luca",
-      "Luca@luca.com"
+      "Luca@luca.com",
     );
 
     await userInfoPage.userForm.saveForm();
@@ -143,7 +143,7 @@ test.describe("Admin", () => {
       "Luca",
       "Luca",
       "Luca",
-      "Luca@luca.com"
+      "Luca@luca.com",
     );
   });
 
@@ -179,7 +179,7 @@ test.describe("Admin", () => {
       "Linkid",
       "true",
       "I am ready to rock",
-      "I have a lot of energy and I want to share it with everyone"
+      "I have a lot of energy and I want to share it with everyone",
     );
   });
 });

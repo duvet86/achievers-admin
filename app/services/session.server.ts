@@ -20,7 +20,7 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
     if (refreshToken === null) {
       trackException({
         exception: new Error(
-          "Missing refresh token. See: https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-oauth-tokens#refresh-auth-tokens"
+          "Missing refresh token. See: https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-oauth-tokens#refresh-auth-tokens",
         ),
       });
     }
@@ -51,7 +51,7 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
 }
 
 export async function getCurrentUserADIdAsync(
-  request: Request
+  request: Request,
 ): Promise<string> {
   const tokenInfo = await getTokenInfoAsync(request);
 
