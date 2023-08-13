@@ -2,20 +2,46 @@ import type { User } from "@prisma/client";
 import type { SpeadsheetUser } from "~/models/speadsheet";
 
 import { Readable } from "stream";
-
 import { stream, read, utils } from "xlsx";
+
 import { prisma } from "~/db.server";
 import { isValidDate } from "~/services";
 
 export async function readExcelFileAsync(file: File) {
   stream.set_readable(Readable);
 
-  const workbook = read(await file.arrayBuffer());
-  const firstWs = workbook.Sheets[workbook.SheetNames[0]];
+  const workbook = read(await file.arrayBuffer(), { cellDates: true });
 
-  const sheetUsers = utils.sheet_to_json<SpeadsheetUser>(firstWs);
+  return workbook.SheetNames.flatMap((sheetName) => {
+    const firstWs = workbook.Sheets[sheetName];
 
-  return sheetUsers;
+    return utils.sheet_to_json<SpeadsheetUser>(firstWs);
+  });
+
+  // const firstWs = workbook.Sheets[workbook.SheetNames[0]];
+
+  // const sheetUsers = utils.sheet_to_json<SpeadsheetUser>(firstWs);
+
+  // return sheetUsers;
+}
+
+export async function getImportHistoryAsync() {
+  return await prisma.importedHistory.findMany({
+    select: {
+      error: true,
+      createdAt: true,
+      user: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 }
 
 export async function getCurrentMentorsAsync() {
@@ -42,12 +68,47 @@ export async function importSpreadsheetMentorsAsync(
     for (let i = 0; i < newUsers.length; i++) {
       const chapter = chapters.find((c) => c.name === newUsers[i]["Chapter"]);
 
-      console.log(
-        "------------------",
-        i,
-        new Date(newUsers[i]["Police Check Renewal Date"]),
-        isValidDate(new Date(newUsers[i]["Police Check Renewal Date"])),
-      );
+      let error: string = "";
+
+      const isDateofBirthValid =
+        newUsers[i]["Date of Birth"] &&
+        isValidDate(new Date(newUsers[i]["Date of Birth"]));
+
+      if (newUsers[i]["Date of Birth"] && !isDateofBirthValid) {
+        error += "Date of Birth is invalid.\n";
+      }
+
+      const isPoliceCheckDateValid =
+        newUsers[i]["Police Check Renewal Date"] &&
+        isValidDate(new Date(newUsers[i]["Police Check Renewal Date"]));
+
+      if (newUsers[i]["Police Check Renewal Date"] && !isPoliceCheckDateValid) {
+        error += "Police Check Renewal Date is invalid.\n";
+      }
+
+      const isWWCDateValid =
+        newUsers[i]["WWC Check Renewal Date"] &&
+        isValidDate(new Date(newUsers[i]["WWC Check Renewal Date"]));
+
+      if (newUsers[i]["WWC Check Renewal Date"] && !isWWCDateValid) {
+        error += "WWC Check Renewal Date is invalid.\n";
+      }
+
+      const isEndDateValid =
+        newUsers[i]["End Date"] &&
+        isValidDate(new Date(newUsers[i]["End Date"]));
+
+      if (newUsers[i]["End Date"] && !isEndDateValid) {
+        error += "End Date is invalid.\n";
+      }
+
+      const isInductionDateValid =
+        newUsers[i]["Induction Date"] &&
+        isValidDate(new Date(newUsers[i]["Induction Date"]));
+
+      if (newUsers[i]["Induction Date"] && !isInductionDateValid) {
+        error += "Induction Date is invalid.\n";
+      }
 
       const user = await tx.user.create({
         data: {
@@ -61,7 +122,7 @@ export async function importSpreadsheetMentorsAsync(
           ]
             ? newUsers[i]["Additional email addresses (for intranet access)"]
             : null,
-          dateOfBirth: newUsers[i]["Date of Birth"]
+          dateOfBirth: isDateofBirthValid
             ? new Date(newUsers[i]["Date of Birth"])
             : null,
           emergencyContactAddress: newUsers[i]["Emergency Contact Address"],
@@ -69,9 +130,7 @@ export async function importSpreadsheetMentorsAsync(
           emergencyContactNumber: newUsers[i]["Emergency Contact Name"],
           emergencyContactRelationship:
             newUsers[i]["Emergency Contact Relationship"],
-          endDate: newUsers[i]["End Date"]
-            ? new Date(newUsers[i]["End Date"])
-            : null,
+          endDate: isEndDateValid ? new Date(newUsers[i]["End Date"]) : null,
           firstName: newUsers[i]["First Name"],
           azureADId: null,
           lastName: newUsers[i]["Last Name"],
@@ -113,7 +172,7 @@ export async function importSpreadsheetMentorsAsync(
                   },
                 }
               : undefined,
-          induction: newUsers[i]["Induction Date"]
+          induction: isInductionDateValid
             ? {
                 create: {
                   completedOnDate: new Date(newUsers[i]["Induction Date"]),
@@ -122,18 +181,16 @@ export async function importSpreadsheetMentorsAsync(
                 },
               }
             : undefined,
-          policeCheck:
-            newUsers[i]["Police Check Renewal Date"] &&
-            isValidDate(new Date(newUsers[i]["Police Check Renewal Date"]))
-              ? {
-                  create: {
-                    expiryDate: new Date(
-                      newUsers[i]["Police Check Renewal Date"],
-                    ),
-                    filePath: "",
-                  },
-                }
-              : undefined,
+          policeCheck: isPoliceCheckDateValid
+            ? {
+                create: {
+                  expiryDate: new Date(
+                    newUsers[i]["Police Check Renewal Date"],
+                  ),
+                  filePath: "",
+                },
+              }
+            : undefined,
           references: {
             createMany: {
               data: [
@@ -169,19 +226,22 @@ export async function importSpreadsheetMentorsAsync(
               comment: "Imported mentor",
             },
           },
-          wwcCheck:
-            newUsers[i]["WWC Check Renewal Date"] &&
-            isValidDate(new Date(newUsers[i]["WWC Check Renewal Date"]))
-              ? {
-                  create: {
-                    expiryDate: new Date(newUsers[i]["WWC Check Renewal Date"]),
-                    filePath: "",
-                    wwcNumber: newUsers[i]["WWC Check Number"]
-                      ? newUsers[i]["WWC Check Number"].toString()
-                      : "Not specified",
-                  },
-                }
-              : undefined,
+          wwcCheck: isWWCDateValid
+            ? {
+                create: {
+                  expiryDate: new Date(newUsers[i]["WWC Check Renewal Date"]),
+                  filePath: "",
+                  wwcNumber: newUsers[i]["WWC Check Number"]
+                    ? newUsers[i]["WWC Check Number"].toString()
+                    : "Not specified",
+                },
+              }
+            : undefined,
+          importedHistory: {
+            create: {
+              error: error || null,
+            },
+          },
         },
       });
 

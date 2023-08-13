@@ -13,7 +13,7 @@ export function ChaptersForm({ loaderData: { user } }: Props) {
   return (
     <>
       <div className="overflow-auto">
-        <table className="table w-full">
+        <table className="table">
           <thead>
             <tr>
               <th align="left" className="p-2">

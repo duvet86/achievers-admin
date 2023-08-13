@@ -1,4 +1,4 @@
-import type { ActionArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 
 import { useLoaderData, Link, Form, useActionData } from "@remix-run/react";
 import { json } from "@remix-run/node";
@@ -15,6 +15,7 @@ import {
   NavArrowDown,
 } from "iconoir-react";
 
+import { getEnvironment } from "~/services";
 import { Input, Title } from "~/components";
 
 import { getUsersAsync, getUsersCountAsync } from "./services.server";
@@ -48,7 +49,7 @@ function getNumberCompletedChecks(user: any): number {
   return checks;
 }
 
-export async function loader() {
+export async function loader({ request }: LoaderArgs) {
   const [count, users] = await Promise.all([
     getUsersCountAsync(),
     getUsersAsync(0),
@@ -60,6 +61,7 @@ export async function loader() {
       ...user,
       checksCompleted: getNumberCompletedChecks(user),
     })),
+    isProduction: getEnvironment(request) === "production",
   });
 }
 
@@ -114,7 +116,7 @@ export async function action({ request }: ActionArgs) {
 }
 
 export default function SelectChapter() {
-  const { users, count } = useLoaderData<typeof loader>();
+  const { users, count, isProduction } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -138,12 +140,14 @@ export default function SelectChapter() {
             tabIndex={0}
             className="dropdown-content menu rounded-box w-52 border border-base-300 bg-base-100 p-2 shadow"
           >
-            <li>
-              <Link className="gap-4" to="import">
-                <DatabaseRestore className="h-6 w-6" />
-                Import mentors
-              </Link>
-            </li>
+            {!isProduction && (
+              <li>
+                <Link className="gap-4" to="import">
+                  <DatabaseRestore className="h-6 w-6" />
+                  Import mentors
+                </Link>
+              </li>
+            )}
             <li>
               <a className="gap-4" href="/users/export" download>
                 <DatabaseExport className="h-6 w-6" />
@@ -199,7 +203,7 @@ export default function SelectChapter() {
         </div>
 
         <div className="overflow-auto">
-          <table className="table w-full">
+          <table className="table">
             <thead>
               <tr>
                 <th align="left" className="w-12 p-2">

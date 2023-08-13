@@ -5,7 +5,14 @@ import {
   unstable_parseMultipartFormData,
   json,
 } from "@remix-run/node";
-import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react";
+import dayjs from "dayjs";
 
 import { isEmail, isStringNullOrEmpty } from "~/services";
 
@@ -17,7 +24,14 @@ import {
   readExcelFileAsync,
   getCurrentMentorsAsync,
   importSpreadsheetMentorsAsync,
+  getImportHistoryAsync,
 } from "./services.server";
+
+export const loader = async () => {
+  const history = await getImportHistoryAsync();
+
+  return json({ history });
+};
 
 export const action = async ({ request }: ActionArgs) => {
   const uploadHandler = unstable_createMemoryUploadHandler({
@@ -98,6 +112,8 @@ export const action = async ({ request }: ActionArgs) => {
 };
 
 export default function Index() {
+  const { history } = useLoaderData<typeof loader>();
+
   const actionData = useActionData<typeof action>();
   const transition = useNavigation();
 
@@ -115,7 +131,7 @@ export default function Index() {
       <Form
         method="post"
         encType="multipart/form-data"
-        className="relative flex h-full flex-col gap-8"
+        className="relative flex h-full flex-col gap-4"
       >
         <div className="form-control w-full max-w-xs">
           <label htmlFor="usersSheet" className="label">
@@ -154,26 +170,29 @@ export default function Index() {
           </div>
         )}
 
-        <div className="text-info">
-          {!actionData?.message && actionData?.newUsers.length === 0 && (
+        {!actionData?.message && actionData?.newUsers.length === 0 && (
+          <div className="text-info">
             <p>No new users to import.</p>
-          )}
-        </div>
+          </div>
+        )}
 
-        <SubTitle>Imported mentors</SubTitle>
+        <SubTitle>History of imported mentors</SubTitle>
 
         <div className="overflow-auto">
-          <table className="table w-full">
+          <table className="table">
             <thead>
               <tr>
                 <th align="left" className="w-12 p-2">
                   #
                 </th>
                 <th align="left" className="p-2">
-                  Full Name
+                  Full name
                 </th>
                 <th align="left" className="p-2">
-                  Email
+                  Errors
+                </th>
+                <th align="left" className="p-2">
+                  Imported at
                 </th>
                 <th align="right" className="p-2">
                   Action
@@ -181,21 +200,30 @@ export default function Index() {
               </tr>
             </thead>
             <tbody>
-              {!actionData && (
+              {history.length === 0 && (
                 <tr>
                   <td colSpan={3} className="border p-2">
                     <i>No mentors imported</i>
                   </td>
                 </tr>
               )}
-              {actionData?.newUsers.map(
-                ({ id, firstName, lastName, email }, index) => (
-                  <tr key={id}>
+              {history.map(
+                (
+                  { user: { id, firstName, lastName }, error, createdAt },
+                  index,
+                ) => (
+                  <tr
+                    key={id}
+                    className={error !== null ? "bg-error" : undefined}
+                  >
                     <td className="border p-2">{index + 1}</td>
                     <td className="border p-2">
                       {firstName} {lastName}
                     </td>
-                    <td className="border p-2">{email}</td>
+                    <td className="border p-2">{error}</td>
+                    <td className="border p-2">
+                      {dayjs(createdAt).format("YYYY/MM/DD hh:mm")}
+                    </td>
                     <td className="border p-2">
                       <Link
                         to={`/users/${id.toString()}`}
