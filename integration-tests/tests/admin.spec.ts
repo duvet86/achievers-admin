@@ -80,7 +80,7 @@ test.describe("Admin", () => {
     await importMentorsPage.expect.toHaveTableRows(4);
   });
 
-  test.only("should edit user info", async ({ page }) => {
+  test("should edit user info", async ({ page }) => {
     await usersListPage.goToEditUser();
 
     await userInfoPage.expect.toHaveTitle();
