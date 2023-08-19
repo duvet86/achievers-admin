@@ -20,8 +20,7 @@ export interface SpeadsheetUser {
   "Committee Member": BooleanAnswer; // Not used.
   "Current Member": BooleanAnswer; // Not used.
   "Induction Date": string;
-  "Active Mentor": BooleanAnswer; // Not used.
-  Attendance: Attendance; // Not used.
+  Attendance: Attendance;
   Mentee: string; // Not used.
   "Mentee Year Level": string; // Not used.
   "Police Check Renewal Date": string;
@@ -39,4 +38,5 @@ export interface SpeadsheetUser {
   "Vaccination Status": VaccinationStatus; // Not used.
   "WWC Check Number": string;
   "Missing Information": string;
+  "Active Volunteer": BooleanAnswer;
 }

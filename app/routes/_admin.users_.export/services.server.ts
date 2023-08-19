@@ -72,6 +72,7 @@ export async function exportMentorsToSpreadsheetAsync() {
     "Vaccination Status": "Unconfirmed", // Not used.
     "WWC Check Number": m.wwcCheck?.wwcNumber ?? "",
     "Missing Information": m.importedHistory?.error ?? "",
+    "Active Volunteer": m.endDate === null ? "No" : "Yes",
   }));
 
   const wb = utils.book_new();

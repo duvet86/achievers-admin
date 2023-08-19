@@ -103,6 +103,13 @@ export async function importSpreadsheetMentorsAsync(
         error += "Induction Date is invalid.\n";
       }
 
+      let endDate: Date | null = null;
+      if (isEndDateValid) {
+        endDate = new Date(uniqueUsers[i]["End Date"]);
+      } else if (uniqueUsers[i]["Active Volunteer"] !== "Yes") {
+        endDate = new Date();
+      }
+
       const user = await tx.user.create({
         include: {
           importedHistory: true,
@@ -111,8 +118,8 @@ export async function importSpreadsheetMentorsAsync(
           addressPostcode: "",
           addressState: "",
           addressSuburb: "",
-          email: uniqueUsers[i]["Email address"],
           addressStreet: uniqueUsers[i]["Residential Address"],
+          email: uniqueUsers[i]["Email address"],
           additionalEmail: uniqueUsers[i][
             "Additional email addresses (for intranet access)"
           ]
@@ -126,7 +133,7 @@ export async function importSpreadsheetMentorsAsync(
           emergencyContactNumber: uniqueUsers[i]["Emergency Contact Name"],
           emergencyContactRelationship:
             uniqueUsers[i]["Emergency Contact Relationship"],
-          endDate: isEndDateValid ? new Date(uniqueUsers[i]["End Date"]) : null,
+          endDate: endDate,
           firstName: uniqueUsers[i]["First Name"],
           azureADId: null,
           lastName: uniqueUsers[i]["Last Name"],
@@ -153,9 +160,11 @@ export async function importSpreadsheetMentorsAsync(
               occupation: uniqueUsers[i]["Occupation"]
                 ? uniqueUsers[i]["Occupation"]
                 : "",
-              preferredFrequency: "Not specified",
+              preferredFrequency: uniqueUsers[i]["Attendance"]
+                ? uniqueUsers[i]["Attendance"]
+                : "Not specified",
               volunteerExperience: "Not specified",
-              role: "Not specified",
+              role: uniqueUsers[i]["Role(s)"] ? uniqueUsers[i]["Role(s)"] : "",
             },
           },
           approvalbyMRC:

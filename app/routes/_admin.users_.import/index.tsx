@@ -215,7 +215,9 @@ export default function Index() {
                     <td className="border p-2">
                       {firstName} {lastName}
                     </td>
-                    <td className="border p-2">{importedHistory?.error}</td>
+                    <td className="border p-2">
+                      {importedHistory?.error ?? "-"}
+                    </td>
                     <td className="border p-2">
                       {dayjs(createdAt).format("YYYY/MM/DD hh:mm")}
                     </td>
