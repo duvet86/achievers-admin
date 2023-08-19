@@ -36,15 +36,15 @@ export class AdminUsersPage {
     this.assigndChapterHeaderCell = page.getByRole("cell", {
       name: "Assigned chapter",
     });
-    this.actionHeaderCell = page.getByRole("cell", { name: "action" });
+    this.actionHeaderCell = page.getByRole("cell", { name: "Action" });
 
-    this.fullNameCell = page.getByRole("cell", { name: "test_9 user_9" });
-    this.emailCell = page.getByRole("cell", { name: "test_9@test.com" });
+    this.fullNameCell = page.getByRole("cell", { name: "test_0 user_0" });
+    this.emailCell = page.getByRole("cell", { name: "test_0@test.com" });
     this.assigndChapterCell = page
-      .getByRole("row", { name: "test_9@test.com" })
+      .getByRole("row", { name: "test_0@test.com" })
       .getByRole("cell", { name: "Girrawheen" });
     this.actionCell = page
-      .getByRole("row", { name: "test_9@test.com" })
+      .getByRole("row", { name: "test_0@test.com" })
       .getByRole("cell", { name: "Edit" });
 
     this.tableRows = page.getByRole("row");

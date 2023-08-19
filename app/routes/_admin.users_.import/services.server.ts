@@ -34,11 +34,9 @@ type UserHistory = User & {
 export async function importSpreadsheetMentorsAsync(
   newUsers: SpeadsheetUser[],
 ): Promise<UserHistory[]> {
-  const newUsersReversed = newUsers.reverse();
-
-  const uniqueUsers = newUsersReversed.filter(
+  const uniqueUsers = newUsers.filter(
     (obj, index) =>
-      newUsersReversed.findIndex(
+      newUsers.findIndex(
         (item) => item["Email address"] === obj["Email address"],
       ) === index,
   );

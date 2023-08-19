@@ -72,13 +72,13 @@ export default function Assign() {
       <BackHeader to="../../" />
 
       <Form method="post">
-        <Title>Assign a Chapter to "{user.email}"</Title>
+        <Title>Assign a chapter to "{user.email}"</Title>
 
         <Select
-          label="Select a Chapter"
+          label="Select a chapter"
           name="chapterId"
           disabled={isSubmitting}
-          options={[{ value: "", label: "Select a Chapter" }].concat(
+          options={[{ value: "", label: "Select a chapter" }].concat(
             availableChapters.map(({ id, name }) => ({
               label: name,
               value: id.toString(),

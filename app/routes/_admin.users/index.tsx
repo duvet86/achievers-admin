@@ -210,13 +210,13 @@ export default function SelectChapter() {
                   #
                 </th>
                 <th align="left" className="p-2">
-                  Full Name
+                  Full name
                 </th>
                 <th align="left" className="p-2">
                   Email
                 </th>
                 <th align="left" className="p-2">
-                  Assigned Chapter
+                  Assigned chapter
                 </th>
                 <th align="left" className="p-2">
                   # Checks completed

@@ -22,7 +22,7 @@ export class ChapterForm {
       name: "Chapters",
       exact: true,
     });
-    this.actionHeaderCell = page.getByRole("cell", { name: "CHAPTERS ACTION" });
+    this.actionHeaderCell = page.getByRole("cell", { name: "Chapters action" });
 
     this.noChaptersCell = page.getByRole("cell", {
       name: "No chapters assigned to this user",
@@ -35,7 +35,7 @@ export class ChapterForm {
   }
 
   async gotToAssignToChapter(): Promise<void> {
-    await this.page.getByRole("link", { name: "ASSIGN A CHAPTER" }).click();
+    await this.page.getByRole("link", { name: "Assign a chapter" }).click();
   }
 
   async gotToRemoveChapter(): Promise<void> {

@@ -6,7 +6,6 @@ import {
   json,
 } from "@remix-run/node";
 import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
-import dayjs from "dayjs";
 
 import { isEmail, isStringNullOrEmpty, trackException } from "~/services";
 
@@ -184,9 +183,6 @@ export default function Index() {
                 <th align="left" className="p-2">
                   Errors
                 </th>
-                <th align="left" className="p-2">
-                  Imported at
-                </th>
                 <th align="right" className="p-2">
                   Action
                 </th>
@@ -201,10 +197,7 @@ export default function Index() {
                 </tr>
               )}
               {actionData?.newUsers.map(
-                (
-                  { id, firstName, lastName, importedHistory, createdAt },
-                  index,
-                ) => (
+                ({ id, firstName, lastName, importedHistory }, index) => (
                   <tr
                     key={id}
                     className={
@@ -215,12 +208,7 @@ export default function Index() {
                     <td className="border p-2">
                       {firstName} {lastName}
                     </td>
-                    <td className="border p-2">
-                      {importedHistory?.error ?? "-"}
-                    </td>
-                    <td className="border p-2">
-                      {dayjs(createdAt).format("YYYY/MM/DD hh:mm")}
-                    </td>
+                    <td className="border p-2">{importedHistory?.error}</td>
                     <td className="border p-2">
                       <Link
                         to={`/users/${id.toString()}`}
