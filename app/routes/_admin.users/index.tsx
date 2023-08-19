@@ -15,7 +15,6 @@ import {
   NavArrowDown,
 } from "iconoir-react";
 
-import { getEnvironment } from "~/services";
 import { Input, Title } from "~/components";
 
 import { getUsersAsync, getUsersCountAsync } from "./services.server";
@@ -61,7 +60,6 @@ export async function loader({ request }: LoaderArgs) {
       ...user,
       checksCompleted: getNumberCompletedChecks(user),
     })),
-    isProduction: getEnvironment(request) === "production",
   });
 }
 
@@ -116,7 +114,7 @@ export async function action({ request }: ActionArgs) {
 }
 
 export default function SelectChapter() {
-  const { users, count, isProduction } = useLoaderData<typeof loader>();
+  const { users, count } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -140,14 +138,12 @@ export default function SelectChapter() {
             tabIndex={0}
             className="dropdown-content menu rounded-box w-52 border border-base-300 bg-base-100 p-2 shadow"
           >
-            {!isProduction && (
-              <li>
-                <Link className="gap-4" to="import">
-                  <DatabaseRestore className="h-6 w-6" />
-                  Import mentors
-                </Link>
-              </li>
-            )}
+            <li>
+              <Link className="gap-4" to="import">
+                <DatabaseRestore className="h-6 w-6" />
+                Import mentors
+              </Link>
+            </li>
             <li>
               <a className="gap-4" href="/users/export" download>
                 <DatabaseExport className="h-6 w-6" />
