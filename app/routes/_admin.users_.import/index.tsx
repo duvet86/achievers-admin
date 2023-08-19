@@ -8,7 +8,7 @@ import {
 import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 import dayjs from "dayjs";
 
-import { isEmail, isStringNullOrEmpty } from "~/services";
+import { isEmail, isStringNullOrEmpty, trackException } from "~/services";
 
 import { Import, PageEdit, Archive } from "iconoir-react";
 
@@ -90,6 +90,10 @@ export const action = async ({ request }: ActionArgs) => {
     });
   } catch (e: any) {
     console.error(e);
+
+    trackException({
+      exception: new Error(e.message),
+    });
 
     return json({
       newUsers: [],
