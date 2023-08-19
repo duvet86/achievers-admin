@@ -5,33 +5,20 @@ import {
   unstable_parseMultipartFormData,
   json,
 } from "@remix-run/node";
-import {
-  Form,
-  Link,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-} from "@remix-run/react";
+import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 import dayjs from "dayjs";
 
 import { isEmail, isStringNullOrEmpty } from "~/services";
 
-import { Import, PageEdit } from "iconoir-react";
+import { Import, PageEdit, Archive } from "iconoir-react";
 
-import { LoadingSpinner, Title, BackHeader, SubTitle } from "~/components";
+import { Title, BackHeader, SubTitle } from "~/components";
 
 import {
   readExcelFileAsync,
   getCurrentMentorsAsync,
   importSpreadsheetMentorsAsync,
-  getImportHistoryAsync,
 } from "./services.server";
-
-export const loader = async () => {
-  const history = await getImportHistoryAsync();
-
-  return json({ history });
-};
 
 export const action = async ({ request }: ActionArgs) => {
   const uploadHandler = unstable_createMemoryUploadHandler({
@@ -112,8 +99,6 @@ export const action = async ({ request }: ActionArgs) => {
 };
 
 export default function Index() {
-  const { history } = useLoaderData<typeof loader>();
-
   const actionData = useActionData<typeof action>();
   const transition = useNavigation();
 
@@ -149,7 +134,7 @@ export default function Index() {
           />
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-20">
           <button
             type="submit"
             className="btn-primary btn gap-2"
@@ -158,7 +143,11 @@ export default function Index() {
             <Import className="h-6 w-6" />
             Import
           </button>
-          {isDisabled && <LoadingSpinner dark />}
+
+          <Link to="/users/import-history" className="btn gap-2">
+            <Archive className="h-4 w-4" />
+            View history
+          </Link>
         </div>
 
         {actionData?.message && (
@@ -176,7 +165,7 @@ export default function Index() {
           </div>
         )}
 
-        <SubTitle>History of imported mentors</SubTitle>
+        <SubTitle>Imported mentors</SubTitle>
 
         <div className="overflow-auto">
           <table className="table">
@@ -200,27 +189,29 @@ export default function Index() {
               </tr>
             </thead>
             <tbody>
-              {history.length === 0 && (
+              {actionData?.newUsers.length === 0 && (
                 <tr>
                   <td colSpan={3} className="border p-2">
                     <i>No mentors imported</i>
                   </td>
                 </tr>
               )}
-              {history.map(
+              {actionData?.newUsers.map(
                 (
-                  { user: { id, firstName, lastName }, error, createdAt },
+                  { id, firstName, lastName, importedHistory, createdAt },
                   index,
                 ) => (
                   <tr
                     key={id}
-                    className={error !== null ? "bg-error" : undefined}
+                    className={
+                      importedHistory?.error !== null ? "bg-error" : undefined
+                    }
                   >
                     <td className="border p-2">{index + 1}</td>
                     <td className="border p-2">
                       {firstName} {lastName}
                     </td>
-                    <td className="border p-2">{error}</td>
+                    <td className="border p-2">{importedHistory?.error}</td>
                     <td className="border p-2">
                       {dayjs(createdAt).format("YYYY/MM/DD hh:mm")}
                     </td>

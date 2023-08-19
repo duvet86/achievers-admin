@@ -1,4 +1,4 @@
-import type { User } from "@prisma/client";
+import type { ImportedHistory, User } from "@prisma/client";
 import type { SpeadsheetUser } from "~/models/speadsheet";
 
 import { Readable } from "stream";
@@ -17,31 +17,6 @@ export async function readExcelFileAsync(file: File) {
 
     return utils.sheet_to_json<SpeadsheetUser>(firstWs);
   });
-
-  // const firstWs = workbook.Sheets[workbook.SheetNames[0]];
-
-  // const sheetUsers = utils.sheet_to_json<SpeadsheetUser>(firstWs);
-
-  // return sheetUsers;
-}
-
-export async function getImportHistoryAsync() {
-  return await prisma.importedHistory.findMany({
-    select: {
-      error: true,
-      createdAt: true,
-      user: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
 }
 
 export async function getCurrentMentorsAsync() {
@@ -52,10 +27,23 @@ export async function getCurrentMentorsAsync() {
   });
 }
 
+type UserHistory = User & {
+  importedHistory: ImportedHistory | null;
+};
+
 export async function importSpreadsheetMentorsAsync(
   newUsers: SpeadsheetUser[],
-): Promise<User[]> {
-  const users: User[] = [];
+): Promise<UserHistory[]> {
+  const newUsersReversed = newUsers.reverse();
+
+  const uniqueUsers = newUsersReversed.filter(
+    (obj, index) =>
+      newUsersReversed.findIndex(
+        (item) => item["Email address"] === obj["Email address"],
+      ) === index,
+  );
+
+  const users: UserHistory[] = [];
 
   const chapters = await prisma.chapter.findMany({
     select: {
@@ -65,80 +53,88 @@ export async function importSpreadsheetMentorsAsync(
   });
 
   await prisma.$transaction(async (tx) => {
-    for (let i = 0; i < newUsers.length; i++) {
-      const chapter = chapters.find((c) => c.name === newUsers[i]["Chapter"]);
+    for (let i = 0; i < uniqueUsers.length; i++) {
+      const chapter = chapters.find(
+        (c) => c.name === uniqueUsers[i]["Chapter"],
+      );
 
       let error: string = "";
 
       const isDateofBirthValid =
-        newUsers[i]["Date of Birth"] &&
-        isValidDate(new Date(newUsers[i]["Date of Birth"]));
+        uniqueUsers[i]["Date of Birth"] &&
+        isValidDate(new Date(uniqueUsers[i]["Date of Birth"]));
 
-      if (newUsers[i]["Date of Birth"] && !isDateofBirthValid) {
+      if (uniqueUsers[i]["Date of Birth"] && !isDateofBirthValid) {
         error += "Date of Birth is invalid.\n";
       }
 
       const isPoliceCheckDateValid =
-        newUsers[i]["Police Check Renewal Date"] &&
-        isValidDate(new Date(newUsers[i]["Police Check Renewal Date"]));
+        uniqueUsers[i]["Police Check Renewal Date"] &&
+        isValidDate(new Date(uniqueUsers[i]["Police Check Renewal Date"]));
 
-      if (newUsers[i]["Police Check Renewal Date"] && !isPoliceCheckDateValid) {
+      if (
+        uniqueUsers[i]["Police Check Renewal Date"] &&
+        !isPoliceCheckDateValid
+      ) {
         error += "Police Check Renewal Date is invalid.\n";
       }
 
       const isWWCDateValid =
-        newUsers[i]["WWC Check Renewal Date"] &&
-        isValidDate(new Date(newUsers[i]["WWC Check Renewal Date"]));
+        uniqueUsers[i]["WWC Check Renewal Date"] &&
+        isValidDate(new Date(uniqueUsers[i]["WWC Check Renewal Date"]));
 
-      if (newUsers[i]["WWC Check Renewal Date"] && !isWWCDateValid) {
+      if (uniqueUsers[i]["WWC Check Renewal Date"] && !isWWCDateValid) {
         error += "WWC Check Renewal Date is invalid.\n";
       }
 
       const isEndDateValid =
-        newUsers[i]["End Date"] &&
-        isValidDate(new Date(newUsers[i]["End Date"]));
+        uniqueUsers[i]["End Date"] &&
+        isValidDate(new Date(uniqueUsers[i]["End Date"]));
 
-      if (newUsers[i]["End Date"] && !isEndDateValid) {
+      if (uniqueUsers[i]["End Date"] && !isEndDateValid) {
         error += "End Date is invalid.\n";
       }
 
       const isInductionDateValid =
-        newUsers[i]["Induction Date"] &&
-        isValidDate(new Date(newUsers[i]["Induction Date"]));
+        uniqueUsers[i]["Induction Date"] &&
+        isValidDate(new Date(uniqueUsers[i]["Induction Date"]));
 
-      if (newUsers[i]["Induction Date"] && !isInductionDateValid) {
+      if (uniqueUsers[i]["Induction Date"] && !isInductionDateValid) {
         error += "Induction Date is invalid.\n";
       }
 
       const user = await tx.user.create({
+        include: {
+          importedHistory: true,
+        },
         data: {
           addressPostcode: "",
           addressState: "",
           addressSuburb: "",
-          email: newUsers[i]["Email address"],
-          addressStreet: newUsers[i]["Residential Address"],
-          additionalEmail: newUsers[i][
+          email: uniqueUsers[i]["Email address"],
+          addressStreet: uniqueUsers[i]["Residential Address"],
+          additionalEmail: uniqueUsers[i][
             "Additional email addresses (for intranet access)"
           ]
-            ? newUsers[i]["Additional email addresses (for intranet access)"]
+            ? uniqueUsers[i]["Additional email addresses (for intranet access)"]
             : null,
           dateOfBirth: isDateofBirthValid
-            ? new Date(newUsers[i]["Date of Birth"])
+            ? new Date(uniqueUsers[i]["Date of Birth"])
             : null,
-          emergencyContactAddress: newUsers[i]["Emergency Contact Address"],
-          emergencyContactName: newUsers[i]["Emergency Contact Name"],
-          emergencyContactNumber: newUsers[i]["Emergency Contact Name"],
+          emergencyContactAddress: uniqueUsers[i]["Emergency Contact Address"],
+          emergencyContactName: uniqueUsers[i]["Emergency Contact Name"],
+          emergencyContactNumber: uniqueUsers[i]["Emergency Contact Name"],
           emergencyContactRelationship:
-            newUsers[i]["Emergency Contact Relationship"],
-          endDate: isEndDateValid ? new Date(newUsers[i]["End Date"]) : null,
-          firstName: newUsers[i]["First Name"],
+            uniqueUsers[i]["Emergency Contact Relationship"],
+          endDate: isEndDateValid ? new Date(uniqueUsers[i]["End Date"]) : null,
+          firstName: uniqueUsers[i]["First Name"],
           azureADId: null,
-          lastName: newUsers[i]["Last Name"],
-          mobile: newUsers[i]["Mobile"].toString(),
+          lastName: uniqueUsers[i]["Last Name"],
+          mobile: uniqueUsers[i]["Mobile"].toString(),
           hasApprovedToPublishPhotos:
-            newUsers[i]["Approval to publish Potographs?"] === "Yes",
+            uniqueUsers[i]["Approval to publish Potographs?"] === "Yes",
           volunteerAgreementSignedOn:
-            newUsers[i]["Volunteer Agreement Complete"] === "Yes"
+            uniqueUsers[i]["Volunteer Agreement Complete"] === "Yes"
               ? new Date()
               : undefined,
           userAtChapter: {
@@ -152,10 +148,10 @@ export async function importSpreadsheetMentorsAsync(
               bestTimeToContact: "Not specified",
               comment: "Existing mentor imported by file.",
               heardAboutUs: "Not specified",
-              isOver18: newUsers[i]["Over the age of 18 years?"] === "Yes",
+              isOver18: uniqueUsers[i]["Over the age of 18 years?"] === "Yes",
               mentoringLevel: "",
-              occupation: newUsers[i]["Occupation"]
-                ? newUsers[i]["Occupation"]
+              occupation: uniqueUsers[i]["Occupation"]
+                ? uniqueUsers[i]["Occupation"]
                 : "",
               preferredFrequency: "Not specified",
               volunteerExperience: "Not specified",
@@ -163,7 +159,7 @@ export async function importSpreadsheetMentorsAsync(
             },
           },
           approvalbyMRC:
-            newUsers[i]["Approved by MRC?"] === "Yes"
+            uniqueUsers[i]["Approved by MRC?"] === "Yes"
               ? {
                   create: {
                     completedBy: "imported mentor",
@@ -175,7 +171,7 @@ export async function importSpreadsheetMentorsAsync(
           induction: isInductionDateValid
             ? {
                 create: {
-                  completedOnDate: new Date(newUsers[i]["Induction Date"]),
+                  completedOnDate: new Date(uniqueUsers[i]["Induction Date"]),
                   runBy: "imported mentor",
                   comment: "Imported mentor",
                 },
@@ -185,7 +181,7 @@ export async function importSpreadsheetMentorsAsync(
             ? {
                 create: {
                   expiryDate: new Date(
-                    newUsers[i]["Police Check Renewal Date"],
+                    uniqueUsers[i]["Police Check Renewal Date"],
                   ),
                   filePath: "",
                 },
@@ -229,10 +225,12 @@ export async function importSpreadsheetMentorsAsync(
           wwcCheck: isWWCDateValid
             ? {
                 create: {
-                  expiryDate: new Date(newUsers[i]["WWC Check Renewal Date"]),
+                  expiryDate: new Date(
+                    uniqueUsers[i]["WWC Check Renewal Date"],
+                  ),
                   filePath: "",
-                  wwcNumber: newUsers[i]["WWC Check Number"]
-                    ? newUsers[i]["WWC Check Number"].toString()
+                  wwcNumber: uniqueUsers[i]["WWC Check Number"]
+                    ? uniqueUsers[i]["WWC Check Number"].toString()
                     : "Not specified",
                 },
               }

@@ -38,4 +38,5 @@ export interface SpeadsheetUser {
   Occupation: string;
   "Vaccination Status": VaccinationStatus; // Not used.
   "WWC Check Number": string;
+  "Missing Information": string;
 }
