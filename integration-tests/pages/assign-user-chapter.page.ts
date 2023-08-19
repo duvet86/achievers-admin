@@ -12,7 +12,7 @@ export class AssignUserChapterPage {
   constructor(page: Page) {
     this.page = page;
 
-    this.title = page.getByRole("heading", { name: "Assign a Chapter to" });
+    this.title = page.getByRole("heading", { name: "Assign a chapter to" });
 
     this.expect = new AssignUserChapterPageAssertions(this);
   }

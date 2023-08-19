@@ -26,7 +26,7 @@ export default function Index() {
       <BackHeader />
 
       <Title>
-        Expression of Interest for "{user.firstName} {user.lastName}"
+        Expression of interest for "{user.firstName} {user.lastName}"
       </Title>
 
       <Text

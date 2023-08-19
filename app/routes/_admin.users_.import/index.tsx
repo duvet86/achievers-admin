@@ -7,11 +7,11 @@ import {
 } from "@remix-run/node";
 import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 
-import { isEmail, isStringNullOrEmpty } from "~/services";
+import { isEmail, isStringNullOrEmpty, trackException } from "~/services";
 
-import { Import, PageEdit } from "iconoir-react";
+import { Import, PageEdit, Archive } from "iconoir-react";
 
-import { LoadingSpinner, Title, BackHeader, SubTitle } from "~/components";
+import { Title, BackHeader, SubTitle } from "~/components";
 
 import {
   readExcelFileAsync,
@@ -90,6 +90,10 @@ export const action = async ({ request }: ActionArgs) => {
   } catch (e: any) {
     console.error(e);
 
+    trackException({
+      exception: new Error(e.message),
+    });
+
     return json({
       newUsers: [],
       message: e.message,
@@ -115,7 +119,7 @@ export default function Index() {
       <Form
         method="post"
         encType="multipart/form-data"
-        className="relative flex h-full flex-col gap-8"
+        className="relative flex h-full flex-col gap-4"
       >
         <div className="form-control w-full max-w-xs">
           <label htmlFor="usersSheet" className="label">
@@ -133,7 +137,7 @@ export default function Index() {
           />
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-20">
           <button
             type="submit"
             className="btn-primary btn gap-2"
@@ -142,7 +146,11 @@ export default function Index() {
             <Import className="h-6 w-6" />
             Import
           </button>
-          {isDisabled && <LoadingSpinner dark />}
+
+          <Link to="/users/import-history" className="btn gap-2">
+            <Archive className="h-4 w-4" />
+            View history
+          </Link>
         </div>
 
         {actionData?.message && (
@@ -154,26 +162,26 @@ export default function Index() {
           </div>
         )}
 
-        <div className="text-info">
-          {!actionData?.message && actionData?.newUsers.length === 0 && (
+        {!actionData?.message && actionData?.newUsers.length === 0 && (
+          <div className="text-info">
             <p>No new users to import.</p>
-          )}
-        </div>
+          </div>
+        )}
 
         <SubTitle>Imported mentors</SubTitle>
 
         <div className="overflow-auto">
-          <table className="table w-full">
+          <table className="table">
             <thead>
               <tr>
                 <th align="left" className="w-12 p-2">
                   #
                 </th>
                 <th align="left" className="p-2">
-                  Full Name
+                  Full name
                 </th>
                 <th align="left" className="p-2">
-                  Email
+                  Errors
                 </th>
                 <th align="right" className="p-2">
                   Action
@@ -181,7 +189,7 @@ export default function Index() {
               </tr>
             </thead>
             <tbody>
-              {!actionData && (
+              {actionData?.newUsers.length === 0 && (
                 <tr>
                   <td colSpan={3} className="border p-2">
                     <i>No mentors imported</i>
@@ -189,13 +197,18 @@ export default function Index() {
                 </tr>
               )}
               {actionData?.newUsers.map(
-                ({ id, firstName, lastName, email }, index) => (
-                  <tr key={id}>
+                ({ id, firstName, lastName, importedHistory }, index) => (
+                  <tr
+                    key={id}
+                    className={
+                      importedHistory?.error !== null ? "bg-error" : undefined
+                    }
+                  >
                     <td className="border p-2">{index + 1}</td>
                     <td className="border p-2">
                       {firstName} {lastName}
                     </td>
-                    <td className="border p-2">{email}</td>
+                    <td className="border p-2">{importedHistory?.error}</td>
                     <td className="border p-2">
                       <Link
                         to={`/users/${id.toString()}`}

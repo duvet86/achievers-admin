@@ -7,12 +7,14 @@ export class ImportMentorsPage {
 
   title: Locator;
 
+  numberHeaderCell: Locator;
   fullNameHeaderCell: Locator;
-  emailHeaderCell: Locator;
+  errorHeaderCell: Locator;
   actionHeaderCell: Locator;
 
+  numberCell: Locator;
   fullNameCell: Locator;
-  emailCell: Locator;
+  errorCell: Locator;
   actionCell: Locator;
 
   tableRows: Locator;
@@ -24,16 +26,20 @@ export class ImportMentorsPage {
 
     this.title = page.getByRole("heading", { name: "Import from file" });
 
+    this.numberHeaderCell = page.getByRole("cell", { name: "#" });
     this.fullNameHeaderCell = page.getByRole("cell", { name: "Full name" });
-    this.emailHeaderCell = page.getByRole("cell", { name: "Email" });
+    this.errorHeaderCell = page.getByRole("cell", { name: "Error" });
     this.actionHeaderCell = page.getByRole("cell", {
       name: "Action",
     });
 
+    this.numberCell = page.getByRole("cell", { name: "1" });
     this.fullNameCell = page.getByRole("cell", { name: "A D" });
-    this.emailCell = page.getByRole("cell", { name: "e11131testASD@test.com" });
+    this.errorCell = page
+      .getByRole("row", { name: "A D" })
+      .getByRole("cell", { name: "", exact: true });
     this.actionCell = page
-      .getByRole("row", { name: "e11131testASD@test.com" })
+      .getByRole("row", { name: "A D" })
       .getByRole("cell", { name: "Edit" });
 
     this.tableRows = page.getByRole("row");
@@ -62,14 +68,16 @@ export class ImportMentorsPageAssertions {
   }
 
   async toHaveTableHeaders(): Promise<void> {
+    await expect(this.importMentorsPage.numberHeaderCell).toBeVisible();
     await expect(this.importMentorsPage.fullNameHeaderCell).toBeVisible();
-    await expect(this.importMentorsPage.emailHeaderCell).toBeVisible();
+    await expect(this.importMentorsPage.errorHeaderCell).toBeVisible();
     await expect(this.importMentorsPage.actionHeaderCell).toBeVisible();
   }
 
   async toHaveTableCells(): Promise<void> {
+    await expect(this.importMentorsPage.numberCell).toBeVisible();
     await expect(this.importMentorsPage.fullNameCell).toBeVisible();
-    await expect(this.importMentorsPage.emailCell).toBeVisible();
+    await expect(this.importMentorsPage.errorCell).toBeVisible();
     await expect(this.importMentorsPage.actionCell).toBeVisible();
   }
 

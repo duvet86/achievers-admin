@@ -1,4 +1,4 @@
-import type { ActionArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 
 import { useLoaderData, Link, Form, useActionData } from "@remix-run/react";
 import { json } from "@remix-run/node";
@@ -48,7 +48,7 @@ function getNumberCompletedChecks(user: any): number {
   return checks;
 }
 
-export async function loader() {
+export async function loader({ request }: LoaderArgs) {
   const [count, users] = await Promise.all([
     getUsersCountAsync(),
     getUsersAsync(0),
@@ -199,20 +199,20 @@ export default function SelectChapter() {
         </div>
 
         <div className="overflow-auto">
-          <table className="table w-full">
+          <table className="table">
             <thead>
               <tr>
                 <th align="left" className="w-12 p-2">
                   #
                 </th>
                 <th align="left" className="p-2">
-                  Full Name
+                  Full name
                 </th>
                 <th align="left" className="p-2">
                   Email
                 </th>
                 <th align="left" className="p-2">
-                  Assigned Chapter
+                  Assigned chapter
                 </th>
                 <th align="left" className="p-2">
                   # Checks completed

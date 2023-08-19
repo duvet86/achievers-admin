@@ -87,9 +87,9 @@ test.describe("Admin", () => {
 
     await userInfoPage.userForm.expect.toHaveProfilePicture();
     await userInfoPage.userForm.expect.toHaveValues(
-      "test_9@test.com",
-      "test_9",
-      "user_9",
+      "test_0@test.com",
+      "test_0",
+      "user_0",
       "123",
       "street",
       "suburb",
@@ -130,7 +130,7 @@ test.describe("Admin", () => {
     await page.reload();
 
     await userInfoPage.userForm.expect.toHaveValues(
-      "test_9@test.com",
+      "test_0@test.com",
       "Luca",
       "Mara",
       "1111111",

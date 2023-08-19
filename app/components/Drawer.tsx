@@ -44,8 +44,8 @@ export function Drawer({ isAdmin, version }: Props) {
               to={value}
               className={({ isActive }) =>
                 isActive
-                  ? "mb-2 justify-between rounded bg-primary font-semibold"
-                  : "mb-2 justify-between rounded bg-base-300 font-semibold"
+                  ? "mb-2 justify-between rounded font-semibold active"
+                  : "mb-2 justify-between rounded font-semibold"
               }
             >
               {label}

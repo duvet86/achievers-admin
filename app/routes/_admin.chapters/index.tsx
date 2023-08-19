@@ -21,7 +21,7 @@ export default function Chapters() {
       <Title>Chapters</Title>
 
       <div className="overflow-auto">
-        <table className="table w-full">
+        <table className="table">
           <thead>
             <tr>
               <th align="left" className="p-2">

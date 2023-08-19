@@ -156,7 +156,7 @@ exports[`Body > Body snapshot admin 1`] = `
         >
           <li>
             <a
-              class="mb-2 justify-between rounded bg-base-300 font-semibold"
+              class="mb-2 justify-between rounded font-semibold"
               href="/users"
             >
               Mentors
@@ -181,7 +181,7 @@ exports[`Body > Body snapshot admin 1`] = `
           </li>
           <li>
             <a
-              class="mb-2 justify-between rounded bg-base-300 font-semibold"
+              class="mb-2 justify-between rounded font-semibold"
               href="/chapters"
             >
               Chapters
@@ -374,7 +374,7 @@ exports[`Body > Body snapshot mentor 1`] = `
         >
           <li>
             <a
-              class="mb-2 justify-between rounded bg-base-300 font-semibold"
+              class="mb-2 justify-between rounded font-semibold"
               href="/users"
             >
               Mentors
@@ -399,7 +399,7 @@ exports[`Body > Body snapshot mentor 1`] = `
           </li>
           <li>
             <a
-              class="mb-2 justify-between rounded bg-base-300 font-semibold"
+              class="mb-2 justify-between rounded font-semibold"
               href="/chapters"
             >
               Chapters

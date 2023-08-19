@@ -28,7 +28,7 @@ export default function AppLayout() {
     <div className="hero rounded-md bg-base-200">
       <div className="hero-content flex-col">
         <div className="text-center">
-          <h1 className="text-4xl font-bold uppercase">Volunteer Agreement</h1>
+          <h1 className="text-4xl font-bold uppercase">Volunteer agreement</h1>
           <p className="py-6">
             The Achievers Club WA Inc. is an association incorporated pursuant
             to the Associations Incorporation Act 2015 (WA)

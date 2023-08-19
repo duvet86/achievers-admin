@@ -12,6 +12,11 @@ export async function exportMentorsToSpreadsheetAsync() {
           chapter: true,
         },
       },
+      importedHistory: {
+        select: {
+          error: true,
+        },
+      },
       approvalbyMRC: true,
       eoIProfile: true,
       induction: true,
@@ -66,6 +71,8 @@ export async function exportMentorsToSpreadsheetAsync() {
     Occupation: m.eoIProfile?.occupation ?? "",
     "Vaccination Status": "Unconfirmed", // Not used.
     "WWC Check Number": m.wwcCheck?.wwcNumber ?? "",
+    "Missing Information": m.importedHistory?.error ?? "",
+    "Active Volunteer": m.endDate === null ? "No" : "Yes",
   }));
 
   const wb = utils.book_new();

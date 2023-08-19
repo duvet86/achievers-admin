@@ -1,21 +1,22 @@
-import type { User } from "@prisma/client";
+import type { ImportedHistory, User } from "@prisma/client";
 import type { SpeadsheetUser } from "~/models/speadsheet";
 
 import { Readable } from "stream";
-
 import { stream, read, utils } from "xlsx";
+
 import { prisma } from "~/db.server";
 import { isValidDate } from "~/services";
 
 export async function readExcelFileAsync(file: File) {
   stream.set_readable(Readable);
 
-  const workbook = read(await file.arrayBuffer());
-  const firstWs = workbook.Sheets[workbook.SheetNames[0]];
+  const workbook = read(await file.arrayBuffer(), { cellDates: true });
 
-  const sheetUsers = utils.sheet_to_json<SpeadsheetUser>(firstWs);
+  return workbook.SheetNames.flatMap((sheetName) => {
+    const firstWs = workbook.Sheets[sheetName];
 
-  return sheetUsers;
+    return utils.sheet_to_json<SpeadsheetUser>(firstWs);
+  });
 }
 
 export async function getCurrentMentorsAsync() {
@@ -26,10 +27,21 @@ export async function getCurrentMentorsAsync() {
   });
 }
 
+type UserHistory = User & {
+  importedHistory: ImportedHistory | null;
+};
+
 export async function importSpreadsheetMentorsAsync(
   newUsers: SpeadsheetUser[],
-): Promise<User[]> {
-  const users: User[] = [];
+): Promise<UserHistory[]> {
+  const uniqueUsers = newUsers.filter(
+    (obj, index) =>
+      newUsers.findIndex(
+        (item) => item["Email address"] === obj["Email address"],
+      ) === index,
+  );
+
+  const users: UserHistory[] = [];
 
   const chapters = await prisma.chapter.findMany({
     select: {
@@ -39,47 +51,95 @@ export async function importSpreadsheetMentorsAsync(
   });
 
   await prisma.$transaction(async (tx) => {
-    for (let i = 0; i < newUsers.length; i++) {
-      const chapter = chapters.find((c) => c.name === newUsers[i]["Chapter"]);
-
-      console.log(
-        "------------------",
-        i,
-        new Date(newUsers[i]["Police Check Renewal Date"]),
-        isValidDate(new Date(newUsers[i]["Police Check Renewal Date"])),
+    for (let i = 0; i < uniqueUsers.length; i++) {
+      const chapter = chapters.find(
+        (c) => c.name === uniqueUsers[i]["Chapter"],
       );
 
+      let error: string = "";
+
+      const isDateofBirthValid =
+        uniqueUsers[i]["Date of Birth"] &&
+        isValidDate(new Date(uniqueUsers[i]["Date of Birth"]));
+
+      if (uniqueUsers[i]["Date of Birth"] && !isDateofBirthValid) {
+        error += "Date of Birth is invalid.\n";
+      }
+
+      const isPoliceCheckDateValid =
+        uniqueUsers[i]["Police Check Renewal Date"] &&
+        isValidDate(new Date(uniqueUsers[i]["Police Check Renewal Date"]));
+
+      if (
+        uniqueUsers[i]["Police Check Renewal Date"] &&
+        !isPoliceCheckDateValid
+      ) {
+        error += "Police Check Renewal Date is invalid.\n";
+      }
+
+      const isWWCDateValid =
+        uniqueUsers[i]["WWC Check Renewal Date"] &&
+        isValidDate(new Date(uniqueUsers[i]["WWC Check Renewal Date"]));
+
+      if (uniqueUsers[i]["WWC Check Renewal Date"] && !isWWCDateValid) {
+        error += "WWC Check Renewal Date is invalid.\n";
+      }
+
+      const isEndDateValid =
+        uniqueUsers[i]["End Date"] &&
+        isValidDate(new Date(uniqueUsers[i]["End Date"]));
+
+      if (uniqueUsers[i]["End Date"] && !isEndDateValid) {
+        error += "End Date is invalid.\n";
+      }
+
+      const isInductionDateValid =
+        uniqueUsers[i]["Induction Date"] &&
+        isValidDate(new Date(uniqueUsers[i]["Induction Date"]));
+
+      if (uniqueUsers[i]["Induction Date"] && !isInductionDateValid) {
+        error += "Induction Date is invalid.\n";
+      }
+
+      let endDate: Date | null = null;
+      if (isEndDateValid) {
+        endDate = new Date(uniqueUsers[i]["End Date"]);
+      } else if (uniqueUsers[i]["Active Volunteer"] !== "Yes") {
+        endDate = new Date();
+      }
+
       const user = await tx.user.create({
+        include: {
+          importedHistory: true,
+        },
         data: {
           addressPostcode: "",
           addressState: "",
           addressSuburb: "",
-          email: newUsers[i]["Email address"],
-          addressStreet: newUsers[i]["Residential Address"],
-          additionalEmail: newUsers[i][
+          addressStreet: uniqueUsers[i]["Residential Address"],
+          email: uniqueUsers[i]["Email address"],
+          additionalEmail: uniqueUsers[i][
             "Additional email addresses (for intranet access)"
           ]
-            ? newUsers[i]["Additional email addresses (for intranet access)"]
+            ? uniqueUsers[i]["Additional email addresses (for intranet access)"]
             : null,
-          dateOfBirth: newUsers[i]["Date of Birth"]
-            ? new Date(newUsers[i]["Date of Birth"])
+          dateOfBirth: isDateofBirthValid
+            ? new Date(uniqueUsers[i]["Date of Birth"])
             : null,
-          emergencyContactAddress: newUsers[i]["Emergency Contact Address"],
-          emergencyContactName: newUsers[i]["Emergency Contact Name"],
-          emergencyContactNumber: newUsers[i]["Emergency Contact Name"],
+          emergencyContactAddress: uniqueUsers[i]["Emergency Contact Address"],
+          emergencyContactName: uniqueUsers[i]["Emergency Contact Name"],
+          emergencyContactNumber: uniqueUsers[i]["Emergency Contact Name"],
           emergencyContactRelationship:
-            newUsers[i]["Emergency Contact Relationship"],
-          endDate: newUsers[i]["End Date"]
-            ? new Date(newUsers[i]["End Date"])
-            : null,
-          firstName: newUsers[i]["First Name"],
+            uniqueUsers[i]["Emergency Contact Relationship"],
+          endDate: endDate,
+          firstName: uniqueUsers[i]["First Name"],
           azureADId: null,
-          lastName: newUsers[i]["Last Name"],
-          mobile: newUsers[i]["Mobile"].toString(),
+          lastName: uniqueUsers[i]["Last Name"],
+          mobile: uniqueUsers[i]["Mobile"].toString(),
           hasApprovedToPublishPhotos:
-            newUsers[i]["Approval to publish Potographs?"] === "Yes",
+            uniqueUsers[i]["Approval to publish Potographs?"] === "Yes",
           volunteerAgreementSignedOn:
-            newUsers[i]["Volunteer Agreement Complete"] === "Yes"
+            uniqueUsers[i]["Volunteer Agreement Complete"] === "Yes"
               ? new Date()
               : undefined,
           userAtChapter: {
@@ -93,18 +153,20 @@ export async function importSpreadsheetMentorsAsync(
               bestTimeToContact: "Not specified",
               comment: "Existing mentor imported by file.",
               heardAboutUs: "Not specified",
-              isOver18: newUsers[i]["Over the age of 18 years?"] === "Yes",
+              isOver18: uniqueUsers[i]["Over the age of 18 years?"] === "Yes",
               mentoringLevel: "",
-              occupation: newUsers[i]["Occupation"]
-                ? newUsers[i]["Occupation"]
+              occupation: uniqueUsers[i]["Occupation"]
+                ? uniqueUsers[i]["Occupation"]
                 : "",
-              preferredFrequency: "Not specified",
+              preferredFrequency: uniqueUsers[i]["Attendance"]
+                ? uniqueUsers[i]["Attendance"]
+                : "Not specified",
               volunteerExperience: "Not specified",
-              role: "Not specified",
+              role: uniqueUsers[i]["Role(s)"] ? uniqueUsers[i]["Role(s)"] : "",
             },
           },
           approvalbyMRC:
-            newUsers[i]["Approved by MRC?"] === "Yes"
+            uniqueUsers[i]["Approved by MRC?"] === "Yes"
               ? {
                   create: {
                     completedBy: "imported mentor",
@@ -113,27 +175,25 @@ export async function importSpreadsheetMentorsAsync(
                   },
                 }
               : undefined,
-          induction: newUsers[i]["Induction Date"]
+          induction: isInductionDateValid
             ? {
                 create: {
-                  completedOnDate: new Date(newUsers[i]["Induction Date"]),
+                  completedOnDate: new Date(uniqueUsers[i]["Induction Date"]),
                   runBy: "imported mentor",
                   comment: "Imported mentor",
                 },
               }
             : undefined,
-          policeCheck:
-            newUsers[i]["Police Check Renewal Date"] &&
-            isValidDate(new Date(newUsers[i]["Police Check Renewal Date"]))
-              ? {
-                  create: {
-                    expiryDate: new Date(
-                      newUsers[i]["Police Check Renewal Date"],
-                    ),
-                    filePath: "",
-                  },
-                }
-              : undefined,
+          policeCheck: isPoliceCheckDateValid
+            ? {
+                create: {
+                  expiryDate: new Date(
+                    uniqueUsers[i]["Police Check Renewal Date"],
+                  ),
+                  filePath: "",
+                },
+              }
+            : undefined,
           references: {
             createMany: {
               data: [
@@ -169,19 +229,24 @@ export async function importSpreadsheetMentorsAsync(
               comment: "Imported mentor",
             },
           },
-          wwcCheck:
-            newUsers[i]["WWC Check Renewal Date"] &&
-            isValidDate(new Date(newUsers[i]["WWC Check Renewal Date"]))
-              ? {
-                  create: {
-                    expiryDate: new Date(newUsers[i]["WWC Check Renewal Date"]),
-                    filePath: "",
-                    wwcNumber: newUsers[i]["WWC Check Number"]
-                      ? newUsers[i]["WWC Check Number"].toString()
-                      : "Not specified",
-                  },
-                }
-              : undefined,
+          wwcCheck: isWWCDateValid
+            ? {
+                create: {
+                  expiryDate: new Date(
+                    uniqueUsers[i]["WWC Check Renewal Date"],
+                  ),
+                  filePath: "",
+                  wwcNumber: uniqueUsers[i]["WWC Check Number"]
+                    ? uniqueUsers[i]["WWC Check Number"].toString()
+                    : "Not specified",
+                },
+              }
+            : undefined,
+          importedHistory: {
+            create: {
+              error: error || null,
+            },
+          },
         },
       });
 

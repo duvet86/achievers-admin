@@ -113,7 +113,7 @@ export async function getUsersAsync(
       },
     },
     orderBy: {
-      firstName: "desc",
+      firstName: "asc",
     },
     skip: numberItems * pageNumber,
     take: numberItems,
