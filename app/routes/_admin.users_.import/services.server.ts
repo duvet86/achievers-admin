@@ -116,7 +116,9 @@ export async function importSpreadsheetMentorsAsync(
           addressPostcode: "",
           addressState: "",
           addressSuburb: "",
-          addressStreet: uniqueUsers[i]["Residential Address"],
+          addressStreet: uniqueUsers[i]["Residential Address"]
+            ? uniqueUsers[i]["Residential Address"]
+            : "",
           email: uniqueUsers[i]["Email address"],
           additionalEmail: uniqueUsers[i][
             "Additional email addresses (for intranet access)"
