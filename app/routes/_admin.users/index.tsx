@@ -15,9 +15,13 @@ import {
   NavArrowDown,
 } from "iconoir-react";
 
-import { Input, Title } from "~/components";
+import { Input, Select, Title } from "~/components";
 
-import { getUsersAsync, getUsersCountAsync } from "./services.server";
+import {
+  getChaptersAsync,
+  getUsersAsync,
+  getUsersCountAsync,
+} from "./services.server";
 
 function getNumberCompletedChecks(user: any): number {
   let checks = 1;
@@ -49,12 +53,14 @@ function getNumberCompletedChecks(user: any): number {
 }
 
 export async function loader({ request }: LoaderArgs) {
-  const [count, users] = await Promise.all([
+  const [chapters, count, users] = await Promise.all([
+    getChaptersAsync(),
     getUsersCountAsync(),
     getUsersAsync(0),
   ]);
 
   return json({
+    chapters,
     count,
     users: users.map((user) => ({
       ...user,
@@ -66,6 +72,8 @@ export async function loader({ request }: LoaderArgs) {
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
 
+  const chapterId = formData.get("chapterId")?.toString();
+
   const searchTermSubmit = formData.get("searchBtn")?.toString();
   const clearSearchSubmit = formData.get("clearSearchBtn")?.toString();
   const previousPageSubmit = formData.get("previousBtn")?.toString();
@@ -76,7 +84,16 @@ export async function action({ request }: ActionArgs) {
   const pageNumber = Number(formData.get("pageNumber")!.toString());
   const includeAllUsers = formData.get("allUsers")?.toString() === "on";
 
-  const count = await getUsersCountAsync();
+  const chapterIdValue =
+    chapterId !== undefined && chapterId !== ""
+      ? parseInt(chapterId)
+      : undefined;
+
+  const count = await getUsersCountAsync(
+    searchTerm,
+    chapterIdValue,
+    includeAllUsers,
+  );
   const totalPageCount = Math.ceil(count / 10);
 
   if (searchTerm?.trim() === "") {
@@ -100,10 +117,12 @@ export async function action({ request }: ActionArgs) {
   const users = await getUsersAsync(
     currentPageNumber,
     searchTerm,
+    chapterIdValue,
     includeAllUsers,
   );
 
   return json({
+    count,
     currentPageNumber,
     users: users.map((user) => ({
       ...user,
@@ -114,12 +133,12 @@ export async function action({ request }: ActionArgs) {
 }
 
 export default function SelectChapter() {
-  const { users, count } = useLoaderData<typeof loader>();
+  const { chapters, users, count } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  const totalPageCount = Math.ceil(count / 10);
+  const totalPageCount = Math.ceil((actionData?.count ?? count) / 10);
   const currentPageNumber = actionData?.currentPageNumber ?? 0;
 
   const pageUsers = actionData?.users ?? users;
@@ -163,40 +182,58 @@ export default function SelectChapter() {
       <hr className="mb-4" />
 
       <Form ref={formRef} method="post">
-        <div className="mb-6 flex gap-6 align-middle">
-          <div className="w-96">
-            <Input name="searchTerm" placeholder="Search" />
-          </div>
+        <div className="mb-6 flex justify-between alert">
+          <div className="flex gap-6 items-center">
+            <div className="w-96">
+              <Input name="searchTerm" placeholder="Search" />
+            </div>
 
-          <div className="form-control">
-            <label className="label cursor-pointer gap-6">
-              <span className="label-text">Include all mentors</span>
-              <input
-                type="checkbox"
-                name="allUsers"
-                className="checkbox-primary checkbox"
+            <div className="w-44">
+              <Select
+                name="chapterId"
+                options={[{ value: "", label: "All chapters" }].concat(
+                  chapters.map(({ id, name }) => ({
+                    label: name,
+                    value: id.toString(),
+                  })),
+                )}
               />
-            </label>
+            </div>
+
+            <div className="form-control">
+              <label className="label cursor-pointer gap-6">
+                <span className="label-text">Include all mentors</span>
+                <input
+                  type="checkbox"
+                  name="allUsers"
+                  className="checkbox bg-base-100"
+                />
+              </label>
+            </div>
           </div>
 
-          <button
-            className="btn-primary btn w-32"
-            type="submit"
-            name="searchBtn"
-            value="searchBtn"
-          >
-            Submit
-          </button>
-          <button
-            className="btn w-32"
-            type="submit"
-            name="clearSearchBtn"
-            value="clearSearchBtn"
-            onClick={() => formRef.current!.reset()}
-          >
-            Clear
-          </button>
+          <div className="flex gap-6 items-center">
+            <button
+              className="btn-primary btn w-32"
+              type="submit"
+              name="searchBtn"
+              value="searchBtn"
+            >
+              Submit
+            </button>
+            <button
+              className="btn btn-outline w-32"
+              type="submit"
+              name="clearSearchBtn"
+              value="clearSearchBtn"
+              onClick={() => formRef.current!.reset()}
+            >
+              Clear
+            </button>
+          </div>
         </div>
+
+        <hr className="mb-4" />
 
         <div className="overflow-auto">
           <table className="table">

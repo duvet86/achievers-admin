@@ -15,17 +15,19 @@ interface Props {
 export function Select({ label, name, options, required, ...props }: Props) {
   return (
     <div className="form-control w-full">
-      <label htmlFor={name} className="label">
-        <span className="label-text">{label}</span>
-        {required && (
-          <span
-            data-testid="required"
-            className="label-text-alt absolute right-1 top-9 text-2xl text-error"
-          >
-            *
-          </span>
-        )}
-      </label>
+      {label && (
+        <label htmlFor={name} className="label">
+          <span className="label-text">{label}</span>
+          {required && (
+            <span
+              data-testid="required"
+              className="label-text-alt absolute right-1 top-9 text-2xl text-error"
+            >
+              *
+            </span>
+          )}
+        </label>
+      )}
       <select
         data-testid="select"
         name={name}

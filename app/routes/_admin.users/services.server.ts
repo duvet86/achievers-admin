@@ -1,12 +1,91 @@
 import { prisma } from "~/db.server";
 
-export async function getUsersCountAsync() {
-  return await prisma.user.count();
+export async function getChaptersAsync() {
+  return await prisma.chapter.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+}
+
+export async function getUsersCountAsync(
+  searchTerm?: string,
+  chapterId?: number,
+  allUsers = false,
+) {
+  return await prisma.user.count({
+    where: {
+      OR: allUsers
+        ? undefined
+        : [
+            {
+              welcomeCall: {
+                is: null,
+              },
+            },
+            {
+              references: {
+                some: {
+                  calledOndate: {
+                    equals: null,
+                  },
+                },
+              },
+            },
+            {
+              induction: {
+                is: null,
+              },
+            },
+            {
+              policeCheck: {
+                is: null,
+              },
+            },
+            {
+              wwcCheck: {
+                is: null,
+              },
+            },
+            {
+              approvalbyMRC: {
+                is: null,
+              },
+            },
+          ],
+      AND: [
+        {
+          OR: [
+            {
+              firstName: {
+                contains: searchTerm?.trim(),
+              },
+            },
+            {
+              lastName: {
+                contains: searchTerm?.trim(),
+              },
+            },
+            { email: { contains: searchTerm?.trim() } },
+          ],
+        },
+        {
+          userAtChapter: {
+            some: {
+              chapterId: chapterId,
+            },
+          },
+        },
+      ],
+    },
+  });
 }
 
 export async function getUsersAsync(
   pageNumber: number,
   searchTerm?: string,
+  chapterId?: number,
   allUsers = false,
   numberItems = 10,
 ) {
@@ -96,21 +175,30 @@ export async function getUsersAsync(
               },
             },
           ],
-      AND: {
-        OR: [
-          {
-            firstName: {
-              contains: searchTerm?.trim(),
+      AND: [
+        {
+          OR: [
+            {
+              firstName: {
+                contains: searchTerm?.trim(),
+              },
+            },
+            {
+              lastName: {
+                contains: searchTerm?.trim(),
+              },
+            },
+            { email: { contains: searchTerm?.trim() } },
+          ],
+        },
+        {
+          userAtChapter: {
+            some: {
+              chapterId: chapterId,
             },
           },
-          {
-            lastName: {
-              contains: searchTerm?.trim(),
-            },
-          },
-          { email: { contains: searchTerm?.trim() } },
-        ],
-      },
+        },
+      ],
     },
     orderBy: {
       firstName: "asc",
