@@ -13,6 +13,7 @@ describe("Admin /users", () => {
         element: <Page />,
         loader() {
           return json({
+            chapters: [],
             count: 0,
             users: [],
           });
@@ -37,6 +38,7 @@ describe("Admin /users", () => {
         element: <Page />,
         loader() {
           return json({
+            chapters: [],
             count: 1,
             users: [
               {
@@ -75,6 +77,7 @@ describe("Admin /users", () => {
         element: <Page />,
         loader() {
           return json({
+            chapters: [],
             count: 0,
             users: [],
           });
@@ -96,6 +99,7 @@ describe("Admin /users", () => {
         element: <Page />,
         loader() {
           return json({
+            chapters: [],
             count: 0,
             users: [],
           });
