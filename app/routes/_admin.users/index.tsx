@@ -5,52 +5,20 @@ import { json } from "@remix-run/node";
 
 import { useRef } from "react";
 
-import {
-  DatabaseRestore,
-  DatabaseExport,
-  PageEdit,
-  FastArrowLeft,
-  FastArrowRight,
-  WarningTriangle,
-  NavArrowDown,
-} from "iconoir-react";
+import { PageEdit, WarningTriangle } from "iconoir-react";
 
-import { Input, Select, Title } from "~/components";
+import { Title } from "~/components";
 
 import {
   getChaptersAsync,
   getUsersAsync,
   getUsersCountAsync,
+  getNumberCompletedChecks,
 } from "./services.server";
 
-function getNumberCompletedChecks(user: any): number {
-  let checks = 1;
-  if (user.welcomeCall !== null) {
-    checks++;
-  }
-  if (
-    user.references.filter((ref: any) => ref.calledOndate !== null).length >= 2
-  ) {
-    checks++;
-  }
-  if (user.induction !== null) {
-    checks++;
-  }
-  if (user.policeCheck !== null) {
-    checks++;
-  }
-  if (user.wwcCheck !== null) {
-    checks++;
-  }
-  if (user.approvalbyMRC !== null) {
-    checks++;
-  }
-  if (user.volunteerAgreementSignedOn !== null) {
-    checks++;
-  }
-
-  return checks;
-}
+import ActionsDropdown from "./ActionsDropdown";
+import FormInputs from "./FormInputs";
+import Pagination from "./Pagination";
 
 export async function loader({ request }: LoaderArgs) {
   const [chapters, count, users] = await Promise.all([
@@ -143,34 +111,16 @@ export default function SelectChapter() {
 
   const pageUsers = actionData?.users ?? users;
 
+  const onFormSubmit = () => formRef.current!.reset();
+
   return (
     <>
       <div className="flex items-center">
         <Title>Mentors</Title>
+
         <div className="flex-1"></div>
-        <div className="dropdown-end dropdown">
-          <label title="actions" tabIndex={0} className="btn w-40 gap-2">
-            Actions
-            <NavArrowDown className="h-6 w-6" />
-          </label>
-          <ul
-            tabIndex={0}
-            className="dropdown-content menu rounded-box w-52 border border-base-300 bg-base-100 p-2 shadow"
-          >
-            <li>
-              <Link className="gap-4" to="import">
-                <DatabaseRestore className="h-6 w-6" />
-                Import mentors
-              </Link>
-            </li>
-            <li>
-              <a className="gap-4" href="/users/export" download>
-                <DatabaseExport className="h-6 w-6" />
-                Export mentors
-              </a>
-            </li>
-          </ul>
-        </div>
+
+        <ActionsDropdown />
       </div>
 
       <p title="checkWarning" className="mb-4 flex items-center gap-2">
@@ -182,56 +132,7 @@ export default function SelectChapter() {
       <hr className="mb-4" />
 
       <Form ref={formRef} method="post">
-        <div className="mb-6 flex justify-between alert">
-          <div className="flex gap-6 items-center">
-            <div className="w-96">
-              <Input name="searchTerm" placeholder="Search" />
-            </div>
-
-            <div className="w-44">
-              <Select
-                name="chapterId"
-                options={[{ value: "", label: "All chapters" }].concat(
-                  chapters.map(({ id, name }) => ({
-                    label: name,
-                    value: id.toString(),
-                  })),
-                )}
-              />
-            </div>
-
-            <div className="form-control">
-              <label className="label cursor-pointer gap-6">
-                <span className="label-text">Include all mentors</span>
-                <input
-                  type="checkbox"
-                  name="allUsers"
-                  className="checkbox bg-base-100"
-                />
-              </label>
-            </div>
-          </div>
-
-          <div className="flex gap-6 items-center">
-            <button
-              className="btn-primary btn w-32"
-              type="submit"
-              name="searchBtn"
-              value="searchBtn"
-            >
-              Submit
-            </button>
-            <button
-              className="btn btn-outline w-32"
-              type="submit"
-              name="clearSearchBtn"
-              value="clearSearchBtn"
-              onClick={() => formRef.current!.reset()}
-            >
-              Clear
-            </button>
-          </div>
-        </div>
+        <FormInputs chapters={chapters} onFormSubmit={onFormSubmit} />
 
         <hr className="mb-4" />
 
@@ -311,47 +212,10 @@ export default function SelectChapter() {
 
         <input type="hidden" name="pageNumber" value={currentPageNumber} />
 
-        <div className="join mt-4">
-          <button
-            type="submit"
-            name="previousBtn"
-            value="previousBtn"
-            className="join-item btn-outline btn"
-            disabled={currentPageNumber === 0}
-            title="previous"
-          >
-            <FastArrowLeft />
-          </button>
-          {Array(totalPageCount)
-            .fill(null)
-            .map((_, index) => (
-              <button
-                key={index}
-                type="submit"
-                name="pageNumberBtn"
-                value={index}
-                className={
-                  currentPageNumber === index
-                    ? "join-item btn-outline btn-active btn "
-                    : "join-item btn-outline btn"
-                }
-              >
-                {index + 1}
-              </button>
-            ))}
-          <button
-            type="submit"
-            name="nextBtn"
-            value="nextBtn"
-            className="join-item btn-outline btn"
-            disabled={
-              currentPageNumber === totalPageCount - 1 || totalPageCount === 0
-            }
-            title="next"
-          >
-            <FastArrowRight />
-          </button>
-        </div>
+        <Pagination
+          currentPageNumber={currentPageNumber}
+          totalPageCount={totalPageCount}
+        />
       </Form>
     </>
   );

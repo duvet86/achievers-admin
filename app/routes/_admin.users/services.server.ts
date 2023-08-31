@@ -207,3 +207,32 @@ export async function getUsersAsync(
     take: numberItems,
   });
 }
+
+export function getNumberCompletedChecks(user: any): number {
+  let checks = 1;
+  if (user.welcomeCall !== null) {
+    checks++;
+  }
+  if (
+    user.references.filter((ref: any) => ref.calledOndate !== null).length >= 2
+  ) {
+    checks++;
+  }
+  if (user.induction !== null) {
+    checks++;
+  }
+  if (user.policeCheck !== null) {
+    checks++;
+  }
+  if (user.wwcCheck !== null) {
+    checks++;
+  }
+  if (user.approvalbyMRC !== null) {
+    checks++;
+  }
+  if (user.volunteerAgreementSignedOn !== null) {
+    checks++;
+  }
+
+  return checks;
+}
