@@ -1,9 +1,12 @@
+import type { AppLoadContext, EntryContext } from "@remix-run/node";
+
+import { renderToPipeableStream } from "react-dom/server";
 import { PassThrough } from "stream";
-import type { EntryContext } from "@remix-run/node";
 import { Response } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import isbot from "isbot";
-import { renderToPipeableStream } from "react-dom/server";
+
+import { NonceContext } from "~/services";
 
 const ABORT_DELAY = 5000;
 
@@ -12,6 +15,7 @@ export default function handleRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext,
+  loadContext: AppLoadContext,
 ) {
   return isbot(request.headers.get("user-agent"))
     ? handleBotRequest(
@@ -19,12 +23,14 @@ export default function handleRequest(
         responseStatusCode,
         responseHeaders,
         remixContext,
+        loadContext,
       )
     : handleBrowserRequest(
         request,
         responseStatusCode,
         responseHeaders,
         remixContext,
+        loadContext,
       );
 }
 
@@ -33,15 +39,23 @@ function handleBotRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext,
+  loadContext: AppLoadContext,
 ) {
+  const cspNonce = loadContext.cspNonce
+    ? String(loadContext.cspNonce)
+    : undefined;
+
   return new Promise((resolve, reject) => {
     const { pipe, abort } = renderToPipeableStream(
-      <RemixServer
-        context={remixContext}
-        url={request.url}
-        abortDelay={ABORT_DELAY}
-      />,
+      <NonceContext.Provider value={cspNonce}>
+        <RemixServer
+          context={remixContext}
+          url={request.url}
+          abortDelay={ABORT_DELAY}
+        />
+      </NonceContext.Provider>,
       {
+        nonce: cspNonce,
         onAllReady() {
           const body = new PassThrough();
 
@@ -75,15 +89,23 @@ function handleBrowserRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext,
+  loadContext: AppLoadContext,
 ) {
+  const cspNonce = loadContext.cspNonce
+    ? String(loadContext.cspNonce)
+    : undefined;
+
   return new Promise((resolve, reject) => {
     const { pipe, abort } = renderToPipeableStream(
-      <RemixServer
-        context={remixContext}
-        url={request.url}
-        abortDelay={ABORT_DELAY}
-      />,
+      <NonceContext.Provider value={cspNonce}>
+        <RemixServer
+          context={remixContext}
+          url={request.url}
+          abortDelay={ABORT_DELAY}
+        />
+      </NonceContext.Provider>,
       {
+        nonce: cspNonce,
         onShellReady() {
           const body = new PassThrough();
 

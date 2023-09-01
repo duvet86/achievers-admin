@@ -174,40 +174,42 @@ export default function Index() {
             required
           />
 
-          <SubTitle>Outcome</SubTitle>
-
-          <Checkbox
-            label="Has know the applicant for a year?"
-            name="hasKnowApplicantForAYear"
-            defaultChecked={reference.hasKnowApplicantForAYear ?? false}
-          />
-
-          <Checkbox
-            label="Is related?"
-            name="isRelated"
-            defaultChecked={reference.isRelated ?? false}
-          />
-
-          <Checkbox
-            label="Is mentor recommended?"
-            name="isMentorRecommended"
-            defaultChecked={reference.isMentorRecommended ?? false}
-          />
+          <SubTitle>Reference check completed</SubTitle>
 
           <Input
-            label="Called by"
+            label="By (name)"
             name="calledBy"
             defaultValue={reference.calledBy ?? ""}
           />
 
           <DateInput
             defaultValue={reference.calledOndate ?? ""}
-            label="Called on"
+            label="On (date)"
             name="calledOndate"
           />
 
+          <SubTitle>Outcome</SubTitle>
+
+          <Checkbox
+            label="Has the referee known the applicant for at least one year?"
+            name="hasKnowApplicantForAYear"
+            defaultChecked={reference.hasKnowApplicantForAYear ?? false}
+          />
+
+          <Checkbox
+            label="Is the referee a family member or partner of the applicant?"
+            name="isRelated"
+            defaultChecked={reference.isRelated ?? false}
+          />
+
+          <Checkbox
+            label="Based on this reference check, do you recommend the Potential Mentor named above be accepted as a Mentor?"
+            name="isMentorRecommended"
+            defaultChecked={reference.isMentorRecommended ?? false}
+          />
+
           <Textarea
-            label="Outcome comment"
+            label="Any other comments?  (Use this response to provide any other relevant information that may be helpful)."
             name="outcomeComment"
             defaultValue={reference.outcomeComment ?? ""}
           />
