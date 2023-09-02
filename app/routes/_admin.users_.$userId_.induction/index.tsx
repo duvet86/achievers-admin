@@ -41,10 +41,8 @@ export async function action({ request, params }: ActionArgs) {
   const comment = formData.get("comment")?.toString() ?? null;
 
   if (runBy === undefined || completedOnDate === undefined) {
-    return json<{
-      message: string | null;
-    }>({
-      message: "Missing required fields",
+    return json({
+      errorMessage: "Missing required fields",
     });
   }
 
@@ -56,10 +54,8 @@ export async function action({ request, params }: ActionArgs) {
 
   await updateInductionAsync(Number(params.userId), data);
 
-  return json<{
-    message: string | null;
-  }>({
-    message: null,
+  return json({
+    errorMessage: null,
   });
 }
 
@@ -98,7 +94,7 @@ export default function Index() {
             defaultValue={user.induction?.comment ?? ""}
           />
 
-          <SubmitFormButton message={actionData?.message} />
+          <SubmitFormButton errorMessage={actionData?.errorMessage} />
         </fieldset>
       </Form>
     </>

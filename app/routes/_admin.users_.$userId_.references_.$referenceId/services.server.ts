@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { prisma } from "~/db.server";
 
 export interface ReferenceUpdateCommand {
@@ -10,6 +11,11 @@ export interface ReferenceUpdateCommand {
   outcomeComment: string;
   hasKnowApplicantForAYear: boolean;
   isRelated: boolean;
+  knownForComment: string | undefined;
+  isChildrenSafe: boolean;
+  skillAndKnowledgeComment: string | undefined;
+  empathyAndPatienceComment: string | undefined;
+  buildRelationshipsComment: string | undefined;
   isMentorRecommended: boolean;
   calledBy: string;
   calledOndate: Date | string;
@@ -46,35 +52,45 @@ export async function updateReferenceByIdAsync(
       id: referenceId,
     },
     create: {
-      bestTimeToContact: data.bestTimeToContact,
-      email: data.email,
+      userId,
       firstName: data.firstName,
       lastName: data.lastName,
       mobile: data.mobile,
+      email: data.email,
+      bestTimeToContact: data.bestTimeToContact,
       relationship: data.relationship,
-      calledBy: data.calledBy,
-      calledOndate: data.calledOndate,
-      generalComment: data.generalComment,
       hasKnowApplicantForAYear: data.hasKnowApplicantForAYear,
-      isMentorRecommended: data.isMentorRecommended,
       isRelated: data.isRelated,
+      knownForComment: data.knownForComment,
+      isChildrenSafe: data.isChildrenSafe,
+      skillAndKnowledgeComment: data.skillAndKnowledgeComment,
+      empathyAndPatienceComment: data.empathyAndPatienceComment,
+      buildRelationshipsComment: data.buildRelationshipsComment,
       outcomeComment: data.outcomeComment,
-      userId,
+      generalComment: data.generalComment,
+      isMentorRecommended: data.isMentorRecommended,
+      calledBy: data.calledBy,
+      calledOndate: dayjs(data.calledOndate, "YYYY-MM-DD").toDate(),
     },
     update: {
-      bestTimeToContact: data.bestTimeToContact,
-      email: data.email,
       firstName: data.firstName,
       lastName: data.lastName,
       mobile: data.mobile,
+      email: data.email,
+      bestTimeToContact: data.bestTimeToContact,
       relationship: data.relationship,
-      calledBy: data.calledBy,
-      calledOndate: data.calledOndate,
-      generalComment: data.generalComment,
       hasKnowApplicantForAYear: data.hasKnowApplicantForAYear,
-      isMentorRecommended: data.isMentorRecommended,
       isRelated: data.isRelated,
+      knownForComment: data.knownForComment,
+      isChildrenSafe: data.isChildrenSafe,
+      skillAndKnowledgeComment: data.skillAndKnowledgeComment,
+      empathyAndPatienceComment: data.empathyAndPatienceComment,
+      buildRelationshipsComment: data.buildRelationshipsComment,
       outcomeComment: data.outcomeComment,
+      generalComment: data.generalComment,
+      isMentorRecommended: data.isMentorRecommended,
+      calledBy: data.calledBy,
+      calledOndate: dayjs(data.calledOndate, "YYYY-MM-DD").toDate(),
     },
   });
 }

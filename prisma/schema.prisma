@@ -109,11 +109,16 @@ model Reference {
   bestTimeToContact String
   relationship      String
 
-  generalComment String? @db.Text
-  outcomeComment String? @db.Text
+  generalComment            String? @db.Text
+  outcomeComment            String? @db.Text
+  skillAndKnowledgeComment  String? @db.Text
+  empathyAndPatienceComment String? @db.Text
+  buildRelationshipsComment String? @db.Text
+  knownForComment           String? @db.Text
 
   hasKnowApplicantForAYear Boolean?
   isRelated                Boolean?
+  isChildrenSafe           Boolean?
   isMentorRecommended      Boolean?
 
   calledBy     String?

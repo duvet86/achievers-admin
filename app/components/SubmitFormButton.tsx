@@ -1,12 +1,18 @@
-import { SaveActionFloppy } from "iconoir-react";
+import { Check, SaveActionFloppy, WarningCircle } from "iconoir-react";
 
 interface Props {
   label?: string;
-  message?: string | null;
+  successMessage?: string | null;
+  errorMessage?: string | null;
   sticky?: boolean;
 }
 
-export function SubmitFormButton({ message, sticky, label = "Save" }: Props) {
+export function SubmitFormButton({
+  successMessage,
+  errorMessage,
+  sticky,
+  label = "Save",
+}: Props) {
   const className = "mt-6 flex items-center justify-between";
 
   return (
@@ -14,11 +20,19 @@ export function SubmitFormButton({ message, sticky, label = "Save" }: Props) {
       data-testid="container"
       className={sticky ? className + " sticky bottom-0" : className}
     >
-      <div
-        data-testid="message"
-        className={message ? "bg-white p-2 font-medium text-error" : ""}
-      >
-        {message}
+      <div data-testid="message">
+        {successMessage && (
+          <div className="alert alert-success">
+            <Check />
+            <span>{successMessage}</span>
+          </div>
+        )}
+        {errorMessage && (
+          <div className="alert alert-error">
+            <WarningCircle />
+            <span>{errorMessage}</span>
+          </div>
+        )}
       </div>
 
       <button className="btn-primary btn w-52 gap-5" type="submit">

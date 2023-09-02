@@ -37,6 +37,16 @@ npm install
 
 The application will run at: http://localhost:3000/
 
+## Run migrations
+
+Update the `schema.prisma` file in the prisma folder to update the database schema.
+
+Run this command to apply the migrations locally:
+
+```bash
+npx prisma migrate dev --name {name}
+```
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first

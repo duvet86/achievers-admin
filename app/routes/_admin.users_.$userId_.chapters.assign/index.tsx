@@ -45,7 +45,7 @@ export async function action({ request, params }: ActionArgs) {
 
   if (chapterId === null) {
     return json({
-      error: "Select a chapter please.",
+      errorMessage: "Select a chapter please.",
     });
   }
 
@@ -86,7 +86,7 @@ export default function Assign() {
           )}
         />
 
-        <SubmitFormButton message={actionData?.error} />
+        <SubmitFormButton errorMessage={actionData?.errorMessage} />
       </Form>
     </>
   );
