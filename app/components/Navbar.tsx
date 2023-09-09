@@ -13,7 +13,7 @@ export function Navbar({ currentUser, environment }: Props) {
   const showEnvBadge = environment === "local" || environment === "staging";
 
   return (
-    <nav className="navbar fixed left-0 top-0 h-16 bg-primary text-primary-content shadow-md z-10">
+    <nav className="navbar absolute left-0 top-0 h-16 bg-primary text-primary-content shadow-md z-10">
       <div className="flex-none lg:hidden">
         <label htmlFor="drawer" className="btn-ghost btn-square btn">
           <Menu className="inline-block h-6 w-6 stroke-current" />

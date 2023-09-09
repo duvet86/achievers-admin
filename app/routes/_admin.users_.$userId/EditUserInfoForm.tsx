@@ -18,7 +18,7 @@ export function EditUserInfoForm({ transition, loaderData: { user } }: Props) {
   return (
     <Form
       method="post"
-      className="relative mb-8 flex-1 overflow-y-auto border-primary md:mb-0 md:mr-8 md:border-r md:pr-4"
+      className="relative mb-8 flex-1 border-primary md:mb-0 md:mr-8 md:border-r md:pr-4"
     >
       <fieldset disabled={transition.state === "submitting"}>
         <ProfilePicture
