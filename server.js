@@ -30,37 +30,6 @@ const app = express();
 
 app.use(compression());
 
-app.use((req, res, next) => {
-  res.locals.cspNonce = randomBytes(16).toString("hex");
-  next();
-});
-app.use(
-  helmet({
-    crossOriginEmbedderPolicy: false,
-    contentSecurityPolicy: {
-      directives: {
-        "connect-src":
-          process.env.NODE_ENV === "development" ? ["ws:", "'self'"] : null,
-        "script-src": [
-          "'strict-dynamic'",
-          "'unsafe-eval'",
-          "'self'",
-          // @ts-expect-error middleware is the worst
-          (req, res) => `'nonce-${res.locals.cspNonce}'`,
-        ],
-        "script-src-attr": [
-          "'unsafe-inline'",
-          // TODO: figure out how to make the nonce work instead of
-          // unsafe-inline. I tried adding a nonce attribute where we're using
-          // inline attributes, but that didn't work. I still got that it
-          // violated the CSP.
-        ],
-        "upgrade-insecure-requests": null,
-      },
-    },
-  }),
-);
-
 // http://expressjs.com/en/advanced/best-practice-security.html#at-a-minimum-disable-x-powered-by-header
 app.disable("x-powered-by");
 
@@ -87,6 +56,22 @@ app.all(
           cspNonce: res.locals.cspNonce,
         }),
       }),
+);
+
+app.use((req, res, next) => {
+  res.locals.cspNonce = randomBytes(16).toString("hex");
+  next();
+});
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        connectSrc:
+          process.env.NODE_ENV === "development" ? ["ws:", "'self'"] : null,
+        scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`],
+      },
+    },
+  }),
 );
 
 app.listen(port, async () => {
