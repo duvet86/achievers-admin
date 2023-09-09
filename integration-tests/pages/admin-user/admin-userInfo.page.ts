@@ -90,8 +90,17 @@ export class AdminUserPage {
     await this.welcomeCallLink.click();
   }
 
-  async goToReferences(): Promise<void> {
+  async goToReferences(referenceName: string): Promise<void> {
     await this.referencesLink.click();
+
+    await this.page
+      .getByRole("row", {
+        name: referenceName,
+      })
+      .getByRole("link", {
+        name: "View",
+      })
+      .click();
   }
 
   async goToInduction(): Promise<void> {

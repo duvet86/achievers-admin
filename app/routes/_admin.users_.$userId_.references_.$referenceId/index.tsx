@@ -272,7 +272,7 @@ export default function Index() {
           />
 
           <Textarea
-            label="Any other comments?  (Use this response to provide any other relevant information that may be helpful)."
+            label="Any other comments? (Use this response to provide any other relevant information that may be helpful)."
             name="outcomeComment"
             defaultValue={reference.outcomeComment ?? ""}
             required

@@ -8,6 +8,7 @@ import { RemoveUserChapterPage } from "../pages/remove-user-chapter.page";
 import { AssignUserChapterPage } from "../pages/assign-user-chapter.page";
 import { EOIInfoPage } from "../pages/eoi.page";
 import { ImportMentorsPage } from "../pages/import-mentors.page";
+import { ReferencePage } from "integration-tests/pages/reference";
 
 test.describe("Admin", () => {
   let usersListPage: AdminUsersPage;
@@ -16,6 +17,7 @@ test.describe("Admin", () => {
   let assignUserChapterPage: AssignUserChapterPage;
   let eoiInfoPage: EOIInfoPage;
   let importMentorsPage: ImportMentorsPage;
+  let referencePage: ReferencePage;
 
   test.beforeEach(async ({ page }) => {
     await createUserAsync();
@@ -26,6 +28,7 @@ test.describe("Admin", () => {
     assignUserChapterPage = new AssignUserChapterPage(page);
     eoiInfoPage = new EOIInfoPage(page);
     importMentorsPage = new ImportMentorsPage(page);
+    referencePage = new ReferencePage(page);
 
     await page.goto("/");
 
@@ -181,5 +184,56 @@ test.describe("Admin", () => {
       "I am ready to rock",
       "I have a lot of energy and I want to share it with everyone",
     );
+  });
+
+  test("should update reference", async ({ page }) => {
+    await usersListPage.goToEditUser();
+    await userInfoPage.goToReferences("referenceA_0 lastnameA_0");
+
+    await referencePage.expect.toHaveHeadings();
+
+    await referencePage.updateReference({
+      firstName: "Luca",
+      lastName: "Mara",
+      mobile: "123123",
+      email: "asd@asd.com",
+      bestTimeToContact: "now",
+      relationship: "father",
+      hasKnowApplicantForAYear: "Yes",
+      isRelated: "No",
+      knownForComment: "asdasdasdasdsa",
+      isChildrenSafe: "Yes",
+      skillAndKnowledgeComment: "asdasdasdssss",
+      empathyAndPatienceComment: "sssssssssssssssssss",
+      buildRelationshipsComment: "aaaaaaaaaaaaaaaaaaa",
+      outcomeComment: "sssssssssssssssssss",
+      generalComment: "ddddddddddddddddddddddd",
+      isMentorRecommended: "Yes",
+      calledBy: "Tony",
+      calledOndate: "2020-02-02",
+    });
+
+    await referencePage.submitForm();
+
+    await referencePage.expect.toHaveInputs({
+      firstName: "Luca",
+      lastName: "Mara",
+      mobile: "123123",
+      email: "asd@asd.com",
+      bestTimeToContact: "now",
+      relationship: "father",
+      hasKnowApplicantForAYear: "Yes",
+      isRelated: "No",
+      knownForComment: "asdasdasdasdsa",
+      isChildrenSafe: "Yes",
+      skillAndKnowledgeComment: "asdasdasdssss",
+      empathyAndPatienceComment: "sssssssssssssssssss",
+      buildRelationshipsComment: "aaaaaaaaaaaaaaaaaaa",
+      outcomeComment: "sssssssssssssssssss",
+      generalComment: "ddddddddddddddddddddddd",
+      isMentorRecommended: "Yes",
+      calledBy: "Tony",
+      calledOndate: "2020-02-02",
+    });
   });
 });
