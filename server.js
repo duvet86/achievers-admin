@@ -39,9 +39,23 @@ app.use(
     crossOriginEmbedderPolicy: false,
     contentSecurityPolicy: {
       directives: {
-        connectSrc:
+        "connect-src":
           process.env.NODE_ENV === "development" ? ["ws:", "'self'"] : null,
-        scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`],
+        "script-src": [
+          "'strict-dynamic'",
+          "'unsafe-eval'",
+          "'self'",
+          // @ts-expect-error middleware is the worst
+          (req, res) => `'nonce-${res.locals.cspNonce}'`,
+        ],
+        "script-src-attr": [
+          "'unsafe-inline'",
+          // TODO: figure out how to make the nonce work instead of
+          // unsafe-inline. I tried adding a nonce attribute where we're using
+          // inline attributes, but that didn't work. I still got that it
+          // violated the CSP.
+        ],
+        "upgrade-insecure-requests": null,
       },
     },
   }),
