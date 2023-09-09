@@ -6,7 +6,7 @@ import { Response } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import isbot from "isbot";
 
-import { NonceContext } from "~/services";
+// import { NonceContext } from "~/services";
 
 const ABORT_DELAY = 5000;
 
@@ -41,21 +41,21 @@ function handleBotRequest(
   remixContext: EntryContext,
   loadContext: AppLoadContext,
 ) {
-  const cspNonce = loadContext.cspNonce
-    ? String(loadContext.cspNonce)
-    : undefined;
+  // const cspNonce = loadContext.cspNonce
+  //   ? String(loadContext.cspNonce)
+  //   : undefined;
 
   return new Promise((resolve, reject) => {
     const { pipe, abort } = renderToPipeableStream(
-      <NonceContext.Provider value={cspNonce}>
-        <RemixServer
-          context={remixContext}
-          url={request.url}
-          abortDelay={ABORT_DELAY}
-        />
-      </NonceContext.Provider>,
+      // <NonceContext.Provider value={cspNonce}>
+      <RemixServer
+        context={remixContext}
+        url={request.url}
+        abortDelay={ABORT_DELAY}
+      />,
+      // </NonceContext.Provider>,
       {
-        nonce: cspNonce,
+        // nonce: cspNonce,
         onAllReady() {
           const body = new PassThrough();
 
@@ -91,21 +91,21 @@ function handleBrowserRequest(
   remixContext: EntryContext,
   loadContext: AppLoadContext,
 ) {
-  const cspNonce = loadContext.cspNonce
-    ? String(loadContext.cspNonce)
-    : undefined;
+  // const cspNonce = loadContext.cspNonce
+  //   ? String(loadContext.cspNonce)
+  //   : undefined;
 
   return new Promise((resolve, reject) => {
     const { pipe, abort } = renderToPipeableStream(
-      <NonceContext.Provider value={cspNonce}>
-        <RemixServer
-          context={remixContext}
-          url={request.url}
-          abortDelay={ABORT_DELAY}
-        />
-      </NonceContext.Provider>,
+      // <NonceContext.Provider value={cspNonce}>
+      <RemixServer
+        context={remixContext}
+        url={request.url}
+        abortDelay={ABORT_DELAY}
+      />,
+      // </NonceContext.Provider>,
       {
-        nonce: cspNonce,
+        // nonce: cspNonce,
         onShellReady() {
           const body = new PassThrough();
 

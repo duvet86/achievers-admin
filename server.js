@@ -1,11 +1,11 @@
 import { statSync } from "node:fs";
-import { randomBytes } from "node:crypto";
+// import { randomBytes } from "node:crypto";
 
 import * as appInsights from "applicationinsights";
 
 import chokidar from "chokidar";
 import express from "express";
-import helmet from "helmet";
+// import helmet from "helmet";
 import compression from "compression";
 import morgan from "morgan";
 
@@ -30,21 +30,21 @@ const app = express();
 
 app.use(compression());
 
-app.use((req, res, next) => {
-  res.locals.cspNonce = randomBytes(16).toString("hex");
-  next();
-});
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        "connect-src":
-          process.env.NODE_ENV === "development" ? ["ws:", "'self'"] : null,
-        scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`],
-      },
-    },
-  }),
-);
+// app.use((req, res, next) => {
+//   res.locals.cspNonce = randomBytes(16).toString("hex");
+//   next();
+// });
+// app.use(
+//   helmet({
+//     contentSecurityPolicy: {
+//       directives: {
+//         "connect-src":
+//           process.env.NODE_ENV === "development" ? ["ws:", "'self'"] : null,
+//         scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`],
+//       },
+//     },
+//   }),
+// );
 
 // http://expressjs.com/en/advanced/best-practice-security.html#at-a-minimum-disable-x-powered-by-header
 app.disable("x-powered-by");
@@ -68,9 +68,9 @@ app.all(
     : createRequestHandler({
         build,
         mode: process.env.NODE_ENV,
-        getLoadContext: (req, res) => ({
-          cspNonce: res.locals.cspNonce,
-        }),
+        // getLoadContext: (req, res) => ({
+        //   cspNonce: res.locals.cspNonce,
+        // }),
       }),
 );
 
@@ -98,9 +98,9 @@ function createDevRequestHandler() {
       return createRequestHandler({
         build: await build,
         mode: "development",
-        getLoadContext: (req, res) => ({
-          cspNonce: res.locals.cspNonce,
-        }),
+        // getLoadContext: (req, res) => ({
+        //   cspNonce: res.locals.cspNonce,
+        // }),
       })(req, res, next);
     } catch (error) {
       next(error);
