@@ -4,13 +4,13 @@ exports[`Navbar > Navbar snapshot 1`] = `
 <body>
   <div>
     <nav
-      class="navbar fixed left-0 top-0 h-16 bg-primary text-primary-content shadow-md z-10"
+      class="navbar absolute left-0 top-0 z-10 h-16 bg-primary text-primary-content shadow-md"
     >
       <div
         class="flex-none lg:hidden"
       >
         <label
-          class="btn-ghost btn-square btn"
+          class="btn btn-square btn-ghost"
           for="drawer"
         >
           <svg
@@ -36,7 +36,7 @@ exports[`Navbar > Navbar snapshot 1`] = `
         class="flex-1"
       >
         <a
-          class="btn-ghost btn text-xl normal-case"
+          class="btn btn-ghost text-xl normal-case"
           href="/"
         >
           <img
@@ -57,7 +57,7 @@ exports[`Navbar > Navbar snapshot 1`] = `
         </a>
       </div>
       <div
-        class="dropdown-end dropdown hidden lg:block"
+        class="dropdown dropdown-end hidden lg:block"
       >
         <div
           class="flex cursor-pointer items-center gap-2"
@@ -67,7 +67,7 @@ exports[`Navbar > Navbar snapshot 1`] = `
             class="font-semibold"
           />
           <label
-            class="btn-ghost btn-circle btn"
+            class="btn btn-circle btn-ghost"
           >
             <div
               class="flex w-10 content-center justify-center rounded-full"
