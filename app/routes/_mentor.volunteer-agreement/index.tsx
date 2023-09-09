@@ -170,7 +170,7 @@ export default function AppLayout() {
             <Checkbox name="isOver18" required />
 
             <div className="form-control mt-6">
-              <button className="btn-primary btn">Submit</button>
+              <button className="btn btn-primary">Submit</button>
             </div>
           </Form>
         </div>

@@ -86,7 +86,7 @@ export default function Chapter() {
           </p>
 
           <button
-            className="btn-success btn float-right mt-6 w-64 gap-4"
+            className="btn btn-success float-right mt-6 w-64 gap-4"
             type="submit"
           >
             <MailOut className="h-6 w-6" />

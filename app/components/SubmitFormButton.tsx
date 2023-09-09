@@ -35,7 +35,7 @@ export function SubmitFormButton({
         )}
       </div>
 
-      <button className="btn-primary btn w-52 gap-5" type="submit">
+      <button className="btn btn-primary w-52 gap-5" type="submit">
         <SaveActionFloppy className="h-6 w-6" />
         {label}
       </button>
