@@ -117,12 +117,12 @@ export async function action({ request, params }: ActionArgs) {
     addressSuburb,
     addressState,
     addressPostcode,
-    additionalEmail:
-      additionalEmail === undefined || additionalEmail.trim() === ""
-        ? null
-        : additionalEmail.trim(),
-    dateOfBirth:
-      dateOfBirth === undefined ? null : new Date(dateOfBirth + "T00:00"),
+    additionalEmail: isStringNullOrEmpty(additionalEmail)
+      ? null
+      : additionalEmail.trim(),
+    dateOfBirth: isStringNullOrEmpty(dateOfBirth)
+      ? null
+      : new Date(dateOfBirth + "T00:00"),
     emergencyContactName,
     emergencyContactNumber,
     emergencyContactAddress,
