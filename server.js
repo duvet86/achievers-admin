@@ -45,19 +45,6 @@ app.use(express.static("public", { maxAge: "1h" }));
 
 app.use(morgan("tiny"));
 
-app.all(
-  "*",
-  process.env.NODE_ENV === "development"
-    ? createDevRequestHandler()
-    : createRequestHandler({
-        build,
-        mode: process.env.NODE_ENV,
-        getLoadContext: (req, res) => ({
-          cspNonce: res.locals.cspNonce,
-        }),
-      }),
-);
-
 app.use((req, res, next) => {
   res.locals.cspNonce = randomBytes(16).toString("hex");
   next();
@@ -72,6 +59,19 @@ app.use(
       },
     },
   }),
+);
+
+app.all(
+  "*",
+  process.env.NODE_ENV === "development"
+    ? createDevRequestHandler()
+    : createRequestHandler({
+        build,
+        mode: process.env.NODE_ENV,
+        getLoadContext: (req, res) => ({
+          cspNonce: res.locals.cspNonce,
+        }),
+      }),
 );
 
 app.listen(port, async () => {
