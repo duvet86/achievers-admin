@@ -1,6 +1,5 @@
 import type { LinksFunction } from "@remix-run/node";
 
-import { useContext } from "react";
 import {
   Links,
   LiveReload,
@@ -15,7 +14,6 @@ import {
 
 import tailwindStylesheetUrl from "~/styles/tailwind.css";
 
-import { NonceContext } from "~/services";
 import {
   Forbidden,
   LoadingSpinner,
@@ -28,7 +26,6 @@ export const links: LinksFunction = () => {
 };
 
 export default function App() {
-  const nonce = useContext(NonceContext);
   const transition = useNavigation();
   const isLoading =
     transition.state === "loading" || transition.state === "submitting";
@@ -51,9 +48,9 @@ export default function App() {
           </div>
         )}
         <Outlet />
-        <ScrollRestoration nonce={nonce} />
-        <Scripts nonce={nonce} />
-        <LiveReload nonce={nonce} />
+        <ScrollRestoration />
+        <Scripts />
+        <LiveReload />
       </body>
     </html>
   );

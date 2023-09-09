@@ -1,11 +1,9 @@
 import { statSync } from "node:fs";
-import { randomBytes } from "node:crypto";
 
 import * as appInsights from "applicationinsights";
 
 import chokidar from "chokidar";
 import express from "express";
-import helmet from "helmet";
 import compression from "compression";
 import morgan from "morgan";
 
@@ -45,22 +43,6 @@ app.use(express.static("public", { maxAge: "1h" }));
 
 app.use(morgan("tiny"));
 
-app.use((req, res, next) => {
-  res.locals.cspNonce = randomBytes(16).toString("hex");
-  next();
-});
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        connectSrc:
-          process.env.NODE_ENV === "development" ? ["ws:", "'self'"] : null,
-        scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`],
-      },
-    },
-  }),
-);
-
 app.all(
   "*",
   process.env.NODE_ENV === "development"
@@ -68,9 +50,6 @@ app.all(
     : createRequestHandler({
         build,
         mode: process.env.NODE_ENV,
-        getLoadContext: (req, res) => ({
-          cspNonce: res.locals.cspNonce,
-        }),
       }),
 );
 
@@ -98,9 +77,6 @@ function createDevRequestHandler() {
       return createRequestHandler({
         build: await build,
         mode: "development",
-        getLoadContext: (req, res) => ({
-          cspNonce: res.locals.cspNonce,
-        }),
       })(req, res, next);
     } catch (error) {
       next(error);

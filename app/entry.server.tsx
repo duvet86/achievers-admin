@@ -6,8 +6,6 @@ import { Response } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import isbot from "isbot";
 
-import { NonceContext } from "~/services";
-
 const ABORT_DELAY = 5000;
 
 export default function handleRequest(
@@ -23,14 +21,12 @@ export default function handleRequest(
         responseStatusCode,
         responseHeaders,
         remixContext,
-        loadContext,
       )
     : handleBrowserRequest(
         request,
         responseStatusCode,
         responseHeaders,
         remixContext,
-        loadContext,
       );
 }
 
@@ -39,23 +35,15 @@ function handleBotRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext,
-  loadContext: AppLoadContext,
 ) {
-  const cspNonce = loadContext.cspNonce
-    ? String(loadContext.cspNonce)
-    : undefined;
-
   return new Promise((resolve, reject) => {
     const { pipe, abort } = renderToPipeableStream(
-      <NonceContext.Provider value={cspNonce}>
-        <RemixServer
-          context={remixContext}
-          url={request.url}
-          abortDelay={ABORT_DELAY}
-        />
-      </NonceContext.Provider>,
+      <RemixServer
+        context={remixContext}
+        url={request.url}
+        abortDelay={ABORT_DELAY}
+      />,
       {
-        nonce: cspNonce,
         onAllReady() {
           const body = new PassThrough();
 
@@ -89,23 +77,15 @@ function handleBrowserRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext,
-  loadContext: AppLoadContext,
 ) {
-  const cspNonce = loadContext.cspNonce
-    ? String(loadContext.cspNonce)
-    : undefined;
-
   return new Promise((resolve, reject) => {
     const { pipe, abort } = renderToPipeableStream(
-      <NonceContext.Provider value={cspNonce}>
-        <RemixServer
-          context={remixContext}
-          url={request.url}
-          abortDelay={ABORT_DELAY}
-        />
-      </NonceContext.Provider>,
+      <RemixServer
+        context={remixContext}
+        url={request.url}
+        abortDelay={ABORT_DELAY}
+      />,
       {
-        nonce: cspNonce,
         onShellReady() {
           const body = new PassThrough();
 
