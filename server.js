@@ -36,12 +36,12 @@ app.use((req, res, next) => {
 });
 app.use(
   helmet({
+    crossOriginEmbedderPolicy: false,
     contentSecurityPolicy: {
       directives: {
         connectSrc:
           process.env.NODE_ENV === "development" ? ["ws:", "'self'"] : null,
         scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`],
-        upgradeInsecureRequests: null,
       },
     },
   }),
