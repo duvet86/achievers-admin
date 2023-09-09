@@ -60,7 +60,7 @@ export default function Index() {
           </p>
 
           <button
-            className="btn-error btn float-right mt-6 w-64 gap-4"
+            className="btn btn-error float-right mt-6 w-64 gap-4"
             type="submit"
           >
             <Cancel className="h-6 w-6" />

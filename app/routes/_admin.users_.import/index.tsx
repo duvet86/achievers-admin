@@ -131,7 +131,7 @@ export default function Index() {
             type="file"
             id="usersSheet"
             name="usersSheet"
-            className="file-input-bordered file-input w-full"
+            className="file-input file-input-bordered w-full"
             accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             disabled={isDisabled}
           />
@@ -140,7 +140,7 @@ export default function Index() {
         <div className="flex items-center gap-20">
           <button
             type="submit"
-            className="btn-primary btn gap-2"
+            className="btn btn-primary gap-2"
             disabled={isDisabled}
           >
             <Import className="h-6 w-6" />
@@ -212,7 +212,7 @@ export default function Index() {
                     <td className="border p-2">
                       <Link
                         to={`/users/${id.toString()}`}
-                        className="btn-success btn-xs btn w-full gap-2"
+                        className="btn btn-success btn-xs w-full gap-2"
                       >
                         <PageEdit className="h-4 w-4" />
                         Edit

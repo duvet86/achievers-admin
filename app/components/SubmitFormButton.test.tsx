@@ -23,10 +23,16 @@ describe("SubmitFormButton", () => {
     );
   });
 
-  it("should have custom message", async () => {
-    render(<SubmitFormButton message="test" />);
+  it("should have custom success message", async () => {
+    render(<SubmitFormButton successMessage="success" />);
 
-    expect(screen.getByTestId("message")).toHaveTextContent("test");
+    expect(screen.getByTestId("message")).toHaveTextContent("success");
+  });
+
+  it("should have custom error message", async () => {
+    render(<SubmitFormButton errorMessage="error" />);
+
+    expect(screen.getByTestId("message")).toHaveTextContent("error");
   });
 
   it("should have custom label", async () => {

@@ -42,7 +42,7 @@ export function DateInput({
         id={name}
         name={name}
         placeholder={label}
-        className="input-bordered input w-full"
+        className="input input-bordered w-full"
         defaultValue={value}
         required={required}
         {...props}

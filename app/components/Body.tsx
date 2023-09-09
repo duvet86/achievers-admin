@@ -25,7 +25,7 @@ export function Body({
   return (
     <div className="drawer lg:drawer-open">
       <input id="drawer" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content flex flex-col">
+      <div className="drawer-content flex h-screen flex-col">
         <Navbar currentUser={currentUser} environment={environment} />
 
         <main className="mt-16 flex h-full flex-col overflow-y-auto bg-white p-4">

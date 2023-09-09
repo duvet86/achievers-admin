@@ -36,7 +36,7 @@ export function Textarea({
         name={name}
         placeholder={label}
         required={required}
-        className="textarea-bordered textarea h-24"
+        className="textarea textarea-bordered h-24"
         {...props}
       ></textarea>
     </div>

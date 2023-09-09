@@ -84,7 +84,7 @@ export function CheckList({
             </td>
             <td className="border p-2">
               <Link
-                className="btn-xs btn w-full gap-2"
+                className="btn btn-xs w-full gap-2"
                 to="eoiProfile"
                 relative="path"
               >
@@ -104,7 +104,7 @@ export function CheckList({
             </td>
             <td className="border p-2">
               <Link
-                className="btn-xs btn w-full gap-2"
+                className="btn btn-xs w-full gap-2"
                 to="welcomeCall"
                 relative="path"
               >
@@ -124,7 +124,7 @@ export function CheckList({
             </td>
             <td className="border p-2">
               <Link
-                className="btn-xs btn w-full gap-2"
+                className="btn btn-xs w-full gap-2"
                 to="references"
                 relative="path"
               >
@@ -144,7 +144,7 @@ export function CheckList({
             </td>
             <td className="border p-2">
               <Link
-                className="btn-xs btn w-full gap-2"
+                className="btn btn-xs w-full gap-2"
                 to="induction"
                 relative="path"
               >
@@ -164,7 +164,7 @@ export function CheckList({
             </td>
             <td className="border p-2">
               <Link
-                className="btn-xs btn w-full gap-2"
+                className="btn btn-xs w-full gap-2"
                 to="police-check"
                 relative="path"
               >
@@ -184,7 +184,7 @@ export function CheckList({
             </td>
             <td className="border p-2">
               <Link
-                className="btn-xs btn w-full gap-2"
+                className="btn btn-xs w-full gap-2"
                 to="wwc-check"
                 relative="path"
               >
@@ -204,7 +204,7 @@ export function CheckList({
             </td>
             <td className="border p-2">
               <Link
-                className="btn-xs btn w-full gap-2"
+                className="btn btn-xs w-full gap-2"
                 to="approval-mrc"
                 relative="path"
               >

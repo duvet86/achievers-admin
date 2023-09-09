@@ -37,14 +37,14 @@ export function Drawer({ isAdmin, version }: Props) {
   return (
     <div className="drawer-side pt-16">
       <label htmlFor="drawer" className="drawer-overlay"></label>
-      <ul className="menu w-80 border-r border-primary bg-base-200 p-4 text-base-content h-full">
+      <ul className="menu h-full w-80 border-r border-primary bg-base-200 p-4 text-base-content">
         {links.map(({ label, value }, index) => (
           <li key={index}>
             <NavLink
               to={value}
               className={({ isActive }) =>
                 isActive
-                  ? "mb-2 justify-between rounded font-semibold active"
+                  ? "active mb-2 justify-between rounded font-semibold"
                   : "mb-2 justify-between rounded font-semibold"
               }
             >

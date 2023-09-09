@@ -32,7 +32,7 @@ export function Select({ label, name, options, required, ...props }: Props) {
         data-testid="select"
         name={name}
         id={name}
-        className="select-bordered select"
+        className="select select-bordered"
         required={required}
         {...props}
       >

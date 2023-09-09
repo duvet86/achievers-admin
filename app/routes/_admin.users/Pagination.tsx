@@ -15,7 +15,7 @@ export default function Pagination({
         type="submit"
         name="previousBtn"
         value="previousBtn"
-        className="join-item btn-outline btn"
+        className="btn btn-outline join-item"
         disabled={currentPageNumber === 0}
         title="previous"
       >
@@ -31,8 +31,8 @@ export default function Pagination({
             value={index}
             className={
               currentPageNumber === index
-                ? "join-item btn-outline btn-active btn "
-                : "join-item btn-outline btn"
+                ? "btn btn-outline join-item btn-active "
+                : "btn btn-outline join-item"
             }
           >
             {index + 1}
@@ -42,7 +42,7 @@ export default function Pagination({
         type="submit"
         name="nextBtn"
         value="nextBtn"
-        className="join-item btn-outline btn"
+        className="btn btn-outline join-item"
         disabled={
           currentPageNumber === totalPageCount - 1 || totalPageCount === 0
         }

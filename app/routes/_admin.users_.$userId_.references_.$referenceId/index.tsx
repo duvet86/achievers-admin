@@ -16,9 +16,9 @@ import {
   Input,
   DateInput,
   Textarea,
-  Checkbox,
   SubmitFormButton,
   SubTitle,
+  Radio,
 } from "~/components";
 
 import {
@@ -56,11 +56,24 @@ export async function action({ request, params }: ActionArgs) {
     .get("hasKnowApplicantForAYear")
     ?.toString();
   const isRelated = formData.get("isRelated")?.toString();
+  const knownForComment = formData.get("knownForComment")?.toString();
+  const isChildrenSafe = formData.get("isChildrenSafe")?.toString();
+  const skillAndKnowledgeComment = formData
+    .get("skillAndKnowledgeComment")
+    ?.toString();
+  const empathyAndPatienceComment = formData
+    .get("empathyAndPatienceComment")
+    ?.toString();
+  const buildRelationshipsComment = formData
+    .get("buildRelationshipsComment")
+    ?.toString();
+  const outcomeComment = formData.get("outcomeComment")?.toString();
+  const generalComment = formData.get("generalComment")?.toString() ?? null;
   const isMentorRecommended = formData.get("isMentorRecommended")?.toString();
   const calledBy = formData.get("calledBy")?.toString();
   const calledOndate = formData.get("calledOndate")?.toString();
-  const outcomeComment = formData.get("outcomeComment")?.toString();
-  const generalComment = formData.get("generalComment")?.toString() ?? null;
+
+  console.log("hasKnowApplicantForAYear", hasKnowApplicantForAYear);
 
   if (
     firstName === undefined ||
@@ -76,27 +89,31 @@ export async function action({ request, params }: ActionArgs) {
     calledOndate === undefined ||
     outcomeComment === undefined
   ) {
-    return json<{
-      message: string | null;
-    }>({
-      message: "Missing required fields",
+    return json({
+      successMessage: null,
+      errorMessage: "Missing required fields",
     });
   }
 
   const data: ReferenceUpdateCommand = {
-    bestTimeToContact,
-    email,
     firstName,
     lastName,
     mobile,
+    email,
+    bestTimeToContact,
     relationship,
+    hasKnowApplicantForAYear: hasKnowApplicantForAYear === "true",
+    isRelated: isRelated === "true",
+    knownForComment,
+    isChildrenSafe: isChildrenSafe === "true",
+    skillAndKnowledgeComment,
+    empathyAndPatienceComment,
+    buildRelationshipsComment,
+    outcomeComment,
+    generalComment,
+    isMentorRecommended: isMentorRecommended === "true",
     calledBy,
     calledOndate,
-    generalComment,
-    hasKnowApplicantForAYear: hasKnowApplicantForAYear === "true",
-    isMentorRecommended: isMentorRecommended === "true",
-    isRelated: isRelated === "true",
-    outcomeComment,
   };
 
   await updateReferenceByIdAsync(
@@ -105,10 +122,9 @@ export async function action({ request, params }: ActionArgs) {
     data,
   );
 
-  return json<{
-    message: string | null;
-  }>({
-    message: null,
+  return json({
+    successMessage: "Saved successfully",
+    errorMessage: null,
   });
 }
 
@@ -174,53 +190,139 @@ export default function Index() {
             required
           />
 
-          <SubTitle>Reference check completed</SubTitle>
-
-          <Input
-            label="By (name)"
-            name="calledBy"
-            defaultValue={reference.calledBy ?? ""}
-          />
-
-          <DateInput
-            defaultValue={reference.calledOndate ?? ""}
-            label="On (date)"
-            name="calledOndate"
-          />
-
           <SubTitle>Outcome</SubTitle>
 
-          <Checkbox
+          <Radio
             label="Has the referee known the applicant for at least one year?"
             name="hasKnowApplicantForAYear"
-            defaultChecked={reference.hasKnowApplicantForAYear ?? false}
+            defaultValue={reference.hasKnowApplicantForAYear?.toString()}
+            options={[
+              {
+                label: "Yes",
+                value: "true",
+              },
+              {
+                label: "No",
+                value: "false",
+              },
+            ]}
+            required
           />
 
-          <Checkbox
+          <Radio
             label="Is the referee a family member or partner of the applicant?"
             name="isRelated"
-            defaultChecked={reference.isRelated ?? false}
-          />
-
-          <Checkbox
-            label="Based on this reference check, do you recommend the Potential Mentor named above be accepted as a Mentor?"
-            name="isMentorRecommended"
-            defaultChecked={reference.isMentorRecommended ?? false}
+            defaultValue={reference.isRelated?.toString()}
+            options={[
+              {
+                label: "Yes",
+                value: "true",
+              },
+              {
+                label: "No",
+                value: "false",
+              },
+            ]}
+            required
           />
 
           <Textarea
-            label="Any other comments?  (Use this response to provide any other relevant information that may be helpful)."
+            label="Please describe how long and in what capacity you have known the Applicant? (Use this to also confirm employment status, dates and role of the applicant)"
+            name="knownForComment"
+            defaultValue={reference.knownForComment ?? ""}
+            required
+          />
+
+          <Radio
+            label="Would you be happy with your own children, or children you know, to be mentored by the Applicant?"
+            name="isChildrenSafe"
+            defaultValue={reference.isChildrenSafe?.toString()}
+            options={[
+              {
+                label: "Yes",
+                value: "true",
+              },
+              {
+                label: "No",
+                value: "false",
+              },
+            ]}
+            required
+          />
+
+          <Textarea
+            label="What skills and knowledge do you think the Applicant has that will help them fulfil this mentoring role?"
+            name="skillAndKnowledgeComment"
+            defaultValue={reference.skillAndKnowledgeComment ?? ""}
+            required
+          />
+
+          <Textarea
+            label="Empathy and patience are key attributes for mentoring. Does the Applicant have these attributes? Provide examples."
+            name="empathyAndPatienceComment"
+            defaultValue={reference.empathyAndPatienceComment ?? ""}
+            required
+          />
+
+          <Textarea
+            label="Another key attribute for this role is the ability to build relationships, especially with children. Does the Applicant have this attribute? Provide examples."
+            name="buildRelationshipsComment"
+            defaultValue={reference.buildRelationshipsComment ?? ""}
+            required
+          />
+
+          <Textarea
+            label="Any other comments? (Use this response to provide any other relevant information that may be helpful)."
             name="outcomeComment"
             defaultValue={reference.outcomeComment ?? ""}
+            required
           />
 
           <Textarea
             label="General comment"
             name="generalComment"
             defaultValue={reference.generalComment ?? ""}
+            required
           />
 
-          <SubmitFormButton message={actionData?.message} sticky />
+          <Radio
+            label="Based on this reference check, do you recommend the Potential Mentor named above be accepted as a Mentor?"
+            name="isMentorRecommended"
+            defaultValue={reference.isMentorRecommended?.toString()}
+            options={[
+              {
+                label: "Yes",
+                value: "true",
+              },
+              {
+                label: "No",
+                value: "false",
+              },
+            ]}
+            required
+          />
+
+          <SubTitle>Reference check completed</SubTitle>
+
+          <Input
+            label="By (name)"
+            name="calledBy"
+            defaultValue={reference.calledBy ?? ""}
+            required
+          />
+
+          <DateInput
+            defaultValue={reference.calledOndate ?? ""}
+            label="On (date)"
+            name="calledOndate"
+            required
+          />
+
+          <SubmitFormButton
+            successMessage={actionData?.successMessage}
+            errorMessage={actionData?.errorMessage}
+            sticky
+          />
         </fieldset>
       </Form>
     </>

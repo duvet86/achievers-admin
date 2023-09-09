@@ -41,7 +41,7 @@ export function Input({
         name={name}
         placeholder={placeholder ?? label}
         required={required}
-        className="input-bordered input w-full"
+        className="input input-bordered w-full"
         {...props}
       />
     </div>

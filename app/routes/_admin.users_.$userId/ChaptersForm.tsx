@@ -33,7 +33,7 @@ export function ChaptersForm({ loaderData: { user } }: Props) {
                 <td align="right" className="border p-2">
                   <Link
                     to={`chapters/${chapter.id}/delete`}
-                    className="btn-error btn-xs btn w-full gap-2"
+                    className="btn btn-error btn-xs w-full gap-2"
                   >
                     <Cancel className="h-4 w-4" />
                     Remove
@@ -56,7 +56,7 @@ export function ChaptersForm({ loaderData: { user } }: Props) {
         <Link
           to="chapters/assign"
           relative="path"
-          className="btn-primary btn w-64 gap-4"
+          className="btn btn-primary w-64 gap-4"
         >
           <HomeSimpleDoor className="h-6 w-6" />
           Assign a chapter

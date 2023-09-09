@@ -36,7 +36,7 @@ export default function ProfileInput({ defaultValue }: Props) {
 
         {hasImage && (
           <button
-            className="btn-error btn w-32 gap-2"
+            className="btn btn-error w-32 gap-2"
             onClick={(e) => {
               e.preventDefault();
               if (inputRef.current) {

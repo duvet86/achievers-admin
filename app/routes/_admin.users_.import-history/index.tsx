@@ -77,7 +77,7 @@ export default function Index() {
                 <th align="left" className="p-2">
                   Full name
                 </th>
-                <th align="left" className="p-2 w-2/5">
+                <th align="left" className="w-2/5 p-2">
                   Errors
                 </th>
                 <th align="left" className="p-2">
@@ -116,7 +116,7 @@ export default function Index() {
                     <td className="border p-2">
                       <Link
                         to={`/users/${id.toString()}`}
-                        className="btn-success btn-xs btn w-full gap-2"
+                        className="btn btn-success btn-xs w-full gap-2"
                       >
                         <PageEdit className="h-4 w-4" />
                         Edit
@@ -136,7 +136,7 @@ export default function Index() {
             type="submit"
             name="previousBtn"
             value="previousBtn"
-            className="join-item btn-outline btn"
+            className="btn btn-outline join-item"
             disabled={currentPageNumber === 0}
             title="previous"
           >
@@ -152,8 +152,8 @@ export default function Index() {
                 value={index}
                 className={
                   currentPageNumber === index
-                    ? "join-item btn-outline btn-active btn "
-                    : "join-item btn-outline btn"
+                    ? "btn btn-outline join-item btn-active "
+                    : "btn btn-outline join-item"
                 }
               >
                 {index + 1}
@@ -163,7 +163,7 @@ export default function Index() {
             type="submit"
             name="nextBtn"
             value="nextBtn"
-            className="join-item btn-outline btn"
+            className="btn btn-outline join-item"
             disabled={
               currentPageNumber === totalPageCount - 1 || totalPageCount === 0
             }

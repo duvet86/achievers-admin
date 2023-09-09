@@ -71,7 +71,7 @@ export default function Index() {
                     <Link
                       to={`${id}`}
                       relative="path"
-                      className="btn-success btn-xs btn w-full gap-2"
+                      className="btn btn-success btn-xs w-full gap-2"
                     >
                       <ChatBubbleEmpty className="h-4 w-4" />
                       View

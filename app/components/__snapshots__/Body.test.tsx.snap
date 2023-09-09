@@ -12,16 +12,16 @@ exports[`Body > Body snapshot admin 1`] = `
         type="checkbox"
       />
       <div
-        class="drawer-content flex flex-col"
+        class="drawer-content flex h-screen flex-col"
       >
         <nav
-          class="navbar fixed left-0 top-0 h-16 bg-primary text-primary-content shadow-md z-10"
+          class="navbar absolute left-0 top-0 z-10 h-16 bg-primary text-primary-content shadow-md"
         >
           <div
             class="flex-none lg:hidden"
           >
             <label
-              class="btn-ghost btn-square btn"
+              class="btn btn-square btn-ghost"
               for="drawer"
             >
               <svg
@@ -47,7 +47,7 @@ exports[`Body > Body snapshot admin 1`] = `
             class="flex-1"
           >
             <a
-              class="btn-ghost btn text-xl normal-case"
+              class="btn btn-ghost text-xl normal-case"
               href="/"
             >
               <img
@@ -68,7 +68,7 @@ exports[`Body > Body snapshot admin 1`] = `
             </a>
           </div>
           <div
-            class="dropdown-end dropdown hidden lg:block"
+            class="dropdown dropdown-end hidden lg:block"
           >
             <div
               class="flex cursor-pointer items-center gap-2"
@@ -78,7 +78,7 @@ exports[`Body > Body snapshot admin 1`] = `
                 class="font-semibold"
               />
               <label
-                class="btn-ghost btn-circle btn"
+                class="btn btn-circle btn-ghost"
               >
                 <div
                   class="flex w-10 content-center justify-center rounded-full"
@@ -152,7 +152,7 @@ exports[`Body > Body snapshot admin 1`] = `
           for="drawer"
         />
         <ul
-          class="menu w-80 border-r border-primary bg-base-200 p-4 text-base-content h-full"
+          class="menu h-full w-80 border-r border-primary bg-base-200 p-4 text-base-content"
         >
           <li>
             <a
@@ -230,16 +230,16 @@ exports[`Body > Body snapshot mentor 1`] = `
         type="checkbox"
       />
       <div
-        class="drawer-content flex flex-col"
+        class="drawer-content flex h-screen flex-col"
       >
         <nav
-          class="navbar fixed left-0 top-0 h-16 bg-primary text-primary-content shadow-md z-10"
+          class="navbar absolute left-0 top-0 z-10 h-16 bg-primary text-primary-content shadow-md"
         >
           <div
             class="flex-none lg:hidden"
           >
             <label
-              class="btn-ghost btn-square btn"
+              class="btn btn-square btn-ghost"
               for="drawer"
             >
               <svg
@@ -265,7 +265,7 @@ exports[`Body > Body snapshot mentor 1`] = `
             class="flex-1"
           >
             <a
-              class="btn-ghost btn text-xl normal-case"
+              class="btn btn-ghost text-xl normal-case"
               href="/"
             >
               <img
@@ -286,7 +286,7 @@ exports[`Body > Body snapshot mentor 1`] = `
             </a>
           </div>
           <div
-            class="dropdown-end dropdown hidden lg:block"
+            class="dropdown dropdown-end hidden lg:block"
           >
             <div
               class="flex cursor-pointer items-center gap-2"
@@ -296,7 +296,7 @@ exports[`Body > Body snapshot mentor 1`] = `
                 class="font-semibold"
               />
               <label
-                class="btn-ghost btn-circle btn"
+                class="btn btn-circle btn-ghost"
               >
                 <div
                   class="flex w-10 content-center justify-center rounded-full"
@@ -370,7 +370,7 @@ exports[`Body > Body snapshot mentor 1`] = `
           for="drawer"
         />
         <ul
-          class="menu w-80 border-r border-primary bg-base-200 p-4 text-base-content h-full"
+          class="menu h-full w-80 border-r border-primary bg-base-200 p-4 text-base-content"
         >
           <li>
             <a

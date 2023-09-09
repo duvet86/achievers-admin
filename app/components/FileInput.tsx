@@ -24,7 +24,7 @@ export function FileInput({ name, label, required, ...props }: Props) {
       <input
         data-testid="fileinput"
         type="file"
-        className="file-input-bordered file-input-primary file-input w-full"
+        className="file-input file-input-bordered file-input-primary w-full"
         id={name}
         name={name}
         placeholder={label}

@@ -10,8 +10,8 @@ interface Props {
 
 export default function FormInputs({ chapters, onFormSubmit }: Props) {
   return (
-    <div className="mb-6 flex justify-between alert flex-wrap">
-      <div className="flex gap-6 items-center">
+    <div className="alert mb-6 flex flex-wrap justify-between">
+      <div className="flex items-center gap-6">
         <div className="w-96">
           <Input name="searchTerm" placeholder="Search by name or email" />
         </div>
@@ -40,9 +40,9 @@ export default function FormInputs({ chapters, onFormSubmit }: Props) {
         </div>
       </div>
 
-      <div className="flex gap-6 items-center">
+      <div className="flex items-center gap-6">
         <button
-          className="btn-primary btn w-32"
+          className="btn btn-primary w-32"
           type="submit"
           name="searchBtn"
           value="searchBtn"

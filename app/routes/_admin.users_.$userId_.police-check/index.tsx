@@ -62,10 +62,8 @@ export async function action({ request, params }: ActionArgs) {
   const expiryDate = formData.get("expiryDate")?.toString();
 
   if (file === null || file.size === 0 || expiryDate === undefined) {
-    return json<{
-      message: string | null;
-    }>({
-      message: "Missing required fields",
+    return json({
+      errorMessage: "Missing required fields",
     });
   }
 
@@ -76,10 +74,8 @@ export async function action({ request, params }: ActionArgs) {
 
   await updatePoliceCheckAsync(Number(params.userId), data);
 
-  return json<{
-    message: string | null;
-  }>({
-    message: null,
+  return json({
+    errorMessage: null,
   });
 }
 
@@ -107,7 +103,7 @@ export default function Index() {
             required
           />
 
-          <SubmitFormButton message={actionData?.message} />
+          <SubmitFormButton errorMessage={actionData?.errorMessage} />
         </fieldset>
       </Form>
 

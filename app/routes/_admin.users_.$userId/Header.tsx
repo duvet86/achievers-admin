@@ -18,7 +18,7 @@ export function Header({ mentorAppRoleAssignmentId }: Props) {
   return (
     <>
       <div className="flex">
-        <Link to="../" relative="path" className="btn-ghost btn mb-2 gap-2">
+        <Link to="../" relative="path" className="btn btn-ghost mb-2 gap-2">
           <ArrowLeft className="w-6" />
           Back
         </Link>

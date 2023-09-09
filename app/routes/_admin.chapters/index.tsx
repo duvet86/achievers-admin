@@ -43,7 +43,7 @@ export default function Chapters() {
                 <td className="border p-2">
                   <Link
                     to={id.toString()}
-                    className="btn-success btn-xs btn w-full gap-2"
+                    className="btn btn-success btn-xs w-full gap-2"
                   >
                     <PageEdit className="h-4 w-4" />
                     Edit
