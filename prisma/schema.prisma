@@ -148,8 +148,9 @@ model Induction {
 model PoliceCheck {
   id Int @id @default(autoincrement())
 
-  filePath   String
-  expiryDate DateTime
+  filePath       String
+  expiryDate     DateTime
+  reminderSentAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -161,9 +162,10 @@ model PoliceCheck {
 model WWCCheck {
   id Int @id @default(autoincrement())
 
-  wwcNumber  String
-  filePath   String
-  expiryDate DateTime
+  wwcNumber      String
+  filePath       String
+  expiryDate     DateTime
+  reminderSentAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
