@@ -20,6 +20,14 @@ if (process.env.NODE_ENV === "production") {
   global.__appinsightsClient__ = appInsights.defaultClient;
 }
 
+if (process.env.ENABLE_EMAIL_REMINDERS) {
+  import("./background-jobs/index.js").then(() => {
+    global.__appinsightsClient__?.trackEvent({
+      message: "Email reminders enabled.",
+    });
+  });
+}
+
 const port = process.env.PORT || 3000;
 const BUILD_PATH = "./build/index.js";
 let build = await import(BUILD_PATH);
