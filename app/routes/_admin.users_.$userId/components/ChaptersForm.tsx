@@ -1,5 +1,5 @@
 import type { SerializeFrom } from "@remix-run/node";
-import type { loader } from "./index";
+import type { loader } from "../index";
 
 import { Link } from "@remix-run/react";
 

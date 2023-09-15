@@ -173,19 +173,48 @@ test.describe("Admin", () => {
     await usersListPage.goToEditUser();
     await userInfoPage.goToEOIProfile();
 
-    await eoiInfoPage.expect.toHaveHeadings();
-    await eoiInfoPage.expect.toHaveText(
-      "Afternoon after 3pm",
-      "Retired",
-      "None",
-      "Mentor",
-      "2 years at Curtin university",
-      "every week",
-      "Linkid",
-      "true",
-      "I am ready to rock",
-      "I have a lot of energy and I want to share it with everyone",
-    );
+    await eoiInfoPage.expect.toHaveValues({
+      bestTimeToContact: "Afternoon after 3pm",
+      occupation: "Retired",
+      volunteerExperience: "None",
+      role: "Mentor",
+      mentoringLevel: "2 years at Curtin university",
+      preferredFrequency: "every week",
+      hearAboutUs: "Linkid",
+      isOver18: "Yes",
+      whyVolunteer: "I am ready to rock",
+      aboutMe: "I have a lot of energy and I want to share it with everyone",
+    });
+
+    await eoiInfoPage.updateForm({
+      bestTimeToContact: "AAAAA",
+      occupation: "asdasd",
+      volunteerExperience: "ddddd",
+      role: "sdsdsd",
+      mentoringLevel: "wwwww",
+      preferredFrequency: "vvcvcv",
+      hearAboutUs: "Linkidvvvvvvvvvvvv",
+      isOver18: "No",
+      whyVolunteer: "mnmnmmmmm",
+      aboutMe: "vvvvvvvvvvvvvvvv",
+    });
+
+    await eoiInfoPage.submitForm();
+
+    await page.reload();
+
+    await eoiInfoPage.expect.toHaveValues({
+      bestTimeToContact: "AAAAA",
+      occupation: "asdasd",
+      volunteerExperience: "ddddd",
+      role: "sdsdsd",
+      mentoringLevel: "wwwww",
+      preferredFrequency: "vvcvcv",
+      hearAboutUs: "Linkidvvvvvvvvvvvv",
+      isOver18: "No",
+      whyVolunteer: "mnmnmmmmm",
+      aboutMe: "vvvvvvvvvvvvvvvv",
+    });
   });
 
   test("should update reference", async ({ page }) => {

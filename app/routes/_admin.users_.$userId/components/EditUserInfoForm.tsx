@@ -1,11 +1,11 @@
 import type { SerializeFrom } from "@remix-run/node";
-import type { loader } from "./index";
+import type { loader } from "../index";
 
 import type { Navigation } from "@remix-run/router";
 
 import { Form } from "@remix-run/react";
 
-import { DateInput, Input, SubmitFormButton } from "~/components";
+import { DateInput, Input, Radio, SubmitFormButton } from "~/components";
 
 import ProfilePicture from "./ProfilePicture";
 
@@ -119,6 +119,23 @@ export function EditUserInfoForm({ transition, loaderData: { user } }: Props) {
           defaultValue={user.additionalEmail ?? ""}
           label="Additional email"
           name="additionalEmail"
+        />
+
+        <Radio
+          label="Permission to publish photos?"
+          name="hasApprovedToPublishPhotos"
+          defaultValue={user.hasApprovedToPublishPhotos?.toString()}
+          options={[
+            {
+              label: "Yes",
+              value: "true",
+            },
+            {
+              label: "No",
+              value: "false",
+            },
+          ]}
+          required
         />
 
         <SubmitFormButton sticky />

@@ -56,12 +56,12 @@ async function seed() {
 
   //   let i;
 
-  //   for (i = 0; i < 1; i++) {
+  //   for (i = 0; i < 10; i++) {
   //     await tx.user.create({
   //       data: {
   //         azureADId: null,
-  //         //email: `test_${i}@test.com`,
-  //         email: "duvet86@gmail.com",
+  //         email: `test_${i}@test.com`,
+  //         //email: "duvet86@gmail.com",
   //         firstName: `test_${i}`,
   //         lastName: `user_${i}`,
   //         mobile: "123",
