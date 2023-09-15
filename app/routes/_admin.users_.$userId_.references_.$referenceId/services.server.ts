@@ -6,7 +6,7 @@ export interface ReferenceUpdateCommand {
   lastName: string;
   mobile: string;
   email: string;
-  bestTimeToContact: string;
+  bestTimeToContact: string | undefined;
   relationship: string;
   outcomeComment: string;
   hasKnowApplicantForAYear: boolean;

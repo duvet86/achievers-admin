@@ -78,7 +78,6 @@ export async function action({ request, params }: ActionArgs) {
     lastName === undefined ||
     mobile === undefined ||
     email === undefined ||
-    bestTimeToContact === undefined ||
     relationship === undefined ||
     hasKnowApplicantForAYear === undefined ||
     isRelated === undefined ||
@@ -175,17 +174,16 @@ export default function Index() {
           />
 
           <Input
-            label="Best time to contact"
-            name="bestTimeToContact"
-            defaultValue={reference.bestTimeToContact ?? ""}
-            required
-          />
-
-          <Input
             label="Relationship"
             name="relationship"
             defaultValue={reference.relationship ?? ""}
             required
+          />
+
+          <Input
+            label="Best time to contact"
+            name="bestTimeToContact"
+            defaultValue={reference.bestTimeToContact ?? ""}
           />
 
           <SubTitle>Outcome</SubTitle>
