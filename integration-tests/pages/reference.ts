@@ -12,7 +12,7 @@ interface ReferenceDetails {
   hasKnowApplicantForAYear: string;
   isRelated: string;
   knownForComment: string;
-  isChildrenSafe: string;
+  safeWithChildren: string;
   skillAndKnowledgeComment: string;
   empathyAndPatienceComment: string;
   buildRelationshipsComment: string;
@@ -38,7 +38,7 @@ export class ReferencePage {
   hasKnowApplicantForAYearInput: Locator;
   isRelatedInput: Locator;
   knownForCommentInput: Locator;
-  isChildrenSafeInput: Locator;
+  safeWithChildrenInput: Locator;
   skillAndKnowledgeCommentInput: Locator;
   empathyAndPatienceCommentInput: Locator;
   buildRelationshipsCommentInput: Locator;
@@ -75,7 +75,9 @@ export class ReferencePage {
     this.knownForCommentInput = page.getByLabel(
       "Please describe how long and in what capacity you have known the Applicant? (Use this to also confirm employment status, dates and role of the applicant)",
     );
-    this.isChildrenSafeInput = page.getByTestId("isChildrenSafe");
+    this.safeWithChildrenInput = page.getByLabel(
+      "Would you be happy with your own children, or children you know, to be mentored by the Applicant?",
+    );
     this.skillAndKnowledgeCommentInput = page.getByLabel(
       "What skills and knowledge do you think the Applicant has that will help them fulfil this mentoring role?",
     );
@@ -106,7 +108,7 @@ export class ReferencePage {
     hasKnowApplicantForAYear,
     isRelated,
     knownForComment,
-    isChildrenSafe,
+    safeWithChildren,
     skillAndKnowledgeComment,
     empathyAndPatienceComment,
     buildRelationshipsComment,
@@ -127,7 +129,7 @@ export class ReferencePage {
       .check();
     await this.isRelatedInput.getByText(isRelated).check();
     await this.knownForCommentInput.fill(knownForComment);
-    await this.isChildrenSafeInput.getByText(isChildrenSafe).check();
+    await this.safeWithChildrenInput.fill(safeWithChildren);
     await this.skillAndKnowledgeCommentInput.fill(skillAndKnowledgeComment);
     await this.empathyAndPatienceCommentInput.fill(empathyAndPatienceComment);
     await this.buildRelationshipsCommentInput.fill(buildRelationshipsComment);
@@ -165,7 +167,7 @@ export class ReferencePageAssertions {
     hasKnowApplicantForAYear,
     isRelated,
     knownForComment,
-    isChildrenSafe,
+    safeWithChildren,
     skillAndKnowledgeComment,
     empathyAndPatienceComment,
     buildRelationshipsComment,
@@ -196,9 +198,9 @@ export class ReferencePageAssertions {
     await expect(this.referencePage.knownForCommentInput).toHaveValue(
       knownForComment,
     );
-    await expect(
-      this.referencePage.isChildrenSafeInput.getByLabel(isChildrenSafe),
-    ).toBeChecked();
+    await expect(this.referencePage.safeWithChildrenInput).toHaveValue(
+      safeWithChildren,
+    );
     await expect(this.referencePage.skillAndKnowledgeCommentInput).toHaveValue(
       skillAndKnowledgeComment,
     );

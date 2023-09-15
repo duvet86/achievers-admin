@@ -132,8 +132,6 @@ test.describe("Admin", () => {
 
     await userInfoPage.userForm.saveForm();
 
-    await page.reload();
-
     await userInfoPage.userForm.expect.toHaveValues(
       "test_0@test.com",
       "Luca",
@@ -201,8 +199,6 @@ test.describe("Admin", () => {
 
     await eoiInfoPage.submitForm();
 
-    await page.reload();
-
     await eoiInfoPage.expect.toHaveValues({
       bestTimeToContact: "AAAAA",
       occupation: "asdasd",
@@ -233,7 +229,7 @@ test.describe("Admin", () => {
       hasKnowApplicantForAYear: "Yes",
       isRelated: "No",
       knownForComment: "asdasdasdasdsa",
-      isChildrenSafe: "Yes",
+      safeWithChildren: "Yes asdasdasasd",
       skillAndKnowledgeComment: "asdasdasdssss",
       empathyAndPatienceComment: "sssssssssssssssssss",
       buildRelationshipsComment: "aaaaaaaaaaaaaaaaaaa",
@@ -256,7 +252,7 @@ test.describe("Admin", () => {
       hasKnowApplicantForAYear: "Yes",
       isRelated: "No",
       knownForComment: "asdasdasdasdsa",
-      isChildrenSafe: "Yes",
+      safeWithChildren: "Yes asdasdasasd",
       skillAndKnowledgeComment: "asdasdasdssss",
       empathyAndPatienceComment: "sssssssssssssssssss",
       buildRelationshipsComment: "aaaaaaaaaaaaaaaaaaa",
