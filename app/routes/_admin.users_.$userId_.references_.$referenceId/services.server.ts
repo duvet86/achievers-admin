@@ -6,13 +6,13 @@ export interface ReferenceUpdateCommand {
   lastName: string;
   mobile: string;
   email: string;
-  bestTimeToContact: string;
+  bestTimeToContact: string | undefined;
   relationship: string;
   outcomeComment: string;
   hasKnowApplicantForAYear: boolean;
   isRelated: boolean;
   knownForComment: string | undefined;
-  isChildrenSafe: boolean;
+  safeWithChildren: string | undefined;
   skillAndKnowledgeComment: string | undefined;
   empathyAndPatienceComment: string | undefined;
   buildRelationshipsComment: string | undefined;
@@ -62,7 +62,7 @@ export async function updateReferenceByIdAsync(
       hasKnowApplicantForAYear: data.hasKnowApplicantForAYear,
       isRelated: data.isRelated,
       knownForComment: data.knownForComment,
-      isChildrenSafe: data.isChildrenSafe,
+      safeWithChildren: data.safeWithChildren,
       skillAndKnowledgeComment: data.skillAndKnowledgeComment,
       empathyAndPatienceComment: data.empathyAndPatienceComment,
       buildRelationshipsComment: data.buildRelationshipsComment,
@@ -82,7 +82,7 @@ export async function updateReferenceByIdAsync(
       hasKnowApplicantForAYear: data.hasKnowApplicantForAYear,
       isRelated: data.isRelated,
       knownForComment: data.knownForComment,
-      isChildrenSafe: data.isChildrenSafe,
+      safeWithChildren: data.safeWithChildren,
       skillAndKnowledgeComment: data.skillAndKnowledgeComment,
       empathyAndPatienceComment: data.empathyAndPatienceComment,
       buildRelationshipsComment: data.buildRelationshipsComment,

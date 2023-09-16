@@ -57,7 +57,7 @@ export async function action({ request, params }: ActionArgs) {
     ?.toString();
   const isRelated = formData.get("isRelated")?.toString();
   const knownForComment = formData.get("knownForComment")?.toString();
-  const isChildrenSafe = formData.get("isChildrenSafe")?.toString();
+  const safeWithChildren = formData.get("safeWithChildren")?.toString();
   const skillAndKnowledgeComment = formData
     .get("skillAndKnowledgeComment")
     ?.toString();
@@ -73,14 +73,11 @@ export async function action({ request, params }: ActionArgs) {
   const calledBy = formData.get("calledBy")?.toString();
   const calledOndate = formData.get("calledOndate")?.toString();
 
-  console.log("hasKnowApplicantForAYear", hasKnowApplicantForAYear);
-
   if (
     firstName === undefined ||
     lastName === undefined ||
     mobile === undefined ||
     email === undefined ||
-    bestTimeToContact === undefined ||
     relationship === undefined ||
     hasKnowApplicantForAYear === undefined ||
     isRelated === undefined ||
@@ -105,7 +102,7 @@ export async function action({ request, params }: ActionArgs) {
     hasKnowApplicantForAYear: hasKnowApplicantForAYear === "true",
     isRelated: isRelated === "true",
     knownForComment,
-    isChildrenSafe: isChildrenSafe === "true",
+    safeWithChildren,
     skillAndKnowledgeComment,
     empathyAndPatienceComment,
     buildRelationshipsComment,
@@ -177,17 +174,16 @@ export default function Index() {
           />
 
           <Input
-            label="Best time to contact"
-            name="bestTimeToContact"
-            defaultValue={reference.bestTimeToContact ?? ""}
-            required
-          />
-
-          <Input
             label="Relationship"
             name="relationship"
             defaultValue={reference.relationship ?? ""}
             required
+          />
+
+          <Input
+            label="Best time to contact"
+            name="bestTimeToContact"
+            defaultValue={reference.bestTimeToContact ?? ""}
           />
 
           <SubTitle>Outcome</SubTitle>
@@ -233,20 +229,10 @@ export default function Index() {
             required
           />
 
-          <Radio
+          <Textarea
             label="Would you be happy with your own children, or children you know, to be mentored by the Applicant?"
-            name="isChildrenSafe"
-            defaultValue={reference.isChildrenSafe?.toString()}
-            options={[
-              {
-                label: "Yes",
-                value: "true",
-              },
-              {
-                label: "No",
-                value: "false",
-              },
-            ]}
+            name="safeWithChildren"
+            defaultValue={reference.safeWithChildren ?? ""}
             required
           />
 
@@ -282,7 +268,6 @@ export default function Index() {
             label="General comment"
             name="generalComment"
             defaultValue={reference.generalComment ?? ""}
-            required
           />
 
           <Radio

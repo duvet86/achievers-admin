@@ -102,23 +102,23 @@ model WelcomeCall {
 model Reference {
   id Int @id @default(autoincrement())
 
-  firstName         String
-  lastName          String
-  mobile            String
-  email             String
-  bestTimeToContact String
-  relationship      String
+  firstName    String
+  lastName     String
+  mobile       String
+  email        String
+  relationship String
 
+  bestTimeToContact         String?
   generalComment            String? @db.Text
   outcomeComment            String? @db.Text
   skillAndKnowledgeComment  String? @db.Text
   empathyAndPatienceComment String? @db.Text
   buildRelationshipsComment String? @db.Text
   knownForComment           String? @db.Text
+  safeWithChildren          String? @db.Text
 
   hasKnowApplicantForAYear Boolean?
   isRelated                Boolean?
-  isChildrenSafe           Boolean?
   isMentorRecommended      Boolean?
 
   calledBy     String?

@@ -19,10 +19,10 @@ import {
   updateUserByIdAsync,
 } from "./services.server";
 
-import { EditUserInfoForm } from "./EditUserInfoForm";
-import { ChaptersForm } from "./ChaptersForm";
-import { CheckList } from "./CheckList";
-import { Header } from "./Header";
+import { EditUserInfoForm } from "./components/EditUserInfoForm";
+import { ChaptersForm } from "./components/ChaptersForm";
+import { CheckList } from "./components/CheckList";
+import { Header } from "./components/Header";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.userId, "userId not found");

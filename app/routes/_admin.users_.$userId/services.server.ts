@@ -31,6 +31,7 @@ export async function getUserByIdAsync(id: number) {
       additionalEmail: true,
       profilePicturePath: true,
       volunteerAgreementSignedOn: true,
+      hasApprovedToPublishPhotos: true,
       userAtChapter: {
         select: {
           chapter: {
