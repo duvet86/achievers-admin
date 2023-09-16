@@ -59,16 +59,11 @@ export async function action({ request, params }: ActionArgs) {
     uploadHandler,
   );
 
-  const file = formData.get("file") as File | null;
+  const file = formData.get("file") as File;
   const expiryDate = formData.get("expiryDate")?.toString();
   const wwcNumber = formData.get("wwcNumber")?.toString();
 
-  if (
-    file === null ||
-    file.size === 0 ||
-    expiryDate === undefined ||
-    wwcNumber === undefined
-  ) {
+  if (expiryDate === undefined || wwcNumber === undefined) {
     return json({
       errorMessage: "Missing required fields",
     });
@@ -77,7 +72,8 @@ export async function action({ request, params }: ActionArgs) {
   const data: UpdateWWCCheckCommand = {
     expiryDate,
     wwcNumber,
-    filePath: await saveFileAsync(params.userId, file),
+    filePath:
+      file.size > 0 ? await saveFileAsync(params.userId, file) : undefined,
   };
 
   await updateWWCCheckAsync(Number(params.userId), data);
@@ -102,8 +98,6 @@ export default function Index() {
 
       <Form method="post" encType="multipart/form-data">
         <fieldset disabled={transition.state === "submitting"}>
-          <FileInput label="Police check file" name="filePath" required />
-
           <Input
             defaultValue={user?.wwcCheck?.wwcNumber ?? ""}
             label="WWC number"
@@ -117,6 +111,8 @@ export default function Index() {
             name="expiryDate"
             required
           />
+
+          <FileInput label="Police check file" name="file" />
 
           <SubmitFormButton errorMessage={actionData?.errorMessage} />
         </fieldset>
