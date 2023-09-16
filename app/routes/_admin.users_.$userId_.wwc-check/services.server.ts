@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 import { prisma } from "~/db.server";
 import {
   getContainerClient,
@@ -8,8 +10,8 @@ import {
 
 export interface UpdateWWCCheckCommand {
   wwcNumber: string;
-  filePath: string;
   expiryDate: Date | string;
+  filePath: string | undefined;
 }
 
 export async function getUserByIdAsync(id: number) {
@@ -29,18 +31,20 @@ export async function updateWWCCheckAsync(
   userId: number,
   data: UpdateWWCCheckCommand,
 ) {
+  const expiryDate = dayjs(data.expiryDate).toDate();
+
   return await prisma.wWCCheck.upsert({
     where: {
       userId,
     },
     create: {
-      expiryDate: data.expiryDate,
+      expiryDate,
       filePath: data.filePath,
       wwcNumber: data.wwcNumber,
       userId,
     },
     update: {
-      expiryDate: data.expiryDate,
+      expiryDate,
       filePath: data.filePath,
       wwcNumber: data.wwcNumber,
     },

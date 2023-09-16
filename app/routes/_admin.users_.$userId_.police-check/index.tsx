@@ -58,10 +58,10 @@ export async function action({ request, params }: ActionArgs) {
     uploadHandler,
   );
 
-  const file = formData.get("file") as File | null;
+  const file = formData.get("file") as File;
   const expiryDate = formData.get("expiryDate")?.toString();
 
-  if (file === null || file.size === 0 || expiryDate === undefined) {
+  if (expiryDate === undefined) {
     return json({
       errorMessage: "Missing required fields",
     });
@@ -69,7 +69,8 @@ export async function action({ request, params }: ActionArgs) {
 
   const data: PoliceCheckUpdateCommand = {
     expiryDate,
-    filePath: await saveFileAsync(params.userId, file),
+    filePath:
+      file.size > 0 ? await saveFileAsync(params.userId, file) : undefined,
   };
 
   await updatePoliceCheckAsync(Number(params.userId), data);
@@ -92,16 +93,25 @@ export default function Index() {
         Police check for "{user.firstName} {user.lastName}"
       </Title>
 
+      <a
+        href="https://wfv.identityservice.auspost.com.au/wfvselfinvite/wapol/invite-candidate"
+        className="link-info link mb-4"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        VNPC Portal
+      </a>
+
       <Form method="post" encType="multipart/form-data">
         <fieldset disabled={transition.state === "submitting"}>
-          <FileInput label="Police check file" name="file" required />
-
           <DateInput
             defaultValue={user.policeCheck?.expiryDate ?? ""}
-            label="Expiry date"
+            label="Expiry Date (3 years from issue)"
             name="expiryDate"
             required
           />
+
+          <FileInput label="Police check file" name="file" />
 
           <SubmitFormButton errorMessage={actionData?.errorMessage} />
         </fieldset>
