@@ -5,7 +5,7 @@ import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
-import { MailOut } from "iconoir-react";
+import { KeyAlt } from "iconoir-react";
 
 import { Title, BackHeader } from "~/components";
 
@@ -89,7 +89,7 @@ export default function Chapter() {
             className="btn btn-success float-right mt-6 w-64 gap-4"
             type="submit"
           >
-            <MailOut className="h-6 w-6" />
+            <KeyAlt className="h-6 w-6" />
             Give access
           </button>
         </fieldset>

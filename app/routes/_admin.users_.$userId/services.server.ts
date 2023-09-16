@@ -32,6 +32,7 @@ export async function getUserByIdAsync(id: number) {
       profilePicturePath: true,
       volunteerAgreementSignedOn: true,
       hasApprovedToPublishPhotos: true,
+      endDate: true,
       userAtChapter: {
         select: {
           chapter: {

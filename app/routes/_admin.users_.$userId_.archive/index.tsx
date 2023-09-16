@@ -4,22 +4,22 @@ import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
+import { BinFull } from "iconoir-react";
 
-import { Cancel } from "iconoir-react";
-
+import {
+  getAzureUserWithRolesByIdAsync,
+  removeRoleFromUserAsync,
+  Roles,
+  trackTrace,
+} from "~/services";
 import { Title, BackHeader } from "~/components";
 
-import { removeRoleFromUserAsync, trackTrace } from "~/services";
-
-import { getUserByIdAsync, archiveUserAsync } from "./services.server";
+import { archiveUserAsync, getUserByIdAsync } from "./services.server";
 
 export async function loader({ params }: LoaderArgs) {
   invariant(params.userId, "userId not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
-  if (user.azureADId === null) {
-    throw new Error("User not in Azure AD.");
-  }
 
   return json({
     user,
@@ -28,20 +28,36 @@ export async function loader({ params }: LoaderArgs) {
 
 export async function action({ request, params }: ActionArgs) {
   invariant(params.userId, "userId not found");
-  invariant(params.appRoleAssignmentId, "appRoleAssignmentId not found");
 
-  await removeRoleFromUserAsync(request, params.appRoleAssignmentId);
+  const user = await getUserByIdAsync(Number(params.userId));
 
-  await archiveUserAsync(Number(params.userId));
+  if (user.azureADId !== null) {
+    const azureUserInfo = await getAzureUserWithRolesByIdAsync(
+      request,
+      user.azureADId,
+    );
 
-  trackTrace({
-    message: "REVOKE_ACCESS_MENTOR",
-  });
+    const appRoleAssignmentId = azureUserInfo.appRoleAssignments.find(
+      ({ appRoleId }) => Roles.Mentor === appRoleId,
+    )?.id;
 
-  return redirect(`/users/${params.userId}`);
+    if (appRoleAssignmentId === undefined) {
+      throw new Error("appRoleAssignmentId must be defined.");
+    }
+
+    await removeRoleFromUserAsync(request, appRoleAssignmentId);
+
+    trackTrace({
+      message: "REVOKE_ACCESS_MENTOR",
+    });
+  }
+
+  await archiveUserAsync(user.id);
+
+  return redirect("/users");
 }
 
-export default function Index() {
+export default function Chapter() {
   const transition = useNavigation();
   const { user } = useLoaderData<typeof loader>();
 
@@ -63,8 +79,8 @@ export default function Index() {
             className="btn btn-error float-right mt-6 w-64 gap-4"
             type="submit"
           >
-            <Cancel className="h-6 w-6" />
-            Archive mentor
+            <BinFull className="h-6 w-6" />
+            Archive
           </button>
         </fieldset>
       </Form>

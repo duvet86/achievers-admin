@@ -143,6 +143,7 @@ export default function Chapter() {
   return (
     <div className="flex h-full flex-col">
       <Header
+        endDate={loaderData.user.endDate}
         mentorAppRoleAssignmentId={loaderData.mentorAppRoleAssignmentId}
       />
 

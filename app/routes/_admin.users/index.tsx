@@ -4,8 +4,7 @@ import { useLoaderData, Link, Form, useActionData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 
 import { useRef } from "react";
-
-import { PageEdit, WarningTriangle } from "iconoir-react";
+import { PageEdit, WarningTriangle, BinFull, CheckCircle } from "iconoir-react";
 
 import { Title } from "~/components";
 
@@ -140,7 +139,7 @@ export default function SelectChapter() {
           <table className="table">
             <thead>
               <tr>
-                <th align="left" className="w-12 p-2">
+                <th align="left" className="w-14 p-2">
                   #
                 </th>
                 <th align="left" className="p-2">
@@ -177,34 +176,50 @@ export default function SelectChapter() {
                     email,
                     userAtChapter,
                     checksCompleted,
+                    endDate,
                   },
                   index,
-                ) => (
-                  <tr key={id}>
-                    <td className="border p-2">
-                      {index + 1 + 10 * currentPageNumber}
-                    </td>
-                    <td className="border p-2">
-                      {firstName} {lastName}
-                    </td>
-                    <td className="border p-2">{email}</td>
-                    <td className="border p-2">
-                      {userAtChapter
-                        .map(({ chapter }) => chapter.name)
-                        .join(", ")}
-                    </td>
-                    <td className="border p-2">{checksCompleted}/8</td>
-                    <td className="border p-2">
-                      <Link
-                        to={id.toString()}
-                        className="btn btn-success btn-xs w-full gap-2"
-                      >
-                        <PageEdit className="h-4 w-4" />
-                        Edit
-                      </Link>
-                    </td>
-                  </tr>
-                ),
+                ) => {
+                  let className: string | undefined;
+                  let icon: JSX.Element | undefined;
+                  if (checksCompleted === 8) {
+                    className = "text-success";
+                    icon = <CheckCircle />;
+                  }
+                  if (endDate) {
+                    className = "text-error";
+                    icon = <BinFull />;
+                  }
+
+                  return (
+                    <tr key={id} className={className}>
+                      <td className="border p-2">
+                        <div className="flex gap-2">
+                          {index + 1 + 10 * currentPageNumber} {icon}
+                        </div>
+                      </td>
+                      <td className="border p-2">
+                        {firstName} {lastName}
+                      </td>
+                      <td className="border p-2">{email}</td>
+                      <td className="border p-2">
+                        {userAtChapter
+                          .map(({ chapter }) => chapter.name)
+                          .join(", ")}
+                      </td>
+                      <td className="border p-2">{checksCompleted}/8</td>
+                      <td className="border p-2">
+                        <Link
+                          to={id.toString()}
+                          className="btn btn-success btn-xs w-full gap-2"
+                        >
+                          <PageEdit className="h-4 w-4" />
+                          Edit
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                },
               )}
             </tbody>
           </table>

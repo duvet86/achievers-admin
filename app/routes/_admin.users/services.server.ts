@@ -16,45 +16,15 @@ export async function getUsersCountAsync(
 ) {
   return await prisma.user.count({
     where: {
-      OR: allUsers
-        ? undefined
-        : [
-            {
-              welcomeCall: {
-                is: null,
-              },
-            },
-            {
-              references: {
-                some: {
-                  calledOndate: {
-                    equals: null,
-                  },
-                },
-              },
-            },
-            {
-              induction: {
-                is: null,
-              },
-            },
-            {
-              policeCheck: {
-                is: null,
-              },
-            },
-            {
-              wwcCheck: {
-                is: null,
-              },
-            },
-            {
-              approvalbyMRC: {
-                is: null,
-              },
-            },
-          ],
       AND: [
+        allUsers ? {} : { endDate: null },
+        {
+          userAtChapter: {
+            some: {
+              chapterId: chapterId,
+            },
+          },
+        },
         {
           OR: [
             {
@@ -69,13 +39,6 @@ export async function getUsersCountAsync(
             },
             { email: { contains: searchTerm?.trim() } },
           ],
-        },
-        {
-          userAtChapter: {
-            some: {
-              chapterId: chapterId,
-            },
-          },
         },
       ],
     },
@@ -96,6 +59,7 @@ export async function getUsersAsync(
       lastName: true,
       email: true,
       volunteerAgreementSignedOn: true,
+      endDate: true,
       userAtChapter: {
         select: {
           chapter: {
@@ -137,45 +101,15 @@ export async function getUsersAsync(
       },
     },
     where: {
-      OR: allUsers
-        ? undefined
-        : [
-            {
-              welcomeCall: {
-                is: null,
-              },
-            },
-            {
-              references: {
-                some: {
-                  calledOndate: {
-                    equals: null,
-                  },
-                },
-              },
-            },
-            {
-              induction: {
-                is: null,
-              },
-            },
-            {
-              policeCheck: {
-                is: null,
-              },
-            },
-            {
-              wwcCheck: {
-                is: null,
-              },
-            },
-            {
-              approvalbyMRC: {
-                is: null,
-              },
-            },
-          ],
       AND: [
+        allUsers ? {} : { endDate: null },
+        {
+          userAtChapter: {
+            some: {
+              chapterId: chapterId,
+            },
+          },
+        },
         {
           OR: [
             {
@@ -190,13 +124,6 @@ export async function getUsersAsync(
             },
             { email: { contains: searchTerm?.trim() } },
           ],
-        },
-        {
-          userAtChapter: {
-            some: {
-              chapterId: chapterId,
-            },
-          },
         },
       ],
     },

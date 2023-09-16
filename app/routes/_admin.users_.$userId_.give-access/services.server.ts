@@ -21,6 +21,7 @@ export async function updateAzureIdAsync(userId: number, azureId: string) {
     },
     data: {
       azureADId: azureId,
+      endDate: null,
     },
   });
 }
