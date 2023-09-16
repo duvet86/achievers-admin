@@ -8,6 +8,8 @@ import { AssignUserChapterPage } from "../pages/assign-user-chapter.page";
 import { EOIInfoPage } from "../pages/eoi.page";
 import { ImportMentorsPage } from "../pages/import-mentors.page";
 import { ReferencePage } from "integration-tests/pages/reference";
+import { PoliceCheckPage } from "integration-tests/pages/police-check.page";
+import { WWCCheckPage } from "integration-tests/pages/wwc-check.page";
 
 test.describe("Admin", () => {
   let usersListPage: AdminUsersPage;
@@ -17,6 +19,8 @@ test.describe("Admin", () => {
   let eoiInfoPage: EOIInfoPage;
   let importMentorsPage: ImportMentorsPage;
   let referencePage: ReferencePage;
+  let policeCheckPage: PoliceCheckPage;
+  let wWCCheckPage: WWCCheckPage;
 
   test.beforeEach(async ({ page }) => {
     await createUserAsync();
@@ -28,6 +32,8 @@ test.describe("Admin", () => {
     eoiInfoPage = new EOIInfoPage(page);
     importMentorsPage = new ImportMentorsPage(page);
     referencePage = new ReferencePage(page);
+    policeCheckPage = new PoliceCheckPage(page);
+    wWCCheckPage = new WWCCheckPage(page);
 
     await page.goto("/");
 
@@ -261,6 +267,52 @@ test.describe("Admin", () => {
       isMentorRecommended: "Yes",
       calledBy: "Tony",
       calledOndate: "2020-02-02",
+    });
+  });
+
+  test("should update police check", async ({ page }) => {
+    await usersListPage.goToEditUser();
+    await userInfoPage.goToPoliceCheck();
+
+    await policeCheckPage.expect.toHaveTitle();
+    await policeCheckPage.expect.toHaveVNPCLink();
+
+    await policeCheckPage.expect.toHaveInputValues({
+      expiryDate: "2023-09-16",
+    });
+
+    await policeCheckPage.updateInputValues({
+      expiryDate: "1999-11-11",
+    });
+
+    await policeCheckPage.submitForm();
+
+    await policeCheckPage.expect.toHaveInputValues({
+      expiryDate: "1999-11-11",
+    });
+  });
+
+  test("should update WWC check", async ({ page }) => {
+    await usersListPage.goToEditUser();
+    await userInfoPage.goToWwcCheck();
+
+    await wWCCheckPage.expect.toHaveTitle();
+
+    await wWCCheckPage.expect.toHaveInputValues({
+      wwcNumber: "123456",
+      expiryDate: "2023-09-16",
+    });
+
+    await wWCCheckPage.updateInputValues({
+      wwcNumber: "00000",
+      expiryDate: "1999-11-11",
+    });
+
+    await wWCCheckPage.submitForm();
+
+    await wWCCheckPage.expect.toHaveInputValues({
+      wwcNumber: "00000",
+      expiryDate: "1999-11-11",
     });
   });
 });

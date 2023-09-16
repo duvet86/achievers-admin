@@ -125,17 +125,15 @@ export async function createUserAsync() {
             },
             policeCheck: {
               create: {
-                filePath: "",
-                expiryDate: new Date(),
+                expiryDate: new Date("2023-09-16"),
                 createdAt: new Date(),
                 updatedAt: new Date(),
               },
             },
             wwcCheck: {
               create: {
-                wwcNumber: "",
-                filePath: "",
-                expiryDate: new Date(),
+                wwcNumber: "123456",
+                expiryDate: new Date("2023-09-16"),
                 createdAt: new Date(),
                 updatedAt: new Date(),
               },
