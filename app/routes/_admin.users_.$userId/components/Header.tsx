@@ -2,19 +2,20 @@ import { Link } from "@remix-run/react";
 
 import {
   ArrowLeft,
-  Cancel,
-  MailOut,
+  KeyAlt,
   NavArrowDown,
   WarningTriangle,
+  BinFull,
 } from "iconoir-react";
 
 import { Title } from "~/components";
 
 interface Props {
+  endDate: string | null;
   mentorAppRoleAssignmentId: string | null;
 }
 
-export function Header({ mentorAppRoleAssignmentId }: Props) {
+export function Header(props: Props) {
   return (
     <>
       <div className="flex">
@@ -32,29 +33,9 @@ export function Header({ mentorAppRoleAssignmentId }: Props) {
           </label>
           <ul
             tabIndex={0}
-            className="dropdown-content menu rounded-box w-56 border border-base-300 bg-base-100 p-2 shadow"
+            className="dropdown-content menu rounded-box z-[1] w-56 border border-base-300 bg-base-100 p-2 shadow"
           >
-            <li>
-              {mentorAppRoleAssignmentId === null ? (
-                <Link
-                  to="give-access"
-                  relative="path"
-                  className="gap-4 font-semibold text-success"
-                >
-                  <MailOut className="h-6 w-6" />
-                  Give access
-                </Link>
-              ) : (
-                <Link
-                  to={`revoke-access/${mentorAppRoleAssignmentId}`}
-                  relative="path"
-                  className="gap-4 font-semibold text-error"
-                >
-                  <Cancel className="h-6 w-6" />
-                  Archive mentor
-                </Link>
-              )}
-            </li>
+            {getLinks(props)}
           </ul>
         </div>
       </div>
@@ -64,13 +45,62 @@ export function Header({ mentorAppRoleAssignmentId }: Props) {
       <div className="flex items-center gap-4">
         <Title>Edit mentor info</Title>
 
-        {mentorAppRoleAssignmentId === null && (
+        {props.mentorAppRoleAssignmentId === null && (
           <p title="No access" className="mb-4 flex items-center gap-2">
             <WarningTriangle className="h-6 w-6 text-warning" />
             This mentor does NOT have access to the system.
           </p>
         )}
       </div>
+    </>
+  );
+}
+
+function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
+  if (endDate !== null) {
+    return (
+      <li>
+        <Link
+          to="give-access"
+          relative="path"
+          className="gap-4 font-semibold text-success"
+        >
+          <KeyAlt className="h-6 w-6" />
+          Re enable mentor
+        </Link>
+      </li>
+    );
+  }
+
+  if (mentorAppRoleAssignmentId !== null) {
+    return (
+      <li>
+        <Link to="./archive" className="gap-4 font-semibold text-error">
+          <BinFull className="h-6 w-6" />
+          Archive
+        </Link>
+      </li>
+    );
+  }
+
+  return (
+    <>
+      <li>
+        <Link
+          to="give-access"
+          relative="path"
+          className="gap-4 font-semibold text-success"
+        >
+          <KeyAlt className="h-6 w-6" />
+          Give access
+        </Link>
+      </li>
+      <li>
+        <Link to="./archive" className="gap-4 font-semibold text-error">
+          <BinFull className="h-6 w-6" />
+          Archive
+        </Link>
+      </li>
     </>
   );
 }

@@ -6,6 +6,8 @@ export async function getUserByIdAsync(id: number) {
       id,
     },
     select: {
+      id: true,
+      email: true,
       firstName: true,
       lastName: true,
       azureADId: true,
@@ -20,7 +22,6 @@ export async function archiveUserAsync(userId: number) {
     },
     data: {
       endDate: new Date(),
-      azureADId: null,
     },
   });
 }

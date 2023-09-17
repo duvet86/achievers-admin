@@ -42,13 +42,13 @@ test.describe("Admin", () => {
 
   test("should display list of mentors", async ({ page }) => {
     await usersListPage.expect.toHaveTitle();
-    await usersListPage.expect.toHaveWarning();
 
     await usersListPage.expect.toHaveTableHeaders();
     await usersListPage.expect.toHaveTableCells();
 
     await usersListPage.expect.toHaveTableRows(11);
     await usersListPage.expect.toHavePreviousPageButtonDisabled();
+    await usersListPage.expect.toHaveCompletedMentor();
 
     await usersListPage.goToNextPage();
 
@@ -67,7 +67,9 @@ test.describe("Admin", () => {
 
     await usersListPage.expect.toHaveTableRows(11);
 
-    await usersListPage.includeAllUsers();
+    await usersListPage.includeArchivedUsers();
+    await usersListPage.expect.toHaveArchivedMentor();
+
     await usersListPage.goToNextPage();
 
     await usersListPage.expect.toHaveTableRows(10);
@@ -97,22 +99,22 @@ test.describe("Admin", () => {
     await userInfoPage.userForm.saveForm();
 
     await userInfoPage.userForm.expect.toHaveProfilePicture();
-    await userInfoPage.userForm.expect.toHaveValues(
-      "test_0@test.com",
-      "test_0",
-      "user_0",
-      "123",
-      "street",
-      "suburb",
-      "state",
-      "123123",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    );
+    await userInfoPage.userForm.expect.toHaveValues({
+      email: "test_0@test.com",
+      firstName: "test_0",
+      lastName: "user_0",
+      mobile: "123",
+      addressStreet: "street",
+      addressSuburb: "suburb",
+      addressState: "state",
+      addressPostcode: "123123",
+      dateOfBirth: "",
+      emergencyContactName: "",
+      emergencyContactNumber: "",
+      emergencyContactAddress: "",
+      emergencyContactRelationship: "",
+      additionalEmail: "",
+    });
 
     await userInfoPage.expect.toHaveNoAccessWarning();
 
@@ -120,40 +122,40 @@ test.describe("Admin", () => {
     await userInfoPage.chapterForm.expect.toHaveTableRow();
 
     // Update user info.
-    await userInfoPage.userForm.updateUserForm(
-      "Luca",
-      "Mara",
-      "1111111",
-      "Address street",
-      "Address suburb",
-      "Address state",
-      "Address postcode",
-      "2018-07-22",
-      "Luca",
-      "Luca",
-      "Luca",
-      "Luca",
-      "Luca@luca.com",
-    );
+    await userInfoPage.userForm.updateUserForm({
+      firstName: "Luca",
+      lastName: "Mara",
+      mobile: "1111111",
+      addressStreet: "Address street",
+      addressSuburb: "Address suburb",
+      addressState: "Address state",
+      addressPostcode: "Address postcode",
+      dateOfBirth: "2018-07-22",
+      emergencyContactName: "Luca",
+      emergencyContactNumber: "Luca",
+      emergencyContactAddress: "Luca",
+      emergencyContactRelationship: "Luca",
+      additionalEmail: "Luca@luca.com",
+    });
 
     await userInfoPage.userForm.saveForm();
 
-    await userInfoPage.userForm.expect.toHaveValues(
-      "test_0@test.com",
-      "Luca",
-      "Mara",
-      "1111111",
-      "Address street",
-      "Address suburb",
-      "Address state",
-      "Address postcode",
-      "2018-07-22",
-      "Luca",
-      "Luca",
-      "Luca",
-      "Luca",
-      "Luca@luca.com",
-    );
+    await userInfoPage.userForm.expect.toHaveValues({
+      email: "test_0@test.com",
+      firstName: "Luca",
+      lastName: "Mara",
+      mobile: "1111111",
+      addressStreet: "Address street",
+      addressSuburb: "Address suburb",
+      addressState: "Address state",
+      addressPostcode: "Address postcode",
+      dateOfBirth: "2018-07-22",
+      emergencyContactName: "Luca",
+      emergencyContactNumber: "Luca",
+      emergencyContactAddress: "Luca",
+      emergencyContactRelationship: "Luca",
+      additionalEmail: "Luca@luca.com",
+    });
   });
 
   test("should edit chapter", async ({ page }) => {
