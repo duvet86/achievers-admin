@@ -2,6 +2,39 @@ import type { Locator, Page } from "@playwright/test";
 
 import { expect } from "@playwright/test";
 
+interface FormQuery {
+  email: string;
+  firstName: string;
+  lastName: string;
+  mobile: string;
+  addressStreet: string;
+  addressSuburb: string;
+  addressState: string;
+  addressPostcode: string;
+  dateOfBirth: string;
+  emergencyContactName: string;
+  emergencyContactNumber: string;
+  emergencyContactAddress: string;
+  emergencyContactRelationship: string;
+  additionalEmail: string;
+}
+
+interface FormCommand {
+  firstName: string;
+  lastName: string;
+  mobile: string;
+  addressStreet: string;
+  addressSuburb: string;
+  addressState: string;
+  addressPostcode: string;
+  dateOfBirth: string;
+  emergencyContactName: string;
+  emergencyContactNumber: string;
+  emergencyContactAddress: string;
+  emergencyContactRelationship: string;
+  additionalEmail: string;
+}
+
 export class UserForm {
   private page: Page;
 
@@ -53,36 +86,36 @@ export class UserForm {
     this.expect = new UserFormAssertions(this);
   }
 
-  async updateUserForm(
-    firstNameValue: string,
-    lastNameValue: string,
-    mobileValue: string,
-    addressStreetValue: string,
-    addressSuburbValue: string,
-    addressStateValue: string,
-    addressPostcodeValue: string,
-    dateOfBirthValue: string,
-    emergencyContactNameValue: string,
-    emergencyContactNumberValue: string,
-    emergencyContactAddressValue: string,
-    emergencyContactRelationshipValue: string,
-    additionalEmailValue: string,
-  ): Promise<void> {
-    await this.firstNameInput.fill(firstNameValue);
-    await this.lastNameInput.fill(lastNameValue);
-    await this.mobileInput.fill(mobileValue);
-    await this.addressStreetInput.fill(addressStreetValue);
-    await this.addressSuburbInput.fill(addressSuburbValue);
-    await this.addressStateInput.fill(addressStateValue);
-    await this.addressPostcodeInput.fill(addressPostcodeValue);
-    await this.dateOfBirthInput.fill(dateOfBirthValue);
-    await this.emergencyContactNameInput.fill(emergencyContactNameValue);
-    await this.emergencyContactNumberInput.fill(emergencyContactNumberValue);
-    await this.emergencyContactAddressInput.fill(emergencyContactAddressValue);
+  async updateUserForm({
+    firstName,
+    lastName,
+    mobile,
+    addressStreet,
+    addressSuburb,
+    addressState,
+    addressPostcode,
+    dateOfBirth,
+    emergencyContactName,
+    emergencyContactNumber,
+    emergencyContactAddress,
+    emergencyContactRelationship,
+    additionalEmail,
+  }: FormCommand): Promise<void> {
+    await this.firstNameInput.fill(firstName);
+    await this.lastNameInput.fill(lastName);
+    await this.mobileInput.fill(mobile);
+    await this.addressStreetInput.fill(addressStreet);
+    await this.addressSuburbInput.fill(addressSuburb);
+    await this.addressStateInput.fill(addressState);
+    await this.addressPostcodeInput.fill(addressPostcode);
+    await this.dateOfBirthInput.fill(dateOfBirth);
+    await this.emergencyContactNameInput.fill(emergencyContactName);
+    await this.emergencyContactNumberInput.fill(emergencyContactNumber);
+    await this.emergencyContactAddressInput.fill(emergencyContactAddress);
     await this.emergencyContactRelationshipInput.fill(
-      emergencyContactRelationshipValue,
+      emergencyContactRelationship,
     );
-    await this.additionalEmailInput.fill(additionalEmailValue);
+    await this.additionalEmailInput.fill(additionalEmail);
   }
 
   async saveForm(): Promise<void> {
@@ -97,55 +130,49 @@ class UserFormAssertions {
     await expect(this.userForm.profilePicture).toBeVisible();
   }
 
-  async toHaveValues(
-    emailValue: string,
-    firstNameValue: string,
-    lastNameValue: string,
-    mobileValue: string,
-    addressStreetValue: string,
-    addressSuburbValue: string,
-    addressStateValue: string,
-    addressPostcodeValue: string,
-    dateOfBirthValue: string,
-    emergencyContactNameValue: string,
-    emergencyContactNumberValue: string,
-    emergencyContactAddressValue: string,
-    emergencyContactRelationshipValue: string,
-    additionalEmailValue: string,
-  ): Promise<void> {
-    await expect(this.userForm.emailInput).toHaveValue(emailValue);
+  async toHaveValues({
+    email,
+    firstName,
+    lastName,
+    mobile,
+    addressStreet,
+    addressSuburb,
+    addressState,
+    addressPostcode,
+    dateOfBirth,
+    emergencyContactName,
+    emergencyContactNumber,
+    emergencyContactAddress,
+    emergencyContactRelationship,
+    additionalEmail,
+  }: FormQuery): Promise<void> {
+    await expect(this.userForm.emailInput).toHaveValue(email);
     await expect(this.userForm.emailInput).toHaveAttribute("disabled", "");
 
-    await expect(this.userForm.firstNameInput).toHaveValue(firstNameValue);
-    await expect(this.userForm.lastNameInput).toHaveValue(lastNameValue);
-    await expect(this.userForm.mobileInput).toHaveValue(mobileValue);
-    await expect(this.userForm.addressStreetInput).toHaveValue(
-      addressStreetValue,
-    );
-    await expect(this.userForm.addressSuburbInput).toHaveValue(
-      addressSuburbValue,
-    );
-    await expect(this.userForm.addressStateInput).toHaveValue(
-      addressStateValue,
-    );
+    await expect(this.userForm.firstNameInput).toHaveValue(firstName);
+    await expect(this.userForm.lastNameInput).toHaveValue(lastName);
+    await expect(this.userForm.mobileInput).toHaveValue(mobile);
+    await expect(this.userForm.addressStreetInput).toHaveValue(addressStreet);
+    await expect(this.userForm.addressSuburbInput).toHaveValue(addressSuburb);
+    await expect(this.userForm.addressStateInput).toHaveValue(addressState);
     await expect(this.userForm.addressPostcodeInput).toHaveValue(
-      addressPostcodeValue,
+      addressPostcode,
     );
-    await expect(this.userForm.dateOfBirthInput).toHaveValue(dateOfBirthValue);
+    await expect(this.userForm.dateOfBirthInput).toHaveValue(dateOfBirth);
     await expect(this.userForm.emergencyContactNameInput).toHaveValue(
-      emergencyContactNameValue,
+      emergencyContactName,
     );
     await expect(this.userForm.emergencyContactNumberInput).toHaveValue(
-      emergencyContactNumberValue,
+      emergencyContactNumber,
     );
     await expect(this.userForm.emergencyContactAddressInput).toHaveValue(
-      emergencyContactAddressValue,
+      emergencyContactAddress,
     );
     await expect(this.userForm.emergencyContactRelationshipInput).toHaveValue(
-      emergencyContactRelationshipValue,
+      emergencyContactRelationship,
     );
     await expect(this.userForm.additionalEmailInput).toHaveValue(
-      additionalEmailValue,
+      additionalEmail,
     );
   }
 }

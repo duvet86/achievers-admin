@@ -44,7 +44,7 @@ export async function createUserAsync() {
             nextOfKinRelationship: null,
             profilePicturePath: null,
             hasApprovedToPublishPhotos: null,
-            endDate: null,
+            endDate: i === 17 ? new Date() : null,
             volunteerAgreementSignedOn: null,
             createdAt: new Date(),
             updatedAt: new Date(),

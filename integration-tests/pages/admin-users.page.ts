@@ -6,7 +6,6 @@ export class AdminUsersPage {
   private page: Page;
 
   title: Locator;
-  includeAllWarning: Locator;
 
   previousPageBtn: Locator;
   nextPageBtn: Locator;
@@ -23,13 +22,15 @@ export class AdminUsersPage {
 
   tableRows: Locator;
 
+  completedMentorRow: Locator;
+  archivedMentorRow: Locator;
+
   expect: AdminUsersPageAssertions;
 
   constructor(page: Page) {
     this.page = page;
 
     this.title = page.getByRole("heading", { name: "Mentors" });
-    this.includeAllWarning = page.getByTitle("checkWarning");
 
     this.fullNameHeaderCell = page.getByRole("cell", { name: "Full name" });
     this.emailHeaderCell = page.getByRole("cell", { name: "Email" });
@@ -52,6 +53,18 @@ export class AdminUsersPage {
     this.previousPageBtn = page.getByTitle("previous");
     this.nextPageBtn = page.getByTitle("next");
 
+    this.completedMentorRow = page
+      .getByRole("row", {
+        name: "test_18@test.com",
+      })
+      .getByTestId("completed");
+
+    this.archivedMentorRow = page
+      .getByRole("row", {
+        name: "	test_17@test.com",
+      })
+      .getByTestId("archived");
+
     this.expect = new AdminUsersPageAssertions(this);
   }
 
@@ -64,8 +77,8 @@ export class AdminUsersPage {
     await this.page.getByRole("button", { name: "Clear" }).click();
   }
 
-  async includeAllUsers(): Promise<void> {
-    await this.page.getByLabel("Include all mentors").check();
+  async includeArchivedUsers(): Promise<void> {
+    await this.page.getByLabel("Include archived mentors").check();
     await this.page.getByRole("button", { name: "Submit" }).click();
   }
 
@@ -113,10 +126,6 @@ export class AdminUsersPageAssertions {
     await expect(this.adminUsersPage.title).toBeVisible();
   }
 
-  async toHaveWarning(): Promise<void> {
-    await expect(this.adminUsersPage.includeAllWarning).toBeVisible();
-  }
-
   async toHaveTableHeaders(): Promise<void> {
     await expect(this.adminUsersPage.fullNameHeaderCell).toBeVisible();
     await expect(this.adminUsersPage.emailHeaderCell).toBeVisible();
@@ -141,5 +150,13 @@ export class AdminUsersPageAssertions {
 
   async toHaveNextPageButtonDisabled(): Promise<void> {
     await expect(this.adminUsersPage.nextPageBtn).toBeDisabled();
+  }
+
+  async toHaveCompletedMentor() {
+    await expect(this.adminUsersPage.completedMentorRow).toBeVisible();
+  }
+
+  async toHaveArchivedMentor() {
+    await expect(this.adminUsersPage.archivedMentorRow).toBeVisible();
   }
 }

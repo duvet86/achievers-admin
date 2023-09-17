@@ -4,7 +4,7 @@ import { useLoaderData, Link, Form, useActionData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 
 import { useRef } from "react";
-import { PageEdit, WarningTriangle, BinFull, CheckCircle } from "iconoir-react";
+import { PageEdit, BinFull, CheckCircle } from "iconoir-react";
 
 import { Title } from "~/components";
 
@@ -122,18 +122,10 @@ export default function SelectChapter() {
         <ActionsDropdown />
       </div>
 
-      <p title="checkWarning" className="mb-4 flex items-center gap-2">
-        <WarningTriangle className="h-6 w-6 text-warning" />
-        Only mentors with incomplete checks are displayed. Toggle the "Include
-        all mentors" to include all of them.
-      </p>
-
-      <hr className="mb-4" />
+      <hr className="my-4" />
 
       <Form ref={formRef} method="post">
         <FormInputs chapters={chapters} onFormSubmit={onFormSubmit} />
-
-        <hr className="mb-4" />
 
         <div className="overflow-auto">
           <table className="table">
@@ -184,11 +176,11 @@ export default function SelectChapter() {
                   let icon: JSX.Element | undefined;
                   if (checksCompleted === 8) {
                     className = "text-success";
-                    icon = <CheckCircle />;
+                    icon = <CheckCircle data-testid="completed" />;
                   }
                   if (endDate) {
                     className = "text-error";
-                    icon = <BinFull />;
+                    icon = <BinFull data-testid="archived" />;
                   }
 
                   return (

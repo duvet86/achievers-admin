@@ -30,7 +30,7 @@ export default function FormInputs({ chapters, onFormSubmit }: Props) {
 
         <div className="form-control">
           <label className="label cursor-pointer gap-2">
-            <span className="label-text">Include all mentors</span>
+            <span className="label-text">Include archived mentors</span>
             <input
               type="checkbox"
               name="allUsers"
