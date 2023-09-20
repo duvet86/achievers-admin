@@ -113,15 +113,22 @@ export default function Index() {
 
           <FileInput label="Police check file" name="file" />
 
+          {user.filePath && (
+            <article className="prose mt-6">
+              <h3>
+                A police check has been uploaded. Click on the link below to
+                download.
+              </h3>
+
+              <a href={user.filePath} target="_blank" rel="noreferrer" download>
+                Downlod police check
+              </a>
+            </article>
+          )}
+
           <SubmitFormButton errorMessage={actionData?.errorMessage} />
         </fieldset>
       </Form>
-
-      {user.filePath && (
-        <a href={user.filePath} className="link-primary link p-2" download>
-          Downlod file
-        </a>
-      )}
     </>
   );
 }
