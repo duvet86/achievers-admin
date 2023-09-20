@@ -321,7 +321,7 @@ test.describe("Admin", () => {
     });
   });
 
-  test.only("should update Approbal by MRC", async ({ page }) => {
+  test("should update Approbal by MRC", async ({ page }) => {
     await usersListPage.goToEditUser();
     await userInfoPage.goToApprovalByMRC();
 
