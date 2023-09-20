@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 import { prisma } from "~/db.server";
 
 export interface UpdateApprovalByMRCCommand {
@@ -23,19 +25,21 @@ export async function updateApprovalByMRCAsync(
   userId: number,
   data: UpdateApprovalByMRCCommand,
 ) {
+  const submittedDate = dayjs(data.submittedDate).toDate();
+
   return await prisma.approvalbyMRC.upsert({
     where: {
       userId,
     },
     create: {
       completedBy: data.completedBy,
-      submittedDate: data.submittedDate,
+      submittedDate,
       comment: data.comment,
       userId,
     },
     update: {
       completedBy: data.completedBy,
-      submittedDate: data.submittedDate,
+      submittedDate,
       comment: data.comment,
     },
   });

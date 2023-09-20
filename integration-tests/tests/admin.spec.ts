@@ -10,6 +10,7 @@ import { ImportMentorsPage } from "../pages/import-mentors.page";
 import { ReferencePage } from "integration-tests/pages/reference";
 import { PoliceCheckPage } from "integration-tests/pages/police-check.page";
 import { WWCCheckPage } from "integration-tests/pages/wwc-check.page";
+import { ApprovalMRCPage } from "integration-tests/pages/approval-mrc.page";
 
 test.describe("Admin", () => {
   let usersListPage: AdminUsersPage;
@@ -21,6 +22,7 @@ test.describe("Admin", () => {
   let referencePage: ReferencePage;
   let policeCheckPage: PoliceCheckPage;
   let wWCCheckPage: WWCCheckPage;
+  let approvalMRCPage: ApprovalMRCPage;
 
   test.beforeEach(async ({ page }) => {
     await createUserAsync();
@@ -34,6 +36,7 @@ test.describe("Admin", () => {
     referencePage = new ReferencePage(page);
     policeCheckPage = new PoliceCheckPage(page);
     wWCCheckPage = new WWCCheckPage(page);
+    approvalMRCPage = new ApprovalMRCPage(page);
 
     await page.goto("/");
 
@@ -315,6 +318,27 @@ test.describe("Admin", () => {
     await wWCCheckPage.expect.toHaveInputValues({
       wwcNumber: "00000",
       expiryDate: "1999-11-11",
+    });
+  });
+
+  test.only("should update Approbal by MRC", async ({ page }) => {
+    await usersListPage.goToEditUser();
+    await userInfoPage.goToApprovalByMRC();
+
+    await approvalMRCPage.expect.toHaveTitle();
+
+    await approvalMRCPage.updateInputValues({
+      completedBy: "Luca",
+      submittedDate: "1999-11-11",
+      comment: "comment asd",
+    });
+
+    await approvalMRCPage.submitForm();
+
+    await approvalMRCPage.expect.toHaveInputs({
+      completedBy: "Luca",
+      submittedDate: "1999-11-11",
+      comment: "comment asd",
     });
   });
 });
