@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { createUserAsync } from "../dbData";
+import { seedDataAsync } from "../test-data";
 import { AdminUsersPage } from "../pages/admin-users.page";
 import { AdminUserPage } from "../pages/admin-user/admin-userInfo.page";
 import { RemoveUserChapterPage } from "../pages/remove-user-chapter.page";
@@ -25,7 +25,7 @@ test.describe("Admin", () => {
   let approvalMRCPage: ApprovalMRCPage;
 
   test.beforeEach(async ({ page }) => {
-    await createUserAsync();
+    await seedDataAsync();
 
     usersListPage = new AdminUsersPage(page);
     userInfoPage = new AdminUserPage(page);

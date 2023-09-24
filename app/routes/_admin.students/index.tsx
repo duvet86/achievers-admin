@@ -1,38 +1,33 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 
-import { useLoaderData, Link, Form, useActionData } from "@remix-run/react";
 import { json } from "@remix-run/node";
-
+import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import { useRef } from "react";
-import { PageEdit, BinFull, CheckCircle } from "iconoir-react";
+
+import { PageEdit } from "iconoir-react";
 
 import { Title } from "~/components";
 
 import {
   getChaptersAsync,
-  getUsersAsync,
-  getUsersCountAsync,
-  getNumberCompletedChecks,
+  getStudentsCountAsync,
+  getStudentsAsync,
 } from "./services.server";
 
-import ActionsDropdown from "./components/ActionsDropdown";
 import FormInputs from "./components/FormInputs";
 import Pagination from "./components/Pagination";
 
 export async function loader({ request }: LoaderArgs) {
-  const [chapters, count, users] = await Promise.all([
+  const [chapters, count, students] = await Promise.all([
     getChaptersAsync(),
-    getUsersCountAsync(),
-    getUsersAsync(0),
+    getStudentsCountAsync(),
+    getStudentsAsync(0),
   ]);
 
   return json({
     chapters,
     count,
-    users: users.map((user) => ({
-      ...user,
-      checksCompleted: getNumberCompletedChecks(user),
-    })),
+    students,
   });
 }
 
@@ -56,7 +51,7 @@ export async function action({ request }: ActionArgs) {
       ? parseInt(chapterId)
       : undefined;
 
-  const count = await getUsersCountAsync(
+  const count = await getStudentsCountAsync(
     searchTerm,
     chapterIdValue,
     includeArchived,
@@ -81,7 +76,7 @@ export async function action({ request }: ActionArgs) {
     currentPageNumber = Number(pageNumberSubmit);
   }
 
-  const users = await getUsersAsync(
+  const students = await getStudentsAsync(
     currentPageNumber,
     searchTerm,
     chapterIdValue,
@@ -91,16 +86,13 @@ export async function action({ request }: ActionArgs) {
   return json({
     count,
     currentPageNumber,
-    users: users.map((user) => ({
-      ...user,
-      checksCompleted: getNumberCompletedChecks(user),
-    })),
+    students,
     searchTerm,
   });
 }
 
 export default function Index() {
-  const { chapters, users, count } = useLoaderData<typeof loader>();
+  const { chapters, students, count } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -108,21 +100,13 @@ export default function Index() {
   const totalPageCount = Math.ceil((actionData?.count ?? count) / 10);
   const currentPageNumber = actionData?.currentPageNumber ?? 0;
 
-  const pageUsers = actionData?.users ?? users;
+  const pageStudents = actionData?.students ?? students;
 
   const onFormSubmit = () => formRef.current!.reset();
 
   return (
     <>
-      <div className="flex items-center">
-        <Title>Mentors</Title>
-
-        <div className="flex-1"></div>
-
-        <ActionsDropdown />
-      </div>
-
-      <hr className="my-4" />
+      <Title>Students</Title>
 
       <Form ref={formRef} method="post">
         <FormInputs chapters={chapters} onFormSubmit={onFormSubmit} />
@@ -138,13 +122,10 @@ export default function Index() {
                   Full name
                 </th>
                 <th align="left" className="p-2">
-                  Email
+                  Year Level
                 </th>
                 <th align="left" className="p-2">
                   Assigned chapter
-                </th>
-                <th align="left" className="p-2">
-                  # Checks completed
                 </th>
                 <th align="right" className="p-2">
                   Action
@@ -152,66 +133,44 @@ export default function Index() {
               </tr>
             </thead>
             <tbody>
-              {pageUsers.length === 0 && (
+              {pageStudents.length === 0 && (
                 <tr>
                   <td className="border p-2" colSpan={6}>
                     <i>No users</i>
                   </td>
                 </tr>
               )}
-              {pageUsers.map(
+              {pageStudents.map(
                 (
-                  {
-                    id,
-                    firstName,
-                    lastName,
-                    email,
-                    userAtChapter,
-                    checksCompleted,
-                    endDate,
-                  },
+                  { id, firstName, lastName, yearLevel, studentAtChapter },
                   index,
-                ) => {
-                  let className: string | undefined;
-                  let icon: JSX.Element | undefined;
-                  if (checksCompleted === 8) {
-                    className = "text-success";
-                    icon = <CheckCircle data-testid="completed" />;
-                  }
-                  if (endDate) {
-                    className = "text-error";
-                    icon = <BinFull data-testid="archived" />;
-                  }
-
-                  return (
-                    <tr key={id} className={className}>
-                      <td className="border p-2">
-                        <div className="flex gap-2">
-                          {index + 1 + 10 * currentPageNumber} {icon}
-                        </div>
-                      </td>
-                      <td className="border p-2">
-                        {firstName} {lastName}
-                      </td>
-                      <td className="border p-2">{email}</td>
-                      <td className="border p-2">
-                        {userAtChapter
-                          .map(({ chapter }) => chapter.name)
-                          .join(", ")}
-                      </td>
-                      <td className="border p-2">{checksCompleted}/8</td>
-                      <td className="border p-2">
-                        <Link
-                          to={id.toString()}
-                          className="btn btn-success btn-xs w-full gap-2"
-                        >
-                          <PageEdit className="h-4 w-4" />
-                          Edit
-                        </Link>
-                      </td>
-                    </tr>
-                  );
-                },
+                ) => (
+                  <tr key={id}>
+                    <td className="border p-2">
+                      <div className="flex gap-2">
+                        {index + 1 + 10 * currentPageNumber}
+                      </div>
+                    </td>
+                    <td className="border p-2">
+                      {firstName} {lastName}
+                    </td>
+                    <td className="border p-2">{yearLevel}</td>
+                    <td className="border p-2">
+                      {studentAtChapter
+                        .map(({ chapter }) => chapter.name)
+                        .join(", ")}
+                    </td>
+                    <td className="border p-2">
+                      <Link
+                        to={id.toString()}
+                        className="btn btn-success btn-xs w-full gap-2"
+                      >
+                        <PageEdit className="h-4 w-4" />
+                        Edit
+                      </Link>
+                    </td>
+                  </tr>
+                ),
               )}
             </tbody>
           </table>
