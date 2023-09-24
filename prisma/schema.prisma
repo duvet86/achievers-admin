@@ -7,6 +7,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum Gender {
+  MALE
+  FEMALE
+}
+
 model User {
   id        Int     @id @default(autoincrement())
   azureADId String? @unique // Defined by Azure Active Directory.
@@ -208,5 +213,80 @@ model Chapter {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userAtChapter UserAtChapter[]
+  userAtChapter    UserAtChapter[]
+  studentAtChapter StudentAtChapter[]
+}
+
+model Student {
+  id Int @id @default(autoincrement())
+
+  firstName                  String
+  lastName                   String
+  startDate                  DateTime
+  dateOfBirth                DateTime
+  gender                     Gender
+  address                    String
+  allergies                  Boolean  @default(false)
+  hasApprovedToPublishPhotos Boolean  @default(false)
+  bestPersonToContact        String
+  bestContactMethod          String
+  schoolName                 String
+  yearLevel                  String
+
+  emergencyContactFullName     String
+  emergencyContactRelationship String
+  emergencyContactPhone        String
+  emergencyContactEmail        String
+  emergencyContactAddress      String
+
+  endDate DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  guardian         StudentGuardian[]
+  studentTeacher   StudentTeacher[]
+  studentAtChapter StudentAtChapter[]
+}
+
+model StudentGuardian {
+  id Int @id @default(autoincrement())
+
+  fullName     String
+  relationship String
+  phone        String
+  email        String
+  address      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId Int
+}
+
+model StudentTeacher {
+  id Int @id @default(autoincrement())
+
+  fullName   String
+  email      String
+  schoolName String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId Int
+}
+
+model StudentAtChapter {
+  chapter   Chapter @relation(fields: [chapterId], references: [id])
+  chapterId Int
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId Int
+
+  assignedAt DateTime @default(now())
+  assignedBy String
+
+  @@id([chapterId, studentId])
 }

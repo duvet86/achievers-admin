@@ -13,7 +13,7 @@ export default function FormInputs({ chapters, onFormSubmit }: Props) {
     <div className="alert mb-6 flex flex-wrap justify-between">
       <div className="flex items-center gap-6">
         <div className="w-96">
-          <Input name="searchTerm" placeholder="Search by name or email" />
+          <Input name="searchTerm" placeholder="Search by name" />
         </div>
 
         <div className="w-44 max-w-xs">
@@ -30,10 +30,10 @@ export default function FormInputs({ chapters, onFormSubmit }: Props) {
 
         <div className="form-control">
           <label className="label cursor-pointer gap-2">
-            <span className="label-text">Include archived mentors</span>
+            <span className="label-text">Include archived students</span>
             <input
               type="checkbox"
-              name="allUsers"
+              name="includeArchived"
               className="checkbox bg-base-100"
             />
           </label>

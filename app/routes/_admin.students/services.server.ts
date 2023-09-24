@@ -9,17 +9,17 @@ export async function getChaptersAsync() {
   });
 }
 
-export async function getUsersCountAsync(
+export async function getStudentsCountAsync(
   searchTerm?: string,
   chapterId?: number,
   includeArchived = false,
 ) {
-  return await prisma.user.count({
+  return await prisma.student.count({
     where: {
       AND: [
         includeArchived ? {} : { endDate: null },
         {
-          userAtChapter: {
+          studentAtChapter: {
             some: {
               chapterId: chapterId,
             },
@@ -37,7 +37,6 @@ export async function getUsersCountAsync(
                 contains: searchTerm?.trim(),
               },
             },
-            { email: { contains: searchTerm?.trim() } },
           ],
         },
       ],
@@ -45,22 +44,21 @@ export async function getUsersCountAsync(
   });
 }
 
-export async function getUsersAsync(
+export async function getStudentsAsync(
   pageNumber: number,
   searchTerm?: string,
   chapterId?: number,
   includeArchived = false,
   numberItems = 10,
 ) {
-  return await prisma.user.findMany({
+  return await prisma.student.findMany({
     select: {
       id: true,
       firstName: true,
       lastName: true,
-      email: true,
-      volunteerAgreementSignedOn: true,
+      yearLevel: true,
       endDate: true,
-      userAtChapter: {
+      studentAtChapter: {
         select: {
           chapter: {
             select: {
@@ -69,42 +67,12 @@ export async function getUsersAsync(
           },
         },
       },
-      approvalbyMRC: {
-        select: {
-          submittedDate: true,
-        },
-      },
-      induction: {
-        select: {
-          completedOnDate: true,
-        },
-      },
-      policeCheck: {
-        select: {
-          createdAt: true,
-        },
-      },
-      references: {
-        select: {
-          calledOndate: true,
-        },
-      },
-      welcomeCall: {
-        select: {
-          calledOnDate: true,
-        },
-      },
-      wwcCheck: {
-        select: {
-          createdAt: true,
-        },
-      },
     },
     where: {
       AND: [
         includeArchived ? {} : { endDate: null },
         {
-          userAtChapter: {
+          studentAtChapter: {
             some: {
               chapterId: chapterId,
             },
@@ -122,7 +90,6 @@ export async function getUsersAsync(
                 contains: searchTerm?.trim(),
               },
             },
-            { email: { contains: searchTerm?.trim() } },
           ],
         },
       ],
@@ -133,33 +100,4 @@ export async function getUsersAsync(
     skip: numberItems * pageNumber,
     take: numberItems,
   });
-}
-
-export function getNumberCompletedChecks(user: any): number {
-  let checks = 1;
-  if (user.welcomeCall !== null) {
-    checks++;
-  }
-  if (
-    user.references.filter((ref: any) => ref.calledOndate !== null).length >= 2
-  ) {
-    checks++;
-  }
-  if (user.induction !== null) {
-    checks++;
-  }
-  if (user.policeCheck !== null) {
-    checks++;
-  }
-  if (user.wwcCheck !== null) {
-    checks++;
-  }
-  if (user.approvalbyMRC !== null) {
-    checks++;
-  }
-  if (user.volunteerAgreementSignedOn !== null) {
-    checks++;
-  }
-
-  return checks;
 }
