@@ -64,9 +64,9 @@ export function getEnvironment(request: Request): Environment {
   return environment;
 }
 
-export function isValidDate(date: unknown) {
+export function isValidDate(date: unknown): boolean {
   return (
-    date &&
+    Boolean(date) &&
     Object.prototype.toString.call(date) === "[object Date]" &&
     !isNaN(date as number)
   );

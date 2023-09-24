@@ -3,6 +3,7 @@ export type Chapter = "Girraween" | "Armadale" | "Butler";
 export type Roles = "Mentor" | "Mentee" | "Member" | "Unknown";
 export type Attendance = "Weekly" | "Fortnightly" | "Other";
 export type VaccinationStatus = "Confirmed" | "Unconfirmed";
+export type Gender = "Male" | "Female";
 
 export interface SpeadsheetUser {
   "First Name": string;
@@ -39,4 +40,37 @@ export interface SpeadsheetUser {
   "WWC Check Number": string;
   "Missing Information": string;
   "Active Volunteer": BooleanAnswer;
+}
+
+export interface SpeadsheetStudent {
+  "First Name": string;
+  "Last Name": string;
+  "Approval to publish photographs?": BooleanAnswer;
+  "Start Date": Date;
+  "End Date": string | undefined;
+  "Date of Birth": Date;
+  Gender: Gender;
+  Address: string;
+  "Dietary Requirements/Allergies": string;
+  "Best Person to Contact": string;
+  "Best Contact Method": string;
+  "Parent/Gaurdian 1 Full name": string;
+  "Parent/Gaurdian 1 Relationship": string;
+  "Parent/Gaurdian 1 Phone": number;
+  "Parent/Gaurdian 1 Email": string;
+  "Parent/Gaurdian 1 Address": string;
+  "Parent/Gaurdian 2 Full name": string;
+  "Parent/Gaurdian 2 Relationship": string;
+  "Parent/Gaurdian 2 Phone": number;
+  "Parent/Gaurdian 2 Email": string;
+  "Parent/Gaurdian 2 Address": string;
+  "Emergency Contact Full Name": string;
+  "Emergency Contact Relationship": string;
+  "Emergency Contact Phone": number;
+  "Emergency Contact Email": string;
+  "Emergency Contact Address": string;
+  "Name of School": string;
+  "Year Level": number | string;
+  "Teacher's Name (s)": string;
+  "Teacher's Email": string;
 }

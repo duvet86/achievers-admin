@@ -18,13 +18,15 @@ export async function getStudentsCountAsync(
     where: {
       AND: [
         includeArchived ? {} : { endDate: null },
-        {
-          studentAtChapter: {
-            some: {
-              chapterId: chapterId,
-            },
-          },
-        },
+        chapterId !== undefined
+          ? {
+              studentAtChapter: {
+                some: {
+                  chapterId: chapterId,
+                },
+              },
+            }
+          : {},
         {
           OR: [
             {
@@ -71,13 +73,15 @@ export async function getStudentsAsync(
     where: {
       AND: [
         includeArchived ? {} : { endDate: null },
-        {
-          studentAtChapter: {
-            some: {
-              chapterId: chapterId,
-            },
-          },
-        },
+        chapterId !== undefined
+          ? {
+              studentAtChapter: {
+                some: {
+                  chapterId: chapterId,
+                },
+              },
+            }
+          : {},
         {
           OR: [
             {
