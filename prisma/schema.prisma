@@ -247,6 +247,8 @@ model Student {
   guardian         StudentGuardian[]
   studentTeacher   StudentTeacher[]
   studentAtChapter StudentAtChapter[]
+
+  importedStudentHistory ImportedStudentHistory?
 }
 
 model StudentGuardian {
@@ -289,4 +291,13 @@ model StudentAtChapter {
   assignedBy String
 
   @@id([chapterId, studentId])
+}
+
+model ImportedStudentHistory {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  error     String?  @db.Text
+
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId Int     @unique
 }

@@ -16,6 +16,7 @@ import {
 
 import FormInputs from "./components/FormInputs";
 import Pagination from "./components/Pagination";
+import ActionsDropdown from "./components/ActionsDropdown";
 
 export async function loader({ request }: LoaderArgs) {
   const [chapters, count, students] = await Promise.all([
@@ -106,7 +107,15 @@ export default function Index() {
 
   return (
     <>
-      <Title>Students</Title>
+      <div className="flex items-center">
+        <Title>Students</Title>
+
+        <div className="flex-1"></div>
+
+        <ActionsDropdown />
+      </div>
+
+      <hr className="my-4" />
 
       <Form ref={formRef} method="post">
         <FormInputs chapters={chapters} onFormSubmit={onFormSubmit} />
@@ -136,7 +145,7 @@ export default function Index() {
               {pageStudents.length === 0 && (
                 <tr>
                   <td className="border p-2" colSpan={6}>
-                    <i>No users</i>
+                    <i>No students</i>
                   </td>
                 </tr>
               )}

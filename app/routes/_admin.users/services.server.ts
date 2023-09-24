@@ -18,13 +18,15 @@ export async function getUsersCountAsync(
     where: {
       AND: [
         includeArchived ? {} : { endDate: null },
-        {
-          userAtChapter: {
-            some: {
-              chapterId: chapterId,
-            },
-          },
-        },
+        chapterId !== undefined
+          ? {
+              userAtChapter: {
+                some: {
+                  chapterId: chapterId,
+                },
+              },
+            }
+          : {},
         {
           OR: [
             {
@@ -103,13 +105,15 @@ export async function getUsersAsync(
     where: {
       AND: [
         includeArchived ? {} : { endDate: null },
-        {
-          userAtChapter: {
-            some: {
-              chapterId: chapterId,
-            },
-          },
-        },
+        chapterId !== undefined
+          ? {
+              userAtChapter: {
+                some: {
+                  chapterId: chapterId,
+                },
+              },
+            }
+          : {},
         {
           OR: [
             {

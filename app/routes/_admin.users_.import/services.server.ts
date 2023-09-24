@@ -1,7 +1,7 @@
 import type { ImportedHistory, User } from "@prisma/client";
 import type { SpeadsheetUser } from "~/models/speadsheet";
 
-import { Readable } from "stream";
+import { Readable } from "node:stream";
 import { stream, read, utils } from "xlsx";
 
 import { prisma } from "~/db.server";
