@@ -63,7 +63,7 @@ export async function action({ request, params }: ActionArgs) {
 
   await updateAzureIdAsync(Number(params.userId), azureUserId);
 
-  return redirect(`/users/${params.userId}`);
+  return redirect(`/admin/users/${params.userId}`);
 }
 
 export default function Chapter() {

@@ -54,7 +54,7 @@ export async function action({ request, params }: ActionArgs) {
 
   await archiveUserAsync(user.id);
 
-  return redirect("/users");
+  return redirect("/admin/users");
 }
 
 export default function Chapter() {

@@ -1,6 +1,9 @@
 import { test, expect } from "@playwright/test";
 
 import { seedDataAsync } from "../test-data";
+
+import { AdminLayoutPage } from "integration-tests/pages/admin-layout.page";
+import { AdminHomePage } from "integration-tests/pages/admin-home.page";
 import { AdminUsersPage } from "../pages/admin-users.page";
 import { AdminUserPage } from "../pages/admin-user/admin-userInfo.page";
 import { RemoveUserChapterPage } from "../pages/remove-user-chapter.page";
@@ -13,6 +16,8 @@ import { WWCCheckPage } from "integration-tests/pages/wwc-check.page";
 import { ApprovalMRCPage } from "integration-tests/pages/approval-mrc.page";
 
 test.describe("Admin", () => {
+  let adminLayoutPage: AdminLayoutPage;
+  let adminHomePage: AdminHomePage;
   let usersListPage: AdminUsersPage;
   let userInfoPage: AdminUserPage;
   let removeUserChapterPage: RemoveUserChapterPage;
@@ -27,6 +32,8 @@ test.describe("Admin", () => {
   test.beforeEach(async ({ page }) => {
     await seedDataAsync();
 
+    adminLayoutPage = new AdminLayoutPage(page);
+    adminHomePage = new AdminHomePage(page);
     usersListPage = new AdminUsersPage(page);
     userInfoPage = new AdminUserPage(page);
     removeUserChapterPage = new RemoveUserChapterPage(page);
@@ -41,9 +48,25 @@ test.describe("Admin", () => {
     await page.goto("/");
 
     await expect(page).toHaveTitle(/Achievers WA/);
+
+    await adminLayoutPage.expect.toHaveTitle();
+    await adminLayoutPage.expect.toHaveDrawerLinks();
+  });
+
+  test("should have home page", async ({ page }) => {
+    await adminHomePage.expect.toHaveTitle();
+    await adminHomePage.expect.toHaveCounters({
+      incompleteCheckMentors: 18,
+      totalMentors: 19,
+      totalStudents: 21,
+      totalChapters: 3,
+    });
+    await adminHomePage.expect.toHaveLinks();
   });
 
   test("should display list of mentors", async ({ page }) => {
+    await adminLayoutPage.goToMentorsList();
+
     await usersListPage.expect.toHaveTitle();
 
     await usersListPage.expect.toHaveTableHeaders();
@@ -79,6 +102,8 @@ test.describe("Admin", () => {
   });
 
   test("should import mentors from file", async ({ page }) => {
+    await adminLayoutPage.goToMentorsList();
+
     await usersListPage.goToImportMentorsFromFile();
 
     await importMentorsPage.expect.toHaveTitle();
@@ -93,7 +118,9 @@ test.describe("Admin", () => {
     await importMentorsPage.expect.toHaveTableRows(4);
   });
 
-  test("should edit user info", async ({ page }) => {
+  test("should edit mentor info", async ({ page }) => {
+    await adminLayoutPage.goToMentorsList();
+
     await usersListPage.goToEditUser();
 
     await userInfoPage.expect.toHaveTitle();
@@ -161,7 +188,9 @@ test.describe("Admin", () => {
     });
   });
 
-  test("should edit chapter", async ({ page }) => {
+  test("should edit chapter for mentor", async ({ page }) => {
+    await adminLayoutPage.goToMentorsList();
+
     await usersListPage.goToEditUser();
     await userInfoPage.chapterForm.gotToRemoveChapter();
 
@@ -178,7 +207,9 @@ test.describe("Admin", () => {
     await userInfoPage.chapterForm.expect.toHaveTableRow();
   });
 
-  test("should display eoi info", async ({ page }) => {
+  test("should display eoi info for mentor", async ({ page }) => {
+    await adminLayoutPage.goToMentorsList();
+
     await usersListPage.goToEditUser();
     await userInfoPage.goToEOIProfile();
 
@@ -224,7 +255,9 @@ test.describe("Admin", () => {
     });
   });
 
-  test("should update reference", async ({ page }) => {
+  test("should update reference for mentor", async ({ page }) => {
+    await adminLayoutPage.goToMentorsList();
+
     await usersListPage.goToEditUser();
     await userInfoPage.goToReferences("referenceA_0 lastnameA_0");
 
@@ -275,7 +308,9 @@ test.describe("Admin", () => {
     });
   });
 
-  test("should update police check", async ({ page }) => {
+  test("should update police check for mentor", async ({ page }) => {
+    await adminLayoutPage.goToMentorsList();
+
     await usersListPage.goToEditUser();
     await userInfoPage.goToPoliceCheck();
 
@@ -297,7 +332,9 @@ test.describe("Admin", () => {
     });
   });
 
-  test("should update WWC check", async ({ page }) => {
+  test("should update WWC check for mentor", async ({ page }) => {
+    await adminLayoutPage.goToMentorsList();
+
     await usersListPage.goToEditUser();
     await userInfoPage.goToWwcCheck();
 
@@ -321,7 +358,9 @@ test.describe("Admin", () => {
     });
   });
 
-  test("should update Approbal by MRC", async ({ page }) => {
+  test("should update Approbal by MRC for mentor", async ({ page }) => {
+    await adminLayoutPage.goToMentorsList();
+
     await usersListPage.goToEditUser();
     await userInfoPage.goToApprovalByMRC();
 

@@ -34,7 +34,7 @@ export async function action({ params }: ActionArgs) {
     Number(params.chapterId),
   );
 
-  return redirect(`/users/${params.userId}`);
+  return redirect(`/admin/users/${params.userId}`);
 }
 
 export default function Assign() {

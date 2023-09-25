@@ -40,7 +40,7 @@ export default function Index() {
   return (
     <>
       <article className="prose relative mb-8 h-24 max-w-none">
-        <div className="h-24 w-full rounded-md bg-achievers opacity-75"></div>
+        <div className="bg-achievers h-24 w-full rounded-md opacity-75"></div>
         <h1 className="absolute left-6 top-6">
           Welcome to Achievers Club WA admin system
         </h1>
@@ -53,8 +53,15 @@ export default function Index() {
               <UserCircle className="inline-block h-8 w-8 stroke-current" />
             </div>
             <div className="stat-title">Mentors with incomplete checks</div>
-            <div className="stat-value text-secondary">{incompleteMentors}</div>
-            <div className="stat-desc">of {mentorsCount} total mentors</div>
+            <div
+              className="stat-value text-secondary"
+              data-testid="incompleteMentors"
+            >
+              {incompleteMentors}
+            </div>
+            <div className="stat-desc" data-testid="totalMentors">
+              of {mentorsCount} total mentors
+            </div>
             <div className="stat-actions">
               <Link to="/admin/users" className="btn">
                 View mentors <NavArrowRight className="h-6 w-6" />
@@ -67,7 +74,9 @@ export default function Index() {
               <GraduationCap className="inline-block h-8 w-8 stroke-current" />
             </div>
             <div className="stat-title">Total students</div>
-            <div className="stat-value">{studentsCount}</div>
+            <div className="stat-value" data-testid="totalStudents">
+              {studentsCount}
+            </div>
             <div className="stat-desc">&nbsp;</div>
             <div className="stat-actions">
               <Link to="/admin/students" className="btn">
@@ -81,7 +90,9 @@ export default function Index() {
               <ShopAlt className="inline-block h-8 w-8 stroke-current" />
             </div>
             <div className="stat-title">Chapters</div>
-            <div className="stat-value">{chaptersCount}</div>
+            <div className="stat-value" data-testid="totalChapters">
+              {chaptersCount}
+            </div>
             <div className="stat-desc">&nbsp;</div>
             <div className="stat-actions">
               <Link to="/admin/chapters" className="btn">

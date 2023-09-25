@@ -57,7 +57,7 @@ export async function action({ request, params }: ActionArgs) {
     currentUserAzureId,
   );
 
-  return redirect(`/users/${params.userId}`);
+  return redirect(`/admin/users/${params.userId}`);
 }
 
 export default function Assign() {
