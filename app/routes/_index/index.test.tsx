@@ -60,7 +60,7 @@ describe("Loader", () => {
       context: {},
     });
 
-    expect(response).toEqual(redirect("/users"));
+    expect(response).toEqual(redirect("/admin/home"));
   });
 
   it("should redirect to volunteer-agreement for mentor user", async () => {
@@ -119,7 +119,7 @@ describe("Loader", () => {
       context: {},
     });
 
-    expect(response).toEqual(redirect("/volunteer-agreement"));
+    expect(response).toEqual(redirect("/mentor/volunteer-agreement"));
   });
 
   it("should redirect to roster for mentor user", async () => {
@@ -178,6 +178,6 @@ describe("Loader", () => {
       context: {},
     });
 
-    expect(response).toEqual(redirect("/roster"));
+    expect(response).toEqual(redirect("/mentor/roster"));
   });
 });
