@@ -17,7 +17,7 @@ interface Props {
 
 export function Header(props: Props) {
   return (
-    <>
+    <div className="h-1/6">
       <div className="flex">
         <Link to="../" relative="path" className="btn btn-ghost mb-2 gap-2">
           <ArrowLeft className="w-6" />
@@ -26,14 +26,14 @@ export function Header(props: Props) {
 
         <div className="flex-1"></div>
 
-        <div className="dropdown-end dropdown">
+        <div className="dropdown dropdown-end">
           <label title="actions" tabIndex={0} className="btn w-40 gap-2">
             Actions
             <NavArrowDown className="h-6 w-6" />
           </label>
           <ul
             tabIndex={0}
-            className="dropdown-content menu rounded-box z-[1] w-56 border border-base-300 bg-base-100 p-2 shadow"
+            className="menu dropdown-content rounded-box z-[1] w-56 border border-base-300 bg-base-100 p-2 shadow"
           >
             {getLinks(props)}
           </ul>
@@ -52,7 +52,7 @@ export function Header(props: Props) {
           </p>
         )}
       </div>
-    </>
+    </div>
   );
 }
 

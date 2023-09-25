@@ -14,7 +14,7 @@ interface Props {
 
 export function Select({ label, name, options, required, ...props }: Props) {
   return (
-    <div className="form-control w-full">
+    <div className="form-control relative w-full">
       {label && (
         <label htmlFor={name} className="label">
           <span className="label-text">{label}</span>

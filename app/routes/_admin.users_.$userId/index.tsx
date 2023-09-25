@@ -19,8 +19,8 @@ import {
   updateUserByIdAsync,
 } from "./services.server";
 
-import { EditUserInfoForm } from "./components/EditUserInfoForm";
-import { ChaptersForm } from "./components/ChaptersForm";
+import { UserForm } from "./components/UserForm";
+import { ChapterList } from "./components/ChapterList";
 import { CheckList } from "./components/CheckList";
 import { Header } from "./components/Header";
 
@@ -136,7 +136,7 @@ export async function action({ request, params }: ActionArgs) {
   });
 }
 
-export default function Chapter() {
+export default function Index() {
   const loaderData = useLoaderData<typeof loader>();
   const transition = useNavigation();
 
@@ -147,17 +147,17 @@ export default function Chapter() {
         mentorAppRoleAssignmentId={loaderData.mentorAppRoleAssignmentId}
       />
 
-      <div className="h-full md:flex">
-        <EditUserInfoForm loaderData={loaderData} transition={transition} />
+      <div className="h-5/6 md:flex">
+        <UserForm loaderData={loaderData} transition={transition} />
 
-        <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700 md:hidden" />
+        <hr className="my-8 md:hidden" />
 
         <div className="flex-1 overflow-y-auto">
           <CheckList loaderData={loaderData} />
 
-          <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700" />
+          <hr className="my-8" />
 
-          <ChaptersForm loaderData={loaderData} />
+          <ChapterList loaderData={loaderData} />
         </div>
       </div>
     </div>
