@@ -58,7 +58,7 @@ test.describe("Admin", () => {
     await adminHomePage.expect.toHaveCounters({
       incompleteCheckMentors: 18,
       totalMentors: 19,
-      totalStudents: 21,
+      totalStudents: 18,
       totalChapters: 3,
     });
     await adminHomePage.expect.toHaveLinks();
