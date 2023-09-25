@@ -37,7 +37,7 @@ exports[`Navbar > Navbar snapshot 1`] = `
       >
         <a
           class="btn btn-ghost text-xl normal-case"
-          href="/"
+          href="/admin/home"
         >
           <img
             alt="Logo"

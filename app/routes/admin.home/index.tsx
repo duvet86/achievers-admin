@@ -40,7 +40,7 @@ export default function Index() {
   return (
     <>
       <article className="prose relative mb-8 h-24 max-w-none">
-        <div className="bg-achievers h-24 w-full rounded-md opacity-75"></div>
+        <div className="h-24 w-full rounded-md bg-achievers opacity-75"></div>
         <h1 className="absolute left-6 top-6">
           Welcome to Achievers Club WA admin system
         </h1>
