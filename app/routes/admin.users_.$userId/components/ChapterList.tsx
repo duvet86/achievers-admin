@@ -12,7 +12,7 @@ interface Props {
 export function ChapterList({ loaderData: { user } }: Props) {
   return (
     <>
-      <div className="overflow-auto">
+      <div className="overflow-auto bg-white">
         <table className="table">
           <thead>
             <tr>
@@ -53,11 +53,7 @@ export function ChapterList({ loaderData: { user } }: Props) {
       </div>
 
       <div className="mt-6 flex justify-end">
-        <Link
-          to="chapters/assign"
-          relative="path"
-          className="btn btn-primary w-64 gap-4"
-        >
+        <Link to="chapters/assign" className="btn btn-primary w-64 gap-4">
           <HomeSimpleDoor className="h-6 w-6" />
           Assign a chapter
         </Link>

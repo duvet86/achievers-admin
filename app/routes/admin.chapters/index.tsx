@@ -13,14 +13,14 @@ export async function loader() {
   return json({ chapters });
 }
 
-export default function Chapters() {
+export default function Index() {
   const { chapters } = useLoaderData<typeof loader>();
 
   return (
     <>
       <Title>Chapters</Title>
 
-      <div className="overflow-auto">
+      <div className="overflow-auto bg-white">
         <table className="table">
           <thead>
             <tr>

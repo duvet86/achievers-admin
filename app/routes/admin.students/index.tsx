@@ -120,7 +120,7 @@ export default function Index() {
       <Form ref={formRef} method="post">
         <FormInputs chapters={chapters} onFormSubmit={onFormSubmit} />
 
-        <div className="overflow-auto">
+        <div className="overflow-auto bg-white">
           <table className="table">
             <thead>
               <tr>

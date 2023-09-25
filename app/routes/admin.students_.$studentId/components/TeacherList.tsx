@@ -15,7 +15,7 @@ export function TeacherList({ loaderData: { student } }: Props) {
     <>
       <SubTitle>Teachers</SubTitle>
 
-      <div className="overflow-auto">
+      <div className="overflow-auto bg-white">
         <table className="table">
           <thead>
             <tr>

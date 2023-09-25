@@ -31,7 +31,7 @@ export default function Index() {
         References for "{user.firstName} {user.lastName}"
       </Title>
 
-      <div className="overflow-auto">
+      <div className="overflow-auto bg-white">
         <table className="table">
           <thead>
             <tr>
@@ -70,7 +70,6 @@ export default function Index() {
                   <td align="right" className="border p-2">
                     <Link
                       to={`${id}`}
-                      relative="path"
                       className="btn btn-success btn-xs w-full gap-2"
                     >
                       <ChatBubbleEmpty className="h-4 w-4" />

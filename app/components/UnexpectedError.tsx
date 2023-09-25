@@ -14,7 +14,7 @@ export function UnexpectedError() {
             </span>
           </h1>
           <div className="flex gap-14">
-            <Link to="/" className="btn btn-primary w-40 gap-2">
+            <Link to="/admin/home" className="btn btn-primary w-40 gap-2">
               <Home className="h-6 w-6" />
               Home
             </Link>

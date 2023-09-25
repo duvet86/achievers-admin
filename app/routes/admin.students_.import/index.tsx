@@ -155,7 +155,7 @@ export default function Index() {
             Import
           </button>
 
-          <Link to="/students/import-history" className="btn gap-2">
+          <Link to="/admin/students/import-history" className="btn gap-2">
             <Archive className="h-4 w-4" />
             View history
           </Link>
@@ -178,7 +178,7 @@ export default function Index() {
 
         <SubTitle>Imported students</SubTitle>
 
-        <div className="overflow-auto">
+        <div className="overflow-auto bg-white">
           <table className="table">
             <thead>
               <tr>
@@ -226,7 +226,7 @@ export default function Index() {
                     </td>
                     <td className="border p-2">
                       <Link
-                        to={`/students/${id.toString()}`}
+                        to={`/admin/students/${id.toString()}`}
                         className="btn btn-success btn-xs w-full gap-2"
                       >
                         <PageEdit className="h-4 w-4" />

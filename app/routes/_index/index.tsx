@@ -19,18 +19,18 @@ export async function loader({ request }: LoaderArgs) {
   );
 
   if (userRoles.includes(Roles.Admin)) {
-    return redirect("/users");
+    return redirect("/admin/home");
   }
 
   const { volunteerAgreementSignedOn } =
     await getUserByAzureADIdAsync(userAzureId);
 
   if (volunteerAgreementSignedOn === null) {
-    return redirect("/volunteer-agreement");
+    return redirect("/mentor/volunteer-agreement");
   }
 
   if (userRoles.includes(Roles.Mentor)) {
-    return redirect("/roster");
+    return redirect("/mentor/roster");
   }
 
   throw redirect("/401");

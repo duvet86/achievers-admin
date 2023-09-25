@@ -1,6 +1,12 @@
 import { NavLink } from "@remix-run/react";
 
-import { NavArrowRight, User, GraduationCap, Home } from "iconoir-react";
+import {
+  NavArrowRight,
+  User,
+  GraduationCap,
+  Home,
+  ShopAlt,
+} from "iconoir-react";
 
 interface Props {
   isAdmin: boolean;
@@ -17,30 +23,35 @@ function getLinks(isAdmin: boolean): DrawerLink[] {
   return isAdmin
     ? [
         {
+          icon: <Home className="h-6 w-6" />,
+          value: "/admin/home",
+          label: "Home",
+        },
+        {
           icon: <User className="h-6 w-6" />,
-          value: "/users",
+          value: "/admin/users",
           label: "Mentors",
         },
         {
           icon: <GraduationCap className="h-6 w-6" />,
-          value: "/students",
+          value: "/admin/students",
           label: "Students",
         },
         {
-          icon: <Home className="h-6 w-6" />,
-          value: "/chapters",
+          icon: <ShopAlt className="h-6 w-6" />,
+          value: "/admin/chapters",
           label: "Chapters",
         },
       ]
     : [
         {
           icon: null,
-          value: "/roster",
+          value: "/mentor/roster",
           label: "Roster",
         },
         {
           icon: null,
-          value: "/mentees",
+          value: "/mentor/mentees",
           label: "My Mentees",
         },
       ];

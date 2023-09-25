@@ -15,7 +15,7 @@ export function GuardianList({ loaderData: { student } }: Props) {
     <>
       <SubTitle>Guardians/Parents</SubTitle>
 
-      <div className="overflow-auto">
+      <div className="overflow-auto bg-white">
         <table className="table">
           <thead>
             <tr>

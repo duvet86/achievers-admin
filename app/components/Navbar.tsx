@@ -20,7 +20,7 @@ export function Navbar({ currentUser, environment }: Props) {
         </label>
       </div>
       <div className="flex-1">
-        <Link to="/" className="btn btn-ghost text-xl normal-case">
+        <Link to="/admin/home" className="btn btn-ghost text-xl normal-case">
           <img
             className="mr-4 w-16 rounded"
             src="/images/logo.png"
@@ -46,7 +46,7 @@ export function Navbar({ currentUser, environment }: Props) {
         </div>
         <ul
           tabIndex={0}
-          className="dropdown-content menu rounded-box w-52 bg-base-100 p-2 shadow"
+          className="menu dropdown-content rounded-box w-52 bg-base-100 p-2 shadow"
         >
           <li>
             <Link className="font-semibold" to="/logout">

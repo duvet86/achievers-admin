@@ -53,7 +53,7 @@ export function CheckList({
   },
 }: Props) {
   return (
-    <div className="overflow-auto">
+    <div className="overflow-auto bg-white">
       <table className="table">
         <thead>
           <tr>
@@ -83,11 +83,7 @@ export function CheckList({
               </div>
             </td>
             <td className="border p-2">
-              <Link
-                className="btn btn-xs w-full gap-2"
-                to="eoiProfile"
-                relative="path"
-              >
+              <Link className="btn btn-xs w-full gap-2" to="eoiProfile">
                 View
               </Link>
             </td>
@@ -103,11 +99,7 @@ export function CheckList({
               <CheckStatus isCompleted={welcomeCallCompleted} />
             </td>
             <td className="border p-2">
-              <Link
-                className="btn btn-xs w-full gap-2"
-                to="welcomeCall"
-                relative="path"
-              >
+              <Link className="btn btn-xs w-full gap-2" to="welcomeCall">
                 View
               </Link>
             </td>
@@ -123,11 +115,7 @@ export function CheckList({
               <CheckStatus isCompleted={referencesCompleted} />
             </td>
             <td className="border p-2">
-              <Link
-                className="btn btn-xs w-full gap-2"
-                to="references"
-                relative="path"
-              >
+              <Link className="btn btn-xs w-full gap-2" to="references">
                 View
               </Link>
             </td>
@@ -143,11 +131,7 @@ export function CheckList({
               <CheckStatus isCompleted={inductionCompleted} />
             </td>
             <td className="border p-2">
-              <Link
-                className="btn btn-xs w-full gap-2"
-                to="induction"
-                relative="path"
-              >
+              <Link className="btn btn-xs w-full gap-2" to="induction">
                 View
               </Link>
             </td>
@@ -163,11 +147,7 @@ export function CheckList({
               <CheckStatus isCompleted={policeCheckCompleted} />
             </td>
             <td className="border p-2">
-              <Link
-                className="btn btn-xs w-full gap-2"
-                to="police-check"
-                relative="path"
-              >
+              <Link className="btn btn-xs w-full gap-2" to="police-check">
                 View
               </Link>
             </td>
@@ -183,11 +163,7 @@ export function CheckList({
               <CheckStatus isCompleted={wwcCheckCompleted} />
             </td>
             <td className="border p-2">
-              <Link
-                className="btn btn-xs w-full gap-2"
-                to="wwc-check"
-                relative="path"
-              >
+              <Link className="btn btn-xs w-full gap-2" to="wwc-check">
                 View
               </Link>
             </td>
@@ -203,11 +179,7 @@ export function CheckList({
               <CheckStatus isCompleted={approvalbyMRCCompleted} />
             </td>
             <td className="border p-2">
-              <Link
-                className="btn btn-xs w-full gap-2"
-                to="approval-mrc"
-                relative="path"
-              >
+              <Link className="btn btn-xs w-full gap-2" to="approval-mrc">
                 View
               </Link>
             </td>

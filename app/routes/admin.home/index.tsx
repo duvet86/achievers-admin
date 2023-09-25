@@ -1,0 +1,96 @@
+import { json } from "@remix-run/node";
+
+import { useLoaderData, Link } from "@remix-run/react";
+
+import {
+  UserCircle,
+  GraduationCap,
+  ShopAlt,
+  NavArrowRight,
+} from "iconoir-react";
+
+import {
+  getIncompleteMentorsAsync,
+  getTotalChaptersAsync,
+  getTotalMentorsAsync,
+  getTotalStudentsAsync,
+} from "./services.server";
+
+export async function loader() {
+  const [mentorsCount, incompleteMentors, studentsCount, chaptersCount] =
+    await Promise.all([
+      getTotalMentorsAsync(),
+      getIncompleteMentorsAsync(),
+      getTotalStudentsAsync(),
+      getTotalChaptersAsync(),
+    ]);
+
+  return json({
+    mentorsCount,
+    incompleteMentors,
+    studentsCount,
+    chaptersCount,
+  });
+}
+
+export default function Index() {
+  const { mentorsCount, incompleteMentors, studentsCount, chaptersCount } =
+    useLoaderData<typeof loader>();
+
+  return (
+    <>
+      <article className="prose relative mb-8 h-24 max-w-none">
+        <div className="bg-achievers h-24 w-full rounded-md opacity-75"></div>
+        <h1 className="absolute left-6 top-6">
+          Welcome to Achievers Club WA admin system
+        </h1>
+      </article>
+
+      <div className="flex w-full justify-center">
+        <div className="stats w-4/5 shadow-lg">
+          <div className="stat">
+            <div className="stat-figure text-secondary">
+              <UserCircle className="inline-block h-8 w-8 stroke-current" />
+            </div>
+            <div className="stat-title">Mentors with incomplete checks</div>
+            <div className="stat-value text-secondary">{incompleteMentors}</div>
+            <div className="stat-desc">of {mentorsCount} total mentors</div>
+            <div className="stat-actions">
+              <Link to="/admin/users" className="btn">
+                View mentors <NavArrowRight className="h-6 w-6" />
+              </Link>
+            </div>
+          </div>
+
+          <div className="stat">
+            <div className="stat-figure text-secondary">
+              <GraduationCap className="inline-block h-8 w-8 stroke-current" />
+            </div>
+            <div className="stat-title">Total students</div>
+            <div className="stat-value">{studentsCount}</div>
+            <div className="stat-desc">&nbsp;</div>
+            <div className="stat-actions">
+              <Link to="/admin/students" className="btn">
+                View students <NavArrowRight className="h-6 w-6" />
+              </Link>
+            </div>
+          </div>
+
+          <div className="stat">
+            <div className="stat-figure text-secondary">
+              <ShopAlt className="inline-block h-8 w-8 stroke-current" />
+            </div>
+            <div className="stat-title">Chapters</div>
+            <div className="stat-value">{chaptersCount}</div>
+            <div className="stat-desc">&nbsp;</div>
+            <div className="stat-actions">
+              <Link to="/admin/chapters" className="btn">
+                View chapters <NavArrowRight className="h-6 w-6" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

@@ -26,14 +26,14 @@ export function Header(props: Props) {
 
         <div className="flex-1"></div>
 
-        <div className="dropdown-end dropdown">
+        <div className="dropdown dropdown-end">
           <label title="actions" tabIndex={0} className="btn w-40 gap-2">
             Actions
             <NavArrowDown className="h-6 w-6" />
           </label>
           <ul
             tabIndex={0}
-            className="dropdown-content menu rounded-box z-[1] w-56 border border-base-300 bg-base-100 p-2 shadow"
+            className="menu dropdown-content rounded-box z-[1] w-56 border border-base-300 bg-base-100 p-2 shadow"
           >
             {getLinks(props)}
           </ul>
@@ -75,7 +75,7 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
   if (mentorAppRoleAssignmentId !== null) {
     return (
       <li>
-        <Link to="./archive" className="gap-4 font-semibold text-error">
+        <Link to="archive" className="gap-4 font-semibold text-error">
           <BinFull className="h-6 w-6" />
           Archive
         </Link>
@@ -86,17 +86,13 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
   return (
     <>
       <li>
-        <Link
-          to="give-access"
-          relative="path"
-          className="gap-4 font-semibold text-success"
-        >
+        <Link to="give-access" className="gap-4 font-semibold text-success">
           <KeyAlt className="h-6 w-6" />
           Give access
         </Link>
       </li>
       <li>
-        <Link to="./archive" className="gap-4 font-semibold text-error">
+        <Link to="archive" className="gap-4 font-semibold text-error">
           <BinFull className="h-6 w-6" />
           Archive
         </Link>

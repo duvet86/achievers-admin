@@ -67,7 +67,7 @@ export default function Index() {
       <Title>History of imported mentors</Title>
 
       <Form method="post">
-        <div className="overflow-auto">
+        <div className="overflow-auto bg-white">
           <table className="table">
             <thead>
               <tr>
@@ -115,7 +115,7 @@ export default function Index() {
                     </td>
                     <td className="border p-2">
                       <Link
-                        to={`/users/${id.toString()}`}
+                        to={`/admin/users/${id.toString()}`}
                         className="btn btn-success btn-xs w-full gap-2"
                       >
                         <PageEdit className="h-4 w-4" />
