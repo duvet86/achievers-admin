@@ -22,7 +22,7 @@ export function SubmitFormButton({
     >
       <div data-testid="message">
         {successMessage && (
-          <div className="alert alert-success">
+          <div className="alert alert-success pr-12">
             <Check />
             <span>{successMessage}</span>
           </div>
