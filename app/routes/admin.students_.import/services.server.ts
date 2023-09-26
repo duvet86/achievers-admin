@@ -59,14 +59,6 @@ export async function importSpreadsheetStudentsAsync(
         error += "Start Date is invalid.\n";
       }
 
-      const isEndDateValid =
-        newStudents[i]["End Date"] &&
-        isValidDate(new Date(newStudents[i]["End Date"]!));
-
-      if (newStudents[i]["End Date"] && !isEndDateValid) {
-        error += "End Date is invalid.\n";
-      }
-
       const student = await tx.student.create({
         include: {
           importedStudentHistory: true,
@@ -103,9 +95,7 @@ export async function importSpreadsheetStudentsAsync(
             newStudents[i]["Dietary Requirements/Allergies"].trim() === "Yes"
               ? true
               : false,
-          endDate: isEndDateValid
-            ? new Date(newStudents[i]["End Date"]!)
-            : null,
+          endDate: null,
           hasApprovedToPublishPhotos:
             newStudents[i]["Approval to publish photographs?"].trim() === "Yes"
               ? true

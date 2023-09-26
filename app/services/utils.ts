@@ -71,3 +71,9 @@ export function isValidDate(date: unknown): boolean {
     !isNaN(date as number)
   );
 }
+
+export function areEqualIgnoreCase(a: string, b: string): boolean {
+  return (
+    a.trim().localeCompare(b.trim(), undefined, { sensitivity: "accent" }) === 0
+  );
+}

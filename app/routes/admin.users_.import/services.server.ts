@@ -5,7 +5,7 @@ import { Readable } from "node:stream";
 import { stream, read, utils } from "xlsx";
 
 import { prisma } from "~/db.server";
-import { isValidDate } from "~/services";
+import { areEqualIgnoreCase, isValidDate } from "~/services";
 
 export async function readExcelFileAsync(file: File) {
   stream.set_readable(Readable);
@@ -36,8 +36,8 @@ export async function importSpreadsheetMentorsAsync(
 ): Promise<UserHistory[]> {
   const uniqueUsers = newUsers.filter(
     (obj, index) =>
-      newUsers.findIndex(
-        (item) => item["Email address"] === obj["Email address"],
+      newUsers.findIndex((item) =>
+        areEqualIgnoreCase(item["Email address"], obj["Email address"]),
       ) === index,
   );
 
@@ -52,8 +52,8 @@ export async function importSpreadsheetMentorsAsync(
 
   await prisma.$transaction(async (tx) => {
     for (let i = 0; i < uniqueUsers.length; i++) {
-      const chapter = chapters.find(
-        (c) => c.name === uniqueUsers[i]["Chapter"],
+      const chapter = chapters.find((c) =>
+        areEqualIgnoreCase(c.name, uniqueUsers[i]["Chapter"]),
       );
 
       let error: string = "";
@@ -85,27 +85,12 @@ export async function importSpreadsheetMentorsAsync(
         error += "WWC Check Renewal Date is invalid.\n";
       }
 
-      const isEndDateValid =
-        uniqueUsers[i]["End Date"] &&
-        isValidDate(new Date(uniqueUsers[i]["End Date"]));
-
-      if (uniqueUsers[i]["End Date"] && !isEndDateValid) {
-        error += "End Date is invalid.\n";
-      }
-
       const isInductionDateValid =
         uniqueUsers[i]["Induction Date"] &&
         isValidDate(new Date(uniqueUsers[i]["Induction Date"]));
 
       if (uniqueUsers[i]["Induction Date"] && !isInductionDateValid) {
         error += "Induction Date is invalid.\n";
-      }
-
-      let endDate: Date | null = null;
-      if (isEndDateValid) {
-        endDate = new Date(uniqueUsers[i]["End Date"]);
-      } else if (uniqueUsers[i]["Active Volunteer"] !== "Yes") {
-        endDate = new Date();
       }
 
       const user = await tx.user.create({
@@ -133,7 +118,7 @@ export async function importSpreadsheetMentorsAsync(
           emergencyContactNumber: uniqueUsers[i]["Emergency Contact Name"],
           emergencyContactRelationship:
             uniqueUsers[i]["Emergency Contact Relationship"],
-          endDate: endDate,
+          endDate: null,
           firstName: uniqueUsers[i]["First Name"],
           azureADId: null,
           lastName: uniqueUsers[i]["Last Name"],
