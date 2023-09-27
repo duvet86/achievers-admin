@@ -141,7 +141,7 @@ exports[`Body > Body snapshot admin 1`] = `
           </div>
         </nav>
         <main
-          class="mt-16 flex h-full flex-col overflow-y-auto bg-preview p-4"
+          class="mt-16 flex h-full flex-col overflow-y-auto p-4"
         />
       </div>
       <div
@@ -518,7 +518,7 @@ exports[`Body > Body snapshot mentor 1`] = `
           </div>
         </nav>
         <main
-          class="mt-16 flex h-full flex-col overflow-y-auto bg-preview p-4"
+          class="mt-16 flex h-full flex-col overflow-y-auto p-4"
         />
       </div>
       <div

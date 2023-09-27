@@ -1,12 +1,28 @@
 import { prisma } from "~/db.server";
 
 export async function getTotalMentorsAsync() {
-  return await prisma.user.count();
+  return await prisma.user.count({
+    where: {
+      endDate: null,
+    },
+  });
+}
+
+export async function getMentorsWithoutChapterAsync() {
+  return await prisma.user.count({
+    where: {
+      endDate: null,
+      userAtChapter: {
+        none: {},
+      },
+    },
+  });
 }
 
 export async function getIncompleteMentorsAsync() {
   return await prisma.user.count({
     where: {
+      endDate: null,
       OR: [
         {
           welcomeCall: {
@@ -48,7 +64,22 @@ export async function getIncompleteMentorsAsync() {
 }
 
 export async function getTotalStudentsAsync() {
-  return await prisma.student.count();
+  return await prisma.student.count({
+    where: {
+      endDate: null,
+    },
+  });
+}
+
+export async function getStudentsWithoutChapterAsync() {
+  return await prisma.student.count({
+    where: {
+      endDate: null,
+      studentAtChapter: {
+        none: {},
+      },
+    },
+  });
 }
 
 export async function getTotalChaptersAsync() {

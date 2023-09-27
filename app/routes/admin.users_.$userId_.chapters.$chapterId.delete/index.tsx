@@ -46,7 +46,7 @@ export default function Assign() {
       <BackHeader to="../../../" />
 
       <Form method="post">
-        <fieldset disabled={transition.state === "submitting"}>
+        <fieldset disabled={transition.state === "loading"}>
           <h1 className="mb-4 text-xl" data-testid="cofirmation-text">
             Are you sure you want to remove chapter{" "}
             <span className="font-medium">'{chapter.chapter.name}'</span> from

@@ -95,7 +95,7 @@ export default function Index() {
       <BackHeader to="../../" />
 
       <Title>
-        {teacherId === "new" ? "Add new guardian" : "Edit info for guardian"}
+        {teacherId === "new" ? "Add new teacher" : "Edit info for teacher"}
       </Title>
 
       <Form method="post">
