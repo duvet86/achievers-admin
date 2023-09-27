@@ -12,12 +12,7 @@ export async function seedDataAsync() {
     await createUsersAsync(prisma);
     await createStudentsAsync(prisma);
   } catch (e) {
-    if (
-      !(e as Error).message.includes("User_email_key") &&
-      !(e as Error).message.includes("prisma.student.deleteMany()")
-    ) {
-      console.log(e);
-    }
+    console.log(e);
   } finally {
     await prisma.$disconnect();
   }

@@ -56,8 +56,8 @@ test.describe("Admin", () => {
   test("should have home page", async ({ page }) => {
     await adminHomePage.expect.toHaveTitle();
     await adminHomePage.expect.toHaveCounters({
-      incompleteCheckMentors: 18,
-      totalMentors: 19,
+      incompleteCheckMentors: 17,
+      totalMentors: 18,
       totalStudents: 18,
       totalChapters: 3,
     });

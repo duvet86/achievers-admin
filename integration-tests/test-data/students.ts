@@ -5,6 +5,7 @@ export async function createStudentsAsync(
   prisma: PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
 ) {
   await prisma.$transaction(async (tx) => {
+    await tx.importedStudentHistory.deleteMany();
     await tx.studentGuardian.deleteMany();
     await tx.studentTeacher.deleteMany();
     await tx.studentAtChapter.deleteMany();

@@ -4,7 +4,9 @@ import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import { BackHeader, SubmitFormButton } from "~/components";
+import { Cancel } from "iconoir-react";
+
+import { BackHeader } from "~/components";
 
 import {
   getChapterByIdAsync,
@@ -47,17 +49,19 @@ export default function Assign() {
 
       <Form method="post">
         <fieldset disabled={transition.state === "loading"}>
-          <h1 className="mb-4 text-xl" data-testid="cofirmation-text">
-            Are you sure you want to remove chapter{" "}
-            <span className="font-medium">'{chapter.chapter.name}'</span> from
-            user{" "}
-            <span className="font-medium">
-              '{chapter.user.firstName} {chapter.user.lastName}'
-            </span>
-            ?
-          </h1>
+          <article className="prose max-w-none" data-testid="cofirmation-text">
+            <h3>
+              Are you sure you want to remove chapter "{chapter.chapter.name}"{" "}
+              from user "{chapter.user.firstName} {chapter.user.lastName}"?
+            </h3>
+          </article>
 
-          <SubmitFormButton label="Remove" />
+          <div className="float-right">
+            <button className="btn btn-error w-52 gap-5" type="submit">
+              <Cancel className="h-6 w-6" />
+              Remove
+            </button>
+          </div>
         </fieldset>
       </Form>
     </>
