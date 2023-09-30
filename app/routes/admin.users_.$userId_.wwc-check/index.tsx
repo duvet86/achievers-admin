@@ -50,33 +50,37 @@ export async function loader({ params }: LoaderArgs) {
 export async function action({ request, params }: ActionArgs) {
   invariant(params.userId, "userId not found");
 
-  const uploadHandler = unstable_createMemoryUploadHandler({
-    maxPartSize: 500_000,
-  });
+  try {
+    const uploadHandler = unstable_createMemoryUploadHandler();
 
-  const formData = await unstable_parseMultipartFormData(
-    request,
-    uploadHandler,
-  );
+    const formData = await unstable_parseMultipartFormData(
+      request,
+      uploadHandler,
+    );
 
-  const file = formData.get("file") as File;
-  const expiryDate = formData.get("expiryDate")?.toString();
-  const wwcNumber = formData.get("wwcNumber")?.toString();
+    const file = formData.get("file") as File;
+    const expiryDate = formData.get("expiryDate")?.toString();
+    const wwcNumber = formData.get("wwcNumber")?.toString();
 
-  if (expiryDate === undefined || wwcNumber === undefined) {
+    if (expiryDate === undefined || wwcNumber === undefined) {
+      return json({
+        errorMessage: "Missing required fields",
+      });
+    }
+
+    const data: UpdateWWCCheckCommand = {
+      expiryDate,
+      wwcNumber,
+      filePath:
+        file.size > 0 ? await saveFileAsync(params.userId, file) : undefined,
+    };
+
+    await updateWWCCheckAsync(Number(params.userId), data);
+  } catch (e: any) {
     return json({
-      errorMessage: "Missing required fields",
+      errorMessage: e.message,
     });
   }
-
-  const data: UpdateWWCCheckCommand = {
-    expiryDate,
-    wwcNumber,
-    filePath:
-      file.size > 0 ? await saveFileAsync(params.userId, file) : undefined,
-  };
-
-  await updateWWCCheckAsync(Number(params.userId), data);
 
   return json({
     errorMessage: null,
@@ -112,7 +116,11 @@ export default function Index() {
             required
           />
 
-          <FileInput label="Police check file" name="file" />
+          <FileInput
+            label="Police check file"
+            name="file"
+            accept="application/pdf, image/png, image/jpeg"
+          />
 
           {user.filePath && (
             <article className="prose mt-6">

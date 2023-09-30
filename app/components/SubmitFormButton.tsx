@@ -67,7 +67,7 @@ function Message({ successMessage, errorMessage }: MessageProps) {
           <span>{successMessage}</span>
         </div>
       )}
-      {isActive && errorMessage && (
+      {errorMessage && (
         <div className="alert alert-error pr-12">
           <WarningCircle />
           <span>{errorMessage}</span>

@@ -70,7 +70,12 @@ export async function saveFileAsync(
   file: File,
 ): Promise<string> {
   if (file.size === 0) {
-    throw new Error();
+    throw new Error("File too small");
+  }
+  const allowedFormats = ["application/pdf", "image/png", "image/jpeg"];
+
+  if (!allowedFormats.includes(file.type)) {
+    throw new Error("Invalid extension.");
   }
 
   const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);

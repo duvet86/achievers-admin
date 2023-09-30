@@ -5,6 +5,7 @@ interface Props {
   readOnly?: boolean;
   disabled?: boolean;
   required?: boolean;
+  accept?: string;
 }
 
 export function FileInput({ name, label, required, ...props }: Props) {
