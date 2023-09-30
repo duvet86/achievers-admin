@@ -38,7 +38,7 @@ export default function Index() {
     useLoaderData<typeof loader>();
 
   return (
-    <>
+    <div className="bg-lines -m-4 h-full p-4">
       <article className="prose relative mb-8 h-24 max-w-none">
         <div className="h-24 w-full rounded-md bg-achievers opacity-75"></div>
         <h1 className="absolute left-6 top-6">
@@ -73,7 +73,7 @@ export default function Index() {
             <div className="stat-figure text-secondary">
               <GraduationCap className="inline-block h-8 w-8 stroke-current" />
             </div>
-            <div className="stat-title">Total students</div>
+            <div className="stat-title">Students</div>
             <div className="stat-value" data-testid="totalStudents">
               {studentsCount}
             </div>
@@ -102,6 +102,6 @@ export default function Index() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

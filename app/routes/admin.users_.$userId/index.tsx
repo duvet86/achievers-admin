@@ -20,7 +20,7 @@ import {
 } from "./services.server";
 
 import { UserForm } from "./components/UserForm";
-import { ChapterList } from "./components/ChapterList";
+import { AssignedChapterList } from "./components/AssignedChapterList";
 import { CheckList } from "./components/CheckList";
 import { Header } from "./components/Header";
 
@@ -157,7 +157,7 @@ export default function Index() {
 
           <hr className="my-8" />
 
-          <ChapterList loaderData={loaderData} />
+          <AssignedChapterList loaderData={loaderData} />
         </div>
       </div>
     </div>

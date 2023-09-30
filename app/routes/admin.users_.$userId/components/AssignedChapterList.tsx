@@ -9,7 +9,7 @@ interface Props {
   loaderData: SerializeFrom<typeof loader>;
 }
 
-export function ChapterList({ loaderData: { user } }: Props) {
+export function AssignedChapterList({ loaderData: { user } }: Props) {
   return (
     <>
       <div className="overflow-auto bg-white">

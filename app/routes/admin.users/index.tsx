@@ -1,6 +1,6 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
 
-import { useLoaderData, Link, Form, useActionData } from "@remix-run/react";
+import { useLoaderData, Link, Form, useSearchParams } from "@remix-run/react";
 import { json } from "@remix-run/node";
 
 import { useRef } from "react";
@@ -20,41 +20,26 @@ import FormInputs from "./components/FormInputs";
 import Pagination from "./components/Pagination";
 
 export async function loader({ request }: LoaderArgs) {
-  const [chapters, count, users] = await Promise.all([
-    getChaptersAsync(),
-    getUsersCountAsync(),
-    getUsersAsync(0),
-  ]);
+  const url = new URL(request.url);
 
-  return json({
-    chapters,
-    count,
-    users: users.map((user) => ({
-      ...user,
-      checksCompleted: getNumberCompletedChecks(user),
-    })),
-  });
-}
+  const chapterId = url.searchParams.get("chapterId");
 
-export async function action({ request }: ActionArgs) {
-  const formData = await request.formData();
+  const searchTermSubmit = url.searchParams.get("searchBtn");
+  const clearSearchSubmit = url.searchParams.get("clearSearchBtn");
+  const previousPageSubmit = url.searchParams.get("previousBtn");
+  const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
+  const nextPageSubmit = url.searchParams.get("nextBtn");
 
-  const chapterId = formData.get("chapterId")?.toString();
+  let searchTerm = url.searchParams.get("searchTerm");
+  const pageNumber = Number(url.searchParams.get("pageNumber")!);
+  const includeArchived = url.searchParams.get("includeArchived") === "on";
 
-  const searchTermSubmit = formData.get("searchBtn")?.toString();
-  const clearSearchSubmit = formData.get("clearSearchBtn")?.toString();
-  const previousPageSubmit = formData.get("previousBtn")?.toString();
-  const pageNumberSubmit = formData.get("pageNumberBtn")?.toString();
-  const nextPageSubmit = formData.get("nextBtn")?.toString();
-
-  let searchTerm = formData.get("searchTerm")?.toString();
-  const pageNumber = Number(formData.get("pageNumber")!.toString());
-  const includeArchived = formData.get("includeArchived")?.toString() === "on";
+  if (searchTerm?.trim() === "") {
+    searchTerm = null;
+  }
 
   const chapterIdValue =
-    chapterId !== undefined && chapterId !== ""
-      ? parseInt(chapterId)
-      : undefined;
+    chapterId !== null && chapterId !== "" ? parseInt(chapterId) : null;
 
   const count = await getUsersCountAsync(
     searchTerm,
@@ -63,32 +48,32 @@ export async function action({ request }: ActionArgs) {
   );
   const totalPageCount = Math.ceil(count / 10);
 
-  if (searchTerm?.trim() === "") {
-    searchTerm = undefined;
-  }
-
   let currentPageNumber = 0;
-  if (searchTermSubmit !== undefined) {
+  if (searchTermSubmit !== null) {
     currentPageNumber = 0;
-  } else if (clearSearchSubmit !== undefined) {
+  } else if (clearSearchSubmit !== null) {
     currentPageNumber = 0;
-    searchTerm = undefined;
-  } else if (previousPageSubmit !== undefined && pageNumber > 0) {
+    searchTerm = null;
+  } else if (previousPageSubmit !== null && pageNumber > 0) {
     currentPageNumber = pageNumber - 1;
-  } else if (nextPageSubmit !== undefined && pageNumber < totalPageCount) {
+  } else if (nextPageSubmit !== null && pageNumber < totalPageCount) {
     currentPageNumber = pageNumber + 1;
-  } else if (pageNumberSubmit !== undefined) {
+  } else if (pageNumberSubmit !== null) {
     currentPageNumber = Number(pageNumberSubmit);
   }
 
-  const users = await getUsersAsync(
-    currentPageNumber,
-    searchTerm,
-    chapterIdValue,
-    includeArchived,
-  );
+  const [chapters, users] = await Promise.all([
+    getChaptersAsync(),
+    getUsersAsync(
+      currentPageNumber,
+      searchTerm,
+      chapterIdValue,
+      includeArchived,
+    ),
+  ]);
 
   return json({
+    chapters,
     count,
     currentPageNumber,
     users: users.map((user) => ({
@@ -100,17 +85,15 @@ export async function action({ request }: ActionArgs) {
 }
 
 export default function Index() {
-  const { chapters, users, count } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
+  const { chapters, users, count, currentPageNumber } =
+    useLoaderData<typeof loader>();
 
+  const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  const totalPageCount = Math.ceil((actionData?.count ?? count) / 10);
-  const currentPageNumber = actionData?.currentPageNumber ?? 0;
+  const totalPageCount = Math.ceil(count / 10);
 
-  const pageUsers = actionData?.users ?? users;
-
-  const onFormSubmit = () => formRef.current!.reset();
+  const onFormClear = () => formRef.current!.reset();
 
   return (
     <>
@@ -124,8 +107,12 @@ export default function Index() {
 
       <hr className="my-4" />
 
-      <Form ref={formRef} method="post">
-        <FormInputs chapters={chapters} onFormSubmit={onFormSubmit} />
+      <Form ref={formRef} method="get">
+        <FormInputs
+          chapters={chapters}
+          searchParams={searchParams}
+          onFormClear={onFormClear}
+        />
 
         <div className="overflow-auto bg-white">
           <table className="table">
@@ -152,14 +139,14 @@ export default function Index() {
               </tr>
             </thead>
             <tbody>
-              {pageUsers.length === 0 && (
+              {users.length === 0 && (
                 <tr>
                   <td className="border p-2" colSpan={6}>
                     <i>No users</i>
                   </td>
                 </tr>
               )}
-              {pageUsers.map(
+              {users.map(
                 (
                   {
                     id,
@@ -202,7 +189,7 @@ export default function Index() {
                       <td className="border p-2">{checksCompleted}/8</td>
                       <td className="border p-2">
                         <Link
-                          to={id.toString()}
+                          to={`${id}?${searchParams}`}
                           className="btn btn-success btn-xs w-full gap-2"
                         >
                           <PageEdit className="h-4 w-4" />

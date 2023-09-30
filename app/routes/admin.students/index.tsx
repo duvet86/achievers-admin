@@ -1,7 +1,7 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
 import { useRef } from "react";
 
 import { PageEdit } from "iconoir-react";
@@ -19,91 +19,77 @@ import Pagination from "./components/Pagination";
 import ActionsDropdown from "./components/ActionsDropdown";
 
 export async function loader({ request }: LoaderArgs) {
-  const [chapters, count, students] = await Promise.all([
-    getChaptersAsync(),
-    getStudentsCountAsync(),
-    getStudentsAsync(0),
-  ]);
+  const url = new URL(request.url);
 
-  return json({
-    chapters,
-    count,
-    students,
-  });
-}
+  const chapterId = url.searchParams.get("chapterId");
 
-export async function action({ request }: ActionArgs) {
-  const formData = await request.formData();
+  const searchTermSubmit = url.searchParams.get("searchBtn");
+  const clearSearchSubmit = url.searchParams.get("clearSearchBtn");
+  const previousPageSubmit = url.searchParams.get("previousBtn");
+  const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
+  const nextPageSubmit = url.searchParams.get("nextBtn");
 
-  const chapterId = formData.get("chapterId")?.toString();
+  let searchTerm = url.searchParams.get("searchTerm");
+  const pageNumber = Number(url.searchParams.get("pageNumber")!);
+  const includeArchived = url.searchParams.get("includeArchived") === "on";
 
-  const searchTermSubmit = formData.get("searchBtn")?.toString();
-  const clearSearchSubmit = formData.get("clearSearchBtn")?.toString();
-  const previousPageSubmit = formData.get("previousBtn")?.toString();
-  const pageNumberSubmit = formData.get("pageNumberBtn")?.toString();
-  const nextPageSubmit = formData.get("nextBtn")?.toString();
-
-  let searchTerm = formData.get("searchTerm")?.toString();
-  const pageNumber = Number(formData.get("pageNumber")!.toString());
-  const includeArchived = formData.get("includeArchived")?.toString() === "on";
+  if (searchTerm?.trim() === "") {
+    searchTerm = null;
+  }
 
   const chapterIdValue =
-    chapterId !== undefined && chapterId !== ""
-      ? parseInt(chapterId)
-      : undefined;
+    chapterId !== null && chapterId !== "" ? parseInt(chapterId) : null;
 
   const count = await getStudentsCountAsync(
     searchTerm,
     chapterIdValue,
     includeArchived,
   );
+
   const totalPageCount = Math.ceil(count / 10);
 
-  if (searchTerm?.trim() === "") {
-    searchTerm = undefined;
-  }
-
   let currentPageNumber = 0;
-  if (searchTermSubmit !== undefined) {
+  if (searchTermSubmit !== null) {
     currentPageNumber = 0;
-  } else if (clearSearchSubmit !== undefined) {
+  } else if (clearSearchSubmit !== null) {
     currentPageNumber = 0;
-    searchTerm = undefined;
-  } else if (previousPageSubmit !== undefined && pageNumber > 0) {
+    searchTerm = null;
+  } else if (previousPageSubmit !== null && pageNumber > 0) {
     currentPageNumber = pageNumber - 1;
-  } else if (nextPageSubmit !== undefined && pageNumber < totalPageCount) {
+  } else if (nextPageSubmit !== null && pageNumber < totalPageCount) {
     currentPageNumber = pageNumber + 1;
-  } else if (pageNumberSubmit !== undefined) {
+  } else if (pageNumberSubmit !== null) {
     currentPageNumber = Number(pageNumberSubmit);
   }
 
-  const students = await getStudentsAsync(
-    currentPageNumber,
-    searchTerm,
-    chapterIdValue,
-    includeArchived,
-  );
+  const [chapters, students] = await Promise.all([
+    getChaptersAsync(),
+    getStudentsAsync(
+      currentPageNumber,
+      searchTerm,
+      chapterIdValue,
+      includeArchived,
+    ),
+  ]);
 
   return json({
-    count,
     currentPageNumber,
+    chapters,
+    count,
     students,
-    searchTerm,
   });
 }
 
 export default function Index() {
-  const { chapters, students, count } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
+  const { chapters, students, count, currentPageNumber } =
+    useLoaderData<typeof loader>();
 
+  const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  const totalPageCount = Math.ceil((actionData?.count ?? count) / 10);
-  const currentPageNumber = actionData?.currentPageNumber ?? 0;
+  const totalPageCount = Math.ceil(count / 10);
 
-  const pageStudents = actionData?.students ?? students;
-
-  const onFormSubmit = () => formRef.current!.reset();
+  const onFormClear = () => formRef.current!.reset();
 
   return (
     <>
@@ -117,8 +103,12 @@ export default function Index() {
 
       <hr className="my-4" />
 
-      <Form ref={formRef} method="post">
-        <FormInputs chapters={chapters} onFormSubmit={onFormSubmit} />
+      <Form ref={formRef}>
+        <FormInputs
+          chapters={chapters}
+          searchParams={searchParams}
+          onFormClear={onFormClear}
+        />
 
         <div className="overflow-auto bg-white">
           <table className="table">
@@ -142,14 +132,14 @@ export default function Index() {
               </tr>
             </thead>
             <tbody>
-              {pageStudents.length === 0 && (
+              {students.length === 0 && (
                 <tr>
                   <td className="border p-2" colSpan={6}>
                     <i>No students</i>
                   </td>
                 </tr>
               )}
-              {pageStudents.map(
+              {students.map(
                 (
                   { id, firstName, lastName, yearLevel, studentAtChapter },
                   index,
@@ -171,7 +161,7 @@ export default function Index() {
                     </td>
                     <td className="border p-2">
                       <Link
-                        to={id.toString()}
+                        to={`${id}?${searchParams}`}
                         className="btn btn-success btn-xs w-full gap-2"
                       >
                         <PageEdit className="h-4 w-4" />

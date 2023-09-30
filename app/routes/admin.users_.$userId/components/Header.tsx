@@ -1,14 +1,14 @@
 import { Link } from "@remix-run/react";
 
 import {
-  ArrowLeft,
   KeyAlt,
   NavArrowDown,
   WarningTriangle,
   BinFull,
+  OnTag,
 } from "iconoir-react";
 
-import { Title } from "~/components";
+import { BackHeader, Title } from "~/components";
 
 interface Props {
   endDate: string | null;
@@ -19,21 +19,18 @@ export function Header(props: Props) {
   return (
     <div className="h-1/6">
       <div className="flex">
-        <Link to="../" relative="path" className="btn btn-ghost mb-2 gap-2">
-          <ArrowLeft className="w-6" />
-          Back
-        </Link>
+        <BackHeader />
 
         <div className="flex-1"></div>
 
-        <div className="dropdown-end dropdown">
+        <div className="dropdown dropdown-end">
           <label title="actions" tabIndex={0} className="btn w-40 gap-2">
             Actions
             <NavArrowDown className="h-6 w-6" />
           </label>
           <ul
             tabIndex={0}
-            className="dropdown-content menu rounded-box z-[1] w-56 border border-base-300 bg-base-100 p-2 shadow"
+            className="menu dropdown-content rounded-box z-[1] w-56 border border-base-300 bg-base-100 p-2 shadow"
           >
             {getLinks(props)}
           </ul>
@@ -45,12 +42,7 @@ export function Header(props: Props) {
       <div className="flex items-center gap-4">
         <Title>Edit mentor info</Title>
 
-        {props.mentorAppRoleAssignmentId === null && (
-          <p title="No access" className="mb-4 flex items-center gap-2">
-            <WarningTriangle className="h-6 w-6 text-warning" />
-            This mentor does NOT have access to the system.
-          </p>
-        )}
+        {getMessage(props)}
       </div>
     </div>
   );
@@ -61,11 +53,11 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
     return (
       <li>
         <Link
-          to="give-access"
+          to="re-enable"
           relative="path"
           className="gap-4 font-semibold text-success"
         >
-          <KeyAlt className="h-6 w-6" />
+          <OnTag className="h-6 w-6" />
           Re enable mentor
         </Link>
       </li>
@@ -99,4 +91,30 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
       </li>
     </>
   );
+}
+
+function getMessage({ endDate, mentorAppRoleAssignmentId }: Props) {
+  if (endDate !== null) {
+    return (
+      <p
+        title="archived"
+        className="mb-4 flex items-center gap-2 rounded bg-error px-6 py-2"
+      >
+        <WarningTriangle className="h-6 w-6" />
+        This mentor is archived!
+      </p>
+    );
+  }
+
+  if (mentorAppRoleAssignmentId === null) {
+    return (
+      <p
+        title="No access"
+        className="mb-4 flex items-center gap-2 rounded bg-warning px-6 py-2"
+      >
+        <WarningTriangle className="h-6 w-6" />
+        This mentor does NOT have access to the system!
+      </p>
+    );
+  }
 }

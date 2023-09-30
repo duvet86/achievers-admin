@@ -10,15 +10,15 @@ export async function getChaptersAsync() {
 }
 
 export async function getUsersCountAsync(
-  searchTerm?: string,
-  chapterId?: number,
+  searchTerm: string | null,
+  chapterId: number | null,
   includeArchived = false,
 ) {
   return await prisma.user.count({
     where: {
       AND: [
         includeArchived ? {} : { endDate: null },
-        chapterId !== undefined
+        chapterId !== null
           ? {
               userAtChapter: {
                 some: {
@@ -49,8 +49,8 @@ export async function getUsersCountAsync(
 
 export async function getUsersAsync(
   pageNumber: number,
-  searchTerm?: string,
-  chapterId?: number,
+  searchTerm: string | null,
+  chapterId: number | null,
   includeArchived = false,
   numberItems = 10,
 ) {
@@ -105,7 +105,7 @@ export async function getUsersAsync(
     where: {
       AND: [
         includeArchived ? {} : { endDate: null },
-        chapterId !== undefined
+        chapterId !== null
           ? {
               userAtChapter: {
                 some: {
