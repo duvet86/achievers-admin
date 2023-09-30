@@ -23,14 +23,14 @@ export function Header(props: Props) {
 
         <div className="flex-1"></div>
 
-        <div className="dropdown dropdown-end">
+        <div className="dropdown-end dropdown">
           <label title="actions" tabIndex={0} className="btn w-40 gap-2">
             Actions
             <NavArrowDown className="h-6 w-6" />
           </label>
           <ul
             tabIndex={0}
-            className="menu dropdown-content rounded-box z-[1] w-56 border border-base-300 bg-base-100 p-2 shadow"
+            className="dropdown-content menu rounded-box z-[1] w-56 border border-base-300 bg-base-100 p-2 shadow"
           >
             {getLinks(props)}
           </ul>
