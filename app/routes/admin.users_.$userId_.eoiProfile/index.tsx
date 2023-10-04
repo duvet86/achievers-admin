@@ -10,6 +10,7 @@ import {
   Input,
   Radio,
   SubmitFormButton,
+  Textarea,
   Title,
 } from "~/components";
 
@@ -94,7 +95,7 @@ export default function Index() {
       </Title>
 
       <Form method="post">
-        <Input
+        <Textarea
           defaultValue={eoIProfile?.bestTimeToContact ?? ""}
           label="Best time to contact"
           name="bestTimeToContact"
@@ -108,7 +109,7 @@ export default function Index() {
           required
         />
 
-        <Input
+        <Textarea
           defaultValue={eoIProfile?.volunteerExperience ?? ""}
           label="Volunteer experience"
           name="volunteerExperience"
@@ -160,7 +161,7 @@ export default function Index() {
           required
         />
 
-        <Input
+        <Textarea
           defaultValue={eoIProfile?.comment ?? ""}
           label="Why a volunteer?"
           name="comment"
