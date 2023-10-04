@@ -77,3 +77,7 @@ export function areEqualIgnoreCase(a: string, b: string): boolean {
     a.trim().localeCompare(b.trim(), undefined, { sensitivity: "accent" }) === 0
   );
 }
+
+export function getValueFromCircularArray(index: number, arr: string[]) {
+  return arr[((index % arr.length) + arr.length) % arr.length];
+}

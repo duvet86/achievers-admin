@@ -6,6 +6,7 @@ export async function createStudentsAsync(
 ) {
   await prisma.$transaction(async (tx) => {
     await tx.importedStudentHistory.deleteMany();
+    await tx.mentorToStudentAssignement.deleteMany();
     await tx.studentGuardian.deleteMany();
     await tx.studentTeacher.deleteMany();
     await tx.studentAtChapter.deleteMany();

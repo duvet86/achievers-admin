@@ -27,6 +27,7 @@ model User {
 
   additionalEmail String?
   dateOfBirth     DateTime?
+  frequencyInDays Int?
 
   emergencyContactName         String?
   emergencyContactNumber       String?
@@ -55,6 +56,9 @@ model User {
   approvalbyMRC ApprovalbyMRC?
 
   userAtChapter UserAtChapter[]
+
+  mentorToStudentAssignement MentorToStudentAssignement[]
+  mentorToStudentSession     MentorToStudentSession[]
 
   importedHistory ImportedHistory?
 }
@@ -213,8 +217,9 @@ model Chapter {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userAtChapter    UserAtChapter[]
-  studentAtChapter StudentAtChapter[]
+  userAtChapter          UserAtChapter[]
+  studentAtChapter       StudentAtChapter[]
+  mentorToStudentSession MentorToStudentSession[]
 }
 
 model Student {
@@ -247,6 +252,9 @@ model Student {
   guardian         StudentGuardian[]
   studentTeacher   StudentTeacher[]
   studentAtChapter StudentAtChapter[]
+
+  mentorToStudentAssignement MentorToStudentAssignement[]
+  mentorToStudentSession     MentorToStudentSession[]
 
   importedStudentHistory ImportedStudentHistory?
 }
@@ -300,4 +308,30 @@ model ImportedStudentHistory {
 
   student   Student @relation(fields: [studentId], references: [id])
   studentId Int     @unique
+}
+
+model MentorToStudentAssignement {
+  user      User    @relation(fields: [userId], references: [id])
+  userId    Int
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId Int
+
+  assignedBy String
+  assignedAt DateTime @default(now())
+
+  @@id([userId, studentId])
+}
+
+model MentorToStudentSession {
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  student    Student  @relation(fields: [studentId], references: [id])
+  studentId  Int
+  chapter    Chapter  @relation(fields: [chapterId], references: [id])
+  chapterId  Int
+  attendedOn DateTime
+
+  report String? @db.Text
+
+  @@id([userId, studentId, chapterId, attendedOn])
 }

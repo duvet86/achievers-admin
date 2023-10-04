@@ -75,7 +75,7 @@ const microsoftStrategy = new MicrosoftStrategy(
     idToken: extraParams.id_token,
     accessToken: accessToken,
     expiresOn: extraParams.expires_in.toString(),
-    refreshToken: refreshToken,
+    refreshToken: refreshToken ?? null,
     issuedAt: new Date().toISOString(),
   }),
 );

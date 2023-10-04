@@ -6,6 +6,7 @@ import {
   GraduationCap,
   Home,
   ShopAlt,
+  Calendar,
 } from "iconoir-react";
 
 interface Props {
@@ -41,6 +42,11 @@ function getLinks(isAdmin: boolean): DrawerLink[] {
           icon: <ShopAlt className="h-6 w-6" />,
           value: "/admin/chapters",
           label: "Chapters",
+        },
+        {
+          icon: <Calendar className="h-6 w-6" />,
+          value: "/admin/roster",
+          label: "Roster",
         },
       ]
     : [
