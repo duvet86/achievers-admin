@@ -5,7 +5,6 @@ import { json } from "@remix-run/node";
 import {
   Form,
   useLoaderData,
-  useActionData,
   useSearchParams,
   useSubmit,
 } from "@remix-run/react";
@@ -53,11 +52,6 @@ export async function action({ request }: ActionArgs) {
   const chapters = await getChaptersAsync();
 
   const chapterId = url.searchParams.get("selectedChapter") ?? chapters[0].id;
-  const selectedTerm = url.searchParams.get("selectedTerm");
-
-  const currentTerm =
-    terms.find((t) => t.name === selectedTerm) ??
-    getCurrentTermForDate(new Date());
 
   if (request.method === "POST") {
     await createSessionAsync({
@@ -77,13 +71,8 @@ export async function action({ request }: ActionArgs) {
     throw new Error();
   }
 
-  const { studentsLookup } = await getStateAsync(
-    Number(chapterId),
-    currentTerm,
-  );
-
   return json({
-    studentsLookup,
+    message: "Successfully saved",
   });
 }
 
@@ -97,12 +86,9 @@ export default function Index() {
     students,
     studentsLookup,
   } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
 
   const submit = useSubmit();
   const [searchParams] = useSearchParams();
-
-  const studentsLookupInit = actionData?.studentsLookup ?? studentsLookup;
 
   return (
     <>
@@ -138,7 +124,7 @@ export default function Index() {
       </Form>
 
       <TermCalendar
-        studentsLookupInit={studentsLookupInit}
+        studentsLookupInit={studentsLookup}
         datesInTerm={datesInTerm}
         mentors={mentors}
         students={students}

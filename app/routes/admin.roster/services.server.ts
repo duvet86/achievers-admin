@@ -102,18 +102,20 @@ export async function getStateAsync(chapterId: Chapter["id"], term: Term) {
     ({ mentorToStudentSession }) => mentorToStudentSession,
   );
 
-  const studentsLookup = students.reduce<
+  let studentsLookup = students.reduce<
     Record<string, Record<string, Record<string, SessionCheckboxState>>>
   >((res, { studentId, userId }) => {
     for (const sessionDate of datesInTerm) {
+      const sessionDateStr = sessionDate.toISOString();
+
       if (res[studentId]) {
-        if (res[studentId][sessionDate.toISOString()]) {
-          res[studentId][sessionDate.toISOString()][userId] = {
+        if (res[studentId][sessionDateStr]) {
+          res[studentId][sessionDateStr][userId] = {
             disabled: false,
             checked: false,
           };
         } else {
-          res[studentId][sessionDate.toISOString()] = {
+          res[studentId][sessionDateStr] = {
             [userId]: {
               disabled: false,
               checked: false,
@@ -122,7 +124,7 @@ export async function getStateAsync(chapterId: Chapter["id"], term: Term) {
         }
       } else {
         res[studentId] = {
-          [sessionDate.toISOString()]: {
+          [sessionDateStr]: {
             [userId]: {
               disabled: false,
               checked: false,
@@ -135,25 +137,52 @@ export async function getStateAsync(chapterId: Chapter["id"], term: Term) {
     return res;
   }, {});
 
-  sessions.forEach(({ studentId, userId, attendedOn }) => {
-    studentsLookup[studentId][attendedOn.toISOString()] = Object.keys(
-      studentsLookup[studentId][attendedOn.toISOString()],
-    ).reduce<Record<string, SessionCheckboxState>>((res, key) => {
-      if (key === userId.toString()) {
-        res[key] = {
-          disabled: false,
-          checked: true,
-        };
-      } else {
-        res[key] = {
+  sessions.forEach(
+    ({ studentId: sessionStudentId, userId: sessionMentorId, attendedOn }) => {
+      if (studentsLookup[sessionStudentId] === undefined) {
+        return;
+      }
+
+      const attendedOnStr = attendedOn.toISOString();
+
+      const foundSessionMentorId = Object.keys(
+        studentsLookup[sessionStudentId][attendedOnStr],
+      ).find((id) => id === sessionMentorId.toString());
+
+      if (foundSessionMentorId === undefined) {
+        return;
+      }
+
+      // Disable session for all the other students of the found mentor.
+      studentsLookup = Object.keys(studentsLookup).reduce((res, val) => {
+        if (res[val][attendedOnStr][foundSessionMentorId]) {
+          res[val][attendedOnStr][foundSessionMentorId] = {
+            disabled: true,
+            checked: false,
+          };
+        }
+
+        return res;
+      }, studentsLookup);
+
+      // Disable this student from the other mentors.
+      studentsLookup[sessionStudentId][attendedOnStr] = Object.keys(
+        studentsLookup[sessionStudentId][attendedOnStr],
+      ).reduce((res, val) => {
+        res[val] = {
           disabled: true,
           checked: false,
         };
-      }
 
-      return res;
-    }, {});
-  });
+        return res;
+      }, studentsLookup[sessionStudentId][attendedOnStr]);
+
+      studentsLookup[sessionStudentId][attendedOnStr][foundSessionMentorId] = {
+        disabled: false,
+        checked: true,
+      };
+    },
+  );
 
   return {
     students,
