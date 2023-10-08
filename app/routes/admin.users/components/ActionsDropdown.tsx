@@ -4,7 +4,7 @@ import { DatabaseExport, DatabaseRestore, NavArrowDown } from "iconoir-react";
 
 export default function ActionsDropdown() {
   return (
-    <div className="dropdown-end dropdown">
+    <div className="dropdown dropdown-end">
       <label title="actions" tabIndex={0} className="btn w-40 gap-2">
         Actions
         <NavArrowDown className="h-6 w-6" />

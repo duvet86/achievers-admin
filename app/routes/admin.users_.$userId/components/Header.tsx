@@ -23,7 +23,7 @@ export function Header(props: Props) {
 
         <div className="flex-1"></div>
 
-        <div className="dropdown-end dropdown">
+        <div className="dropdown dropdown-end">
           <label title="actions" tabIndex={0} className="btn w-40 gap-2">
             Actions
             <NavArrowDown className="h-6 w-6" />
