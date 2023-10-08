@@ -54,10 +54,10 @@ export class MicrosoftStrategy<TUser> extends OAuth2Strategy<
   MicrosoftProfile,
   MicrosoftExtraParams
 > {
-  name = "microsoft";
-
-  private scope: string;
   private prompt: string;
+
+  name = "microsoft";
+  scope: string;
 
   constructor(
     {

@@ -90,7 +90,9 @@ export async function action({ request, params }: ActionArgs) {
 
   await updateStudentByIdAsync(Number(params.studentId), dataCreate);
 
-  return null;
+  return json({
+    message: "Successfully saved",
+  });
 }
 
 export default function Index() {

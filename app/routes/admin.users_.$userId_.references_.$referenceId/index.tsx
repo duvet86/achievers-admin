@@ -307,6 +307,7 @@ export default function Index() {
             successMessage={actionData?.successMessage}
             errorMessage={actionData?.errorMessage}
             sticky
+            className="justify-between"
           />
         </fieldset>
       </Form>

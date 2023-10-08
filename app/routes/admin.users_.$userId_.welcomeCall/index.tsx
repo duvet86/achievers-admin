@@ -95,7 +95,10 @@ export default function Index() {
             required
           />
 
-          <SubmitFormButton errorMessage={actionData?.errorMessage} />
+          <SubmitFormButton
+            errorMessage={actionData?.errorMessage}
+            className="mt-6 justify-between"
+          />
         </fieldset>
       </Form>
     </>

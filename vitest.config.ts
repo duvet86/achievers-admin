@@ -11,7 +11,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    setupFiles: ["./test/setup-test-env.ts"],
+    setupFiles: ["dotenv/config", "./test/setup-test-env.ts"],
     exclude: [...configDefaults.exclude, "integration-tests/tests/*"],
     minThreads: process.env.CI ? 1 : undefined,
     maxThreads: process.env.CI ? 1 : undefined,

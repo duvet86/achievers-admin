@@ -168,7 +168,7 @@ export function StudentForm({ transition, loaderData: { student } }: Props) {
           required
         />
 
-        <SubmitFormButton sticky />
+        <SubmitFormButton sticky className="justify-between" />
       </fieldset>
     </Form>
   );

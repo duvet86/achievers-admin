@@ -86,7 +86,10 @@ export default function Assign() {
           )}
         />
 
-        <SubmitFormButton errorMessage={actionData?.errorMessage} />
+        <SubmitFormButton
+          errorMessage={actionData?.errorMessage}
+          className="mt-6 justify-between"
+        />
       </Form>
     </>
   );

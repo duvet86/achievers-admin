@@ -175,7 +175,7 @@ export default function Index() {
           required
         />
 
-        <SubmitFormButton />
+        <SubmitFormButton className="mt-6 justify-between" />
       </Form>
     </>
   );

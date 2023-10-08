@@ -6,6 +6,7 @@ export * from "./Select";
 export * from "./FileInput";
 export * from "./SubmitFormButton";
 export * from "./Radio";
+export * from "./Autocomplete";
 
 export * from "./Title";
 export * from "./SubTitle";

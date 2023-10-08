@@ -10,17 +10,13 @@ describe("SubmitFormButton", () => {
 
     expect(screen.getByRole("button")).toHaveTextContent("Save");
     expect(screen.getByTestId("message")).not.toHaveClass();
-    expect(screen.getByTestId("container")).toHaveClass(
-      "mt-6 flex items-center justify-between",
-    );
+    expect(screen.getByTestId("container")).toHaveClass("flex");
   });
 
   it("should have stiky prop", async () => {
     render(<SubmitFormButton sticky />);
 
-    expect(screen.getByTestId("container")).toHaveClass(
-      "mt-6 flex items-center justify-between sticky bottom-0",
-    );
+    expect(screen.getByTestId("container")).toHaveClass("flex sticky bottom-0");
   });
 
   it("should have custom success message", async () => {

@@ -94,7 +94,10 @@ export default function Index() {
             defaultValue={user.induction?.comment ?? ""}
           />
 
-          <SubmitFormButton errorMessage={actionData?.errorMessage} />
+          <SubmitFormButton
+            errorMessage={actionData?.errorMessage}
+            className="mt-6 justify-between"
+          />
         </fieldset>
       </Form>
     </>

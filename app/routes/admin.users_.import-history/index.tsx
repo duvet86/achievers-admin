@@ -1,7 +1,7 @@
-import type { ActionArgs } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import dayjs from "dayjs";
 
 import { FastArrowLeft, FastArrowRight, PageEdit } from "iconoir-react";
@@ -13,23 +13,14 @@ import {
   getImportHistoryCountAsync,
 } from "./services.server";
 
-export const loader = async () => {
-  const [count, history] = await Promise.all([
-    getImportHistoryCountAsync(),
-    getImportHistoryAsync(0),
-  ]);
+export const loader = async ({ request }: LoaderArgs) => {
+  const url = new URL(request.url);
 
-  return json({ count, history });
-};
+  const previousPageSubmit = url.searchParams.get("previousBtn")?.toString();
+  const pageNumberSubmit = url.searchParams.get("pageNumberBtn")?.toString();
+  const nextPageSubmit = url.searchParams.get("nextBtn")?.toString();
 
-export const action = async ({ request }: ActionArgs) => {
-  const formData = await request.formData();
-
-  const previousPageSubmit = formData.get("previousBtn")?.toString();
-  const pageNumberSubmit = formData.get("pageNumberBtn")?.toString();
-  const nextPageSubmit = formData.get("nextBtn")?.toString();
-
-  const pageNumber = Number(formData.get("pageNumber")!.toString());
+  const pageNumber = Number(url.searchParams.get("pageNumber")!.toString());
 
   const count = await getImportHistoryCountAsync();
   const totalPageCount = Math.ceil(count / 10);
@@ -46,19 +37,16 @@ export const action = async ({ request }: ActionArgs) => {
   const history = await getImportHistoryAsync(currentPageNumber);
 
   return json({
+    count,
     currentPageNumber,
     history,
   });
 };
 
 export default function Index() {
-  const { history, count } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
+  const { history, count, currentPageNumber } = useLoaderData<typeof loader>();
 
   const totalPageCount = Math.ceil(count / 10);
-  const currentPageNumber = actionData?.currentPageNumber ?? 0;
-
-  const pageHistory = actionData?.history ?? history;
 
   return (
     <>
@@ -66,7 +54,7 @@ export default function Index() {
 
       <Title>History of imported mentors</Title>
 
-      <Form method="post">
+      <Form>
         <div className="overflow-auto bg-white">
           <table className="table">
             <thead>
@@ -89,14 +77,14 @@ export default function Index() {
               </tr>
             </thead>
             <tbody>
-              {pageHistory.length === 0 && (
+              {history.length === 0 && (
                 <tr>
                   <td colSpan={3} className="border p-2">
                     <i>No mentors imported</i>
                   </td>
                 </tr>
               )}
-              {pageHistory.map(
+              {history.map(
                 (
                   { user: { id, firstName, lastName }, error, createdAt },
                   index,

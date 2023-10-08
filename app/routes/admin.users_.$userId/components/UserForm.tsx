@@ -138,7 +138,7 @@ export function UserForm({ transition, loaderData: { user } }: Props) {
           required
         />
 
-        <SubmitFormButton sticky />
+        <SubmitFormButton sticky className="justify-between" />
       </fieldset>
     </Form>
   );

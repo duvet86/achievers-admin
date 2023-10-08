@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import classnames from "classnames";
 
 import { Check, SaveActionFloppy, WarningCircle } from "iconoir-react";
 
@@ -7,20 +8,22 @@ interface Props {
   successMessage?: string | null;
   errorMessage?: string | null;
   sticky?: boolean;
+  className?: string;
 }
 
 export function SubmitFormButton({
   successMessage,
   errorMessage,
   sticky,
+  className,
   label = "Save",
 }: Props) {
-  const className = "mt-6 flex items-center justify-between";
-
   return (
     <div
       data-testid="container"
-      className={sticky ? className + " sticky bottom-0" : className}
+      className={classnames("flex", className, {
+        "sticky bottom-0": sticky,
+      })}
     >
       <Message
         key={Date.now()}
