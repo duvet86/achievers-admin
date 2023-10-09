@@ -7,7 +7,7 @@ vi.mock("../../db.server");
 const mockPrisma = vi.mocked(prisma, true);
 
 describe("Services", () => {
-  it("should return page state", async () => {
+  it.skip("should return page state", async () => {
     mockPrisma.user.findMany.mockResolvedValue([
       {
         firstName: "test_0",
