@@ -28,7 +28,7 @@ export function Body({
       <div className="drawer-content flex h-screen flex-col">
         <Navbar currentUser={currentUser} environment={environment} />
 
-        <main className="mt-16 flex h-full flex-col overflow-y-auto p-4">
+        <main className="content-area mt-16 flex h-full flex-col overflow-y-auto p-4">
           <Outlet />
         </main>
       </div>

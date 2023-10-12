@@ -16,5 +16,4 @@ __azurite_db_blob_extent__.json
 package-lock.json
 storageState.json
 
-/app/styles/tailwind.css
 /dev_sessions

@@ -1,7 +1,7 @@
 import { useLoaderData, Link } from "@remix-run/react";
 import { json } from "@remix-run/node";
 
-import { PageEdit, Group } from "iconoir-react";
+import { PageEdit, Group, Calendar } from "iconoir-react";
 
 import { Title } from "~/components";
 
@@ -24,13 +24,13 @@ export default function Index() {
         <table className="table">
           <thead>
             <tr>
-              <th align="left" className="p-2">
+              <th align="left" className="w-1/3 p-2">
                 Name
               </th>
-              <th align="left" className="p-2">
+              <th align="left" className="w-1/3 p-2">
                 Address
               </th>
-              <th align="right" className="p-2">
+              <th align="right" className="w-1/3 p-2">
                 Action
               </th>
             </tr>
@@ -41,10 +41,17 @@ export default function Index() {
                 <td className="border p-2">{name}</td>
                 <td className="border p-2">{address}</td>
                 <td className="border p-2">
-                  <div className="join">
+                  <div className="join w-1/3">
+                    <Link
+                      to={`${id}/roster`}
+                      className="btn btn-info join-item btn-xs w-full gap-2"
+                    >
+                      <Calendar className="h-4 w-4" />
+                      Roster
+                    </Link>
                     <Link
                       to={`${id}/mentors`}
-                      className="btn btn-info join-item btn-xs w-full gap-2"
+                      className="btn btn-warning join-item btn-xs w-full gap-2"
                     >
                       <Group className="h-4 w-4" />
                       Mentors

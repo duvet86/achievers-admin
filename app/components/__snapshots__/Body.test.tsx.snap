@@ -141,7 +141,7 @@ exports[`Body > Body snapshot admin 1`] = `
           </div>
         </nav>
         <main
-          class="mt-16 flex h-full flex-col overflow-y-auto p-4"
+          class="content-area mt-16 flex h-full flex-col overflow-y-auto p-4"
         />
       </div>
       <div
@@ -343,52 +343,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   />
                 </svg>
                 Chapters
-              </div>
-              <svg
-                class="h-6 w-6"
-                color="currentColor"
-                fill="none"
-                height="1.5em"
-                stroke-width="1.5"
-                viewBox="0 0 24 24"
-                width="1.5em"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M9 6l6 6-6 6"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </a>
-          </li>
-          <li>
-            <a
-              class="mb-2 justify-between rounded font-semibold"
-              href="/admin/roster"
-            >
-              <div
-                class="flex items-center gap-4"
-              >
-                <svg
-                  class="h-6 w-6"
-                  color="currentColor"
-                  fill="none"
-                  height="1.5em"
-                  stroke-width="1.5"
-                  viewBox="0 0 24 24"
-                  width="1.5em"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M15 4V2m0 2v2m0-2h-4.5M3 10v9a2 2 0 002 2h14a2 2 0 002-2v-9H3zM3 10V6a2 2 0 012-2h2M7 2v4M21 10V6a2 2 0 00-2-2h-.5"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-                Roster
               </div>
               <svg
                 class="h-6 w-6"
@@ -564,7 +518,7 @@ exports[`Body > Body snapshot mentor 1`] = `
           </div>
         </nav>
         <main
-          class="mt-16 flex h-full flex-col overflow-y-auto p-4"
+          class="content-area mt-16 flex h-full flex-col overflow-y-auto p-4"
         />
       </div>
       <div
@@ -766,52 +720,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   />
                 </svg>
                 Chapters
-              </div>
-              <svg
-                class="h-6 w-6"
-                color="currentColor"
-                fill="none"
-                height="1.5em"
-                stroke-width="1.5"
-                viewBox="0 0 24 24"
-                width="1.5em"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M9 6l6 6-6 6"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </a>
-          </li>
-          <li>
-            <a
-              class="mb-2 justify-between rounded font-semibold"
-              href="/admin/roster"
-            >
-              <div
-                class="flex items-center gap-4"
-              >
-                <svg
-                  class="h-6 w-6"
-                  color="currentColor"
-                  fill="none"
-                  height="1.5em"
-                  stroke-width="1.5"
-                  viewBox="0 0 24 24"
-                  width="1.5em"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M15 4V2m0 2v2m0-2h-4.5M3 10v9a2 2 0 002 2h14a2 2 0 002-2v-9H3zM3 10V6a2 2 0 012-2h2M7 2v4M21 10V6a2 2 0 00-2-2h-.5"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-                Roster
               </div>
               <svg
                 class="h-6 w-6"
