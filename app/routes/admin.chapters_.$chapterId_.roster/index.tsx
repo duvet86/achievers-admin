@@ -9,7 +9,7 @@ import {
 } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import { Select, Title } from "~/components";
+import { BackHeader, Select, Title } from "~/components";
 import type { SessionCommand } from "./services.server";
 
 import {
@@ -75,6 +75,8 @@ export default function Index() {
 
   return (
     <>
+      <BackHeader />
+
       <Title>Roster planner</Title>
 
       <Form

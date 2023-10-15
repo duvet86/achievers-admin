@@ -1,25 +1,19 @@
-import { Link, useSearchParams } from "@remix-run/react";
+import { useNavigate } from "@remix-run/react";
 
 import { ArrowLeft } from "iconoir-react";
 
-interface Props {
-  to?: string;
-}
+export function BackHeader() {
+  const navigate = useNavigate();
 
-export function BackHeader({ to = "../" }: Props) {
-  const [searchParams] = useSearchParams();
+  const goBack = () => navigate(-1);
 
   return (
     <>
       <div>
-        <Link
-          to={`${to}?${searchParams}`}
-          relative="path"
-          className="btn btn-ghost mb-2 gap-2"
-        >
+        <button onClick={goBack} className="btn btn-ghost mb-2 gap-2">
           <ArrowLeft className="w-6" />
           Back
-        </Link>
+        </button>
       </div>
 
       <hr className="mb-4" />

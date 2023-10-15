@@ -69,7 +69,7 @@ export default function Assign() {
 
   return (
     <>
-      <BackHeader to="../../" />
+      <BackHeader />
 
       <Form method="post">
         <Title>Assign a chapter to "{user.email}"</Title>

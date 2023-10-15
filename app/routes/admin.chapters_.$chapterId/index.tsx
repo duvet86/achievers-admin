@@ -1,12 +1,13 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { Title, Input, BackHeader, SubmitFormButton } from "~/components";
 
 import { getChapterByIdAsync } from "./services.server";
+import { Calendar, Group } from "iconoir-react";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -33,6 +34,25 @@ export default function Index() {
 
         <SubmitFormButton className="mt-6 justify-between" />
       </Form>
+
+      <hr className="my-4" />
+
+      <div className="join mt-4 w-1/3">
+        <Link
+          to="roster"
+          className="btn btn-info join-item btn-xs h-12 w-full gap-2"
+        >
+          <Calendar className="h-4 w-4" />
+          Go to roster
+        </Link>
+        <Link
+          to="mentors"
+          className="btn btn-warning join-item btn-xs h-12 w-full gap-2"
+        >
+          <Group className="h-4 w-4" />
+          Go to mentors
+        </Link>
+      </div>
     </>
   );
 }

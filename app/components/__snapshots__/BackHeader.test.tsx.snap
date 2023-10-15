@@ -4,9 +4,8 @@ exports[`BackHeader > BackHeader snapshot 1`] = `
 <body>
   <div>
     <div>
-      <a
+      <button
         class="btn btn-ghost mb-2 gap-2"
-        href="/"
       >
         <svg
           class="w-6"
@@ -26,7 +25,7 @@ exports[`BackHeader > BackHeader snapshot 1`] = `
           />
         </svg>
         Back
-      </a>
+      </button>
     </div>
     <hr
       class="mb-4"

@@ -28,7 +28,12 @@ export function AssignedChapterList({ loaderData: { user } }: Props) {
             {user.userAtChapter.map(({ chapter }) => (
               <tr key={chapter.id}>
                 <td className="border p-2">
-                  <span className="font-semibold">{chapter.name}</span>
+                  <Link
+                    to={`/admin/chapters/${chapter.id}`}
+                    className="link font-semibold"
+                  >
+                    {chapter.name}
+                  </Link>
                 </td>
                 <td align="right" className="border p-2">
                   <Link

@@ -57,7 +57,7 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to="../../" />
+      <BackHeader />
 
       <Title>Remove student from mentor</Title>
 

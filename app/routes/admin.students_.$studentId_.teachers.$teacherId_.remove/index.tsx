@@ -40,7 +40,7 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to="../../../" />
+      <BackHeader />
 
       <Title>Remove teacher "{teacher.fullName}"</Title>
 

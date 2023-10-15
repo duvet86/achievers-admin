@@ -27,7 +27,7 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to="../../" />
+      <BackHeader />
 
       <Title>Mentors with students</Title>
 

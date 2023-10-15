@@ -98,7 +98,7 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to="../../" />
+      <BackHeader />
 
       <Title>
         {guardianId === "new" ? "Add new guardian" : "Edit info for guardian"}

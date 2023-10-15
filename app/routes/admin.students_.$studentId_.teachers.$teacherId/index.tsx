@@ -92,7 +92,7 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to="../../" />
+      <BackHeader />
 
       <Title>
         {teacherId === "new" ? "Add new teacher" : "Edit info for teacher"}

@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom";
 
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 
 import { BackHeader } from "~/components";
@@ -14,15 +14,5 @@ describe("BackHeader", () => {
     );
 
     expect(baseElement).toMatchSnapshot();
-  });
-
-  it("should have href defined via prop", async () => {
-    render(
-      <MemoryRouter>
-        <BackHeader to="/test" />
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByText("Back")).toHaveAttribute("href", "/test");
   });
 });

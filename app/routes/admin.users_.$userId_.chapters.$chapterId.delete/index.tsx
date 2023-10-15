@@ -45,7 +45,7 @@ export default function Assign() {
 
   return (
     <>
-      <BackHeader to="../../../" />
+      <BackHeader />
 
       <Form method="post">
         <fieldset disabled={transition.state === "loading"}>

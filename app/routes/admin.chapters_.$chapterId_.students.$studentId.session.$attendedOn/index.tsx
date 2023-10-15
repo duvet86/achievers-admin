@@ -89,7 +89,7 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to="../../../../" />
+      <BackHeader />
 
       <Title>Assign mentor for "{dayjs(session).format("MMMM D, YYYY")}"</Title>
 
