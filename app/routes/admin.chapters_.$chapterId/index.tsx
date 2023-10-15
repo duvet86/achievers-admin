@@ -1,4 +1,4 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
@@ -8,7 +8,7 @@ import { Title, Input, BackHeader, SubmitFormButton } from "~/components";
 
 import { getChapterByIdAsync } from "./services.server";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const chapter = await getChapterByIdAsync(Number(params.chapterId));

@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
@@ -11,7 +11,7 @@ import { Title, BackHeader } from "~/components";
 
 import { getUserByIdAsync, updateEndDateAsync } from "./services.server";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.userId, "userId not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
@@ -21,7 +21,7 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
-export async function action({ params }: ActionArgs) {
+export async function action({ params }: ActionFunctionArgs) {
   invariant(params.userId, "userId not found");
 
   await updateEndDateAsync(Number(params.userId));

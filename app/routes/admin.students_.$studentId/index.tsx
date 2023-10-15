@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { Prisma } from "@prisma/client";
 
 import dayjs from "dayjs";
@@ -14,7 +14,7 @@ import { StudentForm } from "./components/StudentForm";
 import { GuardianList } from "./components/GuardianList";
 import { TeacherList } from "./components/TeacherList";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.studentId, "studentId not found");
 
   const student = await getStudentByIdAsync(Number(params.studentId));
@@ -29,7 +29,7 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   invariant(params.studentId, "studentId not found");
 
   const formData = await request.formData();

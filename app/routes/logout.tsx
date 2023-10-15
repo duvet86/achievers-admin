@@ -1,10 +1,10 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { redirect } from "react-router";
 
 import { getCurrentHost, isProduction } from "~/services";
 import { authenticator_dev } from "~/services/session-dev.server";
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   if (isProduction()) {
     return redirect(
       getCurrentHost(request) + "/.auth/logout?post_logout_redirect_uri=/",

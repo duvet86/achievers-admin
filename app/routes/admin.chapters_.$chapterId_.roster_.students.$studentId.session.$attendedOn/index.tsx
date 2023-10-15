@@ -1,10 +1,10 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import { Select, SubmitFormButton, Title } from "~/components";
+import { BackHeader, Select, SubmitFormButton, Title } from "~/components";
 
 import {
   asssignMentorAsync,
@@ -13,7 +13,7 @@ import {
 } from "./services.server";
 import dayjs from "dayjs";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.studentId, "studentId not found");
   invariant(params.attendedOn, "attendedOn not found");
@@ -39,7 +39,7 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
-export async function action({ params, request }: ActionArgs) {
+export async function action({ params, request }: ActionFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.studentId, "studentId not found");
   invariant(params.attendedOn, "attendedOn not found");
@@ -89,9 +89,9 @@ export default function Index() {
 
   return (
     <>
-      <Title>
-        Assign temporary mentor for "{dayjs(session).format("MMMM D, YYYY")}"
-      </Title>
+      <BackHeader to="../../../../" />
+
+      <Title>Assign mentor for "{dayjs(session).format("MMMM D, YYYY")}"</Title>
 
       {mentorToStudentAssignement.length > 0 && (
         <article className="prose max-w-none">

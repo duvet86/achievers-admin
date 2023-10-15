@@ -1,4 +1,4 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { redirect, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
@@ -14,7 +14,7 @@ import {
 
 import { Body } from "~/components";
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const azureUserId = await getCurrentUserADIdAsync(request);
 
   const azureUser = await getAzureUserWithRolesByIdAsync(request, azureUserId);

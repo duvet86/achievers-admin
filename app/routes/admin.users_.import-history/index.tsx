@@ -1,4 +1,4 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
@@ -13,7 +13,7 @@ import {
   getImportHistoryCountAsync,
 } from "./services.server";
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
 
   const previousPageSubmit = url.searchParams.get("previousBtn")?.toString();

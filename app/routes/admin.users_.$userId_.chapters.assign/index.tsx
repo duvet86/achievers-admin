@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
 import {
@@ -18,7 +18,7 @@ import {
   getUserAtChapterByIdAsync,
 } from "./services.server";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.userId, "userId not found");
 
   const [user, chapters] = await Promise.all([
@@ -36,7 +36,7 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   invariant(params.userId, "userId not found");
 
   const formData = await request.formData();

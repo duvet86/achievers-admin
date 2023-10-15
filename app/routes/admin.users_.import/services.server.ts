@@ -27,7 +27,7 @@ export async function getCurrentMentorsAsync() {
   });
 }
 
-type UserHistory = User & {
+export type UserHistory = User & {
   importedHistory: ImportedHistory | null;
 };
 

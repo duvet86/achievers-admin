@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { unstable_createRemixStub } from "@remix-run/testing";
+import { createRemixStub } from "@remix-run/testing";
 
 import { json } from "@remix-run/node";
 
@@ -7,10 +7,10 @@ import Page from "./index";
 
 describe("Admin /users", () => {
   it("should return empty list", async () => {
-    let RemixStub = unstable_createRemixStub([
+    let RemixStub = createRemixStub([
       {
         path: "/",
-        element: <Page />,
+        Component: Page,
         loader() {
           return json({
             chapters: [],
@@ -32,10 +32,10 @@ describe("Admin /users", () => {
   });
 
   it("should return list of users", async () => {
-    let RemixStub = unstable_createRemixStub([
+    let RemixStub = createRemixStub([
       {
         path: "/",
-        element: <Page />,
+        Component: Page,
         loader() {
           return json({
             chapters: [],
@@ -71,10 +71,10 @@ describe("Admin /users", () => {
   });
 
   it("should have title", async () => {
-    let RemixStub = unstable_createRemixStub([
+    let RemixStub = createRemixStub([
       {
         path: "/",
-        element: <Page />,
+        Component: Page,
         loader() {
           return json({
             chapters: [],
@@ -93,10 +93,10 @@ describe("Admin /users", () => {
   });
 
   it("should have link to 'import from file'", async () => {
-    let RemixStub = unstable_createRemixStub([
+    let RemixStub = createRemixStub([
       {
         path: "/",
-        element: <Page />,
+        Component: Page,
         loader() {
           return json({
             chapters: [],

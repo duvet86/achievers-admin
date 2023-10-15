@@ -1,4 +1,4 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
@@ -10,7 +10,7 @@ import { Title, BackHeader } from "~/components";
 
 import { getMentorsWithStudentsAsync } from "./services.server";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const mentorsWithStudents = await getMentorsWithStudentsAsync(

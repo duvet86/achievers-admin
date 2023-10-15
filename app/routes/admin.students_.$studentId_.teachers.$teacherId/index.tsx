@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { Prisma } from "@prisma/client";
 
 import { json } from "@remix-run/node";
@@ -19,7 +19,7 @@ import {
   updateTeacherByIdAsync,
 } from "./services.server";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.studentId, "studentId not found");
   invariant(params.teacherId, "teacherId not found");
 
@@ -41,7 +41,7 @@ export async function loader({ params }: LoaderArgs) {
   }
 }
 
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   invariant(params.studentId, "studentId not found");
   invariant(params.teacherId, "teacherId not found");
 

@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
@@ -13,7 +13,7 @@ import {
   removeMentorStudentAssignement,
 } from "./services.server";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.mentorId, "mentorId not found");
   invariant(params.studentId, "studentId not found");
@@ -34,7 +34,7 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
-export async function action({ params }: ActionArgs) {
+export async function action({ params }: ActionFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.mentorId, "mentorId not found");
   invariant(params.studentId, "studentId not found");

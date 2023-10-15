@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
@@ -18,7 +18,7 @@ import {
 } from "./services.server";
 import { Cancel } from "iconoir-react";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.mentorId, "mentorId not found");
 
@@ -36,7 +36,7 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.mentorId, "mentorId not found");
 

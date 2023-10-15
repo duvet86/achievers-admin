@@ -36,7 +36,7 @@ export default function TermCalendar({ datesInTerm, students }: Props) {
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       if (e.target.value === "assign-temp-mentor") {
         navigate(
-          `/admin/chapters/${chapterId}/students/${studentId}/session/${sessionDate}`,
+          `/admin/chapters/${chapterId}/roster/students/${studentId}/session/${sessionDate}`,
         );
       } else {
         submit(

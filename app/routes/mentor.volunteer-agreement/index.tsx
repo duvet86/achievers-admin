@@ -1,4 +1,4 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
@@ -7,7 +7,7 @@ import { Checkbox, DateInput, Input, Title } from "~/components";
 
 import { getUserByAzureADIdAsync, getCurrentUserADIdAsync } from "~/services";
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const azureUserId = await getCurrentUserADIdAsync(request);
 
   const user = await getUserByAzureADIdAsync(azureUserId);

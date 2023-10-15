@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { UpdateInductionCommand } from "./services.server";
 
 import { json } from "@remix-run/node";
@@ -21,7 +21,7 @@ import {
 
 import { getUserByIdAsync, updateInductionAsync } from "./services.server";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.userId, "userId not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
@@ -31,7 +31,7 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   invariant(params.userId, "userId not found");
 
   const formData = await request.formData();

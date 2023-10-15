@@ -30,7 +30,7 @@ export async function getCurrentStudentsAsync() {
   });
 }
 
-type StudentHistory = Student & {
+export type StudentHistory = Student & {
   importedStudentHistory: ImportedStudentHistory | null;
 };
 

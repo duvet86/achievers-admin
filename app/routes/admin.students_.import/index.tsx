@@ -1,4 +1,5 @@
-import type { ActionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, TypedResponse } from "@remix-run/node";
+import type { StudentHistory } from "./services.server";
 
 import {
   unstable_createMemoryUploadHandler,
@@ -17,7 +18,14 @@ import {
   importSpreadsheetStudentsAsync,
 } from "./services.server";
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({
+  request,
+}: ActionFunctionArgs): Promise<
+  TypedResponse<{
+    newStudents: StudentHistory[];
+    message: null | string;
+  }>
+> => {
   const uploadHandler = unstable_createMemoryUploadHandler({
     maxPartSize: 500_000,
   });

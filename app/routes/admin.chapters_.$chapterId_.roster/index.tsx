@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
 import {
@@ -21,7 +21,7 @@ import {
 } from "./services.server";
 import TermCalendar from "./components/TermCalendar";
 
-export async function loader({ params, request }: LoaderArgs) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const url = new URL(request.url);
@@ -41,7 +41,7 @@ export async function loader({ params, request }: LoaderArgs) {
   });
 }
 
-export async function action({ params, request }: ActionArgs) {
+export async function action({ params, request }: ActionFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const bodyData: SessionCommand = await request.json();

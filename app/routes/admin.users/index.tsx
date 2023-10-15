@@ -1,4 +1,4 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { useLoaderData, Link, Form, useSearchParams } from "@remix-run/react";
 import { json } from "@remix-run/node";
@@ -19,7 +19,7 @@ import ActionsDropdown from "./components/ActionsDropdown";
 import FormInputs from "./components/FormInputs";
 import Pagination from "./components/Pagination";
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
 
   const chapterId = url.searchParams.get("chapterId");

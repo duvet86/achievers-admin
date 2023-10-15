@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { Prisma } from "@prisma/client";
 import type { AzureUserWebAppWithRole } from "~/services";
 
@@ -24,7 +24,7 @@ import { AssignedChapterList } from "./components/AssignedChapterList";
 import { CheckList } from "./components/CheckList";
 import { Header } from "./components/Header";
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.userId, "userId not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
@@ -64,7 +64,7 @@ export async function loader({ request, params }: LoaderArgs) {
   });
 }
 
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   invariant(params.userId, "userId not found");
 
   const formData = await request.formData();

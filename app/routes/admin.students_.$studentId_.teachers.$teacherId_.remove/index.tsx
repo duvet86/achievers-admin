@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
@@ -9,7 +9,7 @@ import { BackHeader, Title } from "~/components";
 import { getTeacherByIdAsync, deleteTeacherByIdAsync } from "./services.server";
 import { Cancel } from "iconoir-react";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.studentId, "studentId not found");
   invariant(params.teacherId, "teacherId not found");
 
@@ -25,7 +25,7 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
-export async function action({ params }: ActionArgs) {
+export async function action({ params }: ActionFunctionArgs) {
   invariant(params.studentId, "studentId not found");
   invariant(params.teacherId, "teacherId not found");
 
