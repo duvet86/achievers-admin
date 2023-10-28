@@ -11,6 +11,15 @@ Achievers Management Web App is an application made to:
 ## Installation
 
 - Install docker from here: https://www.docker.com/products/docker-desktop/
+
+    <details>
+        <summary>
+        Have mysql installed on your computer already?
+        </summary>
+        <p>If you have a version of mysql already installed on your computer, uninstall it. <a href="https://phoenixnap.com/kb/uninstall-mysql" target="_blank">start here.</a></p>
+        <p>This is because the local installation and the docker image conflict and a connection cannot be made by the app. <a href="https://stackoverflow.com/questions/68922032/prisma-cannot-authenticate-database-server" target="_blank"> see here for more info.</a></p>
+    </details>
+
 - Open a terminal/command line and type:
 
 ```bash
@@ -32,6 +41,18 @@ npm install
 ```
 
 - Rename the .env.example file to .env and fill the require values
+
+- To add the achievers db to the container setup above, run:
+
+```bash
+npm run setup
+```
+
+- And to begin local development:
+
+```bash
+npm run dev
+```
 
 ## Usage
 
