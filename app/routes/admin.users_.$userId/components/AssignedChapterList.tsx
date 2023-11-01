@@ -3,7 +3,7 @@ import type { loader } from "../index";
 
 import { Link } from "@remix-run/react";
 
-import { Cancel, HomeSimpleDoor } from "iconoir-react";
+import { Xmark, HomeSimpleDoor } from "iconoir-react";
 
 interface Props {
   loaderData: SerializeFrom<typeof loader>;
@@ -40,7 +40,7 @@ export function AssignedChapterList({ loaderData: { user } }: Props) {
                     to={`chapters/${chapter.id}/delete`}
                     className="btn btn-error btn-xs w-full gap-2"
                   >
-                    <Cancel className="h-4 w-4" />
+                    <Xmark className="h-4 w-4" />
                     Remove
                   </Link>
                 </td>

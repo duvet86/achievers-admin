@@ -5,7 +5,7 @@ import { useLoaderData, Link } from "@remix-run/react";
 import {
   UserCircle,
   GraduationCap,
-  ShopAlt,
+  ShopFourTiles,
   NavArrowRight,
 } from "iconoir-react";
 
@@ -87,7 +87,7 @@ export default function Index() {
 
           <div className="stat">
             <div className="stat-figure text-secondary">
-              <ShopAlt className="inline-block h-8 w-8 stroke-current" />
+              <ShopFourTiles className="inline-block h-8 w-8 stroke-current" />
             </div>
             <div className="stat-title">Chapters</div>
             <div className="stat-value" data-testid="totalChapters">

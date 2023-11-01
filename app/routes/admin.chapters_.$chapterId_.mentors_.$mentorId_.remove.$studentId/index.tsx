@@ -4,7 +4,7 @@ import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import { Cancel } from "iconoir-react";
+import { Xmark } from "iconoir-react";
 
 import { BackHeader, Title } from "~/components";
 
@@ -73,7 +73,7 @@ export default function Index() {
 
           <div className="float-right">
             <button className="btn btn-error w-52 gap-5" type="submit">
-              <Cancel className="h-6 w-6" />
+              <Xmark className="h-6 w-6" />
               Remove
             </button>
           </div>

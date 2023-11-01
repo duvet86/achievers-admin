@@ -10,7 +10,7 @@ import {
   getGuardianByIdAsync,
   deleteGuardianByIdAsync,
 } from "./services.server";
-import { Cancel } from "iconoir-react";
+import { Xmark } from "iconoir-react";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.studentId, "studentId not found");
@@ -59,7 +59,7 @@ export default function Index() {
 
           <div className="float-right">
             <button className="btn btn-error w-52 gap-5" type="submit">
-              <Cancel className="h-6 w-6" />
+              <Xmark className="h-6 w-6" />
               Remove
             </button>
           </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Cancel } from "iconoir-react";
+import { Xmark } from "iconoir-react";
 import { useClientRect } from "~/services";
 
 interface AutocompleteOption {
@@ -71,7 +71,7 @@ export function Autocomplete({ initialOptions, name, placeholder }: Props) {
             })
           }
         >
-          <Cancel className="h-6 w-6" />
+          <Xmark className="h-6 w-6" />
         </div>
       </div>
 

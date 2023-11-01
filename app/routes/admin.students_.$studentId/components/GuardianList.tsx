@@ -3,7 +3,7 @@ import type { loader } from "../index";
 
 import { Link } from "@remix-run/react";
 
-import { Cancel, HomeShield, PageEdit } from "iconoir-react";
+import { Xmark, HomeShield, PageEdit } from "iconoir-react";
 import { SubTitle } from "~/components";
 
 interface Props {
@@ -49,7 +49,7 @@ export function GuardianList({ loaderData: { student } }: Props) {
                       className="btn btn-error join-item btn-xs w-1/2 gap-2"
                       to={`guardians/${id}/remove`}
                     >
-                      <Cancel className="h-4 w-4" />
+                      <Xmark className="h-4 w-4" />
                       <span className="hidden lg:block">Remove</span>
                     </Link>
                   </div>

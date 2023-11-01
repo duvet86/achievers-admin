@@ -16,7 +16,7 @@ import {
   getMentorWithStudentsAsync,
   getStudentsInChapterAsync,
 } from "./services.server";
-import { Cancel } from "iconoir-react";
+import { Xmark } from "iconoir-react";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -92,7 +92,7 @@ export default function Index() {
                       to={`remove/${id}`}
                       className="btn btn-error btn-xs gap-5"
                     >
-                      <Cancel className="h-4 w-4" />
+                      <Xmark className="h-4 w-4" />
                       Remove
                     </Link>
                   </div>
