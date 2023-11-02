@@ -24,7 +24,19 @@ exports[`Navbar > Navbar snapshot 1`] = `
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              d="M3 5h18M3 12h18M3 19h18"
+              d="M3 5H21"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M3 12H21"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M3 19H21"
               stroke="currentColor"
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -82,13 +94,19 @@ exports[`Navbar > Navbar snapshot 1`] = `
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"
+                  d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z"
                   stroke="currentColor"
                   stroke-linecap="round"
                   stroke-linejoin="round"
                 />
                 <path
-                  d="M4.271 18.346S6.5 15.5 12 15.5s7.73 2.846 7.73 2.846M12 12a3 3 0 100-6 3 3 0 000 6z"
+                  d="M4.271 18.3457C4.271 18.3457 6.50002 15.5 12 15.5C17.5 15.5 19.7291 18.3457 19.7291 18.3457"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M12 12C13.6569 12 15 10.6569 15 9C15 7.34315 13.6569 6 12 6C10.3431 6 9 7.34315 9 9C9 10.6569 10.3431 12 12 12Z"
                   stroke="currentColor"
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -98,7 +116,7 @@ exports[`Navbar > Navbar snapshot 1`] = `
           </label>
         </div>
         <ul
-          class="dropdown-content menu rounded-box w-52 bg-base-100 p-2 shadow"
+          class="menu dropdown-content rounded-box w-52 bg-base-100 p-2 shadow"
           tabindex="0"
         >
           <li>
@@ -117,7 +135,13 @@ exports[`Navbar > Navbar snapshot 1`] = `
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  d="M12 12h7m0 0l-3 3m3-3l-3-3M19 6V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2v-1"
+                  d="M12 12H19M19 12L16 15M19 12L16 9"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M19 6V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V18"
                   stroke="currentColor"
                   stroke-linecap="round"
                   stroke-linejoin="round"
