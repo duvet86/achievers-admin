@@ -1,7 +1,7 @@
 import { Link } from "@remix-run/react";
 
 import {
-  KeyAlt,
+  Key,
   NavArrowDown,
   WarningTriangle,
   BinFull,
@@ -30,7 +30,7 @@ export function Header(props: Props) {
           </label>
           <ul
             tabIndex={0}
-            className="dropdown-content menu rounded-box z-[1] w-56 border border-base-300 bg-base-100 p-2 shadow"
+            className="menu dropdown-content rounded-box z-[1] w-56 border border-base-300 bg-base-100 p-2 shadow"
           >
             {getLinks(props)}
           </ul>
@@ -79,7 +79,7 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
     <>
       <li>
         <Link to="give-access" className="gap-4 font-semibold text-success">
-          <KeyAlt className="h-6 w-6" />
+          <Key className="h-6 w-6" />
           Give access
         </Link>
       </li>

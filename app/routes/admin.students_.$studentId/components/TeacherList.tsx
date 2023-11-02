@@ -3,7 +3,7 @@ import type { loader } from "../index";
 
 import { Link } from "@remix-run/react";
 
-import { PageEdit, GraduationCap, Cancel } from "iconoir-react";
+import { PageEdit, GraduationCap, Xmark } from "iconoir-react";
 import { SubTitle } from "~/components";
 
 interface Props {
@@ -49,7 +49,7 @@ export function TeacherList({ loaderData: { student } }: Props) {
                       className="btn btn-error join-item btn-xs w-1/2 gap-2"
                       to={`teachers/${id}/remove`}
                     >
-                      <Cancel className="h-4 w-4" />
+                      <Xmark className="h-4 w-4" />
                       <span className="hidden lg:block">Remove</span>
                     </Link>
                   </div>

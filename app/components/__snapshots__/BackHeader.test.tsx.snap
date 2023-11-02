@@ -18,7 +18,7 @@ exports[`BackHeader > BackHeader snapshot 1`] = `
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M21 12H3m0 0l8.5-8.5M3 12l8.5 8.5"
+            d="M21 12L3 12M3 12L11.5 3.5M3 12L11.5 20.5"
             stroke="currentColor"
             stroke-linecap="round"
             stroke-linejoin="round"

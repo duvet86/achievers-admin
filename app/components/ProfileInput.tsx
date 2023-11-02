@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 
-import { Cancel } from "iconoir-react";
+import { Xmark } from "iconoir-react";
 
 interface Props {
   defaultValue: string | null;
@@ -47,7 +47,7 @@ export default function ProfileInput({ defaultValue }: Props) {
               setProfilePicturePath(null);
             }}
           >
-            <Cancel className="h-6 w-6" />
+            <Xmark className="h-6 w-6" />
             Remove
           </button>
         )}

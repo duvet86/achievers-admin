@@ -11,8 +11,8 @@ import {
   ShieldCheck,
   Group,
   Check,
-  VerifiedUser,
-  Cancel,
+  UserBadgeCheck,
+  Xmark,
   ThumbsUp,
 } from "iconoir-react";
 import dayjs from "dayjs";
@@ -34,7 +34,7 @@ function CheckStatus({ isCompleted }: CheckStatusProps) {
         </>
       ) : (
         <>
-          <Cancel className="h-6 w-6 text-error" /> No
+          <Xmark className="h-6 w-6 text-error" /> No
         </>
       )}
     </div>
@@ -190,7 +190,7 @@ export function CheckList({
           <tr>
             <th className="p-2">
               <div className="flex items-center gap-4">
-                <VerifiedUser className="h-6 w-6" />
+                <UserBadgeCheck className="h-6 w-6" />
                 Volunteer agreement
               </div>
             </th>

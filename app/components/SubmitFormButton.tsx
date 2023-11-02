@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import classnames from "classnames";
 
-import { Check, SaveActionFloppy, WarningCircle } from "iconoir-react";
+import { Check, FloppyDiskArrowIn, WarningCircle } from "iconoir-react";
 
 interface Props {
   label?: string;
@@ -32,7 +32,7 @@ export function SubmitFormButton({
       />
 
       <button className="btn btn-primary w-52 gap-5" type="submit">
-        <SaveActionFloppy className="h-6 w-6" />
+        <FloppyDiskArrowIn className="h-6 w-6" />
         {label}
       </button>
     </div>
