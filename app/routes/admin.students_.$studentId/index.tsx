@@ -13,6 +13,7 @@ import { getStudentByIdAsync, updateStudentByIdAsync } from "./services.server";
 import { StudentForm } from "./components/StudentForm";
 import { GuardianList } from "./components/GuardianList";
 import { TeacherList } from "./components/TeacherList";
+import { AssignedChapterList } from "./components/AssignedChapterList";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.studentId, "studentId not found");
@@ -112,12 +113,16 @@ export default function Index() {
 
         <hr className="my-8 md:hidden" />
 
-        <div className="flex-1">
+        <div className="flex-1 overflow-y-auto">
           <GuardianList loaderData={loaderData} />
 
           <hr className="my-8" />
 
           <TeacherList loaderData={loaderData} />
+
+          <hr className="my-8" />
+
+          <AssignedChapterList loaderData={loaderData} />
         </div>
       </div>
     </div>
