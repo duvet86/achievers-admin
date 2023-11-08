@@ -3,7 +3,7 @@ import type { loader } from "../index";
 
 import { Link } from "@remix-run/react";
 
-import { GraduationCap, Xmark } from "iconoir-react";
+import { GraduationCap, PageEdit, Xmark } from "iconoir-react";
 import { SubTitle } from "~/components";
 
 interface Props {
@@ -34,7 +34,15 @@ export function AssignedChapterList({ loaderData: { student } }: Props) {
                 <td className="border p-2">
                   <div className="join w-full">
                     <Link
-                      className="btn btn-error join-item btn-xs w-full gap-2"
+                      className="btn btn-success join-item btn-xs w-1/2 gap-2"
+                      to={`chapters/${chapterId}`}
+                    >
+                      <PageEdit className="h-4 w-4" />
+                      <span className="hidden lg:block">Edit</span>
+                    </Link>
+
+                    <Link
+                      className="btn btn-error join-item btn-xs w-1/2 gap-2"
                       to={`chapters/${chapterId}/remove`}
                     >
                       <Xmark className="h-4 w-4" />
@@ -44,7 +52,7 @@ export function AssignedChapterList({ loaderData: { student } }: Props) {
                 </td>
               </tr>
             ))}
-            {!student.studentAtChapter && (
+            {!student.studentAtChapter.length && (
               <tr>
                 <td colSpan={3} className="border p-2">
                   <i>This student is not assigned to a chapter</i>
@@ -55,20 +63,14 @@ export function AssignedChapterList({ loaderData: { student } }: Props) {
         </table>
       </div>
 
-      <div className="mt-6 flex justify-end">
-        <Link
-          to={
-            "chapters/" +
-            (student.studentAtChapter.length
-              ? student.studentAtChapter[0]?.chapterId.toString()
-              : "new")
-          }
-          className="btn btn-primary w-64 gap-4"
-        >
-          <GraduationCap className="h-6 w-6" />
-          {student.studentAtChapter.length ? "Edit chapter" : "Add a chapter"}
-        </Link>
-      </div>
+      {!student.studentAtChapter.length && (
+        <div className="mt-6 flex justify-end">
+          <Link to={"chapters/new"} className="btn btn-primary w-64 gap-4">
+            <GraduationCap className="h-6 w-6" />
+            Add a chapter
+          </Link>
+        </div>
+      )}
     </>
   );
 }
