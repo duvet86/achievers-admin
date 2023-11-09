@@ -39,6 +39,18 @@ export async function getStudentByIdAsync(id: number) {
           schoolName: true,
         },
       },
+      studentAtChapter: {
+        select: {
+          chapter: {
+            select: {
+              name: true,
+            },
+          },
+          chapterId: true,
+          assignedAt: true,
+          assignedBy: true,
+        },
+      },
     },
   });
 }
