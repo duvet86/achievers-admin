@@ -46,25 +46,3 @@ export async function assignChapterToStudentAsync(
     },
   });
 }
-
-export async function removeChapterFromStudentAsync(
-  studentId: StudentAtChapter["studentId"],
-  chapterId: StudentAtChapter["chapterId"],
-) {
-  await prisma.studentAtChapter.delete({
-    where: {
-      chapterId_studentId: { chapterId, studentId },
-    },
-  });
-}
-
-// export async function changeChapterForStudentAsync(
-//   studentId: StudentAtChapter["studentId"],
-//   chapterIdFrom: StudentAtChapter["chapterId"] | "new",
-//   chapterIdTo: StudentAtChapter["chapterId"],
-//   azureADId: string,
-// ) {
-//   if (chapterIdFrom !== "new")
-//     await removeChapterFromStudentAsync(studentId, chapterIdFrom);
-//   await assignChapterToStudentAsync(studentId, chapterIdTo, azureADId);
-// }

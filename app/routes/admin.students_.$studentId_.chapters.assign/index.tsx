@@ -14,7 +14,6 @@ import { Select, BackHeader, SubmitFormButton, Title } from "~/components";
 
 import {
   assignChapterToStudentAsync,
-  removeChapterFromStudentAsync,
   getChaptersAsync,
   getStudentAtChapterByIdAsync,
 } from "./services.server";
@@ -29,16 +28,12 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   return json({
     student,
-    availableChapters:
-      params.chapterId === "new"
-        ? chapters
-        : chapters.filter(({ id }) => parseInt(params.chapterId || "") !== id),
+    availableChapters: chapters,
   });
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
   invariant(params.studentId, "student not found");
-  invariant(params.chapterId, "chapter not found");
 
   const formData = await request.formData();
 
@@ -51,14 +46,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
 
   const currentUserAzureId = await getCurrentUserADIdAsync(request);
-
-  if (params.chapterId !== "new") {
-    await removeChapterFromStudentAsync(
-      Number(params.studentId),
-      Number(params.chapterId),
-    );
-  }
-
   await assignChapterToStudentAsync(
     Number(params.studentId),
     Number(chapterId),
