@@ -28,19 +28,7 @@ export async function getUsersCountAsync(
             }
           : {},
         {
-          OR: [
-            {
-              firstName: {
-                contains: searchTerm?.trim(),
-              },
-            },
-            {
-              lastName: {
-                contains: searchTerm?.trim(),
-              },
-            },
-            { email: { contains: searchTerm?.trim() } },
-          ],
+          OR: makeOrQueryFromSearchTerm(searchTerm),
         },
       ],
     },
@@ -115,19 +103,7 @@ export async function getUsersAsync(
             }
           : {},
         {
-          OR: [
-            {
-              firstName: {
-                contains: searchTerm?.trim(),
-              },
-            },
-            {
-              lastName: {
-                contains: searchTerm?.trim(),
-              },
-            },
-            { email: { contains: searchTerm?.trim() } },
-          ],
+          OR: makeOrQueryFromSearchTerm(searchTerm),
         },
       ],
     },
@@ -166,4 +142,30 @@ export function getNumberCompletedChecks(user: any): number {
   }
 
   return checks;
+}
+
+/**
+ * split a search term at the spaces and generate
+ * objects to be passed to a prisma query for firstName
+ * lastName, and email for each of the new search terms
+ * @param searchTerm the search term
+ * @returns an array of prisma "where" objects
+ */
+function makeOrQueryFromSearchTerm(searchTerm: string | null) {
+  return searchTerm
+    ?.trim()
+    ?.split(" ")
+    ?.flatMap((x) => [
+      {
+        firstName: {
+          contains: x?.trim(),
+        },
+      },
+      {
+        lastName: {
+          contains: x?.trim(),
+        },
+      },
+      { email: { contains: x?.trim() } },
+    ]);
 }
