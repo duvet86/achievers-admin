@@ -130,8 +130,8 @@ export async function createSessionAsync(
 }
 
 export function getDatesForTerm(selectedTerm: Term) {
-  let firstDayOfTermStart = selectedTerm.start.startOf("week");
-  const firstDayOfTermEnd = selectedTerm.end.startOf("week");
+  let firstDayOfTermStart = selectedTerm.start.startOf("week").day(6);
+  const firstDayOfTermEnd = selectedTerm.end.startOf("week").day(6);
 
   if (firstDayOfTermStart < selectedTerm.start) {
     firstDayOfTermStart = firstDayOfTermStart.add(1, "week");
