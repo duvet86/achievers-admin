@@ -47,7 +47,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
     return json({
       message: "No mentor selected",
     });
-    // throw new Error();
   }
 
   await assignStudentToMentorAsync(
