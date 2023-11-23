@@ -1,4 +1,5 @@
 import { prisma } from "~/db.server";
+import { searchAcrossFields } from "~/services/dbUtils.server";
 
 export async function getChaptersAsync() {
   return await prisma.chapter.findMany({
@@ -28,7 +29,14 @@ export async function getStudentsCountAsync(
             }
           : {},
         {
-          OR: makeOrQueryFromSearchTerm(searchTerm),
+          OR: searchAcrossFields(
+            searchTerm,
+            (searchTerm: string) =>
+              [
+                { firstName: { contains: searchTerm } },
+                { lastName: { contains: searchTerm } },
+              ] as const,
+          ),
         },
       ],
     },
@@ -72,7 +80,14 @@ export async function getStudentsAsync(
             }
           : {},
         {
-          OR: makeOrQueryFromSearchTerm(searchTerm),
+          OR: searchAcrossFields(
+            searchTerm,
+            (searchTerm: string) =>
+              [
+                { firstName: { contains: searchTerm } },
+                { lastName: { contains: searchTerm } },
+              ] as const,
+          ),
         },
       ],
     },
@@ -82,29 +97,4 @@ export async function getStudentsAsync(
     skip: numberItems * pageNumber,
     take: numberItems,
   });
-}
-
-/**
- * split a search term at the spaces and generate
- * objects to be passed to a prisma query for firstName
- * lastName, and email for each of the new search terms
- * @param searchTerm the search term
- * @returns an array of prisma "where" objects
- */
-function makeOrQueryFromSearchTerm(searchTerm: string | null) {
-  return searchTerm
-    ?.trim()
-    ?.split(" ")
-    ?.flatMap((x) => [
-      {
-        firstName: {
-          contains: x?.trim(),
-        },
-      },
-      {
-        lastName: {
-          contains: x?.trim(),
-        },
-      },
-    ]);
 }
