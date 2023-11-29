@@ -62,8 +62,8 @@ export default function Index() {
             <div className="stat-desc" data-testid="totalMentors">
               of {mentorsCount} total mentors
             </div>
-            <div className="stat-actions">
-              <Link to="/admin/users" className="btn">
+            <div className="stat-actions col-span-2 w-max">
+              <Link to="/admin/users" className="btn w-max">
                 View mentors <NavArrowRight className="h-6 w-6" />
               </Link>
             </div>
@@ -78,8 +78,8 @@ export default function Index() {
               {studentsCount}
             </div>
             <div className="stat-desc">&nbsp;</div>
-            <div className="stat-actions">
-              <Link to="/admin/students" className="btn">
+            <div className="stat-actions col-span-2 w-max">
+              <Link to="/admin/students" className="btn w-max">
                 View students <NavArrowRight className="h-6 w-6" />
               </Link>
             </div>
@@ -94,8 +94,8 @@ export default function Index() {
               {chaptersCount}
             </div>
             <div className="stat-desc">&nbsp;</div>
-            <div className="stat-actions">
-              <Link to="/admin/chapters" className="btn">
+            <div className="stat-actions col-span-2 w-max">
+              <Link to="/admin/chapters" className="btn w-max">
                 View chapters <NavArrowRight className="h-6 w-6" />
               </Link>
             </div>
