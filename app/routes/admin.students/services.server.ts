@@ -1,4 +1,5 @@
 import { prisma } from "~/db.server";
+import { searchAcrossFields } from "~/services/dbUtils.server";
 
 export async function getChaptersAsync() {
   return await prisma.chapter.findMany({
@@ -28,18 +29,14 @@ export async function getStudentsCountAsync(
             }
           : {},
         {
-          OR: [
-            {
-              firstName: {
-                contains: searchTerm?.trim(),
-              },
-            },
-            {
-              lastName: {
-                contains: searchTerm?.trim(),
-              },
-            },
-          ],
+          OR: searchAcrossFields(
+            searchTerm,
+            (searchTerm: string) =>
+              [
+                { firstName: { contains: searchTerm } },
+                { lastName: { contains: searchTerm } },
+              ] as const,
+          ),
         },
       ],
     },
@@ -83,18 +80,14 @@ export async function getStudentsAsync(
             }
           : {},
         {
-          OR: [
-            {
-              firstName: {
-                contains: searchTerm?.trim(),
-              },
-            },
-            {
-              lastName: {
-                contains: searchTerm?.trim(),
-              },
-            },
-          ],
+          OR: searchAcrossFields(
+            searchTerm,
+            (searchTerm: string) =>
+              [
+                { firstName: { contains: searchTerm } },
+                { lastName: { contains: searchTerm } },
+              ] as const,
+          ),
         },
       ],
     },
