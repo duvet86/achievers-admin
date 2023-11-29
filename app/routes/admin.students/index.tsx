@@ -93,11 +93,8 @@ export default function Index() {
 
   return (
     <>
-      <div className="flex items-center">
+      <div className="flex items-center justify-between">
         <Title>Students</Title>
-
-        <div className="flex-1"></div>
-
         <ActionsDropdown />
       </div>
 

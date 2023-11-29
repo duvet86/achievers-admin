@@ -29,13 +29,13 @@ export default function Index() {
     <>
       <div className="flex items-center justify-between">
         <BackHeader to="../.." />
-        <Link relative="path" to={"../students"} className="min-w-40 btn gap-2">
+        <Link relative="path" to={"../mentors"} className="min-w-40 btn gap-2">
           <CoinsSwap className="h-6 w-6" />
-          Swap to students view
+          Swap to mentors view
         </Link>
       </div>
 
-      <Title>Mentors with students</Title>
+      <Title>Students with Mentors</Title>
 
       <div className="overflow-auto bg-white">
         <table className="table table-zebra">
@@ -45,10 +45,7 @@ export default function Index() {
                 Full name
               </th>
               <th align="left" className="p-2">
-                Frequency
-              </th>
-              <th align="left" className="p-2">
-                Students
+                Mentors
               </th>
               <th align="right" className="p-2">
                 Action
@@ -57,25 +54,16 @@ export default function Index() {
           </thead>
           <tbody>
             {mentorsWithStudents.map(
-              ({
-                id,
-                firstName,
-                lastName,
-                frequencyInDays,
-                mentorToStudentAssignement,
-              }) => (
+              ({ id, firstName, lastName, mentorToStudentAssignement }) => (
                 <tr key={id}>
                   <td className="border p-2">
                     {firstName} {lastName}
                   </td>
-                  <td className="border p-2">
-                    {frequencyInDays === 14 ? "Fortnightly" : "Weekly"}
-                  </td>
                   <td className="border">
                     <ul className="list-disc pl-2">
-                      {mentorToStudentAssignement.map(({ student }) => (
-                        <li key={student.id}>
-                          {student.firstName} {student.lastName}
+                      {mentorToStudentAssignement.map(({ user }) => (
+                        <li key={user.id}>
+                          {user.firstName} {user.lastName}
                         </li>
                       ))}
                     </ul>

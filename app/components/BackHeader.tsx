@@ -2,10 +2,14 @@ import { useNavigate } from "@remix-run/react";
 
 import { ArrowLeft } from "iconoir-react";
 
-export function BackHeader() {
+interface Props {
+  to?: string;
+}
+
+export function BackHeader({ to }: Props) {
   const navigate = useNavigate();
 
-  const goBack = () => navigate(-1);
+  const goBack = () => (to ? navigate(to, { relative: "path" }) : navigate(-1));
 
   return (
     <>
