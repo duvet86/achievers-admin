@@ -24,8 +24,8 @@ export default function ProfileInput({ defaultValue }: Props) {
             selectedImage
               ? URL.createObjectURL(selectedImage)
               : profilePicturePath
-              ? profilePicturePath
-              : "/images/profile-picture.webp"
+                ? profilePicturePath
+                : "/images/profile-picture.webp"
           }
           alt="profile"
           className="h-44 w-44"

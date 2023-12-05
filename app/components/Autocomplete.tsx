@@ -83,7 +83,7 @@ export function Autocomplete({ initialOptions, name, placeholder }: Props) {
       />
 
       <ul
-        className="menu dropdown-content rounded-box z-[1] max-h-80 w-52 flex-nowrap overflow-auto bg-base-100 p-2 shadow"
+        className="menu dropdown-content z-[1] max-h-80 w-52 flex-nowrap overflow-auto rounded-box bg-base-100 p-2 shadow"
         style={{ width: rect.width }}
       >
         {options.length === 0 && (
