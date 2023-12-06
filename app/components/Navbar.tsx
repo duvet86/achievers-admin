@@ -46,7 +46,7 @@ export function Navbar({ currentUser, environment }: Props) {
         </div>
         <ul
           tabIndex={0}
-          className="menu dropdown-content rounded-box w-52 bg-base-100 p-2 shadow"
+          className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow"
         >
           <li>
             <Link className="font-semibold" to="/logout">

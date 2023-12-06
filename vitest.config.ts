@@ -13,7 +13,11 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["dotenv/config", "./test/setup-test-env.ts"],
     exclude: [...configDefaults.exclude, "integration-tests/tests/*"],
-    minThreads: process.env.CI ? 1 : undefined,
-    maxThreads: process.env.CI ? 1 : undefined,
+    poolOptions: {
+      threads: {
+        minThreads: process.env.CI ? 1 : undefined,
+        maxThreads: process.env.CI ? 1 : undefined,
+      },
+    },
   },
 });

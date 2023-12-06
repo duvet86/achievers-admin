@@ -30,7 +30,7 @@ export function Header(props: Props) {
           </label>
           <ul
             tabIndex={0}
-            className="menu dropdown-content rounded-box z-[1] w-56 border border-base-300 bg-base-100 p-2 shadow"
+            className="menu dropdown-content z-[1] w-56 rounded-box border border-base-300 bg-base-100 p-2 shadow"
           >
             {getLinks(props)}
           </ul>

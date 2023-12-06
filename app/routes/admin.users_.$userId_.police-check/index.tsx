@@ -99,7 +99,7 @@ export default function Index() {
 
       <a
         href="https://wfv.identityservice.auspost.com.au/wfvselfinvite/wapol/invite-candidate"
-        className="link-info link mb-4"
+        className="link link-info mb-4"
         target="_blank"
         rel="noopener noreferrer"
       >
