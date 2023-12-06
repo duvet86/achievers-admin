@@ -127,7 +127,7 @@ exports[`Body > Body snapshot admin 1`] = `
               </label>
             </div>
             <ul
-              class="menu dropdown-content rounded-box w-52 bg-base-100 p-2 shadow"
+              class="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow"
               tabindex="0"
             >
               <li>
@@ -546,7 +546,7 @@ exports[`Body > Body snapshot mentor 1`] = `
               </label>
             </div>
             <ul
-              class="menu dropdown-content rounded-box w-52 bg-base-100 p-2 shadow"
+              class="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow"
               tabindex="0"
             >
               <li>
