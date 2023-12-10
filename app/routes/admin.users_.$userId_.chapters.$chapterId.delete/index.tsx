@@ -23,6 +23,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   );
 
   return json({
+    userId: params.userId,
     chapter,
   });
 }
@@ -40,12 +41,12 @@ export async function action({ params }: ActionFunctionArgs) {
 }
 
 export default function Assign() {
-  const { chapter } = useLoaderData<typeof loader>();
+  const { userId, chapter } = useLoaderData<typeof loader>();
   const transition = useNavigation();
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to={`/admin/users/${userId}`} />
 
       <Form method="post">
         <fieldset disabled={transition.state === "loading"}>

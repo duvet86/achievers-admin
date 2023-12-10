@@ -120,7 +120,7 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to="/admin/users" />
 
       <Title>Import from file</Title>
 

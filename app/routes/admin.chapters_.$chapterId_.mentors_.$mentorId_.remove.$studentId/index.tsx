@@ -30,6 +30,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
   }
 
   return json({
+    chapterId: params.chapterId,
+    mentorId: params.mentorId,
     mentorWithStudent,
   });
 }
@@ -51,13 +53,15 @@ export async function action({ params }: ActionFunctionArgs) {
 
 export default function Index() {
   const {
+    chapterId,
+    mentorId,
     mentorWithStudent: { user, student },
   } = useLoaderData<typeof loader>();
   const transition = useNavigation();
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to={`/admin/chapters/${chapterId}/mentors/${mentorId}`} />
 
       <Title>Remove student from mentor</Title>
 

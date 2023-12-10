@@ -128,7 +128,7 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to="/admin/students" />
 
       <Title>Import from file</Title>
 

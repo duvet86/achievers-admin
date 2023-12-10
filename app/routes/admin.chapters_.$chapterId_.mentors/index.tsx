@@ -28,7 +28,8 @@ export default function Index() {
   return (
     <>
       <div className="flex items-center justify-between">
-        <BackHeader to="../.." />
+        <BackHeader to="/admin/chapters" />
+
         <Link relative="path" to={"../students"} className="min-w-40 btn gap-2">
           <CoinsSwap className="h-6 w-6" />
           Swap to students view

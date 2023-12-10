@@ -29,6 +29,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const userAtChapterIds = user.userAtChapter.map(({ chapter }) => chapter.id);
 
   return json({
+    userId: params.userId,
     user,
     availableChapters: chapters.filter(
       ({ id }) => !userAtChapterIds.includes(id),
@@ -61,7 +62,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function Assign() {
-  const { user, availableChapters } = useLoaderData<typeof loader>();
+  const { userId, user, availableChapters } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const transition = useNavigation();
 
@@ -69,7 +70,7 @@ export default function Assign() {
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to={`/admin/users/${userId}`} />
 
       <Form method="post">
         <Title>Assign a chapter to "{user.email}"</Title>

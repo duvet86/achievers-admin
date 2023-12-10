@@ -50,7 +50,7 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to="/admin/users" />
 
       <Title>History of imported mentors</Title>
 

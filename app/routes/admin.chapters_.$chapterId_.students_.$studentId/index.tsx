@@ -31,6 +31,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   ]);
 
   return json({
+    chapterId: params.chapterId,
     availableMentors,
     studentWithMentors,
   });
@@ -62,15 +63,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Index() {
   const {
+    chapterId,
     availableMentors,
     studentWithMentors: { firstName, lastName, mentorToStudentAssignement },
   } = useLoaderData<typeof loader>();
 
   return (
     <>
-      {/* add the to because if they have just removed a mentor
-      this will try go to that remove page which will break */}
-      <BackHeader to={".."} />
+      <BackHeader to={`/admin/${chapterId}/students`} />
 
       <Title>Assign mentor to student</Title>
 

@@ -9,7 +9,7 @@ describe("BackHeader", () => {
   it("BackHeader snapshot", async () => {
     const { baseElement } = render(
       <MemoryRouter>
-        <BackHeader />
+        <BackHeader to="/" />
       </MemoryRouter>,
     );
 

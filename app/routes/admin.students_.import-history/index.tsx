@@ -50,7 +50,7 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to="/admin/students" />
 
       <Title>History of imported students</Title>
 

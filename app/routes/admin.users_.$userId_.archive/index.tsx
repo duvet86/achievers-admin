@@ -22,6 +22,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const user = await getUserByIdAsync(Number(params.userId));
 
   return json({
+    userId: params.userId,
     user,
   });
 }
@@ -59,11 +60,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Chapter() {
   const transition = useNavigation();
-  const { user } = useLoaderData<typeof loader>();
+  const { userId, user } = useLoaderData<typeof loader>();
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to={`/admin/users/${userId}`} />
 
       <Title>
         Archive "{user.firstName} {user.lastName}"

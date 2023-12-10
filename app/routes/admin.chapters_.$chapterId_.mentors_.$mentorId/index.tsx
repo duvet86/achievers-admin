@@ -31,6 +31,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   ]);
 
   return json({
+    chapterId: params.chapterId,
     availableStudents,
     mentorWithStudents,
   });
@@ -60,13 +61,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Index() {
   const {
+    chapterId,
     availableStudents,
     mentorWithStudents: { firstName, lastName, mentorToStudentAssignement },
   } = useLoaderData<typeof loader>();
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to={`/admin/chapters/${chapterId}/mentors`} />
 
       <Title>Assign student to mentor</Title>
 
