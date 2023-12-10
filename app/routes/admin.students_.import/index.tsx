@@ -80,9 +80,7 @@ export const action = async ({
   const existingStudentsLookup = currentStudents.reduce<
     Record<string, boolean>
   >((res, { firstName, lastName, dateOfBirth }) => {
-    res[
-      firstName.toLowerCase() + lastName.toLowerCase() + dateOfBirth.toString()
-    ] = true;
+    res[firstName.toLowerCase() + lastName.toLowerCase()] = true;
 
     return res;
   }, {});
@@ -91,8 +89,7 @@ export const action = async ({
     (fileStudent) =>
       existingStudentsLookup[
         fileStudent["First Name"].toLowerCase() +
-          fileStudent["Last Name"].toLowerCase() +
-          new Date(fileStudent["Date of Birth"]).toString()
+          fileStudent["Last Name"].toLowerCase()
       ] === undefined,
   );
 
