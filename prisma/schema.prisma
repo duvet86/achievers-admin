@@ -225,24 +225,25 @@ model Chapter {
 model Student {
   id Int @id @default(autoincrement())
 
-  firstName                  String
-  lastName                   String
-  startDate                  DateTime
-  dateOfBirth                DateTime
-  gender                     Gender
-  address                    String
-  allergies                  Boolean  @default(false)
-  hasApprovedToPublishPhotos Boolean  @default(false)
-  bestPersonToContact        String
-  bestContactMethod          String
-  schoolName                 String
-  yearLevel                  String
+  firstName String
+  lastName  String
+  gender    Gender
 
-  emergencyContactFullName     String
-  emergencyContactRelationship String
-  emergencyContactPhone        String
-  emergencyContactEmail        String
-  emergencyContactAddress      String
+  startDate                  DateTime?
+  dateOfBirth                DateTime?
+  address                    String?
+  allergies                  Boolean   @default(false)
+  hasApprovedToPublishPhotos Boolean   @default(false)
+  bestPersonToContact        String?
+  bestContactMethod          String?
+  schoolName                 String?
+  yearLevel                  String?
+
+  emergencyContactFullName     String?
+  emergencyContactRelationship String?
+  emergencyContactPhone        String?
+  emergencyContactEmail        String?
+  emergencyContactAddress      String?
 
   endDate DateTime?
 

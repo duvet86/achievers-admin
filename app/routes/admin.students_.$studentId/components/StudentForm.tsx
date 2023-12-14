@@ -58,10 +58,9 @@ export function StudentForm({ transition, loaderData: { student } }: Props) {
         />
 
         <Input
-          defaultValue={student.address}
+          defaultValue={student.address ?? undefined}
           label="Address"
           name="address"
-          required
         />
 
         <Radio
@@ -99,66 +98,57 @@ export function StudentForm({ transition, loaderData: { student } }: Props) {
         />
 
         <Input
-          defaultValue={student.bestPersonToContact}
+          defaultValue={student.bestPersonToContact ?? undefined}
           label="Best person to contact"
           name="bestPersonToContact"
-          required
         />
 
         <Input
-          defaultValue={student.bestContactMethod}
+          defaultValue={student.bestContactMethod ?? undefined}
           label="Best contact method"
           name="bestContactMethod"
-          required
         />
 
         <Input
-          defaultValue={student.schoolName}
+          defaultValue={student.schoolName ?? undefined}
           label="Name of the school"
           name="schoolName"
-          required
         />
 
         <Input
-          defaultValue={student.yearLevel}
+          defaultValue={student.yearLevel ?? undefined}
           label="Year level"
           name="yearLevel"
-          required
         />
 
         <Input
-          defaultValue={student.emergencyContactFullName}
+          defaultValue={student.emergencyContactFullName ?? undefined}
           label="Emergency contact full name"
           name="emergencyContactFullName"
-          required
         />
 
         <Input
-          defaultValue={student.emergencyContactRelationship}
+          defaultValue={student.emergencyContactRelationship ?? undefined}
           label="Emergency contact relationship"
           name="emergencyContactRelationship"
-          required
         />
 
         <Input
-          defaultValue={student.emergencyContactPhone}
+          defaultValue={student.emergencyContactPhone ?? undefined}
           label="Emergency contact phone"
           name="emergencyContactPhone"
-          required
         />
 
         <Input
-          defaultValue={student.emergencyContactEmail}
+          defaultValue={student.emergencyContactEmail ?? undefined}
           label="Emergency contact email"
           name="emergencyContactEmail"
-          required
         />
 
         <Input
-          defaultValue={student.emergencyContactAddress}
+          defaultValue={student.emergencyContactAddress ?? undefined}
           label="Emergency contact address"
           name="emergencyContactAddress"
-          required
         />
 
         <DateInput
