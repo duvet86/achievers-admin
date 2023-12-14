@@ -33,6 +33,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const uniqueMentors = mentors.filter((m) => !assignemntLookup[m.id]);
 
   return json({
+    chapterId: params.chapterId,
+    studentId: params.studentId,
     student,
     mentors: uniqueMentors,
     session: params.attendedOn,
@@ -75,6 +77,8 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
 export default function Index() {
   const {
+    chapterId,
+    studentId,
     student: { firstName, lastName, mentorToStudentAssignement },
     mentors,
     session,
@@ -89,7 +93,7 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to={`/admin/chapters/${chapterId}/students/${studentId}`} />
 
       <Title>Assign mentor for "{dayjs(session).format("MMMM D, YYYY")}"</Title>
 

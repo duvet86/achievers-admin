@@ -27,6 +27,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   ]);
 
   return json({
+    studentId: params.studentId,
     student,
     availableChapters: chapters,
   });
@@ -56,7 +57,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function Assign() {
-  const { student, availableChapters } = useLoaderData<typeof loader>();
+  const { studentId, student, availableChapters } =
+    useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const transition = useNavigation();
 
@@ -64,7 +66,7 @@ export default function Assign() {
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to={`/admin/students/${studentId}`} />
 
       <Form method="post">
         <Title>

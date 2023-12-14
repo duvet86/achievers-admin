@@ -19,7 +19,7 @@ export function Header(props: Props) {
   return (
     <div className="h-1/6">
       <div className="flex">
-        <BackHeader />
+        <BackHeader to="/admin/users" />
 
         <div className="flex-1"></div>
 

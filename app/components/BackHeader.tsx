@@ -1,23 +1,19 @@
-import { useNavigate } from "@remix-run/react";
+import { Link } from "@remix-run/react";
 
 import { ArrowLeft } from "iconoir-react";
 
 interface Props {
-  to?: string;
+  to: string;
 }
 
 export function BackHeader({ to }: Props) {
-  const navigate = useNavigate();
-
-  const goBack = () => (to ? navigate(to, { relative: "path" }) : navigate(-1));
-
   return (
     <>
       <div>
-        <button onClick={goBack} className="btn btn-ghost mb-2 gap-2">
+        <Link to={to} className="btn btn-ghost mb-2 gap-2">
           <ArrowLeft className="w-6" />
           Back
-        </button>
+        </Link>
       </div>
 
       <hr className="mb-4" />

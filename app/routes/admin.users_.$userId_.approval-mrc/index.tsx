@@ -27,6 +27,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const user = await getUserByIdAsync(Number(params.userId));
 
   return json({
+    userId: params.userId,
     user,
   });
 }
@@ -61,12 +62,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Index() {
   const transition = useNavigation();
-  const { user } = useLoaderData<typeof loader>();
+  const { userId, user } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to={`/admin/users/${userId}`} />
 
       <Title>
         Approval by MRC for "{user.firstName} {user.lastName}"

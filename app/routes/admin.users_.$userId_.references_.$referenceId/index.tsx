@@ -36,6 +36,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   );
 
   return json({
+    userId: params.userId,
     user,
   });
 }
@@ -127,14 +128,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Index() {
   const transition = useNavigation();
-  const { user } = useLoaderData<typeof loader>();
+  const { userId, user } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   const reference = user.references[0];
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to={`/admin/users/${userId}/references`} />
 
       <Title>
         Reference "{reference.firstName} {reference.lastName}" for mentor "

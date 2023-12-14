@@ -25,6 +25,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   if (params.guardianId === "new") {
     return json({
+      studentId: params.studentId,
       guardian: null,
     });
   } else {
@@ -36,6 +37,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     }
 
     return json({
+      studentId: params.studentId,
       guardian,
     });
   }
@@ -91,14 +93,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { guardian } = useLoaderData<typeof loader>();
+  const { studentId, guardian } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const transition = useNavigation();
   const { guardianId } = useParams();
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to={`/admin/students/${studentId}`} />
 
       <Title>
         {guardianId === "new" ? "Add new guardian" : "Edit info for guardian"}

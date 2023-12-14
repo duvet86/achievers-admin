@@ -16,16 +16,17 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const user = await getUserByIdAsync(Number(params.userId));
 
   return json({
+    userId: params.userId,
     user,
   });
 }
 
 export default function Index() {
-  const { user } = useLoaderData<typeof loader>();
+  const { userId, user } = useLoaderData<typeof loader>();
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to={`/admin/users/${userId}`} />
 
       <Title>
         References for "{user.firstName} {user.lastName}"

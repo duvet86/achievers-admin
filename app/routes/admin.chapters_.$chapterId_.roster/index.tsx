@@ -75,7 +75,7 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to={`/admin/chapters`} />
 
       <Title>Roster planner</Title>
 

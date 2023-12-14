@@ -103,7 +103,7 @@ export default function Index() {
   return (
     <div className="flex h-full flex-col">
       <div className="h-1/6">
-        <BackHeader />
+        <BackHeader to="/admin/students" />
 
         <Title>Edit student info</Title>
       </div>

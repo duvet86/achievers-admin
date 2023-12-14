@@ -24,6 +24,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   }
 
   return json({
+    studentId: params.studentId,
     guardian,
   });
 }
@@ -38,12 +39,12 @@ export async function action({ params }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { guardian } = useLoaderData<typeof loader>();
+  const { studentId, guardian } = useLoaderData<typeof loader>();
   const transition = useNavigation();
 
   return (
     <>
-      <BackHeader />
+      <BackHeader to={`/admin/students/${studentId}`} />
 
       <Title>Remove guardian "{guardian.fullName}"</Title>
 
