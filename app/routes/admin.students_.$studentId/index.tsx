@@ -172,11 +172,7 @@ export default function Index() {
         <div className="flex-1 overflow-y-auto">
           <AssignedChapterList loaderData={loaderData} />
 
-          <hr className="my-8" />
-
           <GuardianList loaderData={loaderData} />
-
-          <hr className="my-8" />
 
           <TeacherList loaderData={loaderData} />
         </div>
