@@ -1,13 +1,8 @@
 import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import { UserCircle, GraduationCap, ShopFourTiles } from "iconoir-react";
 
-import { useLoaderData, Link } from "@remix-run/react";
-
-import {
-  UserCircle,
-  GraduationCap,
-  ShopFourTiles,
-  NavArrowRight,
-} from "iconoir-react";
+import { SubTitle } from "~/components";
 
 import {
   getIncompleteMentorsAsync,
@@ -17,8 +12,9 @@ import {
   getTotalMentorsAsync,
   getTotalStudentsAsync,
 } from "./services.server";
+
 import { MenotorsOverTimeChart } from "./components/MentorsOverTimeChart";
-import { SubTitle } from "~/components";
+import { StatCard } from "./components/StatCard";
 
 export async function loader() {
   const [
@@ -68,58 +64,29 @@ export default function Index() {
 
       <div className="flex w-full justify-center">
         <div className="stats w-4/5 shadow-lg">
-          <div className="stat">
-            <div className="stat-figure text-secondary">
-              <UserCircle className="inline-block h-8 w-8 stroke-current" />
-            </div>
-            <div className="stat-title">Mentors with incomplete checks</div>
-            <div
-              className="stat-value text-secondary"
-              data-testid="incompleteMentors"
-            >
-              {incompleteMentors}
-            </div>
-            <div className="stat-desc" data-testid="totalMentors">
-              of {mentorsCount} total mentors
-            </div>
-            <div className="stat-actions col-span-2 w-max">
-              <Link to="/admin/users" className="btn w-max">
-                View mentors <NavArrowRight className="h-6 w-6" />
-              </Link>
-            </div>
-          </div>
+          <StatCard
+            Icon={UserCircle}
+            label="Mentors with incomplete checks"
+            count={incompleteMentors}
+            subLabel={`of ${mentorsCount} total mentors`}
+            to="/admin/users"
+          />
 
-          <div className="stat">
-            <div className="stat-figure text-secondary">
-              <GraduationCap className="inline-block h-8 w-8 stroke-current" />
-            </div>
-            <div className="stat-title">Students without a mentor</div>
-            <div className="stat-value" data-testid="totalStudents">
-              {studentsWithoutMentor}
-            </div>
-            <div className="stat-desc">of {studentsCount} total students</div>
-            <div className="stat-actions col-span-2 w-max">
-              <Link to="/admin/students" className="btn w-max">
-                View students <NavArrowRight className="h-6 w-6" />
-              </Link>
-            </div>
-          </div>
+          <StatCard
+            Icon={GraduationCap}
+            label="Students without a mentor"
+            count={studentsWithoutMentor}
+            subLabel={`of ${studentsCount} total students`}
+            to="/admin/students"
+          />
 
-          <div className="stat">
-            <div className="stat-figure text-secondary">
-              <ShopFourTiles className="inline-block h-8 w-8 stroke-current" />
-            </div>
-            <div className="stat-title">Chapters</div>
-            <div className="stat-value" data-testid="totalChapters">
-              {chaptersCount}
-            </div>
-            <div className="stat-desc">&nbsp;</div>
-            <div className="stat-actions col-span-2 w-max">
-              <Link to="/admin/chapters" className="btn w-max">
-                View chapters <NavArrowRight className="h-6 w-6" />
-              </Link>
-            </div>
-          </div>
+          <StatCard
+            Icon={ShopFourTiles}
+            label="Chapters"
+            count={chaptersCount}
+            subLabel="&nbsp;"
+            to="/admin/chapters"
+          />
         </div>
       </div>
 

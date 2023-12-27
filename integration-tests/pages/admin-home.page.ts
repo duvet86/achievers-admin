@@ -2,26 +2,23 @@ import type { Locator, Page } from "@playwright/test";
 
 import { expect } from "@playwright/test";
 
-interface Counters {
-  incompleteCheckMentors: number;
-  totalMentors: number;
-  totalStudents: number;
-  totalChapters: number;
-}
-
 export class AdminHomePage {
   private page: Page;
 
   title: Locator;
 
-  incompleteCheckMentors: Locator;
-  totalMentors: Locator;
-  totalStudents: Locator;
-  totalChapters: Locator;
+  incompleteCheckMentorsLabel: Locator;
+  incompleteCheckMentorsCounter: Locator;
+  incompleteCheckMentorsSubLabel: Locator;
 
-  mentorsLink: Locator;
-  studentsLink: Locator;
-  chaptersLink: Locator;
+  studentsNoMentorLabel: Locator;
+  studentsNoMentorCouter: Locator;
+  studentsNoMentorSublabel: Locator;
+
+  totalChaptersLabel: Locator;
+  totalChaptersCounter: Locator;
+
+  links: Locator;
 
   expect: AdminHomePageAssertions;
 
@@ -32,19 +29,35 @@ export class AdminHomePage {
       name: "Welcome to Achievers Club WA admin system",
     });
 
-    this.incompleteCheckMentors = page.getByTestId("incompleteMentors");
-    this.totalMentors = page.getByTestId("totalMentors");
-    this.totalStudents = page.getByTestId("totalStudents");
-    this.totalChapters = page.getByTestId("totalChapters");
+    this.incompleteCheckMentorsLabel = page.getByRole("heading", {
+      name: "Mentors with incomplete checks",
+    });
+    this.incompleteCheckMentorsCounter = page.getByRole("heading", {
+      name: "17",
+    });
+    this.incompleteCheckMentorsSubLabel = page.getByRole("heading", {
+      name: "of 18 total mentors",
+    });
 
-    this.mentorsLink = page.getByRole("link", {
-      name: "View mentors",
+    this.studentsNoMentorLabel = page.getByRole("heading", {
+      name: "Students without a mentor",
     });
-    this.studentsLink = page.getByRole("link", {
-      name: "View students",
+    this.studentsNoMentorCouter = page.getByRole("heading", {
+      name: "15",
     });
-    this.chaptersLink = page.getByRole("link", {
-      name: "View chapters",
+    this.studentsNoMentorSublabel = page.getByRole("heading", {
+      name: "of 18 total students",
+    });
+
+    this.totalChaptersLabel = page.getByRole("heading", {
+      name: "Chapters",
+    });
+    this.totalChaptersCounter = page.getByRole("heading", {
+      name: "3",
+    });
+
+    this.links = page.getByRole("link", {
+      name: "View",
     });
 
     this.expect = new AdminHomePageAssertions(this);
@@ -58,29 +71,39 @@ export class AdminHomePageAssertions {
     await expect(this.adminHomePage.title).toBeVisible();
   }
 
-  async toHaveCounters({
-    incompleteCheckMentors,
-    totalChapters,
-    totalMentors,
-    totalStudents,
-  }: Counters): Promise<void> {
-    await expect(this.adminHomePage.incompleteCheckMentors).toContainText(
-      incompleteCheckMentors.toString(),
-    );
-    await expect(this.adminHomePage.totalMentors).toContainText(
-      `of ${totalMentors} total mentors`,
-    );
-    await expect(this.adminHomePage.totalStudents).toContainText(
-      totalStudents.toString(),
-    );
-    await expect(this.adminHomePage.totalChapters).toContainText(
-      totalChapters.toString(),
-    );
+  async toHaveCounters(): Promise<void> {
+    await expect(this.adminHomePage.incompleteCheckMentorsLabel).toBeVisible();
+    await expect(
+      this.adminHomePage.incompleteCheckMentorsCounter,
+    ).toBeVisible();
+    await expect(
+      this.adminHomePage.incompleteCheckMentorsSubLabel,
+    ).toBeVisible();
+
+    await expect(this.adminHomePage.studentsNoMentorLabel).toBeVisible();
+    await expect(this.adminHomePage.studentsNoMentorCouter).toBeVisible();
+    await expect(this.adminHomePage.studentsNoMentorSublabel).toBeVisible();
+
+    await expect(this.adminHomePage.totalChaptersLabel).toBeVisible();
+    await expect(this.adminHomePage.totalChaptersCounter).toBeVisible();
   }
 
   async toHaveLinks(): Promise<void> {
-    await expect(this.adminHomePage.mentorsLink).toBeVisible();
-    await expect(this.adminHomePage.studentsLink).toBeVisible();
-    await expect(this.adminHomePage.chaptersLink).toBeVisible();
+    await expect(this.adminHomePage.links).toHaveCount(3);
+
+    await expect(this.adminHomePage.links.nth(0)).toHaveAttribute(
+      "href",
+      "/admin/users",
+    );
+
+    await expect(this.adminHomePage.links.nth(1)).toHaveAttribute(
+      "href",
+      "/admin/students",
+    );
+
+    await expect(this.adminHomePage.links.nth(2)).toHaveAttribute(
+      "href",
+      "/admin/chapters",
+    );
   }
 }

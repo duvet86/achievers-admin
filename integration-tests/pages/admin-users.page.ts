@@ -30,7 +30,7 @@ export class AdminUsersPage {
   constructor(page: Page) {
     this.page = page;
 
-    this.title = page.getByRole("heading", { name: "Mentors" });
+    this.title = page.getByRole("heading", { name: "Mentors", exact: true });
 
     this.fullNameHeaderCell = page.getByRole("cell", { name: "Full name" });
     this.emailHeaderCell = page.getByRole("cell", { name: "Email" });
