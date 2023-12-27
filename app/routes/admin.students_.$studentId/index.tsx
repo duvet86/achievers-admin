@@ -4,12 +4,17 @@ import type { Prisma } from "@prisma/client";
 import dayjs from "dayjs";
 import { $Enums } from "@prisma/client";
 import { json } from "@remix-run/node";
-import { useLoaderData, useNavigation } from "@remix-run/react";
+import { useActionData, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
+import { areEqualIgnoreCase } from "~/services";
 import { BackHeader, Title } from "~/components";
 
-import { getStudentByIdAsync, updateStudentByIdAsync } from "./services.server";
+import {
+  createNewStudentAsync,
+  getStudentByIdAsync,
+  updateStudentByIdAsync,
+} from "./services.server";
 import { StudentForm } from "./components/StudentForm";
 import { GuardianList } from "./components/GuardianList";
 import { TeacherList } from "./components/TeacherList";
@@ -17,6 +22,13 @@ import { AssignedChapterList } from "./components/AssignedChapterList";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.studentId, "studentId not found");
+
+  if (areEqualIgnoreCase(params.studentId, "new")) {
+    return json({
+      title: "Add new student",
+      student: null,
+    });
+  }
 
   const student = await getStudentByIdAsync(Number(params.studentId));
   if (student === null) {
@@ -26,6 +38,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   }
 
   return json({
+    title: "Edit student info",
     student,
   });
 }
@@ -65,31 +78,69 @@ export async function action({ request, params }: ActionFunctionArgs) {
     ?.toString();
   const startDate = formData.get("startDate")?.toString();
 
-  const dataCreate: Prisma.XOR<
-    Prisma.StudentUpdateInput,
-    Prisma.StudentUncheckedUpdateInput
-  > = {
-    firstName,
-    lastName,
-    dateOfBirth: dayjs(dateOfBirth).toDate(),
-    gender: gender === "MALE" ? $Enums.Gender.MALE : $Enums.Gender.FEMALE,
-    address,
-    allergies: allergies === "true" ? true : false,
-    hasApprovedToPublishPhotos:
-      hasApprovedToPublishPhotos === "true" ? true : false,
-    bestPersonToContact,
-    bestContactMethod,
-    schoolName,
-    yearLevel,
-    emergencyContactFullName,
-    emergencyContactRelationship,
-    emergencyContactPhone,
-    emergencyContactEmail,
-    emergencyContactAddress,
-    startDate: dayjs(startDate).toDate(),
-  };
+  if (areEqualIgnoreCase(params.studentId, "new")) {
+    if (firstName === undefined || lastName === undefined) {
+      throw new Error();
+    }
 
-  await updateStudentByIdAsync(Number(params.studentId), dataCreate);
+    const dataCreate: Prisma.XOR<
+      Prisma.StudentCreateInput,
+      Prisma.StudentUncheckedCreateInput
+    > = {
+      firstName,
+      lastName,
+      gender: gender === "MALE" ? $Enums.Gender.MALE : $Enums.Gender.FEMALE,
+      dateOfBirth: dateOfBirth ? dayjs(dateOfBirth).toDate() : null,
+      address,
+      allergies: allergies ? (allergies === "true" ? true : false) : undefined,
+      hasApprovedToPublishPhotos: hasApprovedToPublishPhotos
+        ? hasApprovedToPublishPhotos === "true"
+          ? true
+          : false
+        : undefined,
+      bestPersonToContact,
+      bestContactMethod,
+      schoolName,
+      yearLevel,
+      emergencyContactFullName,
+      emergencyContactRelationship,
+      emergencyContactPhone,
+      emergencyContactEmail,
+      emergencyContactAddress,
+      startDate: startDate ? dayjs(startDate).toDate() : null,
+    };
+
+    await createNewStudentAsync(dataCreate);
+  } else {
+    const dataCreate: Prisma.XOR<
+      Prisma.StudentUpdateInput,
+      Prisma.StudentUncheckedUpdateInput
+    > = {
+      firstName,
+      lastName,
+      gender: gender === "MALE" ? $Enums.Gender.MALE : $Enums.Gender.FEMALE,
+      dateOfBirth: dateOfBirth ? dayjs(dateOfBirth).toDate() : null,
+      address,
+      allergies: allergies ? (allergies === "true" ? true : false) : undefined,
+      hasApprovedToPublishPhotos: hasApprovedToPublishPhotos
+        ? hasApprovedToPublishPhotos === "true"
+          ? true
+          : false
+        : undefined,
+      bestPersonToContact,
+      bestContactMethod,
+      schoolName,
+      yearLevel,
+      emergencyContactFullName,
+      emergencyContactRelationship,
+      emergencyContactPhone,
+      emergencyContactEmail,
+      emergencyContactAddress,
+      startDate: startDate ? dayjs(startDate).toDate() : null,
+    };
+
+    await updateStudentByIdAsync(Number(params.studentId), dataCreate);
+  }
 
   return json({
     message: "Successfully saved",
@@ -98,6 +149,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Index() {
   const loaderData = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
   const transition = useNavigation();
 
   return (
@@ -105,24 +157,24 @@ export default function Index() {
       <div className="h-1/6">
         <BackHeader to="/admin/students" />
 
-        <Title>Edit student info</Title>
+        <Title>{loaderData.title}</Title>
       </div>
 
-      <div className="h-5/6 md:flex">
-        <StudentForm transition={transition} loaderData={loaderData} />
+      <div className="mt-2 h-5/6 md:flex">
+        <StudentForm
+          transition={transition}
+          loaderData={loaderData}
+          actionData={actionData}
+        />
 
         <hr className="my-8 md:hidden" />
 
         <div className="flex-1 overflow-y-auto">
+          <AssignedChapterList loaderData={loaderData} />
+
           <GuardianList loaderData={loaderData} />
 
-          <hr className="my-8" />
-
           <TeacherList loaderData={loaderData} />
-
-          <hr className="my-8" />
-
-          <AssignedChapterList loaderData={loaderData} />
         </div>
       </div>
     </div>

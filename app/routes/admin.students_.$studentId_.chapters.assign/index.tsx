@@ -86,6 +86,7 @@ export default function Assign() {
         />
 
         <SubmitFormButton
+          successMessage={undefined}
           errorMessage={actionData?.errorMessage}
           className="mt-6 justify-between"
         />

@@ -3,7 +3,7 @@ import type { Prisma } from "@prisma/client";
 import type { AzureUserWebAppWithRole } from "~/services";
 
 import { json } from "@remix-run/node";
-import { useLoaderData, useNavigation } from "@remix-run/react";
+import { useActionData, useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
@@ -102,7 +102,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
     isStringNullOrEmpty(addressPostcode)
   ) {
     return json({
-      message: "Missing required fields",
+      successMessage: null,
+      errorMessage: "Missing required fields",
     });
   }
 
@@ -132,12 +133,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
   await updateUserByIdAsync(Number(params.userId), dataCreate);
 
   return json({
-    message: null,
+    successMessage: "User successfully saved!",
+    errorMessage: null,
   });
 }
 
 export default function Index() {
   const loaderData = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
   const transition = useNavigation();
 
   return (
@@ -148,7 +151,11 @@ export default function Index() {
       />
 
       <div className="h-5/6 md:flex">
-        <UserForm loaderData={loaderData} transition={transition} />
+        <UserForm
+          loaderData={loaderData}
+          actionData={actionData}
+          transition={transition}
+        />
 
         <hr className="my-8 md:hidden" />
 

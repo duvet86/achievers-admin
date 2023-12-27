@@ -1,5 +1,5 @@
 import type { SerializeFrom } from "@remix-run/node";
-import type { loader } from "../index";
+import type { action, loader } from "../index";
 
 import type { Navigation } from "@remix-run/router";
 
@@ -12,9 +12,14 @@ import ProfilePicture from "./ProfilePicture";
 interface Props {
   transition: Navigation;
   loaderData: SerializeFrom<typeof loader>;
+  actionData: SerializeFrom<typeof action> | undefined;
 }
 
-export function UserForm({ transition, loaderData: { user } }: Props) {
+export function UserForm({
+  transition,
+  loaderData: { user },
+  actionData,
+}: Props) {
   return (
     <Form
       method="post"
@@ -138,7 +143,11 @@ export function UserForm({ transition, loaderData: { user } }: Props) {
           required
         />
 
-        <SubmitFormButton sticky className="justify-between" />
+        <SubmitFormButton
+          sticky
+          successMessage={actionData?.successMessage}
+          className="justify-between"
+        />
       </fieldset>
     </Form>
   );

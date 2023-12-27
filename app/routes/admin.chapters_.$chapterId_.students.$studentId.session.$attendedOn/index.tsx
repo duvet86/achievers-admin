@@ -123,7 +123,10 @@ export default function Index() {
           options={options}
         />
 
-        <SubmitFormButton className="mt-6 justify-between" />
+        <SubmitFormButton
+          className="mt-6 justify-between"
+          successMessage={undefined}
+        />
       </Form>
     </>
   );

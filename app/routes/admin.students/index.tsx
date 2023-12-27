@@ -4,7 +4,7 @@ import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
 import { useRef } from "react";
 
-import { PageEdit } from "iconoir-react";
+import { PageEdit, Plus } from "iconoir-react";
 
 import { Title } from "~/components";
 
@@ -174,10 +174,17 @@ export default function Index() {
 
         <input type="hidden" name="pageNumber" value={currentPageNumber} />
 
-        <Pagination
-          currentPageNumber={currentPageNumber}
-          totalPageCount={totalPageCount}
-        />
+        <div className="mt-4 flex items-center justify-between">
+          <Pagination
+            currentPageNumber={currentPageNumber}
+            totalPageCount={totalPageCount}
+          />
+
+          <Link className="btn btn-primary w-56 gap-4" to="/admin/students/new">
+            <Plus className="h-6 w-6" />
+            Add new student
+          </Link>
+        </div>
       </Form>
     </>
   );

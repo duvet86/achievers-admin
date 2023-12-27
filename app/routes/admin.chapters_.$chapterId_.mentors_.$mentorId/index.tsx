@@ -1,7 +1,7 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import {
@@ -65,6 +65,7 @@ export default function Index() {
     availableStudents,
     mentorWithStudents: { firstName, lastName, mentorToStudentAssignement },
   } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
 
   return (
     <>
@@ -120,7 +121,11 @@ export default function Index() {
               />
             </div>
 
-            <SubmitFormButton label="Add" className="mt-6 justify-between" />
+            <SubmitFormButton
+              label="Add"
+              className="mt-6 justify-between"
+              successMessage={actionData?.message}
+            />
           </Form>
         </div>
       </article>
