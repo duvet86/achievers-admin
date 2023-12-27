@@ -2,7 +2,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { EoiUpdateCommand } from "./services.server";
 
 import { json } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import {
@@ -84,6 +84,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Index() {
   const { userId, user } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
 
   const eoIProfile = user.eoIProfile;
 
@@ -176,7 +177,11 @@ export default function Index() {
           required
         />
 
-        <SubmitFormButton className="mt-6 justify-between" />
+        <SubmitFormButton
+          successMessage={actionData?.successMessage}
+          errorMessage={actionData?.errorMessage}
+          className="mt-6 justify-between"
+        />
       </Form>
     </>
   );

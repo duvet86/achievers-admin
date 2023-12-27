@@ -18,19 +18,23 @@ export async function loader({ params }: LoaderFunctionArgs) {
   );
 
   return json({
+    chapterId: params.chapterId,
     mentorsWithStudents,
   });
 }
 
 export default function Index() {
-  const { mentorsWithStudents } = useLoaderData<typeof loader>();
+  const { chapterId, mentorsWithStudents } = useLoaderData<typeof loader>();
 
   return (
     <>
       <div className="flex items-center justify-between">
         <BackHeader to="/admin/chapters" />
 
-        <Link relative="path" to={"../mentors"} className="min-w-40 btn gap-2">
+        <Link
+          to={`/admin/chapters/${chapterId}/mentors`}
+          className="btn min-w-40 gap-2"
+        >
           <CoinsSwap className="h-6 w-6" />
           Swap to mentors view
         </Link>

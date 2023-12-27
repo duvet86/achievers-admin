@@ -10,7 +10,7 @@ export default function Pagination({
   totalPageCount,
 }: Props) {
   return (
-    <div className="join mt-4">
+    <div className="join">
       <button
         type="submit"
         name="previousBtn"

@@ -69,3 +69,14 @@ export async function updateStudentByIdAsync(
     },
   });
 }
+
+export async function createNewStudentAsync(
+  dataCreate: Prisma.XOR<
+    Prisma.StudentCreateInput,
+    Prisma.StudentUncheckedCreateInput
+  >,
+) {
+  return await prisma.student.create({
+    data: dataCreate,
+  });
+}
