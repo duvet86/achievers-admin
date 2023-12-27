@@ -11,31 +11,51 @@ import {
 
 import {
   getIncompleteMentorsAsync,
+  getMentorsPerMonth,
+  getStudentsWithoutMentorAsync,
   getTotalChaptersAsync,
   getTotalMentorsAsync,
   getTotalStudentsAsync,
 } from "./services.server";
+import { MenotorsOverTimeChart } from "./components/MentorsOverTimeChart";
+import { SubTitle } from "~/components";
 
 export async function loader() {
-  const [mentorsCount, incompleteMentors, studentsCount, chaptersCount] =
-    await Promise.all([
-      getTotalMentorsAsync(),
-      getIncompleteMentorsAsync(),
-      getTotalStudentsAsync(),
-      getTotalChaptersAsync(),
-    ]);
+  const [
+    mentorsCount,
+    incompleteMentors,
+    studentsCount,
+    studentsWithoutMentor,
+    chaptersCount,
+    mentorsPerMonth,
+  ] = await Promise.all([
+    getTotalMentorsAsync(),
+    getIncompleteMentorsAsync(),
+    getTotalStudentsAsync(),
+    getStudentsWithoutMentorAsync(),
+    getTotalChaptersAsync(),
+    getMentorsPerMonth(),
+  ]);
 
   return json({
     mentorsCount,
     incompleteMentors,
     studentsCount,
+    studentsWithoutMentor,
     chaptersCount,
+    mentorsPerMonth,
   });
 }
 
 export default function Index() {
-  const { mentorsCount, incompleteMentors, studentsCount, chaptersCount } =
-    useLoaderData<typeof loader>();
+  const {
+    mentorsCount,
+    incompleteMentors,
+    studentsCount,
+    studentsWithoutMentor,
+    chaptersCount,
+    mentorsPerMonth,
+  } = useLoaderData<typeof loader>();
 
   return (
     <div className="-m-4 h-full bg-lines p-4">
@@ -73,11 +93,11 @@ export default function Index() {
             <div className="stat-figure text-secondary">
               <GraduationCap className="inline-block h-8 w-8 stroke-current" />
             </div>
-            <div className="stat-title">Students</div>
+            <div className="stat-title">Students without a mentor</div>
             <div className="stat-value" data-testid="totalStudents">
-              {studentsCount}
+              {studentsWithoutMentor}
             </div>
-            <div className="stat-desc">&nbsp;</div>
+            <div className="stat-desc">of {studentsCount} total students</div>
             <div className="stat-actions col-span-2 w-max">
               <Link to="/admin/students" className="btn w-max">
                 View students <NavArrowRight className="h-6 w-6" />
@@ -101,6 +121,11 @@ export default function Index() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="mt-8 h-56">
+        <SubTitle>Mentors over time</SubTitle>
+        <MenotorsOverTimeChart mentorsPerMonth={mentorsPerMonth} />
       </div>
     </div>
   );
