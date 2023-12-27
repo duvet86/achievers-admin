@@ -29,7 +29,7 @@ const options = {
   },
 };
 
-export function MenotorsOverTimeChart({ mentorsPerMonth }: Props) {
+export function MentorsOverTimeChart({ mentorsPerMonth }: Props) {
   const data = {
     labels: mentorsPerMonth.x,
     datasets: [

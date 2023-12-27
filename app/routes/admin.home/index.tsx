@@ -13,7 +13,7 @@ import {
   getTotalStudentsAsync,
 } from "./services.server";
 
-import { MenotorsOverTimeChart } from "./components/MentorsOverTimeChart";
+import { MentorsOverTimeChart } from "./components/MentorsOverTimeChart";
 import { StatCard } from "./components/StatCard";
 
 export async function loader() {
@@ -92,7 +92,7 @@ export default function Index() {
 
       <div className="mt-8 h-56">
         <SubTitle>Mentors over time</SubTitle>
-        <MenotorsOverTimeChart mentorsPerMonth={mentorsPerMonth} />
+        <MentorsOverTimeChart mentorsPerMonth={mentorsPerMonth} />
       </div>
     </div>
   );
