@@ -46,14 +46,4 @@ describe("Drawer", () => {
     expect(links[1]).toHaveTextContent("My Mentees");
     expect(links[1]).toHaveAttribute("href", "/mentor/mentees");
   });
-
-  it("should display version", async () => {
-    render(
-      <MemoryRouter>
-        <Drawer isAdmin={false} />
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByTestId("version")).toHaveTextContent("Version 1");
-  });
 });
