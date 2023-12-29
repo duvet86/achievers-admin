@@ -25,15 +25,19 @@ export function Body({
   return (
     <div className="drawer lg:drawer-open">
       <input id="drawer" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content flex h-screen flex-col">
-        <Navbar currentUser={currentUser} environment={environment} />
+      <div className="drawer-content flex flex-col">
+        <Navbar
+          currentUser={currentUser}
+          environment={environment}
+          version={version}
+        />
 
-        <main className="content-area mt-16 flex h-full flex-col overflow-y-auto p-4">
+        <main className="mt-16 flex h-full flex-col overflow-y-auto p-4">
           <Outlet />
         </main>
       </div>
 
-      {showDrawer && <Drawer isAdmin={isAdmin} version={version} />}
+      {showDrawer && <Drawer isAdmin={isAdmin} />}
     </div>
   );
 }

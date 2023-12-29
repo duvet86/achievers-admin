@@ -6,7 +6,7 @@ import { SubmitFormButton } from "~/components";
 
 describe("SubmitFormButton", () => {
   it("should have initial state", async () => {
-    render(<SubmitFormButton successMessage={undefined} />);
+    render(<SubmitFormButton />);
 
     expect(screen.getByRole("button")).toHaveTextContent("Save");
     expect(screen.getByTestId("message")).not.toHaveClass();
@@ -14,7 +14,7 @@ describe("SubmitFormButton", () => {
   });
 
   it("should have stiky prop", async () => {
-    render(<SubmitFormButton sticky successMessage={undefined} />);
+    render(<SubmitFormButton sticky />);
 
     expect(screen.getByTestId("container")).toHaveClass("flex sticky bottom-0");
   });
@@ -26,15 +26,13 @@ describe("SubmitFormButton", () => {
   });
 
   it("should have custom error message", async () => {
-    render(
-      <SubmitFormButton errorMessage="error" successMessage={undefined} />,
-    );
+    render(<SubmitFormButton errorMessage="error" />);
 
     expect(screen.getByTestId("message")).toHaveTextContent("error");
   });
 
   it("should have custom label", async () => {
-    render(<SubmitFormButton label="test" successMessage={undefined} />);
+    render(<SubmitFormButton label="test" />);
 
     expect(screen.getByRole("button")).toHaveTextContent("test");
   });

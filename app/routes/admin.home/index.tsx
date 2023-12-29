@@ -55,15 +55,18 @@ export default function Index() {
 
   return (
     <div className="-m-4 h-full bg-lines p-4">
-      <article className="prose relative mb-8 h-24 max-w-none">
-        <div className="h-24 w-full rounded-md bg-achievers opacity-75"></div>
-        <h1 className="absolute left-6 top-6">
+      <article className="prose relative mb-8 h-24 max-w-none lg:h-28">
+        <div className="h-24 w-full rounded-md bg-achievers opacity-75 lg:h-28"></div>
+        <h1 className="absolute left-6 top-6 hidden lg:block">
           Welcome to Achievers Club WA admin system
         </h1>
+        <h2 className="absolute top-0 mt-0 p-4 lg:hidden">
+          Welcome to Achievers Club WA admin system
+        </h2>
       </article>
 
       <div className="flex w-full justify-center">
-        <div className="stats w-4/5 shadow-lg">
+        <div className="stats stats-vertical w-4/5 shadow-lg lg:stats-horizontal">
           <StatCard
             Icon={UserCircle}
             label="Mentors with incomplete checks"

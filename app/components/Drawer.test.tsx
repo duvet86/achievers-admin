@@ -9,7 +9,7 @@ describe("Drawer", () => {
   it("should display links for admin", async () => {
     render(
       <MemoryRouter>
-        <Drawer isAdmin version="1" />
+        <Drawer isAdmin />
       </MemoryRouter>,
     );
 
@@ -33,7 +33,7 @@ describe("Drawer", () => {
   it("should display links for mentor", async () => {
     render(
       <MemoryRouter>
-        <Drawer isAdmin={false} version="1" />
+        <Drawer isAdmin={false} />
       </MemoryRouter>,
     );
 
@@ -50,7 +50,7 @@ describe("Drawer", () => {
   it("should display version", async () => {
     render(
       <MemoryRouter>
-        <Drawer isAdmin={false} version="1" />
+        <Drawer isAdmin={false} />
       </MemoryRouter>,
     );
 
