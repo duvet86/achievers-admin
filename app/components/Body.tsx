@@ -32,7 +32,7 @@ export function Body({
           version={version}
         />
 
-        <main className="mt-16 flex h-full flex-col overflow-y-auto p-4">
+        <main className="content-main mt-16 flex flex-col overflow-y-auto p-4">
           <Outlet />
         </main>
       </div>

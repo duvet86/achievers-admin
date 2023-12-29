@@ -161,7 +161,7 @@ export default function Index() {
                         to={`${id}?${searchParams}`}
                         className="btn btn-success btn-xs w-full gap-2"
                       >
-                        <PageEdit className="h-4 w-4" />
+                        <PageEdit className="hidden h-4 w-4 lg:block" />
                         Edit
                       </Link>
                     </td>
@@ -174,13 +174,16 @@ export default function Index() {
 
         <input type="hidden" name="pageNumber" value={currentPageNumber} />
 
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-4 flex flex-col items-center justify-between lg:flex-row">
           <Pagination
             currentPageNumber={currentPageNumber}
             totalPageCount={totalPageCount}
           />
 
-          <Link className="btn btn-primary w-56 gap-4" to="/admin/students/new">
+          <Link
+            className="btn btn-primary mt-4 w-56 gap-4 lg:mt-0"
+            to="/admin/students/new"
+          >
             <Plus className="h-6 w-6" />
             Add new student
           </Link>

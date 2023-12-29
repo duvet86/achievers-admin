@@ -145,12 +145,14 @@ export default function Index() {
 
   return (
     <div className="flex h-full flex-col">
-      <Header
-        endDate={loaderData.user.endDate}
-        mentorAppRoleAssignmentId={loaderData.mentorAppRoleAssignmentId}
-      />
+      <div className="h-48 lg:h-36">
+        <Header
+          endDate={loaderData.user.endDate}
+          mentorAppRoleAssignmentId={loaderData.mentorAppRoleAssignmentId}
+        />
+      </div>
 
-      <div className="h-5/6 md:flex">
+      <div className="lg:content-area md:flex">
         <UserForm
           loaderData={loaderData}
           actionData={actionData}
@@ -159,7 +161,7 @@ export default function Index() {
 
         <hr className="my-8 md:hidden" />
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto pb-4 lg:pb-0">
           <CheckList loaderData={loaderData} />
 
           <hr className="my-8" />
