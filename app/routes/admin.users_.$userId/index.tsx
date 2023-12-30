@@ -152,7 +152,7 @@ export default function Index() {
         />
       </div>
 
-      <div className="lg:content-area md:flex">
+      <div className="content-area md:flex">
         <UserForm
           loaderData={loaderData}
           actionData={actionData}
