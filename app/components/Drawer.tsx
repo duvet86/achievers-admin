@@ -10,7 +10,6 @@ import {
 
 interface Props {
   isAdmin: boolean;
-  version: string;
 }
 
 interface DrawerLink {
@@ -57,12 +56,16 @@ function getLinks(isAdmin: boolean): DrawerLink[] {
       ];
 }
 
-export function Drawer({ isAdmin, version }: Props) {
+export function Drawer({ isAdmin }: Props) {
   const links = getLinks(isAdmin);
 
   return (
-    <div className="drawer-side pt-16">
-      <label htmlFor="drawer" className="drawer-overlay"></label>
+    <div className="drawer-side flex-col pt-16">
+      <label
+        htmlFor="drawer"
+        aria-label="close sidebar"
+        className="drawer-overlay"
+      ></label>
       <ul className="menu h-full w-80 border-r border-primary bg-base-200 p-4 text-base-content">
         {links.map(({ icon, label, value }, index) => (
           <li key={index}>
@@ -83,12 +86,6 @@ export function Drawer({ isAdmin, version }: Props) {
           </li>
         ))}
       </ul>
-      <div
-        data-testid="version"
-        className="absolute bottom-0 left-2 z-10 text-sm italic"
-      >
-        Version {version}
-      </div>
     </div>
   );
 }

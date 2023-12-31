@@ -7,9 +7,10 @@ import { ProfileCircle, Menu, LogOut } from "iconoir-react";
 interface Props {
   currentUser: AzureUserWebAppWithRole;
   environment: Environment;
+  version: string;
 }
 
-export function Navbar({ currentUser, environment }: Props) {
+export function Navbar({ currentUser, environment, version }: Props) {
   const showEnvBadge = environment === "local" || environment === "staging";
 
   return (
@@ -53,6 +54,10 @@ export function Navbar({ currentUser, environment }: Props) {
               <LogOut className="mr-2 w-6" />
               Logout
             </Link>
+          </li>
+          <li className="menu-title">
+            <hr />
+            <div className="mt-2 text-xs italic">Version {version}</div>
           </li>
         </ul>
       </div>

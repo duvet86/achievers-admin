@@ -154,13 +154,13 @@ export default function Index() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="h-1/6">
+      <div className="h-36">
         <BackHeader to="/admin/students" />
 
         <Title>{loaderData.title}</Title>
       </div>
 
-      <div className="mt-2 h-5/6 md:flex">
+      <div className="content-area md:flex">
         <StudentForm
           transition={transition}
           loaderData={loaderData}
@@ -169,7 +169,7 @@ export default function Index() {
 
         <hr className="my-8 md:hidden" />
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto pb-4 lg:pb-0">
           <AssignedChapterList loaderData={loaderData} />
 
           <GuardianList loaderData={loaderData} />

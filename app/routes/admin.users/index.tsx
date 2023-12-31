@@ -192,7 +192,7 @@ export default function Index() {
                           to={`${id}?${searchParams}`}
                           className="btn btn-success btn-xs w-full gap-2"
                         >
-                          <PageEdit className="h-4 w-4" />
+                          <PageEdit className="hidden h-4 w-4 lg:block" />
                           Edit
                         </Link>
                       </td>

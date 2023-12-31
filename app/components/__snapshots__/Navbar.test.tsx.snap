@@ -150,6 +150,17 @@ exports[`Navbar > Navbar snapshot 1`] = `
               Logout
             </a>
           </li>
+          <li
+            class="menu-title"
+          >
+            <hr />
+            <div
+              class="mt-2 text-xs italic"
+            >
+              Version 
+              1
+            </div>
+          </li>
         </ul>
       </div>
     </nav>

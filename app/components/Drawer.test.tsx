@@ -9,7 +9,7 @@ describe("Drawer", () => {
   it("should display links for admin", async () => {
     render(
       <MemoryRouter>
-        <Drawer isAdmin version="1" />
+        <Drawer isAdmin />
       </MemoryRouter>,
     );
 
@@ -33,7 +33,7 @@ describe("Drawer", () => {
   it("should display links for mentor", async () => {
     render(
       <MemoryRouter>
-        <Drawer isAdmin={false} version="1" />
+        <Drawer isAdmin={false} />
       </MemoryRouter>,
     );
 
@@ -45,15 +45,5 @@ describe("Drawer", () => {
 
     expect(links[1]).toHaveTextContent("My Mentees");
     expect(links[1]).toHaveAttribute("href", "/mentor/mentees");
-  });
-
-  it("should display version", async () => {
-    render(
-      <MemoryRouter>
-        <Drawer isAdmin={false} version="1" />
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByTestId("version")).toHaveTextContent("Version 1");
   });
 });

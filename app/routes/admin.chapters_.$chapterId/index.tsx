@@ -32,10 +32,7 @@ export default function Index() {
         <Input defaultValue={chapter.name} label="Name" name="name" />
         <Input defaultValue={chapter.address} label="Address" name="address" />
 
-        <SubmitFormButton
-          className="mt-6 justify-between"
-          successMessage={undefined}
-        />
+        <SubmitFormButton className="mt-6 justify-between" />
       </Form>
 
       <hr className="my-4" />

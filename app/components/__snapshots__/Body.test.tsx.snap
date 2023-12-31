@@ -12,7 +12,7 @@ exports[`Body > Body snapshot admin 1`] = `
         type="checkbox"
       />
       <div
-        class="drawer-content flex h-screen flex-col"
+        class="drawer-content flex flex-col"
       >
         <nav
           class="navbar absolute left-0 top-0 z-10 h-16 bg-primary text-primary-content shadow-md"
@@ -161,17 +161,29 @@ exports[`Body > Body snapshot admin 1`] = `
                   Logout
                 </a>
               </li>
+              <li
+                class="menu-title"
+              >
+                <hr />
+                <div
+                  class="mt-2 text-xs italic"
+                >
+                  Version 
+                  1
+                </div>
+              </li>
             </ul>
           </div>
         </nav>
         <main
-          class="content-area mt-16 flex h-full flex-col overflow-y-auto p-4"
+          class="content-main mt-16 flex flex-col overflow-y-auto p-4"
         />
       </div>
       <div
-        class="drawer-side pt-16"
+        class="drawer-side flex-col pt-16"
       >
         <label
+          aria-label="close sidebar"
           class="drawer-overlay"
           for="drawer"
         />
@@ -406,13 +418,6 @@ exports[`Body > Body snapshot admin 1`] = `
             </a>
           </li>
         </ul>
-        <div
-          class="absolute bottom-0 left-2 z-10 text-sm italic"
-          data-testid="version"
-        >
-          Version 
-          1
-        </div>
       </div>
     </div>
   </div>
@@ -431,7 +436,7 @@ exports[`Body > Body snapshot mentor 1`] = `
         type="checkbox"
       />
       <div
-        class="drawer-content flex h-screen flex-col"
+        class="drawer-content flex flex-col"
       >
         <nav
           class="navbar absolute left-0 top-0 z-10 h-16 bg-primary text-primary-content shadow-md"
@@ -580,17 +585,29 @@ exports[`Body > Body snapshot mentor 1`] = `
                   Logout
                 </a>
               </li>
+              <li
+                class="menu-title"
+              >
+                <hr />
+                <div
+                  class="mt-2 text-xs italic"
+                >
+                  Version 
+                  1
+                </div>
+              </li>
             </ul>
           </div>
         </nav>
         <main
-          class="content-area mt-16 flex h-full flex-col overflow-y-auto p-4"
+          class="content-main mt-16 flex flex-col overflow-y-auto p-4"
         />
       </div>
       <div
-        class="drawer-side pt-16"
+        class="drawer-side flex-col pt-16"
       >
         <label
+          aria-label="close sidebar"
           class="drawer-overlay"
           for="drawer"
         />
@@ -825,13 +842,6 @@ exports[`Body > Body snapshot mentor 1`] = `
             </a>
           </li>
         </ul>
-        <div
-          class="absolute bottom-0 left-2 z-10 text-sm italic"
-          data-testid="version"
-        >
-          Version 
-          1
-        </div>
       </div>
     </div>
   </div>

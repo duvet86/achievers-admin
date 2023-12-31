@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.content-main {
+  height: calc(100vh - theme(spacing.16));
+}
+
 .content-area {
-  width: calc(100vw - theme(spacing.80));
+  height: calc(100vh - theme(spacing.60));
 }

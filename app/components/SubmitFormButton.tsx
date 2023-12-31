@@ -5,7 +5,7 @@ import { Check, FloppyDiskArrowIn, WarningCircle } from "iconoir-react";
 
 interface Props {
   label?: string;
-  successMessage: string | null | undefined;
+  successMessage?: string | null;
   errorMessage?: string | null;
   sticky?: boolean;
   className?: string;

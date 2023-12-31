@@ -17,7 +17,7 @@ interface Props {
 
 export function Header(props: Props) {
   return (
-    <div className="h-1/6">
+    <>
       <div className="flex">
         <BackHeader to="/admin/users" />
 
@@ -39,12 +39,12 @@ export function Header(props: Props) {
 
       <hr className="mb-4" />
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col items-center gap-4 lg:flex-row">
         <Title>Edit mentor info</Title>
 
         {getMessage(props)}
       </div>
-    </div>
+    </>
   );
 }
 

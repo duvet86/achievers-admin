@@ -21,6 +21,7 @@ describe("Navbar", () => {
             userPrincipalName: "",
             email: "",
           }}
+          version="1"
         />
       </MemoryRouter>,
     );
