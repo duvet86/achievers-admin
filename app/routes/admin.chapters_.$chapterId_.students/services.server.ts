@@ -1,8 +1,37 @@
 import type { Chapter } from "@prisma/client";
 
 import { prisma } from "~/db.server";
+import { searchAcrossFields } from "~/services";
 
-export async function getMentorsWithStudentsAsync(chapterId: Chapter["id"]) {
+export async function getMentorsWithStudentsCountAsync(
+  chapterId: Chapter["id"],
+  searchTerm: string | null,
+) {
+  return prisma.student.count({
+    where: {
+      studentAtChapter: {
+        some: {
+          chapterId,
+        },
+      },
+      OR: searchAcrossFields(
+        searchTerm,
+        (searchTerm: string) =>
+          [
+            { firstName: { contains: searchTerm } },
+            { lastName: { contains: searchTerm } },
+          ] as const,
+      ),
+    },
+  });
+}
+
+export async function getMentorsWithStudentsAsync(
+  chapterId: Chapter["id"],
+  searchTerm: string | null,
+  pageNumber: number,
+  numberItems = 10,
+) {
   return prisma.student.findMany({
     where: {
       studentAtChapter: {
@@ -10,6 +39,14 @@ export async function getMentorsWithStudentsAsync(chapterId: Chapter["id"]) {
           chapterId,
         },
       },
+      OR: searchAcrossFields(
+        searchTerm,
+        (searchTerm: string) =>
+          [
+            { firstName: { contains: searchTerm } },
+            { lastName: { contains: searchTerm } },
+          ] as const,
+      ),
     },
     select: {
       id: true,
@@ -28,5 +65,12 @@ export async function getMentorsWithStudentsAsync(chapterId: Chapter["id"]) {
         },
       },
     },
+    orderBy: {
+      mentorToStudentAssignement: {
+        _count: "desc",
+      },
+    },
+    skip: numberItems * pageNumber,
+    take: numberItems,
   });
 }

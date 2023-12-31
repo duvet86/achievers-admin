@@ -1,5 +1,5 @@
 import { prisma } from "~/db.server";
-import { searchAcrossFields } from "~/services/dbUtils.server";
+import { searchAcrossFields } from "~/services";
 
 export async function getChaptersAsync() {
   return await prisma.chapter.findMany({
