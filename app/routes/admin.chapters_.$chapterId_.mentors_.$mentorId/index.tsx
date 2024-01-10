@@ -73,17 +73,45 @@ export default function Index() {
 
       <Title>Assign student to mentor</Title>
 
-      <article className="prose flex w-full max-w-none gap-12">
-        <div className="w-56">
-          <h4>Mentor</h4>
+      <article className="prose w-full max-w-none">
+        <div className="flex flex-col gap-12 lg:flex-row">
+          <div className="lg:w-1/2">
+            <h4>Mentor</h4>
+            <div>
+              {firstName} {lastName}
+            </div>
+          </div>
+
           <div>
-            {firstName} {lastName}
+            <h4>Assign a new student</h4>
+
+            <Form method="post" className="flex flex-col gap-6 lg:flex-row">
+              <div className="lg:w-96">
+                <Autocomplete
+                  name="selectedStudentId"
+                  placeholder="start typing to select a student"
+                  initialOptions={availableStudents.map(
+                    ({ id, firstName, lastName }) => ({
+                      label: `${firstName} ${lastName}`,
+                      value: id.toString(),
+                    }),
+                  )}
+                />
+              </div>
+
+              <SubmitFormButton
+                label="Add"
+                successMessage={actionData?.message}
+              />
+            </Form>
           </div>
         </div>
 
-        <div className="w-2/5">
+        <hr />
+
+        <div>
           <h4>Assigned students</h4>
-          <ul>
+          <ol>
             {mentorToStudentAssignement.map(
               ({ student: { firstName, lastName, id } }) => (
                 <li key={id} className="border-b pb-2">
@@ -102,31 +130,7 @@ export default function Index() {
                 </li>
               ),
             )}
-          </ul>
-        </div>
-
-        <div>
-          <h4>Assign a new student</h4>
-          <Form method="post" className="flex gap-6">
-            <div className="w-96">
-              <Autocomplete
-                name="selectedStudentId"
-                placeholder="start typing to select a student"
-                initialOptions={availableStudents.map(
-                  ({ id, firstName, lastName }) => ({
-                    label: `${firstName} ${lastName}`,
-                    value: id.toString(),
-                  }),
-                )}
-              />
-            </div>
-
-            <SubmitFormButton
-              label="Add"
-              className="mt-6 justify-between"
-              successMessage={actionData?.message}
-            />
-          </Form>
+          </ol>
         </div>
       </article>
     </>

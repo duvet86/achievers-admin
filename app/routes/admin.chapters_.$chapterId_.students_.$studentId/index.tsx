@@ -71,21 +71,49 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to={`/admin/${chapterId}/students`} />
+      <BackHeader to={`/admin/chapters/${chapterId}/students`} />
 
       <Title>Assign mentor to student</Title>
 
-      <article className="prose flex w-full max-w-none gap-12">
-        <div className="w-56">
-          <h4>Student</h4>
+      <article className="prose w-full max-w-none">
+        <div className="flex flex-col gap-12 lg:flex-row">
+          <div className="lg:w-1/2">
+            <h4>Student</h4>
+            <div>
+              {firstName} {lastName}
+            </div>
+          </div>
+
           <div>
-            {firstName} {lastName}
+            <h4>Assign a new mentor</h4>
+
+            <Form method="post" className="flex flex-col gap-6 lg:flex-row">
+              <div className="lg:w-96">
+                <Autocomplete
+                  name="selectedMentorId"
+                  placeholder="start typing to select a mentor"
+                  initialOptions={availableMentors.map(
+                    ({ id, firstName, lastName }) => ({
+                      label: `${firstName} ${lastName}`,
+                      value: id.toString(),
+                    }),
+                  )}
+                />
+              </div>
+
+              <SubmitFormButton
+                label="Add"
+                successMessage={actionData?.message}
+              />
+            </Form>
           </div>
         </div>
 
-        <div className="w-2/5">
+        <hr />
+
+        <div>
           <h4>Assigned mentors</h4>
-          <ul>
+          <ol>
             {mentorToStudentAssignement.map(
               ({ user: { firstName, lastName, id } }) => (
                 <li key={id} className="border-b pb-2">
@@ -104,31 +132,7 @@ export default function Index() {
                 </li>
               ),
             )}
-          </ul>
-        </div>
-
-        <div>
-          <h4>Assign a new mentor</h4>
-          <Form method="post" className="flex flex-col">
-            <div className="w-96">
-              <Autocomplete
-                name="selectedMentorId"
-                placeholder="start typing to select a student"
-                initialOptions={availableMentors.map(
-                  ({ id, firstName, lastName }) => ({
-                    label: `${firstName} ${lastName}`,
-                    value: id.toString(),
-                  }),
-                )}
-              />
-            </div>
-
-            <SubmitFormButton
-              label="Add"
-              successMessage={actionData?.message}
-              className="mt-6 justify-between"
-            />
-          </Form>
+          </ol>
         </div>
       </article>
     </>

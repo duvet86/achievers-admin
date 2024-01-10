@@ -35,7 +35,7 @@
     "daisyui": "^4.4.24",
     "dayjs": "^1.11.10",
     "express": "^4.18.2",
-    "iconoir-react": "^7.2.0",
+    "iconoir-react": "^7.3.0",
     "isbot": "^3.7.1-deprecated",
     "morgan": "^1.10.0",
     "node-cron": "^3.0.3",
