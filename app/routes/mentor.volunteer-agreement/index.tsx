@@ -14,6 +14,7 @@ import {
 
 import { getUserByAzureADIdAsync, getCurrentUserADIdAsync } from "~/services";
 import { confirmUserDetailsAsync } from "./services.server";
+import dayjs from "dayjs";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const azureUserId = await getCurrentUserADIdAsync(request);
@@ -25,6 +26,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   return json({
+    maxDateOfBirth: `${dayjs().year() - 18}-01-01`, // At least 18 years old.
     user,
   });
 }
@@ -86,7 +88,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { user } = useLoaderData<typeof loader>();
+  const { user, maxDateOfBirth } = useLoaderData<typeof loader>();
 
   return (
     <div className="hero rounded-md bg-base-200">
@@ -158,7 +160,7 @@ export default function Index() {
               label="Date of birth"
               name="dateOfBirth"
               defaultValue={user.dateOfBirth ?? ""}
-              max="2006-01-01"
+              max={maxDateOfBirth}
               required
             />
 
