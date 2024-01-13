@@ -17,7 +17,6 @@ export interface UserData {
   emergencyContactRelationship: string | undefined;
   hasApprovedToPublishPhotos: boolean | undefined;
   volunteerAgreementSignedOn: Date | undefined;
-
 }
 
 export async function getUserByAzureADIdAsync(azureADId: string) {
@@ -38,12 +37,15 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
       emergencyContactNumber: true,
       emergencyContactAddress: true,
       emergencyContactRelationship: true,
-      hasApprovedToPublishPhotos: true
-    }
+      hasApprovedToPublishPhotos: true,
+    },
   });
 }
 
-export async function confirmUserDetailsAsync(userId: User["id"], data: UserData) {
+export async function confirmUserDetailsAsync(
+  userId: User["id"],
+  data: UserData,
+) {
   return await prisma.user.update({
     data,
     where: {
