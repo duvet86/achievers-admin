@@ -6,6 +6,9 @@ import {
   GraduationCap,
   Home,
   ShopFourTiles,
+  Group,
+  Calendar,
+  PrivacyPolicy,
 } from "iconoir-react";
 
 interface Props {
@@ -44,14 +47,29 @@ function getLinks(isAdmin: boolean): DrawerLink[] {
       ]
     : [
         {
-          icon: null,
+          icon: <Home className="h-6 w-6" />,
+          value: "/mentor/home",
+          label: "Home",
+        },
+        {
+          icon: <GraduationCap className="h-6 w-6" />,
+          value: "/mentor/students",
+          label: "My Students",
+        },
+        {
+          icon: <Group className="h-6 w-6" />,
+          value: "/mentor/partner",
+          label: "My Partner",
+        },
+        {
+          icon: <Calendar className="h-6 w-6" />,
           value: "/mentor/roster",
           label: "Roster",
         },
         {
-          icon: null,
-          value: "/mentor/mentees",
-          label: "My Mentees",
+          icon: <PrivacyPolicy className="h-6 w-6" />,
+          value: "/mentor/policy",
+          label: "Policy",
         },
       ];
 }

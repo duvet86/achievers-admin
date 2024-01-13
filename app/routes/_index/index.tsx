@@ -30,7 +30,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   if (userRoles.includes(Roles.Mentor)) {
-    return redirect("/mentor/roster");
+    return redirect("/mentor/home");
   }
 
   throw redirect("/401");
