@@ -40,7 +40,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
 }
 
-export default function AppLayout() {
+export default function Index() {
   const loaderData = useLoaderData<typeof loader>();
 
   return <Body {...loaderData} />;

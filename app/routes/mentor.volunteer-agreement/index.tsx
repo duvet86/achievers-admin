@@ -1,11 +1,20 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 
-import { Checkbox, DateInput, Input, Title } from "~/components";
+import {
+  Checkbox,
+  DateInput,
+  Input,
+  SubTitle,
+  SubmitFormButton,
+  Title,
+} from "~/components";
 
 import { getUserByAzureADIdAsync, getCurrentUserADIdAsync } from "~/services";
+import { confirmUserDetailsAsync } from "./services.server";
+import dayjs from "dayjs";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const azureUserId = await getCurrentUserADIdAsync(request);
@@ -17,12 +26,69 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   return json({
+    maxDateOfBirth: `${dayjs().year() - 18}-01-01`, // At least 18 years old.
     user,
   });
 }
 
-export default function AppLayout() {
-  const { user } = useLoaderData<typeof loader>();
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+
+  const userId = formData.get("userId")?.toString();
+
+  const firstName = formData.get("firstName")?.toString();
+  const lastName = formData.get("lastName")?.toString();
+  const mobile = formData.get("mobile")?.toString();
+  const addressStreet = formData.get("addressStreet")?.toString();
+  const addressSuburb = formData.get("addressSuburb")?.toString();
+  const addressState = formData.get("addressState")?.toString();
+  const addressPostcode = formData.get("addressPostcode")?.toString();
+  const dateOfBirth = formData.get("dateOfBirth")?.toString();
+  const emergencyContactName = formData.get("emergencyContactName")?.toString();
+  const emergencyContactNumber = formData
+    .get("emergencyContactNumber")
+    ?.toString();
+  const emergencyContactAddress = formData
+    .get("emergencyContactNumber")
+    ?.toString();
+  const emergencyContactRelationship = formData
+    .get("emergencyContactNumber")
+    ?.toString();
+  const hasApprovedToPublishPhotos = formData
+    .get("hasApprovedToPublishPhotos")
+    ?.toString();
+
+  if (
+    userId === undefined ||
+    firstName === undefined ||
+    lastName === undefined ||
+    mobile === undefined
+  ) {
+    throw new Error();
+  }
+
+  await confirmUserDetailsAsync(Number(userId), {
+    firstName,
+    lastName,
+    mobile,
+    addressStreet,
+    addressSuburb,
+    addressState,
+    addressPostcode,
+    dateOfBirth: new Date(dateOfBirth + "T00:00"),
+    emergencyContactName,
+    emergencyContactNumber,
+    emergencyContactAddress,
+    emergencyContactRelationship,
+    hasApprovedToPublishPhotos: hasApprovedToPublishPhotos === "on",
+    volunteerAgreementSignedOn: new Date(),
+  });
+
+  return redirect("/mentor/home");
+}
+
+export default function Index() {
+  const { user, maxDateOfBirth } = useLoaderData<typeof loader>();
 
   return (
     <div className="hero rounded-md bg-base-200">
@@ -34,6 +100,7 @@ export default function AppLayout() {
             to the Associations Incorporation Act 2015 (WA)
           </p>
         </div>
+
         <div className="card w-full bg-base-100 shadow-2xl">
           <Form method="post" className="card-body">
             <Title>Confirm your details</Title>
@@ -87,14 +154,13 @@ export default function AppLayout() {
               required
             />
 
-            <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700" />
-
-            <Title>Update your details</Title>
+            <SubTitle>Update your details</SubTitle>
 
             <DateInput
               label="Date of birth"
               name="dateOfBirth"
               defaultValue={user.dateOfBirth ?? ""}
+              max={maxDateOfBirth}
               required
             />
 
@@ -131,7 +197,10 @@ export default function AppLayout() {
               image in any publications, electronic or otherwise for the
               purposes of promoting the activities of the Achievers Club:
             </p>
-            <Checkbox name="hasApprovedToPublishPhotos" />
+            <Checkbox
+              name="hasApprovedToPublishPhotos"
+              defaultChecked={user.hasApprovedToPublishPhotos ?? false}
+            />
 
             <p className="mt-6">
               I have been informed that copies of the Constitution of the
@@ -169,8 +238,10 @@ export default function AppLayout() {
             <p className="mt-6">I am over 18 years of age:</p>
             <Checkbox name="isOver18" required />
 
-            <div className="form-control mt-6">
-              <button className="btn btn-primary">Submit</button>
+            <input type="hidden" name="userId" value={user.id} />
+
+            <div className="flex justify-end">
+              <SubmitFormButton />
             </div>
           </Form>
         </div>

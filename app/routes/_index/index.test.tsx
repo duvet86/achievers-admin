@@ -123,7 +123,7 @@ describe("Loader", () => {
     expect(response).toEqual(redirect("/mentor/volunteer-agreement"));
   });
 
-  it("should redirect to roster for mentor user", async () => {
+  it("should redirect to home for mentor user", async () => {
     vi.mocked(getCurrentUserADIdAsync).mockResolvedValueOnce("id");
     vi.mocked(getAzureUserWithRolesByIdAsync).mockResolvedValueOnce({
       id: "1",
@@ -180,6 +180,6 @@ describe("Loader", () => {
       context: {},
     });
 
-    expect(response).toEqual(redirect("/mentor/roster"));
+    expect(response).toEqual(redirect("/mentor/home"));
   });
 });
