@@ -11,3 +11,8 @@ export interface TokenInfo {
 }
 
 export type Environment = "local" | "staging" | "production";
+
+export interface DateRange {
+  startDate: Date;
+  endDate: Date;
+}

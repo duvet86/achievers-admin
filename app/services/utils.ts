@@ -1,4 +1,9 @@
-import type { Environment } from "./models";
+import type { DateRange, Environment } from "./models";
+
+import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween.js";
+
+dayjs.extend(isBetween);
 
 export function getExtension(fileName: string): string {
   const fileNameSplit = fileName.split(".");
@@ -80,4 +85,37 @@ export function areEqualIgnoreCase(a: string, b: string): boolean {
 
 export function getValueFromCircularArray(index: number, arr: string[]) {
   return arr[((index % arr.length) + arr.length) % arr.length];
+}
+
+export function areDatesOverlapping(dateRanges: DateRange[]) {
+  return dateRanges.reduce<boolean>(
+    (overlappping, { startDate, endDate }, index, terms) => {
+      if (overlappping) {
+        return true;
+      }
+
+      if (dayjs(endDate).isBefore(startDate, "day")) {
+        return true;
+      }
+
+      if (
+        index > 0 &&
+        (dayjs(terms[index - 1].startDate).isBetween(
+          terms[index].startDate,
+          terms[index].endDate,
+          "day",
+        ) ||
+          dayjs(terms[index - 1].endDate).isBetween(
+            terms[index].startDate,
+            terms[index].endDate,
+            "day",
+          ))
+      ) {
+        return true;
+      }
+
+      return false;
+    },
+    false,
+  );
 }
