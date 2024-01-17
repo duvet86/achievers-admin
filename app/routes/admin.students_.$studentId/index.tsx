@@ -3,8 +3,8 @@ import type { Prisma } from "@prisma/client";
 
 import dayjs from "dayjs";
 import { $Enums } from "@prisma/client";
-import { json } from "@remix-run/node";
-import { useActionData, useLoaderData, useNavigation } from "@remix-run/react";
+import { json, redirect } from "@remix-run/node";
+import { useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { areEqualIgnoreCase } from "~/services";
@@ -23,10 +23,13 @@ import { AssignedChapterList } from "./components/AssignedChapterList";
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.studentId, "studentId not found");
 
-  if (areEqualIgnoreCase(params.studentId, "new")) {
+  const isNewStudent = areEqualIgnoreCase(params.studentId, "new");
+
+  if (isNewStudent) {
     return json({
       title: "Add new student",
       student: null,
+      isNewStudent,
     });
   }
 
@@ -40,6 +43,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return json({
     title: "Edit student info",
     student,
+    isNewStudent,
   });
 }
 
@@ -78,6 +82,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
     ?.toString();
   const startDate = formData.get("startDate")?.toString();
 
+  let studentId: number;
+
   if (areEqualIgnoreCase(params.studentId, "new")) {
     if (firstName === undefined || lastName === undefined) {
       throw new Error();
@@ -110,7 +116,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       startDate: startDate ? dayjs(startDate).toDate() : null,
     };
 
-    await createNewStudentAsync(dataCreate);
+    studentId = await createNewStudentAsync(dataCreate);
   } else {
     const dataCreate: Prisma.XOR<
       Prisma.StudentUpdateInput,
@@ -139,17 +145,17 @@ export async function action({ request, params }: ActionFunctionArgs) {
       startDate: startDate ? dayjs(startDate).toDate() : null,
     };
 
-    await updateStudentByIdAsync(Number(params.studentId), dataCreate);
+    studentId = await updateStudentByIdAsync(
+      Number(params.studentId),
+      dataCreate,
+    );
   }
 
-  return json({
-    message: "Successfully saved",
-  });
+  return redirect(`/admin/students/${studentId}`);
 }
 
 export default function Index() {
   const loaderData = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
   const transition = useNavigation();
 
   return (
@@ -161,11 +167,7 @@ export default function Index() {
       </div>
 
       <div className="content-area md:flex">
-        <StudentForm
-          transition={transition}
-          loaderData={loaderData}
-          actionData={actionData}
-        />
+        <StudentForm transition={transition} loaderData={loaderData} />
 
         <hr className="my-8 md:hidden" />
 

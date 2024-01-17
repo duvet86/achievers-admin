@@ -2,6 +2,7 @@ import type { SerializeFrom } from "@remix-run/node";
 import type { loader } from "../index";
 
 import { Link } from "@remix-run/react";
+import classnames from "classnames";
 
 import { Xmark, HomeShield, PageEdit } from "iconoir-react";
 import { SubTitle } from "~/components";
@@ -10,7 +11,7 @@ interface Props {
   loaderData: SerializeFrom<typeof loader>;
 }
 
-export function GuardianList({ loaderData: { student } }: Props) {
+export function GuardianList({ loaderData: { student, isNewStudent } }: Props) {
   const noGuardiansAssigned = student === null || student.guardian.length === 0;
 
   return (
@@ -65,7 +66,12 @@ export function GuardianList({ loaderData: { student } }: Props) {
       )}
 
       <div className="mt-6 flex justify-end">
-        <Link to="guardians/new" className="btn btn-primary w-48 gap-4">
+        <Link
+          to="guardians/new"
+          className={classnames("btn btn-primary w-48 gap-4", {
+            invisible: isNewStudent,
+          })}
+        >
           <HomeShield className="h-6 w-6" />
           Add a guardian
         </Link>
