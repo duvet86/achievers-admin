@@ -15,7 +15,7 @@ describe("Drawer", () => {
 
     const links: HTMLAnchorElement[] = screen.getAllByRole("link");
 
-    expect(links.length).toBe(4);
+    expect(links.length).toBe(5);
 
     expect(links[0]).toHaveTextContent("Home");
     expect(links[0]).toHaveAttribute("href", "/admin/home");
@@ -28,6 +28,9 @@ describe("Drawer", () => {
 
     expect(links[3]).toHaveTextContent("Chapters");
     expect(links[3]).toHaveAttribute("href", "/admin/chapters");
+
+    expect(links[4]).toHaveTextContent("School Terms");
+    expect(links[4]).toHaveAttribute("href", "/admin/school-terms");
   });
 
   it("should display links for mentor", async () => {

@@ -1,3 +1,5 @@
+import type { ChangeEventHandler } from "react";
+
 interface SelectOption {
   label: string;
   value: string;
@@ -10,6 +12,7 @@ interface Props {
   required?: boolean;
   name: string;
   options: SelectOption[];
+  onChange?: ChangeEventHandler<HTMLSelectElement>;
 }
 
 export function Select({ label, name, options, required, ...props }: Props) {

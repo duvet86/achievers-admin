@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import dayjs from "dayjs";
 
 const prisma = new PrismaClient();
 
@@ -37,165 +38,127 @@ async function seed() {
     update: {},
   });
 
-  // const expiryDate = new Date();
-  // expiryDate.setMonth(expiryDate.getMonth() - 4);
+  await prisma.schoolTerm.upsert({
+    where: {
+      startDate_endDate: {
+        startDate: dayjs("2024-01-31"),
+        endDate: dayjs("2024-03-28"),
+      },
+    },
+    create: {
+      year: 2024,
+      startDate: dayjs("2024-01-31"),
+      endDate: dayjs("2024-03-28"),
+    },
+    update: {},
+  });
 
-  // await prisma.$connect();
+  await prisma.schoolTerm.upsert({
+    where: {
+      startDate_endDate: {
+        startDate: dayjs("2024-04-15"),
+        endDate: dayjs("2024-06-28"),
+      },
+    },
+    create: {
+      year: 2024,
+      startDate: dayjs("2024-04-15"),
+      endDate: dayjs("2024-06-28"),
+    },
+    update: {},
+  });
 
-  // await prisma.$transaction(async (tx) => {
-  //   await tx.importedHistory.deleteMany();
-  //   await tx.approvalbyMRC.deleteMany();
-  //   await tx.eoIProfile.deleteMany();
-  //   await tx.induction.deleteMany();
-  //   await tx.policeCheck.deleteMany();
-  //   await tx.reference.deleteMany();
-  //   await tx.welcomeCall.deleteMany();
-  //   await tx.wWCCheck.deleteMany();
-  //   await tx.userAtChapter.deleteMany();
-  //   await tx.user.deleteMany();
+  await prisma.schoolTerm.upsert({
+    where: {
+      startDate_endDate: {
+        startDate: dayjs("2024-07-15"),
+        endDate: dayjs("2024-09-20"),
+      },
+    },
+    create: {
+      year: 2024,
+      startDate: dayjs("2024-07-15"),
+      endDate: dayjs("2024-09-20"),
+    },
+    update: {},
+  });
 
-  //   let i;
+  await prisma.schoolTerm.upsert({
+    where: {
+      startDate_endDate: {
+        startDate: dayjs("2024-10-07"),
+        endDate: dayjs("2024-12-12"),
+      },
+    },
+    create: {
+      year: 2024,
+      startDate: dayjs("2024-10-07"),
+      endDate: dayjs("2024-12-12"),
+    },
+    update: {},
+  });
 
-  //   for (i = 0; i < 10; i++) {
-  //     await tx.user.create({
-  //       data: {
-  //         azureADId: null,
-  //         email: `test_${i}@test.com`,
-  //         //email: "duvet86@gmail.com",
-  //         firstName: `test_${i}`,
-  //         lastName: `user_${i}`,
-  //         mobile: "123",
-  //         addressStreet: "street",
-  //         addressSuburb: "suburb",
-  //         addressState: "state",
-  //         addressPostcode: "123123",
-  //         additionalEmail: null,
-  //         dateOfBirth: null,
-  //         emergencyContactName: null,
-  //         emergencyContactNumber: null,
-  //         emergencyContactAddress: null,
-  //         emergencyContactRelationship: null,
-  //         nextOfKinName: null,
-  //         nextOfKinNumber: null,
-  //         nextOfKinAddress: null,
-  //         nextOfKinRelationship: null,
-  //         profilePicturePath: null,
-  //         hasApprovedToPublishPhotos: null,
-  //         endDate: null,
-  //         volunteerAgreementSignedOn: null,
-  //         createdAt: new Date(),
-  //         updatedAt: new Date(),
-  //         eoIProfile: {
-  //           create: {
-  //             bestTimeToContact: "Afternoon after 3pm",
-  //             occupation: "Retired",
-  //             volunteerExperience: "None",
-  //             role: "Mentor",
-  //             mentoringLevel: "2 years at Curtin university",
-  //             preferredFrequency: "every week",
-  //             heardAboutUs: "Linkid",
-  //             isOver18: true,
-  //             comment: "I am ready to rock",
-  //             aboutMe:
-  //               "I have a lot of energy and I want to share it with everyone",
-  //             createdAt: new Date(),
-  //             updatedAt: new Date(),
-  //           },
-  //         },
-  //         welcomeCall: {
-  //           create: {
-  //             calledBy: "Pippo",
-  //             calledOnDate: new Date(),
-  //             comment: "Great guy",
-  //             createdAt: new Date(),
-  //             updatedAt: new Date(),
-  //           },
-  //         },
-  //         references: {
-  //           createMany: {
-  //             data: [
-  //               {
-  //                 firstName: `referenceA_${i}`,
-  //                 lastName: `lastnameA_${i}`,
-  //                 mobile: "123",
-  //                 email: "aaa@aaa.com",
-  //                 bestTimeToContact: "",
-  //                 relationship: "mother",
-  //                 generalComment: null,
-  //                 outcomeComment: null,
-  //                 hasKnowApplicantForAYear: null,
-  //                 isRelated: null,
-  //                 isMentorRecommended: null,
-  //                 calledBy: null,
-  //                 calledOndate: null,
-  //                 createdAt: new Date(),
-  //                 updatedAt: new Date(),
-  //               },
-  //               {
-  //                 firstName: `referenceB_${i}`,
-  //                 lastName: `lastnameB_${i}`,
-  //                 mobile: "",
-  //                 email: "bbb@bbb.com",
-  //                 bestTimeToContact: "",
-  //                 relationship: "",
-  //                 generalComment: null,
-  //                 outcomeComment: null,
-  //                 hasKnowApplicantForAYear: null,
-  //                 isRelated: null,
-  //                 isMentorRecommended: null,
-  //                 calledBy: null,
-  //                 calledOndate: null,
-  //                 createdAt: new Date(),
-  //                 updatedAt: new Date(),
-  //               },
-  //             ],
-  //           },
-  //         },
-  //         induction: {
-  //           create: {
-  //             runBy: "Tony",
-  //             completedOnDate: new Date(),
-  //             comment: null,
-  //             createdAt: new Date(),
-  //             updatedAt: new Date(),
-  //           },
-  //         },
-  //         policeCheck: {
-  //           create: {
-  //             filePath: "",
-  //             expiryDate,
-  //             createdAt: new Date(),
-  //             updatedAt: new Date(),
-  //           },
-  //         },
-  //         wwcCheck: {
-  //           create: {
-  //             wwcNumber: "",
-  //             filePath: "",
-  //             expiryDate,
-  //             createdAt: new Date(),
-  //             updatedAt: new Date(),
-  //           },
-  //         },
-  //         approvalbyMRC: {
-  //           create: {
-  //             completedBy: "July",
-  //             submittedDate: null,
-  //             comment: null,
-  //             createdAt: new Date(),
-  //             updatedAt: new Date(),
-  //           },
-  //         },
-  //         userAtChapter: {
-  //           create: {
-  //             assignedBy: "test-data",
-  //             chapterId: (await tx.chapter.findFirstOrThrow()).id,
-  //           },
-  //         },
-  //       },
-  //     });
-  //   }
-  // });
+  // --------------------------
+
+  await prisma.schoolTerm.upsert({
+    where: {
+      startDate_endDate: {
+        startDate: dayjs("2025-02-05"),
+        endDate: dayjs("2025-04-11"),
+      },
+    },
+    create: {
+      year: 2025,
+      startDate: dayjs("2025-02-05"),
+      endDate: dayjs("2025-04-11"),
+    },
+    update: {},
+  });
+
+  await prisma.schoolTerm.upsert({
+    where: {
+      startDate_endDate: {
+        startDate: dayjs("2025-04-28"),
+        endDate: dayjs("2025-07-04"),
+      },
+    },
+    create: {
+      year: 2025,
+      startDate: dayjs("2025-04-28"),
+      endDate: dayjs("2025-07-04"),
+    },
+    update: {},
+  });
+
+  await prisma.schoolTerm.upsert({
+    where: {
+      startDate_endDate: {
+        startDate: dayjs("2025-07-21"),
+        endDate: dayjs("2025-09-26"),
+      },
+    },
+    create: {
+      year: 2025,
+      startDate: dayjs("2025-07-21"),
+      endDate: dayjs("2025-09-26"),
+    },
+    update: {},
+  });
+
+  await prisma.schoolTerm.upsert({
+    where: {
+      startDate_endDate: {
+        startDate: dayjs("2025-10-13"),
+        endDate: dayjs("2025-12-18"),
+      },
+    },
+    create: {
+      year: 2025,
+      startDate: dayjs("2025-10-13"),
+      endDate: dayjs("2025-12-18"),
+    },
+    update: {},
+  });
 
   console.info(`Database has been seeded. 🌱`);
 }

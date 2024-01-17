@@ -1,4 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { SessionCommand } from "./services.server";
 
 import { json } from "@remix-run/node";
 import {
@@ -8,16 +9,16 @@ import {
   useSubmit,
 } from "@remix-run/react";
 import invariant from "tiny-invariant";
+import dayjs from "dayjs";
 
 import { BackHeader, Select, Title } from "~/components";
-import type { SessionCommand } from "./services.server";
 
 import {
   createSessionAsync,
   getCurrentTermForDate,
   getDatesForTerm,
+  getSchoolTermsForYearAsync,
   getStudentsAsync,
-  terms,
 } from "./services.server";
 import TermCalendar from "./components/TermCalendar";
 
@@ -27,9 +28,11 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const selectedTerm = url.searchParams.get("selectedTerm");
 
+  const terms = await getSchoolTermsForYearAsync(dayjs().year());
+
   const currentTerm =
     terms.find((t) => t.name === selectedTerm) ??
-    getCurrentTermForDate(new Date());
+    getCurrentTermForDate(terms, new Date());
 
   const students = await getStudentsAsync(Number(params.chapterId));
 
@@ -75,7 +78,7 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to={`/admin/chapters`} />
+      <BackHeader to="/admin/chapters" />
 
       <Title>Roster planner</Title>
 

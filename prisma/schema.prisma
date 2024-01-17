@@ -336,3 +336,13 @@ model MentorToStudentSession {
 
   @@id([userId, studentId, chapterId, attendedOn])
 }
+
+model SchoolTerm {
+  id        Int      @id @default(autoincrement())
+  year      Int
+  startDate DateTime
+  endDate   DateTime
+
+  @@unique([startDate, endDate])
+  @@index([year])
+}

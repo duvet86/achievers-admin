@@ -44,6 +44,11 @@ function getLinks(isAdmin: boolean): DrawerLink[] {
           value: "/admin/chapters",
           label: "Chapters",
         },
+        {
+          icon: <Calendar className="h-6 w-6" />,
+          value: "/admin/school-terms",
+          label: "School Terms",
+        },
       ]
     : [
         {

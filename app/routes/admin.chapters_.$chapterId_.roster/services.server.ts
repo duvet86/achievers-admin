@@ -14,30 +14,30 @@ export interface SessionCommand {
   attendOn: string;
 }
 
-export const terms: Term[] = [
-  {
-    name: "Term 1",
-    start: dayjs("2023-02-01"),
-    end: dayjs("2023-04-06"),
-  },
-  {
-    name: "Term 2",
-    start: dayjs("2023-04-24"),
-    end: dayjs("2023-06-30"),
-  },
-  {
-    name: "Term 3",
-    start: dayjs("2023-07-17"),
-    end: dayjs("2023-09-22"),
-  },
-  {
-    name: "Term 4",
-    start: dayjs("2023-10-09"),
-    end: dayjs("2023-12-14"),
-  },
-];
+export async function getSchoolTermsForYearAsync(
+  year: number,
+): Promise<Term[]> {
+  const terms = await prisma.schoolTerm.findMany({
+    where: {
+      year,
+    },
+    select: {
+      startDate: true,
+      endDate: true,
+    },
+    orderBy: {
+      startDate: "asc",
+    },
+  });
 
-export function getCurrentTermForDate(date: Date): Term {
+  return terms.map<Term>(({ startDate, endDate }, index) => ({
+    name: "Term " + (index + 1),
+    start: dayjs(startDate),
+    end: dayjs(endDate),
+  }));
+}
+
+export function getCurrentTermForDate(terms: Term[], date: Date): Term {
   for (let i = 0; i < terms.length; i++) {
     if (
       dayjs(date).isBetween(terms[i].start, terms[i].end, "day", "[]") ||
