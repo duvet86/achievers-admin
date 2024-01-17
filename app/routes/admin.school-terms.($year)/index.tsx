@@ -32,8 +32,10 @@ import {
 } from "./services.server";
 
 export async function loader({ params }: LoaderFunctionArgs) {
+  const currentYear = dayjs().year();
+
   const selectedYear = isStringNullOrEmpty(params.year)
-    ? dayjs().year()
+    ? currentYear
     : Number(params.year);
 
   const availableYears = await getAvailableYearsAsync();
@@ -43,6 +45,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return json({
     availableYears,
     selectedYear: selectedYear.toString(),
+    currentYear: currentYear.toString(),
     terms,
   });
 }
@@ -152,7 +155,7 @@ export async function action({ request, params }: ActionFunctionArgs): Promise<
 }
 
 export default function Index() {
-  const { selectedYear, availableYears, terms } =
+  const { currentYear, selectedYear, availableYears, terms } =
     useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
@@ -172,7 +175,7 @@ export default function Index() {
           name="selectedYear"
           defaultValue={selectedYear}
           options={availableYears.map((year) => ({
-            label: selectedYear === year ? `${year} - current` : year,
+            label: currentYear === year ? `${year} - current` : year,
             value: year,
           }))}
           onChange={goToSelectedYear}
