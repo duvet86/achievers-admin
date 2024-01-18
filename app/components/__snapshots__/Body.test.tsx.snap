@@ -60,7 +60,7 @@ exports[`Body > Body snapshot admin 1`] = `
           >
             <a
               class="btn btn-ghost text-xl normal-case"
-              href="/admin/home"
+              href="/"
             >
               <img
                 alt="Logo"
@@ -548,7 +548,7 @@ exports[`Body > Body snapshot mentor 1`] = `
           >
             <a
               class="btn btn-ghost text-xl normal-case"
-              href="/admin/home"
+              href="/"
             >
               <img
                 alt="Logo"

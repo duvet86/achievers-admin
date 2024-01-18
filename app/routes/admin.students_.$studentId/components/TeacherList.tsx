@@ -2,6 +2,7 @@ import type { SerializeFrom } from "@remix-run/node";
 import type { loader } from "../index";
 
 import { Link } from "@remix-run/react";
+import classnames from "classnames";
 
 import { PageEdit, GraduationCap, Xmark } from "iconoir-react";
 import { SubTitle } from "~/components";
@@ -10,7 +11,7 @@ interface Props {
   loaderData: SerializeFrom<typeof loader>;
 }
 
-export function TeacherList({ loaderData: { student } }: Props) {
+export function TeacherList({ loaderData: { student, isNewStudent } }: Props) {
   const noTeachersAssigned =
     student === null || student.studentTeacher.length === 0;
 
@@ -73,7 +74,12 @@ export function TeacherList({ loaderData: { student } }: Props) {
       )}
 
       <div className="mt-6 flex justify-end">
-        <Link to="teachers/new" className="btn btn-primary w-48 gap-4">
+        <Link
+          to="teachers/new"
+          className={classnames("btn btn-primary w-48 gap-4", {
+            invisible: isNewStudent,
+          })}
+        >
           <GraduationCap className="h-6 w-6" />
           Add a teacher
         </Link>

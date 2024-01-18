@@ -61,13 +61,15 @@ export async function updateStudentByIdAsync(
     Prisma.StudentUpdateInput,
     Prisma.StudentUncheckedUpdateInput
   >,
-) {
-  return await prisma.student.update({
+): Promise<number> {
+  const student = await prisma.student.update({
     data: dataUpdate,
     where: {
       id: userId,
     },
   });
+
+  return student.id;
 }
 
 export async function createNewStudentAsync(
@@ -75,8 +77,10 @@ export async function createNewStudentAsync(
     Prisma.StudentCreateInput,
     Prisma.StudentUncheckedCreateInput
   >,
-) {
-  return await prisma.student.create({
+): Promise<number> {
+  const student = await prisma.student.create({
     data: dataCreate,
   });
+
+  return student.id;
 }

@@ -1,6 +1,6 @@
 import type { SerializeFrom } from "@remix-run/node";
 import type { Navigation } from "@remix-run/router";
-import type { action, loader } from "../index";
+import type { loader } from "../index";
 
 import { Form } from "@remix-run/react";
 
@@ -15,14 +15,9 @@ import {
 interface Props {
   transition: Navigation;
   loaderData: SerializeFrom<typeof loader>;
-  actionData: SerializeFrom<typeof action> | undefined;
 }
 
-export function StudentForm({
-  transition,
-  loaderData: { student },
-  actionData,
-}: Props) {
+export function StudentForm({ transition, loaderData: { student } }: Props) {
   return (
     <Form
       method="post"
@@ -159,11 +154,7 @@ export function StudentForm({
           name="startDate"
         />
 
-        <SubmitFormButton
-          sticky
-          successMessage={actionData?.message}
-          className="mt-4 justify-between"
-        />
+        <SubmitFormButton sticky className="mt-4 justify-between" />
       </fieldset>
     </Form>
   );

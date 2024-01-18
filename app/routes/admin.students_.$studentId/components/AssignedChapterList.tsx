@@ -2,6 +2,7 @@ import type { SerializeFrom } from "@remix-run/node";
 import type { loader } from "../index";
 
 import { Link } from "@remix-run/react";
+import classnames from "classnames";
 
 import { GraduationCap, Xmark } from "iconoir-react";
 import { SubTitle } from "~/components";
@@ -10,7 +11,9 @@ interface Props {
   loaderData: SerializeFrom<typeof loader>;
 }
 
-export function AssignedChapterList({ loaderData: { student } }: Props) {
+export function AssignedChapterList({
+  loaderData: { student, isNewStudent },
+}: Props) {
   const noChaptersAssigned =
     student === null || student.studentAtChapter.length === 0;
 
@@ -55,7 +58,12 @@ export function AssignedChapterList({ loaderData: { student } }: Props) {
 
       {noChaptersAssigned && (
         <div className="mt-6 flex justify-end">
-          <Link to="chapters/assign" className="btn btn-primary w-48 gap-4">
+          <Link
+            to="chapters/assign"
+            className={classnames("btn btn-primary w-48 gap-4", {
+              invisible: isNewStudent,
+            })}
+          >
             <GraduationCap className="h-6 w-6" />
             Assign chapter
           </Link>

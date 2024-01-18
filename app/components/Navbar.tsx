@@ -21,7 +21,7 @@ export function Navbar({ currentUser, environment, version }: Props) {
         </label>
       </div>
       <div className="flex-1">
-        <Link to="/admin/home" className="btn btn-ghost text-xl normal-case">
+        <Link to="/" className="btn btn-ghost text-xl normal-case">
           <img
             className="mr-4 w-16 rounded"
             src="/images/logo.png"
