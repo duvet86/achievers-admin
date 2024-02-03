@@ -14,4 +14,7 @@ module.exports = {
       version: 28,
     },
   },
+  rules: {
+    "no-useless-constructor": 0,
+  },
 };
