@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useMatches } from "@remix-run/react";
 
 export function useClientRect<T extends HTMLElement>(): [
   { width: number; height: number },
@@ -15,3 +16,10 @@ export function useClientRect<T extends HTMLElement>(): [
 
   return [rect, ref];
 }
+
+export const useRouteData = <T>(routeId: string): T => {
+  const matches = useMatches();
+  const data = matches.find((match) => match.id === routeId)?.data;
+
+  return data as T;
+};

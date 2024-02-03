@@ -1,7 +1,7 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import {
@@ -56,9 +56,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     Number(params.studentId),
   );
 
-  return json({
-    message: "Successfully saved",
-  });
+  return null;
 }
 
 export default function Index() {
@@ -67,7 +65,6 @@ export default function Index() {
     availableMentors,
     studentWithMentors: { firstName, lastName, mentorToStudentAssignement },
   } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
 
   return (
     <>
@@ -101,10 +98,7 @@ export default function Index() {
                 />
               </div>
 
-              <SubmitFormButton
-                label="Add"
-                successMessage={actionData?.message}
-              />
+              <SubmitFormButton label="Add" />
             </Form>
           </div>
         </div>
