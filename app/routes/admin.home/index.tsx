@@ -54,7 +54,7 @@ export default function Index() {
   } = useLoaderData<typeof loader>();
 
   return (
-    <div className="-m-4 h-full bg-lines p-4">
+    <div className="-m-4 h-full p-4">
       <article className="prose relative mb-8 h-24 max-w-none lg:h-28">
         <div className="h-24 w-full rounded-md bg-achievers opacity-75 lg:h-28"></div>
         <h1 className="absolute left-6 top-6 hidden lg:block">
