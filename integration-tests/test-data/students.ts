@@ -31,7 +31,6 @@ export async function createStudentsAsync(
           lastName: `student_lastname_${i}`,
           schoolName: `school_${i}`,
           startDate: new Date(),
-          yearLevel: "1",
           allergies: true,
           hasApprovedToPublishPhotos: true,
           guardian: {

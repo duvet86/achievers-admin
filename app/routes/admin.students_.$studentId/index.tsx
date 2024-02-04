@@ -64,7 +64,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const bestPersonToContact = formData.get("bestPersonToContact")?.toString();
   const bestContactMethod = formData.get("bestContactMethod")?.toString();
   const schoolName = formData.get("schoolName")?.toString();
-  const yearLevel = formData.get("yearLevel")?.toString();
   const emergencyContactFullName = formData
     .get("emergencyContactFullName")
     ?.toString();
@@ -107,7 +106,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
       bestPersonToContact,
       bestContactMethod,
       schoolName,
-      yearLevel,
       emergencyContactFullName,
       emergencyContactRelationship,
       emergencyContactPhone,
@@ -136,7 +134,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
       bestPersonToContact,
       bestContactMethod,
       schoolName,
-      yearLevel,
       emergencyContactFullName,
       emergencyContactRelationship,
       emergencyContactPhone,

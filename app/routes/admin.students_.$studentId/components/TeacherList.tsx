@@ -24,13 +24,9 @@ export function TeacherList({ loaderData: { student, isNewStudent } }: Props) {
           <table className="table">
             <thead>
               <tr>
-                <th align="left" className="p-2">
-                  Teacher full name
-                </th>
-                <th align="left" className="p-2">
-                  School name
-                </th>
-                <th align="right" className="w-56 p-2">
+                <th align="left">Teacher full name</th>
+                <th align="left">School name</th>
+                <th align="right" className="w-56">
                   Action
                 </th>
               </tr>
@@ -38,9 +34,9 @@ export function TeacherList({ loaderData: { student, isNewStudent } }: Props) {
             <tbody>
               {student?.studentTeacher.map(({ id, fullName, schoolName }) => (
                 <tr key={id}>
-                  <td className="border p-2">{fullName}</td>
-                  <td className="border p-2">{schoolName}</td>
-                  <td className="border p-2">
+                  <td className="border">{fullName}</td>
+                  <td className="border">{schoolName}</td>
+                  <td className="border">
                     <div className="join w-full">
                       <Link
                         className="btn btn-success join-item btn-xs w-1/2 gap-2"
@@ -63,7 +59,7 @@ export function TeacherList({ loaderData: { student, isNewStudent } }: Props) {
               ))}
               {(student === null || student.studentTeacher.length === 0) && (
                 <tr>
-                  <td colSpan={3} className="border p-2">
+                  <td colSpan={3} className="border">
                     <i>No teachers assigned to this student</i>
                   </td>
                 </tr>

@@ -82,7 +82,6 @@ export async function importSpreadsheetStudentsAsync(
           lastName: newStudents[i]["Last Name"].trim(),
           schoolName: newStudents[i]["Name of School"]?.trim(),
           startDate: isStartDateValid ? new Date(startDate) : null,
-          yearLevel: newStudents[i]["Year Level"]?.toString().trim(),
           allergies: newStudents[i]["Dietary Requirements/Allergies"]
             ? newStudents[i]["Dietary Requirements/Allergies"]!.trim() === "Yes"
               ? true

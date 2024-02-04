@@ -3,6 +3,7 @@ import type { SpeadsheetStudent } from "~/models/speadsheet";
 import { write, utils } from "xlsx";
 
 import { prisma } from "~/db.server";
+import { calculateYearLevel } from "~/services";
 
 export async function exportStudentsToSpreadsheetAsync() {
   const mentors = await prisma.student.findMany({
@@ -47,7 +48,7 @@ export async function exportStudentsToSpreadsheetAsync() {
     "Emergency Contact Email": s.emergencyContactEmail ?? undefined,
     "Emergency Contact Address": s.emergencyContactAddress ?? undefined,
     "Name of School": s.schoolName ?? undefined,
-    "Year Level": s.yearLevel ?? undefined,
+    "Year Level": calculateYearLevel(s.dateOfBirth)?.toString(),
     "Teacher's Email": s.studentTeacher[0].email,
     "Teacher's Name (s)": s.studentTeacher[0].fullName,
   }));

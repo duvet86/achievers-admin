@@ -57,128 +57,122 @@ export function CheckList({
       <table className="table">
         <thead>
           <tr>
-            <th align="left" className="p-2">
-              Check list
-            </th>
-            <th align="left" className="p-2">
-              Completed
-            </th>
-            <th align="center" className="p-2">
-              Action
-            </th>
+            <th align="left">Check list</th>
+            <th align="left">Completed</th>
+            <th align="center">Action</th>
           </tr>
         </thead>
 
         <tbody>
           <tr>
-            <td className="border p-2">
+            <td className="border">
               <div className="flex items-center gap-4">
                 <Sparks className="h-6 w-6" />
                 Expression of interest
               </div>
             </td>
-            <td className="border p-2">
+            <td className="border">
               <div className="flex items-center gap-4">
                 <Check className="h-6 w-6 text-success" /> Yes
               </div>
             </td>
-            <td className="border p-2">
+            <td className="border">
               <Link className="btn btn-xs w-full gap-2" to="eoiProfile">
                 View
               </Link>
             </td>
           </tr>
           <tr>
-            <td className="border p-2">
+            <td className="border">
               <div className="flex items-center gap-4">
                 <Phone className="h-6 w-6" />
                 Welcome call
               </div>
             </td>
-            <td className="border p-2">
+            <td className="border">
               <CheckStatus isCompleted={welcomeCallCompleted} />
             </td>
-            <td className="border p-2">
+            <td className="border">
               <Link className="btn btn-xs w-full gap-2" to="welcomeCall">
                 View
               </Link>
             </td>
           </tr>
           <tr>
-            <td className="border p-2">
+            <td className="border">
               <div className="flex items-center gap-4">
                 <MultiBubble className="h-6 w-6" />
                 References
               </div>
             </td>
-            <td className="border p-2">
+            <td className="border">
               <CheckStatus isCompleted={referencesCompleted} />
             </td>
-            <td className="border p-2">
+            <td className="border">
               <Link className="btn btn-xs w-full gap-2" to="references">
                 View
               </Link>
             </td>
           </tr>
           <tr>
-            <td className="border p-2">
+            <td className="border">
               <div className="flex items-center gap-4">
                 <Journal className="h-6 w-6" />
                 Induction
               </div>
             </td>
-            <td className="border p-2">
+            <td className="border">
               <CheckStatus isCompleted={inductionCompleted} />
             </td>
-            <td className="border p-2">
+            <td className="border">
               <Link className="btn btn-xs w-full gap-2" to="induction">
                 View
               </Link>
             </td>
           </tr>
           <tr>
-            <td className="border p-2">
+            <td className="border">
               <div className="flex items-center gap-4">
                 <ShieldCheck className="h-6 w-6" />
                 Police check
               </div>
             </td>
-            <td className="border p-2">
+            <td className="border">
               <CheckStatus isCompleted={policeCheckCompleted} />
             </td>
-            <td className="border p-2">
+            <td className="border">
               <Link className="btn btn-xs w-full gap-2" to="police-check">
                 View
               </Link>
             </td>
           </tr>
           <tr>
-            <td className="border p-2">
+            <td className="border">
               <div className="flex items-center gap-4">
                 <Group className="h-6 w-6" />
                 WWC check
               </div>
             </td>
-            <td className="border p-2">
+            <td className="border">
               <CheckStatus isCompleted={wwcCheckCompleted} />
             </td>
-            <td className="border p-2">
+            <td className="border">
               <Link className="btn btn-xs w-full gap-2" to="wwc-check">
                 View
               </Link>
             </td>
           </tr>
           <tr>
-            <td className="border p-2">
+            <td className="border">
               <div className="flex items-center gap-4">
                 <ThumbsUp className="h-6 w-6" />
                 Approval by MRC
               </div>
             </td>
-            <td className="border p-2">
+            <td className="border">
               <CheckStatus isCompleted={approvalbyMRCCompleted} />
             </td>
-            <td className="border p-2">
+            <td className="border">
               <Link className="btn btn-xs w-full gap-2" to="approval-mrc">
                 View
               </Link>
@@ -188,16 +182,16 @@ export function CheckList({
 
         <tfoot>
           <tr>
-            <th className="p-2">
+            <th>
               <div className="flex items-center gap-4">
                 <UserBadgeCheck className="h-6 w-6" />
                 Volunteer agreement
               </div>
             </th>
-            <th className="p-2">
+            <th>
               <CheckStatus isCompleted={volunteerAgreementSignedOn !== null} />
             </th>
-            <th className="p-2">
+            <th>
               {volunteerAgreementSignedOn
                 ? dayjs(volunteerAgreementSignedOn).format("YYYY-MM-DD")
                 : "-"}

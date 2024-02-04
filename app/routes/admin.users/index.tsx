@@ -118,30 +118,20 @@ export default function Index() {
           <table className="table">
             <thead>
               <tr>
-                <th align="left" className="w-14 p-2">
+                <th align="left" className="w-14">
                   #
                 </th>
-                <th align="left" className="p-2">
-                  Full name
-                </th>
-                <th align="left" className="p-2">
-                  Email
-                </th>
-                <th align="left" className="p-2">
-                  Assigned chapter
-                </th>
-                <th align="left" className="p-2">
-                  # Checks completed
-                </th>
-                <th align="right" className="p-2">
-                  Action
-                </th>
+                <th align="left">Full name</th>
+                <th align="left">Email</th>
+                <th align="left">Assigned chapter</th>
+                <th align="left"># Checks completed</th>
+                <th align="right">Action</th>
               </tr>
             </thead>
             <tbody>
               {users.length === 0 && (
                 <tr>
-                  <td className="border p-2" colSpan={6}>
+                  <td className="border" colSpan={6}>
                     <i>No users</i>
                   </td>
                 </tr>
@@ -172,22 +162,22 @@ export default function Index() {
 
                   return (
                     <tr key={id} className={className}>
-                      <td className="border p-2">
+                      <td className="border">
                         <div className="flex gap-2">
                           {index + 1 + 10 * currentPageNumber} {icon}
                         </div>
                       </td>
-                      <td className="border p-2">
+                      <td className="border">
                         {firstName} {lastName}
                       </td>
-                      <td className="border p-2">{email}</td>
-                      <td className="border p-2">
+                      <td className="border">{email}</td>
+                      <td className="border">
                         {userAtChapter
                           .map(({ chapter }) => chapter.name)
                           .join(", ")}
                       </td>
-                      <td className="border p-2">{checksCompleted}/8</td>
-                      <td className="border p-2">
+                      <td className="border">{checksCompleted}/8</td>
+                      <td className="border">
                         <Link
                           to={`${id}?${searchParams}`}
                           className="btn btn-success btn-xs w-full gap-2"

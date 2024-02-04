@@ -113,12 +113,6 @@ export function StudentForm({ transition, loaderData: { student } }: Props) {
         />
 
         <Input
-          defaultValue={student?.yearLevel ?? undefined}
-          label="Year level"
-          name="yearLevel"
-        />
-
-        <Input
           defaultValue={student?.emergencyContactFullName ?? undefined}
           label="Emergency contact full name"
           name="emergencyContactFullName"

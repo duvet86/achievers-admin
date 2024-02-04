@@ -24,7 +24,6 @@ export async function getStudentsInChapterAsync(
       id: true,
       firstName: true,
       lastName: true,
-      yearLevel: true,
     },
   });
 }
@@ -46,7 +45,6 @@ export async function getMentorWithStudentsAsync(mentorId: User["id"]) {
               id: true,
               firstName: true,
               lastName: true,
-              yearLevel: true,
             },
           },
         },

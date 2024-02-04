@@ -26,10 +26,8 @@ export function AssignedChapterList({
           <table className="table">
             <thead>
               <tr>
-                <th align="left" className="p-2">
-                  Chapters
-                </th>
-                <th align="right" className="w-56 p-2">
+                <th align="left">Chapters</th>
+                <th align="right" className="w-56">
                   Chapter action
                 </th>
               </tr>
@@ -37,8 +35,8 @@ export function AssignedChapterList({
             <tbody>
               {student?.studentAtChapter.map(({ chapterId, chapter }) => (
                 <tr key={chapterId}>
-                  <td className="border p-2">{chapter.name}</td>
-                  <td className="border p-2">
+                  <td className="border">{chapter.name}</td>
+                  <td className="border">
                     <div className="join w-full">
                       <Link
                         className="btn btn-error join-item btn-xs w-full gap-2"

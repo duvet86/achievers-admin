@@ -237,7 +237,6 @@ model Student {
   bestPersonToContact        String?
   bestContactMethod          String?
   schoolName                 String?
-  yearLevel                  String?
 
   emergencyContactFullName     String?
   emergencyContactRelationship String?
