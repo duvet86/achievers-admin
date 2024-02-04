@@ -18,7 +18,6 @@ export async function getStudentByIdAsync(id: number) {
       bestPersonToContact: true,
       bestContactMethod: true,
       schoolName: true,
-      yearLevel: true,
       emergencyContactFullName: true,
       emergencyContactRelationship: true,
       emergencyContactPhone: true,

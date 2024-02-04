@@ -187,24 +187,18 @@ export default function Index() {
           <table className="table">
             <thead>
               <tr>
-                <th align="left" className="w-12 p-2">
+                <th align="left" className="w-12">
                   #
                 </th>
-                <th align="left" className="p-2">
-                  Full name
-                </th>
-                <th align="left" className="p-2">
-                  Errors
-                </th>
-                <th align="right" className="p-2">
-                  Action
-                </th>
+                <th align="left">Full name</th>
+                <th align="left">Errors</th>
+                <th align="right">Action</th>
               </tr>
             </thead>
             <tbody>
               {actionData?.newStudents.length === 0 && (
                 <tr>
-                  <td colSpan={3} className="border p-2">
+                  <td colSpan={3} className="border">
                     <i>No students imported</i>
                   </td>
                 </tr>
@@ -222,14 +216,12 @@ export default function Index() {
                         : undefined
                     }
                   >
-                    <td className="border p-2">{index + 1}</td>
-                    <td className="border p-2">
+                    <td className="border">{index + 1}</td>
+                    <td className="border">
                       {firstName} {lastName}
                     </td>
-                    <td className="border p-2">
-                      {importedStudentHistory?.error}
-                    </td>
-                    <td className="border p-2">
+                    <td className="border">{importedStudentHistory?.error}</td>
+                    <td className="border">
                       <Link
                         to={`/admin/students/${id.toString()}`}
                         className="btn btn-success btn-xs w-full gap-2"

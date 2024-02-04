@@ -119,3 +119,63 @@ export function areDatesOverlapping(dateRanges: DateRange[]) {
     false,
   );
 }
+
+export function calculateYearLevel(dateOfBirth: Date | null): number | null {
+  if (dateOfBirth === null) {
+    return null;
+  }
+
+  const cutoffDateMonth = 6;
+  const cutoffDateDay = 30;
+
+  const currentYear = new Date().getFullYear();
+
+  const dateOfBirthYear = dateOfBirth.getFullYear();
+  const dateOfBirthMonth = dateOfBirth.getMonth() + 1;
+  const dateOfBirthDay = dateOfBirth.getDate();
+
+  const isWithinCutoffDate =
+    dateOfBirthMonth <= cutoffDateMonth && dateOfBirthDay <= cutoffDateDay;
+
+  if (dateOfBirthYear + 17 <= currentYear && isWithinCutoffDate) {
+    return 12;
+  }
+  if (dateOfBirthYear + 16 <= currentYear && isWithinCutoffDate) {
+    return 11;
+  }
+  if (dateOfBirthYear + 15 <= currentYear && isWithinCutoffDate) {
+    return 10;
+  }
+  if (dateOfBirthYear + 14 <= currentYear && isWithinCutoffDate) {
+    return 9;
+  }
+  if (dateOfBirthYear + 13 <= currentYear && isWithinCutoffDate) {
+    return 8;
+  }
+  if (dateOfBirthYear + 12 <= currentYear && isWithinCutoffDate) {
+    return 7;
+  }
+  if (dateOfBirthYear + 11 <= currentYear && isWithinCutoffDate) {
+    return 6;
+  }
+  if (dateOfBirthYear + 10 <= currentYear && isWithinCutoffDate) {
+    return 5;
+  }
+  if (dateOfBirthYear + 9 <= currentYear && isWithinCutoffDate) {
+    return 4;
+  }
+  if (dateOfBirthYear + 8 <= currentYear && isWithinCutoffDate) {
+    return 3;
+  }
+  if (dateOfBirthYear + 7 <= currentYear && isWithinCutoffDate) {
+    return 2;
+  }
+  if (dateOfBirthYear + 6 <= currentYear && isWithinCutoffDate) {
+    return 1;
+  }
+  if (dateOfBirthYear + 5 <= currentYear && isWithinCutoffDate) {
+    return 0;
+  }
+
+  return null;
+}

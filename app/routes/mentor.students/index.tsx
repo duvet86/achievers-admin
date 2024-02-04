@@ -1,5 +1,7 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json, useLoaderData } from "@remix-run/react";
+import { Link, json, useLoaderData } from "@remix-run/react";
+
+import { StatsReport, GraduationCap } from "iconoir-react";
 
 import { getCurrentUserADIdAsync, getUserByAzureADIdAsync } from "~/services";
 import { Title } from "~/components";
@@ -24,14 +26,46 @@ export default function Index() {
     <>
       <Title>My students</Title>
 
-      <div>
-        {students.map(({ student: { id, firstName, lastName } }) => (
-          <div key={id}>
-            <div>{firstName}</div>
-            <div>{lastName}</div>
-            <button>View reports</button>
-          </div>
-        ))}
+      <div className="overflow-auto bg-white">
+        <table className="table table-lg">
+          <thead>
+            <tr>
+              <th align="left" className="w-14"></th>
+              <th align="left">Full name</th>
+              <th align="left">Year Level</th>
+              <th align="right">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {students.length === 0 && (
+              <tr>
+                <td colSpan={6}>
+                  <i>No students</i>
+                </td>
+              </tr>
+            )}
+            {students.map(({ id, firstName, lastName, yearLevel }) => (
+              <tr key={id}>
+                <td align="center">
+                  <GraduationCap className="hidden h-4 w-4 lg:block" />
+                </td>
+                <td>
+                  {firstName} {lastName}
+                </td>
+                <td>{yearLevel ?? "-"}</td>
+                <td align="right">
+                  <Link
+                    to={`${id}`}
+                    className="btn btn-success btn-xs h-8 gap-2"
+                  >
+                    <StatsReport className="hidden h-4 w-4 lg:block" />
+                    View reports
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );

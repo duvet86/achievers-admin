@@ -24,13 +24,13 @@ export default function Index() {
         <table className="table">
           <thead>
             <tr>
-              <th align="left" className="w-1/3 p-2">
+              <th align="left" className="w-1/3">
                 Name
               </th>
-              <th align="left" className="hidden w-1/3 p-2 lg:table-cell">
+              <th align="left" className="hidden w-1/3 lg:table-cell">
                 Address
               </th>
-              <th align="right" className="w-1/3 p-2">
+              <th align="right" className="w-1/3">
                 Action
               </th>
             </tr>
@@ -38,10 +38,10 @@ export default function Index() {
           <tbody>
             {chapters.map(({ id, name, address }) => (
               <tr key={id}>
-                <td className="border p-2">{name}</td>
-                <td className="hidden border p-2 lg:table-cell">{address}</td>
-                <td className="border p-2">
-                  <div className="join h-16 w-full">
+                <td className="border">{name}</td>
+                <td className="hidden border lg:table-cell">{address}</td>
+                <td className="border">
+                  <div className="join h-12 w-full">
                     <Link
                       to={`${id}/roster`}
                       className="btn btn-info join-item btn-xs h-full w-1/4 gap-2"

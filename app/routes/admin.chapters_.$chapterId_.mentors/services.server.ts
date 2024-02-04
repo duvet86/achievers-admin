@@ -60,7 +60,6 @@ export async function getMentorsWithStudentsAsync(
               id: true,
               firstName: true,
               lastName: true,
-              yearLevel: true,
             },
           },
         },

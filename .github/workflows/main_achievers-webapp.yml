@@ -166,7 +166,7 @@ jobs:
         uses: styfle/cancel-workflow-action@0.12.1
 
       - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.WEBAPP_NAME }}
           slot-name: ${{ env.SLOT_NAME }}

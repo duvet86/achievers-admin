@@ -23,13 +23,9 @@ export function GuardianList({ loaderData: { student, isNewStudent } }: Props) {
           <table className="table">
             <thead>
               <tr>
-                <th align="left" className="p-2">
-                  Guardian full name
-                </th>
-                <th align="left" className="p-2">
-                  Guardian relationship
-                </th>
-                <th align="right" className="w-56 p-2">
+                <th align="left">Guardian full name</th>
+                <th align="left">Guardian relationship</th>
+                <th align="right" className="w-56">
                   Action
                 </th>
               </tr>
@@ -37,9 +33,9 @@ export function GuardianList({ loaderData: { student, isNewStudent } }: Props) {
             <tbody>
               {student?.guardian.map(({ id, fullName, relationship }) => (
                 <tr key={id}>
-                  <td className="border p-2">{fullName}</td>
-                  <td className="border p-2">{relationship}</td>
-                  <td className="border p-2">
+                  <td className="border">{fullName}</td>
+                  <td className="border">{relationship}</td>
+                  <td className="border">
                     <div className="join w-full">
                       <Link
                         className="btn btn-success join-item btn-xs w-1/2 gap-2"

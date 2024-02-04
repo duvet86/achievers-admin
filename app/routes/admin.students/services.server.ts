@@ -1,5 +1,5 @@
 import { prisma } from "~/db.server";
-import { searchAcrossFields } from "~/services";
+import { calculateYearLevel, searchAcrossFields } from "~/services";
 
 export async function getChaptersAsync() {
   return await prisma.chapter.findMany({
@@ -50,13 +50,13 @@ export async function getStudentsAsync(
   includeArchived = false,
   numberItems = 10,
 ) {
-  return await prisma.student.findMany({
+  const students = await prisma.student.findMany({
     select: {
       id: true,
       firstName: true,
       lastName: true,
-      yearLevel: true,
       endDate: true,
+      dateOfBirth: true,
       studentAtChapter: {
         select: {
           chapter: {
@@ -97,4 +97,9 @@ export async function getStudentsAsync(
     skip: numberItems * pageNumber,
     take: numberItems,
   });
+
+  return students.map((student) => ({
+    ...student,
+    yearLevel: calculateYearLevel(student.dateOfBirth),
+  }));
 }
