@@ -7,13 +7,13 @@ import { useRef } from "react";
 
 import { CoinsSwap, PageEdit } from "iconoir-react";
 
-import { Title, BackHeader } from "~/components";
+import { getPaginationRange } from "~/services";
+import { Title, BackHeader, Pagination } from "~/components";
 
 import {
   getMentorsWithStudentsAsync,
   getStudentsCountAsync,
 } from "./services.server";
-import Pagination from "./components/Pagination";
 import FormInputs from "./components/FormInputs";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -61,8 +61,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     currentPageNumber,
   );
 
+  const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
+
   return json({
     chapterId: params.chapterId,
+    range,
     currentPageNumber,
     count,
     mentorsWithStudents,
@@ -70,7 +73,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export default function Index() {
-  const { chapterId, mentorsWithStudents, count, currentPageNumber } =
+  const { chapterId, mentorsWithStudents, count, currentPageNumber, range } =
     useLoaderData<typeof loader>();
 
   const [searchParams] = useSearchParams();
@@ -161,6 +164,7 @@ export default function Index() {
         <input type="hidden" name="pageNumber" value={currentPageNumber} />
 
         <Pagination
+          range={range}
           currentPageNumber={currentPageNumber}
           totalPageCount={totalPageCount}
         />

@@ -6,7 +6,8 @@ import invariant from "tiny-invariant";
 import { useRef } from "react";
 import { CoinsSwap, PageEdit } from "iconoir-react";
 
-import { Title, BackHeader } from "~/components";
+import { getPaginationRange } from "~/services";
+import { Title, BackHeader, Pagination } from "~/components";
 
 import {
   getMentorsWithStudentsAsync,
@@ -14,7 +15,6 @@ import {
 } from "./services.server";
 
 import FormInputs from "./components/FormInputs";
-import Pagination from "./components/Pagination";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -61,8 +61,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     currentPageNumber,
   );
 
+  const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
+
   return json({
     chapterId: params.chapterId,
+    range,
     currentPageNumber,
     count,
     mentorsWithStudents,
@@ -70,7 +73,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export default function Index() {
-  const { chapterId, mentorsWithStudents, count, currentPageNumber } =
+  const { chapterId, mentorsWithStudents, count, currentPageNumber, range } =
     useLoaderData<typeof loader>();
 
   const [searchParams] = useSearchParams();
@@ -149,6 +152,7 @@ export default function Index() {
         <input type="hidden" name="pageNumber" value={currentPageNumber} />
 
         <Pagination
+          range={range}
           currentPageNumber={currentPageNumber}
           totalPageCount={totalPageCount}
         />

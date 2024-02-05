@@ -12,6 +12,7 @@ export * from "./Title";
 export * from "./SubTitle";
 export * from "./Text";
 export * from "./BackHeader";
+export * from "./Pagination";
 
 export * from "./LoadingSpinner";
 export * from "./Navbar";

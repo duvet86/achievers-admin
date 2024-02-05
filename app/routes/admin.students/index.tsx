@@ -6,7 +6,7 @@ import { useRef } from "react";
 
 import { PageEdit, Plus } from "iconoir-react";
 
-import { Title } from "~/components";
+import { Pagination, Title } from "~/components";
 
 import {
   getChaptersAsync,
@@ -15,8 +15,8 @@ import {
 } from "./services.server";
 
 import FormInputs from "./components/FormInputs";
-import Pagination from "./components/Pagination";
 import ActionsDropdown from "./components/ActionsDropdown";
+import { getPaginationRange } from "~/services";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
@@ -72,8 +72,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     ),
   ]);
 
+  const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
+
   return json({
     currentPageNumber,
+    range,
     chapters,
     count,
     students,
@@ -81,7 +84,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function Index() {
-  const { chapters, students, count, currentPageNumber } =
+  const { chapters, students, count, currentPageNumber, range } =
     useLoaderData<typeof loader>();
 
   const [searchParams] = useSearchParams();
@@ -170,6 +173,7 @@ export default function Index() {
 
         <div className="mt-4 flex flex-col items-center justify-between lg:flex-row">
           <Pagination
+            range={range}
             currentPageNumber={currentPageNumber}
             totalPageCount={totalPageCount}
           />
