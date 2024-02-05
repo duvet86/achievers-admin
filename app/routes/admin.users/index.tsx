@@ -6,7 +6,8 @@ import { json } from "@remix-run/node";
 import { useRef } from "react";
 import { PageEdit, BinFull, CheckCircle } from "iconoir-react";
 
-import { Title } from "~/components";
+import { getPaginationRange } from "~/services";
+import { Title, Pagination } from "~/components";
 
 import {
   getChaptersAsync,
@@ -17,7 +18,6 @@ import {
 
 import ActionsDropdown from "./components/ActionsDropdown";
 import FormInputs from "./components/FormInputs";
-import Pagination from "./components/Pagination";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
@@ -72,10 +72,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
     ),
   ]);
 
+  const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
+
   return json({
     chapters,
     count,
     currentPageNumber,
+    range,
     users: users.map((user) => ({
       ...user,
       checksCompleted: getNumberCompletedChecks(user),
@@ -85,7 +88,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function Index() {
-  const { chapters, users, count, currentPageNumber } =
+  const { chapters, users, count, currentPageNumber, range } =
     useLoaderData<typeof loader>();
 
   const [searchParams] = useSearchParams();
@@ -197,6 +200,7 @@ export default function Index() {
         <input type="hidden" name="pageNumber" value={currentPageNumber} />
 
         <Pagination
+          range={range}
           currentPageNumber={currentPageNumber}
           totalPageCount={totalPageCount}
         />

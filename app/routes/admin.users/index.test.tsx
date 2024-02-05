@@ -16,6 +16,8 @@ describe("Admin /users", () => {
             chapters: [],
             count: 0,
             users: [],
+            currentPageNumber: 0,
+            range: [],
           });
         },
       },
@@ -40,6 +42,8 @@ describe("Admin /users", () => {
           return json({
             chapters: [],
             count: 1,
+            currentPageNumber: 0,
+            range: [],
             users: [
               {
                 id: 1,
@@ -79,6 +83,8 @@ describe("Admin /users", () => {
           return json({
             chapters: [],
             count: 0,
+            currentPageNumber: 0,
+            range: [],
             users: [],
           });
         },
@@ -101,6 +107,8 @@ describe("Admin /users", () => {
           return json({
             chapters: [],
             count: 0,
+            currentPageNumber: 0,
+            range: [],
             users: [],
           });
         },
