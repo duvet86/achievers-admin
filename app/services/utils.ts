@@ -1,3 +1,4 @@
+import type { Dayjs } from "dayjs";
 import type { DateRange, Environment } from "./models";
 
 import dayjs from "dayjs";
@@ -231,4 +232,26 @@ export function range(start: number, end: number) {
   const length = end - start + 1;
 
   return Array.from({ length }, (_, i) => start + i);
+}
+
+export function getDatesForTerm(startDate: Dayjs, endDate: Dayjs) {
+  let firstDayOfTermStart = startDate.startOf("week").day(6);
+  const firstDayOfTermEnd = endDate.startOf("week").day(6);
+
+  if (firstDayOfTermStart < startDate) {
+    firstDayOfTermStart = firstDayOfTermStart.add(1, "week");
+  }
+
+  const numberOfWeeksInTerm = firstDayOfTermEnd.diff(
+    firstDayOfTermStart,
+    "week",
+  );
+
+  const dates: string[] = [];
+  for (let i = 0; i <= numberOfWeeksInTerm; i++) {
+    const date = firstDayOfTermStart.clone().add(i, "week").toISOString();
+    dates.push(date);
+  }
+
+  return dates;
 }

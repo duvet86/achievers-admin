@@ -1,4 +1,4 @@
-import type { Prisma, User } from "@prisma/client";
+import type { Student, User } from "@prisma/client";
 import type { Term } from "~/models";
 
 import dayjs from "dayjs";
@@ -9,10 +9,10 @@ import { prisma } from "~/db.server";
 dayjs.extend(isBetween);
 
 export interface SessionCommand {
-  chapterId: string;
-  studentId: string;
-  userId: string;
-  attendOn: string;
+  chapterId: number;
+  studentId: number;
+  userId: number;
+  attendedOn: string;
 }
 
 export async function getSchoolTermsForYearAsync(
@@ -52,13 +52,16 @@ export function getCurrentTermForDate(terms: Term[], date: Date): Term {
   return terms[0];
 }
 
-export async function getMentorStudentsAsync(mentorId: User["id"]) {
+export async function getStudentsAsync(
+  userId: User["id"],
+  selectedStudentId: Student["id"],
+) {
   const students = await prisma.student.findMany({
     where: {
       endDate: null,
       mentorToStudentAssignement: {
         some: {
-          userId: mentorId,
+          userId,
         },
       },
     },
@@ -86,7 +89,9 @@ export async function getMentorStudentsAsync(mentorId: User["id"]) {
     },
   });
 
-  return students.map((student) => {
+  let allStudentsSessionLookup: Record<string, number> = {};
+
+  const studentsWithSessions = students.map((student) => {
     const sessionLookup = student.mentorToStudentSession.reduce<
       Record<string, number>
     >((res, val) => {
@@ -95,59 +100,74 @@ export async function getMentorStudentsAsync(mentorId: User["id"]) {
       return res;
     }, {});
 
-    const { mentorToStudentSession, ...rest } = student;
+    const mentorToStudentLookup = student.mentorToStudentAssignement.reduce<
+      Record<string, string>
+    >((res, val) => {
+      res[val.user.id] = `${val.user.firstName} ${val.user.lastName}`;
+
+      return res;
+    }, {});
+
+    const { mentorToStudentSession, mentorToStudentAssignement, ...rest } =
+      student;
+
+    allStudentsSessionLookup = {
+      ...allStudentsSessionLookup,
+      ...sessionLookup,
+    };
 
     return {
       ...rest,
+      mentorToStudentLookup,
       sessionLookup,
     };
   });
+
+  const selectedStudent =
+    studentsWithSessions.find((s) => s.id === selectedStudentId) ??
+    studentsWithSessions[0];
+
+  return {
+    selectedStudent,
+    allStudentsSessionLookup,
+    students: students.map(({ id, firstName, lastName }) => ({
+      id,
+      firstName,
+      lastName,
+    })),
+  };
 }
 
-export async function createSessionAsync(
-  {
-    attendedOn,
-    studentId,
-    chapterId,
-  }: Prisma.MentorToStudentSessionUserIdStudentIdChapterIdAttendedOnCompoundUniqueInput,
-  data: Prisma.XOR<
-    Prisma.MentorToStudentSessionCreateInput,
-    Prisma.MentorToStudentSessionUncheckedCreateInput
-  >,
-) {
-  return await prisma.$transaction(async (tx) => {
-    await tx.mentorToStudentSession.deleteMany({
-      where: {
-        attendedOn,
-        studentId,
-        chapterId,
-      },
-    });
-
-    return await tx.mentorToStudentSession.create({
-      data,
-    });
+export async function createSessionAsync({
+  userId,
+  attendedOn,
+  studentId,
+  chapterId,
+}: SessionCommand) {
+  return await prisma.mentorToStudentSession.create({
+    data: {
+      attendedOn,
+      chapterId,
+      userId,
+      studentId,
+    },
   });
 }
 
-export function getDatesForTerm(selectedTerm: Term) {
-  let firstDayOfTermStart = selectedTerm.start.startOf("week").day(6);
-  const firstDayOfTermEnd = selectedTerm.end.startOf("week").day(6);
-
-  if (firstDayOfTermStart < selectedTerm.start) {
-    firstDayOfTermStart = firstDayOfTermStart.add(1, "week");
-  }
-
-  const numberOfWeeksInTerm = firstDayOfTermEnd.diff(
-    firstDayOfTermStart,
-    "week",
-  );
-
-  const dates: string[] = [];
-  for (let i = 0; i <= numberOfWeeksInTerm; i++) {
-    const date = firstDayOfTermStart.clone().add(i, "week").toISOString();
-    dates.push(date);
-  }
-
-  return dates;
+export async function removeSessionAsync({
+  userId,
+  attendedOn,
+  studentId,
+  chapterId,
+}: SessionCommand) {
+  await prisma.mentorToStudentSession.delete({
+    where: {
+      userId_studentId_chapterId_attendedOn: {
+        attendedOn,
+        chapterId,
+        studentId,
+        userId,
+      },
+    },
+  });
 }
