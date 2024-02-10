@@ -1,5 +1,4 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import type { SessionCommand } from "./services.server";
 
 import {
   Form,
@@ -10,21 +9,34 @@ import {
 } from "@remix-run/react";
 import dayjs from "dayjs";
 
-import { getCurrentUserADIdAsync, getUserByAzureADIdAsync } from "~/services";
+import {
+  getCurrentUserADIdAsync,
+  getDatesForTerm,
+  getUserByAzureADIdAsync,
+} from "~/services";
 import { Select, Title } from "~/components";
 
 import {
   createSessionAsync,
   getCurrentTermForDate,
-  getDatesForTerm,
-  getMentorStudentsAsync,
+  getStudentsAsync,
   getSchoolTermsForYearAsync,
+  removeSessionAsync,
 } from "./services.server";
 import TermCalendar from "./components/TermCalendar";
+
+export interface SessionCommandRequest {
+  action: "assign" | "remove";
+  chapterId: number;
+  studentId: number;
+  userId: number;
+  attendedOn: string;
+}
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const selectedTerm = url.searchParams.get("selectedTerm");
+  const selectedStudentId = url.searchParams.get("selectedStudentId");
 
   const azureUserId = await getCurrentUserADIdAsync(request);
   const user = await getUserByAzureADIdAsync(azureUserId, true);
@@ -35,34 +47,41 @@ export async function loader({ request }: LoaderFunctionArgs) {
     terms.find((t) => t.name === selectedTerm) ??
     getCurrentTermForDate(terms, new Date());
 
-  const students = await getMentorStudentsAsync(user.id);
+  const { students, selectedStudent, allStudentsSessionLookup } =
+    await getStudentsAsync(user.id, Number(selectedStudentId));
 
   return json({
+    userId: user.id,
     chapterId: user.userAtChapter[0].chapterId,
     termsList: terms,
     currentTerm,
     students,
-    datesInTerm: getDatesForTerm(currentTerm),
+    allStudentsSessionLookup,
+    selectedStudent,
+    datesInTerm: getDatesForTerm(currentTerm.start, currentTerm.end),
   });
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const bodyData: SessionCommand = await request.json();
+  const bodyData: SessionCommandRequest = await request.json();
 
-  await createSessionAsync(
-    {
-      attendedOn: bodyData.attendOn,
+  const action = bodyData.action;
+
+  if (action === "assign") {
+    await createSessionAsync({
+      attendedOn: bodyData.attendedOn,
       chapterId: Number(bodyData.chapterId),
       studentId: Number(bodyData.studentId),
       userId: Number(bodyData.userId),
-    },
-    {
-      attendedOn: bodyData.attendOn,
+    });
+  } else {
+    await removeSessionAsync({
+      attendedOn: bodyData.attendedOn,
       chapterId: Number(bodyData.chapterId),
       studentId: Number(bodyData.studentId),
       userId: Number(bodyData.userId),
-    },
-  );
+    });
+  }
 
   return json({
     message: "Successfully saved",
@@ -70,8 +89,16 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { chapterId, students, currentTerm, termsList, datesInTerm } =
-    useLoaderData<typeof loader>();
+  const {
+    userId,
+    chapterId,
+    students,
+    allStudentsSessionLookup,
+    selectedStudent,
+    currentTerm,
+    termsList,
+    datesInTerm,
+  } = useLoaderData<typeof loader>();
 
   const submit = useSubmit();
   const [searchParams] = useSearchParams();
@@ -81,7 +108,7 @@ export default function Index() {
       <Title>Roster planner</Title>
 
       <Form
-        className="mb-6 flex gap-12"
+        className="mb-6 flex flex-col gap-2"
         onChange={(e) => submit(e.currentTarget)}
       >
         <Select
@@ -93,13 +120,28 @@ export default function Index() {
             value: name,
           }))}
         />
+        <Select
+          label="Student"
+          name="selectedStudentId"
+          defaultValue={
+            searchParams.get("selectedStudentId") ?? students[0]?.id.toString()
+          }
+          options={students.map(({ id, firstName, lastName }) => ({
+            label: `${firstName} ${lastName}`,
+            value: id.toString(),
+          }))}
+        />
       </Form>
 
-      <TermCalendar
-        chapterId={chapterId}
-        datesInTerm={datesInTerm}
-        students={students}
-      />
+      {selectedStudent && (
+        <TermCalendar
+          userId={userId}
+          chapterId={chapterId}
+          datesInTerm={datesInTerm}
+          student={selectedStudent}
+          allStudentsSessionLookup={allStudentsSessionLookup}
+        />
+      )}
     </>
   );
 }

@@ -128,25 +128,3 @@ export async function createSessionAsync(
     });
   });
 }
-
-export function getDatesForTerm(selectedTerm: Term) {
-  let firstDayOfTermStart = selectedTerm.start.startOf("week").day(6);
-  const firstDayOfTermEnd = selectedTerm.end.startOf("week").day(6);
-
-  if (firstDayOfTermStart < selectedTerm.start) {
-    firstDayOfTermStart = firstDayOfTermStart.add(1, "week");
-  }
-
-  const numberOfWeeksInTerm = firstDayOfTermEnd.diff(
-    firstDayOfTermStart,
-    "week",
-  );
-
-  const dates: string[] = [];
-  for (let i = 0; i <= numberOfWeeksInTerm; i++) {
-    const date = firstDayOfTermStart.clone().add(i, "week").toISOString();
-    dates.push(date);
-  }
-
-  return dates;
-}

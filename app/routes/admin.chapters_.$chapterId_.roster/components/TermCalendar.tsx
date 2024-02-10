@@ -54,7 +54,7 @@ export default function TermCalendar({ datesInTerm, students }: Props) {
     };
 
   return (
-    <div className="overflow-auto">
+    <div className="relative overflow-auto">
       {isLoading && (
         <div className="absolute z-30 flex h-full w-full justify-center bg-slate-300 bg-opacity-50">
           <span className="loading loading-spinner loading-lg text-primary"></span>
@@ -107,9 +107,9 @@ export default function TermCalendar({ datesInTerm, students }: Props) {
                         <select
                           className="select"
                           onChange={onSessionSubmit(id, sessionDate)}
-                          defaultValue={sessionLookup[sessionDate]}
+                          defaultValue={sessionLookup[sessionDate] ?? ""}
                         >
-                          <option disabled selected></option>
+                          <option disabled value=""></option>
                           {mentorToStudentAssignement.map(
                             ({ user: { id, firstName, lastName } }) => (
                               <option key={id} value={id}>

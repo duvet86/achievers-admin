@@ -1,44 +1,73 @@
 import { useFetcher } from "@remix-run/react";
 import dayjs from "dayjs";
 
-import { Check, WarningCircle } from "iconoir-react";
+import { Check, CheckCircle, WarningTriangle } from "iconoir-react";
 
 interface Props {
+  userId: number;
   chapterId: number;
   datesInTerm: string[];
-  students: {
+  student: {
     sessionLookup: Record<string, number>;
+    mentorToStudentLookup: Record<string, string>;
     id: number;
     firstName: string;
     lastName: string;
-    mentorToStudentAssignement: {
-      user: {
-        id: number;
-        firstName: string;
-        lastName: string;
-      };
-    }[];
-  }[];
+  };
+  allStudentsSessionLookup: Record<string, number>;
 }
 
 export default function TermCalendar({
+  userId,
   chapterId,
   datesInTerm,
-  students,
+  student,
+  allStudentsSessionLookup,
 }: Props) {
   const { state, submit } = useFetcher();
 
   const isLoading = state === "loading";
+  const sessionLookup = student.sessionLookup;
+  const mentorToStudentLookup = student.mentorToStudentLookup;
 
-  const onSessionSubmit =
-    (chapterId: number, studentId: number, sessionDate: string) =>
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const assignMentorForSession =
+    (
+      userId: number,
+      chapterId: number,
+      studentId: number,
+      sessionDate: string,
+    ) =>
+    () => {
       submit(
         {
           chapterId,
           studentId,
-          userId: e.target.value,
-          attendOn: sessionDate,
+          userId,
+          attendedOn: sessionDate,
+          action: "assign",
+        },
+        {
+          method: "POST",
+          encType: "application/json",
+        },
+      );
+    };
+
+  const removeMentorForSession =
+    (
+      userId: number,
+      chapterId: number,
+      studentId: number,
+      sessionDate: string,
+    ) =>
+    () => {
+      submit(
+        {
+          chapterId,
+          studentId,
+          userId,
+          attendedOn: sessionDate,
+          action: "remove",
         },
         {
           method: "POST",
@@ -48,72 +77,82 @@ export default function TermCalendar({
     };
 
   return (
-    <div className="overflow-auto">
+    <div className="relative overflow-auto">
       {isLoading && (
         <div className="absolute z-30 flex h-full w-full justify-center bg-slate-300 bg-opacity-50">
           <span className="loading loading-spinner loading-lg text-primary"></span>
         </div>
       )}
-      <table className="table table-pin-rows table-pin-cols">
-        <thead>
-          <tr className="z-20">
-            <th className="border-r">Students</th>
-            {datesInTerm.map((sessionDate, index) => (
-              <td key={index} className="h-16">
-                <div className="flex flex-col items-center font-medium text-gray-800">
+      <table className="table table-pin-rows">
+        <tbody>
+          {datesInTerm.map((sessionDate, index) => (
+            <tr key={index}>
+              <td className="w-1/6 border-r font-medium text-gray-800">
+                <div className="flex flex-col">
                   <span>{dayjs(sessionDate).format("dddd")}</span>
                   <span>{dayjs(sessionDate).format("DD/MM/YYYY")}</span>
                 </div>
               </td>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {students.map(
-            (
-              {
-                id,
-                firstName,
-                lastName,
-                mentorToStudentAssignement,
-                sessionLookup,
-              },
-              i,
-            ) => (
-              <tr key={id}>
-                <th className="z-10 border-r">
-                  {firstName} {lastName}
-                </th>
-                {datesInTerm.map((sessionDate, index) => (
-                  <td key={index} className="h-16">
-                    <div className="indicator">
-                      <label>
-                        <select
-                          className="select"
-                          onChange={onSessionSubmit(chapterId, id, sessionDate)}
-                          defaultValue={sessionLookup[sessionDate]}
-                        >
-                          <option disabled selected></option>
-                          {mentorToStudentAssignement.map(
-                            ({ user: { id, firstName, lastName } }) => (
-                              <option key={id} value={id}>
-                                {firstName} {lastName}
-                              </option>
-                            ),
-                          )}
-                        </select>
-                        {sessionLookup[sessionDate] ? (
-                          <Check className="badge indicator-item bg-success" />
-                        ) : (
-                          <WarningCircle className="badge indicator-item bg-error" />
-                        )}
-                      </label>
-                    </div>
-                  </td>
-                ))}
-              </tr>
-            ),
-          )}
+              <td>
+                {sessionLookup[sessionDate] === userId ? (
+                  <div className="flex gap-2 text-success">
+                    <CheckCircle />
+                    {mentorToStudentLookup[sessionLookup[sessionDate]] +
+                      " " +
+                      "(Me)"}
+                  </div>
+                ) : mentorToStudentLookup[sessionLookup[sessionDate]] ? (
+                  <div className="flex gap-2 text-info">
+                    <Check />
+                    {mentorToStudentLookup[sessionLookup[sessionDate]] +
+                      " " +
+                      "(Partner)"}
+                  </div>
+                ) : allStudentsSessionLookup[sessionDate] === userId ? (
+                  <div className="flex gap-2 text-error">
+                    <WarningTriangle />
+                    Session already booked
+                  </div>
+                ) : (
+                  <div className="flex gap-2 text-warning">
+                    <WarningTriangle />
+                    No mentors assigned
+                  </div>
+                )}
+              </td>
+              <td align="right">
+                {sessionLookup[sessionDate] === userId ? (
+                  <button
+                    className="btn btn-error btn-sm w-36"
+                    onClick={removeMentorForSession(
+                      userId,
+                      chapterId,
+                      student.id,
+                      sessionDate,
+                    )}
+                  >
+                    <WarningTriangle className="h-4 w-4" />
+                    Remove
+                  </button>
+                ) : allStudentsSessionLookup[sessionDate] === userId ? (
+                  <div></div>
+                ) : (
+                  <button
+                    className="btn btn-success btn-sm w-36"
+                    onClick={assignMentorForSession(
+                      userId,
+                      chapterId,
+                      student.id,
+                      sessionDate,
+                    )}
+                  >
+                    <Check className="h-4 w-4" />
+                    Assign to me
+                  </button>
+                )}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

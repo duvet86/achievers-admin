@@ -11,12 +11,12 @@ import {
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
+import { getDatesForTerm } from "~/services";
 import { BackHeader, Select, Title } from "~/components";
 
 import {
   createSessionAsync,
   getCurrentTermForDate,
-  getDatesForTerm,
   getSchoolTermsForYearAsync,
   getStudentsAsync,
 } from "./services.server";
@@ -40,7 +40,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     termsList: terms,
     currentTerm,
     students,
-    datesInTerm: getDatesForTerm(currentTerm),
+    datesInTerm: getDatesForTerm(currentTerm.start, currentTerm.end),
   });
 }
 
