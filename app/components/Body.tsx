@@ -23,7 +23,7 @@ export function Body({
   const showDrawer = isAdmin || hasCompletedVolunteerAgreement;
 
   return (
-    <div className="drawer lg:drawer-open">
+    <main className="drawer lg:drawer-open">
       <input id="drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
         <Navbar
@@ -38,6 +38,6 @@ export function Body({
       </div>
 
       {showDrawer && <Drawer isAdmin={isAdmin} />}
-    </div>
+    </main>
   );
 }

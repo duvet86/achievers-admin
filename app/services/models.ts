@@ -10,7 +10,12 @@ export interface TokenInfo {
   refreshToken: string | null;
 }
 
-export type Environment = "local" | "staging" | "production";
+export const Environments = {
+  Local: "local",
+  Staging: "staging",
+  Production: "production",
+} as const;
+export type Environment = (typeof Environments)[keyof typeof Environments];
 
 export interface DateRange {
   startDate: Date;
