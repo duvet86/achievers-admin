@@ -1,4 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
+
 import { Link, json, useLoaderData } from "@remix-run/react";
 
 import { StatsReport, GraduationCap } from "iconoir-react";

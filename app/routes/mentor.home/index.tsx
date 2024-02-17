@@ -55,7 +55,7 @@ export default function Index() {
         </h2>
       </article>
 
-      {nextSessionDate ? (
+      {student && nextSessionDate ? (
         <div>
           <div>
             Next session: <span className="font-medium">{nextSessionDate}</span>
@@ -68,7 +68,7 @@ export default function Index() {
           </div>
         </div>
       ) : (
-        <div>No sessions</div>
+        <div>No sessions available</div>
       )}
     </div>
   );

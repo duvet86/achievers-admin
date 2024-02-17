@@ -89,37 +89,41 @@ export async function getStudentsAsync(
     },
   });
 
-  let allStudentsSessionLookup: Record<string, number> = {};
+  let sessionDateToMentorIdForAllStudentsLookup: Record<string, number> = {};
 
   const studentsWithSessions = students.map((student) => {
-    const sessionLookup = student.mentorToStudentSession.reduce<
-      Record<string, number>
-    >((res, val) => {
-      res[val.attendedOn.toISOString()] = val.userId;
+    const sessionDateToMentorIdForStudentLookup =
+      student.mentorToStudentSession.reduce<Record<string, number>>(
+        (res, val) => {
+          res[val.attendedOn.toISOString()] = val.userId;
 
-      return res;
-    }, {});
+          return res;
+        },
+        {},
+      );
 
-    const mentorToStudentLookup = student.mentorToStudentAssignement.reduce<
-      Record<string, string>
-    >((res, val) => {
-      res[val.user.id] = `${val.user.firstName} ${val.user.lastName}`;
+    const mentorIdToMentorNameForStudentLookup =
+      student.mentorToStudentAssignement.reduce<Record<string, string>>(
+        (res, val) => {
+          res[val.user.id] = `${val.user.firstName} ${val.user.lastName}`;
 
-      return res;
-    }, {});
+          return res;
+        },
+        {},
+      );
 
     const { mentorToStudentSession, mentorToStudentAssignement, ...rest } =
       student;
 
-    allStudentsSessionLookup = {
-      ...allStudentsSessionLookup,
-      ...sessionLookup,
+    sessionDateToMentorIdForAllStudentsLookup = {
+      ...sessionDateToMentorIdForAllStudentsLookup,
+      ...sessionDateToMentorIdForStudentLookup,
     };
 
     return {
       ...rest,
-      mentorToStudentLookup,
-      sessionLookup,
+      mentorIdToMentorNameForStudentLookup,
+      sessionDateToMentorIdForStudentLookup,
     };
   });
 
@@ -129,7 +133,7 @@ export async function getStudentsAsync(
 
   return {
     selectedStudent,
-    allStudentsSessionLookup,
+    sessionDateToMentorIdForAllStudentsLookup,
     students: students.map(({ id, firstName, lastName }) => ({
       id,
       firstName,

@@ -47,8 +47,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     terms.find((t) => t.name === selectedTerm) ??
     getCurrentTermForDate(terms, new Date());
 
-  const { students, selectedStudent, allStudentsSessionLookup } =
-    await getStudentsAsync(user.id, Number(selectedStudentId));
+  const {
+    students,
+    selectedStudent,
+    sessionDateToMentorIdForAllStudentsLookup,
+  } = await getStudentsAsync(user.id, Number(selectedStudentId));
 
   return json({
     userId: user.id,
@@ -56,7 +59,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     termsList: terms,
     currentTerm,
     students,
-    allStudentsSessionLookup,
+    sessionDateToMentorIdForAllStudentsLookup,
     selectedStudent,
     datesInTerm: getDatesForTerm(currentTerm.start, currentTerm.end),
   });
@@ -93,7 +96,7 @@ export default function Index() {
     userId,
     chapterId,
     students,
-    allStudentsSessionLookup,
+    sessionDateToMentorIdForAllStudentsLookup,
     selectedStudent,
     currentTerm,
     termsList,
@@ -139,7 +142,9 @@ export default function Index() {
           chapterId={chapterId}
           datesInTerm={datesInTerm}
           student={selectedStudent}
-          allStudentsSessionLookup={allStudentsSessionLookup}
+          sessionDateToMentorIdForAllStudentsLookup={
+            sessionDateToMentorIdForAllStudentsLookup
+          }
         />
       )}
     </>
