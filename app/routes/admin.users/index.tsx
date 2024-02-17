@@ -34,7 +34,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
   const includeArchived = url.searchParams.get("includeArchived") === "on";
 
-  if (searchTerm?.trim() === "") {
+  if (searchTerm?.trim() === "" || clearSearchSubmit !== null) {
     searchTerm = null;
   }
 
@@ -53,7 +53,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     currentPageNumber = 0;
   } else if (clearSearchSubmit !== null) {
     currentPageNumber = 0;
-    searchTerm = null;
   } else if (previousPageSubmit !== null && pageNumber > 0) {
     currentPageNumber = pageNumber - 1;
   } else if (nextPageSubmit !== null && pageNumber < totalPageCount) {

@@ -30,7 +30,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   let searchTerm = url.searchParams.get("searchTerm");
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
 
-  if (searchTerm?.trim() === "") {
+  if (searchTerm?.trim() === "" || clearSearchSubmit !== null) {
     searchTerm = null;
   }
 

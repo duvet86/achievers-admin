@@ -33,7 +33,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
   const includeArchived = url.searchParams.get("includeArchived") === "on";
 
-  if (searchTerm?.trim() === "") {
+  if (searchTerm?.trim() === "" || clearSearchSubmit !== null) {
     searchTerm = null;
   }
 
