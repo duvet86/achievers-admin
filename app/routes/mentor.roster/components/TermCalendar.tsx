@@ -8,13 +8,13 @@ interface Props {
   chapterId: number;
   datesInTerm: string[];
   student: {
-    sessionLookup: Record<string, number>;
-    mentorToStudentLookup: Record<string, string>;
+    sessionDateToMentorIdForStudentLookup: Record<string, number>;
+    mentorIdToMentorNameForStudentLookup: Record<string, string>;
     id: number;
     firstName: string;
     lastName: string;
   };
-  allStudentsSessionLookup: Record<string, number>;
+  sessionDateToMentorIdForAllStudentsLookup: Record<string, number>;
 }
 
 export default function TermCalendar({
@@ -22,13 +22,15 @@ export default function TermCalendar({
   chapterId,
   datesInTerm,
   student,
-  allStudentsSessionLookup,
+  sessionDateToMentorIdForAllStudentsLookup,
 }: Props) {
   const { state, submit } = useFetcher();
 
   const isLoading = state === "loading";
-  const sessionLookup = student.sessionLookup;
-  const mentorToStudentLookup = student.mentorToStudentLookup;
+  const sessionDateToMentorIdForStudentLookup =
+    student.sessionDateToMentorIdForStudentLookup;
+  const mentorIdToMentorNameForStudentLookup =
+    student.mentorIdToMentorNameForStudentLookup;
 
   const assignMentorForSession =
     (
@@ -85,74 +87,85 @@ export default function TermCalendar({
       )}
       <table className="table table-pin-rows">
         <tbody>
-          {datesInTerm.map((sessionDate, index) => (
-            <tr key={index}>
-              <td className="w-1/6 border-r font-medium text-gray-800">
-                <div className="flex flex-col">
-                  <span>{dayjs(sessionDate).format("dddd")}</span>
-                  <span>{dayjs(sessionDate).format("DD/MM/YYYY")}</span>
-                </div>
-              </td>
-              <td>
-                {sessionLookup[sessionDate] === userId ? (
-                  <div className="flex gap-2 text-success">
-                    <CheckCircle />
-                    {mentorToStudentLookup[sessionLookup[sessionDate]] +
-                      " " +
-                      "(Me)"}
+          {datesInTerm.map((sessionDate, index) => {
+            const mentorIdForSessionForSelectedStudent =
+              sessionDateToMentorIdForStudentLookup[sessionDate];
+            const isMySession = mentorIdForSessionForSelectedStudent === userId;
+            const mentorName =
+              mentorIdToMentorNameForStudentLookup[
+                mentorIdForSessionForSelectedStudent
+              ];
+            const isSessionBookedByMe =
+              sessionDateToMentorIdForAllStudentsLookup[sessionDate] === userId;
+
+            return (
+              <tr key={index}>
+                <td className="w-1/6 border-r font-medium text-gray-800">
+                  <div className="flex flex-col">
+                    <span>{dayjs(sessionDate).format("dddd")}</span>
+                    <span>{dayjs(sessionDate).format("DD/MM/YYYY")}</span>
                   </div>
-                ) : mentorToStudentLookup[sessionLookup[sessionDate]] ? (
-                  <div className="flex gap-2 text-info">
-                    <Check />
-                    {mentorToStudentLookup[sessionLookup[sessionDate]] +
-                      " " +
-                      "(Partner)"}
-                  </div>
-                ) : allStudentsSessionLookup[sessionDate] === userId ? (
-                  <div className="flex gap-2 text-error">
-                    <WarningTriangle />
-                    Session already booked
-                  </div>
-                ) : (
-                  <div className="flex gap-2 text-warning">
-                    <WarningTriangle />
-                    No mentors assigned
-                  </div>
-                )}
-              </td>
-              <td align="right">
-                {sessionLookup[sessionDate] === userId ? (
-                  <button
-                    className="btn btn-error btn-sm w-36"
-                    onClick={removeMentorForSession(
-                      userId,
-                      chapterId,
-                      student.id,
-                      sessionDate,
-                    )}
-                  >
-                    <WarningTriangle className="h-4 w-4" />
-                    Remove
-                  </button>
-                ) : allStudentsSessionLookup[sessionDate] === userId ? (
-                  <div></div>
-                ) : (
-                  <button
-                    className="btn btn-success btn-sm w-36"
-                    onClick={assignMentorForSession(
-                      userId,
-                      chapterId,
-                      student.id,
-                      sessionDate,
-                    )}
-                  >
-                    <Check className="h-4 w-4" />
-                    Assign to me
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
+                </td>
+                <td>
+                  {isMySession ? (
+                    <div className="flex gap-2 text-success">
+                      <CheckCircle />
+                      {`${mentorName} (Me)`}
+                    </div>
+                  ) : mentorIdToMentorNameForStudentLookup[
+                      mentorIdForSessionForSelectedStudent
+                    ] ? (
+                    <div className="flex gap-2 text-info">
+                      <Check />
+                      {`${mentorName} (Partner)`}
+                    </div>
+                  ) : isSessionBookedByMe ? (
+                    <div className="flex gap-2 text-error">
+                      <WarningTriangle />
+                      Session already booked
+                    </div>
+                  ) : (
+                    <div className="flex gap-2 text-warning">
+                      <WarningTriangle />
+                      No mentors assigned
+                    </div>
+                  )}
+                </td>
+                <td align="right">
+                  {isMySession ? (
+                    <button
+                      className="btn btn-error btn-sm w-36"
+                      onClick={removeMentorForSession(
+                        userId,
+                        chapterId,
+                        student.id,
+                        sessionDate,
+                      )}
+                    >
+                      <WarningTriangle className="h-4 w-4" />
+                      Remove
+                    </button>
+                  ) : (
+                    !isSessionBookedByMe &&
+                    !mentorName && (
+                      <button
+                        className="btn btn-success btn-sm w-36"
+                        onClick={assignMentorForSession(
+                          userId,
+                          chapterId,
+                          student.id,
+                          sessionDate,
+                        )}
+                      >
+                        <Check className="h-4 w-4" />
+                        Assign to me
+                      </button>
+                    )
+                  )}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
