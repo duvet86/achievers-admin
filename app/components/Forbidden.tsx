@@ -18,7 +18,7 @@ export function Forbidden() {
               <LogOut className="h-6 w-6" />
               Logout
             </Link>
-            <Link to="/admin/home" className="btn btn-primary w-40 gap-2">
+            <Link to="/" className="btn btn-primary w-40 gap-2">
               <Home className="h-6 w-6" />
               Home
             </Link>

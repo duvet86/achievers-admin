@@ -331,7 +331,8 @@ model MentorToStudentSession {
   chapterId  Int
   attendedOn DateTime
 
-  report String? @db.Text
+  report    String?  @db.Text
+  hasReport Boolean?
 
   @@id([userId, studentId, chapterId, attendedOn])
 }

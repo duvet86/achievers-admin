@@ -1,61 +1,22 @@
-import type { Chapter, MentorToStudentSession, User } from "@prisma/client";
+import type { Chapter, User } from "@prisma/client";
 
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween.js";
 
 import { prisma } from "~/db.server";
-import { getDatesForTerm } from "~/services";
 
 dayjs.extend(isBetween);
 
-export async function getNextSessionAsync(year: number) {
-  const today = dayjs();
-
-  const currentTerms = await prisma.schoolTerm.findMany({
+export async function getNextSessionAsync(userId: User["id"]) {
+  const nextAvailableSession = await prisma.mentorToStudentSession.findFirst({
     where: {
-      year,
+      userId,
+      attendedOn: {
+        gte: new Date(),
+      },
     },
     select: {
-      startDate: true,
-      endDate: true,
-    },
-  });
-
-  const currentTerm = currentTerms.find((term) =>
-    today.isBetween(term.startDate, term.endDate, "day", "[]"),
-  );
-
-  if (currentTerm === undefined) {
-    return null;
-  }
-
-  const sessionsForTerm = getDatesForTerm(
-    dayjs(currentTerm.startDate),
-    dayjs(currentTerm.endDate),
-  );
-
-  const nextSessionDate =
-    sessionsForTerm.find((a, b) => today.isBetween(a, b, "day", "[]")) ?? null;
-
-  if (nextSessionDate === undefined) {
-    return null;
-  }
-
-  return nextSessionDate;
-}
-
-export async function getStudentForSessionAsync(
-  mentorId: User["id"],
-  chapterId: Chapter["id"],
-  sessionDate: MentorToStudentSession["attendedOn"],
-) {
-  const mentorToStudentSession = await prisma.mentorToStudentSession.findFirst({
-    where: {
-      userId: mentorId,
-      chapterId,
-      attendedOn: sessionDate,
-    },
-    select: {
+      attendedOn: true,
       student: {
         select: {
           firstName: true,
@@ -65,9 +26,26 @@ export async function getStudentForSessionAsync(
     },
   });
 
-  if (mentorToStudentSession === null) {
-    return null;
-  }
+  return nextAvailableSession;
+}
 
-  return mentorToStudentSession.student;
+export async function getSessionsAsync(
+  userId: User["id"],
+  chapterId: Chapter["id"],
+) {
+  return prisma.mentorToStudentSession.findMany({
+    select: {
+      attendedOn: true,
+      studentId: true,
+      hasReport: true,
+    },
+    where: {
+      chapterId,
+      userId,
+    },
+    orderBy: {
+      attendedOn: "desc",
+    },
+    take: 5,
+  });
 }

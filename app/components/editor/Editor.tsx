@@ -1,4 +1,4 @@
-import type { InitialConfigType } from "./lexical.client";
+import type { EditorState, InitialConfigType } from "./lexical.client";
 
 import { useState } from "react";
 
@@ -27,10 +27,12 @@ import {
   TableNode,
   TableRowNode,
 } from "./lexical.client";
+
 import ListMaxIndentLevelPlugin from "./plugins/ListMaxIndentLevelPlugin.client";
 import AutoLinkPlugin from "./plugins/AutoLinkPlugin.client";
 import ToolbarPlugin from "./plugins/ToolbarPlugin.client";
 import FloatingLinkEditorPlugin from "./plugins/FloatingLinkEditorPlugin.client";
+import OnChangePlugin from "./plugins/OnChangePlugin.client";
 
 import EditorTheme from "./editor-theme.client";
 
@@ -59,7 +61,12 @@ const editorConfig: InitialConfigType = {
   ],
 };
 
-export function Editor() {
+interface Props {
+  initialEditorStateType: string | null;
+  onChange: (editorState: EditorState) => void;
+}
+
+export function Editor({ initialEditorStateType, onChange }: Props) {
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
@@ -73,7 +80,12 @@ export function Editor() {
   return (
     <ClientOnly fallback={<div>Loading...</div>}>
       {() => (
-        <LexicalComposer initialConfig={editorConfig}>
+        <LexicalComposer
+          initialConfig={{
+            ...editorConfig,
+            editorState: initialEditorStateType,
+          }}
+        >
           <div className="lexical border">
             <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
             <div className="editor-inner">
@@ -100,6 +112,7 @@ export function Editor() {
                   setIsLinkEditMode={setIsLinkEditMode}
                 />
               )}
+              <OnChangePlugin onChange={onChange} />
             </div>
           </div>
         </LexicalComposer>
