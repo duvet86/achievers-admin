@@ -22,3 +22,5 @@ export * from "./Body";
 export * from "./NotFound";
 export * from "./Forbidden";
 export * from "./UnexpectedError";
+
+export * from "./editor/Editor";
