@@ -54,5 +54,6 @@ COPY --from=build /myapp/public /myapp/public
 COPY --from=build /myapp/server.mjs /myapp/server.mjs
 COPY --from=build /myapp/package.json /myapp/package.json
 COPY --from=build /myapp/prisma /myapp/prisma
+COPY --from=build /myapp/background-jobs /myapp/background-jobs
 
 CMD ["npm", "start"]
