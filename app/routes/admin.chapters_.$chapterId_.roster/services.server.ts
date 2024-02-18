@@ -55,11 +55,7 @@ export async function getStudentsAsync(chapterId: Chapter["id"]) {
   const students = await prisma.student.findMany({
     where: {
       endDate: null,
-      studentAtChapter: {
-        some: {
-          chapterId,
-        },
-      },
+      chapterId,
     },
     select: {
       id: true,

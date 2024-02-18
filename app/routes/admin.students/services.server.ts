@@ -21,11 +21,7 @@ export async function getStudentsCountAsync(
         includeArchived ? {} : { endDate: null },
         chapterId !== null
           ? {
-              studentAtChapter: {
-                some: {
-                  chapterId: chapterId,
-                },
-              },
+              chapterId: chapterId,
             }
           : {},
         {
@@ -57,13 +53,9 @@ export async function getStudentsAsync(
       lastName: true,
       endDate: true,
       dateOfBirth: true,
-      studentAtChapter: {
+      chapter: {
         select: {
-          chapter: {
-            select: {
-              name: true,
-            },
-          },
+          name: true,
         },
       },
     },
@@ -72,11 +64,7 @@ export async function getStudentsAsync(
         includeArchived ? {} : { endDate: null },
         chapterId !== null
           ? {
-              studentAtChapter: {
-                some: {
-                  chapterId: chapterId,
-                },
-              },
+              chapterId: chapterId,
             }
           : {},
         {

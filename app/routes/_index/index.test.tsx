@@ -112,7 +112,7 @@ describe("Loader", () => {
       updatedAt: new Date(),
       volunteerAgreementSignedOn: null,
       frequencyInDays: 7,
-      userAtChapter: [],
+      chapterId: 2,
     });
 
     const response = await loader({
@@ -173,7 +173,7 @@ describe("Loader", () => {
       updatedAt: new Date(),
       volunteerAgreementSignedOn: new Date(),
       frequencyInDays: 7,
-      userAtChapter: [],
+      chapterId: 2,
     });
 
     const response = await loader({

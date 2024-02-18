@@ -40,18 +40,18 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.sessionDate, "sessionDate not found");
 
   const azureUserId = await getCurrentUserADIdAsync(request);
-  const user = await getUserByAzureADIdAsync(azureUserId, true);
+  const user = await getUserByAzureADIdAsync(azureUserId);
 
   const studentReport = await getSessionReportForStudentAsync({
     attendedOn: params.sessionDate,
-    chapterId: user.userAtChapter[0].chapterId,
+    chapterId: user.chapterId,
     studentId: Number(params.studentId),
     userId: user.id,
   });
 
   return json({
     studentReport,
-    chapterId: user.userAtChapter[0].chapterId,
+    chapterId: user.chapterId,
     userId: user.id,
   });
 }

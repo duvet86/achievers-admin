@@ -9,11 +9,7 @@ export async function getMentorsInChapterAsync(
 ) {
   return prisma.user.findMany({
     where: {
-      userAtChapter: {
-        some: {
-          chapterId,
-        },
-      },
+      chapterId,
       mentorToStudentAssignement: {
         none: {
           studentId,

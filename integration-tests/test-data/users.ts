@@ -15,7 +15,6 @@ export async function createUsersAsync(
     await tx.reference.deleteMany();
     await tx.welcomeCall.deleteMany();
     await tx.wWCCheck.deleteMany();
-    await tx.userAtChapter.deleteMany();
     await tx.user.deleteMany();
 
     let i: number;
@@ -147,12 +146,7 @@ export async function createUsersAsync(
               updatedAt: new Date(),
             },
           },
-          userAtChapter: {
-            create: {
-              assignedBy: "test-data",
-              chapterId: (await tx.chapter.findFirstOrThrow()).id,
-            },
-          },
+          chapterId: (await tx.chapter.findFirstOrThrow()).id,
         },
       });
     }
@@ -285,12 +279,7 @@ export async function createUsersAsync(
             updatedAt: new Date(),
           },
         },
-        userAtChapter: {
-          create: {
-            assignedBy: "test-data",
-            chapterId: (await tx.chapter.findFirstOrThrow()).id,
-          },
-        },
+        chapterId: (await tx.chapter.findFirstOrThrow()).id,
       },
     });
   });

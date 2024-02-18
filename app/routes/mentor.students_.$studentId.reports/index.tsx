@@ -16,12 +16,12 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.studentId, "studentId not found");
 
   const azureUserId = await getCurrentUserADIdAsync(request);
-  const user = await getUserByAzureADIdAsync(azureUserId, true);
+  const user = await getUserByAzureADIdAsync(azureUserId);
 
   const student = await getStudentAsync(Number(params.studentId));
   const sessions = await getSessionsForStudentAsync(
     user.id,
-    user.userAtChapter[0].chapterId,
+    user.chapterId,
     student.id,
   );
 

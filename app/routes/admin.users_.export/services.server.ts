@@ -7,11 +7,7 @@ import { prisma } from "~/db.server";
 export async function exportMentorsToSpreadsheetAsync() {
   const mentors = await prisma.user.findMany({
     include: {
-      userAtChapter: {
-        include: {
-          chapter: true,
-        },
-      },
+      chapter: true,
       importedHistory: {
         select: {
           error: true,
@@ -47,7 +43,7 @@ export async function exportMentorsToSpreadsheetAsync() {
       ? "Yes"
       : "No",
     "Approved by MRC?": m.approvalbyMRC ? "Yes" : "No",
-    Chapter: (m.userAtChapter?.[0].chapter.name as Chapter) ?? "Girraween",
+    Chapter: (m.chapter.name as Chapter) ?? "Girraween",
     "Role(s)": "Mentor",
     "Committee Member": "No", // Not used.
     "Current Member": m.endDate !== undefined ? "Yes" : "No", // Not used.

@@ -2,6 +2,15 @@ import type { Prisma, Student } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
+export async function getChaptersAsync() {
+  return await prisma.chapter.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+}
+
 export async function getStudentByIdAsync(id: number) {
   return await prisma.student.findUnique({
     where: {
@@ -38,16 +47,11 @@ export async function getStudentByIdAsync(id: number) {
           schoolName: true,
         },
       },
-      studentAtChapter: {
+      chapterId: true,
+      chapter: {
         select: {
-          chapter: {
-            select: {
-              name: true,
-            },
-          },
-          chapterId: true,
-          assignedAt: true,
-          assignedBy: true,
+          id: true,
+          name: true,
         },
       },
     },

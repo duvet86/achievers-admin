@@ -145,7 +145,7 @@ export default function Index() {
                     firstName,
                     lastName,
                     email,
-                    userAtChapter,
+                    chapter,
                     checksCompleted,
                     endDate,
                   },
@@ -173,11 +173,7 @@ export default function Index() {
                         {firstName} {lastName}
                       </td>
                       <td className="border">{email}</td>
-                      <td className="border">
-                        {userAtChapter
-                          .map(({ chapter }) => chapter.name)
-                          .join(", ")}
-                      </td>
+                      <td className="border">{chapter.name}</td>
                       <td className="border">{checksCompleted}/8</td>
                       <td className="border">
                         <Link

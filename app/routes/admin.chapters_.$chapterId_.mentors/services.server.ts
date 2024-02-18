@@ -9,11 +9,7 @@ export async function getStudentsCountAsync(
 ) {
   return prisma.user.count({
     where: {
-      userAtChapter: {
-        some: {
-          chapterId,
-        },
-      },
+      chapterId,
       OR: searchAcrossFields(
         searchTerm,
         (searchTerm: string) =>
@@ -34,11 +30,7 @@ export async function getMentorsWithStudentsAsync(
 ) {
   return prisma.user.findMany({
     where: {
-      userAtChapter: {
-        some: {
-          chapterId,
-        },
-      },
+      chapterId,
       OR: searchAcrossFields(
         searchTerm,
         (searchTerm: string) =>

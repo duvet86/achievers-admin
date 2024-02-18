@@ -161,6 +161,7 @@ export async function importSpreadsheetStudentsAsync(
               error: error ? error : undefined,
             },
           },
+          chapterId: 1,
         },
       });
 

@@ -17,10 +17,10 @@ import {
   getUserByIdAsync,
   getProfilePictureUrl,
   updateUserByIdAsync,
+  getChaptersAsync,
 } from "./services.server";
 
 import { UserForm } from "./components/UserForm";
-import { AssignedChapterList } from "./components/AssignedChapterList";
 import { CheckList } from "./components/CheckList";
 import { Header } from "./components/Header";
 
@@ -46,6 +46,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     ? await getProfilePictureUrl(user.profilePicturePath)
     : null;
 
+  const chapters = await getChaptersAsync();
+
   return json({
     user,
     profilePicturePath,
@@ -61,6 +63,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       azureUserInfo?.appRoleAssignments.find(
         ({ appRoleId }) => Roles.Mentor === appRoleId,
       )?.id ?? null,
+    chapters,
   });
 }
 
@@ -161,12 +164,8 @@ export default function Index() {
 
         <hr className="my-8 md:hidden" />
 
-        <div className="flex-1 overflow-y-auto pb-4 lg:pb-0">
+        <div className="flex-1 overflow-y-auto">
           <CheckList loaderData={loaderData} />
-
-          <hr className="my-8" />
-
-          <AssignedChapterList loaderData={loaderData} />
         </div>
       </div>
     </div>

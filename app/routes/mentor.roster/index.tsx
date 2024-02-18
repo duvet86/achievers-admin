@@ -39,7 +39,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const selectedStudentId = url.searchParams.get("selectedStudentId");
 
   const azureUserId = await getCurrentUserADIdAsync(request);
-  const user = await getUserByAzureADIdAsync(azureUserId, true);
+  const user = await getUserByAzureADIdAsync(azureUserId);
 
   const terms = await getSchoolTermsForYearAsync(dayjs().year());
 
@@ -55,7 +55,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   return json({
     userId: user.id,
-    chapterId: user.userAtChapter[0].chapterId,
+    chapterId: user.chapterId,
     termsList: terms,
     currentTerm,
     students,
