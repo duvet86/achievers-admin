@@ -1,46 +1,61 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs, TypedResponse } from "@remix-run/node";
 
 import dayjs from "dayjs";
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
+
+import { StatsReport, Check, Xmark } from "iconoir-react";
 
 import { getCurrentUserADIdAsync, getUserByAzureADIdAsync } from "~/services";
+import { SubTitle } from "~/components";
 
-import {
-  getNextSessionAsync,
-  getStudentForSessionAsync,
-} from "./services.server";
+import { getNextSessionAsync, getSessionsAsync } from "./services.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs): Promise<
+  TypedResponse<{
+    mentorFullName: string;
+    nextSessionDate: string | null;
+    student: null | {
+      firstName: string;
+      lastName: string;
+    };
+    sessions: {
+      studentId: number;
+      attendedOn: Date;
+      hasReport: boolean | null;
+    }[];
+  }>
+> {
   const azureUserId = await getCurrentUserADIdAsync(request);
   const user = await getUserByAzureADIdAsync(azureUserId, true);
 
   const mentorFullName = user.firstName + " " + user.lastName;
 
-  const nextSessionDate = await getNextSessionAsync(new Date().getFullYear());
-  if (nextSessionDate === null) {
+  const nextSession = await getNextSessionAsync(user.id);
+  if (nextSession === null) {
     return json({
       mentorFullName,
       nextSessionDate: null,
       student: null,
+      sessions: [],
     });
   }
 
-  const student = await getStudentForSessionAsync(
+  const sessions = await getSessionsAsync(
     user.id,
     user.userAtChapter[0].chapterId,
-    new Date(nextSessionDate),
   );
 
   return json({
     mentorFullName,
-    nextSessionDate: dayjs(nextSessionDate).format("MMMM D, YYYY"),
-    student,
+    nextSessionDate: dayjs(nextSession.attendedOn).format("MMMM D, YYYY"),
+    student: nextSession.student,
+    sessions,
   });
 }
 
 export default function Index() {
-  const { mentorFullName, nextSessionDate, student } =
+  const { mentorFullName, nextSessionDate, student, sessions } =
     useLoaderData<typeof loader>();
 
   return (
@@ -55,21 +70,70 @@ export default function Index() {
         </h2>
       </article>
 
-      {student && nextSessionDate ? (
-        <div>
-          <div>
-            Next session: <span className="font-medium">{nextSessionDate}</span>
-          </div>
-          <div>
-            With{" "}
-            <span className="font-medium">
-              {student?.firstName} {student?.lastName}
-            </span>
-          </div>
-        </div>
-      ) : (
-        <div>No sessions available</div>
-      )}
+      <div className="mb-12">
+        {student && nextSessionDate ? (
+          <>
+            <div>
+              Next session:{" "}
+              <span className="font-medium">{nextSessionDate}</span>
+            </div>
+            <div>
+              With{" "}
+              <span className="font-medium">
+                {student?.firstName} {student?.lastName}
+              </span>
+            </div>
+          </>
+        ) : (
+          "No sessions available"
+        )}
+      </div>
+
+      <SubTitle>Reports</SubTitle>
+
+      <div className="overflow-auto bg-white">
+        <table className="table table-lg">
+          <thead>
+            <tr>
+              <th className="w-6">#</th>
+              <th align="left">Session date</th>
+              <th align="left">Report started</th>
+              <th align="right">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sessions.length === 0 && (
+              <tr>
+                <td colSpan={6}>
+                  <i>No sessions</i>
+                </td>
+              </tr>
+            )}
+            {sessions.map(({ attendedOn, studentId, hasReport }, index) => (
+              <tr key={index}>
+                <td className="border-r">{index + 1}</td>
+                <td align="left">{dayjs(attendedOn).format("MMMM D, YYYY")}</td>
+                <td align="left">
+                  {hasReport ? (
+                    <Check className="h-4 w-4 text-success" />
+                  ) : (
+                    <Xmark className="h-4 w-4 text-error" />
+                  )}
+                </td>
+                <td align="right">
+                  <Link
+                    to={`/mentor/students/${studentId}/reports/${attendedOn}`}
+                    className="btn btn-success btn-xs h-8 gap-2"
+                  >
+                    <StatsReport className="hidden h-4 w-4 lg:block" />
+                    View report
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
