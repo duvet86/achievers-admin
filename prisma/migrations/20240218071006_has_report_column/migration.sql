@@ -5,4 +5,4 @@
 
 */
 -- AlterTable
-ALTER TABLE `mentortostudentsession` ADD COLUMN `hasReport` BOOLEAN AS (report IS NOT NULL);
+ALTER TABLE `MentorToStudentSession` ADD COLUMN `hasReport` BOOLEAN AS (report IS NOT NULL);
