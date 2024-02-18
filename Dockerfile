@@ -1,5 +1,5 @@
 # base node image
-FROM node:18-slim as base
+FROM node:20-slim as base
 
 # set for base and all layer that inherit from it
 ENV NODE_ENV production
@@ -11,7 +11,7 @@ RUN apt-get install -y openssl
 # Install all node_modules, including dev dependencies
 FROM base as deps
 
-WORKDIR /myapp
+WORKDIR /achievers_app
 
 ADD package.json package-lock.json .npmrc ./
 RUN npm install --production=false
@@ -19,18 +19,18 @@ RUN npm install --production=false
 # Setup production node_modules
 FROM base as production-deps
 
-WORKDIR /myapp
+WORKDIR /achievers_app
 
-COPY --from=deps /myapp/node_modules /myapp/node_modules
+COPY --from=deps /achievers_app/node_modules /achievers_app/node_modules
 ADD package.json package-lock.json .npmrc ./
 RUN npm prune --production
 
 # Build the app
 FROM base as build
 
-WORKDIR /myapp
+WORKDIR /achievers_app
 
-COPY --from=deps /myapp/node_modules /myapp/node_modules
+COPY --from=deps /achievers_app/node_modules /achievers_app/node_modules
 
 ADD prisma .
 RUN npx prisma generate
@@ -44,16 +44,16 @@ FROM base
 ENV PORT="8080"
 ENV NODE_ENV="production"
 
-WORKDIR /myapp
+WORKDIR /achievers_app
 
-COPY --from=production-deps /myapp/node_modules /myapp/node_modules
-COPY --from=build /myapp/node_modules/.prisma /myapp/node_modules/.prisma
+COPY --from=production-deps /achievers_app/node_modules /achievers_app/node_modules
+COPY --from=build /achievers_app/node_modules/.prisma /achievers_app/node_modules/.prisma
 
-COPY --from=build /myapp/build /myapp/build
-COPY --from=build /myapp/public /myapp/public
-COPY --from=build /myapp/server.mjs /myapp/server.mjs
-COPY --from=build /myapp/package.json /myapp/package.json
-COPY --from=build /myapp/prisma /myapp/prisma
-COPY --from=build /myapp/background-jobs /myapp/background-jobs
+COPY --from=build /achievers_app/build /achievers_app/build
+COPY --from=build /achievers_app/public /achievers_app/public
+COPY --from=build /achievers_app/server.mjs /achievers_app/server.mjs
+COPY --from=build /achievers_app/package.json /achievers_app/package.json
+COPY --from=build /achievers_app/prisma /achievers_app/prisma
+COPY --from=build /achievers_app/background-jobs /achievers_app/background-jobs
 
 CMD ["npm", "start"]
