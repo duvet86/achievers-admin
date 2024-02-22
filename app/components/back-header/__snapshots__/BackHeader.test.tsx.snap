@@ -1,0 +1,36 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`BackHeader > BackHeader snapshot 1`] = `
+<body>
+  <div>
+    <div>
+      <a
+        class="btn btn-ghost mb-2 gap-2"
+        href="/"
+      >
+        <svg
+          class="w-6"
+          color="currentColor"
+          fill="none"
+          height="1.5em"
+          stroke-width="1.5"
+          viewBox="0 0 24 24"
+          width="1.5em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M21 12L3 12M3 12L11.5 3.5M3 12L11.5 20.5"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        Back
+      </a>
+    </div>
+    <hr
+      class="mb-4"
+    />
+  </div>
+</body>
+`;

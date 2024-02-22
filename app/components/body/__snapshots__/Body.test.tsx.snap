@@ -1,0 +1,967 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Body > Body snapshot admin 1`] = `
+<body>
+  <div>
+    <main
+      class="drawer lg:drawer-open"
+    >
+      <input
+        class="drawer-toggle"
+        id="drawer"
+        type="checkbox"
+      />
+      <div
+        class="drawer-content flex flex-col"
+      >
+        <nav
+          class="navbar absolute left-0 top-0 z-10 h-16 justify-between bg-primary text-primary-content shadow-md"
+        >
+          <div
+            class="flex"
+          >
+            <div
+              class="flex-none lg:hidden"
+            >
+              <label
+                class="btn btn-square btn-ghost"
+                for="drawer"
+              >
+                <svg
+                  class="inline-block h-6 w-6 stroke-current"
+                  color="currentColor"
+                  fill="none"
+                  height="1.5em"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  width="1.5em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M3 5H21"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M3 12H21"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M3 19H21"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </label>
+            </div>
+            <a
+              class="btn btn-ghost text-xl normal-case"
+              href="/"
+            >
+              <span
+                class="badge badge-lg ml-2"
+              >
+                local
+              </span>
+              <span
+                class="text-xl font-semibold tracking-tight"
+              >
+                Achievers WA
+              </span>
+            </a>
+          </div>
+          <div
+            class="dropdown dropdown-end block"
+          >
+            <div
+              class="flex cursor-pointer items-center gap-2"
+              tabindex="0"
+            >
+              <div
+                class="hidden font-semibold lg:block"
+              />
+              <label
+                class="btn btn-circle btn-ghost"
+              >
+                <div
+                  class="flex w-10 content-center justify-center rounded-full"
+                >
+                  <svg
+                    color="currentColor"
+                    fill="none"
+                    height="1.5em"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                    width="1.5em"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M4.271 18.3457C4.271 18.3457 6.50002 15.5 12 15.5C17.5 15.5 19.7291 18.3457 19.7291 18.3457"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M12 12C13.6569 12 15 10.6569 15 9C15 7.34315 13.6569 6 12 6C10.3431 6 9 7.34315 9 9C9 10.6569 10.3431 12 12 12Z"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </label>
+            </div>
+            <ul
+              class="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow"
+              tabindex="0"
+            >
+              <li>
+                <a
+                  class="font-semibold"
+                  href="/logout"
+                >
+                  <svg
+                    class="mr-2 w-6"
+                    color="currentColor"
+                    fill="none"
+                    height="1.5em"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                    width="1.5em"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 12H19M19 12L16 15M19 12L16 9"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M19 6V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V18"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  Logout
+                </a>
+              </li>
+              <li
+                class="menu-title"
+              >
+                <hr />
+                <div
+                  class="mt-2 text-xs italic"
+                >
+                  Version 
+                  1
+                </div>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <main
+          class="content-main mt-16 flex flex-col overflow-y-auto p-4"
+        />
+      </div>
+      <div
+        class="drawer-side flex-col pt-16"
+      >
+        <label
+          aria-label="close sidebar"
+          class="drawer-overlay"
+          for="drawer"
+        />
+        <ul
+          class="menu h-full w-80 border-r border-primary bg-base-200 p-4 text-base-content"
+        >
+          <li>
+            <a
+              class="mb-2 justify-between rounded font-semibold"
+              href="/admin/home"
+            >
+              <div
+                class="flex items-center gap-4"
+              >
+                <svg
+                  class="h-6 w-6"
+                  color="currentColor"
+                  fill="none"
+                  height="1.5em"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  width="1.5em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M2 8L11.7317 3.13416C11.9006 3.04971 12.0994 3.0497 12.2683 3.13416L22 8"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M20 11V19C20 20.1046 19.1046 21 18 21H6C4.89543 21 4 20.1046 4 19V11"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Home
+              </div>
+              <svg
+                class="h-6 w-6"
+                color="currentColor"
+                fill="none"
+                height="1.5em"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 6L15 12L9 18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              class="mb-2 justify-between rounded font-semibold"
+              href="/admin/users"
+            >
+              <div
+                class="flex items-center gap-4"
+              >
+                <svg
+                  class="h-6 w-6"
+                  color="currentColor"
+                  fill="none"
+                  height="1.5em"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  width="1.5em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 20V19C5 15.134 8.13401 12 12 12V12C15.866 12 19 15.134 19 19V20"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Mentors
+              </div>
+              <svg
+                class="h-6 w-6"
+                color="currentColor"
+                fill="none"
+                height="1.5em"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 6L15 12L9 18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              class="mb-2 justify-between rounded font-semibold"
+              href="/admin/students"
+            >
+              <div
+                class="flex items-center gap-4"
+              >
+                <svg
+                  class="h-6 w-6"
+                  color="currentColor"
+                  fill="none"
+                  height="1.5em"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  width="1.5em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M2.57331 8.46334L11.2317 4.13416C11.4006 4.04971 11.5994 4.04971 11.7683 4.13416L20.4267 8.46334C20.8689 8.68446 20.8689 9.31554 20.4267 9.53666L11.7683 13.8658C11.5994 13.9503 11.4006 13.9503 11.2317 13.8658L2.57331 9.53666C2.13108 9.31554 2.13108 8.68446 2.57331 8.46334Z"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M22.5 13L22.5 9.5L20.5 8.5"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M4.5 10.5V15.9121C4.5 16.6843 4.94459 17.3876 5.6422 17.7188L10.6422 20.0928C11.185 20.3505 11.815 20.3505 12.3578 20.0928L17.3578 17.7188C18.0554 17.3876 18.5 16.6843 18.5 15.9121V10.5"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Students
+              </div>
+              <svg
+                class="h-6 w-6"
+                color="currentColor"
+                fill="none"
+                height="1.5em"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 6L15 12L9 18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              class="mb-2 justify-between rounded font-semibold"
+              href="/admin/chapters"
+            >
+              <div
+                class="flex items-center gap-4"
+              >
+                <svg
+                  class="h-6 w-6"
+                  color="currentColor"
+                  fill="none"
+                  height="1.5em"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  width="1.5em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M20.485 3H16.4933L16.9933 8C16.9933 8 17.9933 9 19.4933 9C20.5703 9 21.3036 8.48445 21.6316 8.1937C21.7623 8.07782 21.8101 7.90091 21.7814 7.72861L21.0768 3.50136C21.0286 3.21205 20.7783 3 20.485 3Z"
+                    stroke="currentColor"
+                  />
+                  <path
+                    d="M16.4933 3L16.9933 8C16.9933 8 15.9933 9 14.4933 9C12.9933 9 11.9933 8 11.9933 8V3H16.4933Z"
+                    stroke="currentColor"
+                  />
+                  <path
+                    d="M11.9933 3V8C11.9933 8 10.9933 9 9.49329 9C7.99329 9 6.99329 8 6.99329 8L7.49329 3H11.9933Z"
+                    stroke="currentColor"
+                  />
+                  <path
+                    d="M7.49331 3H3.50158C3.20828 3 2.95797 3.21205 2.90975 3.50136L2.2052 7.72862C2.17649 7.90091 2.22432 8.07782 2.35502 8.1937C2.68294 8.48445 3.41626 9 4.49329 9C5.99329 9 6.99331 8 6.99331 8L7.49331 3Z"
+                    stroke="currentColor"
+                  />
+                  <path
+                    d="M3 9V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V9"
+                    stroke="currentColor"
+                  />
+                  <path
+                    d="M14.8333 21V15C14.8333 13.8954 13.9379 13 12.8333 13H10.8333C9.72874 13 8.83331 13.8954 8.83331 15V21"
+                    stroke="currentColor"
+                    stroke-miterlimit="16"
+                  />
+                </svg>
+                Chapters
+              </div>
+              <svg
+                class="h-6 w-6"
+                color="currentColor"
+                fill="none"
+                height="1.5em"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 6L15 12L9 18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              class="mb-2 justify-between rounded font-semibold"
+              href="/admin/school-terms"
+            >
+              <div
+                class="flex items-center gap-4"
+              >
+                <svg
+                  class="h-6 w-6"
+                  color="currentColor"
+                  fill="none"
+                  height="1.5em"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  width="1.5em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M15 4V2M15 4V6M15 4H10.5M3 10V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V10H3Z"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M3 10V6C3 4.89543 3.89543 4 5 4H7"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M7 2V6"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M21 10V6C21 4.89543 20.1046 4 19 4H18.5"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                School Terms
+              </div>
+              <svg
+                class="h-6 w-6"
+                color="currentColor"
+                fill="none"
+                height="1.5em"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 6L15 12L9 18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+`;
+
+exports[`Body > Body snapshot mentor 1`] = `
+<body>
+  <div>
+    <main
+      class="drawer lg:drawer-open"
+    >
+      <input
+        class="drawer-toggle"
+        id="drawer"
+        type="checkbox"
+      />
+      <div
+        class="drawer-content flex flex-col"
+      >
+        <nav
+          class="navbar absolute left-0 top-0 z-10 h-16 justify-between bg-primary text-primary-content shadow-md"
+        >
+          <div
+            class="flex"
+          >
+            <div
+              class="flex-none lg:hidden"
+            >
+              <label
+                class="btn btn-square btn-ghost"
+                for="drawer"
+              >
+                <svg
+                  class="inline-block h-6 w-6 stroke-current"
+                  color="currentColor"
+                  fill="none"
+                  height="1.5em"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  width="1.5em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M3 5H21"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M3 12H21"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M3 19H21"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </label>
+            </div>
+            <a
+              class="btn btn-ghost text-xl normal-case"
+              href="/"
+            >
+              <span
+                class="badge badge-lg ml-2"
+              >
+                local
+              </span>
+              <span
+                class="text-xl font-semibold tracking-tight"
+              >
+                Achievers WA
+              </span>
+            </a>
+          </div>
+          <div
+            class="dropdown dropdown-end block"
+          >
+            <div
+              class="flex cursor-pointer items-center gap-2"
+              tabindex="0"
+            >
+              <div
+                class="hidden font-semibold lg:block"
+              />
+              <label
+                class="btn btn-circle btn-ghost"
+              >
+                <div
+                  class="flex w-10 content-center justify-center rounded-full"
+                >
+                  <svg
+                    color="currentColor"
+                    fill="none"
+                    height="1.5em"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                    width="1.5em"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M4.271 18.3457C4.271 18.3457 6.50002 15.5 12 15.5C17.5 15.5 19.7291 18.3457 19.7291 18.3457"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M12 12C13.6569 12 15 10.6569 15 9C15 7.34315 13.6569 6 12 6C10.3431 6 9 7.34315 9 9C9 10.6569 10.3431 12 12 12Z"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </label>
+            </div>
+            <ul
+              class="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow"
+              tabindex="0"
+            >
+              <li>
+                <a
+                  class="font-semibold"
+                  href="/logout"
+                >
+                  <svg
+                    class="mr-2 w-6"
+                    color="currentColor"
+                    fill="none"
+                    height="1.5em"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                    width="1.5em"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 12H19M19 12L16 15M19 12L16 9"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M19 6V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V18"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  Logout
+                </a>
+              </li>
+              <li
+                class="menu-title"
+              >
+                <hr />
+                <div
+                  class="mt-2 text-xs italic"
+                >
+                  Version 
+                  1
+                </div>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <main
+          class="content-main mt-16 flex flex-col overflow-y-auto p-4"
+        />
+      </div>
+      <div
+        class="drawer-side flex-col pt-16"
+      >
+        <label
+          aria-label="close sidebar"
+          class="drawer-overlay"
+          for="drawer"
+        />
+        <ul
+          class="menu h-full w-80 border-r border-primary bg-base-200 p-4 text-base-content"
+        >
+          <li>
+            <a
+              class="mb-2 justify-between rounded font-semibold"
+              href="/admin/home"
+            >
+              <div
+                class="flex items-center gap-4"
+              >
+                <svg
+                  class="h-6 w-6"
+                  color="currentColor"
+                  fill="none"
+                  height="1.5em"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  width="1.5em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M2 8L11.7317 3.13416C11.9006 3.04971 12.0994 3.0497 12.2683 3.13416L22 8"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M20 11V19C20 20.1046 19.1046 21 18 21H6C4.89543 21 4 20.1046 4 19V11"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Home
+              </div>
+              <svg
+                class="h-6 w-6"
+                color="currentColor"
+                fill="none"
+                height="1.5em"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 6L15 12L9 18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              class="mb-2 justify-between rounded font-semibold"
+              href="/admin/users"
+            >
+              <div
+                class="flex items-center gap-4"
+              >
+                <svg
+                  class="h-6 w-6"
+                  color="currentColor"
+                  fill="none"
+                  height="1.5em"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  width="1.5em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 20V19C5 15.134 8.13401 12 12 12V12C15.866 12 19 15.134 19 19V20"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Mentors
+              </div>
+              <svg
+                class="h-6 w-6"
+                color="currentColor"
+                fill="none"
+                height="1.5em"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 6L15 12L9 18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              class="mb-2 justify-between rounded font-semibold"
+              href="/admin/students"
+            >
+              <div
+                class="flex items-center gap-4"
+              >
+                <svg
+                  class="h-6 w-6"
+                  color="currentColor"
+                  fill="none"
+                  height="1.5em"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  width="1.5em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M2.57331 8.46334L11.2317 4.13416C11.4006 4.04971 11.5994 4.04971 11.7683 4.13416L20.4267 8.46334C20.8689 8.68446 20.8689 9.31554 20.4267 9.53666L11.7683 13.8658C11.5994 13.9503 11.4006 13.9503 11.2317 13.8658L2.57331 9.53666C2.13108 9.31554 2.13108 8.68446 2.57331 8.46334Z"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M22.5 13L22.5 9.5L20.5 8.5"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M4.5 10.5V15.9121C4.5 16.6843 4.94459 17.3876 5.6422 17.7188L10.6422 20.0928C11.185 20.3505 11.815 20.3505 12.3578 20.0928L17.3578 17.7188C18.0554 17.3876 18.5 16.6843 18.5 15.9121V10.5"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Students
+              </div>
+              <svg
+                class="h-6 w-6"
+                color="currentColor"
+                fill="none"
+                height="1.5em"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 6L15 12L9 18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              class="mb-2 justify-between rounded font-semibold"
+              href="/admin/chapters"
+            >
+              <div
+                class="flex items-center gap-4"
+              >
+                <svg
+                  class="h-6 w-6"
+                  color="currentColor"
+                  fill="none"
+                  height="1.5em"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  width="1.5em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M20.485 3H16.4933L16.9933 8C16.9933 8 17.9933 9 19.4933 9C20.5703 9 21.3036 8.48445 21.6316 8.1937C21.7623 8.07782 21.8101 7.90091 21.7814 7.72861L21.0768 3.50136C21.0286 3.21205 20.7783 3 20.485 3Z"
+                    stroke="currentColor"
+                  />
+                  <path
+                    d="M16.4933 3L16.9933 8C16.9933 8 15.9933 9 14.4933 9C12.9933 9 11.9933 8 11.9933 8V3H16.4933Z"
+                    stroke="currentColor"
+                  />
+                  <path
+                    d="M11.9933 3V8C11.9933 8 10.9933 9 9.49329 9C7.99329 9 6.99329 8 6.99329 8L7.49329 3H11.9933Z"
+                    stroke="currentColor"
+                  />
+                  <path
+                    d="M7.49331 3H3.50158C3.20828 3 2.95797 3.21205 2.90975 3.50136L2.2052 7.72862C2.17649 7.90091 2.22432 8.07782 2.35502 8.1937C2.68294 8.48445 3.41626 9 4.49329 9C5.99329 9 6.99331 8 6.99331 8L7.49331 3Z"
+                    stroke="currentColor"
+                  />
+                  <path
+                    d="M3 9V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V9"
+                    stroke="currentColor"
+                  />
+                  <path
+                    d="M14.8333 21V15C14.8333 13.8954 13.9379 13 12.8333 13H10.8333C9.72874 13 8.83331 13.8954 8.83331 15V21"
+                    stroke="currentColor"
+                    stroke-miterlimit="16"
+                  />
+                </svg>
+                Chapters
+              </div>
+              <svg
+                class="h-6 w-6"
+                color="currentColor"
+                fill="none"
+                height="1.5em"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 6L15 12L9 18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              class="mb-2 justify-between rounded font-semibold"
+              href="/admin/school-terms"
+            >
+              <div
+                class="flex items-center gap-4"
+              >
+                <svg
+                  class="h-6 w-6"
+                  color="currentColor"
+                  fill="none"
+                  height="1.5em"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  width="1.5em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M15 4V2M15 4V6M15 4H10.5M3 10V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V10H3Z"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M3 10V6C3 4.89543 3.89543 4 5 4H7"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M7 2V6"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M21 10V6C21 4.89543 20.1046 4 19 4H18.5"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                School Terms
+              </div>
+              <svg
+                class="h-6 w-6"
+                color="currentColor"
+                fill="none"
+                height="1.5em"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 6L15 12L9 18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+`;
