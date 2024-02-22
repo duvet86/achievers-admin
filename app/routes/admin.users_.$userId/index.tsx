@@ -72,6 +72,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const formData = await request.formData();
 
+  const chapterId = formData.get("chapterId")?.toString();
   const firstName = formData.get("firstName")?.toString();
   const lastName = formData.get("lastName")?.toString();
   const mobile = formData.get("mobile")?.toString();
@@ -131,6 +132,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     emergencyContactNumber,
     emergencyContactAddress,
     emergencyContactRelationship,
+    chapterId: Number(chapterId),
   };
 
   await updateUserByIdAsync(Number(params.userId), dataCreate);

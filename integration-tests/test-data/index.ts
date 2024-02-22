@@ -4,6 +4,12 @@ import { createUsersAsync } from "./users";
 import { createStudentsAsync } from "./students";
 import { assignMentorsToStudentsAsync } from "./mentor-to-sudent-assignement";
 
+export const CHAPTER_DATA: Record<string, string> = {
+  Girrawheen: "1",
+  Armadale: "2",
+  Butler: "3",
+};
+
 export async function seedDataAsync() {
   const prisma = new PrismaClient();
 

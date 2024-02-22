@@ -49,6 +49,7 @@ export function UserForm({
           name="chapterId"
           label="Chapter"
           defaultValue={user.chapterId.toString()}
+          required
           options={[{ value: "", label: "Select a chapter" }].concat(
             chapters.map(({ id, name }) => ({
               label: name,
@@ -158,7 +159,6 @@ export function UserForm({
               value: "false",
             },
           ]}
-          required
         />
 
         <SubmitFormButton
