@@ -3,14 +3,14 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
+import { getEnvironment } from "~/services";
 import {
-  getCurrentUserADIdAsync,
-  getAzureUserWithRolesByIdAsync,
   Roles,
-  version,
+  getAzureUserWithRolesByIdAsync,
+  getCurrentUserADIdAsync,
   getUserByAzureADIdAsync,
-  getEnvironment,
-} from "~/services";
+  version,
+} from "~/services/.server";
 
 import { Body } from "~/components";
 

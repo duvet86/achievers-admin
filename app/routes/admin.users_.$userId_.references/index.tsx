@@ -29,7 +29,7 @@ export default function Index() {
       <BackHeader to={`/admin/users/${userId}`} />
 
       <Title>
-        References for "{user.firstName} {user.lastName}"
+        References for &quot;{user.firstName} {user.lastName}&quot;
       </Title>
 
       <div className="overflow-auto bg-white">

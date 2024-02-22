@@ -69,9 +69,9 @@ export default function Index() {
         <fieldset disabled={transition.state === "loading"}>
           <article className="prose max-w-none">
             <h3>
-              Are you sure you want to remove the mentor "{user.firstName}{" "}
-              {user.lastName} from student "{student.firstName}{" "}
-              {student.lastName}"?
+              Are you sure you want to remove the mentor &quot;{user.firstName}{" "}
+              {user.lastName} from student &quot;{student.firstName}{" "}
+              {student.lastName}&quot;?
             </h3>
           </article>
 

@@ -46,15 +46,16 @@ export default function Index() {
     <>
       <BackHeader to={`/admin/students/${studentId}`} />
 
-      <Title>Remove guardian "{guardian.fullName}"</Title>
+      <Title>Remove guardian &quot;{guardian.fullName}&quot;</Title>
 
       <Form method="post">
         <fieldset disabled={transition.state === "loading"}>
           <article className="prose max-w-none">
             <h3>
-              Are you sure you want to remove "{guardian.fullName}"" from
-              student "{guardian.student.firstName} {guardian.student.lastName}
-              "?
+              Are you sure you want to remove &quot;{guardian.fullName}&quot;
+              from student &quot;{guardian.student.firstName}{" "}
+              {guardian.student.lastName}
+              &quot;?
             </h3>
           </article>
 

@@ -7,7 +7,7 @@ import Page from "./index";
 
 describe("Admin /users", () => {
   it("should return empty list", async () => {
-    let RemixStub = createRemixStub([
+    const RemixStub = createRemixStub([
       {
         path: "/",
         Component: Page,
@@ -34,7 +34,7 @@ describe("Admin /users", () => {
   });
 
   it("should return list of users", async () => {
-    let RemixStub = createRemixStub([
+    const RemixStub = createRemixStub([
       {
         path: "/",
         Component: Page,
@@ -71,7 +71,7 @@ describe("Admin /users", () => {
   });
 
   it("should have title", async () => {
-    let RemixStub = createRemixStub([
+    const RemixStub = createRemixStub([
       {
         path: "/",
         Component: Page,
@@ -95,7 +95,7 @@ describe("Admin /users", () => {
   });
 
   it("should have link to 'import from file'", async () => {
-    let RemixStub = createRemixStub([
+    const RemixStub = createRemixStub([
       {
         path: "/",
         Component: Page,

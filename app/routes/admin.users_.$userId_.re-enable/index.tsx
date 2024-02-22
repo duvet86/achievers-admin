@@ -39,14 +39,15 @@ export default function Index() {
       <BackHeader to={`/admin/users/${userId}`} />
 
       <Title>
-        Re enable "{user.firstName} {user.lastName}"
+        Re enable &quot;{user.firstName} {user.lastName}&quot;
       </Title>
 
       <Form method="post">
         <fieldset disabled={transition.state === "loading"}>
           <p>
-            Are you sure you want to re enable "{user.firstName} {user.lastName}
-            "?
+            Are you sure you want to re enable &quot;{user.firstName}{" "}
+            {user.lastName}
+            &quot;?
           </p>
 
           <button

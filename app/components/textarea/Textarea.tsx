@@ -10,13 +10,7 @@ interface Props {
   required?: boolean;
 }
 
-export function Textarea({
-  label,
-  name,
-  type = "text",
-  required,
-  ...props
-}: Props) {
+export function Textarea({ label, name, required, ...props }: Props) {
   return (
     <div className="form-control relative w-full">
       <label htmlFor={name} className="label">

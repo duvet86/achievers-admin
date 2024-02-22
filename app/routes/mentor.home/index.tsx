@@ -6,7 +6,10 @@ import { Link, useLoaderData } from "@remix-run/react";
 
 import { StatsReport, Check, Xmark } from "iconoir-react";
 
-import { getCurrentUserADIdAsync, getUserByAzureADIdAsync } from "~/services";
+import {
+  getCurrentUserADIdAsync,
+  getUserByAzureADIdAsync,
+} from "~/services/.server";
 import { SubTitle } from "~/components";
 
 import { getNextSessionAsync, getSessionsAsync } from "./services.server";

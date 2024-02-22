@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import type { BaseSelection, LexicalEditor } from "lexical";
 import type { Dispatch } from "react";
 

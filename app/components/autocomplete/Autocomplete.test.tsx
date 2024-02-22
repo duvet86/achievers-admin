@@ -1,11 +1,11 @@
 import "@testing-library/jest-dom";
 
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import testUserEvent from "@testing-library/user-event";
 
 import { Autocomplete } from "./Autocomplete";
 
-const user = userEvent.setup();
+const user = testUserEvent.setup();
 
 describe("Autocomplete", () => {
   it("should have attributes", async () => {

@@ -6,7 +6,7 @@ import {
   getSASQueryStringAsync,
   uploadBlobAsync,
   USER_DATA_BLOB_CONTAINER_NAME,
-} from "~/services";
+} from "~/services/.server";
 
 export interface PoliceCheckUpdateCommand {
   expiryDate: Date | string;

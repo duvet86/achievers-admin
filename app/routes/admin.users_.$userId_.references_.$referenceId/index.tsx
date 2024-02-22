@@ -138,8 +138,9 @@ export default function Index() {
       <BackHeader to={`/admin/users/${userId}/references`} />
 
       <Title>
-        Reference "{reference.firstName} {reference.lastName}" for mentor "
-        {user.firstName} {user.lastName}"
+        Reference &quot;{reference.firstName} {reference.lastName}&quot; for
+        mentor &quot;
+        {user.firstName} {user.lastName}&quot;
       </Title>
 
       <Form className="relative" method="post">

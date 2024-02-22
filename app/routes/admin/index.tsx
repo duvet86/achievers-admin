@@ -8,8 +8,8 @@ import {
   getCurrentUserADIdAsync,
   Roles,
   version,
-  getEnvironment,
-} from "~/services";
+} from "~/services/.server";
+import { getEnvironment } from "~/services";
 
 import { Body } from "~/components";
 

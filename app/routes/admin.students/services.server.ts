@@ -1,5 +1,6 @@
 import { prisma } from "~/db.server";
-import { calculateYearLevel, searchAcrossFields } from "~/services";
+import { searchAcrossFields } from "~/services/.server";
+import { calculateYearLevel } from "~/services";
 
 export async function getChaptersAsync() {
   return await prisma.chapter.findMany({

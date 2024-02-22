@@ -1,17 +1,14 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { Prisma } from "@prisma/client";
-import type { AzureUserWebAppWithRole } from "~/services";
+import type { AzureUserWebAppWithRole } from "~/services/.server";
 
 import { json } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
-import {
-  getAzureUserWithRolesByIdAsync,
-  isStringNullOrEmpty,
-  Roles,
-} from "~/services";
+import { getAzureUserWithRolesByIdAsync, Roles } from "~/services/.server";
+import { isStringNullOrEmpty } from "~/services";
 
 import {
   getUserByIdAsync,

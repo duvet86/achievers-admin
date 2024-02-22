@@ -11,7 +11,7 @@ import {
   removeRoleFromUserAsync,
   Roles,
   trackTrace,
-} from "~/services";
+} from "~/services/.server";
 import { Title, BackHeader } from "~/components";
 
 import { archiveUserAsync, getUserByIdAsync } from "./services.server";
@@ -67,13 +67,14 @@ export default function Chapter() {
       <BackHeader to={`/admin/users/${userId}`} />
 
       <Title>
-        Archive "{user.firstName} {user.lastName}"
+        Archive &quot;{user.firstName} {user.lastName}&quot;
       </Title>
 
       <Form method="post">
         <fieldset disabled={transition.state === "submitting"}>
           <p>
-            Are you sure you want to archive "{user.firstName} {user.lastName}"?
+            Are you sure you want to archive &quot;{user.firstName}{" "}
+            {user.lastName}&quot;?
           </p>
 
           <button

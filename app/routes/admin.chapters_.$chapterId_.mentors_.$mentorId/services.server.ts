@@ -1,7 +1,7 @@
 import type { Chapter, Student, User } from "@prisma/client";
 
 import { prisma } from "~/db.server";
-import { getCurrentUserADIdAsync } from "~/services";
+import { getCurrentUserADIdAsync } from "~/services/.server";
 
 export async function getStudentsInChapterAsync(
   chapterId: Chapter["id"],

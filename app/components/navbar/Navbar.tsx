@@ -1,12 +1,11 @@
-import {
-  Environments,
-  type AzureUserWebAppWithRole,
-  type Environment,
-} from "~/services";
-
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import { Link } from "@remix-run/react";
 
 import { ProfileCircle, Menu, LogOut } from "iconoir-react";
+
+import { Environment, Environments } from "~/services";
+import { AzureUserWebAppWithRole } from "~/services/.server";
 
 interface Props {
   currentUser: AzureUserWebAppWithRole;

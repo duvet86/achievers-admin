@@ -4,18 +4,18 @@ import {
   getAzureUserWithRolesByIdAsync,
   getCurrentUserADIdAsync,
   getUserByAzureADIdAsync,
-} from "~/services";
+} from "~/services/.server";
 
 import { loader } from "./index";
 
-vi.mock("~/services", async () => {
+vi.mock("~/services/.server", async () => {
   process.env.SESSION_SECRET = "Test";
   process.env.CLIENT_ID = "Test";
   process.env.CLIENT_SECRET = "Test";
   process.env.TENANT_ID = "Test";
   process.env.REDIRECT_URI = "Test";
 
-  const actual: any = await vi.importActual("~/services");
+  const actual: object = await vi.importActual("~/services/.server");
 
   return {
     ...actual,

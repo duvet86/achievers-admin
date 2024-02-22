@@ -70,7 +70,7 @@ export default function Index() {
       <BackHeader to={`/admin/users/${userId}`} />
 
       <Title>
-        Approval by MRC for "{user.firstName} {user.lastName}"
+        Approval by MRC for &quot;{user.firstName} {user.lastName}&quot;
       </Title>
 
       <Form method="post">

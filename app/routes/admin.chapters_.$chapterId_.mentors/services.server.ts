@@ -1,7 +1,7 @@
 import type { Chapter } from "@prisma/client";
 
 import { prisma } from "~/db.server";
-import { searchAcrossFields } from "~/services";
+import { searchAcrossFields } from "~/services/.server";
 
 export async function getStudentsCountAsync(
   chapterId: Chapter["id"],

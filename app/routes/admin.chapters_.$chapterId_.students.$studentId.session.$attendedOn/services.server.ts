@@ -1,6 +1,6 @@
 import type { Student, Chapter, Prisma } from "@prisma/client";
 import { prisma } from "~/db.server";
-import { getCurrentUserADIdAsync } from "~/services";
+import { getCurrentUserADIdAsync } from "~/services/.server";
 
 export async function getStudentAsync(id: Student["id"]) {
   return await prisma.student.findUniqueOrThrow({

@@ -90,6 +90,7 @@ export async function getStudentsAsync(chapterId: Chapter["id"]) {
       return res;
     }, {});
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { mentorToStudentSession, ...rest } = student;
 
     return {

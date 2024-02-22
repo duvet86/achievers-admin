@@ -1,5 +1,5 @@
 import { prisma } from "~/db.server";
-import { searchAcrossFields } from "~/services";
+import { searchAcrossFields } from "~/services/.server";
 
 export async function getChaptersAsync() {
   return await prisma.chapter.findMany({
@@ -120,14 +120,24 @@ export async function getUsersAsync(
   });
 }
 
-export function getNumberCompletedChecks(user: any): number {
+interface UserChecks {
+  welcomeCall: unknown;
+  references: {
+    calledOndate: Date | null;
+  }[];
+  induction: unknown;
+  policeCheck: unknown;
+  wwcCheck: unknown;
+  approvalbyMRC: unknown;
+  volunteerAgreementSignedOn: unknown;
+}
+
+export function getNumberCompletedChecks(user: UserChecks): number {
   let checks = 1;
   if (user.welcomeCall !== null) {
     checks++;
   }
-  if (
-    user.references.filter((ref: any) => ref.calledOndate !== null).length >= 2
-  ) {
+  if (user.references.filter((ref) => ref.calledOndate !== null).length >= 2) {
     checks++;
   }
   if (user.induction !== null) {
