@@ -51,7 +51,7 @@ npm run setup
 - And to begin local development:
 
 ```bash
-npm run dev
+npm start
 ```
 
 ## Usage
