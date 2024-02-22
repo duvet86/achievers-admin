@@ -70,7 +70,8 @@ export default function Index() {
       <BackHeader to={`/admin/users/${userId}`} />
 
       <Title>
-        Induction acknowledgement for "{user.firstName} {user.lastName}"
+        Induction acknowledgement for &quot;{user.firstName} {user.lastName}
+        &quot;
       </Title>
 
       <Form method="post">

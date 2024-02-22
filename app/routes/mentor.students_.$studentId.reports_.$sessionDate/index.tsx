@@ -13,7 +13,10 @@ import { useRef } from "react";
 import invariant from "tiny-invariant";
 import { FloppyDiskArrowIn } from "iconoir-react";
 
-import { getCurrentUserADIdAsync, getUserByAzureADIdAsync } from "~/services";
+import {
+  getCurrentUserADIdAsync,
+  getUserByAzureADIdAsync,
+} from "~/services/.server";
 import { BackHeader, Editor, Title } from "~/components";
 
 import {
@@ -21,7 +24,7 @@ import {
   saveReportAsync,
 } from "./services.server";
 
-import editorStylesheetUrl from "~/styles/editor.css";
+import editorStylesheetUrl from "~/styles/editor.css?url";
 
 interface SessionCommandRequest {
   report: string;
@@ -113,7 +116,7 @@ export default function Index() {
       <BackHeader to={`/mentor/students/${student.id}/reports`} />
 
       <Title>
-        Report for "{student.firstName} {student.lastName}" on:{" "}
+        Report for &quot;{student.firstName} {student.lastName}&quot; on:{" "}
         {dayjs(attendedOn).format("MMMM D, YYYY")}
       </Title>
 

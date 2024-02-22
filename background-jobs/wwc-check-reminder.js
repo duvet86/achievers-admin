@@ -1,3 +1,5 @@
+/*eslint-env node*/
+
 import dayjs from "dayjs";
 
 import { subtractMonths } from "./utils.js";

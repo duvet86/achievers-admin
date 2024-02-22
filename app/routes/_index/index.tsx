@@ -7,7 +7,7 @@ import {
   Roles,
   getUserByAzureADIdAsync,
   getCurrentUserADIdAsync,
-} from "~/services";
+} from "~/services/.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const userAzureId = await getCurrentUserADIdAsync(request);

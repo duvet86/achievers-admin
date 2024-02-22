@@ -12,7 +12,10 @@ import {
   Title,
 } from "~/components";
 
-import { getUserByAzureADIdAsync, getCurrentUserADIdAsync } from "~/services";
+import {
+  getUserByAzureADIdAsync,
+  getCurrentUserADIdAsync,
+} from "~/services/.server";
 import { confirmUserDetailsAsync } from "./services.server";
 import dayjs from "dayjs";
 

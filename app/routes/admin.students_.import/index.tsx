@@ -9,7 +9,8 @@ import {
 import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 import { Import, PageEdit, Archive } from "iconoir-react";
 
-import { isValidDate, trackException } from "~/services";
+import { trackException } from "~/services/.server";
+import { isValidDate } from "~/services";
 import { Title, BackHeader, SubTitle } from "~/components";
 
 import {
@@ -79,7 +80,7 @@ export const action = async ({
 
   const existingStudentsLookup = currentStudents.reduce<
     Record<string, boolean>
-  >((res, { firstName, lastName, dateOfBirth }) => {
+  >((res, { firstName, lastName }) => {
     res[firstName.toLowerCase() + lastName.toLowerCase()] = true;
 
     return res;
@@ -100,16 +101,18 @@ export const action = async ({
       newStudents: students,
       message: null,
     });
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error(e);
 
+    const message = (e as Error).message;
+
     trackException({
-      exception: new Error(e.message),
+      exception: new Error(message),
     });
 
     return json({
       newStudents: [],
-      message: e.message,
+      message,
     });
   }
 };

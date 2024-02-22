@@ -13,11 +13,11 @@ import { getUserByIdAsync, updateAzureIdAsync } from "./services.server";
 import {
   APP_ID,
   assignRoleToUserAsync,
-  getCurrentHost,
   inviteUserToAzureAsync,
   Roles,
   trackTrace,
-} from "~/services";
+} from "~/services/.server";
+import { getCurrentHost } from "~/services";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.userId, "userId not found");
@@ -76,14 +76,15 @@ export default function Chapter() {
       <BackHeader to={`/admin/users/${userId}`} />
 
       <Title>
-        Invite "{user.firstName} {user.lastName}" to the achievers' web app
+        Invite &quot;{user.firstName} {user.lastName}&quot; to the
+        achievers&apos; web app
       </Title>
 
       <Form method="post">
         <fieldset disabled={transition.state === "submitting"}>
           <p>
-            Are you sure you want to invite "{user.firstName} {user.lastName}"
-            to the achievers' web app?
+            Are you sure you want to invite &quot;{user.firstName}{" "}
+            {user.lastName}&quot; to the achievers&apos; web app?
           </p>
 
           <button

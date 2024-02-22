@@ -77,9 +77,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
     };
 
     await updateWWCCheckAsync(Number(params.userId), data);
-  } catch (e: any) {
+  } catch (e: unknown) {
     return json({
-      errorMessage: e.message,
+      errorMessage: (e as Error).message,
     });
   }
 
@@ -98,7 +98,7 @@ export default function Index() {
       <BackHeader to={`/admin/users/${userId}`} />
 
       <Title>
-        WWC check for "{user.firstName} {user.lastName}"
+        WWC check for &quot;{user.firstName} {user.lastName}&quot;
       </Title>
 
       <Form method="post" encType="multipart/form-data">

@@ -93,7 +93,7 @@ export default function Index() {
       <BackHeader to={`/admin/users/${userId}`} />
 
       <Title>
-        Expression of interest for "{user.firstName} {user.lastName}"
+        Expression of interest for &quot;{user.firstName} {user.lastName}&quot;
       </Title>
 
       <Form method="post">

@@ -95,6 +95,7 @@ export default function Index() {
 
       <div className="mt-8 h-56">
         <SubTitle>Mentors over time</SubTitle>
+
         <MentorsOverTimeChart mentorsPerMonth={mentorsPerMonth} />
       </div>
     </div>

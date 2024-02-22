@@ -7,7 +7,10 @@ import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import { StatsReport } from "iconoir-react";
 
-import { getCurrentUserADIdAsync, getUserByAzureADIdAsync } from "~/services";
+import {
+  getCurrentUserADIdAsync,
+  getUserByAzureADIdAsync,
+} from "~/services/.server";
 import { BackHeader, Title } from "~/components";
 
 import { getSessionsForStudentAsync, getStudentAsync } from "./services.server";
@@ -39,7 +42,7 @@ export default function Index() {
       <BackHeader to="/mentor/students" />
 
       <Title>
-        Reports for "{student.firstName} {student.lastName}"
+        Reports for &quot;{student.firstName} {student.lastName}&quot;
       </Title>
 
       <div className="overflow-auto bg-white">

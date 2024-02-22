@@ -11,9 +11,9 @@ import dayjs from "dayjs";
 
 import {
   getCurrentUserADIdAsync,
-  getDatesForTerm,
   getUserByAzureADIdAsync,
-} from "~/services";
+} from "~/services/.server";
+import { getDatesForTerm } from "~/services";
 import { Select, Title } from "~/components";
 
 import {

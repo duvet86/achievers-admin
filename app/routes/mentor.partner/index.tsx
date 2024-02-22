@@ -3,7 +3,10 @@ import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { Calendar } from "iconoir-react";
 
-import { getCurrentUserADIdAsync, getUserByAzureADIdAsync } from "~/services";
+import {
+  getCurrentUserADIdAsync,
+  getUserByAzureADIdAsync,
+} from "~/services/.server";
 import { Title } from "~/components";
 
 import { getPartnersAync } from "./services.server";
@@ -44,24 +47,22 @@ export default function Index() {
                 </td>
               </tr>
             )}
-            {partners.map(
-              ({ user: { id, firstName, lastName, mobile } }, index) => (
-                <tr key={id}>
-                  <td className="border-r">{index + 1}</td>
-                  <td align="left">{`${firstName} ${lastName}`}</td>
-                  <td align="left">-</td>
-                  <td align="right">
-                    <Link
-                      to="/mentor/roster"
-                      className="btn btn-success btn-xs h-8 gap-2"
-                    >
-                      <Calendar className="hidden h-4 w-4 lg:block" />
-                      View roster
-                    </Link>
-                  </td>
-                </tr>
-              ),
-            )}
+            {partners.map(({ user: { id, firstName, lastName } }, index) => (
+              <tr key={id}>
+                <td className="border-r">{index + 1}</td>
+                <td align="left">{`${firstName} ${lastName}`}</td>
+                <td align="left">-</td>
+                <td align="right">
+                  <Link
+                    to="/mentor/roster"
+                    className="btn btn-success btn-xs h-8 gap-2"
+                  >
+                    <Calendar className="hidden h-4 w-4 lg:block" />
+                    View roster
+                  </Link>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

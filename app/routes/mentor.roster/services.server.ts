@@ -112,6 +112,7 @@ export async function getStudentsAsync(
         {},
       );
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { mentorToStudentSession, mentorToStudentAssignement, ...rest } =
       student;
 

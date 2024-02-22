@@ -2,7 +2,6 @@ import type { LinksFunction } from "@remix-run/node";
 
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -12,7 +11,7 @@ import {
   useRouteError,
 } from "@remix-run/react";
 
-import tailwindStylesheetUrl from "~/styles/tailwind.css";
+import tailwindStylesheetUrl from "~/styles/tailwind.css?url";
 
 import {
   Forbidden,
@@ -25,7 +24,7 @@ export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: tailwindStylesheetUrl }];
 };
 
-export default function App() {
+export function Layout({ children }: { children: React.ReactNode }) {
   const transition = useNavigation();
   const isLoading =
     transition.state === "loading" || transition.state === "submitting";
@@ -47,13 +46,16 @@ export default function App() {
             </div>
           </div>
         )}
-        <Outlet />
+        {children}
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
       </body>
     </html>
   );
+}
+
+export default function App() {
+  return <Outlet />;
 }
 
 export function ErrorBoundary() {
@@ -63,7 +65,7 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     if (error.status === 404) {
       return (
-        <html>
+        <html lang="en">
           <head>
             <title>Oops!</title>
             <Meta />
@@ -79,7 +81,7 @@ export function ErrorBoundary() {
 
     if (error.status === 401) {
       return (
-        <html>
+        <html lang="en">
           <head>
             <title>Oops!</title>
             <Meta />
@@ -95,7 +97,7 @@ export function ErrorBoundary() {
   }
 
   return (
-    <html>
+    <html lang="en">
       <head>
         <title>Oops!</title>
         <Meta />

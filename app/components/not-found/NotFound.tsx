@@ -10,7 +10,7 @@ export function NotFound() {
           <h1 className="mt-4 flex h-40 flex-col items-center text-4xl font-extrabold tracking-tight">
             <WarningTriangle className="mr-4 w-24 text-red-500" />
             <span className="block text-center uppercase text-red-500 drop-shadow-md">
-              404 couldn't find the page!
+              404 couldn&apos;t find the page!
             </span>
           </h1>
           <div className="flex gap-14">

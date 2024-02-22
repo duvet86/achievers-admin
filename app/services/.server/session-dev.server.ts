@@ -1,4 +1,4 @@
-import type { TokenInfo } from "./models";
+import type { TokenInfo } from "../models";
 
 import path from "node:path";
 

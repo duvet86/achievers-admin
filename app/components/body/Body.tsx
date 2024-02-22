@@ -1,4 +1,5 @@
-import type { AzureUserWebAppWithRole, Environment } from "~/services";
+import type { AzureUserWebAppWithRole } from "~/services/.server";
+import type { Environment } from "~/services";
 
 import { Outlet } from "@remix-run/react";
 

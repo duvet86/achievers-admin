@@ -1,8 +1,8 @@
-import type { TokenInfo } from "./models";
+import type { TokenInfo } from "../models";
 
 import { redirect } from "@remix-run/node";
 
-import { getCurrentHost, parseJwt } from "./utils";
+import { getCurrentHost, parseJwt } from "../utils";
 import { trackException } from "./appinsights-logging.server";
 import { getSessionInfoAsync_dev } from "./session-dev.server";
 

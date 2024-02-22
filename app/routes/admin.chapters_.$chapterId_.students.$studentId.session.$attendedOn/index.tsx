@@ -95,12 +95,14 @@ export default function Index() {
     <>
       <BackHeader to={`/admin/chapters/${chapterId}/students/${studentId}`} />
 
-      <Title>Assign mentor for "{dayjs(session).format("MMMM D, YYYY")}"</Title>
+      <Title>
+        Assign mentor for &quot;{dayjs(session).format("MMMM D, YYYY")}&quot;
+      </Title>
 
       {mentorToStudentAssignement.length > 0 && (
         <article className="prose max-w-none">
           <div>
-            Student "{firstName} {lastName}"" is currently assigned to:
+            Student &quot;{firstName} {lastName}&quot; is currently assigned to:
           </div>
           <ul>
             {mentorToStudentAssignement.map(

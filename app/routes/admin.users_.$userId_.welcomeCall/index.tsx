@@ -70,7 +70,8 @@ export default function Index() {
       <BackHeader to={`/admin/users/${userId}`} />
 
       <Title>
-        Welcome call acknowledgement for "{user.firstName} {user.lastName}"
+        Welcome call acknowledgement for &quot;{user.firstName} {user.lastName}
+        &quot;
       </Title>
 
       <Form method="post">

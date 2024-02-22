@@ -1,6 +1,6 @@
 export type { InitialConfigType } from "@lexical/react/LexicalComposer";
 
-export * from "lexical";
+export type { EditorState } from "lexical";
 export { LexicalComposer } from "@lexical/react/LexicalComposer";
 export { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 export { ContentEditable } from "@lexical/react/LexicalContentEditable";

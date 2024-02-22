@@ -4,7 +4,10 @@ import { Link, json, useLoaderData } from "@remix-run/react";
 
 import { StatsReport, GraduationCap } from "iconoir-react";
 
-import { getCurrentUserADIdAsync, getUserByAzureADIdAsync } from "~/services";
+import {
+  getCurrentUserADIdAsync,
+  getUserByAzureADIdAsync,
+} from "~/services/.server";
 import { Title } from "~/components";
 
 import { getMentorStudentsAsync } from "./services.server";

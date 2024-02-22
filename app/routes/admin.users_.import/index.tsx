@@ -8,7 +8,8 @@ import {
 } from "@remix-run/node";
 import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 
-import { isEmail, isStringNullOrEmpty, trackException } from "~/services";
+import { trackException } from "~/services/.server";
+import { isEmail, isStringNullOrEmpty } from "~/services";
 
 import { Import, PageEdit, Archive } from "iconoir-react";
 
@@ -95,16 +96,18 @@ export const action = async ({
       newUsers: users,
       message: null,
     });
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error(e);
 
+    const message = (e as Error).message;
+
     trackException({
-      exception: new Error(e.message),
+      exception: new Error(message),
     });
 
     return json({
       newUsers: [],
-      message: e.message,
+      message,
     });
   }
 };

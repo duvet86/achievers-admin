@@ -47,13 +47,13 @@ test.describe("Admin", () => {
     await adminLayoutPage.expect.toHaveDrawerLinks();
   });
 
-  test("should have home page", async ({ page }) => {
+  test("should have home page", async () => {
     await adminHomePage.expect.toHaveTitle();
     await adminHomePage.expect.toHaveCounters();
     await adminHomePage.expect.toHaveLinks();
   });
 
-  test("should display list of mentors", async ({ page }) => {
+  test("should display list of mentors", async () => {
     await adminLayoutPage.goToMentorsList();
 
     await usersListPage.expect.toHaveTitle();
@@ -90,7 +90,7 @@ test.describe("Admin", () => {
     await usersListPage.expect.toHaveTableRows(10);
   });
 
-  test("should import mentors from file", async ({ page }) => {
+  test("should import mentors from file", async () => {
     await adminLayoutPage.goToMentorsList();
 
     await usersListPage.goToImportMentorsFromFile();
@@ -179,7 +179,7 @@ test.describe("Admin", () => {
     });
   });
 
-  test("should display eoi info for mentor", async ({ page }) => {
+  test("should display eoi info for mentor", async () => {
     await adminLayoutPage.goToMentorsList();
 
     await usersListPage.goToEditUser();
@@ -227,7 +227,7 @@ test.describe("Admin", () => {
     });
   });
 
-  test("should update reference for mentor", async ({ page }) => {
+  test("should update reference for mentor", async () => {
     await adminLayoutPage.goToMentorsList();
 
     await usersListPage.goToEditUser();
@@ -280,7 +280,7 @@ test.describe("Admin", () => {
     });
   });
 
-  test("should update police check for mentor", async ({ page }) => {
+  test("should update police check for mentor", async () => {
     await adminLayoutPage.goToMentorsList();
 
     await usersListPage.goToEditUser();
@@ -304,7 +304,7 @@ test.describe("Admin", () => {
     });
   });
 
-  test("should update WWC check for mentor", async ({ page }) => {
+  test("should update WWC check for mentor", async () => {
     await adminLayoutPage.goToMentorsList();
 
     await usersListPage.goToEditUser();
@@ -330,7 +330,7 @@ test.describe("Admin", () => {
     });
   });
 
-  test("should update Approbal by MRC for mentor", async ({ page }) => {
+  test("should update Approbal by MRC for mentor", async () => {
     await adminLayoutPage.goToMentorsList();
 
     await usersListPage.goToEditUser();
