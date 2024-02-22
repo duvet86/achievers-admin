@@ -1,26 +1,26 @@
-export * from "./Checkbox";
-export * from "./DateInput";
-export * from "./Input";
-export * from "./Textarea";
-export * from "./Select";
-export * from "./FileInput";
-export * from "./SubmitFormButton";
-export * from "./Radio";
-export * from "./Autocomplete";
+export * from "./checkbox/Checkbox";
+export * from "./date-input/DateInput";
+export * from "./input/Input";
+export * from "./textarea/Textarea";
+export * from "./select/Select";
+export * from "./file-input/FileInput";
+export * from "./submit-form-button/SubmitFormButton";
+export * from "./radio/Radio";
+export * from "./autocomplete/Autocomplete";
 
-export * from "./Title";
-export * from "./SubTitle";
-export * from "./Text";
-export * from "./BackHeader";
-export * from "./Pagination";
+export * from "./title/Title";
+export * from "./sub-title/SubTitle";
+export * from "./text/Text";
+export * from "./back-header/BackHeader";
+export * from "./pagination/Pagination";
 
-export * from "./LoadingSpinner";
-export * from "./Navbar";
-export * from "./Drawer";
-export * from "./Body";
+export * from "./loading-spinner/LoadingSpinner";
+export * from "./navbar/Navbar";
+export * from "./drawer/Drawer";
+export * from "./body/Body";
 
-export * from "./NotFound";
-export * from "./Forbidden";
-export * from "./UnexpectedError";
+export * from "./not-found/NotFound";
+export * from "./forbidden/Forbidden";
+export * from "./unexpected-error/UnexpectedError";
 
 export * from "./editor/Editor";

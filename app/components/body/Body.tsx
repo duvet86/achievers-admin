@@ -2,8 +2,8 @@ import type { AzureUserWebAppWithRole, Environment } from "~/services";
 
 import { Outlet } from "@remix-run/react";
 
-import { Drawer } from "./Drawer";
-import { Navbar } from "./Navbar";
+import { Drawer } from "../drawer/Drawer";
+import { Navbar } from "../navbar/Navbar";
 
 interface Props {
   isAdmin: boolean;
