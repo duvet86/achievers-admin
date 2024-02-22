@@ -65,15 +65,15 @@ function Message({ successMessage, errorMessage }: MessageProps) {
   return (
     <div data-testid="message">
       {isActive && successMessage && (
-        <div className="alert alert-success pr-12">
+        <div className="flex gap-4 rounded-lg bg-success p-3 pr-12">
           <Check />
-          <span>{successMessage}</span>
+          {successMessage}
         </div>
       )}
       {errorMessage && (
-        <div className="alert alert-error pr-12">
+        <div className="flex gap-4 rounded-lg bg-error p-3 pr-12">
           <WarningCircle />
-          <span>{errorMessage}</span>
+          {errorMessage}
         </div>
       )}
     </div>
