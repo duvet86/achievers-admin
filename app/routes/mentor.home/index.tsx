@@ -27,7 +27,7 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<
   }>
 > {
   const azureUserId = await getCurrentUserADIdAsync(request);
-  const user = await getUserByAzureADIdAsync(azureUserId, true);
+  const user = await getUserByAzureADIdAsync(azureUserId);
 
   const mentorFullName = user.firstName + " " + user.lastName;
 
@@ -41,10 +41,7 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<
     });
   }
 
-  const sessions = await getSessionsAsync(
-    user.id,
-    user.userAtChapter[0].chapterId,
-  );
+  const sessions = await getSessionsAsync(user.id, user.chapterId);
 
   return json({
     mentorFullName,
@@ -89,7 +86,7 @@ export default function Index() {
         )}
       </div>
 
-      <SubTitle>Reports</SubTitle>
+      <SubTitle>Recent reports</SubTitle>
 
       <div className="overflow-auto bg-white">
         <table className="table table-lg">

@@ -8,6 +8,15 @@ import {
   USER_DATA_BLOB_CONTAINER_NAME,
 } from "~/services";
 
+export async function getChaptersAsync() {
+  return await prisma.chapter.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+}
+
 export async function getUserByIdAsync(id: number) {
   return await prisma.user.findUnique({
     where: {
@@ -33,14 +42,11 @@ export async function getUserByIdAsync(id: number) {
       volunteerAgreementSignedOn: true,
       hasApprovedToPublishPhotos: true,
       endDate: true,
-      userAtChapter: {
+      chapterId: true,
+      chapter: {
         select: {
-          chapter: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
+          id: true,
+          name: true,
         },
       },
       approvalbyMRC: {

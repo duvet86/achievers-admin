@@ -129,12 +129,7 @@ export async function importSpreadsheetMentorsAsync(
             uniqueUsers[i]["Volunteer Agreement Complete"] === "Yes"
               ? new Date()
               : undefined,
-          userAtChapter: {
-            create: {
-              assignedBy: "import",
-              chapterId: chapter?.id ?? chapters[0].id,
-            },
-          },
+          chapterId: chapter?.id ?? chapters[0].id,
           eoIProfile: {
             create: {
               bestTimeToContact: "Not specified",

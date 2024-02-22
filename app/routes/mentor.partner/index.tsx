@@ -10,7 +10,7 @@ import { getPartnersAync } from "./services.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const azureUserId = await getCurrentUserADIdAsync(request);
-  const user = await getUserByAzureADIdAsync(azureUserId, true);
+  const user = await getUserByAzureADIdAsync(azureUserId);
 
   const partners = await getPartnersAync(user.id);
 

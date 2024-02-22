@@ -6,8 +6,6 @@ import { AdminLayoutPage } from "integration-tests/pages/admin-layout.page";
 import { AdminHomePage } from "integration-tests/pages/admin-home.page";
 import { AdminUsersPage } from "../pages/admin-users.page";
 import { AdminUserPage } from "../pages/admin-user/admin-userInfo.page";
-import { RemoveUserChapterPage } from "../pages/remove-user-chapter.page";
-import { AssignUserChapterPage } from "../pages/assign-user-chapter.page";
 import { EOIInfoPage } from "../pages/eoi.page";
 import { ImportMentorsPage } from "../pages/import-mentors.page";
 import { ReferencePage } from "integration-tests/pages/reference";
@@ -20,8 +18,6 @@ test.describe("Admin", () => {
   let adminHomePage: AdminHomePage;
   let usersListPage: AdminUsersPage;
   let userInfoPage: AdminUserPage;
-  let removeUserChapterPage: RemoveUserChapterPage;
-  let assignUserChapterPage: AssignUserChapterPage;
   let eoiInfoPage: EOIInfoPage;
   let importMentorsPage: ImportMentorsPage;
   let referencePage: ReferencePage;
@@ -36,8 +32,6 @@ test.describe("Admin", () => {
     adminHomePage = new AdminHomePage(page);
     usersListPage = new AdminUsersPage(page);
     userInfoPage = new AdminUserPage(page);
-    removeUserChapterPage = new RemoveUserChapterPage(page);
-    assignUserChapterPage = new AssignUserChapterPage(page);
     eoiInfoPage = new EOIInfoPage(page);
     importMentorsPage = new ImportMentorsPage(page);
     referencePage = new ReferencePage(page);
@@ -126,6 +120,7 @@ test.describe("Admin", () => {
     await userInfoPage.userForm.expect.toHaveProfilePicture();
     await userInfoPage.userForm.expect.toHaveValues({
       email: "test_0@test.com",
+      chapter: "Girrawheen",
       firstName: "test_0",
       lastName: "user_0",
       mobile: "123",
@@ -143,11 +138,9 @@ test.describe("Admin", () => {
 
     await userInfoPage.expect.toHaveNoAccessWarning();
 
-    await userInfoPage.chapterForm.expect.toHaveTableHeaders();
-    await userInfoPage.chapterForm.expect.toHaveTableRow();
-
     // Update user info.
     await userInfoPage.userForm.updateUserForm({
+      chapter: "Butler",
       firstName: "Luca",
       lastName: "Mara",
       mobile: "1111111",
@@ -165,8 +158,11 @@ test.describe("Admin", () => {
 
     await userInfoPage.userForm.saveForm();
 
+    await page.reload();
+
     await userInfoPage.userForm.expect.toHaveValues({
       email: "test_0@test.com",
+      chapter: "Butler",
       firstName: "Luca",
       lastName: "Mara",
       mobile: "1111111",
@@ -181,25 +177,6 @@ test.describe("Admin", () => {
       emergencyContactRelationship: "Luca",
       additionalEmail: "Luca@luca.com",
     });
-  });
-
-  test("should edit chapter for mentor", async ({ page }) => {
-    await adminLayoutPage.goToMentorsList();
-
-    await usersListPage.goToEditUser();
-    await userInfoPage.chapterForm.gotToRemoveChapter();
-
-    await removeUserChapterPage.expect.toHaveConfirmationText();
-
-    await removeUserChapterPage.removeChapterClick();
-
-    await userInfoPage.chapterForm.expect.toHaveNoChaptersRow();
-
-    await userInfoPage.chapterForm.gotToAssignToChapter();
-    await assignUserChapterPage.selectChapter("Girrawheen");
-    await assignUserChapterPage.assignChapter();
-
-    await userInfoPage.chapterForm.expect.toHaveTableRow();
   });
 
   test("should display eoi info for mentor", async ({ page }) => {

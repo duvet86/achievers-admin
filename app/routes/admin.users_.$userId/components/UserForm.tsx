@@ -5,7 +5,13 @@ import type { Navigation } from "@remix-run/router";
 
 import { Form } from "@remix-run/react";
 
-import { DateInput, Input, Radio, SubmitFormButton } from "~/components";
+import {
+  DateInput,
+  Input,
+  Radio,
+  Select,
+  SubmitFormButton,
+} from "~/components";
 
 import ProfilePicture from "./ProfilePicture";
 
@@ -17,7 +23,7 @@ interface Props {
 
 export function UserForm({
   transition,
-  loaderData: { user },
+  loaderData: { user, chapters },
   actionData,
 }: Props) {
   return (
@@ -37,6 +43,19 @@ export function UserForm({
           label="Email"
           name="email"
           disabled
+        />
+
+        <Select
+          name="chapterId"
+          label="Chapter"
+          defaultValue={user.chapterId.toString()}
+          required
+          options={[{ value: "", label: "Select a chapter" }].concat(
+            chapters.map(({ id, name }) => ({
+              label: name,
+              value: id.toString(),
+            })),
+          )}
         />
 
         <Input
@@ -140,7 +159,6 @@ export function UserForm({
               value: "false",
             },
           ]}
-          required
         />
 
         <SubmitFormButton

@@ -7,21 +7,9 @@ export async function assignMentorsToStudentsAsync(
   await prisma.$transaction(async (tx) => {
     await tx.mentorToStudentAssignement.deleteMany();
 
-    const mentorsAtChapter = await tx.user.findMany({
-      where: {
-        userAtChapter: {
-          some: {},
-        },
-      },
-    });
+    const mentorsAtChapter = await tx.user.findMany();
 
-    const studentsAtChapter = await tx.student.findMany({
-      where: {
-        studentAtChapter: {
-          some: {},
-        },
-      },
-    });
+    const studentsAtChapter = await tx.student.findMany();
 
     await tx.mentorToStudentAssignement.createMany({
       data: [

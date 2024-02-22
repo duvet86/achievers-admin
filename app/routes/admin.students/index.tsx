@@ -134,10 +134,7 @@ export default function Index() {
                 </tr>
               )}
               {students.map(
-                (
-                  { id, firstName, lastName, yearLevel, studentAtChapter },
-                  index,
-                ) => (
+                ({ id, firstName, lastName, yearLevel, chapter }, index) => (
                   <tr key={id}>
                     <td className="border">
                       <div className="flex gap-2">
@@ -148,11 +145,7 @@ export default function Index() {
                       {firstName} {lastName}
                     </td>
                     <td className="border">{yearLevel ?? "-"}</td>
-                    <td className="border">
-                      {studentAtChapter
-                        .map(({ chapter }) => chapter.name)
-                        .join(", ")}
-                    </td>
+                    <td className="border">{chapter.name}</td>
                     <td className="border">
                       <Link
                         to={`${id}?${searchParams}`}

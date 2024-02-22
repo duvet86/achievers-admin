@@ -21,11 +21,7 @@ export async function getUsersCountAsync(
         includeArchived ? {} : { endDate: null },
         chapterId !== null
           ? {
-              userAtChapter: {
-                some: {
-                  chapterId: chapterId,
-                },
-              },
+              chapterId: chapterId,
             }
           : {},
         {
@@ -59,13 +55,9 @@ export async function getUsersAsync(
       email: true,
       volunteerAgreementSignedOn: true,
       endDate: true,
-      userAtChapter: {
+      chapter: {
         select: {
-          chapter: {
-            select: {
-              name: true,
-            },
-          },
+          name: true,
         },
       },
       approvalbyMRC: {
@@ -104,11 +96,7 @@ export async function getUsersAsync(
         includeArchived ? {} : { endDate: null },
         chapterId !== null
           ? {
-              userAtChapter: {
-                some: {
-                  chapterId: chapterId,
-                },
-              },
+              chapterId: chapterId,
             }
           : {},
         {

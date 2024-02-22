@@ -3,13 +3,11 @@ import type { Locator, Page } from "@playwright/test";
 import { expect } from "@playwright/test";
 
 import { UserForm } from "./UserForm";
-import { ChapterForm } from "./ChapterForm";
 
 export class AdminUserPage {
   private page: Page;
 
   userForm: UserForm;
-  chapterForm: ChapterForm;
 
   label: Locator;
   noAccessText: Locator;
@@ -29,7 +27,6 @@ export class AdminUserPage {
     this.page = page;
 
     this.userForm = new UserForm(page);
-    this.chapterForm = new ChapterForm(page);
 
     this.label = this.page.getByRole("heading", { name: "Edit mentor info" });
     this.noAccessText = this.page.getByTitle("No access");

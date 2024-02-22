@@ -12,13 +12,13 @@ import { BackHeader, Title } from "~/components";
 
 import {
   createNewStudentAsync,
+  getChaptersAsync,
   getStudentByIdAsync,
   updateStudentByIdAsync,
 } from "./services.server";
 import { StudentForm } from "./components/StudentForm";
 import { GuardianList } from "./components/GuardianList";
 import { TeacherList } from "./components/TeacherList";
-import { AssignedChapterList } from "./components/AssignedChapterList";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.studentId, "studentId not found");
@@ -30,6 +30,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
       title: "Add new student",
       student: null,
       isNewStudent,
+      chapters: [] as {
+        id: number;
+        name: string;
+      }[],
     });
   }
 
@@ -40,10 +44,13 @@ export async function loader({ params }: LoaderFunctionArgs) {
     });
   }
 
+  const chapters = await getChaptersAsync();
+
   return json({
     title: "Edit student info",
     student,
     isNewStudent,
+    chapters,
   });
 }
 
@@ -112,6 +119,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       emergencyContactEmail,
       emergencyContactAddress,
       startDate: startDate ? dayjs(startDate).toDate() : null,
+      chapterId: 1,
     };
 
     studentId = await createNewStudentAsync(dataCreate);
@@ -169,8 +177,6 @@ export default function Index() {
         <hr className="my-8 md:hidden" />
 
         <div className="flex-1 overflow-y-auto pb-4 lg:pb-0">
-          <AssignedChapterList loaderData={loaderData} />
-
           <GuardianList loaderData={loaderData} />
 
           <TeacherList loaderData={loaderData} />

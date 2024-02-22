@@ -1,9 +1,11 @@
 import type { Locator, Page } from "@playwright/test";
 
 import { expect } from "@playwright/test";
+import { CHAPTER_DATA } from "integration-tests/test-data";
 
 interface FormQuery {
   email: string;
+  chapter: string;
   firstName: string;
   lastName: string;
   mobile: string;
@@ -20,6 +22,7 @@ interface FormQuery {
 }
 
 interface FormCommand {
+  chapter: string;
   firstName: string;
   lastName: string;
   mobile: string;
@@ -41,6 +44,7 @@ export class UserForm {
   profilePicture: Locator;
 
   emailInput: Locator;
+  chapterSelect: Locator;
   firstNameInput: Locator;
   lastNameInput: Locator;
   mobileInput: Locator;
@@ -63,6 +67,7 @@ export class UserForm {
     this.profilePicture = page.getByRole("figure");
 
     this.emailInput = page.getByLabel("Email", { exact: true });
+    this.chapterSelect = page.getByLabel("Chapter");
     this.firstNameInput = page.getByLabel("First name");
     this.lastNameInput = page.getByLabel("Last name");
     this.mobileInput = page.getByLabel("Mobile");
@@ -87,6 +92,7 @@ export class UserForm {
   }
 
   async updateUserForm({
+    chapter,
     firstName,
     lastName,
     mobile,
@@ -101,6 +107,7 @@ export class UserForm {
     emergencyContactRelationship,
     additionalEmail,
   }: FormCommand): Promise<void> {
+    await this.chapterSelect.selectOption({ label: chapter });
     await this.firstNameInput.fill(firstName);
     await this.lastNameInput.fill(lastName);
     await this.mobileInput.fill(mobile);
@@ -131,6 +138,7 @@ class UserFormAssertions {
   }
 
   async toHaveValues({
+    chapter,
     email,
     firstName,
     lastName,
@@ -146,6 +154,9 @@ class UserFormAssertions {
     emergencyContactRelationship,
     additionalEmail,
   }: FormQuery): Promise<void> {
+    await expect(this.userForm.chapterSelect).toHaveValue(
+      CHAPTER_DATA[chapter],
+    );
     await expect(this.userForm.emailInput).toHaveValue(email);
     await expect(this.userForm.emailInput).toHaveAttribute("disabled", "");
 

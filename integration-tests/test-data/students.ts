@@ -9,7 +9,6 @@ export async function createStudentsAsync(
     await tx.mentorToStudentAssignement.deleteMany();
     await tx.studentGuardian.deleteMany();
     await tx.studentTeacher.deleteMany();
-    await tx.studentAtChapter.deleteMany();
     await tx.student.deleteMany();
 
     let i: number;
@@ -69,12 +68,7 @@ export async function createStudentsAsync(
               ],
             },
           },
-          studentAtChapter: {
-            create: {
-              assignedBy: "test-data",
-              chapterId: (await tx.chapter.findFirstOrThrow()).id,
-            },
-          },
+          chapterId: (await tx.chapter.findFirstOrThrow()).id,
         },
       });
     }

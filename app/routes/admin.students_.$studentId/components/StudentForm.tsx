@@ -17,13 +17,28 @@ interface Props {
   loaderData: SerializeFrom<typeof loader>;
 }
 
-export function StudentForm({ transition, loaderData: { student } }: Props) {
+export function StudentForm({
+  transition,
+  loaderData: { student, chapters },
+}: Props) {
   return (
     <Form
       method="post"
       className="relative flex-1 overflow-y-auto border-primary md:mb-0 md:mr-8 md:border-r md:pr-4"
     >
       <fieldset disabled={transition.state === "submitting"}>
+        <Select
+          name="chapterId"
+          label="Chapter"
+          defaultValue={student?.chapterId.toString()}
+          options={[{ value: "", label: "Select a chapter" }].concat(
+            chapters.map(({ id, name }) => ({
+              label: name,
+              value: id.toString(),
+            })),
+          )}
+        />
+
         <Input
           defaultValue={student?.firstName}
           label="First name"

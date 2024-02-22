@@ -50,13 +50,9 @@ describe("Admin /users", () => {
                 email: "test@test.com",
                 firstName: "Test",
                 lastName: "User",
-                userAtChapter: [
-                  {
-                    chapter: {
-                      name: "Chapter 1",
-                    },
-                  },
-                ],
+                chapter: {
+                  name: "Chapter 1",
+                },
               },
             ],
           });
