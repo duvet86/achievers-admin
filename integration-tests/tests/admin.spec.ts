@@ -107,7 +107,7 @@ test.describe("Admin", () => {
     await importMentorsPage.expect.toHaveTableRows(4);
   });
 
-  test.only("should edit mentor info", async ({ page }) => {
+  test("should edit mentor info", async ({ page }) => {
     await adminLayoutPage.goToMentorsList();
 
     await usersListPage.goToEditUser();
