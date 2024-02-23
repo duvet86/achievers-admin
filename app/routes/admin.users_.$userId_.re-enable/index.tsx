@@ -7,7 +7,7 @@ import invariant from "tiny-invariant";
 
 import { OnTag } from "iconoir-react";
 
-import { Title, BackHeader } from "~/components";
+import { Title } from "~/components";
 
 import { getUserByIdAsync, updateEndDateAsync } from "./services.server";
 
@@ -17,7 +17,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const user = await getUserByIdAsync(Number(params.userId));
 
   return json({
-    userId: params.userId,
     user,
   });
 }
@@ -32,12 +31,10 @@ export async function action({ params }: ActionFunctionArgs) {
 
 export default function Index() {
   const transition = useNavigation();
-  const { userId, user } = useLoaderData<typeof loader>();
+  const { user } = useLoaderData<typeof loader>();
 
   return (
     <>
-      <BackHeader to={`/admin/users/${userId}`} />
-
       <Title>
         Re enable &quot;{user.firstName} {user.lastName}&quot;
       </Title>

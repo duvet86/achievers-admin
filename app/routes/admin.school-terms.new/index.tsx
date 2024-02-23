@@ -4,13 +4,7 @@ import type { NewSchoolTerm } from "./services.server";
 import { Form, json, redirect, useActionData } from "@remix-run/react";
 import dayjs from "dayjs";
 
-import {
-  BackHeader,
-  DateInput,
-  SubTitle,
-  SubmitFormButton,
-  Title,
-} from "~/components";
+import { DateInput, SubTitle, SubmitFormButton, Title } from "~/components";
 
 import { addTermsAsync, getExisitingYearsAsync } from "./services.server";
 import { areDatesOverlapping } from "~/services";
@@ -106,8 +100,6 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to="/admin/school-terms" />
-
       <Title>Add new school term</Title>
 
       <Form method="post" className="flex flex-col gap-6">

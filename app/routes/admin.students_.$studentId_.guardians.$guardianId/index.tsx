@@ -11,7 +11,7 @@ import {
 } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import { BackHeader, Input, SubmitFormButton, Title } from "~/components";
+import { Input, SubmitFormButton, Title } from "~/components";
 
 import {
   createGuardianAsync,
@@ -37,7 +37,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
     }
 
     return json({
-      studentId: params.studentId,
       guardian,
     });
   }
@@ -93,15 +92,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { studentId, guardian } = useLoaderData<typeof loader>();
+  const { guardian } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const transition = useNavigation();
   const { guardianId } = useParams();
 
   return (
     <>
-      <BackHeader to={`/admin/students/${studentId}`} />
-
       <Title>
         {guardianId === "new" ? "Add new guardian" : "Edit info for guardian"}
       </Title>

@@ -11,7 +11,7 @@ import {
   getCurrentUserADIdAsync,
   getUserByAzureADIdAsync,
 } from "~/services/.server";
-import { BackHeader, Title } from "~/components";
+import { Title } from "~/components";
 
 import { getSessionsForStudentAsync, getStudentAsync } from "./services.server";
 
@@ -39,8 +39,6 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to="/mentor/students" />
-
       <Title>
         Sessions for &quot;{student.firstName} {student.lastName}&quot;
       </Title>

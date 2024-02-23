@@ -15,7 +15,6 @@ import {
 import invariant from "tiny-invariant";
 
 import {
-  BackHeader,
   DateInput,
   Title,
   FileInput,
@@ -40,7 +39,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
     : null;
 
   return json({
-    userId: params.userId,
     user: {
       ...user,
       filePath,
@@ -90,13 +88,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Index() {
   const transition = useNavigation();
-  const { userId, user } = useLoaderData<typeof loader>();
+  const { user } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   return (
     <>
-      <BackHeader to={`/admin/users/${userId}`} />
-
       <Title>
         WWC check for &quot;{user.firstName} {user.lastName}&quot;
       </Title>

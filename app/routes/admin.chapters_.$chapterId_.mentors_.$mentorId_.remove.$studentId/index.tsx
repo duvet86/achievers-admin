@@ -6,7 +6,7 @@ import invariant from "tiny-invariant";
 
 import { Xmark } from "iconoir-react";
 
-import { BackHeader, Title } from "~/components";
+import { Title } from "~/components";
 
 import {
   getMentorAsync,
@@ -30,8 +30,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
   }
 
   return json({
-    chapterId: params.chapterId,
-    mentorId: params.mentorId,
     mentorWithStudent,
   });
 }
@@ -53,16 +51,12 @@ export async function action({ params }: ActionFunctionArgs) {
 
 export default function Index() {
   const {
-    chapterId,
-    mentorId,
     mentorWithStudent: { user, student },
   } = useLoaderData<typeof loader>();
   const transition = useNavigation();
 
   return (
     <>
-      <BackHeader to={`/admin/chapters/${chapterId}/mentors/${mentorId}`} />
-
       <Title>Remove student from mentor</Title>
 
       <Form method="post">

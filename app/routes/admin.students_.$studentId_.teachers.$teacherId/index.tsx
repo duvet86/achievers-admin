@@ -11,7 +11,7 @@ import {
 } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import { BackHeader, Input, SubmitFormButton, Title } from "~/components";
+import { Input, SubmitFormButton, Title } from "~/components";
 
 import {
   createTeacherAsync,
@@ -37,7 +37,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
     }
 
     return json({
-      studentId: params.studentId,
       teacher,
     });
   }
@@ -87,15 +86,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { studentId, teacher } = useLoaderData<typeof loader>();
+  const { teacher } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const transition = useNavigation();
   const { teacherId } = useParams();
 
   return (
     <>
-      <BackHeader to={`/admin/students/${studentId}`} />
-
       <Title>
         {teacherId === "new" ? "Add new teacher" : "Edit info for teacher"}
       </Title>

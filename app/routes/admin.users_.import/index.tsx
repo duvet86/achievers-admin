@@ -13,7 +13,7 @@ import { isEmail, isStringNullOrEmpty } from "~/services";
 
 import { Import, PageEdit, Archive } from "iconoir-react";
 
-import { Title, BackHeader, SubTitle } from "~/components";
+import { Title, SubTitle } from "~/components";
 
 import {
   readExcelFileAsync,
@@ -123,8 +123,6 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to="/admin/users" />
-
       <Title>Import from file</Title>
 
       <Form

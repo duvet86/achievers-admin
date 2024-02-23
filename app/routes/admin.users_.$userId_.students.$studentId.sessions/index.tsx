@@ -7,7 +7,7 @@ import invariant from "tiny-invariant";
 import { Check, StatsReport, WarningCircle } from "iconoir-react";
 import dayjs from "dayjs";
 
-import { BackHeader, Title } from "~/components";
+import { Title } from "~/components";
 
 import {
   getSessionsAsync,
@@ -33,8 +33,6 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to={`/admin/users`} />
-
       <Title>
         Sessions for mentor &quot;{user.firstName} {user.lastName}&quot;
         mentoring student &quot;{student.firstName} {student.lastName}&quot;

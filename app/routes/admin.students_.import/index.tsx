@@ -11,7 +11,7 @@ import { Import, PageEdit, Archive } from "iconoir-react";
 
 import { trackException } from "~/services/.server";
 import { isValidDate } from "~/services";
-import { Title, BackHeader, SubTitle } from "~/components";
+import { Title, SubTitle } from "~/components";
 
 import {
   readExcelFileAsync,
@@ -128,8 +128,6 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to="/admin/students" />
-
       <Title>Import from file</Title>
 
       <Form

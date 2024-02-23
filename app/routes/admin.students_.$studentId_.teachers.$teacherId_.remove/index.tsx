@@ -4,7 +4,7 @@ import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import { BackHeader, Title } from "~/components";
+import { Title } from "~/components";
 
 import { getTeacherByIdAsync, deleteTeacherByIdAsync } from "./services.server";
 import { Xmark } from "iconoir-react";
@@ -21,7 +21,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
   }
 
   return json({
-    studentId: params.studentId,
     teacher,
   });
 }
@@ -36,13 +35,11 @@ export async function action({ params }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { studentId, teacher } = useLoaderData<typeof loader>();
+  const { teacher } = useLoaderData<typeof loader>();
   const transition = useNavigation();
 
   return (
     <>
-      <BackHeader to={`/admin/students/${studentId}`} />
-
       <Title>Remove teacher &quot;{teacher.fullName}&quot;</Title>
 
       <Form method="post">

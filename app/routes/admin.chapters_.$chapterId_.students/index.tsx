@@ -7,7 +7,7 @@ import { useRef } from "react";
 import { CoinsSwap, PageEdit } from "iconoir-react";
 
 import { getPaginationRange } from "~/services";
-import { Title, BackHeader, Pagination } from "~/components";
+import { Title, Pagination } from "~/components";
 
 import {
   getMentorsWithStudentsAsync,
@@ -86,8 +86,7 @@ export default function Index() {
   return (
     <>
       <div className="flex items-center justify-between">
-        <BackHeader to="/admin/chapters" />
-
+        <Title>Students with Mentors</Title>
         <Link
           to={`/admin/chapters/${chapterId}/mentors`}
           className="btn min-w-40 gap-2"
@@ -97,7 +96,7 @@ export default function Index() {
         </Link>
       </div>
 
-      <Title>Students with Mentors</Title>
+      <hr className="my-4" />
 
       <Form ref={formRef}>
         <FormInputs searchParams={searchParams} onFormClear={onFormClear} />

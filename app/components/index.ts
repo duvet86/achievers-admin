@@ -11,7 +11,6 @@ export * from "./autocomplete/Autocomplete";
 export * from "./title/Title";
 export * from "./sub-title/SubTitle";
 export * from "./text/Text";
-export * from "./back-header/BackHeader";
 export * from "./pagination/Pagination";
 
 export * from "./loading-spinner/LoadingSpinner";

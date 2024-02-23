@@ -6,12 +6,7 @@ import { Form, Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { Xmark, Clock } from "iconoir-react";
 
-import {
-  Title,
-  BackHeader,
-  Autocomplete,
-  SubmitFormButton,
-} from "~/components";
+import { Title, Autocomplete, SubmitFormButton } from "~/components";
 
 import {
   assignStudentToMentorAsync,
@@ -33,7 +28,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   return json({
     mentorId: params.mentorId,
-    chapterId: params.chapterId,
     availableStudents,
     mentorWithStudents,
   });
@@ -62,15 +56,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
 export default function Index() {
   const {
     mentorId,
-    chapterId,
     availableStudents,
     mentorWithStudents: { firstName, lastName, mentorToStudentAssignement },
   } = useLoaderData<typeof loader>();
 
   return (
     <>
-      <BackHeader to={`/admin/chapters/${chapterId}/mentors`} />
-
       <Title>Assign student to mentor</Title>
 
       <article className="prose w-full max-w-none">

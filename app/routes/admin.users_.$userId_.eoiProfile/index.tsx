@@ -5,14 +5,7 @@ import { json } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import {
-  BackHeader,
-  Input,
-  Radio,
-  SubmitFormButton,
-  Textarea,
-  Title,
-} from "~/components";
+import { Input, Radio, SubmitFormButton, Textarea, Title } from "~/components";
 
 import { getUserByIdAsync, updateEoiByUserIdAsync } from "./services.server";
 
@@ -22,7 +15,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const user = await getUserByIdAsync(Number(params.userId));
 
   return json({
-    userId: params.userId,
     user,
   });
 }
@@ -83,15 +75,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { userId, user } = useLoaderData<typeof loader>();
+  const { user } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   const eoIProfile = user.eoIProfile;
 
   return (
     <>
-      <BackHeader to={`/admin/users/${userId}`} />
-
       <Title>
         Expression of interest for &quot;{user.firstName} {user.lastName}&quot;
       </Title>

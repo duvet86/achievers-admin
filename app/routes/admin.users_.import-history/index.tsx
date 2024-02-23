@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 
 import { FastArrowLeft, FastArrowRight, PageEdit } from "iconoir-react";
 
-import { Title, BackHeader } from "~/components";
+import { Title } from "~/components";
 
 import {
   getImportHistoryAsync,
@@ -50,8 +50,6 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to="/admin/users" />
-
       <Title>History of imported mentors</Title>
 
       <Form>
