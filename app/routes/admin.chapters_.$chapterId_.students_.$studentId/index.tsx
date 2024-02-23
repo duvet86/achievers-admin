@@ -111,15 +111,12 @@ export default function Index() {
             {mentorToStudentAssignement.map(
               ({ user: { firstName, lastName, id } }) => (
                 <li key={id} className="border-b pb-2">
-                  <div className="flex justify-between">
+                  <div className="flex items-center justify-between">
                     <div>
                       {firstName} {lastName}
                     </div>
-                    <Link
-                      to={`remove/${id}`}
-                      className="btn btn-error btn-xs gap-5"
-                    >
-                      <Xmark className="h-4 w-4" />
+                    <Link to={`remove/${id}`} className="btn btn-error gap-3">
+                      <Xmark className="h-6 w-6" />
                       Remove
                     </Link>
                   </div>

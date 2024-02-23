@@ -37,7 +37,7 @@ export default function TermCalendar({
       userId: number,
       chapterId: number,
       studentId: number,
-      sessionDate: string,
+      attendedOn: string,
     ) =>
     () => {
       submit(
@@ -45,7 +45,7 @@ export default function TermCalendar({
           chapterId,
           studentId,
           userId,
-          attendedOn: sessionDate,
+          attendedOn,
           action: "assign",
         },
         {
@@ -60,7 +60,7 @@ export default function TermCalendar({
       userId: number,
       chapterId: number,
       studentId: number,
-      sessionDate: string,
+      attendedOn: string,
     ) =>
     () => {
       submit(
@@ -68,7 +68,7 @@ export default function TermCalendar({
           chapterId,
           studentId,
           userId,
-          attendedOn: sessionDate,
+          attendedOn,
           action: "remove",
         },
         {
@@ -85,25 +85,25 @@ export default function TermCalendar({
           <span className="loading loading-spinner loading-lg text-primary"></span>
         </div>
       )}
-      <table className="table table-pin-rows">
+      <table className="table table-zebra table-pin-rows">
         <tbody>
-          {datesInTerm.map((sessionDate, index) => {
+          {datesInTerm.map((attendedOn, index) => {
             const mentorIdForSessionForSelectedStudent =
-              sessionDateToMentorIdForStudentLookup[sessionDate];
+              sessionDateToMentorIdForStudentLookup[attendedOn];
             const isMySession = mentorIdForSessionForSelectedStudent === userId;
             const mentorName =
               mentorIdToMentorNameForStudentLookup[
                 mentorIdForSessionForSelectedStudent
               ];
             const isSessionBookedByMe =
-              sessionDateToMentorIdForAllStudentsLookup[sessionDate] === userId;
+              sessionDateToMentorIdForAllStudentsLookup[attendedOn] === userId;
 
             return (
               <tr key={index}>
                 <td className="w-1/6 border-r font-medium text-gray-800">
                   <div className="flex flex-col">
-                    <span>{dayjs(sessionDate).format("dddd")}</span>
-                    <span>{dayjs(sessionDate).format("DD/MM/YYYY")}</span>
+                    <span>{dayjs(attendedOn).format("dddd")}</span>
+                    <span>{dayjs(attendedOn).format("DD/MM/YYYY")}</span>
                   </div>
                 </td>
                 <td>
@@ -139,7 +139,7 @@ export default function TermCalendar({
                         userId,
                         chapterId,
                         student.id,
-                        sessionDate,
+                        attendedOn,
                       )}
                     >
                       <WarningTriangle className="h-4 w-4" />
@@ -154,7 +154,7 @@ export default function TermCalendar({
                           userId,
                           chapterId,
                           student.id,
-                          sessionDate,
+                          attendedOn,
                         )}
                       >
                         <Check className="h-4 w-4" />

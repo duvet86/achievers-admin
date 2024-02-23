@@ -2,7 +2,9 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
+
 import invariant from "tiny-invariant";
+import { Xmark, Clock } from "iconoir-react";
 
 import {
   Title,
@@ -16,7 +18,6 @@ import {
   getMentorWithStudentsAsync,
   getStudentsInChapterAsync,
 } from "./services.server";
-import { Xmark } from "iconoir-react";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -31,6 +32,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   ]);
 
   return json({
+    mentorId: params.mentorId,
     chapterId: params.chapterId,
     availableStudents,
     mentorWithStudents,
@@ -59,6 +61,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Index() {
   const {
+    mentorId,
     chapterId,
     availableStudents,
     mentorWithStudents: { firstName, lastName, mentorToStudentAssignement },
@@ -105,21 +108,28 @@ export default function Index() {
 
         <div>
           <h4>Assigned students</h4>
+          {mentorToStudentAssignement.length === 0 && (
+            <p className="italic">No students assigned</p>
+          )}
           <ol>
             {mentorToStudentAssignement.map(
-              ({ student: { firstName, lastName, id } }) => (
+              ({ student: { id, firstName, lastName } }) => (
                 <li key={id} className="border-b pb-2">
-                  <div className="flex justify-between">
-                    <div>
-                      {firstName} {lastName}
+                  <div className="flex items-center justify-between">
+                    {firstName} {lastName}
+                    <div className="flex gap-6">
+                      <Link
+                        to={`/admin/users/${mentorId}/students/${id}/sessions`}
+                        className="btn btn-info gap-3"
+                      >
+                        <Clock className="h-6 w-6" />
+                        View sessions
+                      </Link>
+                      <Link to={`remove/${id}`} className="btn btn-error gap-3">
+                        <Xmark className="h-6 w-6" />
+                        Remove
+                      </Link>
                     </div>
-                    <Link
-                      to={`remove/${id}`}
-                      className="btn btn-error btn-xs gap-5"
-                    >
-                      <Xmark className="h-4 w-4" />
-                      Remove
-                    </Link>
                   </div>
                 </li>
               ),

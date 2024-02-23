@@ -1,4 +1,4 @@
-import { useFetcher, useNavigate, useParams } from "@remix-run/react";
+import { Link, useFetcher } from "@remix-run/react";
 import dayjs from "dayjs";
 
 import { Check, WarningCircle } from "iconoir-react";
@@ -6,6 +6,7 @@ import { Check, WarningCircle } from "iconoir-react";
 import { getValueFromCircularArray } from "~/services";
 
 interface Props {
+  chapterId: string;
   datesInTerm: string[];
   students: {
     sessionLookup: Record<string, number>;
@@ -24,33 +25,29 @@ interface Props {
 
 const colours = ["#FAD7A0", "#A9DFBF", "#FADBD8", "#AED6F1"];
 
-export default function TermCalendar({ datesInTerm, students }: Props) {
+export default function TermCalendar({
+  chapterId,
+  datesInTerm,
+  students,
+}: Props) {
   const { state, submit } = useFetcher();
-  const navigate = useNavigate();
-  const { chapterId } = useParams();
 
   const isLoading = state === "loading";
 
   const onSessionSubmit =
-    (studentId: number, sessionDate: string) =>
+    (studentId: number, attendedOn: string) =>
     (e: React.ChangeEvent<HTMLSelectElement>) => {
-      if (e.target.value === "assign-temp-mentor") {
-        navigate(
-          `/admin/chapters/${chapterId}/roster/students/${studentId}/session/${sessionDate}`,
-        );
-      } else {
-        submit(
-          {
-            studentId,
-            userId: e.target.value,
-            attendOn: sessionDate,
-          },
-          {
-            method: "POST",
-            encType: "application/json",
-          },
-        );
-      }
+      submit(
+        {
+          studentId,
+          userId: e.target.value,
+          attendedOn,
+        },
+        {
+          method: "POST",
+          encType: "application/json",
+        },
+      );
     };
 
   return (
@@ -64,11 +61,11 @@ export default function TermCalendar({ datesInTerm, students }: Props) {
         <thead>
           <tr className="z-20">
             <th className="border-r">Students</th>
-            {datesInTerm.map((sessionDate, index) => (
-              <td key={index} className="h-16">
+            {datesInTerm.map((attendedOn, index) => (
+              <td key={index}>
                 <div className="flex flex-col items-center font-medium text-gray-800">
-                  <span>{dayjs(sessionDate).format("dddd")}</span>
-                  <span>{dayjs(sessionDate).format("DD/MM/YYYY")}</span>
+                  <span>{dayjs(attendedOn).format("dddd")}</span>
+                  <span>{dayjs(attendedOn).format("DD/MM/YYYY")}</span>
                 </div>
               </td>
             ))}
@@ -98,38 +95,35 @@ export default function TermCalendar({ datesInTerm, students }: Props) {
                     backgroundColor: getValueFromCircularArray(i, colours),
                   }}
                 >
-                  {firstName} {lastName}
+                  <Link
+                    to={`/admin/chapters/${chapterId}/students/${id}`}
+                    className="link block w-36"
+                  >
+                    {firstName} {lastName}
+                  </Link>
                 </th>
-                {datesInTerm.map((sessionDate, index) => (
-                  <td key={index} className="h-16">
+                {datesInTerm.map((attendedOn, index) => (
+                  <td key={index}>
                     <div className="indicator">
-                      <label>
-                        <select
-                          className="select"
-                          onChange={onSessionSubmit(id, sessionDate)}
-                          defaultValue={sessionLookup[sessionDate] ?? ""}
-                        >
-                          <option disabled value=""></option>
-                          {mentorToStudentAssignement.map(
-                            ({ user: { id, firstName, lastName } }) => (
-                              <option key={id} value={id}>
-                                {firstName} {lastName}
-                              </option>
-                            ),
-                          )}
-                          <option
-                            className="italic text-info"
-                            value="assign-temp-mentor"
-                          >
-                            Assign mentor
-                          </option>
-                        </select>
-                        {sessionLookup[sessionDate] ? (
-                          <Check className="badge indicator-item bg-success" />
-                        ) : (
-                          <WarningCircle className="badge indicator-item bg-error" />
+                      <select
+                        className="select w-48"
+                        onChange={onSessionSubmit(id, attendedOn)}
+                        defaultValue={sessionLookup[attendedOn] ?? ""}
+                      >
+                        <option disabled value=""></option>
+                        {mentorToStudentAssignement.map(
+                          ({ user: { id, firstName, lastName } }) => (
+                            <option key={id} value={id}>
+                              {firstName} {lastName}
+                            </option>
+                          ),
                         )}
-                      </label>
+                      </select>
+                      {sessionLookup[attendedOn] ? (
+                        <Check className="badge indicator-item bg-success" />
+                      ) : (
+                        <WarningCircle className="badge indicator-item bg-error" />
+                      )}
                     </div>
                   </td>
                 ))}
