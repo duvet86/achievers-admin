@@ -4,11 +4,7 @@ import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import {
-  Title,
-  Autocomplete,
-  SubmitFormButton,
-} from "~/components";
+import { Title, Autocomplete, SubmitFormButton } from "~/components";
 
 import {
   assignStudentToMentorAsync,
