@@ -4,7 +4,7 @@ import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import { BackHeader, Title } from "~/components";
+import { Title } from "~/components";
 
 import {
   getGuardianByIdAsync,
@@ -24,7 +24,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
   }
 
   return json({
-    studentId: params.studentId,
     guardian,
   });
 }
@@ -39,13 +38,11 @@ export async function action({ params }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { studentId, guardian } = useLoaderData<typeof loader>();
+  const { guardian } = useLoaderData<typeof loader>();
   const transition = useNavigation();
 
   return (
     <>
-      <BackHeader to={`/admin/students/${studentId}`} />
-
       <Title>Remove guardian &quot;{guardian.fullName}&quot;</Title>
 
       <Form method="post">

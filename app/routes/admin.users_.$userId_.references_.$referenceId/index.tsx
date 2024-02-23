@@ -11,7 +11,6 @@ import {
 import invariant from "tiny-invariant";
 
 import {
-  BackHeader,
   Title,
   Input,
   DateInput,
@@ -36,7 +35,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
   );
 
   return json({
-    userId: params.userId,
     user,
   });
 }
@@ -128,15 +126,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Index() {
   const transition = useNavigation();
-  const { userId, user } = useLoaderData<typeof loader>();
+  const { user } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   const reference = user.references[0];
 
   return (
     <>
-      <BackHeader to={`/admin/users/${userId}/references`} />
-
       <Title>
         Reference &quot;{reference.firstName} {reference.lastName}&quot; for
         mentor &quot;

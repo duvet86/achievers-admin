@@ -13,7 +13,7 @@ import { useRef } from "react";
 import invariant from "tiny-invariant";
 import { FloppyDiskArrowIn } from "iconoir-react";
 
-import { BackHeader, Editor, Title } from "~/components";
+import { Editor, Title } from "~/components";
 
 import {
   getSessionReportForStudentAsync,
@@ -110,8 +110,6 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to={`/mentor/students/${student.id}/sessions`} />
-
       <Title>
         Report for &quot;{student.firstName} {student.lastName}&quot; on:{" "}
         {dayjs(attendedOn).format("MMMM D, YYYY")}

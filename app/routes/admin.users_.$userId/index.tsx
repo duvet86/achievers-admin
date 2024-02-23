@@ -147,12 +147,14 @@ export default function Index() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="h-48 lg:h-36">
+      <div className="h-48 lg:h-16">
         <Header
           endDate={loaderData.user.endDate}
           mentorAppRoleAssignmentId={loaderData.mentorAppRoleAssignmentId}
         />
       </div>
+
+      <hr className="my-4" />
 
       <div className="content-area md:flex">
         <UserForm

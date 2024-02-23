@@ -4,7 +4,7 @@ import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import { Title, Input, BackHeader, SubmitFormButton } from "~/components";
+import { Title, Input, SubmitFormButton } from "~/components";
 
 import { getChapterByIdAsync } from "./services.server";
 import { Calendar, Group } from "iconoir-react";
@@ -24,8 +24,6 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to="/admin/chapters" />
-
       <Title>Edit chapter</Title>
 
       <Form method="post">

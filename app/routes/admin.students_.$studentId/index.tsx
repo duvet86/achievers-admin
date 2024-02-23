@@ -8,7 +8,7 @@ import { useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { areEqualIgnoreCase } from "~/services";
-import { BackHeader, Title } from "~/components";
+import { Title } from "~/components";
 
 import {
   createNewStudentAsync,
@@ -166,8 +166,6 @@ export default function Index() {
   return (
     <div className="flex h-full flex-col">
       <div className="h-36">
-        <BackHeader to="/admin/students" />
-
         <Title>{loaderData.title}</Title>
       </div>
 

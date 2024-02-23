@@ -6,7 +6,7 @@ import invariant from "tiny-invariant";
 
 import { ChatBubbleEmpty, Check, WarningTriangle } from "iconoir-react";
 
-import { BackHeader, Title } from "~/components";
+import { Title } from "~/components";
 
 import { getUserByIdAsync } from "./services.server";
 
@@ -16,18 +16,15 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const user = await getUserByIdAsync(Number(params.userId));
 
   return json({
-    userId: params.userId,
     user,
   });
 }
 
 export default function Index() {
-  const { userId, user } = useLoaderData<typeof loader>();
+  const { user } = useLoaderData<typeof loader>();
 
   return (
     <>
-      <BackHeader to={`/admin/users/${userId}`} />
-
       <Title>
         References for &quot;{user.firstName} {user.lastName}&quot;
       </Title>

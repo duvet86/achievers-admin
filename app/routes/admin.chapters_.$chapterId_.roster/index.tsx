@@ -12,7 +12,7 @@ import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
 import { getDatesForTerm } from "~/services";
-import { BackHeader, Select, Title } from "~/components";
+import { Select, Title } from "~/components";
 
 import {
   createSessionAsync,
@@ -79,8 +79,6 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to="/admin/chapters" />
-
       <Title>Roster planner</Title>
 
       <Form

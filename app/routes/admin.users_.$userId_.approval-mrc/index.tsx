@@ -11,7 +11,6 @@ import {
 import invariant from "tiny-invariant";
 
 import {
-  BackHeader,
   DateInput,
   Input,
   SubmitFormButton,
@@ -27,7 +26,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const user = await getUserByIdAsync(Number(params.userId));
 
   return json({
-    userId: params.userId,
     user,
   });
 }
@@ -62,13 +60,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Index() {
   const transition = useNavigation();
-  const { userId, user } = useLoaderData<typeof loader>();
+  const { user } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
   return (
     <>
-      <BackHeader to={`/admin/users/${userId}`} />
-
       <Title>
         Approval by MRC for &quot;{user.firstName} {user.lastName}&quot;
       </Title>

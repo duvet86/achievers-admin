@@ -12,7 +12,7 @@ import {
   Roles,
   trackTrace,
 } from "~/services/.server";
-import { Title, BackHeader } from "~/components";
+import { Title } from "~/components";
 
 import { archiveUserAsync, getUserByIdAsync } from "./services.server";
 
@@ -22,7 +22,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const user = await getUserByIdAsync(Number(params.userId));
 
   return json({
-    userId: params.userId,
     user,
   });
 }
@@ -60,12 +59,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Chapter() {
   const transition = useNavigation();
-  const { userId, user } = useLoaderData<typeof loader>();
+  const { user } = useLoaderData<typeof loader>();
 
   return (
     <>
-      <BackHeader to={`/admin/users/${userId}`} />
-
       <Title>
         Archive &quot;{user.firstName} {user.lastName}&quot;
       </Title>

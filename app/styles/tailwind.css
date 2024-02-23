@@ -7,5 +7,5 @@
 }
 
 .content-area {
-  height: calc(100vh - theme(spacing.60));
+  height: calc(100vh - theme(spacing.44));
 }

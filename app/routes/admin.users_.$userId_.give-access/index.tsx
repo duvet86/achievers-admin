@@ -7,7 +7,7 @@ import invariant from "tiny-invariant";
 
 import { Key } from "iconoir-react";
 
-import { Title, BackHeader } from "~/components";
+import { Title } from "~/components";
 
 import { getUserByIdAsync, updateAzureIdAsync } from "./services.server";
 import {
@@ -28,7 +28,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
   }
 
   return json({
-    userId: params.userId,
     user,
   });
 }
@@ -69,12 +68,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Chapter() {
   const transition = useNavigation();
-  const { userId, user } = useLoaderData<typeof loader>();
+  const { user } = useLoaderData<typeof loader>();
 
   return (
     <>
-      <BackHeader to={`/admin/users/${userId}`} />
-
       <Title>
         Invite &quot;{user.firstName} {user.lastName}&quot; to the
         achievers&apos; web app
