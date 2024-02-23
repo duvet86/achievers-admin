@@ -89,7 +89,7 @@ export default function Index() {
         )}
       </div>
 
-      <SubTitle>Recent reports</SubTitle>
+      <SubTitle>Recent sessions</SubTitle>
 
       <div className="overflow-auto bg-white">
         <table className="table table-lg">
@@ -122,7 +122,7 @@ export default function Index() {
                 </td>
                 <td align="right">
                   <Link
-                    to={`/mentor/students/${studentId}/reports/${attendedOn}`}
+                    to={`/mentor/students/${studentId}/sessions/${attendedOn}`}
                     className="btn btn-success btn-xs h-8 gap-2"
                   >
                     <StatsReport className="hidden h-4 w-4 lg:block" />

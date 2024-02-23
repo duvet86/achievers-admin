@@ -34,8 +34,9 @@ export default function Index() {
         <table className="table table-lg">
           <thead>
             <tr>
-              <th align="left" className="w-14"></th>
-              <th align="left">Full name</th>
+              <th align="left" colSpan={2}>
+                Full name
+              </th>
               <th align="left">Year Level</th>
               <th align="right">Action</th>
             </tr>
@@ -44,7 +45,7 @@ export default function Index() {
             {students.length === 0 && (
               <tr>
                 <td colSpan={6}>
-                  <i>No students</i>
+                  <i>No students assigned</i>
                 </td>
               </tr>
             )}
@@ -59,7 +60,7 @@ export default function Index() {
                 <td>{yearLevel ?? "-"}</td>
                 <td align="right">
                   <Link
-                    to={`/mentor/students/${id}/reports`}
+                    to={`/mentor/students/${id}/sessions`}
                     className="btn btn-success btn-xs h-8 gap-2"
                   >
                     <StatsReport className="hidden h-4 w-4 lg:block" />

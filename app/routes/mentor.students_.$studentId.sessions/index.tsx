@@ -42,7 +42,7 @@ export default function Index() {
       <BackHeader to="/mentor/students" />
 
       <Title>
-        Reports for &quot;{student.firstName} {student.lastName}&quot;
+        Sessions for &quot;{student.firstName} {student.lastName}&quot;
       </Title>
 
       <div className="overflow-auto bg-white">
@@ -68,7 +68,7 @@ export default function Index() {
                 <td align="left">{dayjs(attendedOn).format("MMMM D, YYYY")}</td>
                 <td align="right">
                   <Link
-                    to={`/mentor/students/${student.id}/reports/${attendedOn}`}
+                    to={`/mentor/students/${student.id}/sessions/${attendedOn}`}
                     className="btn btn-success btn-xs h-8 gap-2"
                   >
                     <StatsReport className="hidden h-4 w-4 lg:block" />

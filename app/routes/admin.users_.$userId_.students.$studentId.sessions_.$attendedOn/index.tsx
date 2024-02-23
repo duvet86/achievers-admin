@@ -13,14 +13,11 @@ import { useRef } from "react";
 import invariant from "tiny-invariant";
 import { FloppyDiskArrowIn } from "iconoir-react";
 
-import {
-  getCurrentUserADIdAsync,
-  getUserByAzureADIdAsync,
-} from "~/services/.server";
 import { BackHeader, Editor, Title } from "~/components";
 
 import {
   getSessionReportForStudentAsync,
+  getUserAsync,
   saveReportAsync,
 } from "./services.server";
 
@@ -38,15 +35,15 @@ export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
 };
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
+  invariant(params.userId, "userId not found");
   invariant(params.studentId, "studentId not found");
-  invariant(params.sessionDate, "sessionDate not found");
+  invariant(params.attendedOn, "attendedOn not found");
 
-  const azureUserId = await getCurrentUserADIdAsync(request);
-  const user = await getUserByAzureADIdAsync(azureUserId);
+  const user = await getUserAsync(Number(params.userId));
 
   const studentReport = await getSessionReportForStudentAsync({
-    attendedOn: params.sessionDate,
+    attendedOn: params.attendedOn,
     chapterId: user.chapterId,
     studentId: Number(params.studentId),
     userId: user.id,
@@ -113,7 +110,7 @@ export default function Index() {
 
   return (
     <>
-      <BackHeader to={`/mentor/students/${student.id}/reports`} />
+      <BackHeader to={`/mentor/students/${student.id}/sessions`} />
 
       <Title>
         Report for &quot;{student.firstName} {student.lastName}&quot; on:{" "}

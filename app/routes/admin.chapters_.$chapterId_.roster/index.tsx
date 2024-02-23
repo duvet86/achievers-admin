@@ -37,6 +37,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const students = await getStudentsAsync(Number(params.chapterId));
 
   return json({
+    chapterId: params.chapterId,
     termsList: terms,
     currentTerm,
     students,
@@ -70,7 +71,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { students, currentTerm, termsList, datesInTerm } =
+  const { students, currentTerm, termsList, datesInTerm, chapterId } =
     useLoaderData<typeof loader>();
 
   const submit = useSubmit();
@@ -97,7 +98,11 @@ export default function Index() {
         />
       </Form>
 
-      <TermCalendar datesInTerm={datesInTerm} students={students} />
+      <TermCalendar
+        chapterId={chapterId}
+        datesInTerm={datesInTerm}
+        students={students}
+      />
     </>
   );
 }
