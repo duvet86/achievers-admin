@@ -4,7 +4,7 @@ import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
-import { Check, StatsReport, WarningCircle } from "iconoir-react";
+import { Check, StatsReport, Xmark } from "iconoir-react";
 import dayjs from "dayjs";
 
 import { Title } from "~/components";
@@ -45,6 +45,7 @@ export default function Index() {
               <th className="w-6">#</th>
               <th align="left">Session date</th>
               <th align="left">Report started</th>
+              <th align="left">Signed off</th>
               <th align="right">Action</th>
             </tr>
           </thead>
@@ -56,7 +57,7 @@ export default function Index() {
                 </td>
               </tr>
             )}
-            {sessions.map(({ attendedOn, hasReport }, index) => (
+            {sessions.map(({ attendedOn, hasReport, signedOffOn }, index) => (
               <tr key={index}>
                 <td className="border-r">{index + 1}</td>
                 <td align="left">{dayjs(attendedOn).format("MMMM D, YYYY")}</td>
@@ -64,7 +65,17 @@ export default function Index() {
                   {hasReport ? (
                     <Check className="h-6 w-6 text-success" />
                   ) : (
-                    <WarningCircle className="h-6 w-6 text-warning" />
+                    <Xmark className="h-6 w-6 text-error" />
+                  )}
+                </td>
+                <td align="left">
+                  {signedOffOn ? (
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-success" />
+                      {dayjs(signedOffOn).format("MMMM D, YYYY")}
+                    </div>
+                  ) : (
+                    <Xmark className="h-6 w-6 text-error" />
                   )}
                 </td>
                 <td align="right">

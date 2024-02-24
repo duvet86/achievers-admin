@@ -125,7 +125,7 @@ export default function Index() {
           </div>
         )}
 
-        <div className="mb-4">
+        <div className="h-56">
           <Editor
             initialEditorStateType={report}
             onChange={(editorState) => (editorStateRef.current = editorState)}
