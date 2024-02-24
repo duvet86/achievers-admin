@@ -13,6 +13,7 @@ import { useRef } from "react";
 import invariant from "tiny-invariant";
 import { FloppyDiskArrowIn } from "iconoir-react";
 
+import { getCurrentUserADIdAsync } from "~/services/.server";
 import { Editor, Title } from "~/components";
 
 import {
@@ -29,6 +30,7 @@ interface SessionCommandRequest {
   chapterId: number;
   studentId: number;
   userId: number;
+  isSignedOff: "on" | "off" | null;
 }
 
 export const links: LinksFunction = () => {
@@ -57,6 +59,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
+  const userAzureId = await getCurrentUserADIdAsync(request);
+
   const bodyData: SessionCommandRequest = await request.json();
 
   const attendedOn = bodyData.attendedOn;
@@ -64,6 +68,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const studentId = bodyData.studentId;
   const userId = bodyData.userId;
   const report = bodyData.report;
+  const isSignedOff = bodyData.isSignedOff;
 
   await saveReportAsync(
     {
@@ -73,6 +78,8 @@ export async function action({ request }: ActionFunctionArgs) {
       userId,
     },
     report,
+    isSignedOff === "on",
+    userAzureId,
   );
 
   return json({
@@ -84,15 +91,20 @@ export default function Index() {
   const {
     chapterId,
     userId,
-    studentReport: { report, attendedOn, student },
+    studentReport: { report, attendedOn, student, signedOffOn },
   } = useLoaderData<typeof loader>();
 
   const editorStateRef = useRef<EditorState>();
-  const { state, submit } = useFetcher();
+  const { Form, state, submit } = useFetcher();
 
   const isLoading = state === "loading";
 
-  function submitForm() {
+  function submitForm(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    const data = new FormData(e.currentTarget);
+    const isSignedOff = data.get("isSignedOff")?.toString();
+
     submit(
       {
         report: JSON.stringify(editorStateRef.current?.toJSON()),
@@ -100,6 +112,7 @@ export default function Index() {
         chapterId,
         studentId: student.id,
         userId,
+        isSignedOff: isSignedOff ?? null,
       },
       {
         method: "POST",
@@ -122,16 +135,33 @@ export default function Index() {
           </div>
         )}
 
-        <div className="mb-4">
+        <div className="h-56">
           <Editor
             initialEditorStateType={report}
             onChange={(editorState) => (editorStateRef.current = editorState)}
           />
         </div>
 
-        <button className="btn btn-success float-end w-44" onClick={submitForm}>
-          <FloppyDiskArrowIn className="h-6 w-6" /> Save
-        </button>
+        <Form
+          className="flex items-center justify-end gap-4"
+          onSubmit={submitForm}
+        >
+          <div className="form-control">
+            <label className="label cursor-pointer">
+              <input
+                type="checkbox"
+                className="checkbox mr-4"
+                name="isSignedOff"
+                defaultChecked={signedOffOn !== null}
+              />
+              <span className="label-text">Signed off</span>
+            </label>
+          </div>
+
+          <button className="btn btn-success w-44" type="submit">
+            <FloppyDiskArrowIn className="h-6 w-6" /> Save
+          </button>
+        </Form>
       </div>
     </>
   );

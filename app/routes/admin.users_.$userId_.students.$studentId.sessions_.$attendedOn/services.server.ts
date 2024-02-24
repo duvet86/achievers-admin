@@ -39,6 +39,7 @@ export async function getSessionReportForStudentAsync({
     select: {
       attendedOn: true,
       report: true,
+      signedOffOn: true,
       student: {
         select: {
           id: true,
@@ -53,6 +54,8 @@ export async function getSessionReportForStudentAsync({
 export async function saveReportAsync(
   { attendedOn, chapterId, studentId, userId }: SessionQuery,
   report: string,
+  isSignedOff: boolean,
+  userAzureId: string,
 ) {
   return await prisma.mentorToStudentSession.update({
     where: {
@@ -65,6 +68,8 @@ export async function saveReportAsync(
     },
     data: {
       report,
+      signedOffOn: isSignedOff ? new Date() : null,
+      signedOffByAzureId: isSignedOff ? userAzureId : null,
     },
   });
 }

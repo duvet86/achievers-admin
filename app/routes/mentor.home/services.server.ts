@@ -38,6 +38,7 @@ export async function getSessionsAsync(
       attendedOn: true,
       studentId: true,
       hasReport: true,
+      signedOffOn: true,
     },
     where: {
       chapterId,

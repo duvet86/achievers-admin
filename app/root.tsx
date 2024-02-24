@@ -64,49 +64,13 @@ export function ErrorBoundary() {
   // when true, this is what used to go to `CatchBoundary`
   if (isRouteErrorResponse(error)) {
     if (error.status === 404) {
-      return (
-        <html lang="en">
-          <head>
-            <title>Oops!</title>
-            <Meta />
-            <Links />
-          </head>
-          <body>
-            <NotFound />
-            <Scripts />
-          </body>
-        </html>
-      );
+      return <NotFound />;
     }
 
     if (error.status === 401) {
-      return (
-        <html lang="en">
-          <head>
-            <title>Oops!</title>
-            <Meta />
-            <Links />
-          </head>
-          <body>
-            <Forbidden />
-            <Scripts />
-          </body>
-        </html>
-      );
+      return <Forbidden />;
     }
   }
 
-  return (
-    <html lang="en">
-      <head>
-        <title>Oops!</title>
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        <UnexpectedError />
-        <Scripts />
-      </body>
-    </html>
-  );
+  return <UnexpectedError />;
 }

@@ -3,6 +3,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
+import { Clock, Xmark } from "iconoir-react";
 
 import { Title, Autocomplete, SubmitFormButton } from "~/components";
 
@@ -11,7 +12,6 @@ import {
   getStudentWithMentorsAsync,
   getMentorsInChapterAsync,
 } from "./services.server";
-import { Xmark } from "iconoir-react";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -26,6 +26,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   ]);
 
   return json({
+    studentId: params.studentId,
     availableMentors,
     studentWithMentors,
   });
@@ -55,6 +56,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Index() {
   const {
+    studentId,
     availableMentors,
     studentWithMentors: { firstName, lastName, mentorToStudentAssignement },
   } = useLoaderData<typeof loader>();
@@ -103,13 +105,20 @@ export default function Index() {
               ({ user: { firstName, lastName, id } }) => (
                 <li key={id} className="border-b pb-2">
                   <div className="flex items-center justify-between">
-                    <div>
-                      {firstName} {lastName}
+                    {firstName} {lastName}
+                    <div className="flex gap-6">
+                      <Link
+                        to={`/admin/users/${id}/students/${studentId}/sessions`}
+                        className="btn btn-info gap-3"
+                      >
+                        <Clock className="h-6 w-6" />
+                        View sessions
+                      </Link>
+                      <Link to={`remove/${id}`} className="btn btn-error gap-3">
+                        <Xmark className="h-6 w-6" />
+                        Remove
+                      </Link>
                     </div>
-                    <Link to={`remove/${id}`} className="btn btn-error gap-3">
-                      <Xmark className="h-6 w-6" />
-                      Remove
-                    </Link>
                   </div>
                 </li>
               ),
