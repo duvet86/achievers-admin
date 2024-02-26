@@ -74,7 +74,6 @@ export function UserForm({
 
         <Input
           defaultValue={user.mobile ?? ""}
-          type="number"
           label="Mobile"
           name="mobile"
           required
