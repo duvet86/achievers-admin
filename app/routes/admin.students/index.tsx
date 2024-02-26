@@ -1,7 +1,13 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useLoaderData,
+  useNavigate,
+  useSearchParams,
+} from "@remix-run/react";
 import { useRef } from "react";
 
 import { PageEdit, Plus } from "iconoir-react";
@@ -87,12 +93,17 @@ export default function Index() {
   const { chapters, students, count, currentPageNumber, range } =
     useLoaderData<typeof loader>();
 
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLFormElement | null>(null);
 
   const totalPageCount = Math.ceil(count / 10);
 
   const onFormClear = () => formRef.current!.reset();
+
+  const handleRowClick = (id: number) => () => {
+    navigate(`${id}?${searchParams}`);
+  };
 
   return (
     <>
@@ -135,7 +146,11 @@ export default function Index() {
               )}
               {students.map(
                 ({ id, firstName, lastName, yearLevel, chapter }, index) => (
-                  <tr key={id}>
+                  <tr
+                    key={id}
+                    className="cursor-pointer hover:bg-base-200"
+                    onClick={handleRowClick(id)}
+                  >
                     <td className="border">
                       <div className="flex gap-2">
                         {index + 1 + 10 * currentPageNumber}
