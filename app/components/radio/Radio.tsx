@@ -14,7 +14,9 @@ interface Props {
 export function Radio({ label, name, options, defaultValue, required }: Props) {
   return (
     <div data-testid={name} className="relative">
-      <span className="label-text">{label}</span>
+      <div className="label">
+        <span className="label-text">{label}</span>
+      </div>
       {required && (
         <span
           data-testid="required"

@@ -1,6 +1,12 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { useLoaderData, Link, Form, useSearchParams } from "@remix-run/react";
+import {
+  useLoaderData,
+  Link,
+  Form,
+  useSearchParams,
+  useNavigate,
+} from "@remix-run/react";
 import { json } from "@remix-run/node";
 
 import { useRef } from "react";
@@ -90,12 +96,17 @@ export default function Index() {
   const { chapters, users, count, currentPageNumber, range } =
     useLoaderData<typeof loader>();
 
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLFormElement | null>(null);
 
   const totalPageCount = Math.ceil(count / 10);
 
   const onFormClear = () => formRef.current!.reset();
+
+  const handleRowClick = (id: number) => () => {
+    navigate(`${id}?${searchParams}`);
+  };
 
   return (
     <>
@@ -151,19 +162,23 @@ export default function Index() {
                   },
                   index,
                 ) => {
-                  let className: string | undefined;
+                  let className = "cursor-pointer hover:bg-base-200 ";
                   let icon: JSX.Element | undefined;
                   if (checksCompleted === 8) {
-                    className = "text-success";
+                    className += "text-success";
                     icon = <CheckCircle data-testid="completed" />;
                   }
                   if (endDate) {
-                    className = "text-error";
+                    className += "text-error";
                     icon = <BinFull data-testid="archived" />;
                   }
 
                   return (
-                    <tr key={id} className={className}>
+                    <tr
+                      key={id}
+                      className={className}
+                      onClick={handleRowClick(id)}
+                    >
                       <td className="border">
                         <div className="flex gap-2">
                           {index + 1 + 10 * currentPageNumber} {icon}
