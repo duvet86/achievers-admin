@@ -6,7 +6,7 @@ import {
   getUserByAzureADIdAsync,
 } from "~/services/.server";
 
-import { loader } from "./index";
+import { loader } from "./route";
 
 vi.mock("~/services/.server", async () => {
   process.env.SESSION_SECRET = "Test";

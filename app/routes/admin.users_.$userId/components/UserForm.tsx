@@ -1,5 +1,5 @@
 import type { SerializeFrom } from "@remix-run/node";
-import type { action, loader } from "../index";
+import type { action, loader } from "../route";
 
 import type { Navigation } from "@remix-run/router";
 

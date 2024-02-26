@@ -3,7 +3,7 @@ import { createRemixStub } from "@remix-run/testing";
 
 import { json } from "@remix-run/node";
 
-import Page from "./index";
+import Page from "./route";
 
 describe("Admin /users", () => {
   it("should return empty list", async () => {
