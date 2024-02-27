@@ -1,6 +1,6 @@
 import type { SerializeFrom } from "@remix-run/node";
 import type { Navigation } from "@remix-run/router";
-import type { loader } from "../index";
+import type { loader } from "../route";
 
 import { Form } from "@remix-run/react";
 
