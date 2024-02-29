@@ -1,7 +1,13 @@
 import { useFetcher } from "@remix-run/react";
 import dayjs from "dayjs";
 
-import { Check, CheckCircle, WarningTriangle } from "iconoir-react";
+import {
+  Group,
+  BookmarkBook,
+  Check,
+  WarningTriangle,
+  ThumbsUp,
+} from "iconoir-react";
 
 interface Props {
   userId: number;
@@ -108,33 +114,33 @@ export default function TermCalendar({
                 </td>
                 <td>
                   {isMySession ? (
-                    <div className="flex gap-2 text-success">
-                      <CheckCircle />
+                    <div className="flex gap-2">
+                      <ThumbsUp />
                       {`${mentorName} (Me)`}
                     </div>
                   ) : mentorIdToMentorNameForStudentLookup[
                       mentorIdForSessionForSelectedStudent
                     ] ? (
                     <div className="flex gap-2 text-info">
-                      <Check />
+                      <Group />
                       {`${mentorName} (Partner)`}
                     </div>
                   ) : isSessionBookedByMe ? (
-                    <div className="flex gap-2 text-error">
-                      <WarningTriangle />
-                      Session already booked
-                    </div>
-                  ) : (
                     <div className="flex gap-2 text-warning">
                       <WarningTriangle />
-                      No mentors assigned
+                      You are already mentoring another student
+                    </div>
+                  ) : (
+                    <div className="flex gap-2 text-success">
+                      <Check />
+                      Available
                     </div>
                   )}
                 </td>
                 <td align="right">
                   {isMySession ? (
                     <button
-                      className="btn btn-error btn-sm w-36"
+                      className="btn btn-error w-28"
                       onClick={removeMentorForSession(
                         userId,
                         chapterId,
@@ -142,14 +148,13 @@ export default function TermCalendar({
                         attendedOn,
                       )}
                     >
-                      <WarningTriangle className="h-4 w-4" />
-                      Remove
+                      <WarningTriangle className="h-6 w-6" />
+                      Cancel
                     </button>
                   ) : (
-                    !isSessionBookedByMe &&
                     !mentorName && (
                       <button
-                        className="btn btn-success btn-sm w-36"
+                        className="btn btn-success w-28"
                         onClick={assignMentorForSession(
                           userId,
                           chapterId,
@@ -157,8 +162,8 @@ export default function TermCalendar({
                           attendedOn,
                         )}
                       >
-                        <Check className="h-4 w-4" />
-                        Assign to me
+                        <BookmarkBook className="h-6 w-6" />
+                        Book
                       </button>
                     )
                   )}
