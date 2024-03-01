@@ -21,6 +21,7 @@ async function globalSetup() {
   const remindMe = page.locator("input[type='submit']");
   await remindMe.click();
 
+  await page.reload(); // Workaround for auth issue.
   await page.waitForEvent("requestfinished");
 
   // Save signed-in state to 'storageState.json'.
