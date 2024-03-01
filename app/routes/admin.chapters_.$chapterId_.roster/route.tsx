@@ -38,7 +38,10 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   return json({
     chapterId: params.chapterId,
-    termsList: terms,
+    termsList: terms.map(({ start, end, name }) => ({
+      value: name,
+      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})`,
+    })),
     currentTerm,
     students,
     datesInTerm: getDatesForTerm(currentTerm.start, currentTerm.end),
@@ -89,10 +92,7 @@ export default function Index() {
           label="Term"
           name="selectedTerm"
           defaultValue={searchParams.get("selectedTerm") ?? currentTerm.name}
-          options={termsList.map(({ name }) => ({
-            label: name,
-            value: name,
-          }))}
+          options={termsList}
         />
       </Form>
 

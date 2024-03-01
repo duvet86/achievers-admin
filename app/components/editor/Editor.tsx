@@ -11,7 +11,6 @@ import {
   CodeNode,
   ContentEditable,
   HeadingNode,
-  HistoryPlugin,
   LexicalComposer,
   LexicalErrorBoundary,
   LinkNode,
@@ -98,7 +97,6 @@ export function Editor({ initialEditorStateType, onChange }: Props) {
                 placeholder={<Placeholder />}
                 ErrorBoundary={LexicalErrorBoundary}
               />
-              <HistoryPlugin />
               <AutoFocusPlugin />
               <ListPlugin />
               <LinkPlugin />

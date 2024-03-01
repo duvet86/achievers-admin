@@ -137,14 +137,14 @@
   padding-left: 16px;
 }
 
-.lexical .editor-list-ol {
+.lexical .editor-list-number {
   padding: 0;
   margin: 0;
   margin-left: 16px;
   list-style-type: decimal;
 }
 
-.lexical .editor-list-ul {
+.lexical .editor-list-bullet {
   padding: 0;
   margin: 0;
   margin-left: 16px;
@@ -326,11 +326,11 @@
   background-image: url(/images/icons/chat-square-quote.svg);
 }
 
-.lexical #block-controls span.block-type.ul {
+.lexical #block-controls span.block-type.bullet {
   background-image: url(/images/icons/list-ul.svg);
 }
 
-.lexical #block-controls span.block-type.ol {
+.lexical #block-controls span.block-type.number {
   background-image: url(/images/icons/list-ol.svg);
 }
 
@@ -425,12 +425,12 @@
 }
 
 .lexical .icon.bullet-list,
-.lexical .icon.ul {
+.lexical .icon.bullet {
   background-image: url(/images/icons/list-ul.svg);
 }
 
 .lexical .icon.numbered-list,
-.lexical .icon.ol {
+.lexical .icon.number {
   background-image: url(/images/icons/list-ol.svg);
 }
 

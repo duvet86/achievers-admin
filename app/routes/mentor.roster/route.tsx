@@ -56,7 +56,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return json({
     userId: user.id,
     chapterId: user.chapterId,
-    termsList: terms,
+    termsList: terms.map(({ start, end, name }) => ({
+      value: name,
+      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})`,
+    })),
     currentTerm,
     students,
     sessionDateToMentorIdForAllStudentsLookup,
@@ -118,10 +121,7 @@ export default function Index() {
           label="Term"
           name="selectedTerm"
           defaultValue={searchParams.get("selectedTerm") ?? currentTerm.name}
-          options={termsList.map(({ name }) => ({
-            label: name,
-            value: name,
-          }))}
+          options={termsList}
         />
         <Select
           label="Student"

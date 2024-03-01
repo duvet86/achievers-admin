@@ -40,25 +40,16 @@ import { getSelectedNode } from "../utils/getSelectedNode";
 
 const LowPriority = 1;
 
-const supportedBlockTypes = new Set([
-  "paragraph",
-  "quote",
-  "h1",
-  "h2",
-  "ul",
-  "ol",
-]);
-
 const blockTypeToBlockName: Record<string, string> = {
   h1: "Large Heading",
   h2: "Small Heading",
   h3: "Heading",
   h4: "Heading",
   h5: "Heading",
-  ol: "Numbered List",
+  number: "Numbered List",
   paragraph: "Normal",
   quote: "Quote",
-  ul: "Bulleted List",
+  bullet: "Bulleted List",
 };
 
 function BlockOptionsDropdownList({
@@ -145,7 +136,7 @@ function BlockOptionsDropdownList({
   };
 
   const formatBulletList = () => {
-    if (blockType !== "ul") {
+    if (blockType !== "bullet") {
       editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, void 0);
     } else {
       editor.dispatchCommand(REMOVE_LIST_COMMAND, void 0);
@@ -154,7 +145,7 @@ function BlockOptionsDropdownList({
   };
 
   const formatNumberedList = () => {
-    if (blockType !== "ol") {
+    if (blockType !== "number") {
       editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, void 0);
     } else {
       editor.dispatchCommand(REMOVE_LIST_COMMAND, void 0);
@@ -195,12 +186,12 @@ function BlockOptionsDropdownList({
       <button className="item" onClick={formatBulletList}>
         <span className="icon bullet-list" />
         <span className="text">Bullet List</span>
-        {blockType === "ul" && <span className="active" />}
+        {blockType === "bullet" && <span className="active" />}
       </button>
       <button className="item" onClick={formatNumberedList}>
         <span className="icon numbered-list" />
         <span className="text">Numbered List</span>
-        {blockType === "ol" && <span className="active" />}
+        {blockType === "number" && <span className="active" />}
       </button>
       <button className="item" onClick={formatQuote}>
         <span className="icon quote" />
@@ -241,14 +232,21 @@ export default function ToolbarPlugin({
       const elementDOM = editor.getElementByKey(elementKey);
       if (elementDOM !== null) {
         if ($isListNode(element)) {
-          const parentList = $getNearestNodeOfType(anchorNode, ListNode);
-          const type = parentList ? parentList.getTag() : element.getTag();
+          const parentList = $getNearestNodeOfType<ListNode>(
+            anchorNode,
+            ListNode,
+          );
+          const type = parentList
+            ? parentList.getListType()
+            : element.getListType();
           setBlockType(type);
         } else {
           const type = $isHeadingNode(element)
             ? element.getTag()
             : element.getType();
-          setBlockType(type);
+          if (type in blockTypeToBlockName) {
+            setBlockType(type as keyof typeof blockTypeToBlockName);
+          }
         }
       }
       // Update text format
@@ -357,32 +355,26 @@ export default function ToolbarPlugin({
         <i className="format redo" />
       </button>
       <div className="divider" />
-      {supportedBlockTypes.has(blockType) && (
-        <>
-          <button
-            className="toolbar-item block-controls"
-            onClick={() =>
-              setShowBlockOptionsDropDown(!showBlockOptionsDropDown)
-            }
-            aria-label="Formatting Options"
-          >
-            <span className={"icon block-type " + blockType} />
-            <span className="text">{blockTypeToBlockName[blockType]}</span>
-            <i className="chevron-down" />
-          </button>
-          {showBlockOptionsDropDown &&
-            createPortal(
-              <BlockOptionsDropdownList
-                editor={editor}
-                blockType={blockType}
-                toolbarRef={toolbarRef}
-                setShowBlockOptionsDropDown={setShowBlockOptionsDropDown}
-              />,
-              document.body,
-            )}
-          <div className="divider" />
-        </>
-      )}
+      <button
+        className="toolbar-item block-controls"
+        onClick={() => setShowBlockOptionsDropDown(!showBlockOptionsDropDown)}
+        aria-label="Formatting Options"
+      >
+        <span className={"icon block-type " + blockType} />
+        <span className="text">{blockTypeToBlockName[blockType]}</span>
+        <i className="chevron-down" />
+      </button>
+      {showBlockOptionsDropDown &&
+        createPortal(
+          <BlockOptionsDropdownList
+            editor={editor}
+            blockType={blockType}
+            toolbarRef={toolbarRef}
+            setShowBlockOptionsDropDown={setShowBlockOptionsDropDown}
+          />,
+          document.body,
+        )}
+      <div className="divider" />
       <button
         onClick={() => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
