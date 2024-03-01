@@ -25,7 +25,7 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<
     sessions: {
       studentId: number;
       attendedOn: Date;
-      hasReport: boolean | null;
+      completedOn: Date | null;
       signedOffOn: Date | null;
     }[];
   }>
@@ -98,7 +98,7 @@ export default function Index() {
             <tr>
               <th className="w-6">#</th>
               <th align="left">Session date</th>
-              <th align="left">Report started</th>
+              <th align="left">Report completed</th>
               <th align="left">Signed off</th>
               <th align="right">Action</th>
             </tr>
@@ -112,24 +112,27 @@ export default function Index() {
               </tr>
             )}
             {sessions.map(
-              ({ attendedOn, studentId, hasReport, signedOffOn }, index) => (
+              ({ attendedOn, studentId, completedOn, signedOffOn }, index) => (
                 <tr key={index}>
                   <td className="border-r">{index + 1}</td>
                   <td align="left">
                     {dayjs(attendedOn).format("MMMM D, YYYY")}
                   </td>
                   <td align="left">
-                    {hasReport ? (
-                      <Check className="h-4 w-4 text-success" />
+                    {signedOffOn ? (
+                      <div className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-success" />
+                        {dayjs(signedOffOn).format("MMMM D, YYYY")}
+                      </div>
                     ) : (
                       <Xmark className="h-4 w-4 text-error" />
                     )}
                   </td>
                   <td align="left">
-                    {signedOffOn ? (
+                    {completedOn ? (
                       <div className="flex items-center gap-2">
                         <Check className="h-4 w-4 text-success" />
-                        {dayjs(signedOffOn).format("MMMM D, YYYY")}
+                        {dayjs(completedOn).format("MMMM D, YYYY")}
                       </div>
                     ) : (
                       <Xmark className="h-4 w-4 text-error" />

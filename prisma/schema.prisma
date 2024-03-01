@@ -310,8 +310,8 @@ model MentorToStudentSession {
   chapterId  Int
   attendedOn DateTime
 
-  report    String?  @db.Text
-  hasReport Boolean? // This is a DB computed value: report != null
+  report      String?   @db.Text
+  completedOn DateTime?
 
   signedOffOn        DateTime?
   signedOffByAzureId String?

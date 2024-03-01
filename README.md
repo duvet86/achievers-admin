@@ -68,6 +68,14 @@ Run this command to apply the migrations locally:
 npx prisma migrate dev --name {name}
 ```
 
+## Update packages
+
+Run this command:
+
+```bash
+npx npm-check-updates
+```
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first
