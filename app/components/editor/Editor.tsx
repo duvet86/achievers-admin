@@ -61,11 +61,16 @@ const editorConfig: InitialConfigType = {
 };
 
 interface Props {
+  isReadonly?: boolean;
   initialEditorStateType: string | null;
   onChange: (editorState: EditorState) => void;
 }
 
-export function Editor({ initialEditorStateType, onChange }: Props) {
+export function Editor({
+  isReadonly,
+  initialEditorStateType,
+  onChange,
+}: Props) {
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
@@ -86,7 +91,9 @@ export function Editor({ initialEditorStateType, onChange }: Props) {
           }}
         >
           <div className="lexical border">
-            <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
+            {!isReadonly && (
+              <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
+            )}
             <div className="editor-inner">
               <RichTextPlugin
                 contentEditable={

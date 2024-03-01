@@ -4,6 +4,7 @@ import type {
   LoaderFunctionArgs,
 } from "@remix-run/node";
 import type { EditorState } from "lexical";
+import type { ActionType } from "./services.server";
 
 import { json } from "@remix-run/node";
 import { useFetcher, useLoaderData } from "@remix-run/react";
@@ -11,7 +12,7 @@ import { useFetcher, useLoaderData } from "@remix-run/react";
 import dayjs from "dayjs";
 import { useRef } from "react";
 import invariant from "tiny-invariant";
-import { FloppyDiskArrowIn } from "iconoir-react";
+import { FloppyDiskArrowIn, CheckCircle, WarningTriangle } from "iconoir-react";
 
 import {
   getCurrentUserADIdAsync,
@@ -27,6 +28,7 @@ import {
 import editorStylesheetUrl from "~/styles/editor.css?url";
 
 interface SessionCommandRequest {
+  type: ActionType;
   report: string;
   attendedOn: string;
   chapterId: number;
@@ -62,6 +64,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   const bodyData: SessionCommandRequest = await request.json();
 
+  const type = bodyData.type as ActionType;
   const attendedOn = bodyData.attendedOn;
   const chapterId = bodyData.chapterId;
   const studentId = bodyData.studentId;
@@ -69,6 +72,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const report = bodyData.report;
 
   await saveReportAsync(
+    type,
     {
       attendedOn,
       chapterId,
@@ -87,7 +91,7 @@ export default function Index() {
   const {
     chapterId,
     userId,
-    studentReport: { report, attendedOn, student },
+    studentReport: { report, attendedOn, completedOn, signedOffOn, student },
   } = useLoaderData<typeof loader>();
 
   const editorStateRef = useRef<EditorState>();
@@ -95,9 +99,13 @@ export default function Index() {
 
   const isLoading = state === "loading";
 
-  function submitForm() {
+  const message = signedOffOn !== null ? "Report has been signed off" : "";
+  const isReadOnlyEditor = completedOn !== null || signedOffOn !== null;
+
+  const handleSubmitForm = (type: ActionType) => () => {
     submit(
       {
+        type,
         report: JSON.stringify(editorStateRef.current?.toJSON()),
         attendedOn,
         chapterId,
@@ -109,7 +117,7 @@ export default function Index() {
         encType: "application/json",
       },
     );
-  }
+  };
 
   return (
     <>
@@ -127,14 +135,47 @@ export default function Index() {
 
         <div className="h-56">
           <Editor
+            isReadonly={isReadOnlyEditor}
             initialEditorStateType={report}
             onChange={(editorState) => (editorStateRef.current = editorState)}
           />
         </div>
 
-        <button className="btn btn-success float-end w-44" onClick={submitForm}>
-          <FloppyDiskArrowIn className="h-6 w-6" /> Save
-        </button>
+        <div className="flex">
+          <p className="flex-1 italic text-info">{message}</p>
+
+          <div className="flex gap-8">
+            {completedOn === null && (
+              <button
+                className="btn btn-success w-48"
+                onClick={handleSubmitForm("completed")}
+              >
+                <CheckCircle className="h-6 w-6" />
+                Mark as completed
+              </button>
+            )}
+
+            {completedOn !== null && signedOffOn === null && (
+              <button
+                className="btn btn-error w-48"
+                onClick={handleSubmitForm("remove-complete")}
+              >
+                <WarningTriangle className="h-6 w-6" />
+                Unmark completed
+              </button>
+            )}
+
+            {completedOn === null && (
+              <button
+                className="btn btn-primary w-44"
+                onClick={handleSubmitForm("draft")}
+              >
+                <FloppyDiskArrowIn className="h-6 w-6" />
+                Save as draft
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </>
   );

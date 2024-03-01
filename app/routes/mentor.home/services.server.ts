@@ -37,7 +37,7 @@ export async function getSessionsAsync(
     select: {
       attendedOn: true,
       studentId: true,
-      hasReport: true,
+      completedOn: true,
       signedOffOn: true,
     },
     where: {

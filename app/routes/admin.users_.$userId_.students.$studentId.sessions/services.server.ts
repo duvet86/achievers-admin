@@ -35,7 +35,7 @@ export async function getSessionsAsync(
   return prisma.mentorToStudentSession.findMany({
     select: {
       attendedOn: true,
-      hasReport: true,
+      completedOn: true,
       signedOffOn: true,
     },
     where: {
