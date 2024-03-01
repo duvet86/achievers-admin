@@ -24,15 +24,11 @@ export default function Index() {
         <table className="table">
           <thead>
             <tr>
-              <th align="left" className="w-1/3">
-                Name
-              </th>
-              <th align="left" className="hidden w-1/3 lg:table-cell">
+              <th align="left">Name</th>
+              <th align="left" className="hidden lg:table-cell">
                 Address
               </th>
-              <th align="right" className="w-1/3">
-                Action
-              </th>
+              <th align="right">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -44,28 +40,35 @@ export default function Index() {
                   <div className="join h-12 w-full">
                     <Link
                       to={`${id}/roster`}
-                      className="btn btn-info join-item btn-xs h-full w-1/4 gap-2"
+                      className="btn btn-info join-item btn-xs h-full w-1/5 gap-2"
                     >
                       <Calendar className="h-4 w-4" />
                       Roster
                     </Link>
                     <Link
                       to={`${id}/students`}
-                      className="btn btn-primary join-item btn-xs h-full w-1/4 gap-2"
+                      className="btn btn-primary join-item btn-xs h-full w-1/5 gap-2"
                     >
                       <GraduationCap className="h-4 w-4" />
                       Students
                     </Link>
                     <Link
                       to={`${id}/mentors`}
-                      className="btn btn-warning join-item btn-xs h-full w-1/4 gap-2"
+                      className="btn btn-warning join-item btn-xs h-full w-1/5 gap-2"
                     >
                       <Group className="h-4 w-4" />
                       Mentors
                     </Link>
                     <Link
+                      to={`${id}/reports`}
+                      className="btn join-item btn-xs h-full w-1/5 gap-2"
+                    >
+                      <PageEdit className="h-4 w-4" />
+                      Reports
+                    </Link>
+                    <Link
                       to={id.toString()}
-                      className="btn btn-success join-item btn-xs h-full w-1/4 gap-2"
+                      className="btn btn-success join-item btn-xs h-full w-1/5 gap-2"
                     >
                       <PageEdit className="h-4 w-4" />
                       Edit
