@@ -133,7 +133,7 @@ export default function Index() {
           </div>
         )}
 
-        <div className="h-56">
+        <div className="mb-4">
           <Editor
             isReadonly={isReadOnlyEditor}
             initialEditorStateType={report}

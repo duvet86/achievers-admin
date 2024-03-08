@@ -11,7 +11,7 @@ import { useFetcher, useLoaderData } from "@remix-run/react";
 import dayjs from "dayjs";
 import { useRef } from "react";
 import invariant from "tiny-invariant";
-import { FloppyDiskArrowIn } from "iconoir-react";
+import { DesignNib, Xmark } from "iconoir-react";
 
 import { getCurrentUserADIdAsync } from "~/services/.server";
 import { Editor, Title } from "~/components";
@@ -30,7 +30,7 @@ interface SessionCommandRequest {
   chapterId: number;
   studentId: number;
   userId: number;
-  isSignedOff: "on" | "off" | null;
+  isSignedOff: boolean;
 }
 
 export const links: LinksFunction = () => {
@@ -78,7 +78,7 @@ export async function action({ request }: ActionFunctionArgs) {
       userId,
     },
     report,
-    isSignedOff === "on",
+    isSignedOff,
     userAzureId,
   );
 
@@ -95,15 +95,16 @@ export default function Index() {
   } = useLoaderData<typeof loader>();
 
   const editorStateRef = useRef<EditorState>();
-  const { Form, state, submit } = useFetcher();
+  const { state, submit } = useFetcher();
 
   const isLoading = state === "loading";
 
-  function submitForm(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    const data = new FormData(e.currentTarget);
-    const isSignedOff = data.get("isSignedOff")?.toString();
+  const handleSignOff = (isSignedOff: boolean) => () => {
+    if (!isSignedOff) {
+      if (!confirm("are you sure you want to remove the sign off?")) {
+        return;
+      }
+    }
 
     submit(
       {
@@ -112,14 +113,14 @@ export default function Index() {
         chapterId,
         studentId: student.id,
         userId,
-        isSignedOff: isSignedOff ?? null,
+        isSignedOff,
       },
       {
         method: "POST",
         encType: "application/json",
       },
     );
-  }
+  };
 
   return (
     <>
@@ -135,33 +136,37 @@ export default function Index() {
           </div>
         )}
 
-        <div className="h-56">
+        <div className="mb-4">
           <Editor
+            isReadonly
             initialEditorStateType={report}
             onChange={(editorState) => (editorStateRef.current = editorState)}
           />
         </div>
 
-        <Form
-          className="flex items-center justify-end gap-4"
-          onSubmit={submitForm}
-        >
-          <div className="form-control">
-            <label className="label cursor-pointer">
-              <input
-                type="checkbox"
-                className="checkbox mr-4"
-                name="isSignedOff"
-                defaultChecked={signedOffOn !== null}
-              />
-              <span className="label-text">Signed off</span>
-            </label>
-          </div>
+        <div className="flex items-center gap-4">
+          <p className="flex-1 text-info">
+            {signedOffOn
+              ? `Report has been signed off on ${dayjs(signedOffOn).format("MMMM D, YYYY")}`
+              : ""}
+          </p>
 
-          <button className="btn btn-success w-44" type="submit">
-            <FloppyDiskArrowIn className="h-6 w-6" /> Save
-          </button>
-        </Form>
+          {signedOffOn ? (
+            <button
+              className="btn btn-error w-44"
+              onClick={handleSignOff(false)}
+            >
+              <Xmark className="h-6 w-6" /> Remove sign off
+            </button>
+          ) : (
+            <button
+              className="btn btn-primary w-44"
+              onClick={handleSignOff(true)}
+            >
+              <DesignNib className="h-6 w-6" /> Sign off
+            </button>
+          )}
+        </div>
       </div>
     </>
   );

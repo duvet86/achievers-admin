@@ -35,10 +35,6 @@ import OnChangePlugin from "./plugins/OnChangePlugin.client";
 
 import EditorTheme from "./editor-theme.client";
 
-function Placeholder() {
-  return <div className="editor-placeholder">Enter some rich text...</div>;
-}
-
 const editorConfig: InitialConfigType = {
   namespace: "achievers",
   theme: EditorTheme,
@@ -87,6 +83,7 @@ export function Editor({
         <LexicalComposer
           initialConfig={{
             ...editorConfig,
+            editable: !isReadonly,
             editorState: initialEditorStateType,
           }}
         >
@@ -98,10 +95,12 @@ export function Editor({
               <RichTextPlugin
                 contentEditable={
                   <div className="editor" ref={onRef}>
-                    <ContentEditable className="editor-input" />
+                    <ContentEditable className="h-96 overflow-y-scroll p-4 outline-none" />
                   </div>
                 }
-                placeholder={<Placeholder />}
+                placeholder={
+                  <div className="editor-placeholder">Start typing...</div>
+                }
                 ErrorBoundary={LexicalErrorBoundary}
               />
               <AutoFocusPlugin />
