@@ -18,7 +18,7 @@ import {
   getCurrentUserADIdAsync,
   getUserByAzureADIdAsync,
 } from "~/services/.server";
-import { Editor, Title } from "~/components";
+import { Editor, SubTitle, Title } from "~/components";
 
 import {
   getSessionReportForStudentAsync,
@@ -91,15 +91,20 @@ export default function Index() {
   const {
     chapterId,
     userId,
-    studentReport: { report, attendedOn, completedOn, signedOffOn, student },
+    studentReport: {
+      report,
+      attendedOn,
+      completedOn,
+      signedOffOn,
+      reportFeedback,
+      student,
+    },
   } = useLoaderData<typeof loader>();
 
   const editorStateRef = useRef<EditorState>();
   const { state, submit } = useFetcher();
 
   const isLoading = state === "loading";
-
-  const message = signedOffOn !== null ? "Report has been signed off" : "";
   const isReadOnlyEditor = completedOn !== null || signedOffOn !== null;
 
   const handleSubmitForm = (type: ActionType) => () => {
@@ -126,54 +131,76 @@ export default function Index() {
         {dayjs(attendedOn).format("MMMM D, YYYY")}
       </Title>
 
-      <div className="relative">
+      <div className="relative flex h-full flex-col">
         {isLoading && (
           <div className="absolute z-30 flex h-full w-full justify-center bg-slate-300 bg-opacity-50">
             <span className="loading loading-spinner loading-lg text-primary"></span>
           </div>
         )}
 
-        <div className="mb-4">
-          <Editor
-            isReadonly={isReadOnlyEditor}
-            initialEditorStateType={report}
-            onChange={(editorState) => (editorStateRef.current = editorState)}
-          />
-        </div>
+        <div className="flex h-full flex-col gap-4">
+          <div className="flex flex-1 flex-col gap-2">
+            <Editor
+              isReadonly={isReadOnlyEditor}
+              initialEditorStateType={report}
+              onChange={(editorState) => (editorStateRef.current = editorState)}
+            />
 
-        <div className="flex">
-          <p className="flex-1 italic text-info">{message}</p>
+            <div className="flex">
+              <div className="flex gap-8">
+                {completedOn === null && (
+                  <button
+                    className="btn btn-success w-48"
+                    onClick={handleSubmitForm("completed")}
+                  >
+                    <CheckCircle className="h-6 w-6" />
+                    Mark as completed
+                  </button>
+                )}
 
-          <div className="flex gap-8">
-            {completedOn === null && (
-              <button
-                className="btn btn-success w-48"
-                onClick={handleSubmitForm("completed")}
-              >
-                <CheckCircle className="h-6 w-6" />
-                Mark as completed
-              </button>
-            )}
+                {completedOn !== null && signedOffOn === null && (
+                  <button
+                    className="btn btn-error w-48"
+                    onClick={handleSubmitForm("remove-complete")}
+                  >
+                    <WarningTriangle className="h-6 w-6" />
+                    Unmark completed
+                  </button>
+                )}
 
-            {completedOn !== null && signedOffOn === null && (
-              <button
-                className="btn btn-error w-48"
-                onClick={handleSubmitForm("remove-complete")}
-              >
-                <WarningTriangle className="h-6 w-6" />
-                Unmark completed
-              </button>
-            )}
+                {completedOn === null && (
+                  <button
+                    className="btn btn-primary w-44"
+                    onClick={handleSubmitForm("draft")}
+                  >
+                    <FloppyDiskArrowIn className="h-6 w-6" />
+                    Save as draft
+                  </button>
+                )}
+              </div>
+            </div>
 
-            {completedOn === null && (
-              <button
-                className="btn btn-primary w-44"
-                onClick={handleSubmitForm("draft")}
-              >
-                <FloppyDiskArrowIn className="h-6 w-6" />
-                Save as draft
-              </button>
-            )}
+            <SubTitle>Admin Feedback</SubTitle>
+          </div>
+
+          <div className="flex flex-1 flex-col gap-4">
+            <div className="flex-1">
+              <Editor
+                isReadonly={signedOffOn !== null}
+                initialEditorStateType={reportFeedback}
+                onChange={(editorState) =>
+                  (editorStateRef.current = editorState)
+                }
+              />
+            </div>
+
+            <div className="flex items-center gap-4">
+              <p className="flex-1 text-info">
+                {signedOffOn
+                  ? `Report has been signed off on ${dayjs(signedOffOn).format("MMMM D, YYYY")}`
+                  : ""}
+              </p>
+            </div>
           </div>
         </div>
       </div>

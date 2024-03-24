@@ -40,6 +40,7 @@ export async function getSessionReportForStudentAsync({
       attendedOn: true,
       report: true,
       signedOffOn: true,
+      reportFeedback: true,
       student: {
         select: {
           id: true,
@@ -53,7 +54,7 @@ export async function getSessionReportForStudentAsync({
 
 export async function saveReportAsync(
   { attendedOn, chapterId, studentId, userId }: SessionQuery,
-  report: string,
+  reportFeedback: string,
   isSignedOff: boolean,
   userAzureId: string,
 ) {
@@ -67,7 +68,7 @@ export async function saveReportAsync(
       },
     },
     data: {
-      report,
+      reportFeedback,
       signedOffOn: isSignedOff ? new Date() : null,
       signedOffByAzureId: isSignedOff ? userAzureId : null,
     },

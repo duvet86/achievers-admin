@@ -313,6 +313,7 @@ model MentorToStudentSession {
   report      String?   @db.Text
   completedOn DateTime?
 
+  reportFeedback     String?   @db.Text
   signedOffOn        DateTime?
   signedOffByAzureId String?
 

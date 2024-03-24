@@ -14,7 +14,7 @@ import invariant from "tiny-invariant";
 import { DesignNib, Xmark } from "iconoir-react";
 
 import { getCurrentUserADIdAsync } from "~/services/.server";
-import { Editor, Title } from "~/components";
+import { Editor, SubTitle, Title } from "~/components";
 
 import {
   getSessionReportForStudentAsync,
@@ -25,7 +25,7 @@ import {
 import editorStylesheetUrl from "~/styles/editor.css?url";
 
 interface SessionCommandRequest {
-  report: string;
+  reportFeedback: string;
   attendedOn: string;
   chapterId: number;
   studentId: number;
@@ -67,7 +67,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const chapterId = bodyData.chapterId;
   const studentId = bodyData.studentId;
   const userId = bodyData.userId;
-  const report = bodyData.report;
+  const reportFeedback = bodyData.reportFeedback;
   const isSignedOff = bodyData.isSignedOff;
 
   await saveReportAsync(
@@ -77,7 +77,7 @@ export async function action({ request }: ActionFunctionArgs) {
       studentId,
       userId,
     },
-    report,
+    reportFeedback,
     isSignedOff,
     userAzureId,
   );
@@ -91,7 +91,7 @@ export default function Index() {
   const {
     chapterId,
     userId,
-    studentReport: { report, attendedOn, student, signedOffOn },
+    studentReport: { report, reportFeedback, attendedOn, student, signedOffOn },
   } = useLoaderData<typeof loader>();
 
   const editorStateRef = useRef<EditorState>();
@@ -108,7 +108,7 @@ export default function Index() {
 
     submit(
       {
-        report: JSON.stringify(editorStateRef.current?.toJSON()),
+        reportFeedback: JSON.stringify(editorStateRef.current?.toJSON()),
         attendedOn,
         chapterId,
         studentId: student.id,
@@ -129,43 +129,55 @@ export default function Index() {
         {dayjs(attendedOn).format("MMMM D, YYYY")}
       </Title>
 
-      <div className="relative">
+      <div className="relative flex h-full flex-col">
         {isLoading && (
           <div className="absolute z-30 flex h-full w-full justify-center bg-slate-300 bg-opacity-50">
             <span className="loading loading-spinner loading-lg text-primary"></span>
           </div>
         )}
 
-        <div className="mb-4">
-          <Editor
-            isReadonly
-            initialEditorStateType={report}
-            onChange={(editorState) => (editorStateRef.current = editorState)}
-          />
-        </div>
+        <div className="flex h-full flex-col gap-4">
+          <div className="flex flex-1 flex-col gap-4">
+            <Editor isReadonly initialEditorStateType={report} />
 
-        <div className="flex items-center gap-4">
-          <p className="flex-1 text-info">
-            {signedOffOn
-              ? `Report has been signed off on ${dayjs(signedOffOn).format("MMMM D, YYYY")}`
-              : ""}
-          </p>
+            <SubTitle>Admin Feedback</SubTitle>
+          </div>
 
-          {signedOffOn ? (
-            <button
-              className="btn btn-error w-44"
-              onClick={handleSignOff(false)}
-            >
-              <Xmark className="h-6 w-6" /> Remove sign off
-            </button>
-          ) : (
-            <button
-              className="btn btn-primary w-44"
-              onClick={handleSignOff(true)}
-            >
-              <DesignNib className="h-6 w-6" /> Sign off
-            </button>
-          )}
+          <div className="flex flex-1 flex-col gap-4">
+            <div className="flex-1">
+              <Editor
+                isReadonly={signedOffOn !== null}
+                initialEditorStateType={reportFeedback}
+                onChange={(editorState) =>
+                  (editorStateRef.current = editorState)
+                }
+              />
+            </div>
+
+            <div className="flex items-center gap-4">
+              <p className="flex-1 text-info">
+                {signedOffOn
+                  ? `Report has been signed off on ${dayjs(signedOffOn).format("MMMM D, YYYY")}`
+                  : ""}
+              </p>
+
+              {signedOffOn ? (
+                <button
+                  className="btn btn-error w-44"
+                  onClick={handleSignOff(false)}
+                >
+                  <Xmark className="h-6 w-6" /> Remove sign off
+                </button>
+              ) : (
+                <button
+                  className="btn btn-primary w-44"
+                  onClick={handleSignOff(true)}
+                >
+                  <DesignNib className="h-6 w-6" /> Sign off
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </>
