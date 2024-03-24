@@ -11,7 +11,6 @@ import {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const userAzureId = await getCurrentUserADIdAsync(request);
-
   const azureUser = await getAzureUserWithRolesByIdAsync(request, userAzureId);
 
   const userRoles = azureUser.appRoleAssignments.map(

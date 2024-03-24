@@ -43,7 +43,7 @@ jobs:
 
     steps:
       - name: Set up test DB
-        run: mysql -h 127.0.0.1 --port 3306 -u ${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+        run: mysql -h 127.0.0.1 --port 3306 -u ${{ env.DB_USER }} -p ${{ env.DB_PASSWORD }}
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -155,7 +155,7 @@ jobs:
 
     steps:
       - name: "Az CLI login"
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 

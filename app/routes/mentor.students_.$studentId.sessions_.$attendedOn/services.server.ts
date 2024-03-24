@@ -29,6 +29,7 @@ export async function getSessionReportForStudentAsync({
       report: true,
       completedOn: true,
       signedOffOn: true,
+      reportFeedback: true,
       student: {
         select: {
           id: true,

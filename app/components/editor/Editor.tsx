@@ -1,6 +1,7 @@
 import type { EditorState, InitialConfigType } from "./lexical.client";
 
 import { useState } from "react";
+import classNames from "classnames";
 
 import { ClientOnly } from "~/services";
 
@@ -32,6 +33,7 @@ import AutoLinkPlugin from "./plugins/AutoLinkPlugin.client";
 import ToolbarPlugin from "./plugins/ToolbarPlugin.client";
 import FloatingLinkEditorPlugin from "./plugins/FloatingLinkEditorPlugin.client";
 import OnChangePlugin from "./plugins/OnChangePlugin.client";
+import OnSetReadonlyPlugin from "./plugins/OnSetReadonlyPlugin.client";
 
 import EditorTheme from "./editor-theme.client";
 
@@ -59,7 +61,7 @@ const editorConfig: InitialConfigType = {
 interface Props {
   isReadonly?: boolean;
   initialEditorStateType: string | null;
-  onChange: (editorState: EditorState) => void;
+  onChange?: (editorState: EditorState) => void;
 }
 
 export function Editor({
@@ -87,19 +89,25 @@ export function Editor({
             editorState: initialEditorStateType,
           }}
         >
-          <div className="lexical border">
+          <div className="lexical flex h-full flex-col border">
             {!isReadonly && (
               <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
             )}
-            <div className="editor-inner">
+            <div
+              className={classNames("relative h-full overflow-auto bg-white", {
+                "bg-slate-50": isReadonly,
+              })}
+            >
               <RichTextPlugin
                 contentEditable={
-                  <div className="editor" ref={onRef}>
-                    <ContentEditable className="h-96 overflow-y-scroll p-4 outline-none" />
+                  <div className="relative" ref={onRef}>
+                    <ContentEditable className="p-4 outline-none" />
                   </div>
                 }
                 placeholder={
-                  <div className="editor-placeholder">Start typing...</div>
+                  isReadonly ? null : (
+                    <div className="editor-placeholder">Start typing...</div>
+                  )
                 }
                 ErrorBoundary={LexicalErrorBoundary}
               />
@@ -117,6 +125,7 @@ export function Editor({
                 />
               )}
               <OnChangePlugin onChange={onChange} />
+              <OnSetReadonlyPlugin isReadonly={isReadonly} />
             </div>
           </div>
         </LexicalComposer>

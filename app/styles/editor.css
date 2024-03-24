@@ -6,15 +6,6 @@
   text-align: right;
 }
 
-.lexical .editor-inner {
-  background: #fff;
-  position: relative;
-}
-
-.lexical .editor {
-  position: relative;
-}
-
 .lexical .editor-placeholder {
   color: #999;
   overflow: hidden;

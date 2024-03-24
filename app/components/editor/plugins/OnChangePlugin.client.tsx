@@ -4,7 +4,7 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import { useEffect } from "react";
 
 interface Props {
-  onChange: (editorState: EditorState) => void;
+  onChange?: (editorState: EditorState) => void;
 }
 
 export default function OnChangePlugin({ onChange }: Props) {
@@ -12,7 +12,9 @@ export default function OnChangePlugin({ onChange }: Props) {
 
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
-      onChange(editorState);
+      if (onChange) {
+        onChange(editorState);
+      }
     });
   }, [editor, onChange]);
 
