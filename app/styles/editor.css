@@ -11,8 +11,8 @@
   overflow: hidden;
   position: absolute;
   text-overflow: ellipsis;
-  top: 15px;
-  left: 10px;
+  top: 18px;
+  left: 16px;
   font-size: 15px;
   user-select: none;
   display: inline-block;
@@ -80,6 +80,7 @@
   margin: 0;
   margin-bottom: 8px;
   position: relative;
+  height: 100%;
 }
 
 .lexical .editor-paragraph:last-child {

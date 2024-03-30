@@ -140,11 +140,31 @@ export default function Index() {
 
         <div className="flex h-full flex-col gap-4">
           <div className="flex flex-1 flex-col gap-2">
-            <Editor
-              isReadonly={isReadOnlyEditor}
-              initialEditorStateType={report}
-              onChange={(editorState) => (editorStateRef.current = editorState)}
-            />
+            <div className="flex h-full flex-row">
+              <div className="w-3/4">
+                <Editor
+                  isReadonly={isReadOnlyEditor}
+                  initialEditorStateType={report}
+                  onChange={(editorState) =>
+                    (editorStateRef.current = editorState)
+                  }
+                />
+              </div>
+
+              <div className="ml-4 w-1/4">
+                <p className="font-semibold">
+                  Have you answered these questions?
+                </p>
+                <hr className="my-2" />
+                <ul className="list-inside list-disc">
+                  <li>What work did you cover this week?</li>
+                  <li>What went well?</li>
+                  <li>What could be improved on?</li>
+                  <li>Any notes for next week for your partner mentor?</li>
+                  <li>Any notes for your Chapter Coordinator?</li>
+                </ul>
+              </div>
+            </div>
 
             <div className="flex">
               <div className="flex gap-8">
@@ -180,28 +200,30 @@ export default function Index() {
               </div>
             </div>
 
-            <SubTitle>Admin Feedback</SubTitle>
+            {reportFeedback && <SubTitle>Admin Feedback</SubTitle>}
           </div>
 
-          <div className="flex flex-1 flex-col gap-4">
-            <div className="flex-1">
-              <Editor
-                isReadonly={signedOffOn !== null}
-                initialEditorStateType={reportFeedback}
-                onChange={(editorState) =>
-                  (editorStateRef.current = editorState)
-                }
-              />
-            </div>
+          {reportFeedback && (
+            <div className="flex flex-1 flex-col gap-4">
+              <div className="flex-1">
+                <Editor
+                  isReadonly
+                  initialEditorStateType={reportFeedback}
+                  onChange={(editorState) =>
+                    (editorStateRef.current = editorState)
+                  }
+                />
+              </div>
 
-            <div className="flex items-center gap-4">
-              <p className="flex-1 text-info">
-                {signedOffOn
-                  ? `Report has been signed off on ${dayjs(signedOffOn).format("MMMM D, YYYY")}`
-                  : ""}
-              </p>
+              <div className="flex items-center gap-4">
+                <p className="flex-1 text-info">
+                  {signedOffOn
+                    ? `Report has been signed off on ${dayjs(signedOffOn).format("MMMM D, YYYY")}`
+                    : ""}
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>
