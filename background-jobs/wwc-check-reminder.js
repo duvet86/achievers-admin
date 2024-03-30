@@ -1,13 +1,9 @@
 /*eslint-env node*/
 
-import dayjs from "dayjs";
-
 import { subtractMonths } from "./utils.js";
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "admin@achieversclubwa.org.au";
-const LOGIC_APP_URL =
-  process.env.LOGIC_APP_URL ??
-  "https://prod-29.australiaeast.logic.azure.com:443/workflows/76030effd6884117a63dc483c78d2684/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xMW6DZic17YtYjc_aVGQ_xxzJGB6c-irE-gE8L0qLpQ";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const LOGIC_APP_URL = process.env.LOGIC_APP_URL;
 
 export default async function sendWWCCheckReminder(prisma) {
   const today = new Date();
@@ -16,16 +12,18 @@ export default async function sendWWCCheckReminder(prisma) {
   const remindersToSend = await prisma.wWCCheck.findMany({
     select: {
       id: true,
-      expiryDate: true,
       user: {
         select: {
-          firstName: true,
-          lastName: true,
           email: true,
         },
       },
     },
     where: {
+      user: {
+        endDate: {
+          not: null,
+        },
+      },
       expiryDate: {
         lte: threeMonthsAgo,
       },
@@ -47,39 +45,34 @@ export default async function sendWWCCheckReminder(prisma) {
   }
 
   await Promise.all(
-    remindersToSend.map(
-      async ({ user: { firstName, lastName, email }, expiryDate }) => {
-        const expiryDateString = dayjs(expiryDate).format("DD/MM/YYYY");
+    remindersToSend.map(async ({ user: { email } }) => {
+      const resp = await fetch(LOGIC_APP_URL, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          subject: "Working with children check renewal",
+          content: `
+          Your working with children check is due to be renewed in the next 3 months. You can
+          do this online by logging into your WWC account or registering for an account if you
+          don't already have one: https://www.workingwithchildren.wa.gov.au/online-services
+          <br />
+          Once this has been renewed, please provide us with the new expiry date. If you need
+          any help, please don't hesitate to contact ${ADMIN_EMAIL}.
+          <br /><br />
+          Many thanks,
+          Achievers Club WA`,
+        }),
+      });
 
-        const resp = await fetch(LOGIC_APP_URL, {
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify([
-            {
-              email,
-              content: `
-              Hello ${firstName} ${lastName},
-              <br />your WWC (Working With Children) check will exipre on: ${expiryDateString}, please renew it.
-              <br /><br />Achievers Club WA`,
-            },
-            {
-              email: ADMIN_EMAIL,
-              content: `
-              ${firstName} ${lastName}'s WWC (Working With Children) check will expire on: ${expiryDateString}.'
-              <br />We have sent an email reminder at '${email}'.`,
-            },
-          ]),
-        });
+      if (!resp.ok) {
+        throw new Error();
+      }
 
-        if (!resp.ok) {
-          throw new Error();
-        }
-
-        return await resp.text();
-      },
-    ),
+      return await resp.text();
+    }),
   );
 
   const counter = await prisma.wWCCheck.updateMany({

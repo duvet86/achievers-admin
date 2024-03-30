@@ -1,13 +1,7 @@
 /*eslint-env node*/
-
-import dayjs from "dayjs";
-
 import { subtractMonths } from "./utils.js";
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "admin@achieversclubwa.org.au";
-const LOGIC_APP_URL =
-  process.env.LOGIC_APP_URL ??
-  "https://prod-29.australiaeast.logic.azure.com:443/workflows/76030effd6884117a63dc483c78d2684/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xMW6DZic17YtYjc_aVGQ_xxzJGB6c-irE-gE8L0qLpQ";
+const LOGIC_APP_URL = process.env.LOGIC_APP_URL;
 
 export default async function sendPoliceCheckReminder(prisma) {
   const today = new Date();
@@ -16,16 +10,18 @@ export default async function sendPoliceCheckReminder(prisma) {
   const remindersToSend = await prisma.policeCheck.findMany({
     select: {
       id: true,
-      expiryDate: true,
       user: {
         select: {
-          firstName: true,
-          lastName: true,
           email: true,
         },
       },
     },
     where: {
+      user: {
+        endDate: {
+          not: null,
+        },
+      },
       expiryDate: {
         lte: threeMonthsAgo,
       },
@@ -47,39 +43,34 @@ export default async function sendPoliceCheckReminder(prisma) {
   }
 
   await Promise.all(
-    remindersToSend.map(
-      async ({ user: { firstName, lastName, email }, expiryDate }) => {
-        const expiryDateString = dayjs(expiryDate).format("DD/MM/YYYY");
+    remindersToSend.map(async ({ user: { email } }) => {
+      const resp = await fetch(LOGIC_APP_URL, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          subject: "Police Clearance renewal",
+          content: `
+              Your police clearance is due to be renewed in the next 3 months. Please see your
+              chapter coordinator at your next mentoring session and they will provide you with
+              the appropriate form to complete.
+              <br />
+              Once the renewal has been completed, the Achievers Club will receive a copy of the
+              clearance and will update the details in our records for you.
+              <br /><br />
+              Many thanks,
+              Achievers Club WA`,
+        }),
+      });
 
-        const resp = await fetch(LOGIC_APP_URL, {
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify([
-            {
-              email,
-              content: `
-              Hello ${firstName} ${lastName},
-              <br />your police check will exipre on: ${expiryDateString}, please renew it.
-              <br /><br />Achievers Club WA`,
-            },
-            {
-              email: ADMIN_EMAIL,
-              content: `
-              ${firstName} ${lastName}'s police check will expire on: ${expiryDateString}.'
-              <br />We have sent an email reminder at '${email}'.`,
-            },
-          ]),
-        });
+      if (!resp.ok) {
+        throw new Error();
+      }
 
-        if (!resp.ok) {
-          throw new Error();
-        }
-
-        return await resp.text();
-      },
-    ),
+      return await resp.text();
+    }),
   );
 
   const counter = await prisma.policeCheck.updateMany({
