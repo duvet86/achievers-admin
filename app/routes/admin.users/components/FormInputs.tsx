@@ -46,13 +46,25 @@ export default function FormInputs({
 
         <div className="form-control">
           <label className="label cursor-pointer gap-2">
-            <span className="label-text">Include archived mentors</span>
+            <input
+              type="checkbox"
+              name="onlyExpiredChecks"
+              className="checkbox bg-base-100"
+              defaultChecked={searchParams.get("onlyExpiredChecks") === "on"}
+            />
+            <span className="label-text">Only expired checks</span>
+          </label>
+        </div>
+
+        <div className="form-control">
+          <label className="label cursor-pointer gap-2">
             <input
               type="checkbox"
               name="includeArchived"
               className="checkbox bg-base-100"
               defaultChecked={searchParams.get("includeArchived") === "on"}
             />
+            <span className="label-text">Include archived</span>
           </label>
         </div>
       </div>

@@ -38,6 +38,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   let searchTerm = url.searchParams.get("searchTerm");
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
+
+  const onlyExpiredChecks = url.searchParams.get("onlyExpiredChecks") === "on";
   const includeArchived = url.searchParams.get("includeArchived") === "on";
 
   if (searchTerm?.trim() === "" || clearSearchSubmit !== null) {
@@ -50,6 +52,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const count = await getUsersCountAsync(
     searchTerm,
     chapterIdValue,
+    onlyExpiredChecks,
     includeArchived,
   );
   const totalPageCount = Math.ceil(count / 10);
@@ -73,6 +76,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       currentPageNumber,
       searchTerm,
       chapterIdValue,
+      onlyExpiredChecks,
       includeArchived,
     ),
   ]);

@@ -13,6 +13,7 @@ export async function getChaptersAsync() {
 export async function getUsersCountAsync(
   searchTerm: string | null,
   chapterId: number | null,
+  onlyExpiredChecks = false,
   includeArchived = false,
 ) {
   return await prisma.user.count({
@@ -25,15 +26,35 @@ export async function getUsersCountAsync(
             }
           : {},
         {
-          OR: searchAcrossFields(
-            searchTerm,
-            (x) =>
-              [
-                { firstName: { contains: x } },
-                { lastName: { contains: x } },
-                { email: { contains: x } },
-              ] as const,
-          ),
+          OR: [
+            ...searchAcrossFields(
+              searchTerm,
+              (x) =>
+                [
+                  { firstName: { contains: x } },
+                  { lastName: { contains: x } },
+                  { email: { contains: x } },
+                ] as const,
+            ),
+            onlyExpiredChecks
+              ? {
+                  policeCheck: {
+                    expiryDate: {
+                      lte: new Date(),
+                    },
+                  },
+                }
+              : {},
+            onlyExpiredChecks
+              ? {
+                  wwcCheck: {
+                    expiryDate: {
+                      lte: new Date(),
+                    },
+                  },
+                }
+              : {},
+          ],
         },
       ],
     },
@@ -44,6 +65,7 @@ export async function getUsersAsync(
   pageNumber: number,
   searchTerm: string | null,
   chapterId: number | null,
+  onlyExpiredChecks = false,
   includeArchived = false,
   numberItems = 10,
 ) {
@@ -100,15 +122,35 @@ export async function getUsersAsync(
             }
           : {},
         {
-          OR: searchAcrossFields(
-            searchTerm,
-            (x) =>
-              [
-                { firstName: { contains: x } },
-                { lastName: { contains: x } },
-                { email: { contains: x } },
-              ] as const,
-          ),
+          OR: [
+            ...searchAcrossFields(
+              searchTerm,
+              (x) =>
+                [
+                  { firstName: { contains: x } },
+                  { lastName: { contains: x } },
+                  { email: { contains: x } },
+                ] as const,
+            ),
+            onlyExpiredChecks
+              ? {
+                  policeCheck: {
+                    expiryDate: {
+                      lte: new Date(),
+                    },
+                  },
+                }
+              : {},
+            onlyExpiredChecks
+              ? {
+                  wwcCheck: {
+                    expiryDate: {
+                      lte: new Date(),
+                    },
+                  },
+                }
+              : {},
+          ],
         },
       ],
     },
