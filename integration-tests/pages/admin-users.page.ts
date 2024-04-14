@@ -78,7 +78,7 @@ export class AdminUsersPage {
   }
 
   async includeArchivedUsers(): Promise<void> {
-    await this.page.getByLabel("Include archived mentors").check();
+    await this.page.getByLabel("Include archived").check();
     await this.page.getByRole("button", { name: "Submit" }).click();
   }
 
