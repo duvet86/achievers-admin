@@ -16,6 +16,39 @@ export async function getUsersCountAsync(
   onlyExpiredChecks = false,
   includeArchived = false,
 ) {
+  const or = [];
+  if (searchTerm !== null) {
+    or.push(
+      ...(searchAcrossFields(
+        searchTerm,
+        (x) =>
+          [
+            { firstName: { contains: x } },
+            { lastName: { contains: x } },
+            { email: { contains: x } },
+          ] as const,
+      ) as []),
+    );
+  }
+  if (onlyExpiredChecks) {
+    or.push({
+      policeCheck: {
+        expiryDate: {
+          lte: new Date(),
+        },
+      },
+    });
+  }
+  if (onlyExpiredChecks) {
+    or.push({
+      wwcCheck: {
+        expiryDate: {
+          lte: new Date(),
+        },
+      },
+    });
+  }
+
   return await prisma.user.count({
     where: {
       AND: [
@@ -26,35 +59,7 @@ export async function getUsersCountAsync(
             }
           : {},
         {
-          OR: [
-            ...searchAcrossFields(
-              searchTerm,
-              (x) =>
-                [
-                  { firstName: { contains: x } },
-                  { lastName: { contains: x } },
-                  { email: { contains: x } },
-                ] as const,
-            ),
-            onlyExpiredChecks
-              ? {
-                  policeCheck: {
-                    expiryDate: {
-                      lte: new Date(),
-                    },
-                  },
-                }
-              : {},
-            onlyExpiredChecks
-              ? {
-                  wwcCheck: {
-                    expiryDate: {
-                      lte: new Date(),
-                    },
-                  },
-                }
-              : {},
-          ],
+          OR: or.length > 0 ? or : undefined,
         },
       ],
     },
@@ -69,6 +74,39 @@ export async function getUsersAsync(
   includeArchived = false,
   numberItems = 10,
 ) {
+  const or = [];
+  if (searchTerm !== null) {
+    or.push(
+      ...(searchAcrossFields(
+        searchTerm,
+        (x) =>
+          [
+            { firstName: { contains: x } },
+            { lastName: { contains: x } },
+            { email: { contains: x } },
+          ] as const,
+      ) as []),
+    );
+  }
+  if (onlyExpiredChecks) {
+    or.push({
+      policeCheck: {
+        expiryDate: {
+          lte: new Date(),
+        },
+      },
+    });
+  }
+  if (onlyExpiredChecks) {
+    or.push({
+      wwcCheck: {
+        expiryDate: {
+          lte: new Date(),
+        },
+      },
+    });
+  }
+
   return await prisma.user.findMany({
     select: {
       id: true,
@@ -122,35 +160,7 @@ export async function getUsersAsync(
             }
           : {},
         {
-          OR: [
-            ...searchAcrossFields(
-              searchTerm,
-              (x) =>
-                [
-                  { firstName: { contains: x } },
-                  { lastName: { contains: x } },
-                  { email: { contains: x } },
-                ] as const,
-            ),
-            onlyExpiredChecks
-              ? {
-                  policeCheck: {
-                    expiryDate: {
-                      lte: new Date(),
-                    },
-                  },
-                }
-              : {},
-            onlyExpiredChecks
-              ? {
-                  wwcCheck: {
-                    expiryDate: {
-                      lte: new Date(),
-                    },
-                  },
-                }
-              : {},
-          ],
+          OR: or.length > 0 ? or : undefined,
         },
       ],
     },

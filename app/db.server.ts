@@ -37,7 +37,9 @@ if (process.env.NODE_ENV === "production") {
   }
 } else {
   if (!global.__db__) {
-    global.__db__ = new PrismaClient();
+    global.__db__ = new PrismaClient({
+      log: ["query"],
+    });
   }
   prisma = global.__db__;
   prisma.$connect();
