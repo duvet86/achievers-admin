@@ -1,4 +1,5 @@
 import type { Chapter, Student, User } from "@prisma/client";
+import dayjs from "dayjs";
 
 import { prisma } from "~/db.server";
 
@@ -30,6 +31,9 @@ export async function getSessionsForStudentAsync(
       chapterId,
       studentId,
       userId,
+      attendedOn: {
+        lte: dayjs().add(1, "week").toDate(),
+      },
     },
     orderBy: {
       attendedOn: "desc",

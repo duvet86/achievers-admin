@@ -43,6 +43,9 @@ export async function getSessionsAsync(
     where: {
       chapterId,
       userId,
+      attendedOn: {
+        lte: dayjs().add(1, "week").toDate(),
+      },
     },
     orderBy: {
       attendedOn: "desc",
