@@ -157,7 +157,6 @@ export function CheckList({
             <td className="border">
               <CheckStatus
                 isCompleted={policeCheckCompleted}
-                isWwcCheckExpired={isWwcCheckExpired}
                 isPoliceCheckExpired={isPoliceCheckExpired}
               />
             </td>
@@ -178,7 +177,6 @@ export function CheckList({
               <CheckStatus
                 isCompleted={wwcCheckCompleted}
                 isWwcCheckExpired={isWwcCheckExpired}
-                isPoliceCheckExpired={isPoliceCheckExpired}
               />
             </td>
             <td className="border">
