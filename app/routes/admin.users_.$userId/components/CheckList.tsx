@@ -24,16 +24,11 @@ interface Props {
 
 interface CheckStatusProps {
   isCompleted: boolean;
-  isWwcCheckExpired?: boolean;
-  isPoliceCheckExpired?: boolean;
+  isExpired?: boolean;
 }
 
-function CheckStatus({
-  isCompleted,
-  isWwcCheckExpired,
-  isPoliceCheckExpired,
-}: CheckStatusProps) {
-  if (isWwcCheckExpired || isPoliceCheckExpired) {
+function CheckStatus({ isCompleted, isExpired }: CheckStatusProps) {
+  if (isExpired) {
     return (
       <div className="flex items-center gap-4">
         <WarningTriangle className="h-6 w-6 text-warning" /> Expired
@@ -157,7 +152,7 @@ export function CheckList({
             <td className="border">
               <CheckStatus
                 isCompleted={policeCheckCompleted}
-                isPoliceCheckExpired={isPoliceCheckExpired}
+                isExpired={isPoliceCheckExpired}
               />
             </td>
             <td className="border">
@@ -176,7 +171,7 @@ export function CheckList({
             <td className="border">
               <CheckStatus
                 isCompleted={wwcCheckCompleted}
-                isWwcCheckExpired={isWwcCheckExpired}
+                isExpired={isWwcCheckExpired}
               />
             </td>
             <td className="border">
