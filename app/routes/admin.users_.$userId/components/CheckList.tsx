@@ -3,6 +3,7 @@ import type { loader } from "../route";
 
 import { Link } from "@remix-run/react";
 
+import dayjs from "dayjs";
 import {
   Sparks,
   Phone,
@@ -14,8 +15,8 @@ import {
   UserBadgeCheck,
   Xmark,
   ThumbsUp,
+  WarningTriangle,
 } from "iconoir-react";
-import dayjs from "dayjs";
 
 interface Props {
   loaderData: SerializeFrom<typeof loader>;
@@ -23,9 +24,23 @@ interface Props {
 
 interface CheckStatusProps {
   isCompleted: boolean;
+  isWwcCheckExpired?: boolean;
+  isPoliceCheckExpired?: boolean;
 }
 
-function CheckStatus({ isCompleted }: CheckStatusProps) {
+function CheckStatus({
+  isCompleted,
+  isWwcCheckExpired,
+  isPoliceCheckExpired,
+}: CheckStatusProps) {
+  if (isWwcCheckExpired || isPoliceCheckExpired) {
+    return (
+      <div className="flex items-center gap-4">
+        <WarningTriangle className="h-6 w-6 text-warning" /> Expired
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center gap-4">
       {isCompleted ? (
@@ -43,6 +58,8 @@ function CheckStatus({ isCompleted }: CheckStatusProps) {
 
 export function CheckList({
   loaderData: {
+    isWwcCheckExpired,
+    isPoliceCheckExpired,
     welcomeCallCompleted,
     referencesCompleted,
     inductionCompleted,
@@ -138,7 +155,11 @@ export function CheckList({
               </div>
             </td>
             <td className="border">
-              <CheckStatus isCompleted={policeCheckCompleted} />
+              <CheckStatus
+                isCompleted={policeCheckCompleted}
+                isWwcCheckExpired={isWwcCheckExpired}
+                isPoliceCheckExpired={isPoliceCheckExpired}
+              />
             </td>
             <td className="border">
               <Link className="btn btn-xs w-full gap-2" to="police-check">
@@ -154,7 +175,11 @@ export function CheckList({
               </div>
             </td>
             <td className="border">
-              <CheckStatus isCompleted={wwcCheckCompleted} />
+              <CheckStatus
+                isCompleted={wwcCheckCompleted}
+                isWwcCheckExpired={isWwcCheckExpired}
+                isPoliceCheckExpired={isPoliceCheckExpired}
+              />
             </td>
             <td className="border">
               <Link className="btn btn-xs w-full gap-2" to="wwc-check">

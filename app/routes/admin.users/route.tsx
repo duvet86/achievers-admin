@@ -10,9 +10,9 @@ import {
 import { json } from "@remix-run/node";
 
 import { useRef } from "react";
-import { PageEdit, BinFull, CheckCircle } from "iconoir-react";
+import { PageEdit, BinFull, CheckCircle, WarningTriangle } from "iconoir-react";
 
-import { getPaginationRange } from "~/services";
+import { getPaginationRange, isDateExpired } from "~/services";
 import { Title, Pagination } from "~/components";
 
 import {
@@ -91,6 +91,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     users: users.map((user) => ({
       ...user,
       checksCompleted: getNumberCompletedChecks(user),
+      isAnyChecksExpired:
+        isDateExpired(user.policeCheck?.expiryDate) ||
+        isDateExpired(user.wwcCheck?.expiryDate),
     })),
     searchTerm,
   });
@@ -163,6 +166,7 @@ export default function Index() {
                     chapter,
                     checksCompleted,
                     endDate,
+                    isAnyChecksExpired,
                   },
                   index,
                 ) => {
@@ -193,7 +197,16 @@ export default function Index() {
                       </td>
                       <td className="border">{email}</td>
                       <td className="border">{chapter.name}</td>
-                      <td className="border">{checksCompleted}/8</td>
+                      <td className="border">
+                        <div className="flex gap-4">
+                          <span>{checksCompleted}/8</span>
+                          {isAnyChecksExpired && (
+                            <span className="flex items-center gap-1 text-warning">
+                              <WarningTriangle /> Expired checks
+                            </span>
+                          )}
+                        </div>
+                      </td>
                       <td className="border">
                         <Link
                           to={`${id}?${searchParams}`}

@@ -16,39 +16,6 @@ export async function getUsersCountAsync(
   onlyExpiredChecks = false,
   includeArchived = false,
 ) {
-  const or = [];
-  if (searchTerm !== null) {
-    or.push(
-      ...(searchAcrossFields(
-        searchTerm,
-        (x) =>
-          [
-            { firstName: { contains: x } },
-            { lastName: { contains: x } },
-            { email: { contains: x } },
-          ] as const,
-      ) as []),
-    );
-  }
-  if (onlyExpiredChecks) {
-    or.push({
-      policeCheck: {
-        expiryDate: {
-          lte: new Date(),
-        },
-      },
-    });
-  }
-  if (onlyExpiredChecks) {
-    or.push({
-      wwcCheck: {
-        expiryDate: {
-          lte: new Date(),
-        },
-      },
-    });
-  }
-
   return await prisma.user.count({
     where: {
       AND: [
@@ -59,7 +26,7 @@ export async function getUsersCountAsync(
             }
           : {},
         {
-          OR: or.length > 0 ? or : undefined,
+          OR: getOR(searchTerm, onlyExpiredChecks),
         },
       ],
     },
@@ -74,39 +41,6 @@ export async function getUsersAsync(
   includeArchived = false,
   numberItems = 10,
 ) {
-  const or = [];
-  if (searchTerm !== null) {
-    or.push(
-      ...(searchAcrossFields(
-        searchTerm,
-        (x) =>
-          [
-            { firstName: { contains: x } },
-            { lastName: { contains: x } },
-            { email: { contains: x } },
-          ] as const,
-      ) as []),
-    );
-  }
-  if (onlyExpiredChecks) {
-    or.push({
-      policeCheck: {
-        expiryDate: {
-          lte: new Date(),
-        },
-      },
-    });
-  }
-  if (onlyExpiredChecks) {
-    or.push({
-      wwcCheck: {
-        expiryDate: {
-          lte: new Date(),
-        },
-      },
-    });
-  }
-
   return await prisma.user.findMany({
     select: {
       id: true,
@@ -133,6 +67,7 @@ export async function getUsersAsync(
       policeCheck: {
         select: {
           createdAt: true,
+          expiryDate: true,
         },
       },
       references: {
@@ -148,6 +83,7 @@ export async function getUsersAsync(
       wwcCheck: {
         select: {
           createdAt: true,
+          expiryDate: true,
         },
       },
     },
@@ -160,7 +96,7 @@ export async function getUsersAsync(
             }
           : {},
         {
-          OR: or.length > 0 ? or : undefined,
+          OR: getOR(searchTerm, onlyExpiredChecks),
         },
       ],
     },
@@ -209,4 +145,42 @@ export function getNumberCompletedChecks(user: UserChecks): number {
   }
 
   return checks;
+}
+
+function getOR(searchTerm: string | null, onlyExpiredChecks: boolean) {
+  const or = [];
+
+  if (searchTerm !== null) {
+    or.push(
+      ...(searchAcrossFields(
+        searchTerm,
+        (term) =>
+          [
+            { firstName: { contains: term } },
+            { lastName: { contains: term } },
+            { email: { contains: term } },
+          ] as const,
+      ) as []),
+    );
+  }
+  if (onlyExpiredChecks) {
+    or.push(
+      {
+        policeCheck: {
+          expiryDate: {
+            lte: new Date(),
+          },
+        },
+      },
+      {
+        wwcCheck: {
+          expiryDate: {
+            lte: new Date(),
+          },
+        },
+      },
+    );
+  }
+
+  return or.length > 0 ? or : undefined;
 }

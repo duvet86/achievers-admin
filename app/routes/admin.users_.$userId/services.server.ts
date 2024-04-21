@@ -62,6 +62,7 @@ export async function getUserByIdAsync(id: number) {
       policeCheck: {
         select: {
           createdAt: true,
+          expiryDate: true,
         },
       },
       references: {
@@ -77,6 +78,7 @@ export async function getUserByIdAsync(id: number) {
       wwcCheck: {
         select: {
           createdAt: true,
+          expiryDate: true,
         },
       },
     },

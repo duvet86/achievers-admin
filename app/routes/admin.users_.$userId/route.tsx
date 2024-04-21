@@ -8,7 +8,7 @@ import { useActionData, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { getAzureUserWithRolesByIdAsync, Roles } from "~/services/.server";
-import { isStringNullOrEmpty } from "~/services";
+import { isDateExpired, isStringNullOrEmpty } from "~/services";
 
 import {
   getUserByIdAsync,
@@ -47,6 +47,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   return json({
     user,
+    isWwcCheckExpired: isDateExpired(user.wwcCheck?.expiryDate),
+    isPoliceCheckExpired: isDateExpired(user.policeCheck?.expiryDate),
     profilePicturePath,
     welcomeCallCompleted: user.welcomeCall !== null,
     referencesCompleted:

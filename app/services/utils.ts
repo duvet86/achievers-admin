@@ -255,3 +255,11 @@ export function getDatesForTerm(startDate: Dayjs, endDate: Dayjs) {
 
   return dates;
 }
+
+export function isDateExpired(expiryDate: Date | undefined) {
+  if (expiryDate === undefined) {
+    return false;
+  }
+
+  return dayjs(expiryDate).isBefore(new Date(), "day");
+}
