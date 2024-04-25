@@ -6,6 +6,7 @@ import { $Enums } from "@prisma/client";
 import { json, redirect } from "@remix-run/node";
 import { Link, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
+import { BinFull, NavArrowDown } from "iconoir-react";
 
 import { areEqualIgnoreCase } from "~/services";
 import { Title } from "~/components";
@@ -21,7 +22,6 @@ import {
 import { StudentForm } from "./components/StudentForm";
 import { GuardianList } from "./components/GuardianList";
 import { TeacherList } from "./components/TeacherList";
-import { BinFull, NavArrowDown } from "iconoir-react";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.studentId, "studentId not found");
