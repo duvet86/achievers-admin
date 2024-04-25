@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 import { prisma } from "~/db.server";
 import { searchAcrossFields } from "~/services/.server";
 
@@ -168,14 +170,14 @@ function getOR(searchTerm: string | null, onlyExpiredChecks: boolean) {
       {
         policeCheck: {
           expiryDate: {
-            lte: new Date(),
+            lte: dayjs().add(3, "months").toDate(),
           },
         },
       },
       {
         wwcCheck: {
           expiryDate: {
-            lte: new Date(),
+            lte: dayjs().add(3, "months").toDate(),
           },
         },
       },

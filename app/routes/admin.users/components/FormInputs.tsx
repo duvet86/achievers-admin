@@ -17,7 +17,7 @@ export default function FormInputs({
   const searchTerm = searchParams.get("searchTerm");
 
   return (
-    <div className="alert mb-6 hidden flex-wrap justify-between lg:flex">
+    <div className="mb-6 hidden flex-wrap justify-between lg:flex">
       <div className="flex items-center gap-6">
         <div className="w-96">
           <Input
@@ -44,28 +44,32 @@ export default function FormInputs({
           />
         </div>
 
-        <div className="form-control">
-          <label className="label cursor-pointer gap-2">
-            <input
-              type="checkbox"
-              name="onlyExpiredChecks"
-              className="checkbox bg-base-100"
-              defaultChecked={searchParams.get("onlyExpiredChecks") === "on"}
-            />
-            <span className="label-text">Only expired checks</span>
-          </label>
-        </div>
+        <div className="flex flex-wrap xl:gap-4">
+          <div className="form-control">
+            <label className="label cursor-pointer gap-2">
+              <input
+                type="checkbox"
+                name="onlyExpiredChecks"
+                className="checkbox bg-base-100"
+                defaultChecked={searchParams.get("onlyExpiredChecks") === "on"}
+              />
+              <span className="label-text">
+                Only expired or soon to expire checks
+              </span>
+            </label>
+          </div>
 
-        <div className="form-control">
-          <label className="label cursor-pointer gap-2">
-            <input
-              type="checkbox"
-              name="includeArchived"
-              className="checkbox bg-base-100"
-              defaultChecked={searchParams.get("includeArchived") === "on"}
-            />
-            <span className="label-text">Include archived</span>
-          </label>
+          <div className="form-control">
+            <label className="label cursor-pointer gap-2">
+              <input
+                type="checkbox"
+                name="includeArchived"
+                className="checkbox bg-base-100"
+                defaultChecked={searchParams.get("includeArchived") === "on"}
+              />
+              <span className="label-text">Include archived</span>
+            </label>
+          </div>
         </div>
       </div>
 

@@ -4,7 +4,7 @@ import type { Prisma } from "@prisma/client";
 import dayjs from "dayjs";
 import { $Enums } from "@prisma/client";
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData, useNavigation } from "@remix-run/react";
+import { Link, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { areEqualIgnoreCase } from "~/services";
@@ -21,6 +21,7 @@ import {
 import { StudentForm } from "./components/StudentForm";
 import { GuardianList } from "./components/GuardianList";
 import { TeacherList } from "./components/TeacherList";
+import { BinFull, NavArrowDown } from "iconoir-react";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.studentId, "studentId not found");
@@ -176,8 +177,28 @@ export default function Index() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="h-36">
+      <div className="flex flex-col items-center gap-4 lg:flex-row">
         <Title>{loaderData.title}</Title>
+
+        <div className="flex-1"></div>
+
+        <div className="dropdown dropdown-end">
+          <div tabIndex={0} role="button" className="btn w-40 gap-2">
+            Actions
+            <NavArrowDown className="h-6 w-6" />
+          </div>
+          <ul
+            tabIndex={0}
+            className="menu dropdown-content w-52 rounded-box border border-base-300 bg-base-100 p-2 shadow"
+          >
+            <li>
+              <Link to="archive" className="gap-4 font-semibold text-error">
+                <BinFull className="h-6 w-6" />
+                Archive
+              </Link>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div className="content-area md:flex">

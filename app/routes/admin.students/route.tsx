@@ -10,7 +10,7 @@ import {
 } from "@remix-run/react";
 import { useRef } from "react";
 
-import { PageEdit, Plus } from "iconoir-react";
+import { BinFull, PageEdit, Plus } from "iconoir-react";
 
 import { Pagination, Title } from "~/components";
 
@@ -145,33 +145,45 @@ export default function Index() {
                 </tr>
               )}
               {students.map(
-                ({ id, firstName, lastName, yearLevel, chapter }, index) => (
-                  <tr
-                    key={id}
-                    className="cursor-pointer hover:bg-base-200"
-                    onClick={handleRowClick(id)}
-                  >
-                    <td className="border">
-                      <div className="flex gap-2">
-                        {index + 1 + 10 * currentPageNumber}
-                      </div>
-                    </td>
-                    <td className="border">
-                      {firstName} {lastName}
-                    </td>
-                    <td className="border">{yearLevel ?? "-"}</td>
-                    <td className="border">{chapter.name}</td>
-                    <td className="border">
-                      <Link
-                        to={`${id}?${searchParams}`}
-                        className="btn btn-success btn-xs w-full gap-2"
-                      >
-                        <PageEdit className="hidden h-4 w-4 lg:block" />
-                        Edit
-                      </Link>
-                    </td>
-                  </tr>
-                ),
+                (
+                  { id, firstName, lastName, yearLevel, chapter, endDate },
+                  index,
+                ) => {
+                  let className = "cursor-pointer hover:bg-base-200 ";
+                  let icon: JSX.Element | undefined;
+                  if (endDate) {
+                    className += "text-error";
+                    icon = <BinFull data-testid="archived" />;
+                  }
+
+                  return (
+                    <tr
+                      key={id}
+                      className={className}
+                      onClick={handleRowClick(id)}
+                    >
+                      <td className="border">
+                        <div className="flex gap-2">
+                          {index + 1 + 10 * currentPageNumber} {icon}
+                        </div>
+                      </td>
+                      <td className="border">
+                        {firstName} {lastName}
+                      </td>
+                      <td className="border">{yearLevel ?? "-"}</td>
+                      <td className="border">{chapter.name}</td>
+                      <td className="border">
+                        <Link
+                          to={`${id}?${searchParams}`}
+                          className="btn btn-success btn-xs w-full gap-2"
+                        >
+                          <PageEdit className="hidden h-4 w-4 lg:block" />
+                          Edit
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                },
               )}
             </tbody>
           </table>

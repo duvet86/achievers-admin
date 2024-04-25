@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-/* eslint-disable jsx-a11y/label-has-associated-control */
 import type { AzureUserWebAppWithRole } from "~/services/.server";
 import type { Environment } from "~/services";
 

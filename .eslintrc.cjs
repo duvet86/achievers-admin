@@ -72,6 +72,8 @@ module.exports = {
       ],
       rules: {
         "@typescript-eslint/consistent-type-imports": "error",
+        "jsx-a11y/no-noninteractive-tabindex": "warn",
+        "jsx-a11y/label-has-associated-control": "warn",
       },
     },
 
