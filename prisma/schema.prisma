@@ -216,8 +216,8 @@ model Student {
 
   firstName String
   lastName  String
-  gender    Gender
 
+  gender                     Gender?
   startDate                  DateTime?
   dateOfBirth                DateTime?
   address                    String?

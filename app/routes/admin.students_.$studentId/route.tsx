@@ -28,14 +28,13 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const isNewStudent = areEqualIgnoreCase(params.studentId, "new");
 
   if (isNewStudent) {
+    const chapters = await getChaptersAsync();
+
     return json({
       title: "Add new student",
       student: null,
       isNewStudent,
-      chapters: [] as {
-        id: number;
-        name: string;
-      }[],
+      chapters,
     });
   }
 
@@ -102,8 +101,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     .get("emergencyContactAddress")
     ?.toString();
   const startDate = formData.get("startDate")?.toString();
-
-  let studentId: number;
+  const chapterId = formData.get("chapterId")?.toString();
 
   if (areEqualIgnoreCase(params.studentId, "new")) {
     if (firstName === undefined || lastName === undefined) {
@@ -134,10 +132,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
       emergencyContactEmail,
       emergencyContactAddress,
       startDate: startDate ? dayjs(startDate).toDate() : null,
-      chapterId: 1,
+      chapterId: Number(chapterId),
     };
 
-    studentId = await createNewStudentAsync(dataCreate);
+    await createNewStudentAsync(dataCreate);
   } else {
     const dataCreate: Prisma.XOR<
       Prisma.StudentUpdateInput,
@@ -163,15 +161,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
       emergencyContactEmail,
       emergencyContactAddress,
       startDate: startDate ? dayjs(startDate).toDate() : null,
+      chapterId: Number(chapterId),
     };
 
-    studentId = await updateStudentByIdAsync(
-      Number(params.studentId),
-      dataCreate,
-    );
+    await updateStudentByIdAsync(Number(params.studentId), dataCreate);
   }
 
-  return redirect(`/admin/students/${studentId}`);
+  return redirect("/admin/students");
 }
 
 export default function Index() {

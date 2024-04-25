@@ -56,13 +56,12 @@ export function StudentForm({
         <Select
           label="Gender"
           name="gender"
-          defaultValue={student?.gender}
+          defaultValue={student?.gender ?? ""}
           options={[
             { value: "", label: "Select a gender" },
             { value: "MALE", label: "Male" },
             { value: "FEMALE", label: "Female" },
           ]}
-          required
         />
 
         <DateInput
