@@ -1,17 +1,18 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Link, useFetcher, useLoaderData } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
-import { Xmark, Clock } from "iconoir-react";
+import { Xmark, Clock, FloppyDiskArrowIn } from "iconoir-react";
 
-import { Title, Autocomplete, SubmitFormButton } from "~/components";
+import { Title, Autocomplete } from "~/components";
 
 import {
   assignStudentToMentorAsync,
   getMentorWithStudentsAsync,
   getStudentsInChapterAsync,
+  removeMentorStudentAssignement,
 } from "./services.server";
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -39,16 +40,23 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const formData = await request.formData();
 
-  const selectedStudentId = formData.get("selectedStudentId")?.toString();
-  if (selectedStudentId === undefined) {
+  const studentId = formData.get("studentId")?.toString();
+  if (studentId === undefined) {
     throw new Error();
   }
 
-  await assignStudentToMentorAsync(
-    request,
-    Number(params.mentorId),
-    Number(selectedStudentId),
-  );
+  if (request.method === "POST") {
+    await assignStudentToMentorAsync(
+      request,
+      Number(params.mentorId),
+      Number(studentId),
+    );
+  } else {
+    await removeMentorStudentAssignement(
+      Number(params.mentorId),
+      Number(studentId),
+    );
+  }
 
   return null;
 }
@@ -59,6 +67,20 @@ export default function Index() {
     availableStudents,
     mentorWithStudents: { firstName, lastName, mentorToStudentAssignement },
   } = useLoaderData<typeof loader>();
+  const { state, Form, submit } = useFetcher();
+
+  const isLoading = state === "loading";
+
+  const onMentorRemoved =
+    (studentFullName: string) => (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+
+      if (confirm(`Are you sure you want to unassign "${studentFullName}"?`)) {
+        submit(e.currentTarget, {
+          method: "DELETE",
+        });
+      }
+    };
 
   return (
     <>
@@ -76,10 +98,10 @@ export default function Index() {
           <div>
             <h4>Assign a new student</h4>
 
-            <Form method="post" className="flex flex-col gap-6 lg:flex-row">
+            <Form method="POST" className="flex flex-col gap-6 lg:flex-row">
               <div className="lg:w-96">
                 <Autocomplete
-                  name="selectedStudentId"
+                  name="studentId"
                   placeholder="start typing to select a student"
                   initialOptions={availableStudents.map(
                     ({ id, firstName, lastName }) => ({
@@ -90,7 +112,21 @@ export default function Index() {
                 />
               </div>
 
-              <SubmitFormButton label="Add" />
+              <button
+                disabled={isLoading}
+                className="btn btn-primary w-52 gap-5"
+                type="submit"
+              >
+                {isLoading ? (
+                  <>
+                    <span className="loading loading-spinner"></span> Loading...
+                  </>
+                ) : (
+                  <>
+                    <FloppyDiskArrowIn className="h-6 w-6" /> Add
+                  </>
+                )}
+              </button>
             </Form>
           </div>
         </div>
@@ -116,10 +152,28 @@ export default function Index() {
                         <Clock className="h-6 w-6" />
                         View sessions
                       </Link>
-                      <Link to={`remove/${id}`} className="btn btn-error gap-3">
-                        <Xmark className="h-6 w-6" />
-                        Remove
-                      </Link>
+                      <Form
+                        onSubmit={onMentorRemoved(`${firstName} ${lastName}`)}
+                      >
+                        <input type="hidden" name="studentId" value={id} />
+                        <button
+                          disabled={isLoading}
+                          className="btn btn-error w-48 gap-3"
+                          type="submit"
+                        >
+                          {isLoading ? (
+                            <>
+                              <span className="loading loading-spinner"></span>{" "}
+                              Loading...
+                            </>
+                          ) : (
+                            <>
+                              <Xmark className="h-6 w-6" />
+                              Remove
+                            </>
+                          )}
+                        </button>
+                      </Form>
                     </div>
                   </div>
                 </li>

@@ -10,7 +10,7 @@ import { createRequestHandler } from "@remix-run/express";
 import sourceMapSupport from "source-map-support";
 
 sourceMapSupport.install();
-installGlobals();
+installGlobals({ nativeFetch: true });
 
 if (process.env.NODE_ENV === "production") {
   appInsights.setup().start();

@@ -63,3 +63,17 @@ export async function assignStudentToMentorAsync(
     },
   });
 }
+
+export async function removeMentorStudentAssignement(
+  userId: User["id"],
+  studentId: Student["id"],
+) {
+  return await prisma.mentorToStudentAssignement.delete({
+    where: {
+      userId_studentId: {
+        studentId,
+        userId,
+      },
+    },
+  });
+}

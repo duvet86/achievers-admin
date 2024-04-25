@@ -1,7 +1,7 @@
 import type { SerializeFrom } from "@remix-run/node";
 import type { loader } from "../route";
 
-import { Link } from "@remix-run/react";
+import { Link, useFetcher } from "@remix-run/react";
 import classnames from "classnames";
 
 import { Xmark, HomeShield, PageEdit } from "iconoir-react";
@@ -12,7 +12,21 @@ interface Props {
 }
 
 export function GuardianList({ loaderData: { student, isNewStudent } }: Props) {
+  const { state, Form, submit } = useFetcher();
+
+  const isLoading = state === "loading";
   const noGuardiansAssigned = student === null || student.guardian.length === 0;
+
+  const onGuardianRemoved =
+    (fullName: string) => (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+
+      if (confirm(`Are you sure you want to remove "${fullName}"?`)) {
+        submit(e.currentTarget, {
+          method: "DELETE",
+        });
+      }
+    };
 
   return (
     <>
@@ -45,13 +59,29 @@ export function GuardianList({ loaderData: { student, isNewStudent } }: Props) {
                         <span className="hidden lg:block">Edit</span>
                       </Link>
 
-                      <Link
-                        className="btn btn-error join-item btn-xs w-1/2 gap-2"
-                        to={`guardians/${id}/remove`}
+                      <Form
+                        onSubmit={onGuardianRemoved(fullName)}
+                        className="btn btn-error join-item btn-xs w-1/2"
                       >
-                        <Xmark className="h-4 w-4" />
-                        <span className="hidden lg:block">Remove</span>
-                      </Link>
+                        <input type="hidden" name="guardianId" value={id} />
+                        <button
+                          type="submit"
+                          className="flex items-center gap-1"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? (
+                            <>
+                              <span className="loading loading-spinner h-4 w-4"></span>{" "}
+                              Loading...
+                            </>
+                          ) : (
+                            <>
+                              <Xmark className="h-4 w-4" />
+                              <span className="hidden lg:block">Remove</span>
+                            </>
+                          )}
+                        </button>
+                      </Form>
                     </div>
                   </td>
                 </tr>

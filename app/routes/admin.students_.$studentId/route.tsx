@@ -12,6 +12,8 @@ import { Title } from "~/components";
 
 import {
   createNewStudentAsync,
+  deleteGuardianByIdAsync,
+  deleteTeacherByIdAsync,
   getChaptersAsync,
   getStudentByIdAsync,
   updateStudentByIdAsync,
@@ -58,6 +60,19 @@ export async function action({ request, params }: ActionFunctionArgs) {
   invariant(params.studentId, "studentId not found");
 
   const formData = await request.formData();
+
+  if (request.method === "DELETE") {
+    const guardianId = formData.get("guardianId")?.toString();
+    const teacherId = formData.get("teacherId")?.toString();
+
+    if (guardianId) {
+      await deleteGuardianByIdAsync(Number(guardianId));
+    } else if (teacherId) {
+      await deleteTeacherByIdAsync(Number(teacherId));
+    }
+
+    return null;
+  }
 
   const firstName = formData.get("firstName")?.toString();
   const lastName = formData.get("lastName")?.toString();

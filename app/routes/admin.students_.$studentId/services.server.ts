@@ -1,4 +1,9 @@
-import type { Prisma, Student } from "@prisma/client";
+import type {
+  Prisma,
+  Student,
+  StudentGuardian,
+  StudentTeacher,
+} from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
@@ -86,4 +91,22 @@ export async function createNewStudentAsync(
   });
 
   return student.id;
+}
+
+export async function deleteGuardianByIdAsync(
+  guardianId: StudentGuardian["id"],
+) {
+  return await prisma.studentGuardian.delete({
+    where: {
+      id: guardianId,
+    },
+  });
+}
+
+export async function deleteTeacherByIdAsync(teacherId: StudentTeacher["id"]) {
+  return await prisma.studentTeacher.delete({
+    where: {
+      id: teacherId,
+    },
+  });
 }
