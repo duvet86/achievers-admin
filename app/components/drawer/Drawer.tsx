@@ -59,7 +59,7 @@ function getLinks(isAdmin: boolean): DrawerLink[] {
         {
           icon: <GraduationCap className="h-6 w-6" />,
           value: "/mentor/students",
-          label: "My Students",
+          label: "My Students (reports)",
         },
         {
           icon: <Group className="h-6 w-6" />,

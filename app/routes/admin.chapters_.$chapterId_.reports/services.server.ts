@@ -17,59 +17,46 @@ export async function getChapterAsync(chapterId: Chapter["id"]) {
 export async function getReportsCountAsync(
   chapterId: Chapter["id"],
   searchTerm: string | null,
+  startDate: Date | null,
+  endDate: Date | null,
+  isCompleted: boolean | null,
+  isSignedOff: boolean | null,
 ) {
   return await prisma.mentorToStudentSession.count({
-    where: {
+    where: whereClause(
       chapterId,
-      completedOn: {
-        not: null,
-      },
-      signedOffOn: null,
-      OR: searchAcrossFields(searchTerm, (searchTerm: string) => [
-        {
-          user: {
-            firstName: { contains: searchTerm },
-          },
-        },
-        {
-          user: {
-            lastName: { contains: searchTerm },
-          },
-        },
-      ]),
-    },
+      searchTerm,
+      startDate,
+      endDate,
+      isCompleted,
+      isSignedOff,
+    ),
   });
 }
 
 export async function getReportsAsync(
   chapterId: Chapter["id"],
   searchTerm: string | null,
+  startDate: Date | null,
+  endDate: Date | null,
+  isCompleted: boolean | null,
+  isSignedOff: boolean | null,
   pageNumber: number,
   numberItems = 10,
 ) {
   return await prisma.mentorToStudentSession.findMany({
-    where: {
+    where: whereClause(
       chapterId,
-      completedOn: {
-        not: null,
-      },
-      signedOffOn: null,
-      OR: searchAcrossFields(searchTerm, (searchTerm: string) => [
-        {
-          user: {
-            firstName: { contains: searchTerm },
-          },
-        },
-        {
-          user: {
-            lastName: { contains: searchTerm },
-          },
-        },
-      ]),
-    },
+      searchTerm,
+      startDate,
+      endDate,
+      isCompleted,
+      isSignedOff,
+    ),
     select: {
       attendedOn: true,
       completedOn: true,
+      signedOffOn: true,
       user: {
         select: {
           id: true,
@@ -91,4 +78,57 @@ export async function getReportsAsync(
     skip: numberItems * pageNumber,
     take: numberItems,
   });
+}
+
+function whereClause(
+  chapterId: Chapter["id"],
+  searchTerm: string | null,
+  startDate: Date | null,
+  endDate: Date | null,
+  isCompleted: boolean | null,
+  isSignedOff: boolean | null,
+) {
+  return {
+    chapterId,
+    report: {
+      not: null,
+    },
+    completedOn: isCompleted
+      ? {
+          not: null,
+        }
+      : undefined,
+    signedOffOn: isSignedOff
+      ? {
+          not: null,
+        }
+      : undefined,
+    OR: searchAcrossFields(searchTerm, (searchTerm: string) => [
+      {
+        user: {
+          firstName: { contains: searchTerm },
+        },
+      },
+      {
+        user: {
+          lastName: { contains: searchTerm },
+        },
+      },
+    ]),
+    AND:
+      startDate && endDate
+        ? [
+            {
+              attendedOn: {
+                lte: endDate ?? undefined,
+              },
+            },
+            {
+              attendedOn: {
+                gte: startDate ?? undefined,
+              },
+            },
+          ]
+        : undefined,
+  };
 }

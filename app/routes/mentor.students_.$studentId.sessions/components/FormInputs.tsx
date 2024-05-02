@@ -13,7 +13,7 @@ export default function FormInputs({ onFormClear }: Props) {
   const endDate = searchParams.get("endDate");
 
   return (
-    <div className="alert mb-6 hidden flex-wrap items-end justify-between lg:flex">
+    <div className="mb-6 hidden flex-wrap items-end justify-between gap-4 lg:flex">
       <div className="flex flex-1 gap-4">
         <DateInput
           defaultValue={

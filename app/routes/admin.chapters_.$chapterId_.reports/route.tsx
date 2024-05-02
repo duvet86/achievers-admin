@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 
 import { useRef } from "react";
 import { Eye } from "iconoir-react";
@@ -29,8 +29,27 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
   const nextPageSubmit = url.searchParams.get("nextBtn");
 
+  const startDate = url.searchParams.get("startDate");
+  const endDate = url.searchParams.get("endDate");
+  const isCompleted = url.searchParams.get("isCompleted") === "on";
+  const isSignedOff = url.searchParams.get("isSignedOff") === "on";
+
   let searchTerm = url.searchParams.get("searchTerm");
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
+
+  let startDateConverted: Date | null = null;
+  let endDateConverted: Date | null = null;
+
+  if (startDate?.trim() === "" || clearSearchSubmit !== null) {
+    startDateConverted = null;
+  } else if (startDate) {
+    startDateConverted = dayjs(startDate, "YYYY/MM/DD").toDate();
+  }
+  if (endDate?.trim() === "" || clearSearchSubmit !== null) {
+    endDateConverted = null;
+  } else if (endDate) {
+    endDateConverted = dayjs(endDate, "YYYY/MM/DD").toDate();
+  }
 
   if (searchTerm?.trim() === "" || clearSearchSubmit !== null) {
     searchTerm = null;
@@ -39,6 +58,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const count = await getReportsCountAsync(
     Number(params.chapterId),
     searchTerm,
+    startDateConverted,
+    endDateConverted,
+    isCompleted,
+    isSignedOff,
   );
 
   const totalPageCount = Math.ceil(count / 10);
@@ -60,6 +83,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const reports = await getReportsAsync(
     Number(params.chapterId),
     searchTerm,
+    startDateConverted,
+    endDateConverted,
+    isCompleted,
+    isSignedOff,
     currentPageNumber,
   );
 
@@ -81,7 +108,6 @@ export default function Index() {
   const { chapterName, reports, count, currentPageNumber, range } =
     useLoaderData<typeof loader>();
 
-  const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLFormElement | null>(null);
 
   const totalPageCount = Math.ceil(count / 10);
@@ -92,8 +118,10 @@ export default function Index() {
     <>
       <Title>Reports for chapter: &quot;{chapterName}&quot;</Title>
 
+      <hr className="my-4" />
+
       <Form ref={formRef}>
-        <FormInputs searchParams={searchParams} onFormClear={onFormClear} />
+        <FormInputs onFormClear={onFormClear} />
 
         <div className="overflow-auto bg-white">
           <table className="table table-zebra">
@@ -111,6 +139,9 @@ export default function Index() {
                 <th align="left" className="p-2">
                   Completed on
                 </th>
+                <th align="left" className="p-2">
+                  Signed off on
+                </th>
                 <th align="right" className="p-2">
                   Action
                 </th>
@@ -118,7 +149,10 @@ export default function Index() {
             </thead>
             <tbody>
               {reports.map(
-                ({ attendedOn, completedOn, student, user }, index) => (
+                (
+                  { attendedOn, completedOn, signedOffOn, student, user },
+                  index,
+                ) => (
                   <tr key={index}>
                     <td className="border p-2">
                       {user.firstName} {user.lastName}
@@ -130,7 +164,14 @@ export default function Index() {
                       {dayjs(attendedOn).format("MMMM D, YYYY")}
                     </td>
                     <td className="border p-2">
-                      {dayjs(completedOn).format("MMMM D, YYYY")}
+                      {completedOn
+                        ? dayjs(completedOn).format("MMMM D, YYYY")
+                        : "-"}
+                    </td>
+                    <td className="border p-2">
+                      {signedOffOn
+                        ? dayjs(signedOffOn).format("MMMM D, YYYY")
+                        : "-"}
                     </td>
                     <td className="border p-2">
                       <Link

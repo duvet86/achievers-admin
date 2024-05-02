@@ -3,8 +3,13 @@ import type { Prisma } from "@prisma/client";
 
 import dayjs from "dayjs";
 import { $Enums } from "@prisma/client";
-import { json, redirect } from "@remix-run/node";
-import { Link, useLoaderData, useNavigation } from "@remix-run/react";
+import { json } from "@remix-run/node";
+import {
+  Link,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { BinFull, NavArrowDown } from "iconoir-react";
 
@@ -71,7 +76,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
       await deleteTeacherByIdAsync(Number(teacherId));
     }
 
-    return null;
+    return json({
+      successMessage: "Student successfully updated!",
+      errorMessage: null,
+    });
   }
 
   const firstName = formData.get("firstName")?.toString();
@@ -168,11 +176,15 @@ export async function action({ request, params }: ActionFunctionArgs) {
     await updateStudentByIdAsync(Number(params.studentId), dataCreate);
   }
 
-  return redirect("/admin/students");
+  return json({
+    successMessage: "Student successfully saved!",
+    errorMessage: null,
+  });
 }
 
 export default function Index() {
   const loaderData = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
   const transition = useNavigation();
 
   return (
@@ -202,7 +214,11 @@ export default function Index() {
       </div>
 
       <div className="content-area md:flex">
-        <StudentForm transition={transition} loaderData={loaderData} />
+        <StudentForm
+          transition={transition}
+          loaderData={loaderData}
+          actionData={actionData}
+        />
 
         <hr className="my-8 md:hidden" />
 

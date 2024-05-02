@@ -121,6 +121,8 @@ export default function Index() {
           onFormClear={onFormClear}
         />
 
+        <hr className="my-4" />
+
         <div className="overflow-auto bg-white">
           <table className="table">
             <thead>

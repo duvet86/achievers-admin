@@ -64,7 +64,7 @@ export default function Index() {
                     className="btn btn-success btn-xs h-8 gap-2"
                   >
                     <StatsReport className="hidden h-4 w-4 lg:block" />
-                    View sessions
+                    View reports
                   </Link>
                 </td>
               </tr>
