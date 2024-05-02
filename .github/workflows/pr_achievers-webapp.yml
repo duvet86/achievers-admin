@@ -20,6 +20,7 @@ env:
   WEBAPP_NAME: "achievers-webapp"
   SLOT_NAME: "stg"
   RESOURCE_GROUP: "achievers-rg"
+  AZURE_WEBAPP_PACKAGE_PATH: "."
 
 jobs:
   e2etests:
@@ -52,6 +53,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -96,57 +98,74 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
+
       - name: Migrate DB
         run: npm run setup
 
   build:
-    name: Push Docker image to Docker Hub
+    name: Build App
     runs-on: ubuntu-latest
     needs: migrate
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@main
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          node-version: "lts/*"
+          cache: "npm"
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+      - name: npm install, build, and test
+        run: |
+          npm install
+          npx prisma generate
+          npm run build
+          npm prune --production
+
+      - name: Zip artifact for deployment
+        run: zip release.zip ./node_modules ./build ./public ./server.mjs ./prisma ./background-jobs -r
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v3
         with:
-          context: .
-          push: true
-          tags: duvet86/achievers-app:latest, duvet86/achievers-app:${{ steps.package-version.outputs.current-version}}
+          name: node-app
+          path: release.zip
 
   deploy:
-    name: 🚀 Deploy
+    name: Zip Deploy
     runs-on: ubuntu-latest
     needs: build
+    environment:
+      name: "production"
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: node-app
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
+      - name: Unzip artifact for deployment
+        run: unzip release.zip
+
+      - name: "Deploy to Azure Web App"
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.WEBAPP_NAME }}
           slot-name: ${{ env.SLOT_NAME }}
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_e4f1458d614f40f5947f467bb0e3f8a0 }}
-          images: duvet86/achievers-app:latest
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
   restart-app:
     name: Restart Web App
