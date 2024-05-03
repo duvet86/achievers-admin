@@ -9,7 +9,7 @@ import {
   Group,
   Calendar,
   PrivacyPolicy,
-  Settings
+  Settings,
 } from "iconoir-react";
 
 interface Props {

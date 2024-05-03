@@ -4,8 +4,8 @@ export async function getPoliceCheckRemainders() {
   return await prisma.policeCheck.findMany({
     where: {
       reminderSentAt: {
-        not: null
-      }
+        not: null,
+      },
     },
     select: {
       id: true,
@@ -14,9 +14,9 @@ export async function getPoliceCheckRemainders() {
       user: {
         select: {
           firstName: true,
-          lastName: true
-        }
-      }
-    }
+          lastName: true,
+        },
+      },
+    },
   });
 }
