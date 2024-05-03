@@ -9,6 +9,7 @@ import {
   Group,
   Calendar,
   PrivacyPolicy,
+  Settings
 } from "iconoir-react";
 
 interface Props {
@@ -48,6 +49,11 @@ function getLinks(isAdmin: boolean): DrawerLink[] {
           icon: <Calendar className="h-6 w-6" />,
           value: "/admin/school-terms",
           label: "School Terms",
+        },
+        {
+          icon: <Settings className="h-6 w-6" />,
+          value: "/admin/config",
+          label: "Config",
         },
       ]
     : [
