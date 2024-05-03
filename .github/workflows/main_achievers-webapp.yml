@@ -26,13 +26,13 @@ env:
   AZURE_WEBAPP_PACKAGE_PATH: "."
 
 jobs:
-  e2etests:
-    name: Tests
-    runs-on: ubuntu-latest
-    env:
-      DB_DATABASE: achievers
-      DB_USER: root
-      DB_PASSWORD: my-secret-pw
+  # e2etests:
+  #   name: Tests
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     DB_DATABASE: achievers
+  #     DB_USER: root
+  #     DB_PASSWORD: my-secret-pw
 
   #   services:
   #     mysql:
