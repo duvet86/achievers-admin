@@ -162,7 +162,7 @@ jobs:
           npm prune --production
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./node_modules ./build ./public ./server.mjs ./prisma ./background-jobs -r
+        run: zip release.zip ./node_modules ./build ./public ./server.mjs ./prisma ./background-jobs ./package.json -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
