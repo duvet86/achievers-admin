@@ -3,7 +3,9 @@
     "env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "node_modules/@remix-run/react/future/single-fetch.d.ts"
+    "node_modules/@remix-run/react/future/single-fetch.d.ts",
+    "app/services/.server/config.server.ts",
+    "app/services/.server/user.server.ts"
   ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],

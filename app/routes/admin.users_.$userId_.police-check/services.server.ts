@@ -44,6 +44,11 @@ export async function updatePoliceCheckAsync(
     update: {
       expiryDate,
       filePath: data.filePath,
+      reminderSentAt: dayjs(data.expiryDate).isAfter(
+        dayjs().subtract(3, "months"),
+      )
+        ? null
+        : undefined,
     },
   });
 }
