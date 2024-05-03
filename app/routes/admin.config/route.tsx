@@ -32,8 +32,11 @@ export default function Index() {
           ) : (
             <Xmark className="text-error" />
           )}
-          <Link to="email-remainders" className="btn w-28">
-            View
+          <Link to="email-remainders-police-check" className="btn w-28">
+            Police check
+          </Link>
+          <Link to="email-remainders-wwc" className="btn w-28">
+            WWC
           </Link>
         </p>
       </div>
