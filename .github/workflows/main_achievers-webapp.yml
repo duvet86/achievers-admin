@@ -192,8 +192,7 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.WEBAPP_NAME }}
-          # slot-name: ${{ env.SLOT_NAME }}
-          slot-name: production
+          slot-name: ${{ env.SLOT_NAME }}
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_e4f1458d614f40f5947f467bb0e3f8a0 }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
