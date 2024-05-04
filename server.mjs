@@ -1,5 +1,4 @@
 /* eslint-disable no-undef */
-import "dotenv/config";
 import * as appInsights from "applicationinsights";
 
 import express from "express";
