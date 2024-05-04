@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+import "dotenv/config";
 import * as appInsights from "applicationinsights";
 
 import express from "express";
@@ -9,20 +10,18 @@ import { installGlobals } from "@remix-run/node";
 import { createRequestHandler } from "@remix-run/express";
 import sourceMapSupport from "source-map-support";
 
+import { initAppInsights, trackEvent } from "./server-utils/utils.js";
+
 sourceMapSupport.install();
 installGlobals({ nativeFetch: true });
 
 if (process.env.NODE_ENV === "production") {
-  appInsights.setup().start();
-
-  global.__appinsightsClient__ = appInsights.defaultClient;
+  initAppInsights(appInsights);
 }
 
 if (process.env.ENABLE_EMAIL_REMINDERS) {
   import("./background-jobs/index.js").then(() => {
-    global.__appinsightsClient__?.trackEvent({
-      message: "Email reminders enabled.",
-    });
+    trackEvent("Email reminders enabled.");
   });
 }
 

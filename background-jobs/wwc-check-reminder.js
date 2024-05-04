@@ -1,13 +1,12 @@
 /*eslint-env node*/
-
-import { subtractMonths } from "./utils.js";
+import dayjs from "dayjs";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const LOGIC_APP_URL = process.env.LOGIC_APP_URL;
+const isDev = process.env.NODE_ENV !== "production";
 
 export default async function sendWWCCheckReminder(prisma) {
   const today = new Date();
-  const threeMonthsAgo = subtractMonths(today, 3);
 
   const remindersToSend = await prisma.wWCCheck.findMany({
     select: {
@@ -25,7 +24,7 @@ export default async function sendWWCCheckReminder(prisma) {
         },
       },
       expiryDate: {
-        lte: threeMonthsAgo,
+        lte: dayjs(today).add(3, "months"),
       },
       OR: [
         {
@@ -33,7 +32,7 @@ export default async function sendWWCCheckReminder(prisma) {
         },
         {
           reminderSentAt: {
-            lte: threeMonthsAgo,
+            lte: dayjs(today).add(1, "month"),
           },
         },
       ],
@@ -52,7 +51,7 @@ export default async function sendWWCCheckReminder(prisma) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email,
+          email: isDev ? ADMIN_EMAIL : email,
           subject: "Working with children check renewal",
           content: `
           Your working with children check is due to be renewed in the next 3 months. You can

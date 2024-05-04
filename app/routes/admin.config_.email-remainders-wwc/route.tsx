@@ -1,8 +1,9 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import dayjs from "dayjs";
+import { Eye } from "iconoir-react";
 
 import { getPaginationRange } from "~/services";
 import { Pagination, Title } from "~/components";
@@ -66,6 +67,7 @@ export default function Index() {
               </th>
               <th align="left">Check expiry date</th>
               <th align="left">Reminder sent at</th>
+              <th align="right">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -91,6 +93,15 @@ export default function Index() {
                     </td>
                     <td className="border">
                       {dayjs(expiryDate).format("MMMM D, YYYY")}
+                    </td>
+                    <td className="border">
+                      <Link
+                        to={`/admin/users/${user.id}/wwc-check`}
+                        className="btn btn-success btn-xs w-full gap-2"
+                      >
+                        <Eye className="hidden h-4 w-4 lg:block" />
+                        View
+                      </Link>
                     </td>
                   </tr>
                 );

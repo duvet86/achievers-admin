@@ -16,6 +16,7 @@ export async function getPoliceCheckRemainders(
       expiryDate: true,
       user: {
         select: {
+          id: true,
           firstName: true,
           lastName: true,
         },

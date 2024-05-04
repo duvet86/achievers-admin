@@ -16,6 +16,7 @@ export async function getWWCCheckRemainders(
       expiryDate: true,
       user: {
         select: {
+          id: true,
           firstName: true,
           lastName: true,
         },

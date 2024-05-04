@@ -1,7 +1,8 @@
+/*eslint-env node*/
 import cron from "node-cron";
 import { PrismaClient } from "@prisma/client";
 
-import { trackTrace, trackException } from "./utils.js";
+import { trackTrace, trackException } from "../server-utils/utils.js";
 import sendPoliceCheckReminder from "./police-check-reminder.js";
 import sendWWCCheckReminder from "./wwc-check-reminder.js";
 
@@ -11,9 +12,7 @@ cron.schedule(
     const prisma = new PrismaClient();
 
     try {
-      trackTrace({
-        message: "Sending police and WWC check reminders.",
-      });
+      trackTrace("Sending police and WWC check reminders.");
 
       const policeCheckReminderCounter = await sendPoliceCheckReminder(prisma);
       const WWCCheckReminderCounter = await sendWWCCheckReminder(prisma);
@@ -21,13 +20,9 @@ cron.schedule(
       const totRemindersSent =
         policeCheckReminderCounter + WWCCheckReminderCounter;
 
-      trackTrace({
-        message: "Reminders sent: " + totRemindersSent,
-      });
+      trackTrace("Reminders sent: " + totRemindersSent);
     } catch (e) {
-      trackException({
-        exception: e,
-      });
+      trackException(e);
     } finally {
       await prisma.$disconnect();
     }

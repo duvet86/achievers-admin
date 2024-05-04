@@ -1,11 +1,12 @@
 /*eslint-env node*/
-import { subtractMonths } from "./utils.js";
+import dayjs from "dayjs";
 
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const LOGIC_APP_URL = process.env.LOGIC_APP_URL;
+const isDev = process.env.NODE_ENV !== "production";
 
 export default async function sendPoliceCheckReminder(prisma) {
   const today = new Date();
-  const threeMonthsAgo = subtractMonths(today, 3);
 
   const remindersToSend = await prisma.policeCheck.findMany({
     select: {
@@ -23,7 +24,7 @@ export default async function sendPoliceCheckReminder(prisma) {
         },
       },
       expiryDate: {
-        lte: threeMonthsAgo,
+        lte: dayjs(today).add(3, "months"),
       },
       OR: [
         {
@@ -31,7 +32,7 @@ export default async function sendPoliceCheckReminder(prisma) {
         },
         {
           reminderSentAt: {
-            lte: threeMonthsAgo,
+            lte: dayjs(today).add(1, "month"),
           },
         },
       ],
@@ -50,7 +51,7 @@ export default async function sendPoliceCheckReminder(prisma) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email,
+          email: isDev ? ADMIN_EMAIL : email,
           subject: "Police Clearance renewal",
           content: `
               Your police clearance is due to be renewed in the next 3 months. Please see your
