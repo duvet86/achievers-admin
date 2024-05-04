@@ -133,10 +133,10 @@ jobs:
           npm prune --production
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./node_modules ./build ./public ./server.mjs ./prisma ./background-jobs -r
+        run: zip release.zip ./node_modules ./build ./public ./server.mjs ./prisma ./background-jobs ./package.json -r
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: node-app
           path: release.zip
@@ -151,7 +151,7 @@ jobs:
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: node-app
 
@@ -184,4 +184,4 @@ jobs:
           az webapp start --name ${{ env.WEBAPP_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --slot ${{ env.SLOT_NAME }}
 
       - name: "Make request"
-        run: curl -X GET "https://achievers-webapp.azurewebsites.net/"
+        run: curl -X GET "https://achievers-webapp-stg.azurewebsites.net/"
