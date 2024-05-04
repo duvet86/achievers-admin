@@ -162,7 +162,7 @@ jobs:
           npm prune --production
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./node_modules ./build ./public ./server.mjs ./prisma ./background-jobs ./package.json -r
+        run: zip release.zip ./node_modules ./node_modules/.prisma ./build ./public ./server.mjs ./prisma ./background-jobs ./package.json -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
@@ -193,6 +193,7 @@ jobs:
         with:
           app-name: ${{ env.WEBAPP_NAME }}
           # slot-name: ${{ env.SLOT_NAME }}
+          slot-name: production
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_e4f1458d614f40f5947f467bb0e3f8a0 }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
