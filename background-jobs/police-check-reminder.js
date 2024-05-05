@@ -32,7 +32,7 @@ export default async function sendPoliceCheckReminder(prisma) {
         },
         {
           reminderSentAt: {
-            lte: dayjs(today).add(1, "month"),
+            lte: dayjs(today).subtract(1, "month"),
           },
         },
       ],

@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === "production") {
 
 if (process.env.ENABLE_EMAIL_REMINDERS) {
   import("./background-jobs/index.js").then(() => {
-    trackEvent("Email reminders enabled.");
+    trackEvent("EMAIL_REMINDERS_ENABLED");
   });
 }
 

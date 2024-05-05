@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "remix vite:build",
+    "start:dev": "node -r dotenv/config ./server.mjs",
     "start": "node ./server.mjs",
     "format": "prettier --write .",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
@@ -74,6 +75,7 @@
     "@vitest/coverage-v8": "^1.6.0",
     "autoprefixer": "^10.4.19",
     "daisyui": "^4.10.5",
+    "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.1",
