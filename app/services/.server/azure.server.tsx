@@ -1,3 +1,4 @@
+import { redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
 import { getTokenInfoAsync } from "./session.server";
@@ -6,10 +7,16 @@ export const MICROSOFT_GRAPH_V1_BASEURL = "https://graph.microsoft.com/v1.0";
 export const APP_ID = "35499ecd-d259-4e81-9a12-e503a69b91b1";
 export const ACHIEVERS_DOMAIN = "achieversclubwa.org.au";
 
-export enum Roles {
-  Admin = "e567add0-fec3-4c87-941a-05dd2e18cdfd",
-  Mentor = "a2ed7b54-4379-465d-873d-2e182e0bd8ef",
-}
+const IS_DEV = process.env.NODE_ENV === "development";
+
+export const ROLES = {
+  Admin: IS_DEV
+    ? "f1f43596-ed2b-4044-8979-dd78ec6ebe08"
+    : "e567add0-fec3-4c87-941a-05dd2e18cdfd",
+  Mentor: IS_DEV
+    ? "83c9c558-9bbb-498d-8082-fc9dc1884618"
+    : "a2ed7b54-4379-465d-873d-2e182e0bd8ef",
+} as const;
 
 interface AppRoleAssignment {
   id: string;
@@ -17,6 +24,18 @@ interface AppRoleAssignment {
   principalDisplayName: string;
   principalId: string;
   resourceDisplayName: string;
+}
+
+interface AzureError {
+  error: {
+    code: string;
+    message: string;
+    innerError: {
+      date: string;
+      "request-id": string;
+      "client-request-id": string;
+    };
+  };
 }
 
 interface AzureUserWithRole extends AzureUser {
@@ -204,7 +223,16 @@ async function getAzureUserByIdAsync(
     },
   );
 
-  return await response.json();
+  const azureUser = await response.json();
+
+  if (
+    (azureUser as AzureError).error &&
+    (azureUser as AzureError).error.code === "Authorization_RequestDenied"
+  ) {
+    throw redirect("/401");
+  }
+
+  return azureUser;
 }
 
 export async function getAzureUserWithRolesByIdAsync(

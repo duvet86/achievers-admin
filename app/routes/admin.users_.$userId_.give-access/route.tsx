@@ -14,7 +14,7 @@ import {
   APP_ID,
   assignRoleToUserAsync,
   inviteUserToAzureAsync,
-  Roles,
+  ROLES,
   trackTrace,
 } from "~/services/.server";
 import { getCurrentHost } from "~/services";
@@ -52,7 +52,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const assignRoleResponse = await assignRoleToUserAsync(request, azureUserId, {
     principalId: azureUserId,
-    appRoleId: Roles.Mentor,
+    appRoleId: ROLES.Mentor,
     resourceId: APP_ID,
   });
 

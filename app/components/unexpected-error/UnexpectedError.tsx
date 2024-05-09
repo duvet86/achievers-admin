@@ -4,7 +4,7 @@ import { WarningTriangle, LogOut, Home } from "iconoir-react";
 
 export function UnexpectedError() {
   return (
-    <div className="hero min-h-screen bg-base-200">
+    <div className="hero min-h-screen bg-base-100">
       <div className="hero-content">
         <div className="flex max-w-md flex-col items-center justify-center">
           <h1 className="mt-4 flex h-40 flex-col items-center text-4xl font-extrabold tracking-tight">

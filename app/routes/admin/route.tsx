@@ -6,7 +6,7 @@ import { useLoaderData } from "@remix-run/react";
 import {
   getAzureUserWithRolesByIdAsync,
   getCurrentUserADIdAsync,
-  Roles,
+  ROLES,
   version,
 } from "~/services/.server";
 import { getEnvironment } from "~/services";
@@ -25,7 +25,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     ({ appRoleId }) => appRoleId,
   );
 
-  const isAdmin = sessionUserRoles.includes(Roles.Admin);
+  const isAdmin = sessionUserRoles.includes(ROLES.Admin);
 
   if (!isAdmin) {
     throw redirect("/401");

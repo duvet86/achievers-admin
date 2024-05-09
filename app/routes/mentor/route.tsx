@@ -5,7 +5,7 @@ import { useLoaderData } from "@remix-run/react";
 
 import { getEnvironment } from "~/services";
 import {
-  Roles,
+  ROLES,
   getAzureUserWithRolesByIdAsync,
   getCurrentUserADIdAsync,
   getUserByAzureADIdAsync,
@@ -23,7 +23,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     ({ appRoleId }) => appRoleId,
   );
 
-  const isMentor = sessionUserRoles.includes(Roles.Mentor);
+  const isMentor = sessionUserRoles.includes(ROLES.Mentor);
 
   if (!isMentor) {
     throw redirect("/401");

@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === "production") {
   initAppInsights(appInsights);
 }
 
-if (process.env.ENABLE_EMAIL_REMINDERS) {
+if (process.env.ENABLE_EMAIL_REMINDERS === "true") {
   import("./background-jobs/index.js").then(() => {
     trackEvent("EMAIL_REMINDERS_ENABLED");
   });

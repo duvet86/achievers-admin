@@ -4,7 +4,7 @@ import { redirect } from "@remix-run/node";
 
 import {
   getAzureUserWithRolesByIdAsync,
-  Roles,
+  ROLES,
   getUserByAzureADIdAsync,
   getCurrentUserADIdAsync,
 } from "~/services/.server";
@@ -17,7 +17,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     ({ appRoleId }) => appRoleId,
   );
 
-  if (userRoles.includes(Roles.Admin)) {
+  if (userRoles.includes(ROLES.Admin)) {
     return redirect("/admin/home");
   }
 
@@ -28,7 +28,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     return redirect("/mentor/volunteer-agreement");
   }
 
-  if (userRoles.includes(Roles.Mentor)) {
+  if (userRoles.includes(ROLES.Mentor)) {
     return redirect("/mentor/home");
   }
 
