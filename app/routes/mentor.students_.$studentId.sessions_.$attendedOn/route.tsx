@@ -102,7 +102,8 @@ export default function Index() {
   } = useLoaderData<typeof loader>();
 
   const editorStateRef = useRef<EditorState>();
-  const { state, submit } = useFetcher();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { state, submit } = (useFetcher as any)();
 
   const isLoading = state === "loading";
   const isReadOnlyEditor = completedOn !== null || signedOffOn !== null;

@@ -30,7 +30,8 @@ export default function TermCalendar({
   datesInTerm,
   students,
 }: Props) {
-  const { state, submit } = useFetcher();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { state, submit } = (useFetcher as any)();
 
   const isLoading = state === "loading";
 

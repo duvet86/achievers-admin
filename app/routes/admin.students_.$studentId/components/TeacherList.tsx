@@ -12,7 +12,8 @@ interface Props {
 }
 
 export function TeacherList({ loaderData: { student, isNewStudent } }: Props) {
-  const { state, Form, submit } = useFetcher();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { state, Form, submit } = (useFetcher as any)();
 
   const isLoading = state === "loading";
   const noTeachersAssigned =

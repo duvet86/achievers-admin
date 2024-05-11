@@ -12,7 +12,7 @@ export async function getNextSessionAsync(userId: User["id"]) {
     where: {
       userId,
       attendedOn: {
-        gte: new Date(),
+        gt: new Date(),
       },
     },
     select: {
@@ -44,7 +44,7 @@ export async function getSessionsAsync(
       chapterId,
       userId,
       attendedOn: {
-        lte: dayjs().add(1, "week").toDate(),
+        lte: new Date(),
       },
     },
     orderBy: {

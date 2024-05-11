@@ -68,7 +68,8 @@ export default function Index() {
     availableMentors,
     studentWithMentors: { firstName, lastName, mentorToStudentAssignement },
   } = useLoaderData<typeof loader>();
-  const { state, Form, submit } = useFetcher();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { state, Form, submit } = (useFetcher as any)();
 
   const isLoading = state === "loading";
 

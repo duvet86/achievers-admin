@@ -61,7 +61,7 @@ export default function Index() {
 
   return (
     <div className="-m-4 h-full p-4">
-      <article className="prose relative mb-8 h-24 max-w-none lg:h-28">
+      <article className="prose relative mb-4 h-24 max-w-none lg:h-28">
         <div className="h-24 w-full rounded-md bg-achievers opacity-75 lg:h-28"></div>
         <h1 className="absolute left-6 top-6 hidden lg:block">
           Welcome {mentorFullName}
@@ -71,24 +71,20 @@ export default function Index() {
         </h2>
       </article>
 
-      <div className="mb-12">
-        {student && nextSessionDate ? (
-          <>
-            <div>
-              Next session:{" "}
-              <span className="font-medium">{nextSessionDate}</span>
+      {student && (
+        <div className="stats w-96 text-primary-content">
+          <div className="stat">
+            <div className="stat-title">
+              Next session with{" "}
+              <span className="font-bold">
+                {student.firstName} {student.lastName}
+              </span>{" "}
+              on
             </div>
-            <div>
-              With{" "}
-              <span className="font-medium">
-                {student?.firstName} {student?.lastName}
-              </span>
-            </div>
-          </>
-        ) : (
-          "No sessions available"
-        )}
-      </div>
+            <div className="stat-value">{nextSessionDate}</div>
+          </div>
+        </div>
+      )}
 
       <SubTitle>Recent sessions</SubTitle>
 

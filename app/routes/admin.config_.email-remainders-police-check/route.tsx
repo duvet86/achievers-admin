@@ -95,10 +95,10 @@ export default function Index() {
                       {user.firstName} {user.lastName}
                     </td>
                     <td className="border">
-                      {dayjs(reminderSentAt).format("MMMM D, YYYY")}
+                      {dayjs(expiryDate).format("MMMM D, YYYY")}
                     </td>
                     <td className="border">
-                      {dayjs(expiryDate).format("MMMM D, YYYY")}
+                      {dayjs(reminderSentAt).format("MMMM D, YYYY")}
                     </td>
                     <td className="border">
                       <Link
