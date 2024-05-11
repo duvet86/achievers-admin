@@ -8,14 +8,15 @@ export const APP_ID = "35499ecd-d259-4e81-9a12-e503a69b91b1";
 export const ACHIEVERS_DOMAIN = "achieversclubwa.org.au";
 
 const IS_DEV = process.env.NODE_ENV === "development";
+const IS_CI = !!process.env.CI;
 
 export const ROLES = {
   Admin:
-    IS_DEV && !process.env.CI
+    IS_DEV || IS_CI
       ? "f1f43596-ed2b-4044-8979-dd78ec6ebe08"
       : "e567add0-fec3-4c87-941a-05dd2e18cdfd",
   Mentor:
-    IS_DEV && !process.env.CI
+    IS_DEV || IS_CI
       ? "83c9c558-9bbb-498d-8082-fc9dc1884618"
       : "a2ed7b54-4379-465d-873d-2e182e0bd8ef",
 } as const;
