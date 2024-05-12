@@ -1,6 +1,7 @@
 import { redirect } from "@remix-run/node";
 
 import {
+  ROLES,
   getAzureUserWithRolesByIdAsync,
   getCurrentUserADIdAsync,
   getUserByAzureADIdAsync,
@@ -47,7 +48,7 @@ describe("Loader", () => {
           principalDisplayName: "",
           principalId: "",
           resourceDisplayName: "",
-          appRoleId: "e567add0-fec3-4c87-941a-05dd2e18cdfd", // admin
+          appRoleId: ROLES.Admin,
           roleName: "",
         },
       ],
@@ -78,7 +79,7 @@ describe("Loader", () => {
           principalDisplayName: "",
           principalId: "",
           resourceDisplayName: "",
-          appRoleId: "a2ed7b54-4379-465d-873d-2e182e0bd8ef", // mentor
+          appRoleId: ROLES.Mentor,
           roleName: "",
         },
       ],
@@ -139,7 +140,7 @@ describe("Loader", () => {
           principalDisplayName: "",
           principalId: "",
           resourceDisplayName: "",
-          appRoleId: "a2ed7b54-4379-465d-873d-2e182e0bd8ef", // mentor
+          appRoleId: ROLES.Mentor,
           roleName: "",
         },
       ],
