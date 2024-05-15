@@ -9,3 +9,13 @@
 .content-area {
   height: calc(100vh - theme(spacing.44));
 }
+
+.blink {
+  animation: blinker 1.4s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}

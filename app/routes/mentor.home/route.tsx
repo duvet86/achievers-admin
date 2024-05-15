@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 
-import { StatsReport, Check, Xmark } from "iconoir-react";
+import { StatsReport, Check, Xmark, InfoCircle } from "iconoir-react";
 
 import {
   getCurrentUserADIdAsync,
@@ -72,18 +72,20 @@ export default function Index() {
       </article>
 
       {student && (
-        <div className="stats w-96 text-primary-content">
-          <div className="stat">
-            <div className="stat-title">
-              Next session with{" "}
-              <span className="font-bold">
+        <>
+          <SubTitle>Next session</SubTitle>
+
+          <div className="mb-8 flex items-center gap-4">
+            <InfoCircle className="blink h-12 w-12 text-primary" />
+
+            <div className="font-bold">
+              <span className="text-4xl">{nextSessionDate}</span> with{" "}
+              <span className="text-3xl">
                 {student.firstName} {student.lastName}
-              </span>{" "}
-              on
+              </span>
             </div>
-            <div className="stat-value">{nextSessionDate}</div>
           </div>
-        </div>
+        </>
       )}
 
       <SubTitle>Recent sessions</SubTitle>

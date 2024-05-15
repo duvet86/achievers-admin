@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const LOGIC_APP_URL = process.env.LOGIC_APP_URL;
-const isDev = process.env.NODE_ENV !== "production";
+const IS_DEV = process.env.NODE_ENV !== "production";
 
 export default async function sendPoliceCheckReminder(prisma) {
   const today = new Date();
@@ -18,13 +18,13 @@ export default async function sendPoliceCheckReminder(prisma) {
       },
     },
     where: {
-      user: {
-        endDate: {
-          not: null,
+      AND: {
+        user: {
+          endDate: null,
         },
-      },
-      expiryDate: {
-        lte: dayjs(today).add(3, "months"),
+        expiryDate: {
+          lte: dayjs(today).add(3, "months"),
+        },
       },
       OR: [
         {
@@ -44,14 +44,14 @@ export default async function sendPoliceCheckReminder(prisma) {
   }
 
   await Promise.all(
-    remindersToSend.map(async ({ user: { email } }) => {
-      const resp = await fetch(LOGIC_APP_URL, {
+    remindersToSend.map(async ({ user: { email } }) =>
+      fetch(LOGIC_APP_URL, {
         method: "post",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: isDev ? ADMIN_EMAIL : email,
+          email: IS_DEV ? ADMIN_EMAIL : email,
           subject: "Police Clearance renewal",
           content: `
               Your police clearance is due to be renewed in the next 3 months. Please see your
@@ -64,14 +64,8 @@ export default async function sendPoliceCheckReminder(prisma) {
               Many thanks,
               Achievers Club WA`,
         }),
-      });
-
-      if (!resp.ok) {
-        throw new Error();
-      }
-
-      return await resp.text();
-    }),
+      }),
+    ),
   );
 
   const counter = await prisma.policeCheck.updateMany({
