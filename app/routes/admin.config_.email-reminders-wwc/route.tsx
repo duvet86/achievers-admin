@@ -8,10 +8,7 @@ import { Eye } from "iconoir-react";
 import { getPaginationRange } from "~/services";
 import { Pagination, Title } from "~/components";
 
-import {
-  getPoliceCheckRemainders,
-  getPoliceCheckRemaindersCount,
-} from "./services.server";
+import { getWWCCheckReminders, getWWCRemindersCount } from "./services.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
@@ -22,10 +19,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
 
-  const policeCheckEmailRemaindersSentCount =
-    await getPoliceCheckRemaindersCount();
+  const policeCheckEmailRemindersSentCount = await getWWCRemindersCount();
 
-  const totalPageCount = Math.ceil(policeCheckEmailRemaindersSentCount / 10);
+  const totalPageCount = Math.ceil(policeCheckEmailRemindersSentCount / 10);
 
   let currentPageNumber = 0;
   if (previousPageSubmit !== null && pageNumber > 0) {
@@ -38,28 +34,23 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
 
-  const policeCheckEmailRemaindersSent =
-    await getPoliceCheckRemainders(currentPageNumber);
+  const wwcEmailRemindersSent = await getWWCCheckReminders(currentPageNumber);
 
   return json({
     range,
     currentPageNumber,
     totalPageCount,
-    policeCheckEmailRemaindersSent,
+    wwcEmailRemindersSent,
   });
 }
 
 export default function Index() {
-  const {
-    policeCheckEmailRemaindersSent,
-    range,
-    currentPageNumber,
-    totalPageCount,
-  } = useLoaderData<typeof loader>();
+  const { wwcEmailRemindersSent, range, currentPageNumber, totalPageCount } =
+    useLoaderData<typeof loader>();
 
   return (
     <Form>
-      <Title>Police check email remainders</Title>
+      <Title>WWC email reminders</Title>
 
       <div className="overflow-auto bg-white">
         <table className="table">
@@ -77,14 +68,14 @@ export default function Index() {
             </tr>
           </thead>
           <tbody>
-            {policeCheckEmailRemaindersSent.length === 0 && (
+            {wwcEmailRemindersSent.length === 0 && (
               <tr>
                 <td className="border" colSpan={6}>
-                  <i>No remainders sent</i>
+                  <i>No reminders sent</i>
                 </td>
               </tr>
             )}
-            {policeCheckEmailRemaindersSent.map(
+            {wwcEmailRemindersSent.map(
               ({ id, user, expiryDate, reminderSentAt }, index) => {
                 return (
                   <tr key={id}>
@@ -102,7 +93,7 @@ export default function Index() {
                     </td>
                     <td className="border">
                       <Link
-                        to={`/admin/users/${user.id}/police-check`}
+                        to={`/admin/users/${user.id}/wwc-check`}
                         className="btn btn-success btn-xs w-full gap-2"
                       >
                         <Eye className="hidden h-4 w-4 lg:block" />

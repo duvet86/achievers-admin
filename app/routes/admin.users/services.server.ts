@@ -70,6 +70,7 @@ export async function getUsersAsync(
         select: {
           createdAt: true,
           expiryDate: true,
+          reminderSentAt: true,
         },
       },
       references: {
@@ -86,6 +87,7 @@ export async function getUsersAsync(
         select: {
           createdAt: true,
           expiryDate: true,
+          reminderSentAt: true,
         },
       },
     },

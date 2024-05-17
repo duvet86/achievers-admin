@@ -3,7 +3,7 @@ import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 
 import { Check, Xmark, CheckCircle } from "iconoir-react";
 
-import { version, isEmailRemaindersCheckEnabled } from "~/services/.server";
+import { version, isEmailRemindersCheckEnabled } from "~/services/.server";
 import { Title } from "~/components";
 
 import { sendEmailRemaniders } from "./services.server";
@@ -11,7 +11,7 @@ import { sendEmailRemaniders } from "./services.server";
 export async function loader() {
   return json({
     version,
-    isEmailRemaindersCheckEnabled,
+    isEmailRemindersCheckEnabled: isEmailRemindersCheckEnabled,
   });
 }
 
@@ -24,7 +24,7 @@ export async function action() {
 }
 
 export default function Index() {
-  const { version, isEmailRemaindersCheckEnabled } =
+  const { version, isEmailRemindersCheckEnabled } =
     useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
 
@@ -38,16 +38,16 @@ export default function Index() {
         </p>
 
         <div className="mb-6 flex items-center gap-4">
-          <span className="font-bold">Email remainders enabled:</span>
-          {isEmailRemaindersCheckEnabled ? (
+          <span className="font-bold">Email reminders enabled:</span>
+          {isEmailRemindersCheckEnabled ? (
             <Check className="text-success" />
           ) : (
             <Xmark className="text-error" />
           )}
-          <Link to="email-remainders-police-check" className="btn w-48">
+          <Link to="email-reminders-police-check" className="btn w-48">
             View Police check
           </Link>
-          <Link to="email-remainders-wwc" className="btn w-48">
+          <Link to="email-reminders-wwc" className="btn w-48">
             View WWC
           </Link>
           <Form method="POST">

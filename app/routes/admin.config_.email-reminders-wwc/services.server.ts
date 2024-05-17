@@ -1,6 +1,6 @@
 import { prisma } from "~/db.server";
 
-export async function getWWCCheckRemainders(
+export async function getWWCCheckReminders(
   pageNumber: number,
   numberItems = 10,
 ) {
@@ -27,7 +27,7 @@ export async function getWWCCheckRemainders(
   });
 }
 
-export async function getWWCRemaindersCount() {
+export async function getWWCRemindersCount() {
   return await prisma.wWCCheck.count({
     where: {
       reminderSentAt: {

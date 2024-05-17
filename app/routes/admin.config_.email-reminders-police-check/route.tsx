@@ -9,8 +9,8 @@ import { getPaginationRange } from "~/services";
 import { Pagination, Title } from "~/components";
 
 import {
-  getWWCCheckRemainders,
-  getWWCRemaindersCount,
+  getPoliceCheckReminders,
+  getPoliceCheckRemindersCount,
 } from "./services.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -22,9 +22,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
 
-  const policeCheckEmailRemaindersSentCount = await getWWCRemaindersCount();
+  const policeCheckEmailRemindersSentCount =
+    await getPoliceCheckRemindersCount();
 
-  const totalPageCount = Math.ceil(policeCheckEmailRemaindersSentCount / 10);
+  const totalPageCount = Math.ceil(policeCheckEmailRemindersSentCount / 10);
 
   let currentPageNumber = 0;
   if (previousPageSubmit !== null && pageNumber > 0) {
@@ -37,23 +38,28 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
 
-  const wwcEmailRemaindersSent = await getWWCCheckRemainders(currentPageNumber);
+  const policeCheckEmailRemindersSent =
+    await getPoliceCheckReminders(currentPageNumber);
 
   return json({
     range,
     currentPageNumber,
     totalPageCount,
-    wwcEmailRemaindersSent,
+    policeCheckEmailRemindersSent,
   });
 }
 
 export default function Index() {
-  const { wwcEmailRemaindersSent, range, currentPageNumber, totalPageCount } =
-    useLoaderData<typeof loader>();
+  const {
+    policeCheckEmailRemindersSent,
+    range,
+    currentPageNumber,
+    totalPageCount,
+  } = useLoaderData<typeof loader>();
 
   return (
     <Form>
-      <Title>WWC email remainders</Title>
+      <Title>Police check email reminders</Title>
 
       <div className="overflow-auto bg-white">
         <table className="table">
@@ -71,14 +77,14 @@ export default function Index() {
             </tr>
           </thead>
           <tbody>
-            {wwcEmailRemaindersSent.length === 0 && (
+            {policeCheckEmailRemindersSent.length === 0 && (
               <tr>
                 <td className="border" colSpan={6}>
-                  <i>No remainders sent</i>
+                  <i>No reminders sent</i>
                 </td>
               </tr>
             )}
-            {wwcEmailRemaindersSent.map(
+            {policeCheckEmailRemindersSent.map(
               ({ id, user, expiryDate, reminderSentAt }, index) => {
                 return (
                   <tr key={id}>
@@ -96,7 +102,7 @@ export default function Index() {
                     </td>
                     <td className="border">
                       <Link
-                        to={`/admin/users/${user.id}/wwc-check`}
+                        to={`/admin/users/${user.id}/police-check`}
                         className="btn btn-success btn-xs w-full gap-2"
                       >
                         <Eye className="hidden h-4 w-4 lg:block" />

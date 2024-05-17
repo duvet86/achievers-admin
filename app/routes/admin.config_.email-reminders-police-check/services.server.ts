@@ -1,6 +1,6 @@
 import { prisma } from "~/db.server";
 
-export async function getPoliceCheckRemainders(
+export async function getPoliceCheckReminders(
   pageNumber: number,
   numberItems = 10,
 ) {
@@ -27,7 +27,7 @@ export async function getPoliceCheckRemainders(
   });
 }
 
-export async function getWWCCheckRemainders() {
+export async function getWWCCheckReminders() {
   return await prisma.wWCCheck.findMany({
     where: {
       reminderSentAt: {
@@ -48,7 +48,7 @@ export async function getWWCCheckRemainders() {
   });
 }
 
-export async function getPoliceCheckRemaindersCount() {
+export async function getPoliceCheckRemindersCount() {
   return await prisma.policeCheck.count({
     where: {
       reminderSentAt: {

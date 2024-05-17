@@ -94,6 +94,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
       isAnyChecksExpired:
         isDateExpired(user.policeCheck?.expiryDate) ||
         isDateExpired(user.wwcCheck?.expiryDate),
+      isReminderSent:
+        user.policeCheck?.reminderSentAt !== null ||
+        user.wwcCheck?.reminderSentAt !== null,
     })),
     searchTerm,
   });
@@ -169,6 +172,7 @@ export default function Index() {
                     checksCompleted,
                     endDate,
                     isAnyChecksExpired,
+                    isReminderSent,
                   },
                   index,
                 ) => {
@@ -200,13 +204,22 @@ export default function Index() {
                       <td className="border">{email}</td>
                       <td className="border">{chapter.name}</td>
                       <td className="border">
-                        <div className="flex gap-4">
+                        <div className="flex items-center gap-4">
                           <span>{checksCompleted}/8</span>
-                          {isAnyChecksExpired && (
-                            <span className="flex items-center gap-1 text-warning">
-                              <WarningTriangle /> Expired checks
-                            </span>
-                          )}
+                          <div className="flex flex-col gap-1">
+                            {isAnyChecksExpired && (
+                              <span className="flex items-center gap-1 text-warning">
+                                <WarningTriangle className="h-4 w-4" /> Expired
+                                checks
+                              </span>
+                            )}
+                            {isReminderSent && (
+                              <span className="flex items-center gap-1 text-success">
+                                <CheckCircle className="h-4 w-4" /> Reminder
+                                sent
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </td>
                       <td className="border">

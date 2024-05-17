@@ -1,2 +1,2 @@
 export { version } from "../../../package.json";
-export const isEmailRemaindersCheckEnabled = process.env.ENABLE_EMAIL_REMINDERS;
+export const isEmailRemindersCheckEnabled = process.env.ENABLE_EMAIL_REMINDERS;
