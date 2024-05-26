@@ -66,16 +66,16 @@ const microsoftStrategy = new MicrosoftStrategy(
   {
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    redirectUri: process.env.REDIRECT_URI,
-    tenantId: process.env.TENANT_ID, // optional - necessary for organization without multitenant (see below)
-    scope: SCOPE, // optional
-    prompt: "login", // optional
+    redirectURI: process.env.REDIRECT_URI,
+    tenantId: process.env.TENANT_ID,
+    scopes: SCOPE,
+    prompt: "login",
   },
-  async ({ extraParams, accessToken, refreshToken }) => ({
-    idToken: extraParams.id_token,
-    accessToken: accessToken,
-    expiresOn: extraParams.expires_in.toString(),
-    refreshToken: refreshToken ?? null,
+  async ({ tokens }) => ({
+    idToken: tokens.id_token,
+    accessToken: tokens.access_token,
+    expiresOn: tokens.expires_in.toString(),
+    refreshToken: tokens.refresh_token ?? null,
     issuedAt: new Date().toISOString(),
   }),
 );

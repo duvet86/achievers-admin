@@ -1,18 +1,22 @@
 import type { StrategyVerifyCallback } from "remix-auth";
 import type {
   OAuth2Profile,
+  OAuth2StrategyOptions,
   OAuth2StrategyVerifyParams,
 } from "remix-auth-oauth2";
 
 import { OAuth2Strategy } from "remix-auth-oauth2";
 
-export const SCOPE = "openid profile email offline_access";
+export const SCOPE = ["openid", "profile", "email", "offline_access"];
 
-interface MicrosoftStrategyOptions {
-  clientId: string;
-  clientSecret: string;
-  redirectUri: string;
-  scope?: string;
+interface MicrosoftStrategyOptions
+  extends Omit<
+    OAuth2StrategyOptions,
+    | "authorizationEndpoint"
+    | "tokenEndpoint"
+    | "authenticateWith"
+    | "codeChallengeMethod"
+  > {
   tenantId?: string;
   prompt?: string;
 }
@@ -57,14 +61,13 @@ export class MicrosoftStrategy<TUser> extends OAuth2Strategy<
   private prompt: string;
 
   name = "microsoft";
-  scope: string;
 
   constructor(
     {
       clientId,
       clientSecret,
-      redirectUri,
-      scope,
+      redirectURI,
+      scopes,
       prompt,
       tenantId = "common",
     }: MicrosoftStrategyOptions,
@@ -75,52 +78,23 @@ export class MicrosoftStrategy<TUser> extends OAuth2Strategy<
   ) {
     super(
       {
-        clientID: clientId,
+        clientId,
         clientSecret,
-        callbackURL: redirectUri,
-        authorizationURL: `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/authorize`,
-        tokenURL: `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
+        redirectURI,
+        authorizationEndpoint: `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/authorize`,
+        tokenEndpoint: `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
+        authenticateWith: "request_body",
+        codeChallengeMethod: "S256",
+        scopes,
       },
       verify,
     );
-    this.scope = scope ?? SCOPE;
     this.prompt = prompt ?? "none";
   }
 
-  protected authorizationParams() {
-    return new URLSearchParams({
-      scope: this.scope,
-      prompt: this.prompt,
-    });
+  protected authorizationParams(params: URLSearchParams): URLSearchParams {
+    params.set("prompt", this.prompt);
+
+    return params;
   }
-}
-
-export async function refreshTokenAsync(
-  tenantId: string,
-  clientId: string,
-  clientSecret: string,
-  refreshToken: string,
-  redirectURI: string,
-): Promise<RefreshTokenResponse> {
-  const body = {
-    client_id: clientId,
-    scope: SCOPE,
-    code: refreshToken,
-    redirect_uri: redirectURI,
-    grant_type: "authorization_code",
-    client_secret: clientSecret,
-  };
-
-  const response = await fetch(
-    `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: JSON.stringify(body),
-    },
-  );
-
-  return await response.json();
 }
