@@ -84,6 +84,7 @@ model EoIProfile {
   mentoringLevel      String
   heardAboutUs        String
   preferredFrequency  String
+  preferredSubject    String  @default("N/A")
   isOver18            Boolean
   comment             String  @db.Text
 
