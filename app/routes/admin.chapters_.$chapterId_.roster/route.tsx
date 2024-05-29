@@ -55,13 +55,13 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
   await createSessionAsync(
     {
-      attendedOn: bodyData.attendOn,
+      attendedOn: bodyData.attendedOn,
       chapterId: Number(params.chapterId),
       studentId: Number(bodyData.studentId),
       userId: Number(bodyData.userId),
     },
     {
-      attendedOn: bodyData.attendOn,
+      attendedOn: bodyData.attendedOn,
       chapterId: Number(params.chapterId),
       studentId: Number(bodyData.studentId),
       userId: Number(bodyData.userId),

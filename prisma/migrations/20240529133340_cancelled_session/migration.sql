@@ -19,8 +19,8 @@ ALTER TABLE `MentorToStudentAssignement`
 ALTER TABLE `MentorToStudentAssignement`
     ADD COLUMN `id` INTEGER NOT NULL AUTO_INCREMENT FIRST,
     ADD PRIMARY KEY (`id`),
-    ADD CONSTRAINT `MentorToStudentAssignement_studentId_fkey` FOREIGN KEY (`studentId`) REFERENCES `student` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-    ADD CONSTRAINT `MentorToStudentAssignement_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+    ADD CONSTRAINT `MentorToStudentAssignement_studentId_fkey` FOREIGN KEY (`studentId`) REFERENCES `Student` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+    ADD CONSTRAINT `MentorToStudentAssignement_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AlterTable
 ALTER TABLE `MentorToStudentSession`
@@ -34,9 +34,9 @@ ALTER TABLE `MentorToStudentSession`
     ADD COLUMN `isCancelled` BOOLEAN NOT NULL DEFAULT false,
     ADD COLUMN `reasonCancelled` TEXT NULL,
     ADD PRIMARY KEY (`id`),
-    ADD CONSTRAINT `MentorToStudentSession_chapterId_fkey` FOREIGN KEY (`chapterId`) REFERENCES `chapter` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-	  ADD CONSTRAINT `MentorToStudentSession_studentId_fkey` FOREIGN KEY (`studentId`) REFERENCES `student` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-	  ADD CONSTRAINT `MentorToStudentSession_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+    ADD CONSTRAINT `MentorToStudentSession_chapterId_fkey` FOREIGN KEY (`chapterId`) REFERENCES `Chapter` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+	  ADD CONSTRAINT `MentorToStudentSession_studentId_fkey` FOREIGN KEY (`studentId`) REFERENCES `Student` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+	  ADD CONSTRAINT `MentorToStudentSession_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- CreateIndex
 CREATE UNIQUE INDEX `MentorToStudentAssignement_userId_studentId_key` ON `MentorToStudentAssignement`(`userId`, `studentId`);

@@ -11,7 +11,7 @@ dayjs.extend(isBetween);
 export interface SessionCommand {
   studentId: string;
   userId: string;
-  attendOn: string;
+  attendedOn: string;
 }
 
 export async function getSchoolTermsForYearAsync(
