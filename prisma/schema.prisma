@@ -292,6 +292,8 @@ model ImportedStudentHistory {
 }
 
 model MentorToStudentAssignement {
+  id Int @id @default(autoincrement())
+
   user      User    @relation(fields: [userId], references: [id])
   userId    Int
   student   Student @relation(fields: [studentId], references: [id])
@@ -300,26 +302,30 @@ model MentorToStudentAssignement {
   assignedBy String
   assignedAt DateTime @default(now())
 
-  @@id([userId, studentId])
+  @@unique([userId, studentId])
 }
 
 model MentorToStudentSession {
-  user       User     @relation(fields: [userId], references: [id])
-  userId     Int
-  student    Student  @relation(fields: [studentId], references: [id])
-  studentId  Int
-  chapter    Chapter  @relation(fields: [chapterId], references: [id])
-  chapterId  Int
-  attendedOn DateTime
+  id Int @id @default(autoincrement())
 
-  report      String?   @db.Text
-  completedOn DateTime?
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+  student     Student  @relation(fields: [studentId], references: [id])
+  studentId   Int
+  chapter     Chapter  @relation(fields: [chapterId], references: [id])
+  chapterId   Int
+  attendedOn  DateTime
+  isCancelled Boolean  @default(false)
+
+  report          String?   @db.Text
+  completedOn     DateTime?
+  reasonCancelled String?   @db.Text
 
   reportFeedback     String?   @db.Text
   signedOffOn        DateTime?
   signedOffByAzureId String?
 
-  @@id([userId, studentId, chapterId, attendedOn])
+  @@unique([userId, studentId, chapterId, attendedOn])
 }
 
 model SchoolTerm {
