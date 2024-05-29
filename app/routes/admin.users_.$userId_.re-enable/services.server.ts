@@ -6,7 +6,6 @@ export async function getUserByIdAsync(id: number) {
       id,
     },
     select: {
-      email: true,
       firstName: true,
       lastName: true,
     },

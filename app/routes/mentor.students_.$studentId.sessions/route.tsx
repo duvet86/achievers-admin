@@ -147,20 +147,20 @@ export default function Index() {
                       {dayjs(attendedOn).format("MMMM D, YYYY")}
                     </td>
                     <td align="left">
-                      {signedOffOn ? (
+                      {completedOn ? (
                         <div className="flex items-center gap-2">
                           <Check className="h-4 w-4 text-success" />
-                          {dayjs(signedOffOn).format("MMMM D, YYYY")}
+                          {dayjs(completedOn).format("MMMM D, YYYY")}
                         </div>
                       ) : (
                         <Xmark className="h-4 w-4 text-error" />
                       )}
                     </td>
                     <td align="left">
-                      {completedOn ? (
+                      {signedOffOn ? (
                         <div className="flex items-center gap-2">
                           <Check className="h-4 w-4 text-success" />
-                          {dayjs(completedOn).format("MMMM D, YYYY")}
+                          {dayjs(signedOffOn).format("MMMM D, YYYY")}
                         </div>
                       ) : (
                         <Xmark className="h-4 w-4 text-error" />

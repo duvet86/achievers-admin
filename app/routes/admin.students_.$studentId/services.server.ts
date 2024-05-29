@@ -38,6 +38,7 @@ export async function getStudentByIdAsync(id: number) {
       emergencyContactEmail: true,
       emergencyContactAddress: true,
       startDate: true,
+      endDate: true,
       guardian: {
         select: {
           id: true,
