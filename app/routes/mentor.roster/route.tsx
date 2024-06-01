@@ -1,4 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { SessionCommandRequest } from "./services.server";
 
 import {
   Form,
@@ -24,14 +25,6 @@ import {
   removeSessionAsync,
 } from "./services.server";
 import TermCalendar from "./components/TermCalendar";
-
-export interface SessionCommandRequest {
-  action: "assign" | "remove";
-  chapterId: number;
-  studentId: number;
-  userId: number;
-  attendedOn: string;
-}
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
@@ -81,12 +74,7 @@ export async function action({ request }: ActionFunctionArgs) {
       userId: Number(bodyData.userId),
     });
   } else {
-    await removeSessionAsync({
-      attendedOn: bodyData.attendedOn,
-      chapterId: Number(bodyData.chapterId),
-      studentId: Number(bodyData.studentId),
-      userId: Number(bodyData.userId),
-    });
+    await removeSessionAsync(Number(bodyData.sessionId));
   }
 
   return json({
@@ -137,15 +125,17 @@ export default function Index() {
       </Form>
 
       {selectedStudent && (
-        <TermCalendar
-          userId={userId}
-          chapterId={chapterId}
-          datesInTerm={datesInTerm}
-          student={selectedStudent}
-          sessionDateToMentorIdForAllStudentsLookup={
-            sessionDateToMentorIdForAllStudentsLookup
-          }
-        />
+        <div className="relative">
+          <TermCalendar
+            userId={userId}
+            chapterId={chapterId}
+            datesInTerm={datesInTerm}
+            student={selectedStudent}
+            sessionDateToMentorIdForAllStudentsLookup={
+              sessionDateToMentorIdForAllStudentsLookup
+            }
+          />
+        </div>
       )}
     </>
   );

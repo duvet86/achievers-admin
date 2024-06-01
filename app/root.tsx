@@ -40,7 +40,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="relative h-full">
         {isLoading && (
-          <div className="absolute z-20 flex h-full w-full justify-center bg-slate-300 bg-opacity-50 pt-60">
+          <div className="absolute z-50 flex h-full w-full justify-center bg-slate-300 bg-opacity-50 pt-60">
             <div>
               <LoadingSpinner dark large />
             </div>

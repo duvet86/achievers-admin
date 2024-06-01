@@ -15,6 +15,26 @@ export interface SessionCommand {
   attendedOn: string;
 }
 
+export type SessionLookup = Record<
+  string,
+  | {
+      sessionId: number;
+      userId: number;
+      hasReport: boolean;
+      isCancelled: boolean;
+    }
+  | undefined
+>;
+
+export interface SessionCommandRequest {
+  action: "assign" | "remove";
+  sessionId: string | undefined;
+  chapterId: number;
+  studentId: number;
+  userId: number;
+  attendedOn: string;
+}
+
 export async function getSchoolTermsForYearAsync(
   year: number,
 ): Promise<Term[]> {
@@ -82,30 +102,36 @@ export async function getStudentsAsync(
       },
       mentorToStudentSession: {
         select: {
+          id: true,
           attendedOn: true,
           userId: true,
+          hasReport: true,
+          isCancelled: true,
         },
       },
     },
   });
 
-  let sessionDateToMentorIdForAllStudentsLookup: Record<string, number> = {};
+  let sessionDateToMentorIdForAllStudentsLookup: SessionLookup = {};
 
   const studentsWithSessions = students.map((student) => {
     const sessionDateToMentorIdForStudentLookup =
-      student.mentorToStudentSession.reduce<Record<string, number>>(
-        (res, val) => {
-          res[val.attendedOn.toISOString()] = val.userId;
+      student.mentorToStudentSession.reduce<SessionLookup>((res, session) => {
+        res[session.attendedOn.toISOString()] = {
+          userId: session.userId,
+          sessionId: session.id,
+          hasReport: session.hasReport,
+          isCancelled: session.isCancelled,
+        };
 
-          return res;
-        },
-        {},
-      );
+        return res;
+      }, {});
 
     const mentorIdToMentorNameForStudentLookup =
       student.mentorToStudentAssignement.reduce<Record<string, string>>(
-        (res, val) => {
-          res[val.user.id] = `${val.user.firstName} ${val.user.lastName}`;
+        (res, assignment) => {
+          res[assignment.user.id] =
+            `${assignment.user.firstName} ${assignment.user.lastName}`;
 
           return res;
         },
@@ -159,20 +185,10 @@ export async function createSessionAsync({
   });
 }
 
-export async function removeSessionAsync({
-  userId,
-  attendedOn,
-  studentId,
-  chapterId,
-}: SessionCommand) {
+export async function removeSessionAsync(sessionId: number) {
   await prisma.mentorToStudentSession.delete({
     where: {
-      userId_studentId_chapterId_attendedOn: {
-        attendedOn,
-        chapterId,
-        studentId,
-        userId,
-      },
+      id: sessionId,
     },
   });
 }
