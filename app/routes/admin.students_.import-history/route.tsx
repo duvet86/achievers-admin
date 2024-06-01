@@ -132,7 +132,7 @@ export default function Index() {
                 value={index}
                 className={
                   currentPageNumber === index
-                    ? "btn btn-outline join-item btn-active "
+                    ? "btn btn-outline join-item btn-active"
                     : "btn btn-outline join-item"
                 }
               >
