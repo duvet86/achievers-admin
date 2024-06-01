@@ -15,7 +15,7 @@ import { getDatesForTerm } from "~/services";
 import { Select, Title } from "~/components";
 
 import {
-  createSessionAsync,
+  upsertSessionAsync,
   getCurrentTermForDate,
   getSchoolTermsForYearAsync,
   getStudentsAsync,
@@ -53,20 +53,13 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
   const bodyData: SessionCommand = await request.json();
 
-  await createSessionAsync(
-    {
-      attendedOn: bodyData.attendedOn,
-      chapterId: Number(params.chapterId),
-      studentId: Number(bodyData.studentId),
-      userId: Number(bodyData.userId),
-    },
-    {
-      attendedOn: bodyData.attendedOn,
-      chapterId: Number(params.chapterId),
-      studentId: Number(bodyData.studentId),
-      userId: Number(bodyData.userId),
-    },
-  );
+  await upsertSessionAsync({
+    sessionId: bodyData.sessionId ? Number(bodyData.sessionId) : undefined,
+    attendedOn: bodyData.attendedOn,
+    chapterId: Number(params.chapterId),
+    studentId: Number(bodyData.studentId),
+    userId: Number(bodyData.userId),
+  });
 
   return json({
     message: "Successfully saved",

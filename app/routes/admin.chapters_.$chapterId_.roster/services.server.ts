@@ -1,4 +1,4 @@
-import type { Chapter, Prisma } from "@prisma/client";
+import type { Chapter } from "@prisma/client";
 import type { Term } from "~/models";
 
 import dayjs from "dayjs";
@@ -9,9 +9,29 @@ import { prisma } from "~/db.server";
 dayjs.extend(isBetween);
 
 export interface SessionCommand {
+  sessionId: string | undefined;
   studentId: string;
   userId: string;
   attendedOn: string;
+}
+
+export type SessionLookup = Record<
+  string,
+  | {
+      sessionId: number;
+      userId: number;
+      hasReport: boolean;
+      isCancelled: boolean;
+    }
+  | undefined
+>;
+
+interface UpsertSessionCommand {
+  sessionId: number | undefined;
+  attendedOn: string;
+  studentId: number;
+  chapterId: number;
+  userId: number;
 }
 
 export async function getSchoolTermsForYearAsync(
@@ -74,21 +94,30 @@ export async function getStudentsAsync(chapterId: Chapter["id"]) {
       },
       mentorToStudentSession: {
         select: {
+          id: true,
           attendedOn: true,
           userId: true,
+          hasReport: true,
+          isCancelled: true,
         },
       },
     },
   });
 
   return students.map((student) => {
-    const sessionLookup = student.mentorToStudentSession.reduce<
-      Record<string, number>
-    >((res, val) => {
-      res[val.attendedOn.toISOString()] = val.userId;
+    const sessionLookup = student.mentorToStudentSession.reduce<SessionLookup>(
+      (res, session) => {
+        res[session.attendedOn.toISOString()] = {
+          userId: session.userId,
+          sessionId: session.id,
+          hasReport: session.hasReport,
+          isCancelled: session.isCancelled,
+        };
 
-      return res;
-    }, {});
+        return res;
+      },
+      {},
+    );
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { mentorToStudentSession, ...rest } = student;
@@ -100,28 +129,46 @@ export async function getStudentsAsync(chapterId: Chapter["id"]) {
   });
 }
 
-export async function createSessionAsync(
-  {
-    attendedOn,
-    studentId,
-    chapterId,
-  }: Prisma.MentorToStudentSessionUserIdStudentIdChapterIdAttendedOnCompoundUniqueInput,
-  data: Prisma.XOR<
-    Prisma.MentorToStudentSessionCreateInput,
-    Prisma.MentorToStudentSessionUncheckedCreateInput
-  >,
-) {
-  return await prisma.$transaction(async (tx) => {
-    await tx.mentorToStudentSession.deleteMany({
+export async function upsertSessionAsync({
+  sessionId,
+  attendedOn,
+  studentId,
+  chapterId,
+  userId,
+}: UpsertSessionCommand) {
+  if (sessionId !== undefined) {
+    const isAnyCancelled = await prisma.mentorToStudentSession.findFirst({
       where: {
         attendedOn,
         studentId,
         chapterId,
+        isCancelled: true,
       },
     });
 
-    return await tx.mentorToStudentSession.create({
-      data,
+    if (isAnyCancelled !== null) {
+      throw new Error("Cannot update a cancelled session.");
+    }
+
+    return prisma.mentorToStudentSession.update({
+      data: {
+        attendedOn,
+        studentId,
+        chapterId,
+        userId,
+      },
+      where: {
+        id: sessionId,
+      },
     });
-  });
+  } else {
+    return prisma.mentorToStudentSession.create({
+      data: {
+        attendedOn,
+        studentId,
+        chapterId,
+        userId,
+      },
+    });
+  }
 }

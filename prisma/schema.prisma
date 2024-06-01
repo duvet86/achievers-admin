@@ -318,6 +318,7 @@ model MentorToStudentSession {
   isCancelled Boolean  @default(false)
 
   report          String?   @db.Text
+  hasReport       Boolean   @default(dbgenerated()) // Calculated column based on report != null.
   completedOn     DateTime?
   reasonCancelled String?   @db.Text
 

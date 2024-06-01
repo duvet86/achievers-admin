@@ -19,3 +19,9 @@
     opacity: 0;
   }
 }
+
+.roster-select.select:disabled,
+.roster-select.select[disabled] {
+  color: black;
+  opacity: 1;
+}

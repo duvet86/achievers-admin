@@ -1,7 +1,8 @@
+import type { SessionLookup } from "../services.server";
+
 import { Link, useFetcher } from "@remix-run/react";
 import dayjs from "dayjs";
-
-import { Check, WarningCircle } from "iconoir-react";
+import { Check, WarningTriangle } from "iconoir-react";
 
 import { getValueFromCircularArray } from "~/services";
 
@@ -9,7 +10,7 @@ interface Props {
   chapterId: string;
   datesInTerm: string[];
   students: {
-    sessionLookup: Record<string, number>;
+    sessionLookup: SessionLookup;
     id: number;
     firstName: string;
     lastName: string;
@@ -35,11 +36,12 @@ export default function TermCalendar({
 
   const isLoading = state === "loading";
 
-  const onSessionSubmit =
-    (studentId: number, attendedOn: string) =>
+  const onMentorSelect =
+    (sessionId: number | undefined, studentId: number, attendedOn: string) =>
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       submit(
         {
+          sessionId,
           studentId,
           userId: e.target.value,
           attendedOn,
@@ -76,16 +78,16 @@ export default function TermCalendar({
           {students.map(
             (
               {
-                id,
-                firstName,
-                lastName,
+                id: studentId,
+                firstName: studentFirstName,
+                lastName: studentLastName,
                 mentorToStudentAssignement,
                 sessionLookup,
               },
               i,
             ) => (
               <tr
-                key={id}
+                key={studentId}
                 style={{
                   backgroundColor: getValueFromCircularArray(i, colours),
                 }}
@@ -97,37 +99,72 @@ export default function TermCalendar({
                   }}
                 >
                   <Link
-                    to={`/admin/chapters/${chapterId}/students/${id}`}
+                    to={`/admin/chapters/${chapterId}/students/${studentId}`}
                     className="link block w-36"
                   >
-                    {firstName} {lastName}
+                    {studentFirstName} {studentLastName}
                   </Link>
                 </th>
-                {datesInTerm.map((attendedOn, index) => (
-                  <td key={index}>
-                    <div className="indicator">
-                      <select
-                        className="select w-48"
-                        onChange={onSessionSubmit(id, attendedOn)}
-                        defaultValue={sessionLookup[attendedOn] ?? ""}
-                      >
-                        <option disabled value=""></option>
-                        {mentorToStudentAssignement.map(
-                          ({ user: { id, firstName, lastName } }) => (
-                            <option key={id} value={id}>
-                              {firstName} {lastName}
-                            </option>
-                          ),
+                {datesInTerm.map((attendedOn, index) => {
+                  const sessionInfo = sessionLookup[attendedOn];
+
+                  const sessionId = sessionInfo?.sessionId;
+                  const hasReport = sessionInfo?.hasReport ?? false;
+                  const isCancelled = sessionInfo?.isCancelled ?? false;
+
+                  return (
+                    <td key={index}>
+                      <div className="indicator">
+                        <select
+                          name="mentorId"
+                          className="roster-select select w-48"
+                          onChange={onMentorSelect(
+                            sessionId,
+                            studentId,
+                            attendedOn,
+                          )}
+                          defaultValue={sessionLookup[attendedOn]?.userId ?? ""}
+                          disabled={hasReport || isCancelled}
+                        >
+                          <option disabled value=""></option>
+                          {mentorToStudentAssignement.map(
+                            ({
+                              user: {
+                                id: mentorId,
+                                firstName: mentorFirstName,
+                                lastName: mentorLastName,
+                              },
+                            }) => (
+                              <option key={mentorId} value={mentorId}>
+                                {mentorFirstName} {mentorLastName}
+                              </option>
+                            ),
+                          )}
+                        </select>
+                        {sessionInfo && !isCancelled && !hasReport && (
+                          <div className="indicator-item">
+                            <Link
+                              className="btn btn-outline btn-error btn-xs font-bold"
+                              to={`/admin/chapters/${chapterId}/sessions/${sessionId}/cancel`}
+                            >
+                              Cancel
+                            </Link>
+                          </div>
                         )}
-                      </select>
-                      {sessionLookup[attendedOn] ? (
-                        <Check className="badge indicator-item bg-success" />
-                      ) : (
-                        <WarningCircle className="badge indicator-item bg-error" />
-                      )}
-                    </div>
-                  </td>
-                ))}
+                        {isCancelled && (
+                          <div className="badge indicator-item badge-error indicator-center gap-1">
+                            Cancelled <WarningTriangle className="h-4 w-4" />
+                          </div>
+                        )}
+                        {hasReport && (
+                          <div className="badge indicator-item badge-success indicator-center gap-1">
+                            Report <Check className="h-4 w-4" />
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  );
+                })}
               </tr>
             ),
           )}

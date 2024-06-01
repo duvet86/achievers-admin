@@ -8,9 +8,16 @@ interface Props {
   readOnly?: boolean;
   disabled?: boolean;
   required?: boolean;
+  placeholder?: string;
 }
 
-export function Textarea({ label, name, required, ...props }: Props) {
+export function Textarea({
+  label,
+  name,
+  required,
+  placeholder,
+  ...props
+}: Props) {
   return (
     <div className="form-control relative w-full">
       <label htmlFor={name} className="label">
@@ -28,7 +35,7 @@ export function Textarea({ label, name, required, ...props }: Props) {
         data-testid="textarea"
         id={name}
         name={name}
-        placeholder={label}
+        placeholder={placeholder ?? label}
         required={required}
         className="textarea textarea-bordered h-24"
         {...props}

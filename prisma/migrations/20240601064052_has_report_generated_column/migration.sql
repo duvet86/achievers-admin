@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `MentorToStudentSession` ADD COLUMN `hasReport` BOOLEAN GENERATED ALWAYS AS (`report` IS NOT NULL) STORED NOT NULL;
