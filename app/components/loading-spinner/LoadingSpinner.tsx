@@ -1,3 +1,5 @@
+import classNames from "classnames";
+
 interface Props {
   dark?: boolean;
   large?: boolean;
@@ -6,11 +8,12 @@ interface Props {
 export function LoadingSpinner({ dark = false, large = false }: Props) {
   return (
     <svg
-      className={
-        "-ml-1 mr-3 animate-spin " +
-        (dark ? "text-primary" : "text-white") +
-        (large ? "h-48 w-48" : "h-5 w-5")
-      }
+      className={classNames("-ml-1 mr-3 animate-spin", {
+        "text-primary": dark,
+        "text-white": !dark,
+        "h-48 w-48": large,
+        "h-5 w-5": !large,
+      })}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
