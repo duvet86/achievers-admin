@@ -14,6 +14,7 @@ export async function getNextSessionAsync(userId: User["id"]) {
       attendedOn: {
         gt: new Date(),
       },
+      isCancelled: false,
     },
     select: {
       attendedOn: true,
@@ -46,6 +47,7 @@ export async function getSessionsAsync(
       attendedOn: {
         lte: new Date(),
       },
+      isCancelled: false,
     },
     orderBy: {
       attendedOn: "desc",
