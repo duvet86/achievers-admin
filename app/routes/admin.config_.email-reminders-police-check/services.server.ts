@@ -8,6 +8,11 @@ export async function getPoliceCheckReminders(
   const today = new Date();
 
   const policeChecks = await prisma.policeCheck.findMany({
+    where: {
+      user: {
+        endDate: null,
+      },
+    },
     select: {
       id: true,
       reminderSentAt: true,
@@ -22,6 +27,9 @@ export async function getPoliceCheckReminders(
     },
     skip: numberItems * pageNumber,
     take: numberItems,
+    orderBy: {
+      expiryDate: "asc",
+    },
   });
 
   return policeChecks.map((pc) => {
@@ -39,5 +47,11 @@ export async function getPoliceCheckReminders(
 }
 
 export async function getPoliceCheckRemindersCount() {
-  return await prisma.policeCheck.count();
+  return await prisma.policeCheck.count({
+    where: {
+      user: {
+        endDate: null,
+      },
+    },
+  });
 }
