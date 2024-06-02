@@ -89,13 +89,11 @@ export default function Index() {
         />
       </Form>
 
-      <div className="relative">
-        <TermCalendar
-          chapterId={chapterId}
-          datesInTerm={datesInTerm}
-          students={students}
-        />
-      </div>
+      <TermCalendar
+        chapterId={chapterId}
+        datesInTerm={datesInTerm}
+        students={students}
+      />
     </>
   );
 }

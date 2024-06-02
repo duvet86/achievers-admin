@@ -79,121 +79,118 @@ export default function TermCalendar({
   };
 
   return (
-    <>
+    <div className="overflow-auto">
       {isLoading && (
-        <div className="absolute z-30 flex h-full w-full justify-center bg-slate-300 bg-opacity-50">
+        <div className="fixed z-30 flex h-full w-full justify-center bg-slate-300 bg-opacity-50">
           <span className="loading loading-spinner loading-lg text-primary"></span>
         </div>
       )}
 
-      <div className="overflow-auto">
-        <table className="table table-zebra table-pin-rows">
-          <tbody>
-            {datesInTerm.map((attendedOn, index) => {
-              const mentorIdForSessionForSelectedStudent =
-                sessionDateToMentorIdForStudentLookup[attendedOn];
+      <table className="table table-zebra table-pin-rows">
+        <tbody>
+          {datesInTerm.map((attendedOn, index) => {
+            const mentorIdForSessionForSelectedStudent =
+              sessionDateToMentorIdForStudentLookup[attendedOn];
 
-              const mentorId = mentorIdForSessionForSelectedStudent?.userId;
+            const mentorId = mentorIdForSessionForSelectedStudent?.userId;
 
-              const isMySession = mentorId === userId;
-              const mentorName = mentorId
-                ? mentorIdToMentorNameForStudentLookup[mentorId]
-                : undefined;
-              const isSessionBookedByMe =
-                sessionDateToMentorIdForAllStudentsLookup[attendedOn]
-                  ?.userId === userId;
+            const isMySession = mentorId === userId;
+            const mentorName = mentorId
+              ? mentorIdToMentorNameForStudentLookup[mentorId]
+              : undefined;
+            const isSessionBookedByMe =
+              sessionDateToMentorIdForAllStudentsLookup[attendedOn]?.userId ===
+              userId;
 
-              const hasReport = mentorIdForSessionForSelectedStudent?.hasReport;
-              const isCancelled =
-                mentorIdForSessionForSelectedStudent?.isCancelled;
+            const hasReport = mentorIdForSessionForSelectedStudent?.hasReport;
+            const isCancelled =
+              mentorIdForSessionForSelectedStudent?.isCancelled;
 
-              const enableActions =
-                hasReport === false && isCancelled === false;
+            const enableActions = hasReport === false && isCancelled === false;
 
-              return (
-                <tr
-                  key={index}
-                  className={classNames({
-                    "bg-success": isMySession && hasReport,
-                    "bg-error": isMySession && isCancelled,
-                  })}
-                >
-                  <td className="w-1/6 border-r font-medium text-gray-800">
-                    <div className="flex flex-col">
-                      <span>{dayjs(attendedOn).format("dddd")}</span>
-                      <span>{dayjs(attendedOn).format("DD/MM/YYYY")}</span>
+            return (
+              <tr
+                key={index}
+                className={classNames({
+                  "bg-success": isMySession && hasReport,
+                  "bg-error": isMySession && isCancelled,
+                })}
+              >
+                <td className="w-1/6 border-r font-medium text-gray-800">
+                  <div className="flex flex-col">
+                    <span>{dayjs(attendedOn).format("dddd")}</span>
+                    <span>{dayjs(attendedOn).format("DD/MM/YYYY")}</span>
+                  </div>
+                </td>
+                <td>
+                  {isMySession ? (
+                    <div className="flex gap-2">
+                      <ThumbsUp />
+                      {`${mentorName} (Me)`}
                     </div>
-                  </td>
-                  <td>
-                    {isMySession ? (
-                      <div className="flex gap-2">
-                        <ThumbsUp />
-                        {`${mentorName} (Me)`}
-                      </div>
-                    ) : mentorName ? (
-                      <div className="flex gap-2 text-info">
-                        <Group />
-                        {`${mentorName} (Partner)`}
-                      </div>
-                    ) : isSessionBookedByMe ? (
-                      <div className="flex gap-2 text-warning">
-                        <WarningTriangle />
-                        You are already mentoring another student
-                      </div>
+                  ) : mentorName ? (
+                    <div className="flex gap-2 text-info">
+                      <Group />
+                      {`${mentorName} (Partner)`}
+                    </div>
+                  ) : isSessionBookedByMe ? (
+                    <div className="flex gap-2 text-warning">
+                      <WarningTriangle />
+                      You are already mentoring another student
+                    </div>
+                  ) : (
+                    <div className="flex gap-2 text-success">
+                      <Check />
+                      Available
+                    </div>
+                  )}
+                </td>
+                <td align="right">
+                  {enableActions &&
+                    (isMySession ? (
+                      <button
+                        className="btn btn-error w-28"
+                        onClick={removeMentorForSession(
+                          mentorIdForSessionForSelectedStudent!.sessionId,
+                        )}
+                      >
+                        <WarningTriangle className="h-6 w-6" />
+                        Cancel
+                      </button>
                     ) : (
-                      <div className="flex gap-2 text-success">
-                        <Check />
-                        Available
-                      </div>
-                    )}
-                  </td>
-                  <td align="right">
-                    {enableActions &&
-                      (isMySession ? (
+                      !mentorName && (
                         <button
-                          className="btn btn-error w-28"
-                          onClick={removeMentorForSession(
-                            mentorIdForSessionForSelectedStudent!.sessionId,
+                          className="btn btn-success w-28"
+                          onClick={assignMentorForSession(
+                            userId,
+                            chapterId,
+                            student.id,
+                            attendedOn,
                           )}
                         >
-                          <WarningTriangle className="h-6 w-6" />
-                          Cancel
+                          <BookmarkBook className="h-6 w-6" />
+                          Book
                         </button>
-                      ) : (
-                        !mentorName && (
-                          <button
-                            className="btn btn-success w-28"
-                            onClick={assignMentorForSession(
-                              userId,
-                              chapterId,
-                              student.id,
-                              attendedOn,
-                            )}
-                          >
-                            <BookmarkBook className="h-6 w-6" />
-                            Book
-                          </button>
-                        )
-                      ))}
-                    {isMySession && hasReport && (
-                      <div className="badge gap-2 p-5 text-success">
-                        <Check className="h-6 w-6" />
-                        Report completed
-                      </div>
-                    )}
-                    {isMySession && isCancelled && (
-                      <div className="badge gap-2 p-5 text-error">
-                        <WarningTriangle className="h-6 w-6" />
-                        Session cancelled
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </>
+                      )
+                    ))}
+                  {isMySession && hasReport && (
+                    <div className="badge gap-2 p-5 text-success">
+                      <Check className="h-6 w-6" />
+                      Report completed
+                    </div>
+                  )}
+                  {isMySession && isCancelled && (
+                    <div className="badge gap-2 p-5 text-error">
+                      <WarningTriangle className="h-6 w-6" />
+                      Session cancelled
+                    </div>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }

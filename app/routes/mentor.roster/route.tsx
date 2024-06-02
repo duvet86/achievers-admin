@@ -125,17 +125,15 @@ export default function Index() {
       </Form>
 
       {selectedStudent && (
-        <div className="relative">
-          <TermCalendar
-            userId={userId}
-            chapterId={chapterId}
-            datesInTerm={datesInTerm}
-            student={selectedStudent}
-            sessionDateToMentorIdForAllStudentsLookup={
-              sessionDateToMentorIdForAllStudentsLookup
-            }
-          />
-        </div>
+        <TermCalendar
+          userId={userId}
+          chapterId={chapterId}
+          datesInTerm={datesInTerm}
+          student={selectedStudent}
+          sessionDateToMentorIdForAllStudentsLookup={
+            sessionDateToMentorIdForAllStudentsLookup
+          }
+        />
       )}
     </>
   );
