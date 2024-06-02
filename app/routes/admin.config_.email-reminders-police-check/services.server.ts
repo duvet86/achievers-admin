@@ -1,15 +1,13 @@
+import dayjs from "dayjs";
 import { prisma } from "~/db.server";
 
 export async function getPoliceCheckReminders(
   pageNumber: number,
   numberItems = 10,
 ) {
-  return await prisma.policeCheck.findMany({
-    where: {
-      reminderSentAt: {
-        not: null,
-      },
-    },
+  const today = new Date();
+
+  const policeChecks = await prisma.policeCheck.findMany({
     select: {
       id: true,
       reminderSentAt: true,
@@ -25,35 +23,21 @@ export async function getPoliceCheckReminders(
     skip: numberItems * pageNumber,
     take: numberItems,
   });
-}
 
-export async function getWWCCheckReminders() {
-  return await prisma.wWCCheck.findMany({
-    where: {
-      reminderSentAt: {
-        not: null,
-      },
-    },
-    select: {
-      id: true,
-      reminderSentAt: true,
-      expiryDate: true,
-      user: {
-        select: {
-          firstName: true,
-          lastName: true,
-        },
-      },
-    },
+  return policeChecks.map((pc) => {
+    const isExpiring = dayjs(today)
+      .add(3, "months")
+      .isAfter(dayjs(pc.expiryDate));
+    const hasExpired = dayjs(today).isAfter(dayjs(pc.expiryDate));
+
+    return {
+      ...pc,
+      isExpiring: isExpiring && !hasExpired,
+      hasExpired,
+    };
   });
 }
 
 export async function getPoliceCheckRemindersCount() {
-  return await prisma.policeCheck.count({
-    where: {
-      reminderSentAt: {
-        not: null,
-      },
-    },
-  });
+  return await prisma.policeCheck.count();
 }

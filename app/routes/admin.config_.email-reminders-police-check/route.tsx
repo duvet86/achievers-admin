@@ -3,6 +3,7 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import dayjs from "dayjs";
+import classNames from "classnames";
 import { Eye } from "iconoir-react";
 
 import { getPaginationRange } from "~/services";
@@ -85,33 +86,55 @@ export default function Index() {
               </tr>
             )}
             {policeCheckEmailRemindersSent.map(
-              ({ id, user, expiryDate, reminderSentAt }, index) => {
-                return (
-                  <tr key={id}>
-                    <td className="border">
-                      <div className="flex gap-2">{index + 1}</div>
-                    </td>
-                    <td className="border">
-                      {user.firstName} {user.lastName}
-                    </td>
-                    <td className="border">
+              (
+                {
+                  id,
+                  user,
+                  expiryDate,
+                  reminderSentAt,
+                  isExpiring,
+                  hasExpired,
+                },
+                index,
+              ) => (
+                <tr
+                  key={id}
+                  className={classNames({
+                    "bg-warning": isExpiring,
+                    "bg-error text-white": hasExpired,
+                  })}
+                >
+                  <td className="border">
+                    <div className="flex gap-2">{index + 1}</div>
+                  </td>
+                  <td className="border">
+                    {user.firstName} {user.lastName}
+                  </td>
+                  <td className="border">
+                    <div className="flex items-center gap-4">
                       {dayjs(expiryDate).format("MMMM D, YYYY")}
-                    </td>
-                    <td className="border">
-                      {dayjs(reminderSentAt).format("MMMM D, YYYY")}
-                    </td>
-                    <td className="border">
-                      <Link
-                        to={`/admin/users/${user.id}/police-check`}
-                        className="btn btn-success btn-xs w-full gap-2"
-                      >
-                        <Eye className="hidden h-4 w-4 lg:block" />
-                        View
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              },
+                      {hasExpired && <span className="badge">Expired</span>}
+                      {isExpiring && (
+                        <span className="badge">Expiring soon</span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="border">
+                    {reminderSentAt
+                      ? dayjs(reminderSentAt).format("MMMM D, YYYY")
+                      : "-"}
+                  </td>
+                  <td className="border">
+                    <Link
+                      to={`/admin/users/${user.id}/police-check`}
+                      className="btn btn-success btn-xs w-full gap-2"
+                    >
+                      <Eye className="hidden h-4 w-4 lg:block" />
+                      View
+                    </Link>
+                  </td>
+                </tr>
+              ),
             )}
           </tbody>
         </table>
