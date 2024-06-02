@@ -60,6 +60,7 @@ export async function createUsersAsync(
               comment: "I am ready to rock",
               aboutMe:
                 "I have a lot of energy and I want to share it with everyone",
+              preferredSubject: "Math",
               createdAt: new Date(),
               updatedAt: new Date(),
             },
