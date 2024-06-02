@@ -1,11 +1,11 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
-import { Form, useLoaderData, useNavigation } from "@remix-run/react";
+import { Form, Link, useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
-import { Key } from "iconoir-react";
+import { Xmark, Key } from "iconoir-react";
 
 import { Title } from "~/components";
 
@@ -84,13 +84,20 @@ export default function Chapter() {
             {user.lastName}&quot; to the achievers&apos; web app?
           </p>
 
-          <button
-            className="btn btn-success float-right mt-6 w-64 gap-4"
-            type="submit"
-          >
-            <Key className="h-6 w-6" />
-            Give access
-          </button>
+          <div className="mt-6 flex items-center justify-end gap-6">
+            <Link
+              className="btn btn-neutral w-44"
+              to={`/admin/users/${user.id}`}
+            >
+              <Xmark className="h-6 w-6" />
+              Cancel
+            </Link>
+
+            <button className="btn btn-success w-44 gap-4" type="submit">
+              <Key className="h-6 w-6" />
+              Give access
+            </button>
+          </div>
         </fieldset>
       </Form>
     </>

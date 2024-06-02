@@ -116,7 +116,9 @@ export default function Index() {
 
   return (
     <>
-      <Title>Reports for chapter: &quot;{chapterName}&quot;</Title>
+      <Title to="/admin/chapters">
+        Reports for chapter: &quot;{chapterName}&quot;
+      </Title>
 
       <hr className="my-4" />
 

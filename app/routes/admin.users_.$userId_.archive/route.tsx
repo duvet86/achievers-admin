@@ -1,10 +1,10 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
-import { Form, useLoaderData, useNavigation } from "@remix-run/react";
+import { Form, Link, useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
-import { BinFull } from "iconoir-react";
+import { BinFull, Xmark } from "iconoir-react";
 
 import {
   getAzureUserWithRolesByIdAsync,
@@ -74,13 +74,20 @@ export default function Chapter() {
             {user.lastName}&quot;?
           </p>
 
-          <button
-            className="btn btn-error float-right mt-6 w-64 gap-4"
-            type="submit"
-          >
-            <BinFull className="h-6 w-6" />
-            Archive
-          </button>
+          <div className="mt-6 flex items-center justify-end gap-6">
+            <Link
+              className="btn btn-neutral w-44"
+              to={`/admin/users/${user.id}`}
+            >
+              <Xmark className="h-6 w-6" />
+              Cancel
+            </Link>
+
+            <button className="btn btn-error w-44 gap-4" type="submit">
+              <BinFull className="h-6 w-6" />
+              Archive
+            </button>
+          </div>
         </fieldset>
       </Form>
     </>

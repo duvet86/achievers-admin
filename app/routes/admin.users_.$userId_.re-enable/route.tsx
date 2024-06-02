@@ -1,11 +1,11 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
-import { Form, useLoaderData, useNavigation } from "@remix-run/react";
+import { Form, Link, useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
-import { OnTag } from "iconoir-react";
+import { OnTag, Xmark } from "iconoir-react";
 
 import { Title } from "~/components";
 
@@ -47,13 +47,20 @@ export default function Index() {
             &quot;?
           </p>
 
-          <button
-            className="btn btn-success float-right mt-6 w-64 gap-4"
-            type="submit"
-          >
-            <OnTag className="h-6 w-6" />
-            Re enable
-          </button>
+          <div className="mt-6 flex items-center justify-end gap-6">
+            <Link
+              className="btn btn-neutral w-44"
+              to={`/admin/users/${user.id}`}
+            >
+              <Xmark className="h-6 w-6" />
+              Cancel
+            </Link>
+
+            <button className="btn btn-success w-44 gap-4" type="submit">
+              <OnTag className="h-6 w-6" />
+              Re enable
+            </button>
+          </div>
         </fieldset>
       </Form>
     </>

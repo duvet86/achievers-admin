@@ -41,7 +41,7 @@ export default function Index() {
 
   return (
     <>
-      <Title>
+      <Title to={`/admin/chapters/${chapterId}/roster`}>
         Cancel session of &quot;{dayjs(session.attendedOn).format("DD/MM/YYYY")}
         &quot;
       </Title>

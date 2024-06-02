@@ -28,6 +28,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   ]);
 
   return json({
+    chapterId: params.chapterId,
     mentorId: params.mentorId,
     availableStudents,
     mentorWithStudents,
@@ -63,6 +64,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Index() {
   const {
+    chapterId,
     mentorId,
     availableStudents,
     mentorWithStudents: { firstName, lastName, mentorToStudentAssignement },
@@ -85,7 +87,9 @@ export default function Index() {
 
   return (
     <>
-      <Title>Assign student to mentor</Title>
+      <Title to={`/admin/chapters/${chapterId}/mentors`}>
+        Assign student to mentor
+      </Title>
 
       <article className="prose w-full max-w-none">
         <div className="flex flex-col gap-12 lg:flex-row">

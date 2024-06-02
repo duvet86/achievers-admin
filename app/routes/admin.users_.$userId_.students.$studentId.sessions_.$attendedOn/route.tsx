@@ -125,7 +125,7 @@ export default function Index() {
 
   return (
     <>
-      <Title>
+      <Title classNames="mb-4" to={`/admin/chapters/${chapterId}/sessions`}>
         Report for &quot;{student.firstName} {student.lastName}&quot; on:{" "}
         {dayjs(attendedOn).format("MMMM D, YYYY")}
       </Title>

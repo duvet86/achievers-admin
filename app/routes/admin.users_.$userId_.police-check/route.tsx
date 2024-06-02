@@ -85,13 +85,13 @@ export default function Index() {
 
   return (
     <>
-      <Title>
+      <Title to={`/admin/users/${user.id}`}>
         Police check for &quot;{user.firstName} {user.lastName}&quot;
       </Title>
 
       <a
         href="https://wfv.identityservice.auspost.com.au/wfvselfinvite/wapol/invite-candidate"
-        className="link link-info mb-4"
+        className="link link-info my-4"
         target="_blank"
         rel="noopener noreferrer"
       >

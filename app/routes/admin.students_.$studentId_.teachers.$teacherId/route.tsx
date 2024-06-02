@@ -37,6 +37,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     }
 
     return json({
+      studentId: params.studentId,
       teacher,
     });
   }
@@ -86,14 +87,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { teacher } = useLoaderData<typeof loader>();
+  const { studentId, teacher } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const transition = useNavigation();
   const { teacherId } = useParams();
 
   return (
     <>
-      <Title>
+      <Title to={`/admin/students/${studentId}`}>
         {teacherId === "new" ? "Add new teacher" : "Edit info for teacher"}
       </Title>
 

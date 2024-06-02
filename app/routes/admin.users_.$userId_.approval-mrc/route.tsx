@@ -65,7 +65,7 @@ export default function Index() {
 
   return (
     <>
-      <Title>
+      <Title to={`/admin/users/${user.id}`}>
         Approval by MRC for &quot;{user.firstName} {user.lastName}&quot;
       </Title>
 

@@ -17,8 +17,8 @@ interface Props {
 
 export function Header(props: Props) {
   return (
-    <div className="flex flex-col items-center gap-4 lg:flex-row">
-      <Title>Edit mentor info</Title>
+    <div className="flex flex-col items-center gap-10 lg:flex-row">
+      <Title to="/admin/users">Edit mentor info</Title>
 
       {getMessage(props)}
 
@@ -90,7 +90,7 @@ function getMessage({ endDate, mentorAppRoleAssignmentId }: Props) {
     return (
       <p
         title="archived"
-        className="mb-4 flex items-center gap-2 rounded bg-error px-6 py-2"
+        className="flex items-center gap-2 rounded bg-error px-6 py-2"
       >
         <WarningTriangle className="h-6 w-6" />
         This mentor is archived!
@@ -102,7 +102,7 @@ function getMessage({ endDate, mentorAppRoleAssignmentId }: Props) {
     return (
       <p
         title="No access"
-        className="mb-4 flex items-center gap-2 rounded bg-warning px-6 py-2"
+        className="flex items-center gap-2 rounded bg-warning px-6 py-2"
       >
         <WarningTriangle className="h-6 w-6" />
         This mentor does NOT have access to the system!

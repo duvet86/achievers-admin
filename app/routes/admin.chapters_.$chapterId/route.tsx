@@ -24,7 +24,7 @@ export default function Index() {
 
   return (
     <>
-      <Title>Edit chapter</Title>
+      <Title to="/admin/chapters">Edit chapter</Title>
 
       <Form method="post">
         <Input defaultValue={chapter.name} label="Name" name="name" />

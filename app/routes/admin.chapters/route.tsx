@@ -41,7 +41,7 @@ export default function Index() {
                 <Group className="h-4 w-4" />
                 Mentors
               </Link>
-              <Link to={`${id}/reports`} className="btn w-32 gap-2">
+              <Link to={`${id}/sessions`} className="btn w-32 gap-2">
                 <PageEdit className="h-4 w-4" />
                 Reports
               </Link>

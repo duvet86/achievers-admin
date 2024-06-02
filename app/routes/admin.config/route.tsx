@@ -32,7 +32,7 @@ export default function Index() {
     <>
       <Title>Configuration settings</Title>
 
-      <div className="flex flex-col gap-4">
+      <div className="mt-4 flex flex-col gap-4">
         <p>
           <span className="font-bold">App version:</span> {version}
         </p>

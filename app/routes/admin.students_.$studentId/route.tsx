@@ -183,7 +183,14 @@ export default function Index() {
 
   return (
     <div className="flex h-full flex-col">
-      <Header title={loaderData.title} endDate={loaderData.student?.endDate} />
+      <div className="h-48 lg:h-16">
+        <Header
+          title={loaderData.title}
+          endDate={loaderData.student?.endDate}
+        />
+      </div>
+
+      <hr className="my-4" />
 
       <div className="content-area md:flex">
         <StudentForm

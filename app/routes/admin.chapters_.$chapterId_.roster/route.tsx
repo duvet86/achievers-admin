@@ -75,7 +75,7 @@ export default function Index() {
 
   return (
     <>
-      <Title>Roster planner</Title>
+      <Title to="/admin/chapters">Roster planner</Title>
 
       <Form
         className="mb-6 flex gap-12"

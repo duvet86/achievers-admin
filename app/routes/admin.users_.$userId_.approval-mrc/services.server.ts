@@ -14,6 +14,7 @@ export async function getUserByIdAsync(id: number) {
       id,
     },
     select: {
+      id: true,
       firstName: true,
       lastName: true,
       approvalbyMRC: true,

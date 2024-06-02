@@ -51,7 +51,7 @@ export default function Index() {
 
   return (
     <Form>
-      <Title>WWC email reminders</Title>
+      <Title to="/admin/config">WWC email reminders</Title>
 
       <div className="overflow-auto bg-white">
         <table className="table">

@@ -60,7 +60,7 @@ export default function Index() {
 
   return (
     <Form>
-      <Title>Police check email reminders</Title>
+      <Title to="/admin/config">Police check email reminders</Title>
 
       <div className="overflow-auto bg-white">
         <table className="table">

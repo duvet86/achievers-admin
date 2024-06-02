@@ -86,7 +86,8 @@ export default function Index() {
   return (
     <>
       <div className="flex items-center justify-between">
-        <Title>Mentors with students</Title>
+        <Title to="/admin/chapters">Mentors with students</Title>
+
         <Link
           to={`/admin/chapters/${chapterId}/students`}
           className="btn min-w-40 gap-2"

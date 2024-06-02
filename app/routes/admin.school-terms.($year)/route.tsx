@@ -187,8 +187,6 @@ export default function Index() {
         </Link>
       </div>
 
-      <hr className="mb-6" />
-
       <Form method="post" className="flex flex-col gap-6">
         {terms.map(({ id, startDate, endDate }, index) => (
           <div key={id} className="rounded bg-gray-100 p-4 shadow-xl">

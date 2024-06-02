@@ -100,7 +100,9 @@ export default function Index() {
 
   return (
     <>
-      <Title>Add new school term</Title>
+      <Title to="/admin/school-terms" classNames="mb-4">
+        Add new school term
+      </Title>
 
       <Form method="post" className="flex flex-col gap-6">
         {Array(4)

@@ -31,6 +31,7 @@ export async function getUserWithReferenceByIdAsync(
       id: userId,
     },
     select: {
+      id: true,
       firstName: true,
       lastName: true,
       references: {
