@@ -105,7 +105,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export default function Index() {
-  const { chapterName, reports, count, currentPageNumber, range } =
+  const { chapterId, chapterName, reports, count, currentPageNumber, range } =
     useLoaderData<typeof loader>();
 
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -117,7 +117,7 @@ export default function Index() {
   return (
     <>
       <Title to="/admin/chapters">
-        Reports for chapter: &quot;{chapterName}&quot;
+        Sessions for chapter: &quot;{chapterName}&quot;
       </Title>
 
       <hr className="my-4" />
@@ -152,7 +152,14 @@ export default function Index() {
             <tbody>
               {reports.map(
                 (
-                  { attendedOn, completedOn, signedOffOn, student, user },
+                  {
+                    id: sessionId,
+                    attendedOn,
+                    completedOn,
+                    signedOffOn,
+                    student,
+                    user,
+                  },
                   index,
                 ) => (
                   <tr key={index}>
@@ -177,7 +184,7 @@ export default function Index() {
                     </td>
                     <td className="border p-2">
                       <Link
-                        to={`/admin/users/${user.id}/students/${student.id}/sessions/${attendedOn}`}
+                        to={`/admin/chapters/${chapterId}/sessions/${sessionId}`}
                         className="btn btn-success btn-xs w-full gap-2"
                       >
                         <Eye className="h-4 w-4" />

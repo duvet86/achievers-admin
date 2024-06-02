@@ -25,29 +25,28 @@ export default function Index() {
           <div className="card-body items-center text-center">
             <h2 className="card-title uppercase">{name}</h2>
             <p className="mb-6">{address}</p>
-            <div className="card-actions">
-              <Link to={`${id}/roster`} className="btn btn-info w-32 gap-2">
+            <div className="card-actions justify-center">
+              <Link to={`${id}/roster`} className="btn btn-accent w-64 gap-2">
                 <Calendar className="h-4 w-4" />
-                Roster
+                View roster
+              </Link>
+              <Link
+                to={`${id}/sessions`}
+                className="btn btn-success w-64 gap-2"
+              >
+                <PageEdit className="h-4 w-4" />
+                Sessions/Reports
               </Link>
               <Link
                 to={`${id}/students`}
-                className="btn btn-primary w-32 gap-2"
+                className="btn btn-primary w-64 gap-2"
               >
                 <GraduationCap className="h-4 w-4" />
-                Students
+                Assign Menotor to Student
               </Link>
-              <Link to={`${id}/mentors`} className="btn btn-warning w-32 gap-2">
+              <Link to={`${id}/mentors`} className="btn btn-warning w-64 gap-2">
                 <Group className="h-4 w-4" />
-                Mentors
-              </Link>
-              <Link to={`${id}/sessions`} className="btn w-32 gap-2">
-                <PageEdit className="h-4 w-4" />
-                Reports
-              </Link>
-              <Link to={id.toString()} className="btn btn-success w-32 gap-2">
-                <PageEdit className="h-4 w-4" />
-                Edit
+                Assign Student to Mentor
               </Link>
             </div>
           </div>

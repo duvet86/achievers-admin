@@ -54,6 +54,7 @@ export async function getReportsAsync(
       isSignedOff,
     ),
     select: {
+      id: true,
       attendedOn: true,
       completedOn: true,
       signedOffOn: true,

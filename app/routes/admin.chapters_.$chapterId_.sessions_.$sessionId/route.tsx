@@ -4,6 +4,7 @@ import type {
   LoaderFunctionArgs,
 } from "@remix-run/node";
 import type { EditorState } from "lexical";
+import type { SessionCommandRequest } from "./services.server";
 
 import { json } from "@remix-run/node";
 import { useFetcher, useLoaderData } from "@remix-run/react";
@@ -16,45 +17,21 @@ import { DesignNib, Xmark } from "iconoir-react";
 import { getCurrentUserADIdAsync } from "~/services/.server";
 import { Editor, SubTitle, Title } from "~/components";
 
-import {
-  getSessionReportForStudentAsync,
-  getUserAsync,
-  saveReportAsync,
-} from "./services.server";
+import { getSessionByIdAsync, saveReportAsync } from "./services.server";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
-
-interface SessionCommandRequest {
-  reportFeedback: string;
-  attendedOn: string;
-  chapterId: number;
-  studentId: number;
-  userId: number;
-  isSignedOff: boolean;
-}
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
 };
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  invariant(params.userId, "userId not found");
-  invariant(params.studentId, "studentId not found");
-  invariant(params.attendedOn, "attendedOn not found");
+  invariant(params.sessionId, "sessionId not found");
 
-  const user = await getUserAsync(Number(params.userId));
-
-  const studentReport = await getSessionReportForStudentAsync({
-    attendedOn: params.attendedOn,
-    chapterId: user.chapterId,
-    studentId: Number(params.studentId),
-    userId: user.id,
-  });
+  const session = await getSessionByIdAsync(Number(params.sessionId));
 
   return json({
-    studentReport,
-    chapterId: user.chapterId,
-    userId: user.id,
+    session,
   });
 }
 
@@ -63,24 +40,11 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const bodyData: SessionCommandRequest = await request.json();
 
-  const attendedOn = bodyData.attendedOn;
-  const chapterId = bodyData.chapterId;
-  const studentId = bodyData.studentId;
-  const userId = bodyData.userId;
+  const sessionId = bodyData.sessionId;
   const reportFeedback = bodyData.reportFeedback;
   const isSignedOff = bodyData.isSignedOff;
 
-  await saveReportAsync(
-    {
-      attendedOn,
-      chapterId,
-      studentId,
-      userId,
-    },
-    reportFeedback,
-    isSignedOff,
-    userAzureId,
-  );
+  await saveReportAsync(sessionId, reportFeedback, isSignedOff, userAzureId);
 
   return json({
     message: "Successfully saved",
@@ -89,9 +53,15 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Index() {
   const {
-    chapterId,
-    userId,
-    studentReport: { report, reportFeedback, attendedOn, student, signedOffOn },
+    session: {
+      id,
+      chapterId,
+      report,
+      reportFeedback,
+      attendedOn,
+      student,
+      signedOffOn,
+    },
   } = useLoaderData<typeof loader>();
 
   const editorStateRef = useRef<EditorState>();
@@ -109,11 +79,9 @@ export default function Index() {
 
     submit(
       {
+        sessionId: id,
         reportFeedback: JSON.stringify(editorStateRef.current?.toJSON()),
         attendedOn,
-        chapterId,
-        studentId: student.id,
-        userId,
         isSignedOff,
       },
       {
