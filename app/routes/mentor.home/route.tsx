@@ -23,7 +23,7 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<
       lastName: string;
     };
     sessions: {
-      studentId: number;
+      id: number;
       attendedOn: Date;
       completedOn: Date | null;
       signedOffOn: Date | null;
@@ -110,8 +110,8 @@ export default function Index() {
               </tr>
             )}
             {sessions.map(
-              ({ attendedOn, studentId, completedOn, signedOffOn }, index) => (
-                <tr key={index}>
+              ({ id, attendedOn, completedOn, signedOffOn }, index) => (
+                <tr key={id}>
                   <td className="border-r">{index + 1}</td>
                   <td align="left">
                     {dayjs(attendedOn).format("MMMM D, YYYY")}
@@ -138,7 +138,7 @@ export default function Index() {
                   </td>
                   <td align="right">
                     <Link
-                      to={`/mentor/students/${studentId}/sessions/${attendedOn}`}
+                      to={`/mentor/sessions/${id}`}
                       className="btn btn-success btn-xs h-8 gap-2"
                     >
                       <StatsReport className="hidden h-4 w-4 lg:block" />

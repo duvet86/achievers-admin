@@ -28,7 +28,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   return json({
     chapterId: params.chapterId,
-    studentId: params.studentId,
     availableMentors,
     studentWithMentors,
   });
@@ -66,7 +65,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 export default function Index() {
   const {
     chapterId,
-    studentId,
     availableMentors,
     studentWithMentors: { firstName, lastName, mentorToStudentAssignement },
   } = useLoaderData<typeof loader>();
@@ -149,7 +147,7 @@ export default function Index() {
                     {firstName} {lastName}
                     <div className="flex gap-6">
                       <Link
-                        to={`/admin/users/${id}/students/${studentId}/sessions`}
+                        to={`/admin/chapters/${chapterId}/sessions`}
                         className="btn btn-info gap-3"
                       >
                         <Clock className="h-6 w-6" />

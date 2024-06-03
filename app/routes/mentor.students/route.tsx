@@ -2,7 +2,7 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { Link, json, useLoaderData } from "@remix-run/react";
 
-import { StatsReport, GraduationCap } from "iconoir-react";
+import { StatsReport } from "iconoir-react";
 
 import {
   getCurrentUserADIdAsync,
@@ -34,9 +34,8 @@ export default function Index() {
         <table className="table table-lg">
           <thead>
             <tr>
-              <th align="left" colSpan={2}>
-                Full name
-              </th>
+              <th className="w-16">#</th>
+              <th align="left">Full name</th>
               <th align="left">Year Level</th>
               <th align="right">Action</th>
             </tr>
@@ -44,23 +43,21 @@ export default function Index() {
           <tbody>
             {students.length === 0 && (
               <tr>
-                <td colSpan={6}>
+                <td colSpan={4}>
                   <i>No students assigned</i>
                 </td>
               </tr>
             )}
-            {students.map(({ id, firstName, lastName, yearLevel }) => (
+            {students.map(({ id, firstName, lastName, yearLevel }, index) => (
               <tr key={id}>
-                <td align="center">
-                  <GraduationCap className="hidden h-4 w-4 lg:block" />
-                </td>
+                <td>{index + 1}</td>
                 <td>
                   {firstName} {lastName}
                 </td>
                 <td>{yearLevel ?? "-"}</td>
                 <td align="right">
                   <Link
-                    to={`/mentor/students/${id}/sessions`}
+                    to={`/mentor/sessions?studentId=${id}`}
                     className="btn btn-success btn-xs h-8 gap-2"
                   >
                     <StatsReport className="hidden h-4 w-4 lg:block" />

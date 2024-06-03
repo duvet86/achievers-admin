@@ -1,12 +1,22 @@
 import { useSearchParams } from "@remix-run/react";
 
-import { DateInput } from "~/components";
+import { DateInput, Select } from "~/components";
 
 interface Props {
+  selectedStudentId: string | undefined;
+  students: {
+    id: number;
+    firstName: string;
+    lastName: string;
+  }[];
   onFormClear: () => void;
 }
 
-export default function FormInputs({ onFormClear }: Props) {
+export default function FormInputs({
+  selectedStudentId,
+  students,
+  onFormClear,
+}: Props) {
   const [searchParams] = useSearchParams();
 
   const startDate = searchParams.get("startDate");
@@ -14,6 +24,16 @@ export default function FormInputs({ onFormClear }: Props) {
 
   return (
     <div className="mb-6 hidden flex-wrap items-end justify-between gap-4 lg:flex">
+      <Select
+        label="Select a student"
+        name="studentId"
+        defaultValue={selectedStudentId}
+        options={students.map(({ id, firstName, lastName }) => ({
+          label: `${firstName} ${lastName}`,
+          value: id.toString(),
+        }))}
+      />
+
       <div className="flex flex-1 gap-4">
         <DateInput
           defaultValue={

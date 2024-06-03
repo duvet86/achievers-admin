@@ -41,7 +41,7 @@ export default function Index() {
 
   return (
     <>
-      <Title to={`/admin/chapters/${chapterId}/roster`}>
+      <Title classNames="mb-4">
         Cancel session of &quot;{dayjs(session.attendedOn).format("DD/MM/YYYY")}
         &quot;
       </Title>
@@ -65,12 +65,12 @@ export default function Index() {
         />
 
         <div className="mt-4 flex justify-end gap-6">
-          <Link to={`/admin/chapters/${chapterId}/roster`} className="btn">
+          <Link to={`/admin/chapters/${chapterId}/roster`} className="btn w-56">
             <ArrowLeft className="h-6 w-6" />
-            Back to the roster
+            Back
           </Link>
 
-          <button type="submit" className="btn btn-error">
+          <button type="submit" className="btn btn-error w-56">
             <UserXmark className="h-6 w-6" /> Cancel session
           </button>
         </div>

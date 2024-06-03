@@ -4,7 +4,7 @@ import type {
   LoaderFunctionArgs,
 } from "@remix-run/node";
 import type { EditorState } from "lexical";
-import type { ActionType } from "./services.server";
+import type { ActionType, SessionCommandRequest } from "./services.server";
 
 import { json } from "@remix-run/node";
 import { useFetcher, useLoaderData } from "@remix-run/react";
@@ -14,50 +14,22 @@ import { useRef } from "react";
 import invariant from "tiny-invariant";
 import { FloppyDiskArrowIn, CheckCircle, WarningTriangle } from "iconoir-react";
 
-import {
-  getCurrentUserADIdAsync,
-  getUserByAzureADIdAsync,
-} from "~/services/.server";
+import editorStylesheetUrl from "~/styles/editor.css?url";
 import { Editor, SubTitle, Title } from "~/components";
 
-import {
-  getSessionReportForStudentAsync,
-  saveReportAsync,
-} from "./services.server";
-
-import editorStylesheetUrl from "~/styles/editor.css?url";
-
-interface SessionCommandRequest {
-  type: ActionType;
-  report: string;
-  attendedOn: string;
-  chapterId: number;
-  studentId: number;
-  userId: number;
-}
+import { getSessionAsync, saveReportAsync } from "./services.server";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
 };
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
-  invariant(params.studentId, "studentId not found");
-  invariant(params.attendedOn, "attendedOn not found");
+export async function loader({ params }: LoaderFunctionArgs) {
+  invariant(params.sessionId, "sessionId not found");
 
-  const azureUserId = await getCurrentUserADIdAsync(request);
-  const user = await getUserByAzureADIdAsync(azureUserId);
-
-  const studentReport = await getSessionReportForStudentAsync({
-    attendedOn: params.attendedOn,
-    chapterId: user.chapterId,
-    studentId: Number(params.studentId),
-    userId: user.id,
-  });
+  const session = await getSessionAsync(Number(params.sessionId));
 
   return json({
-    studentReport,
-    chapterId: user.chapterId,
-    userId: user.id,
+    session,
   });
 }
 
@@ -65,22 +37,10 @@ export async function action({ request }: ActionFunctionArgs) {
   const bodyData: SessionCommandRequest = await request.json();
 
   const type = bodyData.type as ActionType;
-  const attendedOn = bodyData.attendedOn;
-  const chapterId = bodyData.chapterId;
-  const studentId = bodyData.studentId;
-  const userId = bodyData.userId;
+  const sessionId = bodyData.sessionId;
   const report = bodyData.report;
 
-  await saveReportAsync(
-    type,
-    {
-      attendedOn,
-      chapterId,
-      studentId,
-      userId,
-    },
-    report,
-  );
+  await saveReportAsync(type, sessionId, report);
 
   return json({
     message: "Successfully saved",
@@ -89,9 +49,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Index() {
   const {
-    chapterId,
-    userId,
-    studentReport: {
+    session: {
+      id: sessionId,
       report,
       attendedOn,
       completedOn,
@@ -112,11 +71,8 @@ export default function Index() {
     submit(
       {
         type,
+        sessionId,
         report: JSON.stringify(editorStateRef.current?.toJSON()),
-        attendedOn,
-        chapterId,
-        studentId: student.id,
-        userId,
       },
       {
         method: "POST",
@@ -127,7 +83,7 @@ export default function Index() {
 
   return (
     <>
-      <Title>
+      <Title to="/mentor/sessions" classNames="mb-4">
         Report for &quot;{student.firstName} {student.lastName}&quot; on:{" "}
         {dayjs(attendedOn).format("MMMM D, YYYY")}
       </Title>

@@ -10,6 +10,7 @@ import {
   Calendar,
   PrivacyPolicy,
   Settings,
+  StatsReport,
 } from "iconoir-react";
 
 interface Props {
@@ -65,7 +66,7 @@ function getLinks(isAdmin: boolean): DrawerLink[] {
         {
           icon: <GraduationCap className="h-6 w-6" />,
           value: "/mentor/students",
-          label: "My Students (reports)",
+          label: "My Students",
         },
         {
           icon: <Group className="h-6 w-6" />,
@@ -76,6 +77,11 @@ function getLinks(isAdmin: boolean): DrawerLink[] {
           icon: <Calendar className="h-6 w-6" />,
           value: "/mentor/roster",
           label: "Roster",
+        },
+        {
+          icon: <StatsReport className="h-6 w-6" />,
+          value: "/mentor/sessions",
+          label: "Sessions/Reports",
         },
         {
           icon: <PrivacyPolicy className="h-6 w-6" />,

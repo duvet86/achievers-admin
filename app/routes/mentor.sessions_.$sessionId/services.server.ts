@@ -2,29 +2,19 @@ import { prisma } from "~/db.server";
 
 export type ActionType = "completed" | "remove-complete" | "draft";
 
-interface SessionQuery {
-  attendedOn: string;
-  chapterId: number;
-  studentId: number;
-  userId: number;
+export interface SessionCommandRequest {
+  type: ActionType;
+  sessionId: number;
+  report: string;
 }
 
-export async function getSessionReportForStudentAsync({
-  attendedOn,
-  chapterId,
-  studentId,
-  userId,
-}: SessionQuery) {
+export async function getSessionAsync(sessionId: number) {
   return await prisma.mentorToStudentSession.findUniqueOrThrow({
     where: {
-      userId_studentId_chapterId_attendedOn: {
-        attendedOn,
-        chapterId,
-        studentId,
-        userId,
-      },
+      id: sessionId,
     },
     select: {
+      id: true,
       attendedOn: true,
       report: true,
       completedOn: true,
@@ -43,7 +33,7 @@ export async function getSessionReportForStudentAsync({
 
 export async function saveReportAsync(
   actionType: ActionType,
-  { attendedOn, chapterId, studentId, userId }: SessionQuery,
+  sessionId: number,
   report: string,
 ) {
   let completedOn: Date | null;
@@ -60,12 +50,7 @@ export async function saveReportAsync(
 
   return await prisma.mentorToStudentSession.update({
     where: {
-      userId_studentId_chapterId_attendedOn: {
-        attendedOn,
-        chapterId,
-        studentId,
-        userId,
-      },
+      id: sessionId,
     },
     data: {
       report,
