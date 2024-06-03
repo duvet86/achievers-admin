@@ -45,7 +45,7 @@ describe("Drawer", () => {
 
     const links: HTMLAnchorElement[] = screen.getAllByRole("link");
 
-    expect(links.length).toBe(5);
+    expect(links.length).toBe(6);
     expect(links[0]).toHaveTextContent("Home");
     expect(links[0]).toHaveAttribute("href", "/mentor/home");
 
@@ -58,7 +58,10 @@ describe("Drawer", () => {
     expect(links[3]).toHaveTextContent("Roster");
     expect(links[3]).toHaveAttribute("href", "/mentor/roster");
 
-    expect(links[4]).toHaveTextContent("Policy");
-    expect(links[4]).toHaveAttribute("href", "/mentor/policy");
+    expect(links[4]).toHaveTextContent("Sessions/Reports");
+    expect(links[4]).toHaveAttribute("href", "/mentor/sessions");
+
+    expect(links[5]).toHaveTextContent("Policy");
+    expect(links[5]).toHaveAttribute("href", "/mentor/policy");
   });
 });
