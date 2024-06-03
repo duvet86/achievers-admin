@@ -146,7 +146,7 @@ export default function TermCalendar({
                           <div className="indicator-item">
                             <Link
                               className="btn btn-outline btn-error btn-xs font-bold"
-                              to={`/admin/chapters/${chapterId}/sessions/${sessionId}/cancel`}
+                              to={`/admin/sessions/${sessionId}/cancel`}
                             >
                               Cancel
                             </Link>

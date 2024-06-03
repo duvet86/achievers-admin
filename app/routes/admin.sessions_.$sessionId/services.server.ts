@@ -14,7 +14,6 @@ export async function getSessionByIdAsync(sessionId: number) {
     },
     select: {
       id: true,
-      chapterId: true,
       attendedOn: true,
       report: true,
       signedOffOn: true,

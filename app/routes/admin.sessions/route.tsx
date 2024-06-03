@@ -1,26 +1,25 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
 
 import { useRef } from "react";
 import { Eye } from "iconoir-react";
-import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
 import { getPaginationRange } from "~/services";
 import { Pagination, Title } from "~/components";
 
 import {
-  getReportsCountAsync,
-  getReportsAsync,
-  getChapterAsync,
+  getCountAsync,
+  getSessionsAsync,
+  getChaptersAsync,
+  getAvailabelMentorsAsync,
+  getAvailabelStudentsAsync,
 } from "./services.server";
 import FormInputs from "./components/FormInputs";
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
-  invariant(params.chapterId, "chapterId not found");
-
+export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
 
   const searchTermSubmit = url.searchParams.get("searchBtn");
@@ -29,35 +28,57 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
   const nextPageSubmit = url.searchParams.get("nextBtn");
 
+  const chapterIdUrl = url.searchParams.get("chapterId");
+  const mentorIdUrl = url.searchParams.get("mentorId");
+  const studentIdUrl = url.searchParams.get("studentId");
+
   const startDate = url.searchParams.get("startDate");
   const endDate = url.searchParams.get("endDate");
   const isCompleted = url.searchParams.get("isCompleted") === "on";
   const isSignedOff = url.searchParams.get("isSignedOff") === "on";
 
-  let searchTerm = url.searchParams.get("searchTerm");
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
 
-  let startDateConverted: Date | null = null;
-  let endDateConverted: Date | null = null;
+  let chapterId: number;
+  let startDateConverted: Date | undefined;
+  let endDateConverted: Date | undefined;
+  let mentorId: number | undefined;
+  let studentId: number | undefined;
 
-  if (startDate?.trim() === "" || clearSearchSubmit !== null) {
-    startDateConverted = null;
+  const chapters = await getChaptersAsync();
+
+  if (clearSearchSubmit !== null || startDate?.trim() === "") {
+    startDateConverted = undefined;
   } else if (startDate) {
     startDateConverted = dayjs(startDate, "YYYY/MM/DD").toDate();
   }
-  if (endDate?.trim() === "" || clearSearchSubmit !== null) {
-    endDateConverted = null;
+  if (clearSearchSubmit !== null || endDate?.trim() === "") {
+    endDateConverted = undefined;
   } else if (endDate) {
     endDateConverted = dayjs(endDate, "YYYY/MM/DD").toDate();
   }
-
-  if (searchTerm?.trim() === "" || clearSearchSubmit !== null) {
-    searchTerm = null;
+  if (clearSearchSubmit !== null || chapterIdUrl === "") {
+    chapterId = chapters[0].id;
+  } else {
+    chapterId =
+      chapters.find(({ id }) => id === Number(chapterIdUrl))?.id ??
+      chapters[0].id;
+  }
+  if (clearSearchSubmit !== null || mentorIdUrl === "") {
+    mentorId = undefined;
+  } else if (mentorIdUrl) {
+    mentorId = Number(mentorIdUrl);
+  }
+  if (clearSearchSubmit !== null || studentIdUrl === "") {
+    studentId = undefined;
+  } else if (studentIdUrl) {
+    studentId = Number(studentIdUrl);
   }
 
-  const count = await getReportsCountAsync(
-    Number(params.chapterId),
-    searchTerm,
+  const count = await getCountAsync(
+    chapterId,
+    mentorId,
+    studentId,
     startDateConverted,
     endDateConverted,
     isCompleted,
@@ -71,7 +92,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     currentPageNumber = 0;
   } else if (clearSearchSubmit !== null) {
     currentPageNumber = 0;
-    searchTerm = null;
   } else if (previousPageSubmit !== null && pageNumber > 0) {
     currentPageNumber = pageNumber - 1;
   } else if (nextPageSubmit !== null && pageNumber < totalPageCount) {
@@ -80,9 +100,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     currentPageNumber = Number(pageNumberSubmit);
   }
 
-  const reports = await getReportsAsync(
-    Number(params.chapterId),
-    searchTerm,
+  const sessions = await getSessionsAsync(
+    chapterId,
+    mentorId,
+    studentId,
     startDateConverted,
     endDateConverted,
     isCompleted,
@@ -92,38 +113,67 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
 
-  const chapter = await getChapterAsync(Number(params.chapterId));
+  const [mentors, students] = await Promise.all([
+    getAvailabelMentorsAsync(chapterId, studentId),
+    getAvailabelStudentsAsync(chapterId, mentorId),
+  ]);
 
   return json({
-    chapterName: chapter.name,
-    chapterId: params.chapterId,
+    mentors,
+    students,
+    selectedChapterId: chapterId.toString(),
+    selectedMentorId: mentorId?.toString(),
+    selectedStudentId: studentId?.toString(),
+    chapters,
     range,
     currentPageNumber,
     count,
-    reports,
+    sessions,
   });
 }
 
 export default function Index() {
-  const { chapterId, chapterName, reports, count, currentPageNumber, range } =
-    useLoaderData<typeof loader>();
-
+  const {
+    mentors,
+    students,
+    selectedChapterId,
+    selectedMentorId,
+    selectedStudentId,
+    chapters,
+    sessions,
+    count,
+    currentPageNumber,
+    range,
+  } = useLoaderData<typeof loader>();
+  const submit = useSubmit();
   const formRef = useRef<HTMLFormElement | null>(null);
 
   const totalPageCount = Math.ceil(count / 10);
 
-  const onFormClear = () => formRef.current!.reset();
+  const onFormClear = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    formRef.current!.reset();
+    submit(formRef.current);
+  };
 
   return (
     <>
-      <Title to="/admin/chapters">
-        Sessions for chapter: &quot;{chapterName}&quot;
-      </Title>
+      <Title>Sessions</Title>
 
       <hr className="my-4" />
 
       <Form ref={formRef}>
-        <FormInputs onFormClear={onFormClear} />
+        <FormInputs
+          selectedChapterId={selectedChapterId}
+          selectedMentorId={selectedMentorId}
+          selectedStudentId={selectedStudentId}
+          chapters={chapters}
+          mentors={mentors}
+          students={students}
+          submit={submit}
+          onFormClear={onFormClear}
+        />
 
         <div className="overflow-auto bg-white">
           <table className="table table-zebra">
@@ -150,16 +200,14 @@ export default function Index() {
               </tr>
             </thead>
             <tbody>
-              {reports.map(
+              {sessions.length === 0 && (
+                <tr>
+                  <td colSpan={6}>No sessions available</td>
+                </tr>
+              )}
+              {sessions.map(
                 (
-                  {
-                    id: sessionId,
-                    attendedOn,
-                    completedOn,
-                    signedOffOn,
-                    student,
-                    user,
-                  },
+                  { id, attendedOn, completedOn, signedOffOn, student, user },
                   index,
                 ) => (
                   <tr key={index}>
@@ -184,7 +232,7 @@ export default function Index() {
                     </td>
                     <td className="border p-2">
                       <Link
-                        to={`/admin/chapters/${chapterId}/sessions/${sessionId}`}
+                        to={`/admin/sessions/${id}`}
                         className="btn btn-success btn-xs w-full gap-2"
                       >
                         <Eye className="h-4 w-4" />

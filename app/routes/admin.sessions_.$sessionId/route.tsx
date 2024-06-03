@@ -53,15 +53,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Index() {
   const {
-    session: {
-      id,
-      chapterId,
-      report,
-      reportFeedback,
-      attendedOn,
-      student,
-      signedOffOn,
-    },
+    session: { id, report, reportFeedback, attendedOn, student, signedOffOn },
   } = useLoaderData<typeof loader>();
 
   const editorStateRef = useRef<EditorState>();
@@ -93,7 +85,7 @@ export default function Index() {
 
   return (
     <>
-      <Title classNames="mb-4" to={`/admin/chapters/${chapterId}/sessions`}>
+      <Title classNames="mb-4" to="/admin/sessions">
         Report for &quot;{student.firstName} {student.lastName}&quot; on:{" "}
         {dayjs(attendedOn).format("MMMM D, YYYY")}
       </Title>

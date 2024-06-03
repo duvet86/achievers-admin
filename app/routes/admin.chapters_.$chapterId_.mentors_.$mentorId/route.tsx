@@ -6,7 +6,7 @@ import { Link, useFetcher, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { Xmark, Clock, FloppyDiskArrowIn } from "iconoir-react";
 
-import { Title, Autocomplete } from "~/components";
+import { Title, SelectSearch } from "~/components";
 
 import {
   assignStudentToMentorAsync,
@@ -103,10 +103,11 @@ export default function Index() {
 
             <Form method="POST" className="flex flex-col gap-6 lg:flex-row">
               <div className="lg:w-96">
-                <Autocomplete
+                <SelectSearch
+                  showClearButton
                   name="studentId"
                   placeholder="start typing to select a student"
-                  initialOptions={availableStudents.map(
+                  options={availableStudents.map(
                     ({ id, firstName, lastName }) => ({
                       label: `${firstName} ${lastName}`,
                       value: id.toString(),
@@ -148,10 +149,7 @@ export default function Index() {
                   <div className="flex items-center justify-between">
                     {firstName} {lastName}
                     <div className="flex gap-6">
-                      <Link
-                        to={`/admin/chapters/${chapterId}/sessions`}
-                        className="btn btn-info gap-3"
-                      >
+                      <Link to="/admin/sessions" className="btn btn-info gap-3">
                         <Clock className="h-6 w-6" />
                         View sessions
                       </Link>

@@ -3,11 +3,11 @@ import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import testUserEvent from "@testing-library/user-event";
 
-import { Autocomplete } from "./Autocomplete";
+import { SelectSearch } from "./SelectSearch";
 
 const user = testUserEvent.setup();
 
-describe("Autocomplete", () => {
+describe("SelectSearch", () => {
   it("should have attributes", async () => {
     const availableStudents = [
       {
@@ -28,15 +28,13 @@ describe("Autocomplete", () => {
     ];
 
     render(
-      <Autocomplete
+      <SelectSearch
         name="selectedStudentId"
         placeholder="start typing to select a student"
-        initialOptions={availableStudents.map(
-          ({ id, firstName, lastName }) => ({
-            label: `${firstName} ${lastName}`,
-            value: id.toString(),
-          }),
-        )}
+        options={availableStudents.map(({ id, firstName, lastName }) => ({
+          label: `${firstName} ${lastName}`,
+          value: id.toString(),
+        }))}
       />,
     );
 
@@ -69,15 +67,13 @@ describe("Autocomplete", () => {
     ];
 
     render(
-      <Autocomplete
+      <SelectSearch
         name="selectedStudentId"
         placeholder="start typing to select a student"
-        initialOptions={availableStudents.map(
-          ({ id, firstName, lastName }) => ({
-            label: `${firstName} ${lastName}`,
-            value: id.toString(),
-          }),
-        )}
+        options={availableStudents.map(({ id, firstName, lastName }) => ({
+          label: `${firstName} ${lastName}`,
+          value: id.toString(),
+        }))}
       />,
     );
 
@@ -113,15 +109,13 @@ describe("Autocomplete", () => {
     ];
 
     render(
-      <Autocomplete
+      <SelectSearch
         name="selectedStudentId"
         placeholder="start typing to select a student"
-        initialOptions={availableStudents.map(
-          ({ id, firstName, lastName }) => ({
-            label: `${firstName} ${lastName}`,
-            value: id.toString(),
-          }),
-        )}
+        options={availableStudents.map(({ id, firstName, lastName }) => ({
+          label: `${firstName} ${lastName}`,
+          value: id.toString(),
+        }))}
       />,
     );
 

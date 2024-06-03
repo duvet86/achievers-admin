@@ -42,6 +42,11 @@ function getLinks(isAdmin: boolean): DrawerLink[] {
           label: "Students",
         },
         {
+          icon: <StatsReport className="h-6 w-6" />,
+          value: "/admin/sessions",
+          label: "Sessions/Reports",
+        },
+        {
           icon: <ShopFourTiles className="h-6 w-6" />,
           value: "/admin/chapters",
           label: "Chapters",

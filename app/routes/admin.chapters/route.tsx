@@ -1,6 +1,5 @@
 import { useLoaderData, Link } from "@remix-run/react";
 import { json } from "@remix-run/node";
-
 import { PageEdit, Group, Calendar, GraduationCap } from "iconoir-react";
 
 import { Title } from "~/components";
@@ -31,7 +30,7 @@ export default function Index() {
                 View roster
               </Link>
               <Link
-                to={`${id}/sessions`}
+                to={`/admin/sessions?chapterId=${id}`}
                 className="btn btn-success w-64 gap-2"
               >
                 <PageEdit className="h-4 w-4" />
