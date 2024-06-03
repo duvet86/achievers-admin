@@ -1,7 +1,13 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useLoaderData,
+  useSearchParams,
+  useSubmit,
+} from "@remix-run/react";
 
 import { useRef } from "react";
 import { Eye } from "iconoir-react";
@@ -145,6 +151,7 @@ export default function Index() {
     currentPageNumber,
     range,
   } = useLoaderData<typeof loader>();
+  const [searchParams] = useSearchParams();
   const submit = useSubmit();
   const formRef = useRef<HTMLFormElement | null>(null);
 
@@ -232,7 +239,7 @@ export default function Index() {
                     </td>
                     <td className="border p-2">
                       <Link
-                        to={`/admin/sessions/${id}`}
+                        to={`/admin/sessions/${id}?${searchParams}`}
                         className="btn btn-success btn-xs w-full gap-2"
                       >
                         <Eye className="h-4 w-4" />

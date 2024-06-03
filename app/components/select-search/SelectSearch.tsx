@@ -19,6 +19,11 @@ interface Props {
   options: Option[];
 }
 
+const EMPTY_OPTION: Option = {
+  label: "",
+  value: "",
+};
+
 export function SelectSearch({
   options,
   name,
@@ -28,30 +33,14 @@ export function SelectSearch({
   showClearButton,
 }: Props) {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [selectedValue, setSelectedValue] = useState<Option>(() => {
-    if (defaultValue) {
-      const selectedvalue = options.find(({ value }) => value === defaultValue);
-
-      if (selectedvalue) {
-        return selectedvalue;
-      }
-    }
-
-    return {
-      label: "",
-      value: "",
-    };
-  });
+  const [selectedValue, setSelectedValue] = useState<Option | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const [rect, ref] = useClientRect<HTMLDivElement>();
 
   useEffect(() => {
     const resetHandler = () => {
-      setSelectedValue({
-        label: "",
-        value: "",
-      });
+      setSelectedValue(EMPTY_OPTION);
     };
 
     inputRef.current?.form?.addEventListener("reset", resetHandler);
@@ -68,10 +57,7 @@ export function SelectSearch({
   };
 
   const onClearSelection = () => {
-    setSelectedValue({
-      label: "",
-      value: "",
-    });
+    setSelectedValue(EMPTY_OPTION);
   };
 
   const viewOptions =
@@ -80,6 +66,12 @@ export function SelectSearch({
       : options.filter((item) =>
           item.label.toLowerCase().includes(searchTerm.toLowerCase()),
         );
+
+  const selectedOption =
+    selectedValue ??
+    (defaultValue
+      ? options.find(({ value }) => value === defaultValue) ?? EMPTY_OPTION
+      : EMPTY_OPTION);
 
   return (
     <div
@@ -95,7 +87,7 @@ export function SelectSearch({
         <input
           type="text"
           className="input join-item input-bordered flex-1"
-          value={selectedValue.label}
+          value={selectedOption.label}
           placeholder={label ?? placeholder}
           readOnly
         />
@@ -131,6 +123,7 @@ export function SelectSearch({
         ) : (
           <li className="sticky top-0 z-10 mb-4 bg-white p-2">
             <input
+              ref={searchInputRef}
               type="text"
               className="input input-bordered text-white"
               placeholder="Start typing to search..."

@@ -7,7 +7,7 @@ import type { EditorState } from "lexical";
 import type { SessionCommandRequest } from "./services.server";
 
 import { json } from "@remix-run/node";
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
 
 import dayjs from "dayjs";
 import { useRef } from "react";
@@ -55,6 +55,7 @@ export default function Index() {
   const {
     session: { id, report, reportFeedback, attendedOn, student, signedOffOn },
   } = useLoaderData<typeof loader>();
+  const [searchParams] = useSearchParams();
 
   const editorStateRef = useRef<EditorState>();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -85,7 +86,7 @@ export default function Index() {
 
   return (
     <>
-      <Title classNames="mb-4" to="/admin/sessions">
+      <Title classNames="mb-4" to={`/admin/sessions?${searchParams}`}>
         Report for &quot;{student.firstName} {student.lastName}&quot; on:{" "}
         {dayjs(attendedOn).format("MMMM D, YYYY")}
       </Title>

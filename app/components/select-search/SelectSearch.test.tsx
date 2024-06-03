@@ -110,6 +110,7 @@ describe("SelectSearch", () => {
 
     render(
       <SelectSearch
+        showClearButton
         name="selectedStudentId"
         placeholder="start typing to select a student"
         options={availableStudents.map(({ id, firstName, lastName }) => ({
