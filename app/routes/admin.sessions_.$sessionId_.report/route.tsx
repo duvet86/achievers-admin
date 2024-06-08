@@ -91,7 +91,7 @@ export default function Index() {
 
   return (
     <>
-      <Title classNames="mb-4">
+      <Title className="mb-4">
         Report for &quot;{student.fullName}&quot; on:{" "}
         {dayjs(attendedOn).format("MMMM D, YYYY")}
       </Title>

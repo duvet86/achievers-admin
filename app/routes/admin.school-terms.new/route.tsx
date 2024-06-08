@@ -100,7 +100,7 @@ export default function Index() {
 
   return (
     <>
-      <Title to="/admin/school-terms" classNames="mb-4">
+      <Title to="/admin/school-terms" className="mb-4">
         Add new school term
       </Title>
 

@@ -41,7 +41,7 @@ export default function Index() {
 
   return (
     <>
-      <Title classNames="mb-4">
+      <Title className="mb-4">
         Cancel session of &quot;{dayjs(session.attendedOn).format("DD/MM/YYYY")}
         &quot;
       </Title>

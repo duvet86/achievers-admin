@@ -3,14 +3,14 @@ import classnames from "classnames";
 import { NavArrowLeft } from "iconoir-react";
 
 interface Props {
-  classNames?: string;
+  className?: string;
   to?: string;
   children?: React.ReactNode;
 }
 
-export function Title({ classNames, to, children }: Props) {
+export function Title({ className, to, children }: Props) {
   return (
-    <div className={classnames("flex items-center gap-2", classNames)}>
+    <div className={classnames("flex items-center gap-2", className)}>
       {to && (
         <Link to={to} className="btn btn-square">
           <NavArrowLeft className="h-8 w-8" />

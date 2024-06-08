@@ -84,7 +84,7 @@ export default function Index() {
             <WarningCircle />
             <span>Session has been cancelled</span>
           </div>
-        ) : (
+        ) : completedOn ? null : (
           <div className="w-48">
             <Link
               to={`cancel?${searchParams}`}
@@ -171,9 +171,12 @@ export default function Index() {
                 label: fullName,
                 value: id.toString(),
               }))}
+              disabled={!!completedOn}
             />
 
-            <SubmitFormButton className="mt-6 justify-between" />
+            {!completedOn && (
+              <SubmitFormButton className="mt-6 justify-between" />
+            )}
           </Form>
         </>
       )}

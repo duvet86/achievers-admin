@@ -85,7 +85,7 @@ export default function Index() {
 
   return (
     <>
-      <Title classNames="mb-4">
+      <Title className="mb-4">
         Update session of &quot;{dayjs(attendedOn).format("DD/MM/YYYY")}
         &quot;
       </Title>

@@ -25,7 +25,7 @@ describe("Title", () => {
   it("should display component with class names", async () => {
     const { baseElement } = render(
       <MemoryRouter>
-        <Title classNames="mb-4" to="/">
+        <Title className="mb-4" to="/">
           Test
         </Title>
       </MemoryRouter>,
