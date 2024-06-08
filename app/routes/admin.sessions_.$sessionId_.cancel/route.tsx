@@ -1,7 +1,7 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import { ArrowLeft, UserXmark } from "iconoir-react";
@@ -11,19 +11,16 @@ import { Title, Textarea } from "~/components";
 import { cancelSessionAsync, getSessionByIdAsync } from "./services.server";
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  invariant(params.chapterId, "chapterId not found");
   invariant(params.sessionId, "sessionId not found");
 
   const session = await getSessionByIdAsync(Number(params.sessionId));
 
   return json({
-    chapterId: params.chapterId,
     session,
   });
 }
 
 export async function action({ params, request }: ActionFunctionArgs) {
-  invariant(params.chapterId, "chapterId not found");
   invariant(params.sessionId, "sessionId not found");
 
   const formData = await request.formData();
@@ -33,11 +30,14 @@ export async function action({ params, request }: ActionFunctionArgs) {
     formData.get("reason")!.toString(),
   );
 
-  return redirect(`/admin/chapters/${params.chapterId}/roster`);
+  const url = new URL(request.url);
+
+  return redirect(`/admin/sessions/${params.sessionId}?${url.searchParams}`);
 }
 
 export default function Index() {
-  const { chapterId, session } = useLoaderData<typeof loader>();
+  const { session } = useLoaderData<typeof loader>();
+  const [searchParams] = useSearchParams();
 
   return (
     <>
@@ -65,7 +65,10 @@ export default function Index() {
         />
 
         <div className="mt-4 flex justify-end gap-6">
-          <Link to={`/admin/chapters/${chapterId}/roster`} className="btn w-56">
+          <Link
+            to={`/admin/sessions/${session.id}?${searchParams}`}
+            className="btn w-48"
+          >
             <ArrowLeft className="h-6 w-6" />
             Back
           </Link>

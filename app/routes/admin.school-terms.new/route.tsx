@@ -4,10 +4,10 @@ import type { NewSchoolTerm } from "./services.server";
 import { Form, json, redirect, useActionData } from "@remix-run/react";
 import dayjs from "dayjs";
 
+import { areDatesOverlapping } from "~/services";
 import { DateInput, SubTitle, SubmitFormButton, Title } from "~/components";
 
 import { addTermsAsync, getExisitingYearsAsync } from "./services.server";
-import { areDatesOverlapping } from "~/services";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();

@@ -20,8 +20,8 @@
   }
 }
 
-.roster-select.select:disabled,
-.roster-select.select[disabled] {
+.select:disabled,
+.select[disabled] {
   color: black;
   opacity: 1;
 }

@@ -5,6 +5,7 @@ import { prisma } from "~/db.server";
 export async function getSessionByIdAsync(id: MentorToStudentSession["id"]) {
   return await prisma.mentorToStudentSession.findUniqueOrThrow({
     select: {
+      id: true,
       attendedOn: true,
       user: {
         select: {

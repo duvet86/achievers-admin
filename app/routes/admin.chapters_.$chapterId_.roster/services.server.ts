@@ -8,31 +8,16 @@ import { prisma } from "~/db.server";
 
 dayjs.extend(isBetween);
 
-export interface SessionCommand {
-  sessionId: string | undefined;
-  studentId: string;
-  userId: string;
-  attendedOn: string;
-}
-
 export type SessionLookup = Record<
   string,
   | {
       sessionId: number;
-      userId: number;
+      mentorFullName: string;
       hasReport: boolean;
       isCancelled: boolean;
     }
   | undefined
 >;
-
-interface UpsertSessionCommand {
-  sessionId: number | undefined;
-  attendedOn: string;
-  studentId: number;
-  chapterId: number;
-  userId: number;
-}
 
 export async function getSchoolTermsForYearAsync(
   year: number,
@@ -81,8 +66,12 @@ export async function getStudentsAsync(chapterId: Chapter["id"]) {
       id: true,
       firstName: true,
       lastName: true,
-      mentorToStudentAssignement: {
+      mentorToStudentSession: {
         select: {
+          id: true,
+          attendedOn: true,
+          hasReport: true,
+          isCancelled: true,
           user: {
             select: {
               id: true,
@@ -92,15 +81,6 @@ export async function getStudentsAsync(chapterId: Chapter["id"]) {
           },
         },
       },
-      mentorToStudentSession: {
-        select: {
-          id: true,
-          attendedOn: true,
-          userId: true,
-          hasReport: true,
-          isCancelled: true,
-        },
-      },
     },
   });
 
@@ -108,7 +88,7 @@ export async function getStudentsAsync(chapterId: Chapter["id"]) {
     const sessionLookup = student.mentorToStudentSession.reduce<SessionLookup>(
       (res, session) => {
         res[session.attendedOn.toISOString()] = {
-          userId: session.userId,
+          mentorFullName: `${session.user.firstName} ${session.user.lastName}`,
           sessionId: session.id,
           hasReport: session.hasReport,
           isCancelled: session.isCancelled,
@@ -127,48 +107,4 @@ export async function getStudentsAsync(chapterId: Chapter["id"]) {
       sessionLookup,
     };
   });
-}
-
-export async function upsertSessionAsync({
-  sessionId,
-  attendedOn,
-  studentId,
-  chapterId,
-  userId,
-}: UpsertSessionCommand) {
-  if (sessionId !== undefined) {
-    const isAnyCancelled = await prisma.mentorToStudentSession.findFirst({
-      where: {
-        attendedOn,
-        studentId,
-        chapterId,
-        isCancelled: true,
-      },
-    });
-
-    if (isAnyCancelled !== null) {
-      throw new Error("Cannot update a cancelled session.");
-    }
-
-    return prisma.mentorToStudentSession.update({
-      data: {
-        attendedOn,
-        studentId,
-        chapterId,
-        userId,
-      },
-      where: {
-        id: sessionId,
-      },
-    });
-  } else {
-    return prisma.mentorToStudentSession.create({
-      data: {
-        attendedOn,
-        studentId,
-        chapterId,
-        userId,
-      },
-    });
-  }
 }

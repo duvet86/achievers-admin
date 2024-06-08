@@ -1,26 +1,20 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import type { SessionCommand } from "./services.server";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import {
-  Form,
-  useLoaderData,
-  useSearchParams,
-  useSubmit,
-} from "@remix-run/react";
+import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
+import classNames from "classnames";
+import { Check, WarningTriangle, NavArrowRight } from "iconoir-react";
 
-import { getDatesForTerm } from "~/services";
+import { getDatesForTerm, getValueFromCircularArray } from "~/services";
 import { Select, Title } from "~/components";
 
 import {
-  upsertSessionAsync,
   getCurrentTermForDate,
   getSchoolTermsForYearAsync,
   getStudentsAsync,
 } from "./services.server";
-import TermCalendar from "./components/TermCalendar";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -48,30 +42,13 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   });
 }
 
-export async function action({ params, request }: ActionFunctionArgs) {
-  invariant(params.chapterId, "chapterId not found");
-
-  const bodyData: SessionCommand = await request.json();
-
-  await upsertSessionAsync({
-    sessionId: bodyData.sessionId ? Number(bodyData.sessionId) : undefined,
-    attendedOn: bodyData.attendedOn,
-    chapterId: Number(params.chapterId),
-    studentId: Number(bodyData.studentId),
-    userId: Number(bodyData.userId),
-  });
-
-  return json({
-    message: "Successfully saved",
-  });
-}
+const colours = ["#FAD7A0", "#A9DFBF", "#FADBD8", "#AED6F1"];
 
 export default function Index() {
   const { students, currentTerm, termsList, datesInTerm, chapterId } =
     useLoaderData<typeof loader>();
 
   const submit = useSubmit();
-  const [searchParams] = useSearchParams();
 
   return (
     <>
@@ -84,16 +61,108 @@ export default function Index() {
         <Select
           label="Term"
           name="selectedTerm"
-          defaultValue={searchParams.get("selectedTerm") ?? currentTerm.name}
+          defaultValue={currentTerm.name}
           options={termsList}
         />
       </Form>
 
-      <TermCalendar
-        chapterId={chapterId}
-        datesInTerm={datesInTerm}
-        students={students}
-      />
+      <div className="overflow-auto">
+        <table className="table table-pin-rows table-pin-cols">
+          <thead>
+            <tr className="z-20">
+              <th className="border-r">Students</th>
+              {datesInTerm.map((attendedOn, index) => (
+                <td key={index}>
+                  <div className="flex flex-col items-center font-medium text-gray-800">
+                    <span>{dayjs(attendedOn).format("dddd")}</span>
+                    <span>{dayjs(attendedOn).format("DD/MM/YYYY")}</span>
+                  </div>
+                </td>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {students.map(
+              (
+                {
+                  id: studentId,
+                  firstName: studentFirstName,
+                  lastName: studentLastName,
+                  sessionLookup,
+                },
+                i,
+              ) => (
+                <tr
+                  key={studentId}
+                  style={{
+                    backgroundColor: getValueFromCircularArray(i, colours),
+                  }}
+                >
+                  <th
+                    className="z-10 border-r"
+                    style={{
+                      backgroundColor: getValueFromCircularArray(i, colours),
+                    }}
+                  >
+                    <Link
+                      to={`/admin/chapters/${chapterId}/students/${studentId}`}
+                      className="link block w-36"
+                    >
+                      {studentFirstName} {studentLastName}
+                    </Link>
+                  </th>
+                  {datesInTerm.map((attendedOn, index) => {
+                    const sessionInfo = sessionLookup[attendedOn];
+
+                    const sessionId = sessionInfo?.sessionId;
+                    const hasReport = sessionInfo?.hasReport ?? false;
+                    const isCancelled = sessionInfo?.isCancelled ?? false;
+
+                    const to = sessionId
+                      ? `/admin/sessions/${sessionId}?backURL=/admin/chapters/${chapterId}/roster`
+                      : `/admin/sessions/${attendedOn}/new?studentId=${studentId}&chapterId=${chapterId}&backURL=/admin/chapters/${chapterId}/roster`;
+
+                    return (
+                      <td key={index} className="border-r">
+                        <div className="indicator">
+                          {hasReport && (
+                            <div className="badge indicator-item badge-success indicator-center gap-1">
+                              Report <Check className="h-4 w-4" />
+                            </div>
+                          )}
+                          <div className="w-48">
+                            <Link
+                              to={to}
+                              className={classNames(
+                                "btn btn-ghost btn-block justify-between",
+                                {
+                                  "font-bold text-error": isCancelled,
+                                },
+                              )}
+                            >
+                              {isCancelled ? (
+                                <>
+                                  <WarningTriangle />
+                                  Cancelled
+                                </>
+                              ) : (
+                                <span className="flex-1">
+                                  {sessionInfo?.mentorFullName}
+                                </span>
+                              )}
+                              <NavArrowRight />
+                            </Link>
+                          </div>
+                        </div>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ),
+            )}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 }

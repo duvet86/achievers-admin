@@ -1,147 +1,184 @@
-import type {
-  ActionFunctionArgs,
-  LinksFunction,
-  LoaderFunctionArgs,
-} from "@remix-run/node";
-import type { EditorState } from "lexical";
-import type { SessionCommandRequest } from "./services.server";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
-import { json } from "@remix-run/node";
-import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
-
+import { json, redirect } from "@remix-run/node";
+import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
 import dayjs from "dayjs";
-import { useRef } from "react";
 import invariant from "tiny-invariant";
-import { DesignNib, Xmark } from "iconoir-react";
+import { Xmark, Check, StatsReport, WarningCircle } from "iconoir-react";
 
-import { getCurrentUserADIdAsync } from "~/services/.server";
-import { Editor, SubTitle, Title } from "~/components";
+import {
+  Title,
+  Select,
+  SubTitle,
+  SubmitFormButton,
+  Textarea,
+} from "~/components";
 
-import { getSessionByIdAsync, saveReportAsync } from "./services.server";
-
-import editorStylesheetUrl from "~/styles/editor.css?url";
-
-export const links: LinksFunction = () => {
-  return [{ rel: "stylesheet", href: editorStylesheetUrl }];
-};
+import {
+  getMentorsForStudent,
+  getSessionByIdAsync,
+  updateSessionAsync,
+} from "./services.server";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.sessionId, "sessionId not found");
 
   const session = await getSessionByIdAsync(Number(params.sessionId));
 
+  const mentorsForStudent = await getMentorsForStudent(session.student.id);
+
   return json({
     session,
+    mentorsForStudent,
   });
 }
 
-export async function action({ request }: ActionFunctionArgs) {
-  const userAzureId = await getCurrentUserADIdAsync(request);
+export async function action({ params, request }: ActionFunctionArgs) {
+  invariant(params.sessionId, "sessionId not found");
 
-  const bodyData: SessionCommandRequest = await request.json();
+  const formData = await request.formData();
 
-  const sessionId = bodyData.sessionId;
-  const reportFeedback = bodyData.reportFeedback;
-  const isSignedOff = bodyData.isSignedOff;
+  await updateSessionAsync(
+    Number(params.sessionId),
+    Number(formData.get("mentorId")),
+  );
 
-  await saveReportAsync(sessionId, reportFeedback, isSignedOff, userAzureId);
+  const url = new URL(request.url);
+  const backURL = url.searchParams.get("backURL");
 
-  return json({
-    message: "Successfully saved",
-  });
+  if (backURL) {
+    return redirect(backURL);
+  }
+
+  return redirect("/admin/sessions");
 }
 
 export default function Index() {
   const {
-    session: { id, report, reportFeedback, attendedOn, student, signedOffOn },
+    session: {
+      chapter,
+      user,
+      student,
+      attendedOn,
+      isCancelled,
+      reasonCancelled,
+      hasReport,
+      completedOn,
+      signedOffOn,
+    },
+    mentorsForStudent,
   } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
 
-  const editorStateRef = useRef<EditorState>();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { state, submit } = (useFetcher as any)();
-
-  const isLoading = state === "loading";
-
-  const handleSignOff = (isSignedOff: boolean) => () => {
-    if (!isSignedOff) {
-      if (!confirm("are you sure you want to remove the sign off?")) {
-        return;
-      }
-    }
-
-    submit(
-      {
-        sessionId: id,
-        reportFeedback: JSON.stringify(editorStateRef.current?.toJSON()),
-        attendedOn,
-        isSignedOff,
-      },
-      {
-        method: "POST",
-        encType: "application/json",
-      },
-    );
-  };
+  const backURL = searchParams.get("backURL");
 
   return (
     <>
-      <Title classNames="mb-4" to={`/admin/sessions?${searchParams}`}>
-        Report for &quot;{student.firstName} {student.lastName}&quot; on:{" "}
-        {dayjs(attendedOn).format("MMMM D, YYYY")}
-      </Title>
+      <div className="mb-4 flex justify-between">
+        <Title to={backURL ? backURL : `/admin/sessions?${searchParams}`}>
+          Session of &quot;{dayjs(attendedOn).format("MMMM D, YYYY")}&quot;
+        </Title>
 
-      <div className="relative flex h-full flex-col">
-        {isLoading && (
-          <div className="absolute z-30 flex h-full w-full justify-center bg-slate-300 bg-opacity-50">
-            <span className="loading loading-spinner loading-lg text-primary"></span>
+        {isCancelled ? (
+          <div role="alert" className="alert alert-error w-72">
+            <WarningCircle />
+            <span>Session has been cancelled</span>
+          </div>
+        ) : (
+          <div className="w-48">
+            <Link
+              to={`cancel?${searchParams}`}
+              className="btn btn-error btn-block gap-2"
+            >
+              <Xmark className="h-6 w-6" /> Cancel session
+            </Link>
           </div>
         )}
+      </div>
 
-        <div className="flex h-full flex-col gap-4">
-          <div className="flex flex-1 flex-col gap-4">
-            <Editor isReadonly initialEditorStateType={report} />
+      <div className="mb-8 flex flex-col gap-8">
+        <div className="flex items-center gap-2 border-b p-2">
+          <div className="w-72 font-bold">Chapter</div>
+          <div className="flex-1">{chapter.name}</div>
+        </div>
+        <div className="flex items-center gap-2 border-b p-2">
+          <div className="w-72 font-bold">Student</div>
+          <div className="flex-1">{`${student.firstName} ${student.lastName}`}</div>
+        </div>
 
-            <SubTitle>Admin Feedback</SubTitle>
+        {isCancelled ? (
+          <div className="flex items-center gap-2 p-2">
+            <div className="w-72 font-bold">Reason</div>
+            <Textarea readOnly defaultValue={reasonCancelled!} />
           </div>
-
-          <div className="flex flex-1 flex-col gap-4">
-            <div className="flex-1">
-              <Editor
-                isReadonly={signedOffOn !== null}
-                initialEditorStateType={reportFeedback}
-                onChange={(editorState) =>
-                  (editorStateRef.current = editorState)
-                }
-              />
-            </div>
-
-            <div className="flex items-center gap-4">
-              <p className="flex-1 text-info">
-                {signedOffOn
-                  ? `Report has been signed off on ${dayjs(signedOffOn).format("MMMM D, YYYY")}`
-                  : ""}
-              </p>
-
-              {signedOffOn ? (
-                <button
-                  className="btn btn-error w-44"
-                  onClick={handleSignOff(false)}
+        ) : (
+          <>
+            <div className="flex items-center gap-2 border-b p-2">
+              <div className="w-72 font-bold">Has report?</div>
+              <div className="flex-1">
+                {hasReport ? (
+                  <Check className="h-6 w-6 text-success" />
+                ) : (
+                  <Xmark className="h-6 w-6 text-error" />
+                )}
+              </div>
+              {hasReport && (
+                <Link
+                  to={`report?${searchParams}`}
+                  className="btn btn-success gap-2"
                 >
-                  <Xmark className="h-6 w-6" /> Remove sign off
-                </button>
-              ) : (
-                <button
-                  className="btn btn-primary w-44"
-                  onClick={handleSignOff(true)}
-                >
-                  <DesignNib className="h-6 w-6" /> Sign off
-                </button>
+                  Go to report
+                  <StatsReport className="h-6 w-6" />
+                </Link>
               )}
             </div>
-          </div>
-        </div>
+            <div className="flex items-center gap-2 border-b p-2">
+              <div className="w-72 font-bold">Is report completed?</div>
+              <div className="flex-1">
+                {completedOn ? (
+                  <Check className="h-6 w-6 text-success" />
+                ) : (
+                  <Xmark className="h-6 w-6 text-error" />
+                )}
+              </div>
+              {completedOn && dayjs(completedOn).format("YYYY-MM-DD")}
+            </div>
+            <div className="flex items-center gap-2 border-b p-2">
+              <div className="w-72 font-bold">Is report signed off?</div>
+              <div className="flex-1">
+                {signedOffOn ? (
+                  <Check className="h-6 w-6 text-success" />
+                ) : (
+                  <Xmark className="h-6 w-6 text-error" />
+                )}
+              </div>
+              {signedOffOn && dayjs(signedOffOn).format("YYYY-MM-DD")}
+            </div>
+          </>
+        )}
       </div>
+
+      {!isCancelled && (
+        <>
+          <SubTitle>Update mentor</SubTitle>
+
+          <Form method="post">
+            <Select
+              label="Mentor"
+              name="mentorId"
+              defaultValue={user.id.toString()}
+              options={mentorsForStudent.map(
+                ({ user: { id, firstName, lastName } }) => ({
+                  label: `${firstName} ${lastName}`,
+                  value: id.toString(),
+                }),
+              )}
+            />
+
+            <SubmitFormButton className="mt-6 justify-between" />
+          </Form>
+        </>
+      )}
     </>
   );
 }

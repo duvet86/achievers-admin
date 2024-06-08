@@ -1,8 +1,8 @@
 import type { HTMLInputTypeAttribute } from "react";
 
 interface Props {
-  name: string;
-  label: string;
+  name?: string;
+  label?: string;
   defaultValue?: string;
   type?: HTMLInputTypeAttribute;
   readOnly?: boolean;
@@ -20,17 +20,19 @@ export function Textarea({
 }: Props) {
   return (
     <div className="form-control relative w-full">
-      <label htmlFor={name} className="label">
-        <span className="label-text">{label}</span>
-        {required && (
-          <span
-            data-testid="required"
-            className="label-text-alt absolute right-1 top-9 text-2xl text-error"
-          >
-            *
-          </span>
-        )}
-      </label>
+      {label && (
+        <label htmlFor={name} className="label">
+          <span className="label-text">{label}</span>
+          {required && (
+            <span
+              data-testid="required"
+              className="label-text-alt absolute right-1 top-9 text-2xl text-error"
+            >
+              *
+            </span>
+          )}
+        </label>
+      )}
       <textarea
         data-testid="textarea"
         id={name}
