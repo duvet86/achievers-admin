@@ -236,10 +236,13 @@ export function range(start: number, end: number) {
 
 export function getDatesForTerm(startDate: Dayjs, endDate: Dayjs) {
   let firstDayOfTermStart = startDate.startOf("week").day(6);
-  const firstDayOfTermEnd = endDate.startOf("week").day(6);
+  let firstDayOfTermEnd = endDate.startOf("week").day(6);
 
-  if (firstDayOfTermStart < startDate) {
+  if (firstDayOfTermStart.isBefore(startDate)) {
     firstDayOfTermStart = firstDayOfTermStart.add(1, "week");
+  }
+  if (firstDayOfTermEnd.isAfter(endDate)) {
+    firstDayOfTermEnd = firstDayOfTermEnd.add(-1, "week");
   }
 
   const numberOfWeeksInTerm = firstDayOfTermEnd.diff(
