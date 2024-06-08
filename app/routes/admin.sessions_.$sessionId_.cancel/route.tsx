@@ -48,10 +48,10 @@ export default function Index() {
 
       <p className="mb-2">
         Are you sure you want to cancel the session between the mentor{" "}
-        <span className="font-bold">&quot;{session.user.lastName}&quot;</span>{" "}
-        {session.user.lastName} and the student{" "}
+        <span className="font-bold">&quot;{session.user.fullName}&quot;</span>{" "}
+        and the student{" "}
         <span className="font-bold">
-          &quot;{session.student.firstName} {session.student.lastName}&quot;
+          &quot;{session.student.fullName}&quot;
         </span>
         ?
       </p>

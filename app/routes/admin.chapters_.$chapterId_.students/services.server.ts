@@ -1,29 +1,25 @@
-import type { Chapter } from "@prisma/client";
-
 import { prisma } from "~/db.server";
-import { searchAcrossFields } from "~/services/.server";
 
 export async function getMentorsWithStudentsCountAsync(
-  chapterId: Chapter["id"],
+  chapterId: number,
   searchTerm: string | null,
 ) {
   return prisma.student.count({
     where: {
       chapterId,
-      OR: searchAcrossFields(
-        searchTerm,
-        (searchTerm: string) =>
-          [
-            { firstName: { contains: searchTerm } },
-            { lastName: { contains: searchTerm } },
-          ] as const,
-      ),
+      OR: [
+        {
+          fullName: {
+            contains: searchTerm ?? undefined,
+          },
+        },
+      ],
     },
   });
 }
 
 export async function getMentorsWithStudentsAsync(
-  chapterId: Chapter["id"],
+  chapterId: number,
   searchTerm: string | null,
   pageNumber: number,
   numberItems = 10,
@@ -31,26 +27,23 @@ export async function getMentorsWithStudentsAsync(
   return prisma.student.findMany({
     where: {
       chapterId,
-      OR: searchAcrossFields(
-        searchTerm,
-        (searchTerm: string) =>
-          [
-            { firstName: { contains: searchTerm } },
-            { lastName: { contains: searchTerm } },
-          ] as const,
-      ),
+      OR: [
+        {
+          fullName: {
+            contains: searchTerm ?? undefined,
+          },
+        },
+      ],
     },
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
+      fullName: true,
       mentorToStudentAssignement: {
         select: {
           user: {
             select: {
               id: true,
-              firstName: true,
-              lastName: true,
+              fullName: true,
               frequencyInDays: true,
             },
           },

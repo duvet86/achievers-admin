@@ -16,7 +16,7 @@ export async function getAvailabelMentorsAsync(
   chapterId: number,
   studentId: number | undefined,
 ) {
-  const mentors = await prisma.user.findMany({
+  return await prisma.user.findMany({
     where: {
       chapterId,
       mentorToStudentAssignement: {
@@ -27,25 +27,19 @@ export async function getAvailabelMentorsAsync(
     },
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
+      fullName: true,
     },
     orderBy: {
-      firstName: "asc",
+      fullName: "asc",
     },
   });
-
-  return mentors.map(({ id, firstName, lastName }) => ({
-    id,
-    fullName: `${firstName} ${lastName}`,
-  }));
 }
 
 export async function getAvailabelStudentsAsync(
   chapterId: number,
   mentorId: number | undefined,
 ) {
-  const students = await prisma.student.findMany({
+  return await prisma.student.findMany({
     where: {
       chapterId,
       mentorToStudentAssignement: {
@@ -56,18 +50,12 @@ export async function getAvailabelStudentsAsync(
     },
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
+      fullName: true,
     },
     orderBy: {
-      firstName: "asc",
+      fullName: "asc",
     },
   });
-
-  return students.map(({ id, firstName, lastName }) => ({
-    id,
-    fullName: `${firstName} ${lastName}`,
-  }));
 }
 
 export async function getCountAsync(
@@ -121,15 +109,13 @@ export async function getSessionsAsync(
       user: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          fullName: true,
         },
       },
       student: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          fullName: true,
         },
       },
     },

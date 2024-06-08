@@ -1,5 +1,4 @@
 import { prisma } from "~/db.server";
-import { searchAcrossFields } from "~/services/.server";
 import { calculateYearLevel } from "~/services";
 
 export async function getChaptersAsync() {
@@ -26,14 +25,13 @@ export async function getStudentsCountAsync(
             }
           : {},
         {
-          OR: searchAcrossFields(
-            searchTerm,
-            (searchTerm: string) =>
-              [
-                { firstName: { contains: searchTerm } },
-                { lastName: { contains: searchTerm } },
-              ] as const,
-          ),
+          OR: [
+            {
+              fullName: {
+                contains: searchTerm ?? undefined,
+              },
+            },
+          ],
         },
       ],
     },
@@ -50,8 +48,7 @@ export async function getStudentsAsync(
   const students = await prisma.student.findMany({
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
+      fullName: true,
       endDate: true,
       dateOfBirth: true,
       chapter: {
@@ -69,19 +66,18 @@ export async function getStudentsAsync(
             }
           : {},
         {
-          OR: searchAcrossFields(
-            searchTerm,
-            (searchTerm: string) =>
-              [
-                { firstName: { contains: searchTerm } },
-                { lastName: { contains: searchTerm } },
-              ] as const,
-          ),
+          OR: [
+            {
+              fullName: {
+                contains: searchTerm ?? undefined,
+              },
+            },
+          ],
         },
       ],
     },
     orderBy: {
-      firstName: "asc",
+      fullName: "asc",
     },
     skip: numberItems * pageNumber,
     take: numberItems,

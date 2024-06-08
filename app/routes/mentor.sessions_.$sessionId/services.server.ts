@@ -23,8 +23,7 @@ export async function getSessionAsync(sessionId: number) {
       student: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          fullName: true,
         },
       },
     },

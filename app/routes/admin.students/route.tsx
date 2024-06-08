@@ -145,10 +145,7 @@ export default function Index() {
                 </tr>
               )}
               {students.map(
-                (
-                  { id, firstName, lastName, yearLevel, chapter, endDate },
-                  index,
-                ) => {
+                ({ id, fullName, yearLevel, chapter, endDate }, index) => {
                   let className = "cursor-pointer hover:bg-base-200 ";
                   let icon: JSX.Element | undefined;
                   if (endDate) {
@@ -167,9 +164,7 @@ export default function Index() {
                           {index + 1 + 10 * currentPageNumber} {icon}
                         </div>
                       </td>
-                      <td className="border">
-                        {firstName} {lastName}
-                      </td>
+                      <td className="border">{fullName}</td>
                       <td className="border">{yearLevel ?? "-"}</td>
                       <td className="border">{chapter.name}</td>
                       <td className="border">

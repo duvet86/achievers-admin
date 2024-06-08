@@ -46,8 +46,7 @@ export async function getUsersAsync(
   return await prisma.user.findMany({
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
+      fullName: true,
       email: true,
       volunteerAgreementSignedOn: true,
       endDate: true,
@@ -105,7 +104,7 @@ export async function getUsersAsync(
       ],
     },
     orderBy: {
-      firstName: "asc",
+      fullName: "asc",
     },
     skip: numberItems * pageNumber,
     take: numberItems,
@@ -160,8 +159,7 @@ function getOR(searchTerm: string | null, onlyExpiredChecks: boolean) {
         searchTerm,
         (term) =>
           [
-            { firstName: { contains: term } },
-            { lastName: { contains: term } },
+            { fullName: { contains: term } },
             { email: { contains: term } },
           ] as const,
       ) as []),

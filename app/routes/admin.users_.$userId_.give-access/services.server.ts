@@ -8,8 +8,7 @@ export async function getUserByIdAsync(id: number) {
     select: {
       id: true,
       email: true,
-      firstName: true,
-      lastName: true,
+      fullName: true,
       azureADId: true,
     },
   });

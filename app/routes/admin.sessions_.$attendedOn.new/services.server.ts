@@ -26,8 +26,7 @@ export async function getStudentByIdAsync(id: number) {
     },
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
+      fullName: true,
     },
   });
 }
@@ -41,8 +40,7 @@ export async function getMentorForStudentAsync(studentId: number) {
       user: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          fullName: true,
         },
       },
     },

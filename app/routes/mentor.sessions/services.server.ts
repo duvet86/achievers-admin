@@ -11,17 +11,15 @@ export async function getAssignedStudentsAsync(userId: number) {
       student: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          fullName: true,
         },
       },
     },
   });
 
-  return students.map(({ student: { id, firstName, lastName } }) => ({
+  return students.map(({ student: { id, fullName } }) => ({
     id,
-    firstName,
-    lastName,
+    fullName,
   }));
 }
 

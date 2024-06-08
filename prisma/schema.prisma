@@ -20,6 +20,7 @@ model User {
   email           String @unique
   firstName       String
   lastName        String
+  fullName        String @default(dbgenerated()) // Calculated column firstName + lastName.
   mobile          String
   addressStreet   String @db.VarChar(2000)
   addressSuburb   String
@@ -116,6 +117,7 @@ model Reference {
 
   firstName    String
   lastName     String
+  fullName     String @default(dbgenerated()) // Calculated column firstName + lastName.
   mobile       String
   email        String
   relationship String
@@ -218,6 +220,7 @@ model Student {
 
   firstName String
   lastName  String
+  fullName  String @default(dbgenerated()) // Calculated column firstName + lastName.
 
   gender                     Gender?
   startDate                  DateTime?

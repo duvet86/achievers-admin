@@ -87,15 +87,13 @@ export async function getStudentsAsync(
     },
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
+      fullName: true,
       mentorToStudentAssignement: {
         select: {
           user: {
             select: {
               id: true,
-              firstName: true,
-              lastName: true,
+              fullName: true,
             },
           },
         },
@@ -130,8 +128,7 @@ export async function getStudentsAsync(
     const mentorIdToMentorNameForStudentLookup =
       student.mentorToStudentAssignement.reduce<Record<string, string>>(
         (res, assignment) => {
-          res[assignment.user.id] =
-            `${assignment.user.firstName} ${assignment.user.lastName}`;
+          res[assignment.user.id] = assignment.user.fullName;
 
           return res;
         },
@@ -161,11 +158,7 @@ export async function getStudentsAsync(
   return {
     selectedStudent,
     sessionDateToMentorIdForAllStudentsLookup,
-    students: students.map(({ id, firstName, lastName }) => ({
-      id,
-      firstName,
-      lastName,
-    })),
+    students,
   };
 }
 

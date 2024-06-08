@@ -77,18 +77,13 @@ export default function Index() {
                 </tr>
               )}
               {history.map(
-                (
-                  { user: { id, firstName, lastName }, error, createdAt },
-                  index,
-                ) => (
+                ({ user: { id, fullName }, error, createdAt }, index) => (
                   <tr
                     key={id}
                     className={error !== null ? "bg-error" : undefined}
                   >
                     <td className="border">{index + 1}</td>
-                    <td className="border">
-                      {firstName} {lastName}
-                    </td>
+                    <td className="border">{fullName}</td>
                     <td className="border">{error}</td>
                     <td className="border">
                       {dayjs(createdAt).format("YYYY/MM/DD hh:mm")}

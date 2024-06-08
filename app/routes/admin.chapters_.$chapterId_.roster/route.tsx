@@ -82,84 +82,74 @@ export default function Index() {
             </tr>
           </thead>
           <tbody>
-            {students.map(
-              (
-                {
-                  id: studentId,
-                  firstName: studentFirstName,
-                  lastName: studentLastName,
-                  sessionLookup,
-                },
-                i,
-              ) => (
-                <tr
-                  key={studentId}
+            {students.map(({ id: studentId, fullName, sessionLookup }, i) => (
+              <tr
+                key={studentId}
+                style={{
+                  backgroundColor: getValueFromCircularArray(i, colours),
+                }}
+              >
+                <th
+                  className="z-10 border-r"
                   style={{
                     backgroundColor: getValueFromCircularArray(i, colours),
                   }}
                 >
-                  <th
-                    className="z-10 border-r"
-                    style={{
-                      backgroundColor: getValueFromCircularArray(i, colours),
-                    }}
+                  <Link
+                    to={`/admin/chapters/${chapterId}/students/${studentId}`}
+                    className="link block w-36"
                   >
-                    <Link
-                      to={`/admin/chapters/${chapterId}/students/${studentId}`}
-                      className="link block w-36"
-                    >
-                      {studentFirstName} {studentLastName}
-                    </Link>
-                  </th>
-                  {datesInTerm.map((attendedOn, index) => {
-                    const sessionInfo = sessionLookup[attendedOn];
+                    {fullName}
+                  </Link>
+                </th>
+                {datesInTerm.map((attendedOn, index) => {
+                  const sessionInfo = sessionLookup[attendedOn];
 
-                    const sessionId = sessionInfo?.sessionId;
-                    const hasReport = sessionInfo?.hasReport ?? false;
-                    const isCancelled = sessionInfo?.isCancelled ?? false;
+                  const sessionId = sessionInfo?.sessionId;
+                  const hasReport = sessionInfo?.hasReport ?? false;
+                  const isCancelled = sessionInfo?.isCancelled ?? false;
 
-                    const to = sessionId
-                      ? `/admin/sessions/${sessionId}?backURL=/admin/chapters/${chapterId}/roster`
-                      : `/admin/sessions/${attendedOn}/new?studentId=${studentId}&chapterId=${chapterId}&backURL=/admin/chapters/${chapterId}/roster`;
+                  const to = sessionId
+                    ? `/admin/sessions/${sessionId}?backURL=/admin/chapters/${chapterId}/roster`
+                    : `/admin/sessions/${attendedOn}/new?studentId=${studentId}&chapterId=${chapterId}&backURL=/admin/chapters/${chapterId}/roster`;
 
-                    return (
-                      <td key={index} className="border-r">
-                        <div className="indicator">
-                          {hasReport && (
-                            <div className="badge indicator-item badge-success indicator-center gap-1">
-                              Report <Check className="h-4 w-4" />
-                            </div>
-                          )}
-                          <div className="w-48">
-                            <Link
-                              to={to}
-                              className={classNames(
-                                "btn btn-ghost btn-block justify-between",
-                                {
-                                  "font-bold text-error": isCancelled,
-                                },
-                              )}
-                            >
-                              {isCancelled ? (
-                                <>
-                                  <WarningTriangle />
-                                  Cancelled
-                                </>
-                              ) : (
-                                <span className="flex-1">
-                                  {sessionInfo?.mentorFullName}
-                                </span>
-                              )}
-                              <NavArrowRight />
-                            </Link>
+                  return (
+                    <td key={index} className="border-r">
+                      <div className="indicator">
+                        {hasReport && (
+                          <div className="badge indicator-item badge-success indicator-center gap-1">
+                            Report <Check className="h-4 w-4" />
                           </div>
+                        )}
+                        <div className="w-48">
+                          <Link
+                            to={to}
+                            className={classNames(
+                              "btn btn-ghost btn-block justify-between",
+                              {
+                                "font-bold text-error": isCancelled,
+                              },
+                            )}
+                          >
+                            {isCancelled ? (
+                              <>
+                                <WarningTriangle />
+                                Cancelled
+                              </>
+                            ) : (
+                              <span className="flex-1">
+                                {sessionInfo?.mentorFullName}
+                              </span>
+                            )}
+                            <NavArrowRight />
+                          </Link>
                         </div>
-                      </td>
-                    );
-                  })}
-                </tr>
-              ),
-            )}
+                      </div>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

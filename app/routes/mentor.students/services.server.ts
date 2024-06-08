@@ -11,8 +11,7 @@ export async function getMentorStudentsAsync(mentorId: User["id"]) {
       student: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          fullName: true,
           dateOfBirth: true,
         },
       },

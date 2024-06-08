@@ -1,11 +1,9 @@
-import type { Chapter, Student, User } from "@prisma/client";
-
 import { prisma } from "~/db.server";
 import { getCurrentUserADIdAsync } from "~/services/.server";
 
 export async function getStudentsInChapterAsync(
-  chapterId: Chapter["id"],
-  mentorId: User["id"],
+  chapterId: number,
+  mentorId: number,
 ) {
   return prisma.student.findMany({
     where: {
@@ -18,29 +16,26 @@ export async function getStudentsInChapterAsync(
     },
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
+      fullName: true,
     },
   });
 }
 
-export async function getMentorWithStudentsAsync(mentorId: User["id"]) {
+export async function getMentorWithStudentsAsync(mentorId: number) {
   return prisma.user.findFirstOrThrow({
     where: {
       id: mentorId,
     },
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
+      fullName: true,
       frequencyInDays: true,
       mentorToStudentAssignement: {
         select: {
           student: {
             select: {
               id: true,
-              firstName: true,
-              lastName: true,
+              fullName: true,
             },
           },
         },
@@ -51,8 +46,8 @@ export async function getMentorWithStudentsAsync(mentorId: User["id"]) {
 
 export async function assignStudentToMentorAsync(
   request: Request,
-  mentorId: User["id"],
-  studentId: Student["id"],
+  mentorId: number,
+  studentId: number,
 ) {
   const currentUserAzureId = await getCurrentUserADIdAsync(request);
 
@@ -66,8 +61,8 @@ export async function assignStudentToMentorAsync(
 }
 
 export async function removeMentorStudentAssignement(
-  userId: User["id"],
-  studentId: Student["id"],
+  userId: number,
+  studentId: number,
 ) {
   return await prisma.mentorToStudentAssignement.delete({
     where: {

@@ -20,8 +20,7 @@ export async function getPoliceCheckReminders(
       user: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          fullName: true,
         },
       },
     },

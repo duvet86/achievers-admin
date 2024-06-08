@@ -63,16 +63,11 @@ export default function Chapter() {
 
   return (
     <>
-      <Title>
-        Archive &quot;{user.firstName} {user.lastName}&quot;
-      </Title>
+      <Title>Archive &quot;{user.fullName}&quot;</Title>
 
       <Form method="post">
         <fieldset disabled={transition.state === "submitting"}>
-          <p>
-            Are you sure you want to archive &quot;{user.firstName}{" "}
-            {user.lastName}&quot;?
-          </p>
+          <p>Are you sure you want to archive &quot;{user.fullName}&quot;?</p>
 
           <div className="mt-6 flex items-center justify-end gap-6">
             <Link

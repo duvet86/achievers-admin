@@ -19,8 +19,7 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<
     mentorFullName: string;
     nextSessionDate: string | null;
     student: null | {
-      firstName: string;
-      lastName: string;
+      fullName: string;
     };
     sessions: {
       id: number;
@@ -33,12 +32,10 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<
   const azureUserId = await getCurrentUserADIdAsync(request);
   const user = await getUserByAzureADIdAsync(azureUserId);
 
-  const mentorFullName = user.firstName + " " + user.lastName;
-
   const nextSession = await getNextSessionAsync(user.id);
   if (nextSession === null) {
     return json({
-      mentorFullName,
+      mentorFullName: user.fullName,
       nextSessionDate: null,
       student: null,
       sessions: [],
@@ -48,7 +45,7 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<
   const sessions = await getSessionsAsync(user.id, user.chapterId);
 
   return json({
-    mentorFullName,
+    mentorFullName: user.fullName,
     nextSessionDate: dayjs(nextSession.attendedOn).format("MMMM D, YYYY"),
     student: nextSession.student,
     sessions,
@@ -80,9 +77,7 @@ export default function Index() {
 
             <div className="font-bold">
               <span className="text-4xl">{nextSessionDate}</span> with{" "}
-              <span className="text-3xl">
-                {student.firstName} {student.lastName}
-              </span>
+              <span className="text-3xl">{student.fullName}</span>
             </div>
           </div>
         </>

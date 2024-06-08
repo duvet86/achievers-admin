@@ -47,10 +47,10 @@ export default function Index() {
                 </td>
               </tr>
             )}
-            {partners.map(({ user: { id, firstName, lastName } }, index) => (
+            {partners.map(({ user: { id, fullName } }, index) => (
               <tr key={id}>
                 <td className="border-r">{index + 1}</td>
-                <td align="left">{`${firstName} ${lastName}`}</td>
+                <td align="left">{fullName}</td>
                 <td align="left">-</td>
                 <td align="right">
                   <Link

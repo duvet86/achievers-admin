@@ -98,9 +98,7 @@ export default function Index() {
                   <td className="border">
                     <div className="flex gap-2">{index + 1}</div>
                   </td>
-                  <td className="border">
-                    {user.firstName} {user.lastName}
-                  </td>
+                  <td className="border">{user.fullName}</td>
                   <td className="border">
                     <div className="flex items-center gap-4">
                       {dayjs(expiryDate).format("MMMM D, YYYY")}

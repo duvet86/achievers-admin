@@ -48,8 +48,7 @@ describe("Admin /users", () => {
               {
                 id: 1,
                 email: "test@test.com",
-                firstName: "Test",
-                lastName: "User",
+                fullName: "Test User",
                 chapter: {
                   name: "Chapter 1",
                 },

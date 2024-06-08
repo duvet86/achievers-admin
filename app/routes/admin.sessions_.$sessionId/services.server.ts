@@ -21,15 +21,13 @@ export async function getSessionByIdAsync(sessionId: number) {
       user: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          fullName: true,
         },
       },
       student: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          fullName: true,
         },
       },
     },
@@ -45,8 +43,7 @@ export async function getMentorsForStudent(studentId: number) {
       user: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          fullName: true,
         },
       },
     },

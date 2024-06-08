@@ -218,12 +218,8 @@ export default function Index() {
                   index,
                 ) => (
                   <tr key={index}>
-                    <td className="border p-2">
-                      {user.firstName} {user.lastName}
-                    </td>
-                    <td className="border p-2">
-                      {student.firstName} {student.lastName}
-                    </td>
+                    <td className="border p-2">{user.fullName}</td>
+                    <td className="border p-2">{student.fullName}</td>
                     <td className="border p-2">
                       {dayjs(attendedOn).format("MMMM D, YYYY")}
                     </td>

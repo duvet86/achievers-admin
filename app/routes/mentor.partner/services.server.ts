@@ -22,8 +22,7 @@ export async function getPartnersAync(userId: User["id"]) {
       user: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          fullName: true,
           mobile: true,
         },
       },

@@ -1,5 +1,3 @@
-import type { User } from "@prisma/client";
-
 import { prisma } from "~/db.server";
 
 export interface UserData {
@@ -25,8 +23,7 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
       azureADId,
     },
     select: {
-      firstName: true,
-      lastName: true,
+      fullName: true,
       mobile: true,
       addressStreet: true,
       addressSuburb: true,
@@ -42,10 +39,7 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
   });
 }
 
-export async function confirmUserDetailsAsync(
-  userId: User["id"],
-  data: UserData,
-) {
+export async function confirmUserDetailsAsync(userId: number, data: UserData) {
   return await prisma.user.update({
     data,
     where: {

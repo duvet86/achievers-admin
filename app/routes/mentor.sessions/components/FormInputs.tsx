@@ -6,8 +6,7 @@ interface Props {
   selectedStudentId: string | undefined;
   students: {
     id: number;
-    firstName: string;
-    lastName: string;
+    fullName: string;
   }[];
   onFormClear: () => void;
 }
@@ -28,8 +27,8 @@ export default function FormInputs({
         label="Select a student"
         name="studentId"
         defaultValue={selectedStudentId}
-        options={students.map(({ id, firstName, lastName }) => ({
-          label: `${firstName} ${lastName}`,
+        options={students.map(({ id, fullName }) => ({
+          label: fullName,
           value: id.toString(),
         }))}
       />

@@ -9,8 +9,7 @@ export async function getStudentByIdAsync(id: Student["id"]) {
     },
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
+      fullName: true,
     },
   });
 }

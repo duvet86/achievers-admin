@@ -66,7 +66,7 @@ export default function Index() {
   const {
     chapterId,
     availableMentors,
-    studentWithMentors: { firstName, lastName, mentorToStudentAssignement },
+    studentWithMentors: { fullName, mentorToStudentAssignement },
   } = useLoaderData<typeof loader>();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { state, Form, submit } = (useFetcher as any)();
@@ -94,9 +94,7 @@ export default function Index() {
         <div className="flex flex-col gap-12 lg:flex-row">
           <div className="lg:w-1/2">
             <h4>Student</h4>
-            <div>
-              {firstName} {lastName}
-            </div>
+            <div>{fullName}</div>
           </div>
 
           <div>
@@ -108,12 +106,10 @@ export default function Index() {
                   showClearButton
                   name="mentorId"
                   placeholder="start typing to select a mentor"
-                  options={availableMentors.map(
-                    ({ id, firstName, lastName }) => ({
-                      label: `${firstName} ${lastName}`,
-                      value: id.toString(),
-                    }),
-                  )}
+                  options={availableMentors.map(({ id, fullName }) => ({
+                    label: fullName,
+                    value: id.toString(),
+                  }))}
                 />
               </div>
 
@@ -141,43 +137,39 @@ export default function Index() {
         <div>
           <h4>Assigned mentors</h4>
           <ol>
-            {mentorToStudentAssignement.map(
-              ({ user: { firstName, lastName, id } }) => (
-                <li key={id} className="border-b pb-2">
-                  <div className="flex items-center justify-between">
-                    {firstName} {lastName}
-                    <div className="flex gap-6">
-                      <Link to="/admin/sessions" className="btn btn-info gap-3">
-                        <Clock className="h-6 w-6" />
-                        View sessions
-                      </Link>
-                      <Form
-                        onSubmit={onMentorRemoved(`${firstName} ${lastName}`)}
+            {mentorToStudentAssignement.map(({ user: { fullName, id } }) => (
+              <li key={id} className="border-b pb-2">
+                <div className="flex items-center justify-between">
+                  {fullName}
+                  <div className="flex gap-6">
+                    <Link to="/admin/sessions" className="btn btn-info gap-3">
+                      <Clock className="h-6 w-6" />
+                      View sessions
+                    </Link>
+                    <Form onSubmit={onMentorRemoved(fullName)}>
+                      <input type="hidden" name="mentorId" value={id} />
+                      <button
+                        disabled={isLoading}
+                        className="btn btn-error w-48 gap-3"
+                        type="submit"
                       >
-                        <input type="hidden" name="mentorId" value={id} />
-                        <button
-                          disabled={isLoading}
-                          className="btn btn-error w-48 gap-3"
-                          type="submit"
-                        >
-                          {isLoading ? (
-                            <>
-                              <span className="loading loading-spinner"></span>{" "}
-                              Loading...
-                            </>
-                          ) : (
-                            <>
-                              <Xmark className="h-6 w-6" />
-                              Remove
-                            </>
-                          )}
-                        </button>
-                      </Form>
-                    </div>
+                        {isLoading ? (
+                          <>
+                            <span className="loading loading-spinner"></span>{" "}
+                            Loading...
+                          </>
+                        ) : (
+                          <>
+                            <Xmark className="h-6 w-6" />
+                            Remove
+                          </>
+                        )}
+                      </button>
+                    </Form>
                   </div>
-                </li>
-              ),
-            )}
+                </div>
+              </li>
+            ))}
           </ol>
         </div>
       </article>

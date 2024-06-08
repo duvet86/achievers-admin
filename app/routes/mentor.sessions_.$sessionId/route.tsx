@@ -84,7 +84,7 @@ export default function Index() {
   return (
     <>
       <Title to="/mentor/sessions" classNames="mb-4">
-        Report for &quot;{student.firstName} {student.lastName}&quot; on:{" "}
+        Report for &quot;{student.fullName}&quot; on:{" "}
         {dayjs(attendedOn).format("MMMM D, YYYY")}
       </Title>
 

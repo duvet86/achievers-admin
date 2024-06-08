@@ -86,7 +86,7 @@ export default function Index() {
   return (
     <>
       <Title to={`/admin/users/${user.id}`}>
-        Police check for &quot;{user.firstName} {user.lastName}&quot;
+        Police check for &quot;{user.fullName}&quot;
       </Title>
 
       <a

@@ -1,5 +1,3 @@
-import type { Chapter, User } from "@prisma/client";
-
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween.js";
 
@@ -7,7 +5,7 @@ import { prisma } from "~/db.server";
 
 dayjs.extend(isBetween);
 
-export async function getNextSessionAsync(userId: User["id"]) {
+export async function getNextSessionAsync(userId: number) {
   const nextAvailableSession = await prisma.mentorToStudentSession.findFirst({
     where: {
       userId,
@@ -20,8 +18,7 @@ export async function getNextSessionAsync(userId: User["id"]) {
       attendedOn: true,
       student: {
         select: {
-          firstName: true,
-          lastName: true,
+          fullName: true,
         },
       },
     },
@@ -30,10 +27,7 @@ export async function getNextSessionAsync(userId: User["id"]) {
   return nextAvailableSession;
 }
 
-export async function getSessionsAsync(
-  userId: User["id"],
-  chapterId: Chapter["id"],
-) {
+export async function getSessionsAsync(userId: number, chapterId: number) {
   return prisma.mentorToStudentSession.findMany({
     select: {
       id: true,

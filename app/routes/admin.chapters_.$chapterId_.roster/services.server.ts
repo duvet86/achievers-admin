@@ -64,8 +64,7 @@ export async function getStudentsAsync(chapterId: Chapter["id"]) {
     },
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
+      fullName: true,
       mentorToStudentSession: {
         select: {
           id: true,
@@ -75,8 +74,7 @@ export async function getStudentsAsync(chapterId: Chapter["id"]) {
           user: {
             select: {
               id: true,
-              firstName: true,
-              lastName: true,
+              fullName: true,
             },
           },
         },
@@ -88,7 +86,7 @@ export async function getStudentsAsync(chapterId: Chapter["id"]) {
     const sessionLookup = student.mentorToStudentSession.reduce<SessionLookup>(
       (res, session) => {
         res[session.attendedOn.toISOString()] = {
-          mentorFullName: `${session.user.firstName} ${session.user.lastName}`,
+          mentorFullName: session.user.fullName,
           sessionId: session.id,
           hasReport: session.hasReport,
           isCancelled: session.isCancelled,

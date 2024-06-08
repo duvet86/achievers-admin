@@ -9,14 +9,12 @@ export async function getSessionByIdAsync(id: MentorToStudentSession["id"]) {
       attendedOn: true,
       user: {
         select: {
-          firstName: true,
-          lastName: true,
+          fullName: true,
         },
       },
       student: {
         select: {
-          firstName: true,
-          lastName: true,
+          fullName: true,
         },
       },
     },

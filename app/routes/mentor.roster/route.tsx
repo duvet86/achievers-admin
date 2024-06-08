@@ -117,8 +117,8 @@ export default function Index() {
           defaultValue={
             searchParams.get("selectedStudentId") ?? students[0]?.id.toString()
           }
-          options={students.map(({ id, firstName, lastName }) => ({
-            label: `${firstName} ${lastName}`,
+          options={students.map(({ id, fullName }) => ({
+            label: fullName,
             value: id.toString(),
           }))}
         />

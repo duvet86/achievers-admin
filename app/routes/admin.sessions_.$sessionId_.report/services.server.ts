@@ -21,8 +21,7 @@ export async function getSessionByIdAsync(sessionId: number) {
       student: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          fullName: true,
         },
       },
     },

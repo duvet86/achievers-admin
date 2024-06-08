@@ -35,15 +35,12 @@ export default function Index() {
 
   return (
     <>
-      <Title>
-        Re enable &quot;{user.firstName} {user.lastName}&quot;
-      </Title>
+      <Title>Re enable &quot;{user.fullName}&quot;</Title>
 
       <Form method="post">
         <fieldset disabled={transition.state === "loading"}>
           <p>
-            Are you sure you want to re enable &quot;{user.firstName}{" "}
-            {user.lastName}
+            Are you sure you want to re enable &quot;{user.fullName}
             &quot;?
           </p>
 

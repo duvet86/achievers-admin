@@ -11,8 +11,7 @@ export async function getImportHistoryAsync(
       user: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          fullName: true,
         },
       },
     },

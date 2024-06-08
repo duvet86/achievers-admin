@@ -94,7 +94,7 @@ export default function Index() {
   return (
     <>
       <Title to={`/admin/users/${user.id}`}>
-        WWC check for &quot;{user.firstName} {user.lastName}&quot;
+        WWC check for &quot;{user.fullName}&quot;
       </Title>
 
       <Form method="post" encType="multipart/form-data">

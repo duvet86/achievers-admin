@@ -38,8 +38,8 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     student,
     attendedOn: params.attenedOn,
     mentors: [{ label: "Select a mentor", value: "" }].concat(
-      mentors.map(({ user: { id, firstName, lastName } }) => ({
-        label: `${firstName} ${lastName}`,
+      mentors.map(({ user: { id, fullName } }) => ({
+        label: fullName,
         value: id.toString(),
       })),
     ),
@@ -92,7 +92,7 @@ export default function Index() {
 
       <Text label="Chapter" text={chapter.name} />
 
-      <Text label="Student" text={`${student.firstName} ${student.lastName}`} />
+      <Text label="Student" text={student.fullName} />
 
       <SubTitle>Update mentor</SubTitle>
 

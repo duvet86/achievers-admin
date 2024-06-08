@@ -20,8 +20,7 @@ interface Props {
     sessionDateToMentorIdForStudentLookup: SessionLookup;
     mentorIdToMentorNameForStudentLookup: Record<string, string>;
     id: number;
-    firstName: string;
-    lastName: string;
+    fullName: string;
   };
   sessionDateToMentorIdForAllStudentsLookup: SessionLookup;
 }

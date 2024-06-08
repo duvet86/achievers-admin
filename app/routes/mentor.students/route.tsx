@@ -48,12 +48,10 @@ export default function Index() {
                 </td>
               </tr>
             )}
-            {students.map(({ id, firstName, lastName, yearLevel }, index) => (
+            {students.map(({ id, fullName, yearLevel }, index) => (
               <tr key={id}>
                 <td>{index + 1}</td>
-                <td>
-                  {firstName} {lastName}
-                </td>
+                <td>{fullName}</td>
                 <td>{yearLevel ?? "-"}</td>
                 <td align="right">
                   <Link

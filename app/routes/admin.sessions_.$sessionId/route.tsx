@@ -103,7 +103,7 @@ export default function Index() {
         </div>
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Student</div>
-          <div className="flex-1">{`${student.firstName} ${student.lastName}`}</div>
+          <div className="flex-1">{student.fullName}</div>
         </div>
 
         {isCancelled ? (
@@ -167,12 +167,10 @@ export default function Index() {
               label="Mentor"
               name="mentorId"
               defaultValue={user.id.toString()}
-              options={mentorsForStudent.map(
-                ({ user: { id, firstName, lastName } }) => ({
-                  label: `${firstName} ${lastName}`,
-                  value: id.toString(),
-                }),
-              )}
+              options={mentorsForStudent.map(({ user: { id, fullName } }) => ({
+                label: fullName,
+                value: id.toString(),
+              }))}
             />
 
             <SubmitFormButton className="mt-6 justify-between" />

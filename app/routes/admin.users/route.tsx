@@ -163,8 +163,7 @@ export default function Index() {
                 (
                   {
                     id,
-                    firstName,
-                    lastName,
+                    fullName,
                     email,
                     chapter,
                     checksCompleted,
@@ -196,9 +195,7 @@ export default function Index() {
                           {index + 1 + 10 * currentPageNumber} {icon}
                         </div>
                       </td>
-                      <td className="border">
-                        {firstName} {lastName}
-                      </td>
+                      <td className="border">{fullName}</td>
                       <td className="border">{email}</td>
                       <td className="border">{chapter.name}</td>
                       <td className="border">

@@ -73,15 +73,14 @@ export default function Chapter() {
   return (
     <>
       <Title>
-        Invite &quot;{user.firstName} {user.lastName}&quot; to the
-        achievers&apos; web app
+        Invite &quot;{user.fullName}&quot; to the achievers&apos; web app
       </Title>
 
       <Form method="post">
         <fieldset disabled={transition.state === "submitting"}>
           <p>
-            Are you sure you want to invite &quot;{user.firstName}{" "}
-            {user.lastName}&quot; to the achievers&apos; web app?
+            Are you sure you want to invite &quot;{user.fullName}&quot; to the
+            achievers&apos; web app?
           </p>
 
           <div className="mt-6 flex items-center justify-end gap-6">

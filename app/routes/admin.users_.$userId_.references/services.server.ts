@@ -7,9 +7,14 @@ export async function getUserByIdAsync(id: number) {
     },
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
-      references: true,
+      fullName: true,
+      references: {
+        select: {
+          id: true,
+          fullName: true,
+          calledOndate: true,
+        },
+      },
     },
   });
 }

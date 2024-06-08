@@ -119,17 +119,13 @@ export default function Index() {
             </thead>
             <tbody>
               {mentorsWithStudents.map(
-                ({ id, firstName, lastName, mentorToStudentAssignement }) => (
+                ({ id, fullName, mentorToStudentAssignement }) => (
                   <tr key={id}>
-                    <td className="border p-2">
-                      {firstName} {lastName}
-                    </td>
+                    <td className="border p-2">{fullName}</td>
                     <td className="border">
                       <ul className="list-disc pl-2">
                         {mentorToStudentAssignement.map(({ user }) => (
-                          <li key={user.id}>
-                            {user.firstName} {user.lastName}
-                          </li>
+                          <li key={user.id}>{user.fullName}</li>
                         ))}
                       </ul>
                     </td>
