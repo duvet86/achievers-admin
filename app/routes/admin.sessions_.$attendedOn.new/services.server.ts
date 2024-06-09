@@ -1,5 +1,10 @@
 import { prisma } from "~/db.server";
 
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
+
 export interface SessionCommand {
   chapterId: number;
   studentId: number;
@@ -58,7 +63,7 @@ export async function createSessionAsync({
       chapterId,
       studentId,
       userId,
-      attendedOn,
+      attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
     },
     select: {
       id: true,

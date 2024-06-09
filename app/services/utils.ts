@@ -2,7 +2,7 @@ import type { Dayjs } from "dayjs";
 import type { DateRange, Environment } from "./models";
 
 import dayjs from "dayjs";
-import isBetween from "dayjs/plugin/isBetween.js";
+import isBetween from "dayjs/plugin/isBetween";
 
 dayjs.extend(isBetween);
 
@@ -252,7 +252,11 @@ export function getDatesForTerm(startDate: Dayjs, endDate: Dayjs) {
 
   const dates: string[] = [];
   for (let i = 0; i <= numberOfWeeksInTerm; i++) {
-    const date = firstDayOfTermStart.clone().add(i, "week").toISOString();
+    const date = firstDayOfTermStart
+      .clone()
+      .add(i, "week")
+      .format("YYYY-MM-DD");
+
     dates.push(date);
   }
 

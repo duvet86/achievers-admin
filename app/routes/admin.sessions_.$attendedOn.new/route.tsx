@@ -36,7 +36,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   return json({
     chapter,
     student,
-    attendedOn: params.attenedOn,
+    attendedOn: dayjs(params.attendedOn, "YYYY-MM-DD").format("DD/MM/YYYY"),
     mentors: [{ label: "Select a mentor", value: "" }].concat(
       mentors.map(({ user: { id, fullName } }) => ({
         label: fullName,
@@ -85,13 +85,9 @@ export default function Index() {
 
   return (
     <>
-      <Title className="mb-4">
-        Update session of &quot;{dayjs(attendedOn).format("DD/MM/YYYY")}
-        &quot;
-      </Title>
+      <Title className="mb-4">Update session of &quot;{attendedOn}&quot;</Title>
 
       <Text label="Chapter" text={chapter.name} />
-
       <Text label="Student" text={student.fullName} />
 
       <SubTitle>Update mentor</SubTitle>

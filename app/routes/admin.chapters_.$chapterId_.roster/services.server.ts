@@ -2,10 +2,12 @@ import type { Chapter } from "@prisma/client";
 import type { Term } from "~/models";
 
 import dayjs from "dayjs";
-import isBetween from "dayjs/plugin/isBetween.js";
+import isBetween from "dayjs/plugin/isBetween";
+import utc from "dayjs/plugin/utc";
 
 import { prisma } from "~/db.server";
 
+dayjs.extend(utc);
 dayjs.extend(isBetween);
 
 export type SessionLookup = Record<
@@ -37,8 +39,8 @@ export async function getSchoolTermsForYearAsync(
 
   return terms.map<Term>(({ startDate, endDate }, index) => ({
     name: "Term " + (index + 1),
-    start: dayjs(startDate),
-    end: dayjs(endDate),
+    start: dayjs.utc(startDate),
+    end: dayjs.utc(endDate),
   }));
 }
 
@@ -85,7 +87,7 @@ export async function getStudentsAsync(chapterId: Chapter["id"]) {
   return students.map((student) => {
     const sessionLookup = student.mentorToStudentSession.reduce<SessionLookup>(
       (res, session) => {
-        res[session.attendedOn.toISOString()] = {
+        res[dayjs.utc(session.attendedOn).format("YYYY-MM-DD")] = {
           mentorFullName: session.user.fullName,
           sessionId: session.id,
           hasReport: session.hasReport,

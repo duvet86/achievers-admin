@@ -33,7 +33,7 @@ export async function getSchoolTermsForYearAsync(year: number) {
   });
 }
 
-export async function editTermsAsync(terms: SchoolTerm[]) {
+export async function updateTermsAsync(terms: SchoolTerm[]) {
   const updates = terms.map((term) =>
     prisma.schoolTerm.update({
       where: {

@@ -1,11 +1,12 @@
-import type { Student, User } from "@prisma/client";
 import type { Term } from "~/models";
 
 import dayjs from "dayjs";
-import isBetween from "dayjs/plugin/isBetween.js";
+import utc from "dayjs/plugin/utc";
+import isBetween from "dayjs/plugin/isBetween";
 
 import { prisma } from "~/db.server";
 
+dayjs.extend(utc);
 dayjs.extend(isBetween);
 
 export interface SessionCommand {
@@ -73,8 +74,8 @@ export function getCurrentTermForDate(terms: Term[], date: Date): Term {
 }
 
 export async function getStudentsAsync(
-  userId: User["id"],
-  selectedStudentId: Student["id"],
+  userId: number,
+  selectedStudentId: number,
 ) {
   const students = await prisma.student.findMany({
     where: {
@@ -115,7 +116,7 @@ export async function getStudentsAsync(
   const studentsWithSessions = students.map((student) => {
     const sessionDateToMentorIdForStudentLookup =
       student.mentorToStudentSession.reduce<SessionLookup>((res, session) => {
-        res[session.attendedOn.toISOString()] = {
+        res[dayjs.utc(session.attendedOn).format("YYYY-MM-DD")] = {
           userId: session.userId,
           sessionId: session.id,
           hasReport: session.hasReport,
@@ -170,7 +171,7 @@ export async function createSessionAsync({
 }: SessionCommand) {
   return await prisma.mentorToStudentSession.create({
     data: {
-      attendedOn,
+      attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
       chapterId,
       userId,
       studentId,

@@ -1,9 +1,4 @@
-import dayjs from "dayjs";
-import isBetween from "dayjs/plugin/isBetween.js";
-
 import { prisma } from "~/db.server";
-
-dayjs.extend(isBetween);
 
 export async function getNextSessionAsync(userId: number) {
   const nextAvailableSession = await prisma.mentorToStudentSession.findFirst({

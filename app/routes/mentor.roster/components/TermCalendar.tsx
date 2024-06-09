@@ -105,7 +105,7 @@ export default function TermCalendar({
             const isCancelled =
               mentorIdForSessionForSelectedStudent?.isCancelled;
 
-            const enableActions = hasReport === false && isCancelled === false;
+            const enableActions = !hasReport && !isCancelled;
 
             return (
               <tr

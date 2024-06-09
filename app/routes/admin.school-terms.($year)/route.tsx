@@ -26,7 +26,7 @@ import {
 } from "~/components";
 
 import {
-  editTermsAsync,
+  updateTermsAsync,
   getAvailableYearsAsync,
   getSchoolTermsForYearAsync,
 } from "./services.server";
@@ -146,7 +146,7 @@ export async function action({ request, params }: ActionFunctionArgs): Promise<
     });
   }
 
-  await editTermsAsync(newTerms);
+  await updateTermsAsync(newTerms);
 
   return json({
     successMessage: "Success",
