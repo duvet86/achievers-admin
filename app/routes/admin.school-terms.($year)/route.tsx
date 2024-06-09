@@ -14,6 +14,7 @@ import {
   useNavigate,
 } from "@remix-run/react";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import { Plus } from "iconoir-react";
 
 import { areDatesOverlapping, isStringNullOrEmpty } from "~/services";
@@ -30,6 +31,8 @@ import {
   getAvailableYearsAsync,
   getSchoolTermsForYearAsync,
 } from "./services.server";
+
+dayjs.extend(utc);
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const currentYear = dayjs().year();
@@ -63,27 +66,39 @@ export async function action({ request, params }: ActionFunctionArgs): Promise<
   const termId3 = formData.get("termId2")!.toString();
   const termId4 = formData.get("termId3")!.toString();
 
-  const startDate1 = dayjs(
+  const startDate1 = dayjs.utc(
     formData.get("startDate0")!.toString(),
     "YYYY-MM-DD",
   );
-  const startDate2 = dayjs(
+  const startDate2 = dayjs.utc(
     formData.get("startDate1")!.toString(),
     "YYYY-MM-DD",
   );
-  const startDate3 = dayjs(
+  const startDate3 = dayjs.utc(
     formData.get("startDate2")!.toString(),
     "YYYY-MM-DD",
   );
-  const startDate4 = dayjs(
+  const startDate4 = dayjs.utc(
     formData.get("startDate3")!.toString(),
     "YYYY-MM-DD",
   );
 
-  const endDate1 = dayjs(formData.get("endDate0")!.toString(), "YYYY-MM-DD");
-  const endDate2 = dayjs(formData.get("endDate1")!.toString(), "YYYY-MM-DD");
-  const endDate3 = dayjs(formData.get("endDate2")!.toString(), "YYYY-MM-DD");
-  const endDate4 = dayjs(formData.get("endDate3")!.toString(), "YYYY-MM-DD");
+  const endDate1 = dayjs.utc(
+    formData.get("endDate0")!.toString(),
+    "YYYY-MM-DD",
+  );
+  const endDate2 = dayjs.utc(
+    formData.get("endDate1")!.toString(),
+    "YYYY-MM-DD",
+  );
+  const endDate3 = dayjs.utc(
+    formData.get("endDate2")!.toString(),
+    "YYYY-MM-DD",
+  );
+  const endDate4 = dayjs.utc(
+    formData.get("endDate3")!.toString(),
+    "YYYY-MM-DD",
+  );
 
   const commonYear = startDate1.year();
 
@@ -119,18 +134,18 @@ export async function action({ request, params }: ActionFunctionArgs): Promise<
   const newTerms: SchoolTerm[] = [
     {
       id: Number(termId1),
-      startDate: dayjs(startDate1, "YYYY-MM-DD").toDate(),
-      endDate: dayjs(endDate1, "YYYY-MM-DD").toDate(),
+      startDate: dayjs.utc(startDate1, "YYYY-MM-DD").toDate(),
+      endDate: dayjs.utc(endDate1, "YYYY-MM-DD").toDate(),
     },
     {
       id: Number(termId2),
-      startDate: dayjs(startDate2, "YYYY-MM-DD").toDate(),
-      endDate: dayjs(endDate2, "YYYY-MM-DD").toDate(),
+      startDate: dayjs.utc(startDate2, "YYYY-MM-DD").toDate(),
+      endDate: dayjs.utc(endDate2, "YYYY-MM-DD").toDate(),
     },
     {
       id: Number(termId3),
-      startDate: dayjs(startDate3, "YYYY-MM-DD").toDate(),
-      endDate: dayjs(endDate3, "YYYY-MM-DD").toDate(),
+      startDate: dayjs.utc(startDate3, "YYYY-MM-DD").toDate(),
+      endDate: dayjs.utc(endDate3, "YYYY-MM-DD").toDate(),
     },
     {
       id: Number(termId4),
