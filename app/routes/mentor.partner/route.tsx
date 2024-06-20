@@ -27,7 +27,7 @@ export default function Index() {
 
   return (
     <>
-      <Title>My partnes</Title>
+      <Title>My partner</Title>
 
       <div className="overflow-auto bg-white">
         <table className="table table-lg">

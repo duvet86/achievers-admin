@@ -41,7 +41,7 @@ export default function Index() {
                 className="btn btn-primary w-64 gap-2"
               >
                 <GraduationCap className="h-4 w-4" />
-                Assign Menotor to Student
+                Assign Mentor to Student
               </Link>
               <Link to={`${id}/mentors`} className="btn btn-warning w-64 gap-2">
                 <Group className="h-4 w-4" />
