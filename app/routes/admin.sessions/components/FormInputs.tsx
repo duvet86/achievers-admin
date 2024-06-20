@@ -46,7 +46,7 @@ export default function FormInputs({
   return (
     <div className="mb-6 hidden flex-col gap-4 lg:flex">
       <Select
-        label="Select a chpater"
+        label="Select a Chapter"
         name="chapterId"
         defaultValue={selectedChapterId}
         onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
