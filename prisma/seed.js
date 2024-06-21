@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 const prisma = new PrismaClient();
 
 async function seed() {
+  // CHAPTERS ----------------------------
   await prisma.chapter.upsert({
     where: {
       name: "Girrawheen",
@@ -100,7 +101,7 @@ async function seed() {
     update: {},
   });
 
-  // --------------------------
+  // SCHOOL TERMS ----------------------------
 
   await prisma.schoolTerm.upsert({
     where: {
@@ -160,6 +161,56 @@ async function seed() {
       endDate: dayjs("2025-12-18"),
     },
     update: {},
+  });
+
+  // PERMISSIONS ----------------------------
+
+  const IS_DEV = process.env.NODE_ENV === "development";
+  const IS_CI = !!process.env.CI;
+
+  const adminRoleId =
+    IS_DEV || IS_CI
+      ? "f1f43596-ed2b-4044-8979-dd78ec6ebe08"
+      : "e567add0-fec3-4c87-941a-05dd2e18cdfd";
+
+  await prisma.permission.createMany({
+    data: [
+      {
+        roleId: adminRoleId,
+        action: "manage",
+        subject: "all",
+      },
+      {
+        roleId: adminRoleId,
+        action: "manage",
+        subject: "Chapter",
+      },
+      {
+        roleId: adminRoleId,
+        action: "manage",
+        subject: "Config",
+      },
+      {
+        roleId: adminRoleId,
+        action: "manage",
+        subject: "SchoolTerm",
+      },
+      {
+        roleId: adminRoleId,
+        action: "manage",
+        subject: "Session",
+      },
+      {
+        roleId: adminRoleId,
+        action: "manage",
+        subject: "Student",
+      },
+      {
+        roleId: adminRoleId,
+        action: "manage",
+        subject: "User",
+      },
+    ],
   });
 
   console.info(`Database has been seeded. 🌱`);

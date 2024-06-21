@@ -341,3 +341,11 @@ model SchoolTerm {
   @@unique([startDate, endDate])
   @@index([year])
 }
+
+model Permission {
+  id         Int     @id @default(autoincrement())
+  action     String
+  subject    String
+  conditions String?
+  roleId     String
+}

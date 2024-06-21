@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@azure/storage-blob": "^12.23.0",
+    "@casl/ability": "^6.7.1",
     "@lexical/react": "^0.16.0",
     "@prisma/client": "^5.15.1",
     "@remix-run/express": "^2.9.2",
