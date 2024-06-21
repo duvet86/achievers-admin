@@ -8,6 +8,7 @@ export interface EoiUpdateCommand {
   mentoringLevel: string;
   heardAboutUs: string;
   preferredFrequency: string;
+  preferredSubject: string;
   isOver18: boolean;
   comment: string;
   aboutMe: string;

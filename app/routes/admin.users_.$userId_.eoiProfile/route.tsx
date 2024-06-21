@@ -31,6 +31,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const mentoringLevel = formData.get("mentoringLevel")?.toString();
   const heardAboutUs = formData.get("heardAboutUs")?.toString();
   const preferredFrequency = formData.get("preferredFrequency")?.toString();
+  const preferredSubject = formData.get("preferredSubject")?.toString();
   const isOver18 = formData.get("isOver18")?.toString();
   const comment = formData.get("comment")?.toString();
   const aboutMe = formData.get("aboutMe")?.toString();
@@ -43,6 +44,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     mentoringLevel === undefined ||
     heardAboutUs === undefined ||
     preferredFrequency === undefined ||
+    preferredSubject === undefined ||
     isOver18 === undefined ||
     comment === undefined ||
     aboutMe === undefined
@@ -61,6 +63,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     mentoringLevel,
     heardAboutUs,
     preferredFrequency,
+    preferredSubject,
     isOver18: isOver18 === "true",
     comment,
     aboutMe,
@@ -133,6 +136,13 @@ export default function Index() {
           defaultValue={eoIProfile?.preferredFrequency ?? ""}
           label="Preferred frequency"
           name="preferredFrequency"
+          required
+        />
+
+        <Input
+          defaultValue={eoIProfile?.preferredSubject ?? ""}
+          label="Preferred subject"
+          name="preferredSubject"
           required
         />
 
