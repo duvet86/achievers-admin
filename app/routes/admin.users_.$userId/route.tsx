@@ -7,7 +7,10 @@ import { useActionData, useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
-import { getAzureUserWithRolesByIdAsync, ROLES } from "~/services/.server";
+import {
+  getAzureUserWithRolesByIdAsync,
+  ROLE_MAPPINGS,
+} from "~/services/.server";
 import { isDateExpired, isStringNullOrEmpty } from "~/services";
 
 import {
@@ -60,7 +63,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     volunteerAgreementSignedOn: user.volunteerAgreementSignedOn,
     mentorAppRoleAssignmentId:
       azureUserInfo?.appRoleAssignments.find(
-        ({ appRoleId }) => ROLES.Mentor === appRoleId,
+        ({ appRoleId }) => ROLE_MAPPINGS.Mentor === appRoleId,
       )?.id ?? null,
     chapters,
   });

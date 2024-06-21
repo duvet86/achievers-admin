@@ -14,15 +14,14 @@ import {
 
 import {
   getUserByAzureADIdAsync,
-  getCurrentUserADIdAsync,
+  getLoggedUserInfoAsync,
 } from "~/services/.server";
 import { confirmUserDetailsAsync } from "./services.server";
 import dayjs from "dayjs";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const azureUserId = await getCurrentUserADIdAsync(request);
-
-  const user = await getUserByAzureADIdAsync(azureUserId);
+  const loggedUser = await getLoggedUserInfoAsync(request);
+  const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
   if (user.volunteerAgreementSignedOn !== null) {
     throw redirect("/");

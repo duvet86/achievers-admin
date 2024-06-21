@@ -1,19 +1,17 @@
-import type { AzureUserWebAppWithRole } from "~/services/.server";
 import type { Environment } from "~/services";
 
 import { Link } from "@remix-run/react";
-
 import { ProfileCircle, Menu, LogOut } from "iconoir-react";
 
 import { Environments } from "~/services";
 
 interface Props {
-  currentUser: AzureUserWebAppWithRole;
+  userName: string;
   environment: Environment;
   version: string;
 }
 
-export function Navbar({ currentUser, environment, version }: Props) {
+export function Navbar({ userName, environment, version }: Props) {
   const showEnvBadge =
     environment === Environments.Local || environment === Environments.Staging;
 
@@ -43,9 +41,7 @@ export function Navbar({ currentUser, environment, version }: Props) {
 
       <div className="dropdown dropdown-end block">
         <div tabIndex={0} className="flex cursor-pointer items-center gap-2">
-          <div className="hidden font-semibold lg:block">
-            {currentUser.email}
-          </div>
+          <div className="hidden font-semibold lg:block">{userName}</div>
           <label className="btn btn-circle btn-ghost">
             <div className="flex w-10 content-center justify-center rounded-full">
               <ProfileCircle />

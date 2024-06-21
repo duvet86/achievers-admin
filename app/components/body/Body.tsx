@@ -1,4 +1,3 @@
-import type { AzureUserWebAppWithRole } from "~/services/.server";
 import type { Environment } from "~/services";
 
 import { Outlet } from "@remix-run/react";
@@ -10,12 +9,12 @@ interface Props {
   isAdmin: boolean;
   hasCompletedVolunteerAgreement?: boolean;
   version: string;
-  currentUser: AzureUserWebAppWithRole;
+  userName: string;
   environment: Environment;
 }
 
 export function Body({
-  currentUser,
+  userName,
   hasCompletedVolunteerAgreement,
   isAdmin,
   version,
@@ -28,7 +27,7 @@ export function Body({
       <input id="drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
         <Navbar
-          currentUser={currentUser}
+          userName={userName}
           environment={environment}
           version={version}
         />

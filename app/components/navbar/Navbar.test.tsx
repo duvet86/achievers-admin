@@ -9,20 +9,7 @@ describe("Navbar", () => {
   it("Navbar snapshot", async () => {
     const { baseElement } = render(
       <MemoryRouter>
-        <Navbar
-          environment="local"
-          currentUser={{
-            appRoleAssignments: [],
-            displayName: "",
-            givenName: "",
-            id: "1",
-            mail: "test@test.com",
-            surname: "",
-            userPrincipalName: "",
-            email: "",
-          }}
-          version="1"
-        />
+        <Navbar environment="local" userName="test@test.com" version="1" />
       </MemoryRouter>,
     );
 

@@ -72,7 +72,9 @@ exports[`Navbar > Navbar snapshot 1`] = `
         >
           <div
             class="hidden font-semibold lg:block"
-          />
+          >
+            test@test.com
+          </div>
           <label
             class="btn btn-circle btn-ghost"
           >

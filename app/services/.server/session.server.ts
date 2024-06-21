@@ -6,7 +6,41 @@ import { getCurrentHost, parseJwt } from "../utils";
 import { trackException } from "./appinsights-logging.server";
 import { getSessionInfoAsync_dev } from "./session-dev.server";
 
+export type ROLES = "Admin" | "Mentor";
+
+export interface CurentUserInfo {
+  aud: string;
+  iss: string;
+  iat: number;
+  nbf: number;
+  exp: number;
+  aio: string;
+  name: string;
+  oid: string;
+  preferred_username: string;
+  rh: string;
+  roles: ROLES[];
+  sub: string;
+  tid: string;
+  uti: string;
+  ver: string;
+}
+
 const loginPath = "/.auth/login/aad?post_login_redirect_uri=/";
+
+const IS_DEV = process.env.NODE_ENV === "development";
+const IS_CI = !!process.env.CI;
+
+export const ROLE_MAPPINGS: Record<ROLES, string> = {
+  Admin:
+    IS_DEV || IS_CI
+      ? "f1f43596-ed2b-4044-8979-dd78ec6ebe08"
+      : "e567add0-fec3-4c87-941a-05dd2e18cdfd",
+  Mentor:
+    IS_DEV || IS_CI
+      ? "83c9c558-9bbb-498d-8082-fc9dc1884618"
+      : "a2ed7b54-4379-465d-873d-2e182e0bd8ef",
+} as const;
 
 export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
   if (process.env.CI || process.env.NODE_ENV !== "production") {
@@ -50,14 +84,10 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
   }
 }
 
-export async function getCurrentUserADIdAsync(
+export async function getLoggedUserInfoAsync(
   request: Request,
-): Promise<string> {
+): Promise<CurentUserInfo> {
   const tokenInfo = await getTokenInfoAsync(request);
 
-  const userInfo = parseJwt<{
-    oid: string;
-  }>(tokenInfo.idToken);
-
-  return userInfo.oid; // Azure AD id for the current logged in user.
+  return parseJwt<CurentUserInfo>(tokenInfo.idToken);
 }

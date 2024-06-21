@@ -3,29 +3,15 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
-import {
-  getAzureUserWithRolesByIdAsync,
-  getCurrentUserADIdAsync,
-  ROLES,
-  version,
-} from "~/services/.server";
+import { getLoggedUserInfoAsync, version } from "~/services/.server";
 import { getEnvironment } from "~/services";
 
 import { Body } from "~/components";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const currentAzureUserId = await getCurrentUserADIdAsync(request);
+  const loggedUser = await getLoggedUserInfoAsync(request);
 
-  const azureUser = await getAzureUserWithRolesByIdAsync(
-    request,
-    currentAzureUserId,
-  );
-
-  const sessionUserRoles = azureUser.appRoleAssignments.map(
-    ({ appRoleId }) => appRoleId,
-  );
-
-  const isAdmin = sessionUserRoles.includes(ROLES.Admin);
+  const isAdmin = loggedUser.roles.includes("Admin");
 
   if (!isAdmin) {
     throw redirect("/401");
@@ -34,7 +20,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return json({
     isAdmin: true,
     environment: getEnvironment(request),
-    currentUser: azureUser,
+    userName: loggedUser.preferred_username,
     version,
   });
 }

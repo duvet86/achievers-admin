@@ -3,32 +3,26 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 
 import {
-  getAzureUserWithRolesByIdAsync,
-  ROLES,
   getUserByAzureADIdAsync,
-  getCurrentUserADIdAsync,
+  getLoggedUserInfoAsync,
 } from "~/services/.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const userAzureId = await getCurrentUserADIdAsync(request);
-  const azureUser = await getAzureUserWithRolesByIdAsync(request, userAzureId);
+  const loggedUser = await getLoggedUserInfoAsync(request);
 
-  const userRoles = azureUser.appRoleAssignments.map(
-    ({ appRoleId }) => appRoleId,
-  );
-
-  if (userRoles.includes(ROLES.Admin)) {
+  if (loggedUser.roles.includes("Admin")) {
     return redirect("/admin/home");
   }
 
-  const { volunteerAgreementSignedOn } =
-    await getUserByAzureADIdAsync(userAzureId);
+  const { volunteerAgreementSignedOn } = await getUserByAzureADIdAsync(
+    loggedUser.oid,
+  );
 
   if (volunteerAgreementSignedOn === null) {
     return redirect("/mentor/volunteer-agreement");
   }
 
-  if (userRoles.includes(ROLES.Mentor)) {
+  if (loggedUser.roles.includes("Mentor")) {
     return redirect("/mentor/home");
   }
 

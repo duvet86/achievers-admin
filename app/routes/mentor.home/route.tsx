@@ -7,7 +7,7 @@ import { Link, useLoaderData } from "@remix-run/react";
 import { StatsReport, Check, Xmark, InfoCircle } from "iconoir-react";
 
 import {
-  getCurrentUserADIdAsync,
+  getLoggedUserInfoAsync,
   getUserByAzureADIdAsync,
 } from "~/services/.server";
 import { SubTitle } from "~/components";
@@ -29,8 +29,8 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<
     }[];
   }>
 > {
-  const azureUserId = await getCurrentUserADIdAsync(request);
-  const user = await getUserByAzureADIdAsync(azureUserId);
+  const loggedUser = await getLoggedUserInfoAsync(request);
+  const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
   const nextSession = await getNextSessionAsync(user.id);
   if (nextSession === null) {

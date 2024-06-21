@@ -1,5 +1,5 @@
 import { prisma } from "~/db.server";
-import { getCurrentUserADIdAsync } from "~/services/.server";
+import { getLoggedUserInfoAsync } from "~/services/.server";
 
 export async function getStudentsInChapterAsync(
   chapterId: number,
@@ -49,13 +49,13 @@ export async function assignStudentToMentorAsync(
   mentorId: number,
   studentId: number,
 ) {
-  const currentUserAzureId = await getCurrentUserADIdAsync(request);
+  const loggedUser = await getLoggedUserInfoAsync(request);
 
   return await prisma.mentorToStudentAssignement.create({
     data: {
       studentId,
       userId: mentorId,
-      assignedBy: currentUserAzureId,
+      assignedBy: loggedUser.oid,
     },
   });
 }

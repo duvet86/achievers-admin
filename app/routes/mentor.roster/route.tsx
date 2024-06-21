@@ -11,7 +11,7 @@ import {
 import dayjs from "dayjs";
 
 import {
-  getCurrentUserADIdAsync,
+  getLoggedUserInfoAsync,
   getUserByAzureADIdAsync,
 } from "~/services/.server";
 import { getDatesForTerm } from "~/services";
@@ -31,8 +31,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const selectedTerm = url.searchParams.get("selectedTerm");
   const selectedStudentId = url.searchParams.get("selectedStudentId");
 
-  const azureUserId = await getCurrentUserADIdAsync(request);
-  const user = await getUserByAzureADIdAsync(azureUserId);
+  const loggedUser = await getLoggedUserInfoAsync(request);
+  const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
   const terms = await getSchoolTermsForYearAsync(dayjs().year());
 

@@ -13,16 +13,7 @@ describe("Body", () => {
           isAdmin
           version="1"
           environment="local"
-          currentUser={{
-            appRoleAssignments: [],
-            displayName: "",
-            givenName: "",
-            id: "1",
-            mail: "test@test.com",
-            surname: "",
-            userPrincipalName: "",
-            email: "",
-          }}
+          userName="test@test.com"
         />
       </MemoryRouter>,
     );
@@ -37,16 +28,7 @@ describe("Body", () => {
           isAdmin
           version="1"
           environment="local"
-          currentUser={{
-            appRoleAssignments: [],
-            displayName: "",
-            givenName: "",
-            id: "1",
-            mail: "test@test.com",
-            surname: "",
-            userPrincipalName: "",
-            email: "",
-          }}
+          userName="test@test.com"
         />
       </MemoryRouter>,
     );

@@ -9,7 +9,7 @@ import { Check, StatsReport, Xmark } from "iconoir-react";
 
 import { getPaginationRange } from "~/services";
 import {
-  getCurrentUserADIdAsync,
+  getLoggedUserInfoAsync,
   getUserByAzureADIdAsync,
 } from "~/services/.server";
 import { Pagination, Title } from "~/components";
@@ -56,8 +56,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
     studentId = Number(studentIdUrl);
   }
 
-  const azureUserId = await getCurrentUserADIdAsync(request);
-  const user = await getUserByAzureADIdAsync(azureUserId);
+  const loggedUser = await getLoggedUserInfoAsync(request);
+  const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
   const students = await getAssignedStudentsAsync(user.id);
 

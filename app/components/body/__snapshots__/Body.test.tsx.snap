@@ -83,7 +83,9 @@ exports[`Body > Body snapshot admin 1`] = `
             >
               <div
                 class="hidden font-semibold lg:block"
-              />
+              >
+                test@test.com
+              </div>
               <label
                 class="btn btn-circle btn-ghost"
               >
@@ -686,7 +688,9 @@ exports[`Body > Body snapshot mentor 1`] = `
             >
               <div
                 class="hidden font-semibold lg:block"
-              />
+              >
+                test@test.com
+              </div>
               <label
                 class="btn btn-circle btn-ghost"
               >

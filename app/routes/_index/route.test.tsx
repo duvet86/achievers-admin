@@ -1,9 +1,7 @@
 import { redirect } from "@remix-run/node";
 
 import {
-  ROLES,
-  getAzureUserWithRolesByIdAsync,
-  getCurrentUserADIdAsync,
+  getLoggedUserInfoAsync,
   getUserByAzureADIdAsync,
 } from "~/services/.server";
 
@@ -20,39 +18,34 @@ vi.mock("~/services/.server", async () => {
 
   return {
     ...actual,
-    getCurrentUserADIdAsync: vi.fn(),
-    getAzureUserWithRolesByIdAsync: vi.fn(),
+    getLoggedUserInfoAsync: vi.fn(),
     getUserByAzureADIdAsync: vi.fn(),
   };
 });
 
 describe("Loader", () => {
   beforeEach(() => {
-    vi.mocked(getCurrentUserADIdAsync).mockReset();
-    vi.mocked(getAzureUserWithRolesByIdAsync).mockReset();
+    vi.mocked(getLoggedUserInfoAsync).mockReset();
     vi.mocked(getUserByAzureADIdAsync).mockReset();
   });
 
   it("should redirect to users page for admin user", async () => {
-    vi.mocked(getCurrentUserADIdAsync).mockResolvedValueOnce("id");
-    vi.mocked(getAzureUserWithRolesByIdAsync).mockResolvedValueOnce({
-      id: "1",
-      displayName: "1",
-      givenName: "1",
-      surname: "1",
-      mail: "1",
-      userPrincipalName: "1",
-      appRoleAssignments: [
-        {
-          id: "",
-          principalDisplayName: "",
-          principalId: "",
-          resourceDisplayName: "",
-          appRoleId: ROLES.Admin,
-          roleName: "",
-        },
-      ],
-      email: "",
+    vi.mocked(getLoggedUserInfoAsync).mockResolvedValueOnce({
+      aud: "",
+      iss: "",
+      iat: 1,
+      nbf: 1,
+      exp: 1,
+      aio: "",
+      name: "",
+      oid: "",
+      preferred_username: "test",
+      rh: "",
+      roles: ["Admin"],
+      sub: "",
+      tid: "",
+      uti: "",
+      ver: "",
     });
 
     const response = await loader({
@@ -65,25 +58,22 @@ describe("Loader", () => {
   });
 
   it("should redirect to volunteer-agreement for mentor user", async () => {
-    vi.mocked(getCurrentUserADIdAsync).mockResolvedValueOnce("id");
-    vi.mocked(getAzureUserWithRolesByIdAsync).mockResolvedValueOnce({
-      id: "1",
-      displayName: "1",
-      givenName: "1",
-      surname: "1",
-      mail: "1",
-      userPrincipalName: "1",
-      appRoleAssignments: [
-        {
-          id: "",
-          principalDisplayName: "",
-          principalId: "",
-          resourceDisplayName: "",
-          appRoleId: ROLES.Mentor,
-          roleName: "",
-        },
-      ],
-      email: "",
+    vi.mocked(getLoggedUserInfoAsync).mockResolvedValueOnce({
+      aud: "",
+      iss: "",
+      iat: 1,
+      nbf: 1,
+      exp: 1,
+      aio: "",
+      name: "",
+      oid: "",
+      preferred_username: "test",
+      rh: "",
+      roles: ["Mentor"],
+      sub: "",
+      tid: "",
+      uti: "",
+      ver: "",
     });
     vi.mocked(getUserByAzureADIdAsync).mockResolvedValueOnce({
       id: 1,
@@ -127,25 +117,22 @@ describe("Loader", () => {
   });
 
   it("should redirect to home for mentor user", async () => {
-    vi.mocked(getCurrentUserADIdAsync).mockResolvedValueOnce("id");
-    vi.mocked(getAzureUserWithRolesByIdAsync).mockResolvedValueOnce({
-      id: "1",
-      displayName: "1",
-      givenName: "1",
-      surname: "1",
-      mail: "1",
-      userPrincipalName: "1",
-      appRoleAssignments: [
-        {
-          id: "",
-          principalDisplayName: "",
-          principalId: "",
-          resourceDisplayName: "",
-          appRoleId: ROLES.Mentor,
-          roleName: "",
-        },
-      ],
-      email: "",
+    vi.mocked(getLoggedUserInfoAsync).mockResolvedValueOnce({
+      aud: "",
+      iss: "",
+      iat: 1,
+      nbf: 1,
+      exp: 1,
+      aio: "",
+      name: "",
+      oid: "",
+      preferred_username: "test",
+      rh: "",
+      roles: ["Mentor"],
+      sub: "",
+      tid: "",
+      uti: "",
+      ver: "",
     });
     vi.mocked(getUserByAzureADIdAsync).mockResolvedValueOnce({
       id: 1,

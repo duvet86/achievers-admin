@@ -19,7 +19,7 @@ import { useRef } from "react";
 import invariant from "tiny-invariant";
 import { ArrowLeft, DesignNib, Xmark } from "iconoir-react";
 
-import { getCurrentUserADIdAsync } from "~/services/.server";
+import { getLoggedUserInfoAsync } from "~/services/.server";
 import { Editor, SubTitle, Title } from "~/components";
 
 import { getSessionByIdAsync, saveReportAsync } from "./services.server";
@@ -41,7 +41,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const userAzureId = await getCurrentUserADIdAsync(request);
+  const user = await getLoggedUserInfoAsync(request);
 
   const bodyData: SessionCommandRequest = await request.json();
 
@@ -49,7 +49,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const reportFeedback = bodyData.reportFeedback;
   const isSignedOff = bodyData.isSignedOff;
 
-  await saveReportAsync(sessionId, reportFeedback, isSignedOff, userAzureId);
+  await saveReportAsync(sessionId, reportFeedback, isSignedOff, user.oid);
 
   return json({
     message: "Successfully saved",
