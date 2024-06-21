@@ -173,45 +173,152 @@ async function seed() {
       ? "f1f43596-ed2b-4044-8979-dd78ec6ebe08"
       : "e567add0-fec3-4c87-941a-05dd2e18cdfd";
 
-  await prisma.permission.createMany({
-    data: [
-      {
+  const manageAll = await prisma.permission.upsert({
+    where: {
+      roleId_action_subject: {
         roleId: adminRoleId,
         action: "manage",
         subject: "all",
       },
-      {
+    },
+    create: {
+      roleId: adminRoleId,
+      action: "manage",
+      subject: "all",
+    },
+    update: {},
+  });
+
+  await prisma.permission.upsert({
+    where: {
+      roleId_action_subject: {
         roleId: adminRoleId,
         action: "manage",
         subject: "Chapter",
       },
-      {
+    },
+    create: {
+      roleId: adminRoleId,
+      action: "manage",
+      subject: "Chapter",
+    },
+    update: {},
+  });
+
+  await prisma.permission.upsert({
+    where: {
+      roleId_action_subject: {
         roleId: adminRoleId,
         action: "manage",
         subject: "Config",
       },
-      {
+    },
+    create: {
+      roleId: adminRoleId,
+      action: "manage",
+      subject: "Config",
+    },
+    update: {},
+  });
+
+  await prisma.permission.upsert({
+    where: {
+      roleId_action_subject: {
         roleId: adminRoleId,
         action: "manage",
         subject: "SchoolTerm",
       },
-      {
+    },
+    create: {
+      roleId: adminRoleId,
+      action: "manage",
+      subject: "SchoolTerm",
+    },
+    update: {},
+  });
+
+  await prisma.permission.upsert({
+    where: {
+      roleId_action_subject: {
         roleId: adminRoleId,
         action: "manage",
         subject: "Session",
       },
-      {
+    },
+    create: {
+      roleId: adminRoleId,
+      action: "manage",
+      subject: "Session",
+    },
+    update: {},
+  });
+
+  await prisma.permission.upsert({
+    where: {
+      roleId_action_subject: {
         roleId: adminRoleId,
         action: "manage",
         subject: "Student",
       },
-      {
+    },
+    create: {
+      roleId: adminRoleId,
+      action: "manage",
+      subject: "Student",
+    },
+    update: {},
+  });
+
+  await prisma.permission.upsert({
+    where: {
+      roleId_action_subject: {
         roleId: adminRoleId,
         action: "manage",
         subject: "User",
       },
-    ],
+    },
+    create: {
+      roleId: adminRoleId,
+      action: "manage",
+      subject: "User",
+    },
+    update: {},
   });
+
+  await prisma.permission.upsert({
+    where: {
+      roleId_action_subject: {
+        roleId: adminRoleId,
+        action: "manage",
+        subject: "Permission",
+      },
+    },
+    create: {
+      roleId: adminRoleId,
+      action: "manage",
+      subject: "Permission",
+    },
+    update: {},
+  });
+
+  const lucaUser = await prisma.user.findUnique({
+    where: {
+      email: "luca@achieversclubwa.org.au",
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (lucaUser !== null) {
+    await prisma.userPermission.create({
+      data: {
+        assignedBy: "seed",
+        userId: lucaUser.id,
+        permissionId: manageAll.id,
+      },
+    });
+  }
 
   console.info(`Database has been seeded. 🌱`);
 }

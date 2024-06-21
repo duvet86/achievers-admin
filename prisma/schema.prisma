@@ -62,6 +62,7 @@ model User {
 
   mentorToStudentAssignement MentorToStudentAssignement[]
   mentorToStudentSession     MentorToStudentSession[]
+  userPermission             UserPermission[]
 
   importedHistory ImportedHistory?
 }
@@ -343,9 +344,24 @@ model SchoolTerm {
 }
 
 model Permission {
-  id         Int     @id @default(autoincrement())
-  action     String
-  subject    String
-  conditions String?
-  roleId     String
+  id             Int              @id @default(autoincrement())
+  action         String
+  subject        String
+  conditions     String?
+  roleId         String
+  UserPermission UserPermission[]
+
+  @@unique([roleId, action, subject])
+}
+
+model UserPermission {
+  user         User       @relation(fields: [userId], references: [id])
+  userId       Int
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  permissionId Int
+
+  assignedBy String
+  assignedAt DateTime @default(now())
+
+  @@id([userId, permissionId])
 }

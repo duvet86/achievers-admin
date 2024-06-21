@@ -1,9 +1,8 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
+import { Form, useLoaderData, useSearchParams } from "@remix-run/react";
 import dayjs from "dayjs";
-import { ArrowLeft } from "iconoir-react";
 import invariant from "tiny-invariant";
 
 import { Title, Select, SubmitFormButton, Text, SubTitle } from "~/components";
@@ -15,23 +14,15 @@ import {
   getStudentByIdAsync,
 } from "./services.server";
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
+  invariant(params.chapterId, "chapterId not found");
+  invariant(params.studentId, "studentId not found");
   invariant(params.attendedOn, "attendedOn not found");
 
-  const url = new URL(request.url);
-  const chapterId = url.searchParams.get("chapterId");
-  const studentId = url.searchParams.get("studentId");
+  const chapter = await getChapterByIdAsync(Number(params.chapterId));
+  const student = await getStudentByIdAsync(Number(params.studentId));
 
-  invariant(chapterId, "chapterId not found");
-  invariant(studentId, "studentId not found");
-
-  const chapter = await getChapterByIdAsync(Number(chapterId));
-
-  const student = await getStudentByIdAsync(Number(studentId));
-
-  const mentors = studentId
-    ? await getMentorForStudentAsync(Number(studentId))
-    : [];
+  const mentors = await getMentorForStudentAsync(Number(params.studentId));
 
   return json({
     chapter,
@@ -47,26 +38,23 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 }
 
 export async function action({ params, request }: ActionFunctionArgs) {
+  invariant(params.chapterId, "chapterId not found");
+  invariant(params.studentId, "studentId not found");
   invariant(params.attendedOn, "attendedOn not found");
-
-  const url = new URL(request.url);
-  const chapterId = url.searchParams.get("chapterId");
-  const studentId = url.searchParams.get("studentId");
 
   const formData = await request.formData();
   const userId = formData.get("userId");
 
-  invariant(chapterId, "chapterId not found");
-  invariant(studentId, "studentId not found");
   invariant(userId, "userId not found");
 
   const session = await createSessionAsync({
     attendedOn: params.attendedOn,
-    chapterId: Number(chapterId),
-    studentId: Number(studentId),
+    chapterId: Number(params.chapterId),
+    studentId: Number(params.studentId),
     userId: Number(userId),
   });
 
+  const url = new URL(request.url);
   const backURL = url.searchParams.get("backURL");
 
   if (backURL) {
@@ -85,7 +73,12 @@ export default function Index() {
 
   return (
     <>
-      <Title className="mb-4">Update session of &quot;{attendedOn}&quot;</Title>
+      <Title
+        to={backURL ? backURL : `/admin/sessions?${searchParams}`}
+        className="mb-4"
+      >
+        Update session of &quot;{attendedOn}&quot;
+      </Title>
 
       <Text label="Chapter" text={chapter.name} />
       <Text label="Student" text={student.fullName} />
@@ -95,17 +88,7 @@ export default function Index() {
       <Form method="post">
         <Select label="Mentor" name="userId" options={mentors} required />
 
-        <div className="mt-4 flex justify-end gap-6">
-          <Link
-            to={backURL ? backURL : `/admin/sessions?${searchParams}`}
-            className="btn w-48"
-          >
-            <ArrowLeft className="h-6 w-6" />
-            Back
-          </Link>
-
-          <SubmitFormButton />
-        </div>
+        <SubmitFormButton className="mt-6 justify-between" />
       </Form>
     </>
   );

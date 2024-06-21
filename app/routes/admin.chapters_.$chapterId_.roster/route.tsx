@@ -111,7 +111,7 @@ export default function Index() {
 
                   const to = sessionId
                     ? `/admin/sessions/${sessionId}?backURL=/admin/chapters/${chapterId}/roster`
-                    : `/admin/sessions/${attendedOn}/new?studentId=${studentId}&chapterId=${chapterId}&backURL=/admin/chapters/${chapterId}/roster`;
+                    : `/admin/chapters/${chapterId}/students/${studentId}/sessions/${attendedOn}/assign-mentor?backURL=/admin/chapters/${chapterId}/roster`;
 
                   return (
                     <td key={index} className="border-r">
