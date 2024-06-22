@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { NewSchoolTerm } from "./services.server";
 
 import { Form, json, redirect, useActionData } from "@remix-run/react";
@@ -9,8 +9,19 @@ import { areDatesOverlapping } from "~/services";
 import { DateInput, SubTitle, SubmitFormButton, Title } from "~/components";
 
 import { addTermsAsync, getExisitingYearsAsync } from "./services.server";
+import { isLoggedUserBlockedAsync } from "~/services/.server";
 
 dayjs.extend(utc);
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const isUserBlocked = await isLoggedUserBlockedAsync(request, "SchoolTerm");
+
+  if (isUserBlocked) {
+    throw redirect("/401");
+  }
+
+  return null;
+}
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();

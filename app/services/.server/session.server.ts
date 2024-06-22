@@ -1,12 +1,18 @@
 import type { TokenInfo } from "../models";
 
 import { redirect } from "@remix-run/node";
+import { RawRuleOf } from "@casl/ability";
 
 import { getCurrentHost, parseJwt } from "../utils";
+
 import { trackException } from "./appinsights-logging.server";
 import { getSessionInfoAsync_dev } from "./session-dev.server";
-
-export type ROLES = "Admin" | "Mentor";
+import {
+  Subject,
+  AppAbility,
+  createAbility,
+  ROLES,
+} from "./permissions.server";
 
 export interface CurentUserInfo {
   aud: string;
@@ -27,20 +33,6 @@ export interface CurentUserInfo {
 }
 
 const loginPath = "/.auth/login/aad?post_login_redirect_uri=/";
-
-const IS_DEV = process.env.NODE_ENV === "development";
-const IS_CI = !!process.env.CI;
-
-export const ROLE_MAPPINGS: Record<ROLES, string> = {
-  Admin:
-    IS_DEV || IS_CI
-      ? "f1f43596-ed2b-4044-8979-dd78ec6ebe08"
-      : "e567add0-fec3-4c87-941a-05dd2e18cdfd",
-  Mentor:
-    IS_DEV || IS_CI
-      ? "83c9c558-9bbb-498d-8082-fc9dc1884618"
-      : "a2ed7b54-4379-465d-873d-2e182e0bd8ef",
-} as const;
 
 export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
   if (process.env.CI || process.env.NODE_ENV !== "production") {
@@ -90,4 +82,24 @@ export async function getLoggedUserInfoAsync(
   const tokenInfo = await getTokenInfoAsync(request);
 
   return parseJwt<CurentUserInfo>(tokenInfo.idToken);
+}
+
+export async function isLoggedUserBlockedAsync(
+  request: Request,
+  subject: Subject,
+): Promise<boolean> {
+  const loggedUser = await getLoggedUserInfoAsync(request);
+
+  const rules = loggedUser.roles.map<RawRuleOf<AppAbility>>((role) => {
+    const parts = role.split(".");
+
+    return {
+      action: parts[1],
+      subject: parts[2],
+    } as RawRuleOf<AppAbility>;
+  });
+
+  const ability = createAbility(rules);
+
+  return ability.cannot("manage", subject);
 }

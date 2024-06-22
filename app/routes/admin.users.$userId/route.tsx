@@ -28,11 +28,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.userId, "userId not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
-  if (user === null) {
-    throw new Response("Not Found", {
-      status: 404,
-    });
-  }
 
   let azureUserInfo: AzureUserWebAppWithRole | null = null;
   if (user.azureADId !== null) {
@@ -41,6 +36,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       user.azureADId,
     );
   }
+
+  console.log("azureUserInfo", azureUserInfo);
 
   const profilePicturePath = user?.profilePicturePath
     ? await getProfilePictureUrl(user.profilePicturePath)

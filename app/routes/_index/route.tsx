@@ -10,7 +10,11 @@ import {
 export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
 
-  if (loggedUser.roles.includes("Admin")) {
+  if (!loggedUser.roles) {
+    throw redirect("/401");
+  }
+
+  if (loggedUser.roles.findIndex((role) => role.includes("Admin")) !== -1) {
     return redirect("/admin/home");
   }
 

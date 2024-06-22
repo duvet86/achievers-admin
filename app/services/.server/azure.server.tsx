@@ -218,6 +218,8 @@ async function getAzureUserByIdAsync(
     (azureUser as AzureError).error &&
     (azureUser as AzureError).error.code === "Authorization_RequestDenied"
   ) {
+    console.log("azureUser", azureUser);
+
     throw redirect("/401");
   }
 

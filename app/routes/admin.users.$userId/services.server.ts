@@ -18,7 +18,7 @@ export async function getChaptersAsync() {
 }
 
 export async function getUserByIdAsync(id: number) {
-  return await prisma.user.findUnique({
+  return await prisma.user.findUniqueOrThrow({
     where: {
       id,
     },

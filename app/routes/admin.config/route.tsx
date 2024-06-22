@@ -1,69 +1,20 @@
-import { json } from "@remix-run/node";
-import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { Check, Xmark, CheckCircle } from "iconoir-react";
+import { redirect } from "@remix-run/node";
+import { Outlet } from "@remix-run/react";
 
-import { version, isEmailRemindersCheckEnabled } from "~/services/.server";
-import { Title } from "~/components";
+import { isLoggedUserBlockedAsync } from "~/services/.server";
 
-import { sendEmailRemaniders } from "./services.server";
+export async function loader({ request }: LoaderFunctionArgs) {
+  const isUserBlocked = await isLoggedUserBlockedAsync(request, "Config");
 
-export async function loader() {
-  return json({
-    version,
-    isEmailRemindersCheckEnabled: isEmailRemindersCheckEnabled,
-  });
-}
+  if (isUserBlocked) {
+    throw redirect("/401");
+  }
 
-export async function action() {
-  const totRemindersSent = await sendEmailRemaniders();
-
-  return json({
-    message: "Reminders sent: " + totRemindersSent,
-  });
+  return null;
 }
 
 export default function Index() {
-  const { version, isEmailRemindersCheckEnabled } =
-    useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
-
-  return (
-    <>
-      <Title>Configuration settings</Title>
-
-      <div className="mt-4 flex flex-col gap-4">
-        <p>
-          <span className="font-bold">App version:</span> {version}
-        </p>
-
-        <div className="mb-6 flex items-center gap-4">
-          <span className="font-bold">Email reminders enabled:</span>
-          {isEmailRemindersCheckEnabled ? (
-            <Check className="text-success" />
-          ) : (
-            <Xmark className="text-error" />
-          )}
-          <Link to="email-reminders-police-check" className="btn w-48">
-            View Police check
-          </Link>
-          <Link to="email-reminders-wwc" className="btn w-48">
-            View WWC
-          </Link>
-          <Form method="POST">
-            <button className="btn btn-neutral w-48" type="submit">
-              Send email
-            </button>
-          </Form>
-        </div>
-      </div>
-
-      {actionData && (
-        <div role="alert" className="alert alert-success">
-          <CheckCircle className="h-6 w-6 shrink-0 stroke-current" />
-          <span>{actionData.message}</span>
-        </div>
-      )}
-    </>
-  );
+  return <Outlet />;
 }

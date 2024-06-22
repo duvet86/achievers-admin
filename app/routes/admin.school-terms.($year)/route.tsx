@@ -9,6 +9,7 @@ import {
   Form,
   Link,
   json,
+  redirect,
   useActionData,
   useLoaderData,
   useNavigate,
@@ -31,10 +32,17 @@ import {
   getAvailableYearsAsync,
   getSchoolTermsForYearAsync,
 } from "./services.server";
+import { isLoggedUserBlockedAsync } from "~/services/.server";
 
 dayjs.extend(utc);
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
+  const isUserBlocked = await isLoggedUserBlockedAsync(request, "SchoolTerm");
+
+  if (isUserBlocked) {
+    throw redirect("/401");
+  }
+
   const currentYear = dayjs().year();
 
   const selectedYear = isStringNullOrEmpty(params.year)
