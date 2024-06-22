@@ -44,3 +44,16 @@ export async function getSessionsAsync(userId: number, chapterId: number) {
     take: 5,
   });
 }
+
+export async function getUserByAzureADIdAsync(azureADId: string) {
+  return await prisma.user.findUniqueOrThrow({
+    where: {
+      azureADId,
+    },
+    select: {
+      id: true,
+      fullName: true,
+      chapterId: true,
+    },
+  });
+}

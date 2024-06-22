@@ -10,10 +10,7 @@ import {
 } from "@remix-run/react";
 import dayjs from "dayjs";
 
-import {
-  getLoggedUserInfoAsync,
-  getUserByAzureADIdAsync,
-} from "~/services/.server";
+import { getLoggedUserInfoAsync } from "~/services/.server";
 import { getDatesForTerm } from "~/services";
 import { Select, Title } from "~/components";
 
@@ -23,6 +20,7 @@ import {
   getStudentsAsync,
   getSchoolTermsForYearAsync,
   removeSessionAsync,
+  getUserByAzureADIdAsync,
 } from "./services.server";
 import TermCalendar from "./components/TermCalendar";
 

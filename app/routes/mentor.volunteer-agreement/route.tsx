@@ -2,7 +2,9 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
+import dayjs from "dayjs";
 
+import { getLoggedUserInfoAsync } from "~/services/.server";
 import {
   Checkbox,
   DateInput,
@@ -13,11 +15,9 @@ import {
 } from "~/components";
 
 import {
+  confirmUserDetailsAsync,
   getUserByAzureADIdAsync,
-  getLoggedUserInfoAsync,
-} from "~/services/.server";
-import { confirmUserDetailsAsync } from "./services.server";
-import dayjs from "dayjs";
+} from "./services.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);

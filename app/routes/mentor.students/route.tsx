@@ -1,22 +1,16 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { Link, json, useLoaderData } from "@remix-run/react";
-
 import { StatsReport } from "iconoir-react";
 
-import {
-  getLoggedUserInfoAsync,
-  getUserByAzureADIdAsync,
-} from "~/services/.server";
+import { getLoggedUserInfoAsync } from "~/services/.server";
 import { Title } from "~/components";
 
 import { getMentorStudentsAsync } from "./services.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
-  const user = await getUserByAzureADIdAsync(loggedUser.oid);
-
-  const students = await getMentorStudentsAsync(user.id);
+  const students = await getMentorStudentsAsync(loggedUser.oid);
 
   return json({
     students,

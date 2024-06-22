@@ -17,7 +17,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const isUserBlocked = await isLoggedUserBlockedAsync(request, "SchoolTerm");
 
   if (isUserBlocked) {
-    throw redirect("/401");
+    throw redirect("/403");
   }
 
   return null;

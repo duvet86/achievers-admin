@@ -1,12 +1,11 @@
 import { redirect } from "@remix-run/node";
 
-import {
-  getLoggedUserInfoAsync,
-  getUserByAzureADIdAsync,
-} from "~/services/.server";
+import { getLoggedUserInfoAsync } from "~/services/.server";
 
+import { getUserByAzureADIdAsync } from "./services.server";
 import { loader } from "./route";
 
+vi.mock("./services.server");
 vi.mock("~/services/.server", async () => {
   process.env.SESSION_SECRET = "Test";
   process.env.CLIENT_ID = "Test";
@@ -76,35 +75,7 @@ describe("Loader", () => {
       ver: "",
     });
     vi.mocked(getUserByAzureADIdAsync).mockResolvedValueOnce({
-      id: 1,
-      azureADId: null,
-      email: "",
-      firstName: "",
-      lastName: "",
-      fullName: "",
-      mobile: "",
-      addressStreet: "",
-      addressSuburb: "",
-      addressState: "",
-      addressPostcode: "",
-      additionalEmail: null,
-      dateOfBirth: null,
-      emergencyContactName: null,
-      emergencyContactNumber: null,
-      emergencyContactAddress: null,
-      emergencyContactRelationship: null,
-      nextOfKinName: null,
-      nextOfKinNumber: null,
-      nextOfKinAddress: null,
-      nextOfKinRelationship: null,
-      profilePicturePath: null,
-      hasApprovedToPublishPhotos: null,
-      endDate: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
       volunteerAgreementSignedOn: null,
-      frequencyInDays: 7,
-      chapterId: 2,
     });
 
     const response = await loader({
@@ -135,35 +106,7 @@ describe("Loader", () => {
       ver: "",
     });
     vi.mocked(getUserByAzureADIdAsync).mockResolvedValueOnce({
-      id: 1,
-      azureADId: null,
-      email: "",
-      firstName: "",
-      lastName: "",
-      fullName: "",
-      mobile: "",
-      addressStreet: "",
-      addressSuburb: "",
-      addressState: "",
-      addressPostcode: "",
-      additionalEmail: null,
-      dateOfBirth: null,
-      emergencyContactName: null,
-      emergencyContactNumber: null,
-      emergencyContactAddress: null,
-      emergencyContactRelationship: null,
-      nextOfKinName: null,
-      nextOfKinNumber: null,
-      nextOfKinAddress: null,
-      nextOfKinRelationship: null,
-      profilePicturePath: null,
-      hasApprovedToPublishPhotos: null,
-      endDate: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
       volunteerAgreementSignedOn: new Date(),
-      frequencyInDays: 7,
-      chapterId: 2,
     });
 
     const response = await loader({

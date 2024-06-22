@@ -8,16 +8,14 @@ import dayjs from "dayjs";
 import { Check, StatsReport, Xmark } from "iconoir-react";
 
 import { getPaginationRange } from "~/services";
-import {
-  getLoggedUserInfoAsync,
-  getUserByAzureADIdAsync,
-} from "~/services/.server";
+import { getLoggedUserInfoAsync } from "~/services/.server";
 import { Pagination, Title } from "~/components";
 
 import {
   getSessionsAsync,
   getCountAsync,
   getAssignedStudentsAsync,
+  getUserByAzureADIdAsync,
 } from "./services.server";
 import FormInputs from "./components/FormInputs";
 

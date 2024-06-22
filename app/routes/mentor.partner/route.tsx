@@ -3,19 +3,14 @@ import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { Calendar } from "iconoir-react";
 
-import {
-  getLoggedUserInfoAsync,
-  getUserByAzureADIdAsync,
-} from "~/services/.server";
+import { getLoggedUserInfoAsync } from "~/services/.server";
 import { Title } from "~/components";
 
 import { getPartnersAync } from "./services.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
-  const user = await getUserByAzureADIdAsync(loggedUser.oid);
-
-  const partners = await getPartnersAync(user.id);
+  const partners = await getPartnersAync(loggedUser.oid);
 
   return json({
     partners,

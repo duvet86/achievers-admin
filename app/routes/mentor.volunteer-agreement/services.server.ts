@@ -23,7 +23,9 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
       azureADId,
     },
     select: {
-      fullName: true,
+      id: true,
+      firstName: true,
+      lastName: true,
       mobile: true,
       addressStreet: true,
       addressSuburb: true,
@@ -35,6 +37,7 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
       emergencyContactAddress: true,
       emergencyContactRelationship: true,
       hasApprovedToPublishPhotos: true,
+      volunteerAgreementSignedOn: true,
     },
   });
 }

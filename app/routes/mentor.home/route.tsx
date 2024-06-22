@@ -6,13 +6,14 @@ import { Link, useLoaderData } from "@remix-run/react";
 
 import { StatsReport, Check, Xmark, InfoCircle } from "iconoir-react";
 
-import {
-  getLoggedUserInfoAsync,
-  getUserByAzureADIdAsync,
-} from "~/services/.server";
+import { getLoggedUserInfoAsync } from "~/services/.server";
 import { SubTitle } from "~/components";
 
-import { getNextSessionAsync, getSessionsAsync } from "./services.server";
+import {
+  getNextSessionAsync,
+  getSessionsAsync,
+  getUserByAzureADIdAsync,
+} from "./services.server";
 
 export async function loader({ request }: LoaderFunctionArgs): Promise<
   TypedResponse<{

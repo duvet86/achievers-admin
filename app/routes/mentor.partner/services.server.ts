@@ -1,10 +1,18 @@
-import type { User } from "@prisma/client";
 import { prisma } from "~/db.server";
 
-export async function getPartnersAync(userId: User["id"]) {
+export async function getPartnersAync(azureADId: string) {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: {
+      azureADId,
+    },
+    select: {
+      id: true,
+    },
+  });
+
   const studentAssignements = await prisma.mentorToStudentAssignement.findMany({
     where: {
-      userId,
+      userId: user.id,
     },
     select: {
       studentId: true,
@@ -29,5 +37,5 @@ export async function getPartnersAync(userId: User["id"]) {
     },
   });
 
-  return partners.filter(({ user: { id } }) => userId !== id);
+  return partners.filter(({ user: { id } }) => user.id !== id);
 }

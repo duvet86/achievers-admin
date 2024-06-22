@@ -220,7 +220,7 @@ async function getAzureUserByIdAsync(
   ) {
     console.log("azureUser", azureUser);
 
-    throw redirect("/401");
+    throw redirect("/403");
   }
 
   return azureUser;

@@ -2,16 +2,15 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { redirect } from "@remix-run/node";
 
-import {
-  getUserByAzureADIdAsync,
-  getLoggedUserInfoAsync,
-} from "~/services/.server";
+import { getLoggedUserInfoAsync } from "~/services/.server";
+
+import { getUserByAzureADIdAsync } from "./services.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
 
   if (!loggedUser.roles) {
-    throw redirect("/401");
+    throw redirect("/403");
   }
 
   if (loggedUser.roles.findIndex((role) => role.includes("Admin")) !== -1) {
@@ -30,5 +29,5 @@ export async function loader({ request }: LoaderFunctionArgs) {
     return redirect("/mentor/home");
   }
 
-  throw redirect("/401");
+  throw redirect("/403");
 }
