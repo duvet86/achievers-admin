@@ -84,13 +84,8 @@ export async function getLoggedUserInfoAsync(
   return parseJwt<CurentUserInfo>(tokenInfo.idToken);
 }
 
-export async function isLoggedUserBlockedAsync(
-  request: Request,
-  subject: Subject,
-): Promise<boolean> {
-  const loggedUser = await getLoggedUserInfoAsync(request);
-
-  const rules = loggedUser.roles.map<RawRuleOf<AppAbility>>((role) => {
+export function getPermissionsAbility(roles: ROLES[]) {
+  const rules = roles.map<RawRuleOf<AppAbility>>((role) => {
     const parts = role.split(".");
 
     return {
@@ -100,6 +95,17 @@ export async function isLoggedUserBlockedAsync(
   });
 
   const ability = createAbility(rules);
+
+  return ability;
+}
+
+export async function isLoggedUserBlockedAsync(
+  request: Request,
+  subject: Subject,
+): Promise<boolean> {
+  const loggedUser = await getLoggedUserInfoAsync(request);
+
+  const ability = getPermissionsAbility(loggedUser.roles);
 
   return ability.cannot("manage", subject);
 }

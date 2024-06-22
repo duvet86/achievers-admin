@@ -11,6 +11,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   if (isUserBlocked) {
     throw redirect("/403");
   }
+
   return null;
 }
 

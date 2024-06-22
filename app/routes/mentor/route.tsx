@@ -24,6 +24,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     hasCompletedVolunteerAgreement: user.volunteerAgreementSignedOn !== null,
     userName: loggedUser.preferred_username,
     version,
+    linkMappings: {},
     environment: getEnvironment(request),
   });
 }

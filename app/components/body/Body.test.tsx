@@ -14,6 +14,14 @@ describe("Body", () => {
           version="1"
           environment="local"
           userName="test@test.com"
+          linkMappings={{
+            User: true,
+            Student: true,
+            Session: true,
+            Chapter: true,
+            SchoolTerm: true,
+            Config: true,
+          }}
         />
       </MemoryRouter>,
     );
@@ -25,10 +33,12 @@ describe("Body", () => {
     const { baseElement } = render(
       <MemoryRouter>
         <Body
-          isAdmin
+          isAdmin={false}
+          hasCompletedVolunteerAgreement
           version="1"
           environment="local"
           userName="test@test.com"
+          linkMappings={{}}
         />
       </MemoryRouter>,
     );

@@ -11,6 +11,7 @@ interface Props {
   version: string;
   userName: string;
   environment: Environment;
+  linkMappings: Record<string, boolean>;
 }
 
 export function Body({
@@ -19,6 +20,7 @@ export function Body({
   isAdmin,
   version,
   environment,
+  linkMappings,
 }: Props) {
   const showDrawer = isAdmin || hasCompletedVolunteerAgreement;
 
@@ -37,7 +39,7 @@ export function Body({
         </main>
       </div>
 
-      {showDrawer && <Drawer isAdmin={isAdmin} />}
+      {showDrawer && <Drawer isAdmin={isAdmin} linkMappings={linkMappings} />}
     </main>
   );
 }

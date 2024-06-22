@@ -10,7 +10,17 @@ describe("Drawer", () => {
   it("should display links for admin", async () => {
     render(
       <MemoryRouter>
-        <Drawer isAdmin />
+        <Drawer
+          isAdmin
+          linkMappings={{
+            User: true,
+            Student: true,
+            Session: true,
+            Chapter: true,
+            SchoolTerm: true,
+            Config: true,
+          }}
+        />
       </MemoryRouter>,
     );
 
@@ -43,7 +53,7 @@ describe("Drawer", () => {
   it("should display links for mentor", async () => {
     render(
       <MemoryRouter>
-        <Drawer isAdmin={false} />
+        <Drawer isAdmin={false} linkMappings={{}} />
       </MemoryRouter>,
     );
 
