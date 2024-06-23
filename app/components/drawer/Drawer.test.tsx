@@ -11,7 +11,8 @@ describe("Drawer", () => {
     render(
       <MemoryRouter>
         <Drawer
-          isAdmin
+          currentView="admin"
+          isMentorAndAdmin={false}
           linkMappings={{
             User: true,
             Student: true,
@@ -53,7 +54,11 @@ describe("Drawer", () => {
   it("should display links for mentor", async () => {
     render(
       <MemoryRouter>
-        <Drawer isAdmin={false} linkMappings={{}} />
+        <Drawer
+          currentView="mentor"
+          isMentorAndAdmin={false}
+          linkMappings={{}}
+        />
       </MemoryRouter>,
     );
 
@@ -77,5 +82,50 @@ describe("Drawer", () => {
 
     expect(links[5]).toHaveTextContent("Policy");
     expect(links[5]).toHaveAttribute("href", "/mentor/policy");
+  });
+
+  it("should display swap app link if both mentor and admin", async () => {
+    render(
+      <MemoryRouter>
+        <Drawer
+          currentView="admin"
+          isMentorAndAdmin={true}
+          linkMappings={{
+            User: true,
+            Student: true,
+            Session: true,
+            Chapter: true,
+            SchoolTerm: true,
+            Config: true,
+          }}
+        />
+      </MemoryRouter>,
+    );
+
+    const links: HTMLAnchorElement[] = screen.getAllByRole("link");
+
+    expect(links[0]).toHaveTextContent("Home");
+    expect(links[0]).toHaveAttribute("href", "/admin/home");
+
+    expect(links[1]).toHaveTextContent("Mentors");
+    expect(links[1]).toHaveAttribute("href", "/admin/users");
+
+    expect(links[2]).toHaveTextContent("Students");
+    expect(links[2]).toHaveAttribute("href", "/admin/students");
+
+    expect(links[3]).toHaveTextContent("Sessions/Reports");
+    expect(links[3]).toHaveAttribute("href", "/admin/sessions");
+
+    expect(links[4]).toHaveTextContent("Chapters");
+    expect(links[4]).toHaveAttribute("href", "/admin/chapters");
+
+    expect(links[5]).toHaveTextContent("School Terms");
+    expect(links[5]).toHaveAttribute("href", "/admin/school-terms");
+
+    expect(links[6]).toHaveTextContent("Config");
+    expect(links[6]).toHaveAttribute("href", "/admin/config");
+
+    expect(links[7]).toHaveTextContent("Mentor View");
+    expect(links[7]).toHaveAttribute("href", "/mentor/home");
   });
 });

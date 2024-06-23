@@ -6,7 +6,8 @@ import { Drawer } from "../drawer/Drawer";
 import { Navbar } from "../navbar/Navbar";
 
 interface Props {
-  isAdmin: boolean;
+  currentView: string;
+  isMentorAndAdmin: boolean;
   hasCompletedVolunteerAgreement?: boolean;
   version: string;
   userName: string;
@@ -17,12 +18,13 @@ interface Props {
 export function Body({
   userName,
   hasCompletedVolunteerAgreement,
-  isAdmin,
+  currentView,
+  isMentorAndAdmin,
   version,
   environment,
   linkMappings,
 }: Props) {
-  const showDrawer = isAdmin || hasCompletedVolunteerAgreement;
+  const showDrawer = currentView === "admin" || hasCompletedVolunteerAgreement;
 
   return (
     <main className="drawer lg:drawer-open">
@@ -39,7 +41,13 @@ export function Body({
         </main>
       </div>
 
-      {showDrawer && <Drawer isAdmin={isAdmin} linkMappings={linkMappings} />}
+      {showDrawer && (
+        <Drawer
+          currentView={currentView}
+          isMentorAndAdmin={isMentorAndAdmin}
+          linkMappings={linkMappings}
+        />
+      )}
     </main>
   );
 }

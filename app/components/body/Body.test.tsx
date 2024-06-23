@@ -10,7 +10,8 @@ describe("Body", () => {
     const { baseElement } = render(
       <MemoryRouter>
         <Body
-          isAdmin
+          currentView="admin"
+          isMentorAndAdmin={false}
           version="1"
           environment="local"
           userName="test@test.com"
@@ -33,7 +34,26 @@ describe("Body", () => {
     const { baseElement } = render(
       <MemoryRouter>
         <Body
-          isAdmin={false}
+          currentView="mentor"
+          isMentorAndAdmin={false}
+          hasCompletedVolunteerAgreement
+          version="1"
+          environment="local"
+          userName="test@test.com"
+          linkMappings={{}}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(baseElement).toMatchSnapshot();
+  });
+
+  it("Body snapshot mentor and admin permissions", async () => {
+    const { baseElement } = render(
+      <MemoryRouter>
+        <Body
+          currentView="admin"
+          isMentorAndAdmin={true}
           hasCompletedVolunteerAgreement
           version="1"
           environment="local"

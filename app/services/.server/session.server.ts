@@ -30,6 +30,8 @@ export interface CurentUserInfo {
   tid: string;
   uti: string;
   ver: string;
+  isAdmin: boolean;
+  isMentor: boolean;
 }
 
 const loginPath = "/.auth/login/aad?post_login_redirect_uri=/";
@@ -81,7 +83,18 @@ export async function getLoggedUserInfoAsync(
 ): Promise<CurentUserInfo> {
   const tokenInfo = await getTokenInfoAsync(request);
 
-  return parseJwt<CurentUserInfo>(tokenInfo.idToken);
+  const loggedUser = parseJwt<CurentUserInfo>(tokenInfo.idToken);
+
+  if (!loggedUser.roles || loggedUser.roles.length === 0) {
+    throw redirect("/403");
+  }
+
+  return {
+    ...loggedUser,
+    isAdmin:
+      loggedUser.roles.findIndex((role) => role.includes("Admin")) !== -1,
+    isMentor: loggedUser.roles.includes("Mentor"),
+  };
 }
 
 export function getPermissionsAbility(roles: ROLES[]) {

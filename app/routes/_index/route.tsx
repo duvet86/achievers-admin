@@ -9,11 +9,7 @@ import { getUserByAzureADIdAsync } from "./services.server";
 export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
 
-  if (!loggedUser.roles) {
-    throw redirect("/403");
-  }
-
-  if (loggedUser.roles.findIndex((role) => role.includes("Admin")) !== -1) {
+  if (loggedUser.isAdmin) {
     return redirect("/admin/home");
   }
 
@@ -21,11 +17,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     loggedUser.oid,
   );
 
-  if (volunteerAgreementSignedOn === null) {
+  if (loggedUser.isMentor && volunteerAgreementSignedOn === null) {
     return redirect("/mentor/volunteer-agreement");
   }
 
-  if (loggedUser.roles.includes("Mentor")) {
+  if (loggedUser.isMentor) {
     return redirect("/mentor/home");
   }
 

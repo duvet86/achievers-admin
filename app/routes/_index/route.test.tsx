@@ -45,6 +45,8 @@ describe("Loader", () => {
       tid: "",
       uti: "",
       ver: "",
+      isAdmin: true,
+      isMentor: false,
     });
 
     const response = await loader({
@@ -73,6 +75,8 @@ describe("Loader", () => {
       tid: "",
       uti: "",
       ver: "",
+      isAdmin: false,
+      isMentor: true,
     });
     vi.mocked(getUserByAzureADIdAsync).mockResolvedValueOnce({
       volunteerAgreementSignedOn: null,
@@ -104,6 +108,8 @@ describe("Loader", () => {
       tid: "",
       uti: "",
       ver: "",
+      isAdmin: false,
+      isMentor: true,
     });
     vi.mocked(getUserByAzureADIdAsync).mockResolvedValueOnce({
       volunteerAgreementSignedOn: new Date(),

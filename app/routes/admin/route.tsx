@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
 import {
@@ -15,6 +15,10 @@ import { Body } from "~/components";
 export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
 
+  if (!loggedUser.isAdmin) {
+    throw redirect("/403");
+  }
+
   const ability = getPermissionsAbility(loggedUser.roles);
 
   const linkMappings = {
@@ -27,7 +31,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 
   return json({
-    isAdmin: true,
+    currentView: "admin",
+    isMentorAndAdmin: loggedUser.isAdmin && loggedUser.isMentor,
     linkMappings,
     environment: getEnvironment(request),
     userName: loggedUser.preferred_username,

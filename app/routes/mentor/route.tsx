@@ -11,16 +11,16 @@ import { getUserByAzureADIdAsync } from "./services.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
-  const isMentor = loggedUser.roles.includes("Mentor");
 
-  if (!isMentor) {
+  if (!loggedUser.isMentor) {
     throw redirect("/403");
   }
 
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
   return json({
-    isAdmin: false,
+    currentView: "mentor",
+    isMentorAndAdmin: loggedUser.isAdmin && loggedUser.isMentor,
     hasCompletedVolunteerAgreement: user.volunteerAgreementSignedOn !== null,
     userName: loggedUser.preferred_username,
     version,
