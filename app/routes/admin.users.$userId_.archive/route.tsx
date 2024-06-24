@@ -10,7 +10,7 @@ import {
   getAzureUserWithRolesByIdAsync,
   removeRoleFromUserAsync,
   ROLE_MAPPINGS,
-  trackTrace,
+  trackEvent,
 } from "~/services/.server";
 import { Title } from "~/components";
 
@@ -47,9 +47,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
     await removeRoleFromUserAsync(request, appRoleAssignmentId);
 
-    trackTrace({
-      message: "REVOKE_ACCESS_MENTOR",
-    });
+    trackEvent("REVOKE_ACCESS_MENTOR");
   }
 
   await archiveUserAsync(user.id);

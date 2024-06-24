@@ -1,41 +1,30 @@
-export function initAppInsights(appInsights) {
-  appInsights.setup().start();
-
-  global.__appinsightsClient__ = appInsights.defaultClient;
+export function initAppInsightsTracer(tracer) {
+  global.__appinsightsTracer__ = tracer;
 }
 
-export function trackEvent(message) {
-  const client = global.__appinsightsClient__;
+export function trackEvent(message, properties) {
+  const tracer = global.__appinsightsTracer__;
 
-  if (client) {
-    client.trackEvent({
-      message,
-    });
+  if (tracer) {
+    const span = tracer.startSpan("trace");
+    span.addEvent(message);
+    if (properties) {
+      span.setAttributes(properties);
+    }
+    span.end();
   } else {
     console.warn(message);
   }
 }
 
-export function trackTrace(message) {
-  const client = global.__appinsightsClient__;
+export function trackException(error) {
+  const tracer = global.__appinsightsTracer__;
 
-  if (client) {
-    client.trackTrace({
-      message,
-    });
+  if (tracer) {
+    const span = tracer.startSpan("exception");
+    span.recordException(error);
+    span.end();
   } else {
-    console.warn(message);
-  }
-}
-
-export function trackException(exception) {
-  const client = global.__appinsightsClient__;
-
-  if (client) {
-    client.trackException({
-      exception,
-    });
-  } else {
-    console.error(exception);
+    console.error(error.message);
   }
 }

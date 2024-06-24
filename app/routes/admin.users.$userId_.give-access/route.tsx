@@ -15,7 +15,7 @@ import {
   assignRoleToUserAsync,
   inviteUserToAzureAsync,
   ROLE_MAPPINGS,
-  trackTrace,
+  trackEvent,
 } from "~/services/.server";
 import { getCurrentHost } from "~/services";
 
@@ -43,9 +43,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
     sendInvitationMessage: true,
   });
 
-  trackTrace({
-    message: "GIVE_ACCESS_MENTOR",
-    properties: inviteUserToAzureResponse,
+  trackEvent("GIVE_ACCESS_MENTOR", {
+    id: inviteUserToAzureResponse.id,
   });
 
   const azureUserId = inviteUserToAzureResponse.invitedUser.id;
@@ -56,9 +55,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
     resourceId: APP_ID,
   });
 
-  trackTrace({
-    message: "ASSIGN_ROLE_TO_MENTOR",
-    properties: assignRoleResponse,
+  trackEvent("ASSIGN_ROLE_TO_MENTOR", {
+    id: assignRoleResponse.id,
   });
 
   await updateAzureIdAsync(Number(params.userId), azureUserId);

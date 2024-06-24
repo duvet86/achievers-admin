@@ -46,11 +46,11 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
     const refreshToken = request.headers.get("X-MS-TOKEN-AAD-REFRESH-TOKEN");
 
     if (refreshToken === null) {
-      trackException({
-        exception: new Error(
+      trackException(
+        new Error(
           "Missing refresh token. See: https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-oauth-tokens#refresh-auth-tokens",
         ),
-      });
+      );
     }
 
     if (idToken === null || accessToken === null || expiresOn === null) {
@@ -60,9 +60,7 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
     if (refreshToken !== null && new Date() >= new Date(expiresOn)) {
       const resp = await fetch(getCurrentHost(request) + "/.auth/refresh");
       if (!resp.ok) {
-        trackException({
-          exception: new Error(await resp.text()),
-        });
+        trackException(new Error(await resp.text()));
 
         throw redirect(getCurrentHost(request) + loginPath);
       }

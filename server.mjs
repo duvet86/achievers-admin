@@ -1,5 +1,13 @@
-/* eslint-disable no-undef */
-import * as appInsights from "applicationinsights";
+/*eslint-env node*/
+import { useAzureMonitor } from "@azure/monitor-opentelemetry";
+import { trace } from "@opentelemetry/api";
+import { trackEvent, initAppInsightsTracer } from "./server-utils/utils.js";
+
+if (process.env.NODE_ENV === "production") {
+  useAzureMonitor();
+  const tracer = trace.getTracer("testMeter");
+  initAppInsightsTracer(tracer);
+}
 
 import express from "express";
 import compression from "compression";
@@ -9,14 +17,8 @@ import { installGlobals } from "@remix-run/node";
 import { createRequestHandler } from "@remix-run/express";
 import sourceMapSupport from "source-map-support";
 
-import { initAppInsights, trackEvent } from "./server-utils/utils.js";
-
 sourceMapSupport.install();
 installGlobals({ nativeFetch: true });
-
-if (process.env.NODE_ENV === "production") {
-  initAppInsights(appInsights);
-}
 
 if (process.env.ENABLE_EMAIL_REMINDERS === "true") {
   import("./background-jobs/index.js").then(() => {

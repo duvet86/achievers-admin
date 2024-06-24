@@ -1,27 +1,32 @@
-import type appInsights from "applicationinsights";
+import type { Tracer, Attributes } from "@opentelemetry/api";
 
 declare global {
-  var __appinsightsClient__: appInsights.TelemetryClient | undefined;
+  var __appinsightsTracer__: Tracer | undefined;
 }
 
-export function trackTrace(telemetry: appInsights.Contracts.TraceTelemetry) {
-  const client = global.__appinsightsClient__;
+export function trackEvent(message: string, properties?: Attributes) {
+  const tracer = global.__appinsightsTracer__;
 
-  if (client) {
-    client.trackTrace(telemetry);
+  if (tracer) {
+    const span = tracer.startSpan("trace");
+    span.addEvent(message);
+    if (properties) {
+      span.setAttributes(properties);
+    }
+    span.end();
   } else {
-    console.warn(telemetry.message);
+    console.warn(message);
   }
 }
 
-export function trackException(
-  telemetry: appInsights.Contracts.ExceptionTelemetry,
-) {
-  const client = global.__appinsightsClient__;
+export function trackException(error: Error) {
+  const tracer = global.__appinsightsTracer__;
 
-  if (client) {
-    client.trackException(telemetry);
+  if (tracer) {
+    const span = tracer.startSpan("exception");
+    span.recordException(error);
+    span.end();
   } else {
-    console.error(telemetry.exception);
+    console.error(error.message);
   }
 }

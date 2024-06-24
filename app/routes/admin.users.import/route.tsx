@@ -101,9 +101,7 @@ export const action = async ({
 
     const message = (e as Error).message;
 
-    trackException({
-      exception: new Error(message),
-    });
+    trackException(new Error(message));
 
     return json({
       newUsers: [],
