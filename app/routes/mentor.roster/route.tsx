@@ -21,6 +21,7 @@ import {
   getSchoolTermsForYearAsync,
   removeSessionAsync,
   getUserByAzureADIdAsync,
+  stealSessionFromParterAsync,
 } from "./services.server";
 import TermCalendar from "./components/TermCalendar";
 
@@ -64,15 +65,29 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const action = bodyData.action;
 
-  if (action === "assign") {
-    await createSessionAsync({
-      attendedOn: bodyData.attendedOn,
-      chapterId: Number(bodyData.chapterId),
-      studentId: Number(bodyData.studentId),
-      userId: Number(bodyData.userId),
-    });
-  } else {
-    await removeSessionAsync(Number(bodyData.sessionId));
+  switch (action) {
+    case "create":
+      await createSessionAsync({
+        attendedOn: bodyData.attendedOn,
+        chapterId: Number(bodyData.chapterId),
+        studentId: Number(bodyData.studentId),
+        userId: Number(bodyData.userId),
+      });
+      break;
+
+    case "update":
+      await stealSessionFromParterAsync(
+        Number(bodyData.sessionId),
+        Number(bodyData.userId),
+      );
+      break;
+
+    case "remove":
+      await removeSessionAsync(Number(bodyData.sessionId));
+      break;
+
+    default:
+      throw new Error(`Invalid action ${action}.`);
   }
 
   return json({

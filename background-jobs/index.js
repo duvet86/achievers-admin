@@ -2,7 +2,7 @@
 import cron from "node-cron";
 import { PrismaClient } from "@prisma/client";
 
-import { trackEvent, trackException } from "../server-utils/utils.js";
+import { trackEvent, trackException } from "../server-utils/azure-logger.js";
 import sendPoliceCheckReminder from "./police-check-reminder.js";
 import sendWWCCheckReminder from "./wwc-check-reminder.js";
 

@@ -1,13 +1,8 @@
 /*eslint-env node*/
-import { useAzureMonitor } from "@azure/monitor-opentelemetry";
-import { trace } from "@opentelemetry/api";
-import { trackEvent, initAppInsightsTracer } from "./server-utils/utils.js";
-
-if (process.env.NODE_ENV === "production") {
-  useAzureMonitor();
-  const tracer = trace.getTracer("testMeter");
-  initAppInsightsTracer(tracer);
-}
+import {
+  initAppInsightsLogger,
+  trackEvent,
+} from "./server-utils/azure-logger.js";
 
 import express from "express";
 import compression from "compression";
@@ -17,6 +12,7 @@ import { installGlobals } from "@remix-run/node";
 import { createRequestHandler } from "@remix-run/express";
 import sourceMapSupport from "source-map-support";
 
+initAppInsightsLogger();
 sourceMapSupport.install();
 installGlobals({ nativeFetch: true });
 

@@ -55,7 +55,7 @@ export default function TermCalendar({
           studentId,
           userId,
           attendedOn,
-          action: "assign",
+          action: "create",
         },
         {
           method: "POST",
@@ -64,7 +64,31 @@ export default function TermCalendar({
       );
     };
 
+  const stealSessionFromPartner = (sessionId: number, userId: number) => () => {
+    if (
+      !confirm("Are you sure you want to steal the session from you partner?")
+    ) {
+      return;
+    }
+
+    submit(
+      {
+        sessionId,
+        userId,
+        action: "update",
+      },
+      {
+        method: "POST",
+        encType: "application/json",
+      },
+    );
+  };
+
   const removeMentorForSession = (sessionId: number) => () => {
+    if (!confirm("Are you sure you want to cancel the session?")) {
+      return;
+    }
+
     submit(
       {
         sessionId,
@@ -97,15 +121,18 @@ export default function TermCalendar({
             const mentorName = mentorId
               ? mentorIdToMentorNameForStudentLookup[mentorId]
               : undefined;
-            const isSessionBookedByMe =
+            const isSessionBookedByPartner =
+              !isMySession && mentorName !== undefined;
+            const isCurrentDateAlreadyBookedByMe =
+              !isMySession &&
               sessionDateToMentorIdForAllStudentsLookup[attendedOn]?.userId ===
-              userId;
+                userId;
 
             const hasReport = mentorIdForSessionForSelectedStudent?.hasReport;
             const isCancelled =
               mentorIdForSessionForSelectedStudent?.isCancelled;
 
-            const enableActions = !hasReport && !isCancelled;
+            const isActionDisabled = hasReport || isCancelled;
 
             return (
               <tr
@@ -127,16 +154,13 @@ export default function TermCalendar({
                       <ThumbsUp />
                       {`${mentorName} (Me)`}
                     </div>
-                  ) : mentorName ? (
+                  ) : isSessionBookedByPartner ? (
                     <div className="flex gap-2 text-info">
                       <Group />
                       {`${mentorName} (Partner)`}
                     </div>
-                  ) : isSessionBookedByMe ? (
-                    <div className="flex gap-2 text-warning">
-                      <WarningTriangle />
-                      You are already mentoring another student
-                    </div>
+                  ) : isCurrentDateAlreadyBookedByMe ? (
+                    ""
                   ) : (
                     <div className="flex gap-2 text-success">
                       <Check />
@@ -145,33 +169,64 @@ export default function TermCalendar({
                   )}
                 </td>
                 <td align="right">
-                  {enableActions &&
-                    (isMySession ? (
-                      <button
-                        className="btn btn-error w-28"
-                        onClick={removeMentorForSession(
-                          mentorIdForSessionForSelectedStudent!.sessionId,
-                        )}
-                      >
-                        <WarningTriangle className="h-6 w-6" />
-                        Cancel
-                      </button>
-                    ) : (
-                      !mentorName && (
+                  {(() => {
+                    if (isActionDisabled) {
+                      return null;
+                    }
+
+                    if (isCurrentDateAlreadyBookedByMe) {
+                      return (
+                        <div className="flex gap-2 text-warning">
+                          <WarningTriangle />
+                          You are already mentoring another student on this date
+                        </div>
+                      );
+                    }
+
+                    if (isMySession) {
+                      return (
                         <button
-                          className="btn btn-success w-28"
-                          onClick={assignMentorForSession(
-                            userId,
-                            chapterId,
-                            student.id,
-                            attendedOn,
+                          className="btn btn-error w-28"
+                          onClick={removeMentorForSession(
+                            mentorIdForSessionForSelectedStudent!.sessionId,
                           )}
                         >
-                          <BookmarkBook className="h-6 w-6" />
-                          Book
+                          <WarningTriangle className="h-6 w-6" />
+                          Cancel
                         </button>
-                      )
-                    ))}
+                      );
+                    }
+
+                    if (isSessionBookedByPartner) {
+                      return (
+                        <button
+                          className="btn btn-warning w-28"
+                          onClick={stealSessionFromPartner(
+                            mentorIdForSessionForSelectedStudent!.sessionId,
+                            userId,
+                          )}
+                        >
+                          <WarningTriangle className="h-6 w-6" />
+                          Steal
+                        </button>
+                      );
+                    }
+
+                    return (
+                      <button
+                        className="btn btn-success w-28"
+                        onClick={assignMentorForSession(
+                          userId,
+                          chapterId,
+                          student.id,
+                          attendedOn,
+                        )}
+                      >
+                        <BookmarkBook className="h-6 w-6" />
+                        Book
+                      </button>
+                    );
+                  })()}
                   {isMySession && hasReport && (
                     <div className="badge gap-2 p-5 text-success">
                       <Check className="h-6 w-6" />

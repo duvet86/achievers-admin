@@ -28,7 +28,7 @@ export type SessionLookup = Record<
 >;
 
 export interface SessionCommandRequest {
-  action: "assign" | "remove";
+  action: "create" | "update" | "remove";
   sessionId: string | undefined;
   chapterId: number;
   studentId: number;
@@ -175,6 +175,20 @@ export async function createSessionAsync({
       chapterId,
       userId,
       studentId,
+    },
+  });
+}
+
+export async function stealSessionFromParterAsync(
+  sessionId: number,
+  userId: number,
+) {
+  return await prisma.mentorToStudentSession.update({
+    where: {
+      id: sessionId,
+    },
+    data: {
+      userId,
     },
   });
 }

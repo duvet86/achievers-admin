@@ -2,6 +2,18 @@ import type { Chapter } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
+function getOR(searchTerm: string | null) {
+  return searchTerm
+    ? [
+        {
+          fullName: {
+            contains: searchTerm,
+          },
+        },
+      ]
+    : undefined;
+}
+
 export async function getStudentsCountAsync(
   chapterId: Chapter["id"],
   searchTerm: string | null,
@@ -9,13 +21,7 @@ export async function getStudentsCountAsync(
   return prisma.user.count({
     where: {
       chapterId,
-      OR: [
-        {
-          fullName: {
-            contains: searchTerm ?? undefined,
-          },
-        },
-      ],
+      OR: getOR(searchTerm),
     },
   });
 }
@@ -29,13 +35,7 @@ export async function getMentorsWithStudentsAsync(
   return prisma.user.findMany({
     where: {
       chapterId,
-      OR: [
-        {
-          fullName: {
-            contains: searchTerm ?? undefined,
-          },
-        },
-      ],
+      OR: getOR(searchTerm),
     },
     select: {
       id: true,

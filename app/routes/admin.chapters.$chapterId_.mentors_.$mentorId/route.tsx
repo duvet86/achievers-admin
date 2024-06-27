@@ -99,7 +99,10 @@ export default function Index() {
           <div>
             <h4>Assign a new student</h4>
 
-            <Form method="POST" className="flex flex-col gap-6 lg:flex-row">
+            <Form
+              method="POST"
+              className="flex flex-col items-end gap-6 lg:flex-row"
+            >
               <div className="lg:w-96">
                 <SelectSearch
                   showClearButton

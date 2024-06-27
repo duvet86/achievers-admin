@@ -1,5 +1,15 @@
-export function initAppInsightsTracer(tracer) {
-  global.__appinsightsTracer__ = tracer;
+/*eslint-env node*/
+import { useAzureMonitor } from "@azure/monitor-opentelemetry";
+import { trace } from "@opentelemetry/api";
+
+export function initAppInsightsLogger() {
+  if (process.env.NODE_ENV !== "production") {
+    return;
+  }
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useAzureMonitor();
+  global.__appinsightsTracer__ = trace.getTracer("appTracer");
 }
 
 export function trackEvent(message, properties) {
