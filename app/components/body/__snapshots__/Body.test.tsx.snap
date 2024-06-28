@@ -60,6 +60,7 @@ exports[`Body > Body snapshot admin 1`] = `
             </div>
             <a
               class="btn btn-ghost text-xl normal-case"
+              data-discover="true"
               href="/"
             >
               <span
@@ -130,6 +131,7 @@ exports[`Body > Body snapshot admin 1`] = `
               <li>
                 <a
                   class="font-semibold"
+                  data-discover="true"
                   href="/logout"
                 >
                   <svg
@@ -193,6 +195,7 @@ exports[`Body > Body snapshot admin 1`] = `
             <li>
               <a
                 class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
                 href="/admin/home"
               >
                 <div
@@ -245,6 +248,7 @@ exports[`Body > Body snapshot admin 1`] = `
             <li>
               <a
                 class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
                 href="/admin/users"
               >
                 <div
@@ -297,6 +301,7 @@ exports[`Body > Body snapshot admin 1`] = `
             <li>
               <a
                 class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
                 href="/admin/students"
               >
                 <div
@@ -355,6 +360,7 @@ exports[`Body > Body snapshot admin 1`] = `
             <li>
               <a
                 class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
                 href="/admin/sessions"
               >
                 <div
@@ -423,6 +429,7 @@ exports[`Body > Body snapshot admin 1`] = `
             <li>
               <a
                 class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
                 href="/admin/chapters"
               >
                 <div
@@ -488,6 +495,7 @@ exports[`Body > Body snapshot admin 1`] = `
             <li>
               <a
                 class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
                 href="/admin/school-terms"
               >
                 <div
@@ -552,6 +560,7 @@ exports[`Body > Body snapshot admin 1`] = `
             <li>
               <a
                 class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
                 href="/admin/config"
               >
                 <div
@@ -669,6 +678,7 @@ exports[`Body > Body snapshot mentor 1`] = `
             </div>
             <a
               class="btn btn-ghost text-xl normal-case"
+              data-discover="true"
               href="/"
             >
               <span
@@ -739,6 +749,7 @@ exports[`Body > Body snapshot mentor 1`] = `
               <li>
                 <a
                   class="font-semibold"
+                  data-discover="true"
                   href="/logout"
                 >
                   <svg
@@ -802,6 +813,7 @@ exports[`Body > Body snapshot mentor 1`] = `
             <li>
               <a
                 class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
                 href="/mentor/home"
               >
                 <div
@@ -854,6 +866,7 @@ exports[`Body > Body snapshot mentor 1`] = `
             <li>
               <a
                 class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
                 href="/mentor/students"
               >
                 <div
@@ -912,6 +925,7 @@ exports[`Body > Body snapshot mentor 1`] = `
             <li>
               <a
                 class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
                 href="/mentor/partner"
               >
                 <div
@@ -974,6 +988,7 @@ exports[`Body > Body snapshot mentor 1`] = `
             <li>
               <a
                 class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
                 href="/mentor/roster"
               >
                 <div
@@ -1038,6 +1053,7 @@ exports[`Body > Body snapshot mentor 1`] = `
             <li>
               <a
                 class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
                 href="/mentor/sessions"
               >
                 <div
@@ -1106,6 +1122,7 @@ exports[`Body > Body snapshot mentor 1`] = `
             <li>
               <a
                 class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
                 href="/mentor/policy"
               >
                 <div
@@ -1235,6 +1252,7 @@ exports[`Body > Body snapshot mentor and admin permissions 1`] = `
             </div>
             <a
               class="btn btn-ghost text-xl normal-case"
+              data-discover="true"
               href="/"
             >
               <span
@@ -1305,6 +1323,7 @@ exports[`Body > Body snapshot mentor and admin permissions 1`] = `
               <li>
                 <a
                   class="font-semibold"
+                  data-discover="true"
                   href="/logout"
                 >
                   <svg
@@ -1368,6 +1387,7 @@ exports[`Body > Body snapshot mentor and admin permissions 1`] = `
             <li>
               <a
                 class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
                 href="/admin/home"
               >
                 <div
@@ -1424,6 +1444,7 @@ exports[`Body > Body snapshot mentor and admin permissions 1`] = `
             <li>
               <a
                 class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
                 href="/mentor/home"
               >
                 <div

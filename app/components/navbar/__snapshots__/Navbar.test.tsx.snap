@@ -49,6 +49,7 @@ exports[`Navbar > Navbar snapshot 1`] = `
         </div>
         <a
           class="btn btn-ghost text-xl normal-case"
+          data-discover="true"
           href="/"
         >
           <span
@@ -119,6 +120,7 @@ exports[`Navbar > Navbar snapshot 1`] = `
           <li>
             <a
               class="font-semibold"
+              data-discover="true"
               href="/logout"
             >
               <svg
