@@ -18,8 +18,8 @@
     "pretest:e2e:run": "npm run build",
     "test:e2e": "playwright test --project=chromium",
     "typecheck": "tsc",
-    "prepare": "husky install",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "prepare": "husky"
   },
   "dependencies": {
     "@azure/monitor-opentelemetry": "^1.6.0",
