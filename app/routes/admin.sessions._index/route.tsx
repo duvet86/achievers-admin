@@ -13,6 +13,10 @@ import { useRef } from "react";
 import { Eye } from "iconoir-react";
 import dayjs from "dayjs";
 
+import {
+  getLoggedUserInfoAsync,
+  getPermissionsAbility,
+} from "~/services/.server";
 import { getPaginationRange } from "~/services";
 import { Pagination, Title } from "~/components";
 
@@ -26,6 +30,9 @@ import {
 import FormInputs from "./components/FormInputs";
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  const loggedUser = await getLoggedUserInfoAsync(request);
+  const ability = getPermissionsAbility(loggedUser.roles);
+
   const url = new URL(request.url);
 
   const searchTermSubmit = url.searchParams.get("searchBtn");
@@ -51,7 +58,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   let mentorId: number | undefined;
   let studentId: number | undefined;
 
-  const chapters = await getChaptersAsync();
+  const chapters = await getChaptersAsync(ability);
 
   if (clearSearchSubmit !== null || startDate?.trim() === "") {
     startDateConverted = undefined;
@@ -120,8 +127,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
 
   const [mentors, students] = await Promise.all([
-    getAvailabelMentorsAsync(chapterId, studentId),
-    getAvailabelStudentsAsync(chapterId, mentorId),
+    getAvailabelMentorsAsync(ability, chapterId, studentId),
+    getAvailabelStudentsAsync(ability, chapterId, mentorId),
   ]);
 
   return json({

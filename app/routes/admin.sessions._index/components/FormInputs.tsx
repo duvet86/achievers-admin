@@ -45,18 +45,20 @@ export default function FormInputs({
 
   return (
     <div className="mb-6 hidden flex-col gap-4 lg:flex">
-      <Select
-        label="Select a Chapter"
-        name="chapterId"
-        defaultValue={selectedChapterId}
-        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-          submit(e.currentTarget.form)
-        }
-        options={chapters.map(({ id, name }) => ({
-          label: name,
-          value: id.toString(),
-        }))}
-      />
+      {chapters.length > 1 && (
+        <Select
+          label="Select a Chapter"
+          name="chapterId"
+          defaultValue={selectedChapterId}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+            submit(e.currentTarget.form)
+          }
+          options={chapters.map(({ id, name }) => ({
+            label: name,
+            value: id.toString(),
+          }))}
+        />
+      )}
       <div className="flex flex-1 gap-4">
         <SelectSearch
           key={`${selectedChapterId}-mentorId`}

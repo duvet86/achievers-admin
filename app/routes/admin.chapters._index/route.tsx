@@ -1,13 +1,22 @@
-import { useLoaderData, Link } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "@remix-run/node";
+
 import { json } from "@remix-run/node";
+import { useLoaderData, Link } from "@remix-run/react";
 import { PageEdit, Group, Calendar, GraduationCap } from "iconoir-react";
 
+import {
+  getLoggedUserInfoAsync,
+  getPermissionsAbility,
+} from "~/services/.server";
 import { Title } from "~/components";
 
 import { getChaptersAsync } from "./services.server";
 
-export async function loader() {
-  const chapters = await getChaptersAsync();
+export async function loader({ request }: LoaderFunctionArgs) {
+  const loggedUser = await getLoggedUserInfoAsync(request);
+  const ability = getPermissionsAbility(loggedUser.roles);
+
+  const chapters = await getChaptersAsync(ability);
 
   return json({ chapters });
 }

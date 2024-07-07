@@ -12,6 +12,11 @@ import { useRef } from "react";
 
 import { BinFull, PageEdit, Plus } from "iconoir-react";
 
+import {
+  getLoggedUserInfoAsync,
+  getPermissionsAbility,
+} from "~/services/.server";
+import { getPaginationRange } from "~/services";
 import { Pagination, Title } from "~/components";
 
 import {
@@ -19,12 +24,13 @@ import {
   getStudentsCountAsync,
   getStudentsAsync,
 } from "./services.server";
-
 import FormInputs from "./components/FormInputs";
 import ActionsDropdown from "./components/ActionsDropdown";
-import { getPaginationRange } from "~/services";
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  const loggedUser = await getLoggedUserInfoAsync(request);
+  const ability = getPermissionsAbility(loggedUser.roles);
+
   const url = new URL(request.url);
 
   const chapterId = url.searchParams.get("chapterId");
@@ -47,6 +53,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     chapterId !== null && chapterId !== "" ? parseInt(chapterId) : null;
 
   const count = await getStudentsCountAsync(
+    ability,
     searchTerm,
     chapterIdValue,
     includeArchived,
@@ -69,8 +76,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   const [chapters, students] = await Promise.all([
-    getChaptersAsync(),
+    getChaptersAsync(ability),
     getStudentsAsync(
+      ability,
       currentPageNumber,
       searchTerm,
       chapterIdValue,

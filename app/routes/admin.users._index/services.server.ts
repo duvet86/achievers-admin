@@ -1,10 +1,14 @@
+import type { AppAbility } from "~/services/.server";
+
 import dayjs from "dayjs";
+import { accessibleBy } from "@casl/prisma";
 
 import { prisma } from "~/db.server";
 import { searchAcrossFields } from "~/services/.server";
 
-export async function getChaptersAsync() {
+export async function getChaptersAsync(ability: AppAbility) {
   return await prisma.chapter.findMany({
+    where: accessibleBy(ability).Chapter,
     select: {
       id: true,
       name: true,
@@ -13,6 +17,7 @@ export async function getChaptersAsync() {
 }
 
 export async function getUsersCountAsync(
+  ability: AppAbility,
   searchTerm: string | null,
   chapterId: number | null,
   onlyExpiredChecks = false,
@@ -20,6 +25,7 @@ export async function getUsersCountAsync(
 ) {
   return await prisma.user.count({
     where: {
+      chapter: accessibleBy(ability).Chapter,
       AND: [
         includeArchived ? {} : { endDate: null },
         chapterId !== null
@@ -36,6 +42,7 @@ export async function getUsersCountAsync(
 }
 
 export async function getUsersAsync(
+  ability: AppAbility,
   pageNumber: number,
   searchTerm: string | null,
   chapterId: number | null,
@@ -91,6 +98,7 @@ export async function getUsersAsync(
       },
     },
     where: {
+      chapter: accessibleBy(ability).Chapter,
       AND: [
         includeArchived ? {} : { endDate: null },
         chapterId !== null

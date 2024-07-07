@@ -31,18 +31,20 @@ export default function FormInputs({
           />
         </div>
 
-        <div className="w-44 max-w-xs">
-          <Select
-            name="chapterId"
-            defaultValue={searchParams.get("chapterId") ?? ""}
-            options={[{ value: "", label: "All chapters" }].concat(
-              chapters.map(({ id, name }) => ({
-                label: name,
-                value: id.toString(),
-              })),
-            )}
-          />
-        </div>
+        {chapters.length > 1 && (
+          <div className="w-44 max-w-xs">
+            <Select
+              name="chapterId"
+              defaultValue={searchParams.get("chapterId") ?? ""}
+              options={[{ value: "", label: "All chapters" }].concat(
+                chapters.map(({ id, name }) => ({
+                  label: name,
+                  value: id.toString(),
+                })),
+              )}
+            />
+          </div>
+        )}
 
         <div className="flex flex-wrap xl:gap-4">
           <div className="form-control">

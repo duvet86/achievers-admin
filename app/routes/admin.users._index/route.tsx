@@ -12,6 +12,10 @@ import { json } from "@remix-run/node";
 import { useRef } from "react";
 import { PageEdit, BinFull, CheckCircle, WarningTriangle } from "iconoir-react";
 
+import {
+  getLoggedUserInfoAsync,
+  getPermissionsAbility,
+} from "~/services/.server";
 import { getPaginationRange, isDateExpired } from "~/services";
 import { Title, Pagination } from "~/components";
 
@@ -26,6 +30,9 @@ import ActionsDropdown from "./components/ActionsDropdown";
 import FormInputs from "./components/FormInputs";
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  const loggedUser = await getLoggedUserInfoAsync(request);
+  const ability = getPermissionsAbility(loggedUser.roles);
+
   const url = new URL(request.url);
 
   const chapterId = url.searchParams.get("chapterId");
@@ -50,6 +57,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     chapterId !== null && chapterId !== "" ? parseInt(chapterId) : null;
 
   const count = await getUsersCountAsync(
+    ability,
     searchTerm,
     chapterIdValue,
     onlyExpiredChecks,
@@ -71,8 +79,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   const [chapters, users] = await Promise.all([
-    getChaptersAsync(),
+    getChaptersAsync(ability),
     getUsersAsync(
+      ability,
       currentPageNumber,
       searchTerm,
       chapterIdValue,

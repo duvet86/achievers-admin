@@ -1,9 +1,6 @@
-import {
-  createMongoAbility,
-  MongoAbility,
-  RawRuleOf,
-  ForcedSubject,
-} from "@casl/ability";
+import { RawRuleOf, PureAbility } from "@casl/ability";
+import { Chapter } from "@prisma/client";
+import { createPrismaAbility, PrismaQuery, Subjects } from "@casl/prisma";
 
 export type ROLES = "Admin" | "Mentor";
 
@@ -21,10 +18,12 @@ export const subjects = [
 export type Action = (typeof actions)[number];
 export type Subject =
   | (typeof subjects)[number]
-  | ForcedSubject<Exclude<(typeof subjects)[number], "all">>;
+  | Subjects<{
+      Chapter: Chapter;
+    }>;
 
 export type Abilities = [Action, Subject];
-export type AppAbility = MongoAbility<Abilities>;
+export type AppAbility = PureAbility<Abilities, PrismaQuery>;
 
 const IS_DEV = process.env.NODE_ENV === "development";
 const IS_CI = !!process.env.CI;
@@ -41,4 +40,4 @@ export const ROLE_MAPPINGS: Record<ROLES, string> = {
 } as const;
 
 export const createAbility = (rules: RawRuleOf<AppAbility>[]) =>
-  createMongoAbility<AppAbility>(rules);
+  createPrismaAbility<AppAbility>(rules);

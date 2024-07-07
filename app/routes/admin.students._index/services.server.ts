@@ -1,8 +1,13 @@
+import type { AppAbility } from "~/services/.server";
+
+import { accessibleBy } from "@casl/prisma";
+
 import { prisma } from "~/db.server";
 import { calculateYearLevel } from "~/services";
 
-export async function getChaptersAsync() {
+export async function getChaptersAsync(ability: AppAbility) {
   return await prisma.chapter.findMany({
+    where: accessibleBy(ability).Chapter,
     select: {
       id: true,
       name: true,
@@ -11,12 +16,14 @@ export async function getChaptersAsync() {
 }
 
 export async function getStudentsCountAsync(
+  ability: AppAbility,
   searchTerm: string | null,
   chapterId: number | null,
   includeArchived = false,
 ) {
   return await prisma.student.count({
     where: {
+      chapter: accessibleBy(ability).Chapter,
       AND: [
         includeArchived ? {} : { endDate: null },
         chapterId !== null
@@ -39,6 +46,7 @@ export async function getStudentsCountAsync(
 }
 
 export async function getStudentsAsync(
+  ability: AppAbility,
   pageNumber: number,
   searchTerm: string | null,
   chapterId: number | null,
@@ -58,6 +66,7 @@ export async function getStudentsAsync(
       },
     },
     where: {
+      chapter: accessibleBy(ability).Chapter,
       AND: [
         includeArchived ? {} : { endDate: null },
         chapterId !== null

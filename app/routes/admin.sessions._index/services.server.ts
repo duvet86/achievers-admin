@@ -1,7 +1,12 @@
+import type { AppAbility } from "~/services/.server";
+
+import { accessibleBy } from "@casl/prisma";
+
 import { prisma } from "~/db.server";
 
-export async function getChaptersAsync() {
+export async function getChaptersAsync(ability: AppAbility) {
   return await prisma.chapter.findMany({
+    where: accessibleBy(ability).Chapter,
     select: {
       id: true,
       name: true,
@@ -13,11 +18,13 @@ export async function getChaptersAsync() {
 }
 
 export async function getAvailabelMentorsAsync(
+  ability: AppAbility,
   chapterId: number,
   studentId: number | undefined,
 ) {
   return await prisma.user.findMany({
     where: {
+      chapter: accessibleBy(ability).Chapter,
       chapterId,
       mentorToStudentAssignement: {
         some: {
@@ -36,11 +43,13 @@ export async function getAvailabelMentorsAsync(
 }
 
 export async function getAvailabelStudentsAsync(
+  ability: AppAbility,
   chapterId: number,
   mentorId: number | undefined,
 ) {
   return await prisma.student.findMany({
     where: {
+      chapter: accessibleBy(ability).Chapter,
       chapterId,
       mentorToStudentAssignement: {
         some: {

@@ -90,22 +90,37 @@ export async function getLoggedUserInfoAsync(
   return {
     ...loggedUser,
     isAdmin:
-      loggedUser.roles.findIndex((role) => role.includes("Admin")) !== -1,
+      loggedUser.roles.findIndex(
+        (role) => role.includes("Admin") || role.includes("ChapterCoordinator"),
+      ) !== -1,
     isMentor: loggedUser.roles.includes("Mentor"),
   };
 }
 
 export function getPermissionsAbility(roles: ROLES[]) {
-  const rules = roles.map<RawRuleOf<AppAbility>>((role) => {
+  const rules = roles.map<RawRuleOf<AppAbility>[]>((role) => {
     const parts = role.split(".");
 
-    return {
-      action: parts[1],
-      subject: parts[2],
-    } as RawRuleOf<AppAbility>;
+    if (parts[0] === "ChapterCoordinator") {
+      return ["Chapter", "Session", "Student", "User"].map(
+        (subject) =>
+          ({
+            action: parts[1],
+            subject,
+            conditions: { id: Number(parts[2]) },
+          }) as RawRuleOf<AppAbility>,
+      );
+    }
+
+    return [
+      {
+        action: parts[1],
+        subject: parts[2],
+      } as RawRuleOf<AppAbility>,
+    ];
   });
 
-  const ability = createAbility(rules);
+  const ability = createAbility(rules.flat());
 
   return ability;
 }
