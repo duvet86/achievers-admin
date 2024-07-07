@@ -6,7 +6,7 @@ import { Outlet } from "@remix-run/react";
 import { isLoggedUserBlockedAsync } from "~/services/.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const isUserBlocked = await isLoggedUserBlockedAsync(request, "Config");
+  const isUserBlocked = await isLoggedUserBlockedAsync(request, "ConfigArea");
 
   if (isUserBlocked) {
     throw redirect("/403");

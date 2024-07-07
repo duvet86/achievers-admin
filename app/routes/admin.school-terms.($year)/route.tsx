@@ -37,7 +37,10 @@ import { isLoggedUserBlockedAsync } from "~/services/.server";
 dayjs.extend(utc);
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const isUserBlocked = await isLoggedUserBlockedAsync(request, "SchoolTerm");
+  const isUserBlocked = await isLoggedUserBlockedAsync(
+    request,
+    "SchoolTermArea",
+  );
 
   if (isUserBlocked) {
     throw redirect("/403");

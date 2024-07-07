@@ -114,30 +114,29 @@ export function SelectSearch({
         className="menu dropdown-content z-[1] max-h-80 flex-nowrap overflow-auto rounded-box bg-base-100 p-0 shadow"
         style={{ width: rect.width }}
       >
-        {viewOptions.length === 0 ? (
-          <li>
-            <button className="italic" onClick={(e) => e.preventDefault()}>
-              No items
-            </button>
-          </li>
-        ) : (
-          <li className="sticky top-0 z-10 mb-4 bg-white p-2">
-            <input
-              ref={searchInputRef}
-              type="text"
-              className="input input-bordered text-white"
-              placeholder="Start typing to search..."
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setSearchTerm(e.target.value)
-              }
-            />
-          </li>
-        )}
+        <li className="sticky top-0 z-10 mb-4 bg-white p-2">
+          <input
+            ref={searchInputRef}
+            type="text"
+            className="input input-bordered"
+            placeholder="Start typing to search..."
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearchTerm(e.target.value)
+            }
+          />
+        </li>
         {viewOptions.map((option, index) => (
           <li key={index}>
             <button onClick={onOptionClick(option)}>{option.label}</button>
           </li>
         ))}
+        {viewOptions.length === 0 && (
+          <li>
+            <button className="italic" onClick={(e) => e.preventDefault()}>
+              No items
+            </button>
+          </li>
+        )}
       </ul>
     </div>
   );

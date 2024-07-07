@@ -6,12 +6,12 @@ export type ROLES = "Admin" | "Mentor";
 
 export const actions = ["manage"] as const;
 export const subjects = [
-  "Chapter",
-  "Config",
-  "SchoolTerm",
-  "Session",
-  "Student",
-  "User",
+  "ChapterArea",
+  "ConfigArea",
+  "SchoolTermArea",
+  "SessionArea",
+  "StudentArea",
+  "UserArea",
   "all",
 ] as const;
 

@@ -22,12 +22,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const ability = getPermissionsAbility(loggedUser.roles);
 
   const linkMappings = {
-    User: ability.can("manage", "User"),
-    Student: ability.can("manage", "Student"),
-    Session: ability.can("manage", "Session"),
-    Chapter: ability.can("manage", "Chapter"),
-    SchoolTerm: ability.can("manage", "SchoolTerm"),
-    Config: ability.can("manage", "Config"),
+    User: ability.can("manage", "UserArea"),
+    Student: ability.can("manage", "StudentArea"),
+    Session: ability.can("manage", "SessionArea"),
+    Chapter: ability.can("manage", "ChapterArea"),
+    SchoolTerm: ability.can("manage", "SchoolTermArea"),
+    Config: ability.can("manage", "ConfigArea"),
   };
 
   return json({

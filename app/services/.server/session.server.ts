@@ -98,24 +98,32 @@ export async function getLoggedUserInfoAsync(
 }
 
 export function getPermissionsAbility(roles: ROLES[]) {
-  const rules = roles.map<RawRuleOf<AppAbility>>((role) => {
+  const rules = roles.map<RawRuleOf<AppAbility>[]>((role) => {
     const parts = role.split(".");
 
     if (parts[0] === "ChapterCoordinator") {
-      return {
-        action: parts[1],
-        subject: parts[3],
-        conditions: { id: Number(parts[2]) },
-      } as RawRuleOf<AppAbility>;
+      return [
+        {
+          action: parts[1],
+          subject: parts[3],
+        } as RawRuleOf<AppAbility>,
+        {
+          action: parts[1],
+          subject: "Chapter",
+          conditions: { id: Number(parts[2]) },
+        } as RawRuleOf<AppAbility>,
+      ];
     }
 
-    return {
-      action: parts[1],
-      subject: parts[2],
-    } as RawRuleOf<AppAbility>;
+    return [
+      {
+        action: parts[1],
+        subject: parts[2],
+      } as RawRuleOf<AppAbility>,
+    ];
   });
 
-  const ability = createAbility(rules);
+  const ability = createAbility(rules.flat());
 
   return ability;
 }
