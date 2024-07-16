@@ -70,7 +70,7 @@ export function SelectSearch({
   const selectedOption =
     selectedValue ??
     (defaultValue
-      ? options.find(({ value }) => value === defaultValue) ?? EMPTY_OPTION
+      ? (options.find(({ value }) => value === defaultValue) ?? EMPTY_OPTION)
       : EMPTY_OPTION);
 
   return (
