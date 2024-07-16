@@ -120,6 +120,10 @@ export function getPermissionsAbility(roles: ROLES[]) {
         action: parts[1],
         subject: parts[2],
       } as RawRuleOf<AppAbility>,
+      {
+        action: parts[1],
+        subject: "Chapter",
+      } as RawRuleOf<AppAbility>,
     ];
   });
 
