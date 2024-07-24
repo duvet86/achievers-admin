@@ -33,12 +33,15 @@ export default function Index() {
         <table className="table">
           <thead>
             <tr>
-              <th align="left">Full name</th>
+              <th align="center">Full Name</th>
               <th align="center" className="w-1/12">
                 Completed
               </th>
-              <th align="right" className="w-1/4">
+              <th align="center" className="w-1/4">
                 Action
+              </th>
+              <th align="center" className="w-1/4">
+                Archive Status
               </th>
             </tr>
           </thead>
@@ -68,6 +71,11 @@ export default function Index() {
                     <ChatBubbleEmpty className="h-4 w-4" />
                     View
                   </Link>
+                </td>
+                <td align="center" className="border">
+                  <button className="btn btn-info btn-xs w-full">
+                    Not Archived
+                  </button>
                 </td>
               </tr>
             ))}
