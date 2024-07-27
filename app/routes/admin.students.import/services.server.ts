@@ -67,8 +67,7 @@ export async function importSpreadsheetStudentsAsync(
           dateOfBirth: isDateofBirthValid ? new Date(dateOfBirth) : null,
           emergencyContactAddress:
             newStudent["Emergency Contact Address"]?.trim(),
-          emergencyContactEmail:
-            newStudent["Emergency Contact Email"]?.trim(),
+          emergencyContactEmail: newStudent["Emergency Contact Email"]?.trim(),
           emergencyContactFullName:
             newStudent["Emergency Contact Full Name"]?.trim(),
           emergencyContactPhone:
@@ -92,8 +91,7 @@ export async function importSpreadsheetStudentsAsync(
           hasApprovedToPublishPhotos: newStudent[
             "Approval to publish photographs?"
           ]
-            ? newStudent["Approval to publish photographs?"]!.trim() ===
-              "Yes"
+            ? newStudent["Approval to publish photographs?"]!.trim() === "Yes"
               ? true
               : false
             : undefined,
@@ -112,30 +110,24 @@ export async function importSpreadsheetStudentsAsync(
                       {
                         address:
                           newStudent["Parent/Gaurdian 1 Address"]!.trim(),
-                        email:
-                          newStudent["Parent/Gaurdian 1 Email"]!.trim(),
+                        email: newStudent["Parent/Gaurdian 1 Email"]!.trim(),
                         fullName:
                           newStudent["Parent/Gaurdian 1 Full name"]!.trim(),
                         phone:
                           newStudent["Parent/Gaurdian 1 Phone"]!.toString(),
                         relationship:
-                          newStudent[
-                            "Parent/Gaurdian 1 Relationship"
-                          ]!.trim(),
+                          newStudent["Parent/Gaurdian 1 Relationship"]!.trim(),
                       },
                       {
                         address:
                           newStudent["Parent/Gaurdian 2 Address"]!.trim(),
-                        email:
-                          newStudent["Parent/Gaurdian 2 Email"]!.trim(),
+                        email: newStudent["Parent/Gaurdian 2 Email"]!.trim(),
                         fullName:
                           newStudent["Parent/Gaurdian 2 Full name"]!.trim(),
                         phone:
                           newStudent["Parent/Gaurdian 2 Phone"]!.toString(),
                         relationship:
-                          newStudent[
-                            "Parent/Gaurdian 2 Relationship"
-                          ]!.trim(),
+                          newStudent["Parent/Gaurdian 2 Relationship"]!.trim(),
                       },
                     ]
                   : [],

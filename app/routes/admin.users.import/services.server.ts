@@ -70,10 +70,7 @@ export async function importSpreadsheetMentorsAsync(
         uniqueUser["Police Check Renewal Date"] &&
         isValidDate(new Date(uniqueUser["Police Check Renewal Date"]));
 
-      if (
-        uniqueUser["Police Check Renewal Date"] &&
-        !isPoliceCheckDateValid
-      ) {
+      if (uniqueUser["Police Check Renewal Date"] && !isPoliceCheckDateValid) {
         error += "Police Check Renewal Date is invalid.\n";
       }
 
@@ -169,9 +166,7 @@ export async function importSpreadsheetMentorsAsync(
           policeCheck: isPoliceCheckDateValid
             ? {
                 create: {
-                  expiryDate: new Date(
-                    uniqueUser["Police Check Renewal Date"],
-                  ),
+                  expiryDate: new Date(uniqueUser["Police Check Renewal Date"]),
                   filePath: "",
                 },
               }
@@ -214,9 +209,7 @@ export async function importSpreadsheetMentorsAsync(
           wwcCheck: isWWCDateValid
             ? {
                 create: {
-                  expiryDate: new Date(
-                    uniqueUser["WWC Check Renewal Date"],
-                  ),
+                  expiryDate: new Date(uniqueUser["WWC Check Renewal Date"]),
                   filePath: "",
                   wwcNumber: uniqueUser["WWC Check Number"]
                     ? uniqueUser["WWC Check Number"].toString()
