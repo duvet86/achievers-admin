@@ -43,7 +43,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   const user = await getLoggedUserInfoAsync(request);
 
-  const bodyData = await request.json() as SessionCommandRequest;
+  const bodyData = (await request.json()) as SessionCommandRequest;
 
   const sessionId = bodyData.sessionId;
   const reportFeedback = bodyData.reportFeedback;

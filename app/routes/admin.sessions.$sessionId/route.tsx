@@ -75,7 +75,9 @@ export default function Index() {
   return (
     <>
       <div className="mb-4 flex justify-between">
-        <Title to={backURL ? backURL : `/admin/sessions?${searchParams.toString()}`}>
+        <Title
+          to={backURL ? backURL : `/admin/sessions?${searchParams.toString()}`}
+        >
           Session of &quot;
           {dayjs(attendedOn, "YYYY-MM-DD").format("DD/MM/YYYY")}&quot;
         </Title>

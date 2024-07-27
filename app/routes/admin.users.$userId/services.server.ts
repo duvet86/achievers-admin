@@ -117,9 +117,7 @@ export async function saveProfilePicture(
   return path;
 }
 
-export function getProfilePictureUrl(
-  profilePicturePath: string,
-): string {
+export function getProfilePictureUrl(profilePicturePath: string): string {
   const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
 
   const blob = containerClient.getBlobClient(profilePicturePath);

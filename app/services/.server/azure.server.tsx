@@ -130,7 +130,7 @@ export async function getAzureRolesAsync(request: Request): Promise<AppRole[]> {
     },
   );
 
-  const azureApplication = await response.json() as Application;
+  const azureApplication = (await response.json()) as Application;
 
   return azureApplication.appRoles;
 }
@@ -171,7 +171,7 @@ export async function getAzureUsersAsync(
     },
   );
 
-  const azureUsers = await response.json() as { value: AzureUser[] };
+  const azureUsers = (await response.json()) as { value: AzureUser[] };
 
   return azureUsers.value.map((user) => ({
     ...user,
@@ -266,7 +266,7 @@ export async function inviteUserToAzureAsync(
     throw error;
   }
 
-  return await response.json() as AzureInviteResponse;
+  return (await response.json()) as AzureInviteResponse;
 }
 
 export async function assignRoleToUserAsync(
@@ -285,7 +285,7 @@ export async function assignRoleToUserAsync(
     },
   );
 
-  return await response.json() as AzureAppRoleResponse;
+  return (await response.json()) as AzureAppRoleResponse;
 }
 
 export async function removeRoleFromUserAsync(

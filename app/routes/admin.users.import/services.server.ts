@@ -134,9 +134,7 @@ export async function importSpreadsheetMentorsAsync(
               heardAboutUs: "Not specified",
               isOver18: uniqueUser["Over the age of 18 years?"] === "Yes",
               mentoringLevel: "",
-              occupation: uniqueUser.Occupation
-                ? uniqueUser.Occupation
-                : "",
+              occupation: uniqueUser.Occupation ? uniqueUser.Occupation : "",
               preferredFrequency: uniqueUser.Attendance
                 ? uniqueUser.Attendance
                 : "Not specified",

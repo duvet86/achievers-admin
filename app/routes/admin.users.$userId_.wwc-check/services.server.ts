@@ -56,11 +56,7 @@ export function getFileUrl(path: string): string {
 
   const blob = containerClient.getBlobClient(path);
 
-  const sasQueryString = getSASQueryString(
-    containerClient,
-    path,
-    60,
-  );
+  const sasQueryString = getSASQueryString(containerClient, path, 60);
 
   return `${blob.url}?${sasQueryString}`;
 }

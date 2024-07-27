@@ -107,24 +107,20 @@ export async function importSpreadsheetStudentsAsync(
                 newStudent["Parent/Gaurdian 2 Relationship"] != null
                   ? [
                       {
-                        address:
-                          newStudent["Parent/Gaurdian 1 Address"].trim(),
+                        address: newStudent["Parent/Gaurdian 1 Address"].trim(),
                         email: newStudent["Parent/Gaurdian 1 Email"].trim(),
                         fullName:
                           newStudent["Parent/Gaurdian 1 Full name"]!.trim(),
-                        phone:
-                          newStudent["Parent/Gaurdian 1 Phone"].toString(),
+                        phone: newStudent["Parent/Gaurdian 1 Phone"].toString(),
                         relationship:
                           newStudent["Parent/Gaurdian 1 Relationship"].trim(),
                       },
                       {
-                        address:
-                          newStudent["Parent/Gaurdian 2 Address"].trim(),
+                        address: newStudent["Parent/Gaurdian 2 Address"].trim(),
                         email: newStudent["Parent/Gaurdian 2 Email"].trim(),
                         fullName:
                           newStudent["Parent/Gaurdian 2 Full name"]!.trim(),
-                        phone:
-                          newStudent["Parent/Gaurdian 2 Phone"].toString(),
+                        phone: newStudent["Parent/Gaurdian 2 Phone"].toString(),
                         relationship:
                           newStudent["Parent/Gaurdian 2 Relationship"].trim(),
                       },

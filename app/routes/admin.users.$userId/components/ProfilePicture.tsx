@@ -11,9 +11,7 @@ export default function ProfilePicture({
     <div className="card card-side m-8 bg-base-100 shadow-xl">
       <figure>
         <img
-          src={
-            profilePicturePath ?? "/images/profile-picture.webp"
-          }
+          src={profilePicturePath ?? "/images/profile-picture.webp"}
           alt="user profile"
           className="h-28 w-28"
         />

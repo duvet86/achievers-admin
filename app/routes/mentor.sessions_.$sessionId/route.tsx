@@ -34,7 +34,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const bodyData = await request.json() as SessionCommandRequest;
+  const bodyData = (await request.json()) as SessionCommandRequest;
 
   const type = bodyData.type;
   const sessionId = bodyData.sessionId;

@@ -32,7 +32,9 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
   const url = new URL(request.url);
 
-  return redirect(`/admin/sessions/${params.sessionId}?${url.searchParams.toString()}`);
+  return redirect(
+    `/admin/sessions/${params.sessionId}?${url.searchParams.toString()}`,
+  );
 }
 
 export default function Index() {
