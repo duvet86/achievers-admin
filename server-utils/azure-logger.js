@@ -7,7 +7,6 @@ export function initAppInsightsLogger() {
     return;
   }
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useAzureMonitor();
   global.__appinsightsTracer__ = trace.getTracer("appTracer");
 }

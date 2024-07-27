@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { ImportedStudentHistory, Student } from "@prisma/client";
 import type { SpeadsheetStudent } from "~/models/speadsheet";
 
@@ -40,16 +41,16 @@ export async function importSpreadsheetStudentsAsync(
   const students: StudentHistory[] = [];
 
   await prisma.$transaction(async (tx) => {
-    for (let i = 0; i < newStudents.length; i++) {
-      let error: string = "";
+    for (const newStudent of newStudents) {
+      let error = "";
 
-      const dateOfBirth = newStudents[i]["Date of Birth"];
-      const startDate = newStudents[i]["Start Date"];
+      const dateOfBirth = newStudent["Date of Birth"];
+      const startDate = newStudent["Start Date"];
 
       const isDateofBirthValid =
         dateOfBirth && isValidDate(new Date(dateOfBirth));
 
-      if (newStudents[i]["Date of Birth"] && !isDateofBirthValid) {
+      if (newStudent["Date of Birth"] && !isDateofBirthValid) {
         error += "Date of Birth is invalid.\n";
       }
 
@@ -60,38 +61,38 @@ export async function importSpreadsheetStudentsAsync(
           importedStudentHistory: true,
         },
         data: {
-          address: newStudents[i]["Address"]?.trim(),
-          bestContactMethod: newStudents[i]["Best Contact Method"]?.trim(),
-          bestPersonToContact: newStudents[i]["Best Person to Contact"]?.trim(),
+          address: newStudent["Address"]?.trim(),
+          bestContactMethod: newStudent["Best Contact Method"]?.trim(),
+          bestPersonToContact: newStudent["Best Person to Contact"]?.trim(),
           dateOfBirth: isDateofBirthValid ? new Date(dateOfBirth) : null,
           emergencyContactAddress:
-            newStudents[i]["Emergency Contact Address"]?.trim(),
+            newStudent["Emergency Contact Address"]?.trim(),
           emergencyContactEmail:
-            newStudents[i]["Emergency Contact Email"]?.trim(),
+            newStudent["Emergency Contact Email"]?.trim(),
           emergencyContactFullName:
-            newStudents[i]["Emergency Contact Full Name"]?.trim(),
+            newStudent["Emergency Contact Full Name"]?.trim(),
           emergencyContactPhone:
-            newStudents[i]["Emergency Contact Phone"]?.toString(),
+            newStudent["Emergency Contact Phone"]?.toString(),
           emergencyContactRelationship:
-            newStudents[i]["Emergency Contact Relationship"]?.trim(),
-          firstName: newStudents[i]["First Name"].trim(),
+            newStudent["Emergency Contact Relationship"]?.trim(),
+          firstName: newStudent["First Name"].trim(),
           gender:
-            newStudents[i]["Gender"].trim() === "Female"
+            newStudent["Gender"].trim() === "Female"
               ? $Enums.Gender.FEMALE
               : $Enums.Gender.MALE,
-          lastName: newStudents[i]["Last Name"].trim(),
-          schoolName: newStudents[i]["Name of School"]?.trim(),
+          lastName: newStudent["Last Name"].trim(),
+          schoolName: newStudent["Name of School"]?.trim(),
           startDate: isStartDateValid ? new Date(startDate) : null,
-          allergies: newStudents[i]["Dietary Requirements/Allergies"]
-            ? newStudents[i]["Dietary Requirements/Allergies"]!.trim() === "Yes"
+          allergies: newStudent["Dietary Requirements/Allergies"]
+            ? newStudent["Dietary Requirements/Allergies"]!.trim() === "Yes"
               ? true
               : false
             : undefined,
           endDate: null,
-          hasApprovedToPublishPhotos: newStudents[i][
+          hasApprovedToPublishPhotos: newStudent[
             "Approval to publish photographs?"
           ]
-            ? newStudents[i]["Approval to publish photographs?"]!.trim() ===
+            ? newStudent["Approval to publish photographs?"]!.trim() ===
               "Yes"
               ? true
               : false
@@ -99,40 +100,40 @@ export async function importSpreadsheetStudentsAsync(
           guardian: {
             createMany: {
               data:
-                newStudents[i]["Parent/Gaurdian 1 Address"] != null &&
-                newStudents[i]["Parent/Gaurdian 1 Email"] != null &&
-                newStudents[i]["Parent/Gaurdian 1 Phone"] != null &&
-                newStudents[i]["Parent/Gaurdian 1 Relationship"] != null &&
-                newStudents[i]["Parent/Gaurdian 2 Address"] != null &&
-                newStudents[i]["Parent/Gaurdian 2 Email"] != null &&
-                newStudents[i]["Parent/Gaurdian 2 Phone"] != null &&
-                newStudents[i]["Parent/Gaurdian 2 Relationship"] != null
+                newStudent["Parent/Gaurdian 1 Address"] != null &&
+                newStudent["Parent/Gaurdian 1 Email"] != null &&
+                newStudent["Parent/Gaurdian 1 Phone"] != null &&
+                newStudent["Parent/Gaurdian 1 Relationship"] != null &&
+                newStudent["Parent/Gaurdian 2 Address"] != null &&
+                newStudent["Parent/Gaurdian 2 Email"] != null &&
+                newStudent["Parent/Gaurdian 2 Phone"] != null &&
+                newStudent["Parent/Gaurdian 2 Relationship"] != null
                   ? [
                       {
                         address:
-                          newStudents[i]["Parent/Gaurdian 1 Address"]!.trim(),
+                          newStudent["Parent/Gaurdian 1 Address"]!.trim(),
                         email:
-                          newStudents[i]["Parent/Gaurdian 1 Email"]!.trim(),
+                          newStudent["Parent/Gaurdian 1 Email"]!.trim(),
                         fullName:
-                          newStudents[i]["Parent/Gaurdian 1 Full name"]!.trim(),
+                          newStudent["Parent/Gaurdian 1 Full name"]!.trim(),
                         phone:
-                          newStudents[i]["Parent/Gaurdian 1 Phone"]!.toString(),
+                          newStudent["Parent/Gaurdian 1 Phone"]!.toString(),
                         relationship:
-                          newStudents[i][
+                          newStudent[
                             "Parent/Gaurdian 1 Relationship"
                           ]!.trim(),
                       },
                       {
                         address:
-                          newStudents[i]["Parent/Gaurdian 2 Address"]!.trim(),
+                          newStudent["Parent/Gaurdian 2 Address"]!.trim(),
                         email:
-                          newStudents[i]["Parent/Gaurdian 2 Email"]!.trim(),
+                          newStudent["Parent/Gaurdian 2 Email"]!.trim(),
                         fullName:
-                          newStudents[i]["Parent/Gaurdian 2 Full name"]!.trim(),
+                          newStudent["Parent/Gaurdian 2 Full name"]!.trim(),
                         phone:
-                          newStudents[i]["Parent/Gaurdian 2 Phone"]!.toString(),
+                          newStudent["Parent/Gaurdian 2 Phone"]!.toString(),
                         relationship:
-                          newStudents[i][
+                          newStudent[
                             "Parent/Gaurdian 2 Relationship"
                           ]!.trim(),
                       },
@@ -143,14 +144,14 @@ export async function importSpreadsheetStudentsAsync(
           studentTeacher: {
             createMany: {
               data:
-                newStudents[i]["Teacher's Email"] != null &&
-                newStudents[i]["Teacher's Name (s)"] != null &&
-                newStudents[i]["Name of School"] != null
+                newStudent["Teacher's Email"] != null &&
+                newStudent["Teacher's Name (s)"] != null &&
+                newStudent["Name of School"] != null
                   ? [
                       {
-                        email: newStudents[i]["Teacher's Email"]!.trim(),
-                        fullName: newStudents[i]["Teacher's Name (s)"]!.trim(),
-                        schoolName: newStudents[i]["Name of School"]!.trim(),
+                        email: newStudent["Teacher's Email"]!.trim(),
+                        fullName: newStudent["Teacher's Name (s)"]!.trim(),
+                        schoolName: newStudent["Name of School"]!.trim(),
                       },
                     ]
                   : [],

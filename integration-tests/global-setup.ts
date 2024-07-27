@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { chromium } from "@playwright/test";
 
 async function globalSetup() {

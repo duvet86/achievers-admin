@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import {

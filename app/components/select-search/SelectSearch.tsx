@@ -1,5 +1,4 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useEffect, useRef, useState } from "react";
 
 import { Xmark } from "iconoir-react";

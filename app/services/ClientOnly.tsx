@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from "react";
 
 function subscribe() {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   return () => {};
 }
 
