@@ -102,6 +102,32 @@ export function getPermissionsAbility(roles: ROLES[]) {
     const parts = role.split(".");
 
     if (parts[0] === "ChapterCoordinator") {
+      if (parts[3] === "all") {
+        return [
+          {
+            action: parts[1],
+            subject: "ChapterArea",
+          } as RawRuleOf<AppAbility>,
+          {
+            action: parts[1],
+            subject: "SessionArea",
+          } as RawRuleOf<AppAbility>,
+          {
+            action: parts[1],
+            subject: "StudentArea",
+          } as RawRuleOf<AppAbility>,
+          {
+            action: parts[1],
+            subject: "UserArea",
+          } as RawRuleOf<AppAbility>,
+          {
+            action: parts[1],
+            subject: "Chapter",
+            conditions: { id: Number(parts[2]) },
+          } as RawRuleOf<AppAbility>,
+        ];
+      }
+
       return [
         {
           action: parts[1],

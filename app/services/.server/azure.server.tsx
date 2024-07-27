@@ -1,6 +1,7 @@
 import { redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
+import { trackException } from "~/services/.server";
 import { getTokenInfoAsync } from "./session.server";
 
 export const MICROSOFT_GRAPH_V1_BASEURL = "https://graph.microsoft.com/v1.0";
@@ -218,8 +219,6 @@ async function getAzureUserByIdAsync(
     (azureUser as AzureError).error &&
     (azureUser as AzureError).error.code === "Authorization_RequestDenied"
   ) {
-    console.log("azureUser", azureUser);
-
     throw redirect("/403");
   }
 
@@ -260,7 +259,11 @@ export async function inviteUserToAzureAsync(
   });
 
   if (!response.ok) {
-    throw new Error(await response.text());
+    const error = new Error(await response.text());
+
+    trackException(error);
+
+    throw error;
   }
 
   return response.json();
