@@ -60,7 +60,7 @@ export async function exportStudentsToSpreadsheetAsync() {
     utils.json_to_sheet<SpeadsheetStudent>(speadsheetMentors),
   );
 
-  const buf = write(wb, { type: "buffer", bookType: "xlsx" });
+  const buf = write(wb, { type: "buffer", bookType: "xlsx" }) as ReadableStream;
 
   return buf;
 }

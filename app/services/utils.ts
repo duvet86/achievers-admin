@@ -33,6 +33,7 @@ export async function readFormDataAsStringsAsync(
   return Object.entries(Object.fromEntries(formData)).reduce<
     Record<string, string>
   >((res, [key, value]) => {
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     res[key] = value?.toString().trim();
 
     return res;
@@ -40,6 +41,7 @@ export async function readFormDataAsStringsAsync(
 }
 
 export function parseJwt<T>(token: string): T {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
 }
 

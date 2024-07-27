@@ -61,7 +61,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const bodyData: SessionCommandRequest = await request.json();
+  const bodyData = await request.json() as SessionCommandRequest;
 
   const action = bodyData.action;
 
@@ -87,7 +87,7 @@ export async function action({ request }: ActionFunctionArgs) {
       break;
 
     default:
-      throw new Error(`Invalid action ${action}.`);
+      throw new Error("Invalid action");
   }
 
   return json({

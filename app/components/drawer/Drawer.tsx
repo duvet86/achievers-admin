@@ -42,37 +42,37 @@ function getLinks(
           icon: <User className="h-6 w-6" />,
           path: "/admin/users",
           label: "Mentors",
-          isVisible: linkMappings["User"],
+          isVisible: linkMappings.User,
         },
         {
           icon: <GraduationCap className="h-6 w-6" />,
           path: "/admin/students",
           label: "Students",
-          isVisible: linkMappings["Student"],
+          isVisible: linkMappings.Student,
         },
         {
           icon: <StatsReport className="h-6 w-6" />,
           path: "/admin/sessions",
           label: "Sessions/Reports",
-          isVisible: linkMappings["Session"],
+          isVisible: linkMappings.Session,
         },
         {
           icon: <ShopFourTiles className="h-6 w-6" />,
           path: "/admin/chapters",
           label: "Chapters",
-          isVisible: linkMappings["Chapter"],
+          isVisible: linkMappings.Chapter,
         },
         {
           icon: <Calendar className="h-6 w-6" />,
           path: "/admin/school-terms",
           label: "School Terms",
-          isVisible: linkMappings["SchoolTerm"],
+          isVisible: linkMappings.SchoolTerm,
         },
         {
           icon: <Settings className="h-6 w-6" />,
           path: "/admin/config",
           label: "Config",
-          isVisible: linkMappings["Config"],
+          isVisible: linkMappings.Config,
         },
       ]
     : [

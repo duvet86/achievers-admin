@@ -73,7 +73,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
     return redirect(backURL);
   }
 
-  return redirect(`/admin/sessions/${session.id}?${url.searchParams}`);
+  return redirect(`/admin/sessions/${session.id}?${url.searchParams.toString()}`);
 }
 
 export default function Index() {
@@ -97,7 +97,7 @@ export default function Index() {
 
         <div className="mt-4 flex justify-end gap-6">
           <Link
-            to={backURL ? backURL : `/admin/sessions?${searchParams}`}
+            to={backURL ? backURL : `/admin/sessions?${searchParams.toString()}`}
             className="btn w-48"
           >
             <ArrowLeft className="h-6 w-6" />

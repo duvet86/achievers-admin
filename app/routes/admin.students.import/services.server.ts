@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { ImportedStudentHistory, Student } from "@prisma/client";
 import type { SpeadsheetStudent } from "~/models/speadsheet";
 
@@ -61,7 +60,7 @@ export async function importSpreadsheetStudentsAsync(
           importedStudentHistory: true,
         },
         data: {
-          address: newStudent["Address"]?.trim(),
+          address: newStudent.Address?.trim(),
           bestContactMethod: newStudent["Best Contact Method"]?.trim(),
           bestPersonToContact: newStudent["Best Person to Contact"]?.trim(),
           dateOfBirth: isDateofBirthValid ? new Date(dateOfBirth) : null,
@@ -76,14 +75,14 @@ export async function importSpreadsheetStudentsAsync(
             newStudent["Emergency Contact Relationship"]?.trim(),
           firstName: newStudent["First Name"].trim(),
           gender:
-            newStudent["Gender"].trim() === "Female"
+            newStudent.Gender.trim() === "Female"
               ? $Enums.Gender.FEMALE
               : $Enums.Gender.MALE,
           lastName: newStudent["Last Name"].trim(),
           schoolName: newStudent["Name of School"]?.trim(),
           startDate: isStartDateValid ? new Date(startDate) : null,
           allergies: newStudent["Dietary Requirements/Allergies"]
-            ? newStudent["Dietary Requirements/Allergies"]!.trim() === "Yes"
+            ? newStudent["Dietary Requirements/Allergies"].trim() === "Yes"
               ? true
               : false
             : undefined,
@@ -91,7 +90,7 @@ export async function importSpreadsheetStudentsAsync(
           hasApprovedToPublishPhotos: newStudent[
             "Approval to publish photographs?"
           ]
-            ? newStudent["Approval to publish photographs?"]!.trim() === "Yes"
+            ? newStudent["Approval to publish photographs?"].trim() === "Yes"
               ? true
               : false
             : undefined,
@@ -109,25 +108,25 @@ export async function importSpreadsheetStudentsAsync(
                   ? [
                       {
                         address:
-                          newStudent["Parent/Gaurdian 1 Address"]!.trim(),
-                        email: newStudent["Parent/Gaurdian 1 Email"]!.trim(),
+                          newStudent["Parent/Gaurdian 1 Address"].trim(),
+                        email: newStudent["Parent/Gaurdian 1 Email"].trim(),
                         fullName:
                           newStudent["Parent/Gaurdian 1 Full name"]!.trim(),
                         phone:
-                          newStudent["Parent/Gaurdian 1 Phone"]!.toString(),
+                          newStudent["Parent/Gaurdian 1 Phone"].toString(),
                         relationship:
-                          newStudent["Parent/Gaurdian 1 Relationship"]!.trim(),
+                          newStudent["Parent/Gaurdian 1 Relationship"].trim(),
                       },
                       {
                         address:
-                          newStudent["Parent/Gaurdian 2 Address"]!.trim(),
-                        email: newStudent["Parent/Gaurdian 2 Email"]!.trim(),
+                          newStudent["Parent/Gaurdian 2 Address"].trim(),
+                        email: newStudent["Parent/Gaurdian 2 Email"].trim(),
                         fullName:
                           newStudent["Parent/Gaurdian 2 Full name"]!.trim(),
                         phone:
-                          newStudent["Parent/Gaurdian 2 Phone"]!.toString(),
+                          newStudent["Parent/Gaurdian 2 Phone"].toString(),
                         relationship:
-                          newStudent["Parent/Gaurdian 2 Relationship"]!.trim(),
+                          newStudent["Parent/Gaurdian 2 Relationship"].trim(),
                       },
                     ]
                   : [],
@@ -141,9 +140,9 @@ export async function importSpreadsheetStudentsAsync(
                 newStudent["Name of School"] != null
                   ? [
                       {
-                        email: newStudent["Teacher's Email"]!.trim(),
-                        fullName: newStudent["Teacher's Name (s)"]!.trim(),
-                        schoolName: newStudent["Name of School"]!.trim(),
+                        email: newStudent["Teacher's Email"].trim(),
+                        fullName: newStudent["Teacher's Name (s)"].trim(),
+                        schoolName: newStudent["Name of School"].trim(),
                       },
                     ]
                   : [],

@@ -34,9 +34,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const bodyData: SessionCommandRequest = await request.json();
+  const bodyData = await request.json() as SessionCommandRequest;
 
-  const type = bodyData.type as ActionType;
+  const type = bodyData.type;
   const sessionId = bodyData.sessionId;
   const report = bodyData.report;
 
@@ -61,8 +61,7 @@ export default function Index() {
   } = useLoaderData<typeof loader>();
 
   const editorStateRef = useRef<EditorState>();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { state, submit } = (useFetcher as any)();
+  const { state, submit } = useFetcher();
 
   const isLoading = state === "loading";
   const isReadOnlyEditor = completedOn !== null || signedOffOn !== null;

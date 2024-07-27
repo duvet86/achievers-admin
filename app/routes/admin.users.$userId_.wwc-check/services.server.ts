@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { prisma } from "~/db.server";
 import {
   getContainerClient,
-  getSASQueryStringAsync,
+  getSASQueryString,
   uploadBlobAsync,
   USER_DATA_BLOB_CONTAINER_NAME,
 } from "~/services/.server";
@@ -51,12 +51,12 @@ export async function updateWWCCheckAsync(
   });
 }
 
-export async function getFileUrl(path: string): Promise<string> {
+export function getFileUrl(path: string): string {
   const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
 
   const blob = containerClient.getBlobClient(path);
 
-  const sasQueryString = await getSASQueryStringAsync(
+  const sasQueryString = getSASQueryString(
     containerClient,
     path,
     60,

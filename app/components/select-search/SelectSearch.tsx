@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useEffect, useRef, useState } from "react";
 
 import { Xmark } from "iconoir-react";

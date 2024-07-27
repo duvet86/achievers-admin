@@ -17,7 +17,7 @@ import invariant from "tiny-invariant";
 import { DateInput, Title, FileInput, SubmitFormButton } from "~/components";
 
 import {
-  getFileUrlAsync,
+  getFileUrl,
   getUserByIdAsync,
   updatePoliceCheckAsync,
   saveFileAsync,
@@ -29,7 +29,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const user = await getUserByIdAsync(Number(params.userId));
 
   const filePath = user?.policeCheck?.filePath
-    ? await getFileUrlAsync(user.policeCheck.filePath)
+    ? getFileUrl(user.policeCheck.filePath)
     : null;
 
   return json({

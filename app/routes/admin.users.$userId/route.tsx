@@ -40,7 +40,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   console.log("azureUserInfo", azureUserInfo);
 
   const profilePicturePath = user?.profilePicturePath
-    ? await getProfilePictureUrl(user.profilePicturePath)
+    ? getProfilePictureUrl(user.profilePicturePath)
     : null;
 
   const chapters = await getChaptersAsync();

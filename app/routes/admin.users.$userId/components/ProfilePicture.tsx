@@ -12,9 +12,7 @@ export default function ProfilePicture({
       <figure>
         <img
           src={
-            profilePicturePath !== null
-              ? profilePicturePath
-              : "/images/profile-picture.webp"
+            profilePicturePath ?? "/images/profile-picture.webp"
           }
           alt="user profile"
           className="h-28 w-28"

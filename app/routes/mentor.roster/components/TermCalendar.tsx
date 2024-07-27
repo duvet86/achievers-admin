@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { SessionLookup } from "../services.server";
 
 import { useFetcher } from "@remix-run/react";
@@ -33,8 +32,7 @@ export default function TermCalendar({
   student,
   sessionDateToMentorIdForAllStudentsLookup,
 }: Props) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { state, submit } = (useFetcher as any)();
+  const { state, submit } = useFetcher();
 
   const isLoading = state === "loading";
   const sessionDateToMentorIdForStudentLookup =
@@ -133,7 +131,7 @@ export default function TermCalendar({
             const isCancelled =
               mentorIdForSessionForSelectedStudent?.isCancelled;
 
-            const isActionDisabled = hasReport || isCancelled;
+            const isActionDisabled = hasReport ?? isCancelled;
 
             return (
               <tr

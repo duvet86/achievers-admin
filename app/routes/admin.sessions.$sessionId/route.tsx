@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
@@ -76,7 +75,7 @@ export default function Index() {
   return (
     <>
       <div className="mb-4 flex justify-between">
-        <Title to={backURL ? backURL : `/admin/sessions?${searchParams}`}>
+        <Title to={backURL ? backURL : `/admin/sessions?${searchParams.toString()}`}>
           Session of &quot;
           {dayjs(attendedOn, "YYYY-MM-DD").format("DD/MM/YYYY")}&quot;
         </Title>
@@ -89,7 +88,7 @@ export default function Index() {
         ) : completedOn ? null : (
           <div className="w-48">
             <Link
-              to={`cancel?${searchParams}`}
+              to={`cancel?${searchParams.toString()}`}
               className="btn btn-error btn-block gap-2"
             >
               <Xmark className="h-6 w-6" /> Cancel session
@@ -126,7 +125,7 @@ export default function Index() {
               </div>
               {hasReport && (
                 <Link
-                  to={`report?${searchParams}`}
+                  to={`report?${searchParams.toString()}`}
                   className="btn btn-success gap-2"
                 >
                   Go to report

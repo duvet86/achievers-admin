@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
@@ -28,12 +27,12 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
   await cancelSessionAsync(
     Number(params.sessionId),
-    formData.get("reason")!.toString(),
+    formData.get("reason") as string,
   );
 
   const url = new URL(request.url);
 
-  return redirect(`/admin/sessions/${params.sessionId}?${url.searchParams}`);
+  return redirect(`/admin/sessions/${params.sessionId}?${url.searchParams.toString()}`);
 }
 
 export default function Index() {
@@ -67,7 +66,7 @@ export default function Index() {
 
         <div className="mt-4 flex justify-end gap-6">
           <Link
-            to={`/admin/sessions/${session.id}?${searchParams}`}
+            to={`/admin/sessions/${session.id}?${searchParams.toString()}`}
             className="btn w-48"
           >
             <ArrowLeft className="h-6 w-6" />

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
@@ -111,7 +110,7 @@ export default function Index() {
   const onFormClear = () => formRef.current!.reset();
 
   const handleRowClick = (id: number) => () => {
-    navigate(`${id}?${searchParams}`);
+    navigate(`${id}?${searchParams.toString()}`);
   };
 
   return (
@@ -178,7 +177,7 @@ export default function Index() {
                       <td className="border">{chapter.name}</td>
                       <td className="border">
                         <Link
-                          to={`${id}?${searchParams}`}
+                          to={`${id}?${searchParams.toString()}`}
                           className="btn btn-success btn-xs w-full gap-2"
                         >
                           <PageEdit className="hidden h-4 w-4 lg:block" />

@@ -8,7 +8,7 @@ import { Title } from "~/components";
 
 import { sendEmailRemaniders } from "./services.server";
 
-export async function loader() {
+export function loader() {
   return json({
     version,
     isEmailRemindersCheckEnabled: isEmailRemindersCheckEnabled,

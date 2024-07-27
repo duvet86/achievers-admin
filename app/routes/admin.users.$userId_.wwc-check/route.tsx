@@ -35,7 +35,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const user = await getUserByIdAsync(Number(params.userId));
 
   const filePath = user?.wwcCheck?.filePath
-    ? await getFileUrl(user.wwcCheck.filePath)
+    ? getFileUrl(user.wwcCheck.filePath)
     : null;
 
   return json({

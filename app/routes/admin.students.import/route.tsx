@@ -60,7 +60,7 @@ export const action = async ({
       if (!isValidDate(fileStudent["Date of Birth"])) {
         res.push(
           `row number ${index + 1}: date of birth is incorrect: ${
-            fileStudent["Date of Birth"]
+            fileStudent["Date of Birth"]?.toString()
           }`,
         );
       }

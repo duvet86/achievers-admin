@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
@@ -143,7 +142,7 @@ export default function Index() {
                     </td>
                     <td className="border p-2">
                       <Link
-                        to={`${id}?${searchParams}`}
+                        to={`${id}?${searchParams.toString()}`}
                         className="btn btn-success btn-xs w-full gap-2"
                       >
                         <PageEdit className="h-4 w-4" />

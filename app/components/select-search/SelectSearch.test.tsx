@@ -8,7 +8,7 @@ import { SelectSearch } from "./SelectSearch";
 const user = testUserEvent.setup();
 
 describe("SelectSearch", () => {
-  it("should have attributes", async () => {
+  it("should have attributes", () => {
     const availableStudents = [
       {
         id: 1,

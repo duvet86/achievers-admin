@@ -7,7 +7,7 @@ import { MemoryRouter } from "react-router";
 import { Drawer } from "~/components";
 
 describe("Drawer", () => {
-  it("should display links for admin", async () => {
+  it("should display links for admin", () => {
     render(
       <MemoryRouter>
         <Drawer
@@ -51,7 +51,7 @@ describe("Drawer", () => {
     expect(links[6]).toHaveAttribute("href", "/admin/config");
   });
 
-  it("should display links for mentor", async () => {
+  it("should display links for mentor", () => {
     render(
       <MemoryRouter>
         <Drawer
@@ -84,7 +84,7 @@ describe("Drawer", () => {
     expect(links[5]).toHaveAttribute("href", "/mentor/policy");
   });
 
-  it("should display swap app link if both mentor and admin", async () => {
+  it("should display swap app link if both mentor and admin", () => {
     render(
       <MemoryRouter>
         <Drawer

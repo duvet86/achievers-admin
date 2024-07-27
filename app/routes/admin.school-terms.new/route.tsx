@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { NewSchoolTerm } from "./services.server";
 
@@ -31,38 +30,26 @@ export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
 
   const startDate1 = dayjs.utc(
-    formData.get("startDate0")!.toString(),
+    formData.get("startDate0") as string,
     "YYYY-MM-DD",
   );
   const startDate2 = dayjs.utc(
-    formData.get("startDate1")!.toString(),
+    formData.get("startDate1") as string,
     "YYYY-MM-DD",
   );
   const startDate3 = dayjs.utc(
-    formData.get("startDate2")!.toString(),
+    formData.get("startDate2") as string,
     "YYYY-MM-DD",
   );
   const startDate4 = dayjs.utc(
-    formData.get("startDate3")!.toString(),
+    formData.get("startDate3") as string,
     "YYYY-MM-DD",
   );
 
-  const endDate1 = dayjs.utc(
-    formData.get("endDate0")!.toString(),
-    "YYYY-MM-DD",
-  );
-  const endDate2 = dayjs.utc(
-    formData.get("endDate1")!.toString(),
-    "YYYY-MM-DD",
-  );
-  const endDate3 = dayjs.utc(
-    formData.get("endDate2")!.toString(),
-    "YYYY-MM-DD",
-  );
-  const endDate4 = dayjs.utc(
-    formData.get("endDate3")!.toString(),
-    "YYYY-MM-DD",
-  );
+  const endDate1 = dayjs.utc(formData.get("endDate0") as string, "YYYY-MM-DD");
+  const endDate2 = dayjs.utc(formData.get("endDate1") as string, "YYYY-MM-DD");
+  const endDate3 = dayjs.utc(formData.get("endDate2") as string, "YYYY-MM-DD");
+  const endDate4 = dayjs.utc(formData.get("endDate3") as string, "YYYY-MM-DD");
 
   const commonYear = startDate1.year();
 

@@ -37,7 +37,7 @@ export interface CurentUserInfo {
 const loginPath = "/.auth/login/aad?post_login_redirect_uri=/";
 
 export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
-  if (process.env.CI || process.env.NODE_ENV !== "production") {
+  if (process.env.CI ?? process.env.NODE_ENV !== "production") {
     return await getSessionInfoAsync_dev(request);
   } else {
     const idToken = request.headers.get("X-MS-TOKEN-AAD-ID-TOKEN");

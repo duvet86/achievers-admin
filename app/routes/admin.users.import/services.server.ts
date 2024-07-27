@@ -53,7 +53,7 @@ export async function importSpreadsheetMentorsAsync(
   await prisma.$transaction(async (tx) => {
     for (const uniqueUser of uniqueUsers) {
       const chapter = chapters.find((c) =>
-        areEqualIgnoreCase(c.name, uniqueUser["Chapter"]),
+        areEqualIgnoreCase(c.name, uniqueUser.Chapter),
       );
 
       let error = "";
@@ -119,7 +119,7 @@ export async function importSpreadsheetMentorsAsync(
           firstName: uniqueUser["First Name"],
           azureADId: null,
           lastName: uniqueUser["Last Name"],
-          mobile: uniqueUser["Mobile"].toString(),
+          mobile: uniqueUser.Mobile.toString(),
           hasApprovedToPublishPhotos:
             uniqueUser["Approval to publish Potographs?"] === "Yes",
           volunteerAgreementSignedOn:
@@ -134,11 +134,11 @@ export async function importSpreadsheetMentorsAsync(
               heardAboutUs: "Not specified",
               isOver18: uniqueUser["Over the age of 18 years?"] === "Yes",
               mentoringLevel: "",
-              occupation: uniqueUser["Occupation"]
-                ? uniqueUser["Occupation"]
+              occupation: uniqueUser.Occupation
+                ? uniqueUser.Occupation
                 : "",
-              preferredFrequency: uniqueUser["Attendance"]
-                ? uniqueUser["Attendance"]
+              preferredFrequency: uniqueUser.Attendance
+                ? uniqueUser.Attendance
                 : "Not specified",
               volunteerExperience: "Not specified",
               role: uniqueUser["Role(s)"] ? uniqueUser["Role(s)"] : "",

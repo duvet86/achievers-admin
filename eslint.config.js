@@ -1,8 +1,10 @@
 import globals from "globals";
 import pluginJs from "@eslint/js";
+import { fixupPluginRules } from "@eslint/compat";
 import tseslint from "typescript-eslint";
 import pluginReact from "eslint-plugin-react";
 import jsxA11y from "eslint-plugin-jsx-a11y";
+import eslintPluginReactHooks from "eslint-plugin-react-hooks";
 import eslintConfigPrettier from "eslint-config-prettier";
 
 export default [
@@ -19,31 +21,20 @@ export default [
   },
   { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
   pluginJs.configs.recommended,
-  // ...tseslint.configs.recommended,
-  ...tseslint.configs.strict,
-  ...tseslint.configs.stylistic,
-  // {
-  //   plugins: {
-  //     "@typescript-eslint": tseslint.plugin,
-  //   },
-  //   languageOptions: {
-  //     parser: tseslint.parser,
-  //     parserOptions: {
-  //       project: true,
-  //     },
-  //   },
-  //   settings: {
-  //     "import/internal-regex": "^~/",
-  //     "import/resolver": {
-  //       node: {
-  //         extensions: [".ts", ".tsx"],
-  //       },
-  //       typescript: {
-  //         alwaysTryTypes: true,
-  //       },
-  //     },
-  //   },
-  // },
+  ...tseslint.configs.recommendedTypeChecked,
+  ...tseslint.configs.stylisticTypeChecked,
+  {
+    languageOptions: {
+      parserOptions: {
+        project: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
+    files: ["**/*.js", "**/*.cjs", "**/*.mjs"],
+    ...tseslint.configs.disableTypeChecked,
+  },
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
     ...pluginReact.configs.flat.recommended,
@@ -83,6 +74,14 @@ export default [
           jsx: true,
         },
       },
+    },
+  },
+  {
+    plugins: {
+      "react-hooks": fixupPluginRules(eslintPluginReactHooks),
+    },
+    rules: {
+      ...eslintPluginReactHooks.configs.recommended.rules,
     },
   },
   eslintConfigPrettier,

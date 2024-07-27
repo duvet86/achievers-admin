@@ -6,21 +6,21 @@ import { render } from "@testing-library/react";
 import { DateInput } from "~/components";
 
 describe("DateInput", () => {
-  it("should display label", async () => {
+  it("should display label", () => {
     render(<DateInput name="date" label="test" />);
 
     expect(screen.getByTestId("dateinput")).toHaveValue("");
     expect(screen.getByLabelText("test")).toBeInTheDocument();
   });
 
-  it("should display required", async () => {
+  it("should display required", () => {
     render(<DateInput name="date" label="test" required />);
 
     expect(screen.getByTestId("dateinput")).toHaveValue("");
     expect(screen.getByTestId("required")).toBeInTheDocument();
   });
 
-  it("should have initial value type date", async () => {
+  it("should have initial value type date", () => {
     render(
       <DateInput
         name="date"
@@ -33,7 +33,7 @@ describe("DateInput", () => {
     expect(screen.getByLabelText("test")).toBeInTheDocument();
   });
 
-  it("should have initial value type string", async () => {
+  it("should have initial value type string", () => {
     render(<DateInput name="date" label="test" defaultValue="1995-12-17" />);
 
     expect(screen.getByTestId("dateinput")).toHaveValue("1995-12-17");

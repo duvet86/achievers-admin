@@ -6,7 +6,7 @@ import { MemoryRouter } from "react-router";
 import { Navbar } from "~/components";
 
 describe("Navbar", () => {
-  it("Navbar snapshot", async () => {
+  it("Navbar snapshot", () => {
     const { baseElement } = render(
       <MemoryRouter>
         <Navbar environment="local" userName="test@test.com" version="1" />

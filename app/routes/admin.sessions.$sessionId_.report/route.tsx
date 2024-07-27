@@ -43,7 +43,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   const user = await getLoggedUserInfoAsync(request);
 
-  const bodyData: SessionCommandRequest = await request.json();
+  const bodyData = await request.json() as SessionCommandRequest;
 
   const sessionId = bodyData.sessionId;
   const reportFeedback = bodyData.reportFeedback;
@@ -63,8 +63,7 @@ export default function Index() {
   const [searchParams] = useSearchParams();
 
   const editorStateRef = useRef<EditorState>();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { state, submit } = (useFetcher as any)();
+  const { state, submit } = useFetcher();
 
   const isLoading = state === "loading";
 
@@ -129,7 +128,7 @@ export default function Index() {
               </p>
 
               <Link
-                to={`/admin/sessions/${id}?${searchParams}`}
+                to={`/admin/sessions/${id}?${searchParams.toString()}`}
                 className="btn w-44"
               >
                 <ArrowLeft className="h-6 w-6" />

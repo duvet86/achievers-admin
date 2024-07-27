@@ -294,7 +294,7 @@ function useFloatingLinkEditorToolbar(
           focusNode,
           $isAutoLinkNode,
         );
-        if (!(focusLinkNode || focusAutoLinkNode)) {
+        if (!(focusLinkNode ?? focusAutoLinkNode)) {
           setIsLink(false);
           return;
         }
