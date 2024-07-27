@@ -40,7 +40,7 @@ if (process.env.NODE_ENV === "production") {
     global.__db__ = new PrismaClient();
   }
   prisma = global.__db__;
-  await prisma.$connect();
+  void prisma.$connect();
 }
 
 export { prisma };
