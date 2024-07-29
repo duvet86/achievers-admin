@@ -7,17 +7,12 @@ import type { EditorState } from "lexical";
 import type { SessionCommandRequest } from "./services.server";
 
 import { json } from "@remix-run/node";
-import {
-  Link,
-  useFetcher,
-  useLoaderData,
-  useSearchParams,
-} from "@remix-run/react";
+import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
 
 import dayjs from "dayjs";
 import { useRef } from "react";
 import invariant from "tiny-invariant";
-import { ArrowLeft, DesignNib, Xmark } from "iconoir-react";
+import { DesignNib, Xmark } from "iconoir-react";
 
 import { getLoggedUserInfoAsync } from "~/services/.server";
 import { Editor, SubTitle, Title } from "~/components";
@@ -90,7 +85,10 @@ export default function Index() {
 
   return (
     <>
-      <Title className="mb-4">
+      <Title
+        className="mb-4"
+        to={`/admin/sessions/${id}?${searchParams.toString()}`}
+      >
         Report for &quot;{student.fullName}&quot; on:{" "}
         {dayjs(attendedOn).format("MMMM D, YYYY")}
       </Title>
@@ -126,14 +124,6 @@ export default function Index() {
                   ? `Report has been signed off on ${dayjs(signedOffOn).format("MMMM D, YYYY")}`
                   : ""}
               </p>
-
-              <Link
-                to={`/admin/sessions/${id}?${searchParams.toString()}`}
-                className="btn w-44"
-              >
-                <ArrowLeft className="h-6 w-6" />
-                Back
-              </Link>
 
               {signedOffOn ? (
                 <button

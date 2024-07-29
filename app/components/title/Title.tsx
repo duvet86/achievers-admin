@@ -10,9 +10,9 @@ interface Props {
 
 export function Title({ className, to, children }: Props) {
   return (
-    <div className={classnames("flex items-center gap-2", className)}>
+    <div className={classnames("flex items-center gap-4", className)}>
       {to && (
-        <Link to={to} className="btn btn-square">
+        <Link to={to} className="btn btn-square w-14">
           <NavArrowLeft className="h-8 w-8" />
         </Link>
       )}

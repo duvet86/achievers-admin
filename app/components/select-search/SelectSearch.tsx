@@ -125,12 +125,18 @@ export function SelectSearch({
         </li>
         {viewOptions.map((option, index) => (
           <li key={index}>
-            <button onClick={onOptionClick(option)}>{option.label}</button>
+            <button type="button" onClick={onOptionClick(option)}>
+              {option.label}
+            </button>
           </li>
         ))}
         {viewOptions.length === 0 && (
           <li>
-            <button className="italic" onClick={(e) => e.preventDefault()}>
+            <button
+              type="button"
+              className="italic"
+              onClick={(e) => e.preventDefault()}
+            >
               No items
             </button>
           </li>

@@ -1,10 +1,10 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
+import { Form, useLoaderData, useSearchParams } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
-import { ArrowLeft, UserXmark } from "iconoir-react";
+import { UserXmark } from "iconoir-react";
 
 import { Title, Textarea } from "~/components";
 
@@ -43,7 +43,10 @@ export default function Index() {
 
   return (
     <>
-      <Title className="mb-4">
+      <Title
+        to={`/admin/sessions/${session.id}?${searchParams.toString()}`}
+        className="mb-4"
+      >
         Cancel session of &quot;{dayjs(session.attendedOn).format("DD/MM/YYYY")}
         &quot;
       </Title>
@@ -66,15 +69,7 @@ export default function Index() {
           required
         />
 
-        <div className="mt-4 flex justify-end gap-6">
-          <Link
-            to={`/admin/sessions/${session.id}?${searchParams.toString()}`}
-            className="btn w-48"
-          >
-            <ArrowLeft className="h-6 w-6" />
-            Back
-          </Link>
-
+        <div className="mt-4 flex justify-end">
           <button type="submit" className="btn btn-error w-56">
             <UserXmark className="h-6 w-6" /> Cancel session
           </button>

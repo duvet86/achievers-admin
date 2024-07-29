@@ -7,7 +7,7 @@ import jsxA11y from "eslint-plugin-jsx-a11y";
 import eslintPluginReactHooks from "eslint-plugin-react-hooks";
 import eslintConfigPrettier from "eslint-config-prettier";
 
-export default [
+export default tseslint.config(
   {
     ignores: [
       "**/playwright-report",
@@ -85,4 +85,4 @@ export default [
     },
   },
   eslintConfigPrettier,
-];
+);

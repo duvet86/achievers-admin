@@ -1,9 +1,8 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
+import { Form, useLoaderData, useSearchParams } from "@remix-run/react";
 import dayjs from "dayjs";
-import { ArrowLeft } from "iconoir-react";
 import invariant from "tiny-invariant";
 
 import { Title, Select, SubmitFormButton, Text, SubTitle } from "~/components";
@@ -87,7 +86,12 @@ export default function Index() {
 
   return (
     <>
-      <Title className="mb-4">Update session of &quot;{attendedOn}&quot;</Title>
+      <Title
+        className="mb-4"
+        to={backURL ? backURL : `/admin/sessions?${searchParams.toString()}`}
+      >
+        Update session of &quot;{attendedOn}&quot;
+      </Title>
 
       <Text label="Chapter" text={chapter.name} />
       <Text label="Student" text={student.fullName} />
@@ -97,17 +101,7 @@ export default function Index() {
       <Form method="post">
         <Select label="Mentor" name="userId" options={mentors} required />
 
-        <div className="mt-4 flex justify-end gap-6">
-          <Link
-            to={
-              backURL ? backURL : `/admin/sessions?${searchParams.toString()}`
-            }
-            className="btn w-48"
-          >
-            <ArrowLeft className="h-6 w-6" />
-            Back
-          </Link>
-
+        <div className="mt-4 flex justify-end">
           <SubmitFormButton />
         </div>
       </Form>
