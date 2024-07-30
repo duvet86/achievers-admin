@@ -14,6 +14,7 @@ export function useHydrated() {
 }
 
 export function ClientOnly({
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   children,
   fallback = null,
 }: {

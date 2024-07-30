@@ -17,11 +17,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
+  if (user.volunteerAgreementSignedOn === null) {
+    return redirect("/volunteer-agreement");
+  }
 
   return json({
     currentView: "mentor",
     isMentorAndAdmin: loggedUser.isAdmin && loggedUser.isMentor,
-    hasCompletedVolunteerAgreement: user.volunteerAgreementSignedOn !== null,
     userName: loggedUser.preferred_username,
     version,
     linkMappings: {},

@@ -18,7 +18,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   );
 
   if (loggedUser.isMentor && volunteerAgreementSignedOn === null) {
-    return redirect("/mentor/volunteer-agreement");
+    return redirect("/volunteer-agreement");
   }
 
   if (loggedUser.isMentor) {

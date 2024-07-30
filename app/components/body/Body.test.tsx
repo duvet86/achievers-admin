@@ -36,7 +36,6 @@ describe("Body", () => {
         <Body
           currentView="mentor"
           isMentorAndAdmin={false}
-          hasCompletedVolunteerAgreement
           version="1"
           environment="local"
           userName="test@test.com"
@@ -54,7 +53,6 @@ describe("Body", () => {
         <Body
           currentView="admin"
           isMentorAndAdmin={true}
-          hasCompletedVolunteerAgreement
           version="1"
           environment="local"
           userName="test@test.com"

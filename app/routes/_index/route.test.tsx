@@ -88,7 +88,7 @@ describe("Loader", () => {
       context: {},
     });
 
-    expect(response).toEqual(redirect("/mentor/volunteer-agreement"));
+    expect(response).toEqual(redirect("/volunteer-agreement"));
   });
 
   it("should redirect to home for mentor user", async () => {
