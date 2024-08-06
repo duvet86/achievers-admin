@@ -14,6 +14,7 @@ export default tseslint.config(
       "**/public/build",
       "**/build",
       "**/dev_sessions",
+      "**/tailwind.config.*",
     ],
   },
   {
@@ -29,6 +30,9 @@ export default tseslint.config(
         project: true,
         tsconfigRootDir: import.meta.dirname,
       },
+    },
+    rules: {
+      "@typescript-eslint/only-throw-error": "off",
     },
   },
   {

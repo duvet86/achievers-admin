@@ -131,7 +131,10 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
           {links
             .filter(({ isVisible }) => isVisible)
             .map(({ icon, label, path: value }, index) => (
-              <li key={index}>
+              <li
+                key={index}
+                onClick={() => document.getElementById("drawer")!.click()}
+              >
                 <NavLink
                   to={value}
                   className={({ isActive }) =>
