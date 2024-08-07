@@ -17,7 +17,7 @@ export default function FormInputs({
   const searchTerm = searchParams.get("searchTerm");
 
   return (
-    <div className="mb-6 hidden flex-wrap justify-between lg:flex">
+    <div className="mb-6 hidden flex-wrap justify-between gap-4 lg:flex">
       <div className="flex items-center gap-6">
         <div className="w-96">
           <Input
