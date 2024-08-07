@@ -9,7 +9,7 @@ import { areDatesOverlapping } from "~/services";
 import { DateInput, SubTitle, SubmitFormButton, Title } from "~/components";
 
 import { addTermsAsync, getExisitingYearsAsync } from "./services.server";
-import { isLoggedUserBlockedAsync } from "~/services/.server";
+import { isLoggedUserBlockedAsync, trackException } from "~/services/.server";
 
 dayjs.extend(utc);
 
@@ -20,6 +20,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   );
 
   if (isUserBlocked) {
+    trackException(
+      new Error(
+        `Request url: ${request.url}. loggedUser has no SchoolTermArea permissions.`,
+      ),
+    );
     throw redirect("/403");
   }
 

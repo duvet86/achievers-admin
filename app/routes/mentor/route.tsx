@@ -4,7 +4,11 @@ import { redirect, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
 import { getEnvironment } from "~/services";
-import { getLoggedUserInfoAsync, version } from "~/services/.server";
+import {
+  getLoggedUserInfoAsync,
+  trackException,
+  version,
+} from "~/services/.server";
 import { Body } from "~/components";
 
 import { getUserByAzureADIdAsync } from "./services.server";
@@ -13,6 +17,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
 
   if (!loggedUser.isMentor) {
+    trackException(
+      new Error(
+        `Request url: ${request.url}. loggedUser is not MENTOR: ${JSON.stringify(loggedUser)}`,
+      ),
+    );
     throw redirect("/403");
   }
 

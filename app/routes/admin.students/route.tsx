@@ -3,12 +3,17 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 
-import { isLoggedUserBlockedAsync } from "~/services/.server";
+import { isLoggedUserBlockedAsync, trackException } from "~/services/.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const isUserBlocked = await isLoggedUserBlockedAsync(request, "StudentArea");
 
   if (isUserBlocked) {
+    trackException(
+      new Error(
+        `Request url: ${request.url}. loggedUser has no StudentArea permissions.`,
+      ),
+    );
     throw redirect("/403");
   }
 

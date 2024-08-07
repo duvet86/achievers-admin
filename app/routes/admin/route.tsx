@@ -6,6 +6,7 @@ import { useLoaderData } from "@remix-run/react";
 import {
   getLoggedUserInfoAsync,
   getPermissionsAbility,
+  trackException,
   version,
 } from "~/services/.server";
 import { getEnvironment } from "~/services";
@@ -16,6 +17,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
 
   if (!loggedUser.isAdmin) {
+    trackException(
+      new Error(
+        `Request url: ${request.url}. loggedUser is not ADMIN: ${JSON.stringify(loggedUser)}`,
+      ),
+    );
     throw redirect("/403");
   }
 

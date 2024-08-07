@@ -84,6 +84,11 @@ export async function getLoggedUserInfoAsync(
   const loggedUser = parseJwt<CurentUserInfo>(tokenInfo.idToken);
 
   if (!loggedUser.roles || loggedUser.roles.length === 0) {
+    trackException(
+      new Error(
+        `getLoggedUserInfoAsync: loggedUser has incorrect roles: ${JSON.stringify(loggedUser)}`,
+      ),
+    );
     throw redirect("/403");
   }
 
