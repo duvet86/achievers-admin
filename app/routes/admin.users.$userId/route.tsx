@@ -37,8 +37,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     );
   }
 
-  console.log("azureUserInfo", azureUserInfo);
-
   const profilePicturePath = user?.profilePicturePath
     ? getProfilePictureUrl(user.profilePicturePath)
     : null;

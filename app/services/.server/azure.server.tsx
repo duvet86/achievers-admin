@@ -219,6 +219,7 @@ async function getAzureUserByIdAsync(
     (azureUser as AzureError).error &&
     (azureUser as AzureError).error.code === "Authorization_RequestDenied"
   ) {
+    trackException(new Error(JSON.stringify(azureUser)));
     throw redirect("/403");
   }
 
