@@ -45,6 +45,16 @@ export async function getSessionsAsync(userId: number, chapterId: number) {
   });
 }
 
+export async function hasAnyStudentsAssignedAsync(mentorId: number) {
+  return (
+    (await prisma.mentorToStudentAssignement.count({
+      where: {
+        userId: mentorId,
+      },
+    })) > 0
+  );
+}
+
 export async function getUserByAzureADIdAsync(azureADId: string) {
   return await prisma.user.findUniqueOrThrow({
     where: {

@@ -83,18 +83,6 @@ function getLinks(
           isVisible: true,
         },
         {
-          icon: <GraduationCap className="h-6 w-6" />,
-          path: "/mentor/students",
-          label: "My Students",
-          isVisible: true,
-        },
-        {
-          icon: <Group className="h-6 w-6" />,
-          path: "/mentor/partner",
-          label: "My Partner",
-          isVisible: true,
-        },
-        {
           icon: <Calendar className="h-6 w-6" />,
           path: "/mentor/roster",
           label: "Roster",
@@ -104,6 +92,18 @@ function getLinks(
           icon: <StatsReport className="h-6 w-6" />,
           path: "/mentor/sessions",
           label: "Sessions/Reports",
+          isVisible: true,
+        },
+        {
+          icon: <GraduationCap className="h-6 w-6" />,
+          path: "/mentor/students",
+          label: "My Students",
+          isVisible: true,
+        },
+        {
+          icon: <Group className="h-6 w-6" />,
+          path: "/mentor/partner",
+          label: "My Partner",
           isVisible: true,
         },
         {
