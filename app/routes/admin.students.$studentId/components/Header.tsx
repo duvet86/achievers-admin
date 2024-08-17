@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import { Link, useSearchParams } from "@remix-run/react";
 import { BinFull, NavArrowDown, OnTag, WarningTriangle } from "iconoir-react";
 
 import { Title } from "~/components";
@@ -9,9 +9,11 @@ interface Props {
 }
 
 export function Header({ title, endDate }: Props) {
+  const [searchParams] = useSearchParams();
+
   return (
     <div className="flex flex-col items-center gap-4 lg:flex-row">
-      <Title to="/admin/students">{title}</Title>
+      <Title to={`/admin/students?${searchParams.toString()}`}>{title}</Title>
 
       {endDate && (
         <p

@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import { Link, useSearchParams } from "@remix-run/react";
 
 import {
   Key,
@@ -16,9 +16,13 @@ interface Props {
 }
 
 export function Header(props: Props) {
+  const [searchParams] = useSearchParams();
+
   return (
     <div className="flex flex-col items-center gap-10 lg:flex-row">
-      <Title to="/admin/users">Edit mentor info</Title>
+      <Title to={`/admin/users?${searchParams.toString()}`}>
+        Edit mentor info
+      </Title>
 
       {getMessage(props)}
 
