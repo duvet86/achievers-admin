@@ -53,23 +53,16 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<
   }
 
   const nextSession = await getNextSessionAsync(user.id);
-  if (nextSession === null) {
-    return json({
-      hasAnyStudentsAssigned: true,
-      mentorFullName: user.fullName,
-      nextSessionDate: null,
-      student: null,
-      sessions: [],
-    });
-  }
-
   const sessions = await getSessionsAsync(user.id, user.chapterId);
 
   return json({
     hasAnyStudentsAssigned: true,
     mentorFullName: user.fullName,
-    nextSessionDate: dayjs(nextSession.attendedOn).format("MMMM D, YYYY"),
-    student: nextSession.student,
+    nextSessionDate:
+      nextSession !== null
+        ? dayjs(nextSession.attendedOn).format("MMMM D, YYYY")
+        : null,
+    student: nextSession !== null ? nextSession.student : null,
     sessions,
   });
 }
@@ -95,7 +88,7 @@ export default function Index() {
         </h2>
       </article>
 
-      {student && (
+      {student && nextSessionDate && (
         <>
           <SubTitle>Next session</SubTitle>
 

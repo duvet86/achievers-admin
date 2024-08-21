@@ -1,6 +1,6 @@
 import type { SessionLookup } from "../services.server";
 
-import { useFetcher } from "@remix-run/react";
+import { Link, useFetcher } from "@remix-run/react";
 import classNames from "classnames";
 import dayjs from "dayjs";
 
@@ -10,6 +10,8 @@ import {
   Check,
   WarningTriangle,
   ThumbsUp,
+  Xmark,
+  StatsReport,
 } from "iconoir-react";
 
 interface Props {
@@ -109,6 +111,19 @@ export default function TermCalendar({
       )}
 
       <table className="table table-zebra table-pin-rows">
+        <thead>
+          <tr>
+            <th align="left">Session date</th>
+            <th align="left">Status</th>
+            <th align="left" className="hidden lg:table-cell">
+              Report completed
+            </th>
+            <th align="left" className="hidden lg:table-cell">
+              Signed off
+            </th>
+            <th align="right">Action</th>
+          </tr>
+        </thead>
         <tbody>
           {datesInTerm.map((attendedOn, index) => {
             const mentorIdForSessionForSelectedStudent =
@@ -167,6 +182,25 @@ export default function TermCalendar({
                     </div>
                   )}
                 </td>
+                <td className="hidden lg:table-cell">
+                  {mentorIdForSessionForSelectedStudent?.hasReport ? (
+                    <Check className="h-4 w-4 text-success" />
+                  ) : (
+                    <Xmark className="h-4 w-4 text-error" />
+                  )}
+                </td>
+                <td className="hidden lg:table-cell">
+                  {mentorIdForSessionForSelectedStudent?.signedOffOn ? (
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-success" />
+                      {dayjs(
+                        mentorIdForSessionForSelectedStudent.signedOffOn,
+                      ).format("MMMM D, YYYY")}
+                    </div>
+                  ) : (
+                    <Xmark className="h-4 w-4 text-error" />
+                  )}
+                </td>
                 <td align="right">
                   {(() => {
                     if (isActionDisabled) {
@@ -184,15 +218,24 @@ export default function TermCalendar({
 
                     if (isMySession) {
                       return (
-                        <button
-                          className="btn btn-error w-28"
-                          onClick={removeMentorForSession(
-                            mentorIdForSessionForSelectedStudent!.sessionId,
-                          )}
-                        >
-                          <WarningTriangle className="h-6 w-6" />
-                          Cancel
-                        </button>
+                        <div className="flex items-center justify-end gap-6">
+                          <Link
+                            to={`/mentor/sessions/${mentorIdForSessionForSelectedStudent!.sessionId}`}
+                            className="btn btn-info w-36"
+                          >
+                            <StatsReport className="h-6 w-6" />
+                            Report
+                          </Link>
+                          <button
+                            className="btn btn-error w-28"
+                            onClick={removeMentorForSession(
+                              mentorIdForSessionForSelectedStudent!.sessionId,
+                            )}
+                          >
+                            <WarningTriangle className="h-6 w-6" />
+                            Cancel
+                          </button>
+                        </div>
                       );
                     }
 
