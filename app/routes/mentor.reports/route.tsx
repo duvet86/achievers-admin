@@ -9,8 +9,9 @@ import type { ActionType, SessionCommandRequest } from "./services.server";
 import { json } from "@remix-run/node";
 import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
 
-import dayjs from "dayjs";
 import { useRef } from "react";
+import dayjs from "dayjs";
+import classNames from "classnames";
 import { FloppyDiskArrowIn, CheckCircle, WarningTriangle } from "iconoir-react";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
@@ -37,8 +38,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
 
   let selectedTerm = url.searchParams.get("selectedTerm");
-  const selectedTermDate = url.searchParams.get("selectedTermDate");
-  const selectedStudentId = url.searchParams.get("selectedStudentId");
+  let selectedTermDate = url.searchParams.get("selectedTermDate");
+  let selectedStudentId = url.searchParams.get("selectedStudentId");
 
   const terms = await getSchoolTermsForYearAsync(dayjs().year());
 
@@ -57,8 +58,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const datesInTerm = getDatesForTerm(currentTerm.start, currentTerm.end).map(
     (sessionDate) => ({
-      value: sessionDate.format("DD/MM/YYYY"),
-      label: sessionDate.format("DD/MM/YYYY"),
+      value: sessionDate,
+      label: dayjs(sessionDate).format("DD/MM/YYYY"),
     }),
   );
 
@@ -67,23 +68,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const students = await getStudentsAsync(user.id, user.chapterId);
 
-  if (selectedTermDate === null || selectedStudentId === null) {
-    return json({
-      students,
-      selectedTerm: currentTerm.name,
-      selectedTermDate: getClosestSessionDate(),
-      selectedStudentId: students[0].id.toString(),
-      termsList,
-      datesInTerm,
-      session: null,
-    });
-  }
+  selectedTermDate = selectedTermDate ?? getClosestSessionDate();
+  selectedStudentId = selectedStudentId ?? students[0].id.toString();
 
   const session = await getSessionAsync(
     user.id,
     Number(selectedStudentId),
     user.chapterId,
-    dayjs(selectedTermDate, "DD/MM/YYYY").toDate(),
+    selectedTermDate ?? getClosestSessionDate(),
   );
 
   return json({
@@ -115,13 +107,11 @@ export async function action({ request }: ActionFunctionArgs) {
     user.id,
     user.chapterId,
     studentId,
-    dayjs(attendedOn, "YYYY-MM-DD").toDate(),
+    attendedOn,
     report,
   );
 
-  return json({
-    message: "Successfully saved",
-  });
+  return null;
 }
 
 export default function Index() {
@@ -163,22 +153,28 @@ export default function Index() {
     load(`?${searchParams.toString()}`);
   };
 
-  const saveReport =
-    (type: ActionType, studentId: string, attendedOn: string) => () => {
-      submit(
-        {
-          type,
-          studentId: Number(studentId),
-          attendedOn,
-          sessionId: session?.id ?? null,
-          report: JSON.stringify(editorStateRef.current?.toJSON()),
-        },
-        {
-          method: "POST",
-          encType: "application/json",
-        },
-      );
-    };
+  const saveReport = (type: ActionType) => () => {
+    const studentId = (
+      document.getElementById("selectedStudentId") as HTMLSelectElement
+    ).value;
+    const attendedOn = (
+      document.getElementById("selectedTermDate") as HTMLSelectElement
+    ).value;
+
+    submit(
+      {
+        type,
+        studentId: Number(studentId),
+        attendedOn,
+        sessionId: session?.id ?? null,
+        report: JSON.stringify(editorStateRef.current?.toJSON()),
+      },
+      {
+        method: "POST",
+        encType: "application/json",
+      },
+    );
+  };
 
   return (
     <>
@@ -230,7 +226,12 @@ export default function Index() {
         <div className="flex h-full flex-col gap-4">
           <div className="flex flex-1 flex-col gap-2">
             <div className="flex h-full flex-row">
-              <div className="w-3/4">
+              <div
+                className={classNames({
+                  "w-3/4": !session?.signedOffOn,
+                  "w-full": session?.signedOffOn,
+                })}
+              >
                 <Editor
                   isReadonly={isReadOnlyEditor}
                   initialEditorStateType={session?.report ?? null}
@@ -240,19 +241,21 @@ export default function Index() {
                 />
               </div>
 
-              <div className="w-1/4 border-b pl-4">
-                <p className="font-semibold">
-                  Have you answered these questions?
-                </p>
-                <hr className="my-2" />
-                <ul className="list-inside list-disc">
-                  <li>What work did you cover this week?</li>
-                  <li>What went well?</li>
-                  <li>What could be improved on?</li>
-                  <li>Any notes for next week for your partner mentor?</li>
-                  <li>Any notes for your Chapter Coordinator?</li>
-                </ul>
-              </div>
+              {!session?.signedOffOn && (
+                <div className="w-1/4 border-b pl-4">
+                  <p className="font-semibold">
+                    Have you answered these questions?
+                  </p>
+                  <hr className="my-2" />
+                  <ul className="list-inside list-disc">
+                    <li>What work did you cover this week?</li>
+                    <li>What went well?</li>
+                    <li>What could be improved on?</li>
+                    <li>Any notes for next week for your partner mentor?</li>
+                    <li>Any notes for your Chapter Coordinator?</li>
+                  </ul>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end">
@@ -260,11 +263,7 @@ export default function Index() {
                 {!session?.completedOn && (
                   <button
                     className="btn btn-primary w-44"
-                    onClick={saveReport(
-                      "draft",
-                      selectedStudentId,
-                      selectedTermDate,
-                    )}
+                    onClick={saveReport("draft")}
                   >
                     <FloppyDiskArrowIn className="h-6 w-6" />
                     Save as draft
@@ -273,25 +272,17 @@ export default function Index() {
                 {!session?.completedOn && (
                   <button
                     className="btn btn-success w-48"
-                    onClick={saveReport(
-                      "completed",
-                      selectedStudentId,
-                      selectedTermDate,
-                    )}
+                    onClick={saveReport("completed")}
                   >
                     <CheckCircle className="h-6 w-6" />
                     Mark as completed
                   </button>
                 )}
 
-                {session?.completedOn && session?.signedOffOn && (
+                {session?.completedOn && !session?.signedOffOn && (
                   <button
                     className="btn btn-error w-48"
-                    onClick={saveReport(
-                      "remove-complete",
-                      selectedStudentId,
-                      selectedTermDate,
-                    )}
+                    onClick={saveReport("remove-complete")}
                   >
                     <WarningTriangle className="h-6 w-6" />
                     Unmark completed

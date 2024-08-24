@@ -2,10 +2,12 @@ import type { Term } from "~/models";
 
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 import { prisma } from "~/db.server";
 
 dayjs.extend(isBetween);
+dayjs.extend(customParseFormat);
 
 export type ActionType = "completed" | "remove-complete" | "draft";
 
@@ -33,7 +35,7 @@ export async function getSessionAsync(
   userId: number,
   studentId: number,
   chapterId: number,
-  attendedOn: Date,
+  attendedOn: string,
 ) {
   return await prisma.mentorToStudentSession.findUnique({
     where: {
@@ -67,7 +69,7 @@ export async function saveReportAsync(
   userId: number,
   chapterId: number,
   studentId: number,
-  attendedOn: Date,
+  attendedOn: string,
   report: string,
 ) {
   let completedOn: Date | null;
@@ -147,10 +149,12 @@ export function getClosestSessionDate(): string {
   const sessionDateFromToday = dayjs().startOf("week").day(6);
 
   if (sessionDateFromToday > dayjs()) {
-    return sessionDateFromToday.add(-1, "week").format("YYYY-MM-DD");
+    return (
+      sessionDateFromToday.add(-1, "week").format("YYYY-MM-DD") + "T00:00:00Z"
+    );
   }
 
-  return sessionDateFromToday.format("YYYY-MM-DD");
+  return sessionDateFromToday.format("YYYY-MM-DD") + "T00:00:00Z";
 }
 
 export async function getStudentsAsync(userId: number, chapterId: number) {

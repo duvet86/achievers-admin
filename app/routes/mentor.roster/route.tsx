@@ -59,7 +59,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     sessionDateToMentorIdForAllStudentsLookup,
     selectedStudent,
     datesInTerm: getDatesForTerm(currentTerm.start, currentTerm.end).map(
-      (date) => date.format("YYYY-MM-DD"),
+      (date) => dayjs(date).format("YYYY-MM-DD"),
     ),
   });
 }

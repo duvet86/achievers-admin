@@ -39,7 +39,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     currentTerm,
     students,
     datesInTerm: getDatesForTerm(currentTerm.start, currentTerm.end).map(
-      (date) => date.format("YYYY-MM-DD"),
+      (date) => dayjs(date).format("YYYY-MM-DD"),
     ),
   });
 }
