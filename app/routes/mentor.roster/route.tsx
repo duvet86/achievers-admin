@@ -58,7 +58,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     students,
     sessionDateToMentorIdForAllStudentsLookup,
     selectedStudent,
-    datesInTerm: getDatesForTerm(currentTerm.start, currentTerm.end),
+    datesInTerm: getDatesForTerm(currentTerm.start, currentTerm.end).map(
+      (date) => date.format("YYYY-MM-DD"),
+    ),
   });
 }
 

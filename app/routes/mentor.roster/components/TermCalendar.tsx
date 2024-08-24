@@ -220,7 +220,7 @@ export default function TermCalendar({
                       return (
                         <div className="flex items-center justify-end gap-6">
                           <Link
-                            to={`/mentor/sessions/${mentorIdForSessionForSelectedStudent!.sessionId}`}
+                            to={`/mentor/reports?selectedStudentId=${student.id}&selectedTermDate=${dayjs(attendedOn).format("DD/MM/YYYY")}`}
                             className="btn btn-info w-36"
                           >
                             <StatsReport className="h-6 w-6" />

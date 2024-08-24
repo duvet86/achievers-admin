@@ -237,7 +237,7 @@ export function range(start: number, end: number) {
   return Array.from({ length }, (_, i) => start + i);
 }
 
-export function getDatesForTerm(startDate: Dayjs, endDate: Dayjs) {
+export function getDatesForTerm(startDate: Dayjs, endDate: Dayjs): Dayjs[] {
   let firstDayOfTermStart = startDate.startOf("week").day(6);
   let firstDayOfTermEnd = endDate.startOf("week").day(6);
 
@@ -253,12 +253,9 @@ export function getDatesForTerm(startDate: Dayjs, endDate: Dayjs) {
     "week",
   );
 
-  const dates: string[] = [];
+  const dates: Dayjs[] = [];
   for (let i = 0; i <= numberOfWeeksInTerm; i++) {
-    const date = firstDayOfTermStart
-      .clone()
-      .add(i, "week")
-      .format("YYYY-MM-DD");
+    const date = firstDayOfTermStart.clone().add(i, "week");
 
     dates.push(date);
   }

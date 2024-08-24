@@ -83,6 +83,12 @@ function getLinks(
           isVisible: true,
         },
         {
+          icon: <StatsReport className="h-6 w-6" />,
+          path: "/mentor/reports",
+          label: "Reports",
+          isVisible: true,
+        },
+        {
           icon: <Calendar className="h-6 w-6" />,
           path: "/mentor/roster",
           label: "Roster/Reports",
