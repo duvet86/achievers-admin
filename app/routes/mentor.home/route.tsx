@@ -28,6 +28,7 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<
     mentorFullName: string;
     nextSessionDate: string | null;
     student: null | {
+      id: number;
       fullName: string;
     };
     sessions: {
@@ -181,7 +182,7 @@ export default function Index() {
                       </td>
                       <td align="right">
                         <Link
-                          to={`/mentor/sessions/${id}`}
+                          to={`/mentor/reports?selectedStudentId=${student!.id}&selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00Z&back_url=/mentor/home`}
                           className="btn btn-success btn-xs h-8 gap-2"
                         >
                           <StatsReport className="hidden h-4 w-4 lg:block" />

@@ -179,7 +179,11 @@ export default function Index() {
   return (
     <>
       <Title
-        to={searchParams.get("back_url") ? "/mentor/roster" : undefined}
+        to={
+          searchParams.get("back_url")
+            ? searchParams.get("back_url")!
+            : undefined
+        }
         className="mb-4"
       >
         Reports

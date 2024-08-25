@@ -13,6 +13,7 @@ export async function getNextSessionAsync(userId: number) {
       attendedOn: true,
       student: {
         select: {
+          id: true,
           fullName: true,
         },
       },
