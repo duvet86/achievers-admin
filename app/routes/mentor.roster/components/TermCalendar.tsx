@@ -220,7 +220,7 @@ export default function TermCalendar({
                           <Link
                             to={`/mentor/reports?selectedStudentId=${student.id}&selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00Z&back_url=/mentor/roster`}
                             className={classNames("btn", {
-                              "btn-success w-40": !completedOn,
+                              "btn-warning w-40": !completedOn,
                               // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
                               "btn-info w-36": completedOn || signedOffOn,
                             })}
