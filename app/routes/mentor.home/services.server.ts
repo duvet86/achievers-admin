@@ -30,6 +30,12 @@ export async function getSessionsAsync(userId: number, chapterId: number) {
       attendedOn: true,
       completedOn: true,
       signedOffOn: true,
+      student: {
+        select: {
+          id: true,
+          fullName: true,
+        },
+      },
     },
     where: {
       chapterId,

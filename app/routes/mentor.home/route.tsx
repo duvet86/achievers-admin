@@ -36,6 +36,10 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<
       attendedOn: Date;
       completedOn: Date | null;
       signedOffOn: Date | null;
+      student: {
+        id: number;
+        fullName: string;
+      };
     }[];
   }>
 > {
@@ -140,6 +144,7 @@ export default function Index() {
                 <tr>
                   <th className="w-6">#</th>
                   <th align="left">Session date</th>
+                  <th align="left">Student</th>
                   <th align="left">Report completed</th>
                   <th align="left">Signed off</th>
                   <th align="right">Action</th>
@@ -154,12 +159,16 @@ export default function Index() {
                   </tr>
                 )}
                 {sessions.map(
-                  ({ id, attendedOn, completedOn, signedOffOn }, index) => (
+                  (
+                    { id, attendedOn, completedOn, signedOffOn, student },
+                    index,
+                  ) => (
                     <tr key={id}>
                       <td className="border-r">{index + 1}</td>
                       <td align="left">
                         {dayjs(attendedOn).format("MMMM D, YYYY")}
                       </td>
+                      <td align="left">{student.fullName}</td>
                       <td align="left">
                         {completedOn ? (
                           <div className="flex items-center gap-2">
@@ -182,7 +191,7 @@ export default function Index() {
                       </td>
                       <td align="right">
                         <Link
-                          to={`/mentor/reports?selectedStudentId=${student!.id}&selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00Z&back_url=/mentor/home`}
+                          to={`/mentor/reports?selectedStudentId=${student.id}&selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00Z&back_url=/mentor/home`}
                           className="btn btn-success btn-xs h-8 gap-2"
                         >
                           <StatsReport className="hidden h-4 w-4 lg:block" />
