@@ -81,8 +81,8 @@ describe("Drawer", () => {
     expect(links[4]).toHaveTextContent("My Partner");
     expect(links[4]).toHaveAttribute("href", "/mentor/partner");
 
-    expect(links[5]).toHaveTextContent("Policy");
-    expect(links[5]).toHaveAttribute("href", "/mentor/policy");
+    expect(links[5]).toHaveTextContent("Useful Resources");
+    expect(links[5]).toHaveAttribute("href", "/mentor/useful-resources");
   });
 
   it("should display swap app link if both mentor and admin", () => {

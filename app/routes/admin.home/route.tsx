@@ -66,7 +66,7 @@ export default function Index() {
       </article>
 
       <div className="flex w-full justify-center">
-        <div className="stats stats-vertical w-4/5 shadow-lg lg:stats-horizontal">
+        <div className="stats stats-vertical w-4/5 shadow-lg lg:stats-horizontal lg:w-full">
           <StatCard
             Icon={UserCircle}
             label="Mentors with incomplete checks"

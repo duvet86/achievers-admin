@@ -1,17 +1,19 @@
 import type { Environment } from "~/services";
 
 import { Link } from "@remix-run/react";
-import { ProfileCircle, Menu, LogOut } from "iconoir-react";
+import { ProfileCircle, Menu, LogOut, ClipboardCheck } from "iconoir-react";
 
 import { Environments } from "~/services";
 
 interface Props {
+  currentView?: string;
   userName: string;
   environment: Environment;
   version: string;
 }
 
-export function Navbar({ userName, environment, version }: Props) {
+export function Navbar({ userName, environment, version, currentView }: Props) {
+  const isCurrentViewMentor = currentView === "mentor";
   const showEnvBadge =
     environment === Environments.Local || environment === Environments.Staging;
 
@@ -23,7 +25,10 @@ export function Navbar({ userName, environment, version }: Props) {
             <Menu className="inline-block h-6 w-6 stroke-current" />
           </label>
         </div>
-        <Link to="/" className="btn btn-ghost text-xl normal-case">
+        <Link
+          to={isCurrentViewMentor ? "/mentor/home" : "/admin/home"}
+          className="btn btn-ghost text-xl normal-case"
+        >
           {showEnvBadge ? (
             <span className="badge badge-lg ml-2">{environment}</span>
           ) : (
@@ -50,9 +55,17 @@ export function Navbar({ userName, environment, version }: Props) {
         </div>
         <ul
           tabIndex={0}
-          className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow"
+          className="menu dropdown-content w-64 rounded-box bg-base-100 p-2 shadow"
         >
-          <li>
+          {isCurrentViewMentor && (
+            <li className="text-info">
+              <Link className="font-semibold" to="/volunteer-agreement">
+                <ClipboardCheck className="mr-2 w-6" />
+                Volunteer Agreement
+              </Link>
+            </li>
+          )}
+          <li className="text-error">
             <Link className="font-semibold" to="/logout">
               <LogOut className="mr-2 w-6" />
               Logout

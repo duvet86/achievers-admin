@@ -27,6 +27,7 @@ export function Body({
       <input id="drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
         <Navbar
+          currentView={currentView}
           userName={userName}
           environment={environment}
           version={version}

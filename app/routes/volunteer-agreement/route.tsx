@@ -1,8 +1,9 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import dayjs from "dayjs";
+import { CheckSquareSolid, NavArrowLeft } from "iconoir-react";
 
 import { getEnvironment } from "~/services";
 import { getLoggedUserInfoAsync, version } from "~/services/.server";
@@ -25,13 +26,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
-  if (user.volunteerAgreementSignedOn !== null) {
-    throw redirect("/");
-  }
-
   return json({
     environment: getEnvironment(request),
     userName: loggedUser.preferred_username,
+    hasAgreed: user.volunteerAgreementSignedOn !== null,
     version,
     maxDateOfBirth: `${dayjs().year() - 18}-01-01`, // At least 18 years old.
     user,
@@ -95,7 +93,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { user, maxDateOfBirth, userName, environment, version } =
+  const { user, maxDateOfBirth, userName, environment, version, hasAgreed } =
     useLoaderData<typeof loader>();
 
   return (
@@ -117,104 +115,109 @@ export default function Index() {
 
             <div className="card w-full bg-base-100 shadow-2xl">
               <Form method="post" className="card-body">
-                <Title>Confirm your details</Title>
+                {!hasAgreed && <Title>Confirm your details</Title>}
 
-                <Input
-                  label="First name"
-                  name="firstName"
-                  defaultValue={user.firstName}
-                  required
-                />
+                {!hasAgreed && (
+                  <fieldset>
+                    <Input
+                      label="First name"
+                      name="firstName"
+                      defaultValue={user.firstName}
+                      required
+                    />
 
-                <Input
-                  label="Last name"
-                  name="lastName"
-                  defaultValue={user.lastName}
-                  required
-                />
+                    <Input
+                      label="Last name"
+                      name="lastName"
+                      defaultValue={user.lastName}
+                      required
+                    />
 
-                <Input
-                  label="Mobile"
-                  name="mobile"
-                  defaultValue={user.mobile}
-                  required
-                />
+                    <Input
+                      label="Mobile"
+                      name="mobile"
+                      defaultValue={user.mobile}
+                      required
+                    />
 
-                <Input
-                  defaultValue={user.addressStreet ?? ""}
-                  label="Address street"
-                  name="addressStreet"
-                  required
-                />
+                    <Input
+                      defaultValue={user.addressStreet ?? ""}
+                      label="Address street"
+                      name="addressStreet"
+                      required
+                    />
 
-                <Input
-                  defaultValue={user.addressSuburb ?? ""}
-                  label="Address suburb"
-                  name="addressSuburb"
-                  required
-                />
+                    <Input
+                      defaultValue={user.addressSuburb ?? ""}
+                      label="Address suburb"
+                      name="addressSuburb"
+                      required
+                    />
 
-                <Input
-                  defaultValue={user.addressState ?? ""}
-                  label="Address state"
-                  name="addressState"
-                  required
-                />
+                    <Input
+                      defaultValue={user.addressState ?? ""}
+                      label="Address state"
+                      name="addressState"
+                      required
+                    />
 
-                <Input
-                  defaultValue={user.addressPostcode ?? ""}
-                  label="Address postcode"
-                  name="addressPostcode"
-                  required
-                />
+                    <Input
+                      defaultValue={user.addressPostcode ?? ""}
+                      label="Address postcode"
+                      name="addressPostcode"
+                      required
+                    />
 
-                <SubTitle>Update your details</SubTitle>
+                    <SubTitle>Update your details</SubTitle>
 
-                <DateInput
-                  label="Date of birth"
-                  name="dateOfBirth"
-                  defaultValue={user.dateOfBirth ?? ""}
-                  max={maxDateOfBirth}
-                  required
-                />
+                    <DateInput
+                      label="Date of birth"
+                      name="dateOfBirth"
+                      defaultValue={user.dateOfBirth ?? ""}
+                      max={maxDateOfBirth}
+                      required
+                    />
 
-                <Input
-                  defaultValue={user.emergencyContactName ?? ""}
-                  label="Emergency Contact Name"
-                  name="emergencyContactName"
-                  required
-                />
+                    <Input
+                      defaultValue={user.emergencyContactName ?? ""}
+                      label="Emergency Contact Name"
+                      name="emergencyContactName"
+                      required
+                    />
 
-                <Input
-                  defaultValue={user.emergencyContactNumber ?? ""}
-                  label="Emergency Contact Number"
-                  name="emergencyContactNumber"
-                  required
-                />
+                    <Input
+                      defaultValue={user.emergencyContactNumber ?? ""}
+                      label="Emergency Contact Number"
+                      name="emergencyContactNumber"
+                      required
+                    />
 
-                <Input
-                  defaultValue={user.emergencyContactAddress ?? ""}
-                  label="Emergency Contact Address"
-                  name="emergencyContactAddress"
-                  required
-                />
+                    <Input
+                      defaultValue={user.emergencyContactAddress ?? ""}
+                      label="Emergency Contact Address"
+                      name="emergencyContactAddress"
+                      required
+                    />
 
-                <Input
-                  defaultValue={user.emergencyContactRelationship ?? ""}
-                  label="Emergency Contact Relationship"
-                  name="emergencyContactRelationship"
-                  required
-                />
+                    <Input
+                      defaultValue={user.emergencyContactRelationship ?? ""}
+                      label="Emergency Contact Relationship"
+                      name="emergencyContactRelationship"
+                      required
+                    />
 
-                <p className="mt-6">
-                  I authorise Achievers Club WA Inc. to publish photographs of
-                  my image in any publications, electronic or otherwise for the
-                  purposes of promoting the activities of the Achievers Club:
-                </p>
-                <Checkbox
-                  name="hasApprovedToPublishPhotos"
-                  defaultChecked={user.hasApprovedToPublishPhotos ?? false}
-                />
+                    <p className="mt-6">
+                      I authorise Achievers Club WA Inc. to publish photographs
+                      of my image in any publications, electronic or otherwise
+                      for the purposes of promoting the activities of the
+                      Achievers Club:
+                    </p>
+                    <Checkbox
+                      name="hasApprovedToPublishPhotos"
+                      defaultChecked={user.hasApprovedToPublishPhotos ?? false}
+                    />
+                  </fieldset>
+                )}
 
                 <p className="mt-6">
                   I have been informed that copies of the Constitution of the
@@ -224,7 +227,11 @@ export default function Index() {
                 <a className="link" href="www.achieversclubwa.org.au/policies">
                   www.achieversclubwa.org.au/policies
                 </a>
-                <Checkbox name="isInformedOfConstitution" required />
+                {hasAgreed ? (
+                  <CheckSquareSolid />
+                ) : (
+                  <Checkbox name="isInformedOfConstitution" required />
+                )}
 
                 <p className="mt-6">
                   I will comply with all safety directions given to me by
@@ -232,7 +239,11 @@ export default function Index() {
                   Policy and any COVID directions issued by the State
                   Government:
                 </p>
-                <Checkbox name="hasApprovedSafetyDirections" required />
+                {hasAgreed ? (
+                  <CheckSquareSolid />
+                ) : (
+                  <Checkbox name="hasApprovedSafetyDirections" required />
+                )}
 
                 <p className="mt-6">
                   I understand that the Club will take all due care to minimise
@@ -240,7 +251,11 @@ export default function Index() {
                   accepts no legal responsibility for any loss or harm that
                   occurs and I release the Club from same:
                 </p>
-                <Checkbox name="hasAcceptedNoLegalResp" required />
+                {hasAgreed ? (
+                  <CheckSquareSolid />
+                ) : (
+                  <Checkbox name="hasAcceptedNoLegalResp" required />
+                )}
 
                 <p className="mt-6">
                   To the best of my knowledge all details I have provided on
@@ -248,15 +263,33 @@ export default function Index() {
                   of this form does not guarantee me a volunteer role at the
                   Achievers Club WA:
                 </p>
-                <Checkbox name="agree" required />
+                {hasAgreed ? (
+                  <CheckSquareSolid />
+                ) : (
+                  <Checkbox name="agree" required />
+                )}
 
                 <p className="mt-6">I am over 18 years of age:</p>
-                <Checkbox name="isOver18" required />
+                {hasAgreed ? (
+                  <CheckSquareSolid />
+                ) : (
+                  <Checkbox name="isOver18" required />
+                )}
 
                 <input type="hidden" name="userId" value={user.id} />
 
                 <div className="flex justify-end">
-                  <SubmitFormButton />
+                  {hasAgreed ? (
+                    <Link
+                      className="btn btn-neutral w-32 gap-2"
+                      to="/mentor/home"
+                    >
+                      <NavArrowLeft />
+                      Home
+                    </Link>
+                  ) : (
+                    <SubmitFormButton />
+                  )}
                 </div>
               </Form>
             </div>

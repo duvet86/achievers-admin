@@ -246,7 +246,7 @@ export default function Index() {
               </div>
 
               {!session?.signedOffOn && (
-                <div className="w-1/4 border-b pl-4">
+                <div className="w-1/4 border-b pb-2 pl-2">
                   <p className="font-semibold">
                     Have you answered these questions?
                   </p>
@@ -262,7 +262,7 @@ export default function Index() {
               )}
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-end pb-2">
               <div className="flex gap-8">
                 {!session?.completedOn && (
                   <button

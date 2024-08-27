@@ -7,7 +7,7 @@ import {
   ShopFourTiles,
   Group,
   Calendar,
-  PrivacyPolicy,
+  Page,
   Settings,
   StatsReport,
   RefreshDouble,
@@ -107,9 +107,9 @@ function getLinks(
           isVisible: true,
         },
         {
-          icon: <PrivacyPolicy className="h-6 w-6" />,
-          path: "/mentor/policy",
-          label: "Policy",
+          icon: <Page className="h-6 w-6" />,
+          path: "/mentor/useful-resources",
+          label: "Useful Resources",
           isVisible: true,
         },
       ];
