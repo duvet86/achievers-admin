@@ -1,4 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { Prisma } from "@prisma/client";
 
 import {
   useLoaderData,
@@ -17,7 +18,7 @@ import {
   getPermissionsAbility,
 } from "~/services/.server";
 import { getPaginationRange, isDateExpired } from "~/services";
-import { Title, Pagination } from "~/components";
+import { Title, Pagination, TableHeaderSort } from "~/components";
 
 import {
   getChaptersAsync,
@@ -43,6 +44,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
   const nextPageSubmit = url.searchParams.get("nextBtn");
 
+  const sortFullNameSubmit: Prisma.SortOrder | undefined =
+    (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? undefined;
+
+  const sortEmailSubmit: Prisma.SortOrder | undefined =
+    (url.searchParams.get("sortEmail") as Prisma.SortOrder) ?? undefined;
+
+  const sortChapterSubmit: Prisma.SortOrder | undefined =
+    (url.searchParams.get("sortChapter") as Prisma.SortOrder) ?? undefined;
+
   let searchTerm = url.searchParams.get("searchTerm");
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
 
@@ -56,6 +66,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const chapterIdValue =
     chapterId !== null && chapterId !== "" ? parseInt(chapterId) : null;
 
+  const numberItems = 25;
+
   const count = await getUsersCountAsync(
     ability,
     searchTerm,
@@ -63,7 +75,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     onlyExpiredChecks,
     includeArchived,
   );
-  const totalPageCount = Math.ceil(count / 10);
+  const totalPageCount = Math.ceil(count / numberItems);
 
   let currentPageNumber = 0;
   if (searchTermSubmit !== null) {
@@ -85,8 +97,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
       currentPageNumber,
       searchTerm,
       chapterIdValue,
+      sortFullNameSubmit,
+      sortEmailSubmit,
+      sortChapterSubmit,
       onlyExpiredChecks,
       includeArchived,
+      numberItems,
     ),
   ]);
 
@@ -108,12 +124,23 @@ export async function loader({ request }: LoaderFunctionArgs) {
         user.wwcCheck?.reminderSentAt !== null,
     })),
     searchTerm,
+    sortFullNameSubmit,
+    sortEmailSubmit,
+    sortChapterSubmit,
   });
 }
 
 export default function Index() {
-  const { chapters, users, count, currentPageNumber, range } =
-    useLoaderData<typeof loader>();
+  const {
+    chapters,
+    users,
+    count,
+    currentPageNumber,
+    range,
+    sortFullNameSubmit,
+    sortEmailSubmit,
+    sortChapterSubmit,
+  } = useLoaderData<typeof loader>();
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -146,16 +173,40 @@ export default function Index() {
           onFormClear={onFormClear}
         />
 
-        <div className="overflow-auto bg-white">
+        <Pagination
+          range={range}
+          currentPageNumber={currentPageNumber}
+          totalPageCount={totalPageCount}
+        />
+
+        <div className="mt-2 overflow-auto bg-white">
           <table className="table">
             <thead>
               <tr>
                 <th align="left" className="w-14">
                   #
                 </th>
-                <th align="left">Full name</th>
-                <th align="left">Email</th>
-                <th align="left">Assigned chapter</th>
+                <th align="left">
+                  <TableHeaderSort
+                    sortPropName="sortFullName"
+                    sortPropValue={sortFullNameSubmit}
+                    label="Full name"
+                  />
+                </th>
+                <th align="left">
+                  <TableHeaderSort
+                    sortPropName="sortEmail"
+                    sortPropValue={sortEmailSubmit}
+                    label="Full Email"
+                  />
+                </th>
+                <th align="left">
+                  <TableHeaderSort
+                    sortPropName="sortChapter"
+                    sortPropValue={sortChapterSubmit}
+                    label="Assigned chapter"
+                  />
+                </th>
                 <th align="left"># Checks completed</th>
                 <th align="right">Action</th>
               </tr>

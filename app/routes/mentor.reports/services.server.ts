@@ -191,7 +191,7 @@ export async function getStudentsAsync(userId: number, chapterId: number) {
   return assignedStudents
     .map(({ student: { id, fullName } }) => ({
       id,
-      fullName: `${fullName} (Assigned)`,
+      fullName: `** ${fullName} (Assigned) **`,
     }))
     .concat(allStudents);
 }

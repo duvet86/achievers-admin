@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import type { AppAbility } from "~/services/.server";
 
 import dayjs from "dayjs";
@@ -46,6 +47,9 @@ export async function getUsersAsync(
   pageNumber: number,
   searchTerm: string | null,
   chapterId: number | null,
+  sortFullName: Prisma.SortOrder,
+  sortEmail: Prisma.SortOrder,
+  sortChapter: Prisma.SortOrder,
   onlyExpiredChecks = false,
   includeArchived = false,
   numberItems = 10,
@@ -112,7 +116,13 @@ export async function getUsersAsync(
       ],
     },
     orderBy: {
-      fullName: "asc",
+      fullName: sortEmail || sortChapter ? undefined : (sortFullName ?? "asc"),
+      email: sortEmail ? sortEmail : undefined,
+      chapter: sortChapter
+        ? {
+            name: sortChapter,
+          }
+        : undefined,
     },
     skip: numberItems * pageNumber,
     take: numberItems,

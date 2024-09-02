@@ -22,6 +22,14 @@
 
 .select:disabled,
 .select[disabled] {
-  color: black;
-  opacity: 1;
+  color: inherit;
+}
+
+.input:disabled,
+.input[disabled] {
+  color: inherit;
+}
+
+li input.input.input-bordered.select-search-input {
+  @apply bg-slate-100;
 }

@@ -6,13 +6,7 @@ import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import { Xmark, Check, StatsReport, WarningCircle } from "iconoir-react";
 
-import {
-  Title,
-  Select,
-  SubTitle,
-  SubmitFormButton,
-  Textarea,
-} from "~/components";
+import { Title, SubmitFormButton, Textarea, SelectSearch } from "~/components";
 
 import {
   getMentorsForStudent,
@@ -25,9 +19,13 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const session = await getSessionByIdAsync(Number(params.sessionId));
 
-  const mentorsForStudent = await getMentorsForStudent(session.student.id);
+  const mentorsForStudent = await getMentorsForStudent(
+    session.chapterId,
+    session.student.id,
+  );
 
   return json({
+    attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
     session,
     mentorsForStudent,
   });
@@ -55,11 +53,11 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
 export default function Index() {
   const {
+    attendedOnLabel,
     session: {
       chapter,
       user,
       student,
-      attendedOn,
       isCancelled,
       reasonCancelled,
       hasReport,
@@ -74,39 +72,47 @@ export default function Index() {
 
   return (
     <>
-      <div className="mb-4 flex justify-between">
-        <Title
-          to={backURL ? backURL : `/admin/sessions?${searchParams.toString()}`}
-        >
-          Session of &quot;
-          {dayjs(attendedOn, "YYYY-MM-DD").format("DD/MM/YYYY")}&quot;
-        </Title>
+      <Title
+        to={backURL ? backURL : `/admin/sessions?${searchParams.toString()}`}
+      >
+        Session of &quot;
+        {attendedOnLabel}&quot;
+      </Title>
 
-        {isCancelled ? (
-          <div role="alert" className="alert alert-error w-72">
-            <WarningCircle />
-            <span>Session has been cancelled</span>
-          </div>
-        ) : completedOn ? null : (
-          <div className="w-48">
-            <Link
-              to={`cancel?${searchParams.toString()}`}
-              className="btn btn-error btn-block gap-2"
-            >
-              <Xmark className="h-6 w-6" /> Cancel session
-            </Link>
-          </div>
-        )}
-      </div>
+      <div className="my-8 flex flex-col gap-12">
+        <div className="flex items-center gap-2 border-b p-2">
+          <div className="w-72 font-bold">Session</div>
+          <div className="flex-1">{attendedOnLabel}</div>
+        </div>
 
-      <div className="mb-8 flex flex-col gap-8">
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Chapter</div>
           <div className="flex-1">{chapter.name}</div>
         </div>
+
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Student</div>
           <div className="flex-1">{student.fullName}</div>
+        </div>
+
+        <div className="flex items-center gap-2 border-b p-2">
+          <div className="w-72 font-bold">Mentor</div>
+          {!isCancelled && (
+            <Form className="flex flex-1 items-end gap-4" method="post">
+              <SelectSearch
+                name="mentorId"
+                defaultValue={user.id.toString()}
+                options={mentorsForStudent.map(({ id, fullName }) => ({
+                  label: fullName,
+                  value: id.toString(),
+                }))}
+                disabled={!!completedOn}
+                required
+              />
+
+              {!completedOn && <SubmitFormButton label="Update" />}
+            </Form>
+          )}
         </div>
 
         {isCancelled ? (
@@ -144,7 +150,7 @@ export default function Index() {
                   <Xmark className="h-6 w-6 text-error" />
                 )}
               </div>
-              {completedOn && dayjs(completedOn).format("YYYY-MM-DD")}
+              {completedOn && dayjs(completedOn).format("MMMM D, YYYY")}
             </div>
             <div className="flex items-center gap-2 border-b p-2">
               <div className="w-72 font-bold">Is report signed off?</div>
@@ -155,33 +161,26 @@ export default function Index() {
                   <Xmark className="h-6 w-6 text-error" />
                 )}
               </div>
-              {signedOffOn && dayjs(signedOffOn).format("YYYY-MM-DD")}
+              {signedOffOn && dayjs(signedOffOn).format("MMMM D, YYYY")}
             </div>
           </>
         )}
       </div>
 
-      {!isCancelled && (
-        <>
-          <SubTitle>Update mentor</SubTitle>
-
-          <Form method="post">
-            <Select
-              label="Mentor"
-              name="mentorId"
-              defaultValue={user.id.toString()}
-              options={mentorsForStudent.map(({ user: { id, fullName } }) => ({
-                label: fullName,
-                value: id.toString(),
-              }))}
-              disabled={!!completedOn}
-            />
-
-            {!completedOn && (
-              <SubmitFormButton className="mt-6 justify-between" />
-            )}
-          </Form>
-        </>
+      {isCancelled ? (
+        <div role="alert" className="alert alert-error w-72">
+          <WarningCircle />
+          <span>Session has been cancelled</span>
+        </div>
+      ) : completedOn ? null : (
+        <div className="flex justify-end">
+          <Link
+            to={`cancel?${searchParams.toString()}`}
+            className="btn btn-error w-48 gap-2"
+          >
+            <Xmark className="h-6 w-6" /> Cancel session
+          </Link>
+        </div>
       )}
     </>
   );

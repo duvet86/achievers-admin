@@ -1,3 +1,5 @@
+import type { Prisma } from "@prisma/client";
+
 import { prisma } from "~/db.server";
 
 function getOR(searchTerm: string | null) {
@@ -28,6 +30,8 @@ export async function getMentorsWithStudentsAsync(
   chapterId: number,
   searchTerm: string | null,
   pageNumber: number,
+  sortFullName: Prisma.SortOrder | undefined,
+  sortCountMentors: Prisma.SortOrder | undefined,
   numberItems = 10,
 ) {
   return prisma.student.findMany({
@@ -51,9 +55,12 @@ export async function getMentorsWithStudentsAsync(
       },
     },
     orderBy: {
-      mentorToStudentAssignement: {
-        _count: "desc",
-      },
+      fullName: sortCountMentors ? undefined : (sortFullName ?? "asc"),
+      mentorToStudentAssignement: sortCountMentors
+        ? {
+            _count: sortCountMentors,
+          }
+        : undefined,
     },
     skip: numberItems * pageNumber,
     take: numberItems,

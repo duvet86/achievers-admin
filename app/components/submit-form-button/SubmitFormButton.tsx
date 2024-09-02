@@ -31,7 +31,7 @@ export function SubmitFormButton({
         successMessage={successMessage}
       />
 
-      <button className="btn btn-primary w-52 gap-5" type="submit">
+      <button className="btn btn-primary w-48 gap-2" type="submit">
         <FloppyDiskArrowIn className="h-6 w-6" />
         {label}
       </button>

@@ -1,4 +1,5 @@
 import type { AppAbility } from "~/services/.server";
+import type { Prisma } from "@prisma/client";
 
 import { accessibleBy } from "@casl/prisma";
 
@@ -50,6 +51,8 @@ export async function getStudentsAsync(
   pageNumber: number,
   searchTerm: string | null,
   chapterId: number | null,
+  sortFullName: Prisma.SortOrder | undefined,
+  sortChapter: Prisma.SortOrder | undefined,
   includeArchived = false,
   numberItems = 10,
 ) {
@@ -86,7 +89,12 @@ export async function getStudentsAsync(
       ],
     },
     orderBy: {
-      fullName: "asc",
+      fullName: sortChapter ? undefined : (sortFullName ?? "asc"),
+      chapter: sortChapter
+        ? {
+            name: sortChapter,
+          }
+        : undefined,
     },
     skip: numberItems * pageNumber,
     take: numberItems,

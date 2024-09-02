@@ -1,4 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { Prisma } from "@prisma/client";
 
 import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
@@ -7,7 +8,7 @@ import { useRef } from "react";
 import { CoinsSwap, PageEdit } from "iconoir-react";
 
 import { getPaginationRange } from "~/services";
-import { Title, Pagination } from "~/components";
+import { Title, Pagination, TableHeaderSort } from "~/components";
 
 import {
   getMentorsWithStudentsAsync,
@@ -26,6 +27,12 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const previousPageSubmit = url.searchParams.get("previousBtn");
   const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
   const nextPageSubmit = url.searchParams.get("nextBtn");
+
+  const sortFullNameSubmit: Prisma.SortOrder | undefined =
+    (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? undefined;
+
+  const sortCountMentorsSubmit: Prisma.SortOrder | undefined =
+    (url.searchParams.get("sortCountMentors") as Prisma.SortOrder) ?? undefined;
 
   let searchTerm = url.searchParams.get("searchTerm");
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
@@ -59,6 +66,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     Number(params.chapterId),
     searchTerm,
     currentPageNumber,
+    sortFullNameSubmit,
+    sortCountMentorsSubmit,
   );
 
   const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
@@ -69,12 +78,21 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     currentPageNumber,
     count,
     mentorsWithStudents,
+    sortFullNameSubmit,
+    sortCountMentorsSubmit,
   });
 }
 
 export default function Index() {
-  const { chapterId, mentorsWithStudents, count, currentPageNumber, range } =
-    useLoaderData<typeof loader>();
+  const {
+    chapterId,
+    mentorsWithStudents,
+    count,
+    currentPageNumber,
+    range,
+    sortFullNameSubmit,
+    sortCountMentorsSubmit,
+  } = useLoaderData<typeof loader>();
 
   const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -107,10 +125,18 @@ export default function Index() {
             <thead>
               <tr>
                 <th align="left" className="p-2">
-                  Students
+                  <TableHeaderSort
+                    sortPropName="sortFullName"
+                    sortPropValue={sortFullNameSubmit}
+                    label="Students"
+                  />
                 </th>
                 <th align="left" className="p-2">
-                  Mentors
+                  <TableHeaderSort
+                    sortPropName="sortCountMentors"
+                    sortPropValue={sortCountMentorsSubmit}
+                    label="Mentors"
+                  />
                 </th>
                 <th align="right" className="p-2">
                   Action

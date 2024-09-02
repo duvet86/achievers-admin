@@ -13,6 +13,7 @@ export async function getSessionByIdAsync(sessionId: number) {
       isCancelled: true,
       completedOn: true,
       reasonCancelled: true,
+      chapterId: true,
       chapter: {
         select: {
           name: true,
@@ -34,8 +35,30 @@ export async function getSessionByIdAsync(sessionId: number) {
   });
 }
 
-export async function getMentorsForStudent(studentId: number) {
-  return await prisma.mentorToStudentAssignement.findMany({
+export async function getMentorsForStudent(
+  chapterId: number,
+  studentId: number,
+) {
+  const allMentors = await prisma.user.findMany({
+    where: {
+      chapterId,
+      endDate: null,
+      mentorToStudentAssignement: {
+        none: {
+          studentId,
+        },
+      },
+    },
+    select: {
+      id: true,
+      fullName: true,
+    },
+    orderBy: {
+      fullName: "asc",
+    },
+  });
+
+  const assignedMentors = await prisma.mentorToStudentAssignement.findMany({
     where: {
       studentId,
     },
@@ -47,7 +70,19 @@ export async function getMentorsForStudent(studentId: number) {
         },
       },
     },
+    orderBy: {
+      user: {
+        fullName: "asc",
+      },
+    },
   });
+
+  return assignedMentors
+    .map(({ user: { id, fullName } }) => ({
+      id,
+      fullName: `** ${fullName} (Assigned) **`,
+    }))
+    .concat(allMentors);
 }
 
 export async function updateSessionAsync(sessionId: number, mentorId: number) {

@@ -1,4 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { Prisma } from "@prisma/client";
 
 import { json } from "@remix-run/node";
 import {
@@ -17,7 +18,7 @@ import {
   getPermissionsAbility,
 } from "~/services/.server";
 import { getPaginationRange } from "~/services";
-import { Pagination, Title } from "~/components";
+import { Pagination, TableHeaderSort, Title } from "~/components";
 
 import {
   getChaptersAsync,
@@ -41,6 +42,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
   const nextPageSubmit = url.searchParams.get("nextBtn");
 
+  const sortFullNameSubmit: Prisma.SortOrder | undefined =
+    (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? undefined;
+
+  const sortChapterSubmit: Prisma.SortOrder | undefined =
+    (url.searchParams.get("sortChapter") as Prisma.SortOrder) ?? undefined;
+
   let searchTerm = url.searchParams.get("searchTerm");
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
   const includeArchived = url.searchParams.get("includeArchived") === "on";
@@ -59,7 +66,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     includeArchived,
   );
 
-  const totalPageCount = Math.ceil(count / 10);
+  const numberItems = 25;
+
+  const totalPageCount = Math.ceil(count / numberItems);
 
   let currentPageNumber = 0;
   if (searchTermSubmit !== null) {
@@ -82,7 +91,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
       currentPageNumber,
       searchTerm,
       chapterIdValue,
+      sortFullNameSubmit,
+      sortChapterSubmit,
       includeArchived,
+      numberItems,
     ),
   ]);
 
@@ -94,12 +106,21 @@ export async function loader({ request }: LoaderFunctionArgs) {
     chapters,
     count,
     students,
+    sortFullNameSubmit,
+    sortChapterSubmit,
   });
 }
 
 export default function Index() {
-  const { chapters, students, count, currentPageNumber, range } =
-    useLoaderData<typeof loader>();
+  const {
+    chapters,
+    students,
+    count,
+    currentPageNumber,
+    range,
+    sortFullNameSubmit,
+    sortChapterSubmit,
+  } = useLoaderData<typeof loader>();
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -137,10 +158,20 @@ export default function Index() {
                   #
                 </th>
                 <th align="left" className="w-1/3">
-                  Full name
+                  <TableHeaderSort
+                    sortPropName="sortFullName"
+                    sortPropValue={sortFullNameSubmit}
+                    label="Full name"
+                  />
                 </th>
                 <th align="left">Year Level</th>
-                <th align="left">Assigned chapter</th>
+                <th align="left">
+                  <TableHeaderSort
+                    sortPropName="sortChapter"
+                    sortPropValue={sortChapterSubmit}
+                    label="Assigned chapter"
+                  />
+                </th>
                 <th align="right">Action</th>
               </tr>
             </thead>
