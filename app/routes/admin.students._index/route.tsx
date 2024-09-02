@@ -66,7 +66,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     includeArchived,
   );
 
-  const numberItems = 25;
+  const numberItems = 10;
 
   const totalPageCount = Math.ceil(count / numberItems);
 

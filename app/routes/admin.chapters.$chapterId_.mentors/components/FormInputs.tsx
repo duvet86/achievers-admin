@@ -9,7 +9,7 @@ export default function FormInputs({ searchParams, onFormClear }: Props) {
   const searchTerm = searchParams.get("searchTerm");
 
   return (
-    <div className="alert mb-6 hidden flex-wrap justify-between lg:flex">
+    <div className="mb-6 hidden flex-wrap justify-between lg:flex">
       <div className="w-96">
         <Input
           name="searchTerm"

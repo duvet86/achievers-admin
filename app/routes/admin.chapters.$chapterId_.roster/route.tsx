@@ -5,7 +5,7 @@ import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
-import { Check, WarningTriangle, NavArrowRight } from "iconoir-react";
+import { Check, WarningTriangle, NavArrowRight, HomeUser } from "iconoir-react";
 
 import { getDatesForTerm, getValueFromCircularArray } from "~/services";
 import { Select, Title } from "~/components";
@@ -54,7 +54,17 @@ export default function Index() {
 
   return (
     <>
-      <Title to="/admin/chapters">Roster planner</Title>
+      <div className="flex items-center justify-between">
+        <Title to="/admin/chapters">Roster planner</Title>
+
+        <Link
+          to={`/admin/chapters/${chapterId}/mentors?back_url=/admin/chapters/${chapterId}/roster`}
+          className="btn min-w-40 gap-2"
+        >
+          <HomeUser className="h-6 w-6" />
+          Go to mentors view
+        </Link>
+      </div>
 
       <Form
         className="mb-6 flex gap-12"

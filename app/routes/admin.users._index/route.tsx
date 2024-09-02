@@ -66,7 +66,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const chapterIdValue =
     chapterId !== null && chapterId !== "" ? parseInt(chapterId) : null;
 
-  const numberItems = 25;
+  const numberItems = 10;
 
   const count = await getUsersCountAsync(
     ability,
@@ -173,12 +173,6 @@ export default function Index() {
           onFormClear={onFormClear}
         />
 
-        <Pagination
-          range={range}
-          currentPageNumber={currentPageNumber}
-          totalPageCount={totalPageCount}
-        />
-
         <div className="mt-2 overflow-auto bg-white">
           <table className="table">
             <thead>
@@ -197,7 +191,7 @@ export default function Index() {
                   <TableHeaderSort
                     sortPropName="sortEmail"
                     sortPropValue={sortEmailSubmit}
-                    label="Full Email"
+                    label="Email"
                   />
                 </th>
                 <th align="left">

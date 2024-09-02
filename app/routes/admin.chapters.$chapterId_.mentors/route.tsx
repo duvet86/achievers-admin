@@ -105,7 +105,15 @@ export default function Index() {
   return (
     <>
       <div className="flex items-center justify-between">
-        <Title to="/admin/chapters">Mentors with students</Title>
+        <Title
+          to={
+            searchParams.get("back_url")
+              ? searchParams.get("back_url")!
+              : "/admin/chapters"
+          }
+        >
+          Mentors with students
+        </Title>
 
         <Link
           to={`/admin/chapters/${chapterId}/students`}
