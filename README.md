@@ -76,6 +76,14 @@ Run this command:
 npx npm-check-updates
 ```
 
+## Install Playwright
+
+Run this command:
+
+```bash
+npx playwright install --with-deps chromium
+```
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first
