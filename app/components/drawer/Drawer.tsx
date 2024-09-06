@@ -127,7 +127,7 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
         className="drawer-overlay"
       ></label>
       <div className="flex h-full flex-col">
-        <ul className="menu w-80 flex-1 border-r border-primary bg-base-200 p-4 text-base-content">
+        <ul className="menu w-64 flex-1 border-r border-primary bg-base-200 p-4 text-base-content">
           {links
             .filter(({ isVisible }) => isVisible)
             .map(({ icon, label, path: value }, index) => (
@@ -153,7 +153,7 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
             ))}
         </ul>
         {isMentorAndAdmin && (
-          <ul className="menu w-80 border-r border-t border-primary bg-base-200 p-4 text-base-content">
+          <ul className="menu w-64 border-r border-t border-primary bg-base-200 p-4 text-base-content">
             <li>
               <Link
                 to={isCurrentViewAdmin ? "/mentor/home" : "/admin/home"}

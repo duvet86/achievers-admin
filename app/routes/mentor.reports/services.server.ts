@@ -5,6 +5,7 @@ import isBetween from "dayjs/plugin/isBetween";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
 import { prisma } from "~/db.server";
+import { getDatesForTerm } from "~/services";
 
 dayjs.extend(isBetween);
 dayjs.extend(customParseFormat);
@@ -31,23 +32,20 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
   });
 }
 
-export async function getSessionAsync(
-  userId: number,
+export async function getReportForSessionDateAsync(
   studentId: number,
   chapterId: number,
   attendedOn: string,
 ) {
-  return await prisma.mentorToStudentSession.findUnique({
+  return await prisma.mentorToStudentSession.findFirst({
     where: {
-      userId_studentId_chapterId_attendedOn: {
-        userId,
-        attendedOn,
-        chapterId,
-        studentId,
-      },
+      attendedOn,
+      chapterId,
+      studentId,
     },
     select: {
       id: true,
+      userId: true,
       attendedOn: true,
       report: true,
       completedOn: true,
@@ -59,9 +57,121 @@ export async function getSessionAsync(
           fullName: true,
         },
       },
+      user: {
+        select: {
+          fullName: true,
+        },
+      },
     },
   });
 }
+
+export async function getMentorSessionDatesAsync(
+  userId: number,
+  studentId: number,
+  chapterId: number,
+  currentTerm: Term,
+) {
+  return (
+    await prisma.mentorToStudentSession.findMany({
+      where: {
+        userId,
+        chapterId,
+        studentId,
+        AND: [
+          {
+            attendedOn: {
+              gte: currentTerm.start.toDate(),
+            },
+          },
+          {
+            attendedOn: {
+              lte: currentTerm.end.toDate(),
+            },
+          },
+        ],
+      },
+      select: {
+        attendedOn: true,
+      },
+    })
+  ).map(({ attendedOn }) => dayjs(attendedOn).format("YYYY-MM-DD"));
+}
+
+export function getSessionDatesFormatted(
+  sessionDates: string[],
+  currentTerm: Term,
+  includeAllDates: boolean,
+) {
+  if (includeAllDates) {
+    return getDatesForTerm(currentTerm.start, currentTerm.end)
+      .map((attendedOn) => dayjs(attendedOn))
+      .map((attendedOn) => ({
+        value: attendedOn.format("YYYY-MM-DD") + "T00:00:00Z",
+        label: sessionDates.includes(attendedOn.format("YYYY-MM-DD"))
+          ? `** ${attendedOn.format("DD/MM/YYYY")} (Booked) **`
+          : attendedOn.format("DD/MM/YYYY"),
+      }));
+  }
+
+  return sessionDates
+    .map((attendedOn) => dayjs(attendedOn))
+    .map((attendedOn) => ({
+      value: attendedOn.format("YYYY-MM-DD") + "T00:00:00Z",
+      label: attendedOn.format("DD/MM/YYYY"),
+    }));
+}
+
+// export async function getMentorSessionDatesAsync(
+//   userId: number,
+//   studentId: number,
+//   chapterId: number,
+//   currentTerm: Term,
+//   includeAllDates: boolean,
+// ) {
+//   const sessionDates = (
+//     await prisma.mentorToStudentSession.findMany({
+//       where: {
+//         userId,
+//         chapterId,
+//         studentId,
+//         AND: [
+//           {
+//             attendedOn: {
+//               gte: currentTerm.start.toDate(),
+//             },
+//           },
+//           {
+//             attendedOn: {
+//               lte: currentTerm.end.toDate(),
+//             },
+//           },
+//         ],
+//       },
+//       select: {
+//         attendedOn: true,
+//       },
+//     })
+//   ).map(({ attendedOn }) => dayjs(attendedOn).format("YYYY-MM-DD"));
+
+//   if (includeAllDates) {
+//     return getDatesForTerm(currentTerm.start, currentTerm.end)
+//       .map((attendedOn) => dayjs(attendedOn))
+//       .map((attendedOn) => ({
+//         value: attendedOn.format("YYYY-MM-DD") + "T00:00:00Z",
+//         label: sessionDates.includes(attendedOn.format("YYYY-MM-DD"))
+//           ? `** ${attendedOn.format("DD/MM/YYYY")} (Booked) **`
+//           : attendedOn.format("DD/MM/YYYY"),
+//       }));
+//   }
+
+//   return sessionDates
+//     .map((attendedOn) => dayjs(attendedOn))
+//     .map((attendedOn) => ({
+//       value: attendedOn.format("YYYY-MM-DD") + "T00:00:00Z",
+//       label: attendedOn.format("DD/MM/YYYY"),
+//     }));
+// }
 
 export async function saveReportAsync(
   actionType: ActionType,
@@ -145,35 +255,39 @@ export function getCurrentTermForDate(terms: Term[], date: Date): Term {
   return terms[0];
 }
 
-export function getClosestSessionDate(): string {
-  const sessionDateFromToday = dayjs().startOf("week").day(6);
-
-  if (sessionDateFromToday > dayjs()) {
-    return (
-      sessionDateFromToday.add(-1, "week").format("YYYY-MM-DD") + "T00:00:00Z"
-    );
+export function getClosestSessionDate(dates: Date[]) {
+  if (dates.length === 0) {
+    return null;
   }
 
-  return sessionDateFromToday.format("YYYY-MM-DD") + "T00:00:00Z";
+  const today = new Date();
+  const closest = dates.reduce((a, b) =>
+    a.getDate() - today.getDate() < b.getDate() - today.getDate() ? a : b,
+  );
+
+  return dayjs(closest).format("YYYY-MM-DD") + "T00:00:00Z";
+  // const isTodayInTerm = dayjs().isBetween(term.start, term.end, "day", "[]");
+
+  // if (!isTodayInTerm) {
+  //   return null;
+  // }
+
+  // const sessionDateFromToday = dayjs().startOf("week").day(6);
+
+  // if (sessionDateFromToday > dayjs()) {
+  //   return (
+  //     sessionDateFromToday.add(-1, "week").format("YYYY-MM-DD") + "T00:00:00Z"
+  //   );
+  // }
+
+  // return sessionDateFromToday.format("YYYY-MM-DD") + "T00:00:00Z";
 }
 
-export async function getStudentsAsync(userId: number, chapterId: number) {
-  const allStudents = await prisma.student.findMany({
-    where: {
-      chapterId,
-      endDate: null,
-      mentorToStudentAssignement: {
-        none: {
-          userId,
-        },
-      },
-    },
-    select: {
-      id: true,
-      fullName: true,
-    },
-  });
-
+export async function getStudentsAsync(
+  userId: number,
+  chapterId: number,
+  includeAllstudents: boolean,
+) {
   const assignedStudents = await prisma.mentorToStudentAssignement.findMany({
     where: {
       userId,
@@ -188,12 +302,35 @@ export async function getStudentsAsync(userId: number, chapterId: number) {
     },
   });
 
-  return assignedStudents
-    .map(({ student: { id, fullName } }) => ({
-      id,
-      fullName: `** ${fullName} (Assigned) **`,
-    }))
-    .concat(allStudents);
+  if (includeAllstudents) {
+    const allStudents = await prisma.student.findMany({
+      where: {
+        chapterId,
+        endDate: null,
+        mentorToStudentAssignement: {
+          none: {
+            userId,
+          },
+        },
+      },
+      select: {
+        id: true,
+        fullName: true,
+      },
+    });
+
+    return assignedStudents
+      .map(({ student: { id, fullName } }) => ({
+        id,
+        fullName: `** ${fullName} (Assigned) **`,
+      }))
+      .concat(allStudents);
+  }
+
+  return assignedStudents.map(({ student: { id, fullName } }) => ({
+    id,
+    fullName,
+  }));
 }
 
 export function getTermFromDate(terms: Term[], date: string) {

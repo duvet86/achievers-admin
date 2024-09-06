@@ -214,7 +214,7 @@ export default function TermCalendar({
                       );
                     }
 
-                    if (isMySession) {
+                    if (isMySession || completedOn) {
                       return (
                         <div className="flex items-center justify-end gap-6">
                           <Link

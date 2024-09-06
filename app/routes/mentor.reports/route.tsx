@@ -7,28 +7,39 @@ import type { EditorState } from "lexical";
 import type { ActionType, SessionCommandRequest } from "./services.server";
 
 import { json } from "@remix-run/node";
-import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
+import {
+  Link,
+  useFetcher,
+  useLoaderData,
+  useSearchParams,
+} from "@remix-run/react";
 
 import { useRef } from "react";
 import dayjs from "dayjs";
 import classNames from "classnames";
-import { FloppyDiskArrowIn, CheckCircle, WarningTriangle } from "iconoir-react";
+import {
+  FloppyDiskArrowIn,
+  CheckCircle,
+  WarningTriangle,
+  Calendar,
+} from "iconoir-react";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
-import { Editor, Select, SubTitle, Title } from "~/components";
+import { Checkbox, Editor, Select, SubTitle, Title } from "~/components";
 
 import { getLoggedUserInfoAsync } from "~/services/.server/session.server";
 import {
   getSchoolTermsForYearAsync,
-  getSessionAsync,
+  getReportForSessionDateAsync,
+  getMentorSessionDatesAsync,
   getUserByAzureADIdAsync,
   saveReportAsync,
   getCurrentTermForDate,
   getClosestSessionDate,
   getStudentsAsync,
   getTermFromDate,
+  getSessionDatesFormatted,
 } from "./services.server";
-import { getDatesForTerm } from "~/services";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
@@ -41,6 +52,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
   let selectedTermDate = url.searchParams.get("selectedTermDate");
   let selectedStudentId = url.searchParams.get("selectedStudentId");
 
+  let includeAllDates = url.searchParams.get("includeAllDates") === "true";
+  const includeAllstudents =
+    url.searchParams.get("includeAllstudents") === "true";
+
   const terms = await getSchoolTermsForYearAsync(dayjs().year());
 
   if (selectedTerm === null && selectedTermDate !== null) {
@@ -51,41 +66,67 @@ export async function loader({ request }: LoaderFunctionArgs) {
     terms.find((t) => t.name === selectedTerm) ??
     getCurrentTermForDate(terms, new Date());
 
-  const termsList = terms.map(({ start, end, name }) => ({
-    value: name,
-    label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${currentTerm.name === name ? " (Current)" : ""}`,
-  }));
-
-  const datesInTerm = getDatesForTerm(currentTerm.start, currentTerm.end).map(
-    (sessionDate) => ({
-      value: sessionDate,
-      label: dayjs(sessionDate).format("DD/MM/YYYY"),
-    }),
-  );
-
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
-  const students = await getStudentsAsync(user.id, user.chapterId);
+  const students = await getStudentsAsync(
+    user.id,
+    user.chapterId,
+    includeAllstudents,
+  );
 
-  selectedTermDate = selectedTermDate ?? getClosestSessionDate();
   selectedStudentId = selectedStudentId ?? students[0].id.toString();
 
-  const session = await getSessionAsync(
+  const mentorBookedDates = await getMentorSessionDatesAsync(
     user.id,
     Number(selectedStudentId),
     user.chapterId,
-    selectedTermDate ?? getClosestSessionDate(),
+    currentTerm,
   );
+
+  let disableIncludeDates = false;
+  if (
+    selectedTermDate &&
+    !mentorBookedDates.includes(dayjs(selectedTermDate).format("YYYY-MM-DD"))
+  ) {
+    includeAllDates = true;
+    disableIncludeDates = true;
+  }
+
+  const sessionDatesFormatted = getSessionDatesFormatted(
+    mentorBookedDates,
+    currentTerm,
+    includeAllDates,
+  );
+
+  selectedTermDate =
+    selectedTermDate ??
+    getClosestSessionDate(
+      mentorBookedDates.map((date) => dayjs(date).toDate()),
+    );
+
+  const report = selectedTermDate
+    ? await getReportForSessionDateAsync(
+        Number(selectedStudentId),
+        user.chapterId,
+        selectedTermDate,
+      )
+    : null;
 
   return json({
     students,
     selectedTerm: selectedTerm ?? currentTerm.name,
     selectedTermDate,
     selectedStudentId,
-    termsList,
-    datesInTerm,
-    session,
+    termsList: terms.map(({ start, end, name }) => ({
+      value: name,
+      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${currentTerm.name === name ? " (Current)" : ""}`,
+    })),
+    sessionDates: sessionDatesFormatted,
+    session: report,
+    isNotMyReport: report !== null && report.userId !== user.id,
+    includeAllDates,
+    disableIncludeDates,
   });
 }
 
@@ -127,31 +168,31 @@ export default function Index() {
     selectedTermDate,
     selectedStudentId,
     termsList,
-    datesInTerm,
+    sessionDates,
     students,
+    isNotMyReport,
+    includeAllDates,
+    disableIncludeDates,
   } = data ?? initialData;
 
   const isLoading = state === "loading";
   const isReadOnlyEditor =
     session !== null &&
-    (session?.completedOn !== null || session?.signedOffOn !== null);
+    (session.completedOn !== null ||
+      session.signedOffOn !== null ||
+      isNotMyReport);
 
-  const handleChangeTerm = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    searchParams.set("selectedTerm", event.target.value);
-    load(`?${searchParams.toString()}`);
-  };
+  const handleSelectChange =
+    (value: string) => (event: React.ChangeEvent<HTMLSelectElement>) => {
+      searchParams.set(value, event.target.value);
+      load(`?${searchParams.toString()}`);
+    };
 
-  const handleChangeTermDate = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    searchParams.set("selectedTermDate", event.target.value);
-    load(`?${searchParams.toString()}`);
-  };
-
-  const handleChangeStudent = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    searchParams.set("selectedStudentId", event.target.value);
-    load(`?${searchParams.toString()}`);
-  };
+  const handleCheckBoxChange =
+    (value: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      searchParams.set(value, event.target.checked.toString());
+      load(`?${searchParams.toString()}`);
+    };
 
   const saveReport = (type: ActionType) => () => {
     const studentId = (
@@ -178,16 +219,26 @@ export default function Index() {
 
   return (
     <>
-      <Title
-        to={
-          searchParams.get("back_url")
-            ? searchParams.get("back_url")!
-            : undefined
-        }
-        className="mb-4"
-      >
-        Reports
-      </Title>
+      <div className="flex flex-col gap-10 lg:flex-row">
+        <Title
+          to={
+            searchParams.get("back_url")
+              ? searchParams.get("back_url")!
+              : undefined
+          }
+          className="mb-4"
+        >
+          Report of "{dayjs(selectedTermDate).format("DD/MM/YYYY")}"
+        </Title>
+
+        {isNotMyReport && session && (
+          <p className="flex items-center gap-2 rounded bg-info px-6 py-2">
+            <WarningTriangle className="h-6 w-6" />
+            Written By{" "}
+            <span className="font-bold">{session.user.fullName}</span>
+          </p>
+        )}
+      </div>
 
       <div className="relative flex h-full flex-col">
         {isLoading && (
@@ -198,36 +249,72 @@ export default function Index() {
 
         <div className="mb-6 flex flex-col gap-2">
           <Select
+            key={searchParams.get("selectedTerm") ?? selectedTerm}
             label="Term"
             name="selectedTerm"
             defaultValue={searchParams.get("selectedTerm") ?? selectedTerm}
             options={termsList}
-            onChange={handleChangeTerm}
+            onChange={handleSelectChange("selectedTerm")}
           />
-          <Select
-            label="Session date"
-            name="selectedTermDate"
-            defaultValue={
-              searchParams.get("selectedTermDate") ?? selectedTermDate
-            }
-            options={datesInTerm}
-            onChange={handleChangeTermDate}
-          />
-          <Select
-            label="Student"
-            name="selectedStudentId"
-            defaultValue={
-              searchParams.get("selectedStudentId") ?? selectedStudentId
-            }
-            options={students.map(({ id, fullName }) => ({
-              label: fullName,
-              value: id.toString(),
-            }))}
-            onChange={handleChangeStudent}
-          />
+
+          <div className="flex content-center gap-6">
+            {sessionDates.length > 0 ? (
+              <Select
+                key={searchParams.get("selectedTermDate") ?? selectedTermDate}
+                label="Session date"
+                name="selectedTermDate"
+                defaultValue={
+                  searchParams.get("selectedTermDate") ?? selectedTermDate ?? ""
+                }
+                options={sessionDates}
+                onChange={handleSelectChange("selectedTermDate")}
+              />
+            ) : (
+              <p className="text-warning">
+                No sessions booked for the selected term, go to{" "}
+                <Link className="btn gap-2" to="/mentor/roster">
+                  <Calendar /> Roster
+                </Link>{" "}
+                or include all dates
+              </p>
+            )}
+            <Checkbox
+              className="w-44"
+              label="Include all dates"
+              name="includeAllDates"
+              defaultChecked={includeAllDates}
+              disabled={disableIncludeDates}
+              onChange={handleCheckBoxChange("includeAllDates")}
+            />
+          </div>
+
+          <div className="flex content-center gap-6">
+            <Select
+              key={searchParams.get("selectedStudentId") ?? selectedStudentId}
+              label="Student"
+              name="selectedStudentId"
+              defaultValue={
+                searchParams.get("selectedStudentId") ?? selectedStudentId
+              }
+              options={students.map(({ id, fullName }) => ({
+                label: fullName,
+                value: id.toString(),
+              }))}
+              onChange={handleSelectChange("selectedStudentId")}
+            />
+            <Checkbox
+              className="w-44"
+              label="Include all students"
+              name="includeAllstudents"
+              onChange={handleCheckBoxChange("includeAllstudents")}
+            />
+          </div>
         </div>
 
-        <div className="flex h-full flex-col gap-4">
+        <div
+          key={selectedTerm + selectedTermDate + selectedStudentId}
+          className="flex h-full flex-col gap-4"
+        >
           <div className="flex flex-1 flex-col gap-2">
             <div className="flex h-full flex-row">
               <div
@@ -268,6 +355,7 @@ export default function Index() {
                   <button
                     className="btn btn-primary w-44"
                     onClick={saveReport("draft")}
+                    disabled={isNotMyReport}
                   >
                     <FloppyDiskArrowIn className="h-6 w-6" />
                     Save as draft
@@ -277,6 +365,7 @@ export default function Index() {
                   <button
                     className="btn btn-success w-48"
                     onClick={saveReport("completed")}
+                    disabled={isNotMyReport}
                   >
                     <CheckCircle className="h-6 w-6" />
                     Mark as completed
@@ -287,6 +376,7 @@ export default function Index() {
                   <button
                     className="btn btn-error w-48"
                     onClick={saveReport("remove-complete")}
+                    disabled={isNotMyReport}
                   >
                     <WarningTriangle className="h-6 w-6" />
                     Unmark completed

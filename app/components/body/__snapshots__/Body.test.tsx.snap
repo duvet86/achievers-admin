@@ -192,7 +192,7 @@ exports[`Body > Body snapshot admin 1`] = `
           class="flex h-full flex-col"
         >
           <ul
-            class="menu w-80 flex-1 border-r border-primary bg-base-200 p-4 text-base-content"
+            class="menu w-64 flex-1 border-r border-primary bg-base-200 p-4 text-base-content"
           >
             <li>
               <a
@@ -855,7 +855,7 @@ exports[`Body > Body snapshot mentor 1`] = `
           class="flex h-full flex-col"
         >
           <ul
-            class="menu w-80 flex-1 border-r border-primary bg-base-200 p-4 text-base-content"
+            class="menu w-64 flex-1 border-r border-primary bg-base-200 p-4 text-base-content"
           >
             <li>
               <a
@@ -1437,7 +1437,7 @@ exports[`Body > Body snapshot mentor and admin permissions 1`] = `
           class="flex h-full flex-col"
         >
           <ul
-            class="menu w-80 flex-1 border-r border-primary bg-base-200 p-4 text-base-content"
+            class="menu w-64 flex-1 border-r border-primary bg-base-200 p-4 text-base-content"
           >
             <li>
               <a
@@ -1494,7 +1494,7 @@ exports[`Body > Body snapshot mentor and admin permissions 1`] = `
             </li>
           </ul>
           <ul
-            class="menu w-80 border-r border-t border-primary bg-base-200 p-4 text-base-content"
+            class="menu w-64 border-r border-t border-primary bg-base-200 p-4 text-base-content"
           >
             <li>
               <a
