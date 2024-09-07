@@ -13,19 +13,25 @@ import dayjs from "dayjs";
 import classNames from "classnames";
 import { Check, WarningTriangle, NavArrowRight, Calendar } from "iconoir-react";
 
-import { getDatesForTerm, getValueFromCircularArray } from "~/services";
-import { Select, TableHeaderSort, Title } from "~/components";
+import {
+  debounce,
+  getDatesForTerm,
+  getValueFromCircularArray,
+} from "~/services";
+import { Input, Select, TableHeaderSort, Title } from "~/components";
 
 import {
   getCurrentTermForDate,
   getSchoolTermsForYearAsync,
   getMentorsAsync,
 } from "./services.server";
+
 export async function loader({ params, request }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const url = new URL(request.url);
   const selectedTerm = url.searchParams.get("selectedTerm");
+  const searchTerm = url.searchParams.get("search") ?? undefined;
 
   const sortFullNameSubmit: Prisma.SortOrder | undefined =
     (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? undefined;
@@ -39,15 +45,14 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const mentors = await getMentorsAsync(
     Number(params.chapterId),
     sortFullNameSubmit,
+    searchTerm,
   );
 
   return json({
     chapterId: params.chapterId,
     termsList: terms.map(({ start, end, name }) => ({
       value: name,
-      label:
-        `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})` +
-        (name === currentTerm.name ? " (current)" : ""),
+      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})`,
     })),
     currentTerm,
     mentors,
@@ -81,6 +86,20 @@ export default function Index() {
     load(`?${searchParams.toString()}`);
   };
 
+  const handleInputChange = debounce(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      searchParams.set("search", event.target.value);
+      load(`?${searchParams.toString()}`);
+    },
+  );
+
+  const handleButtonClick = () => {
+    searchParams.set("search", "");
+    load(`?${searchParams.toString()}`);
+
+    (document.getElementById("search") as HTMLInputElement).value = "";
+  };
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -95,21 +114,34 @@ export default function Index() {
         </Link>
       </div>
 
-      {isLoading && (
-        <div className="absolute z-30 flex h-full w-full justify-center bg-slate-300 bg-opacity-50">
-          <span className="loading loading-spinner loading-lg text-primary"></span>
-        </div>
-      )}
+      <div className="flex gap-4 pb-2">
+        <Select
+          label="Term"
+          name="selectedTerm"
+          defaultValue={currentTerm.name}
+          options={termsList}
+          onChange={handleSelectChange}
+          disabled={isLoading}
+        />
 
-      <Select
-        label="Term"
-        name="selectedTerm"
-        defaultValue={currentTerm.name}
-        options={termsList}
-        onChange={handleSelectChange}
-      />
+        <Input
+          hasButton
+          onButtonClick={handleButtonClick}
+          label="Filter mentor"
+          name="search"
+          placeholder="Mentor name"
+          onChange={handleInputChange}
+          disabled={isLoading}
+        />
+      </div>
 
-      <div className="overflow-auto">
+      <div className="relative overflow-auto">
+        {isLoading && (
+          <div className="absolute z-30 flex h-full w-full justify-center bg-slate-300 bg-opacity-50">
+            <span className="loading loading-spinner loading-lg text-primary"></span>
+          </div>
+        )}
+
         <table className="table table-pin-rows table-pin-cols">
           <thead>
             <tr className="z-20">

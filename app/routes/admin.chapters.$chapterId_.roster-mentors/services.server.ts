@@ -61,11 +61,17 @@ export function getCurrentTermForDate(terms: Term[], date: Date): Term {
 export async function getMentorsAsync(
   chapterId: Chapter["id"],
   sortFullName: Prisma.SortOrder | undefined,
+  searchTerm: string | undefined,
 ) {
   const mentors = await prisma.user.findMany({
     where: {
       endDate: null,
       chapterId,
+      fullName: searchTerm
+        ? {
+            contains: searchTerm,
+          }
+        : undefined,
     },
     select: {
       id: true,

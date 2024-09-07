@@ -329,6 +329,8 @@ model MentorToStudentSession {
   signedOffOn        DateTime?
   signedOffByAzureId String?
 
+  writteOnBehalfByAzureId String?
+
   @@unique([studentId, chapterId, attendedOn])
 }
 
