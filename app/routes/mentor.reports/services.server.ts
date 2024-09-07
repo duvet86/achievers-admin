@@ -37,11 +37,13 @@ export async function getReportForSessionDateAsync(
   chapterId: number,
   attendedOn: string,
 ) {
-  return await prisma.mentorToStudentSession.findFirst({
+  return await prisma.mentorToStudentSession.findUnique({
     where: {
-      attendedOn,
-      chapterId,
-      studentId,
+      studentId_chapterId_attendedOn: {
+        attendedOn,
+        chapterId,
+        studentId,
+      },
     },
     select: {
       id: true,
