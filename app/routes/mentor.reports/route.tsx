@@ -123,7 +123,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${currentTerm.name === name ? " (Current)" : ""}`,
     })),
     sessionDates: sessionDatesFormatted,
-    session: report,
+    report,
     isNotMyReport: report !== null && report.userId !== user.id,
     includeAllDates,
     disableIncludeDates,
@@ -163,7 +163,7 @@ export default function Index() {
   const [searchParams] = useSearchParams();
 
   const {
-    session,
+    report,
     selectedTerm,
     selectedTermDate,
     selectedStudentId,
@@ -177,10 +177,17 @@ export default function Index() {
 
   const isLoading = state === "loading";
   const isReadOnlyEditor =
-    session !== null &&
-    (session.completedOn !== null ||
-      session.signedOffOn !== null ||
+    report !== null &&
+    (report.completedOn !== null ||
+      report.signedOffOn !== null ||
       isNotMyReport);
+
+  const signedOffOn = report?.signedOffOn;
+  const completedOn = report?.completedOn;
+  const reportFeedback = report?.reportFeedback;
+
+  const isMyReport = !isNotMyReport;
+  const canUnmarkReport = isMyReport && completedOn && !signedOffOn;
 
   const handleSelectChange =
     (value: string) => (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -207,7 +214,7 @@ export default function Index() {
         type,
         studentId: Number(studentId),
         attendedOn,
-        sessionId: session?.id ?? null,
+        sessionId: report?.id ?? null,
         report: JSON.stringify(editorStateRef.current?.toJSON()),
       },
       {
@@ -231,11 +238,10 @@ export default function Index() {
           Report of "{dayjs(selectedTermDate).format("DD/MM/YYYY")}"
         </Title>
 
-        {isNotMyReport && session && (
+        {isNotMyReport && report && (
           <p className="flex items-center gap-2 rounded bg-info px-6 py-2">
             <WarningTriangle className="h-6 w-6" />
-            Written By{" "}
-            <span className="font-bold">{session.user.fullName}</span>
+            Written By <span className="font-bold">{report.user.fullName}</span>
           </p>
         )}
       </div>
@@ -319,20 +325,20 @@ export default function Index() {
             <div className="flex h-full flex-row">
               <div
                 className={classNames({
-                  "w-3/4": !session?.signedOffOn,
-                  "w-full": session?.signedOffOn,
+                  "w-3/4": !completedOn,
+                  "w-full": completedOn,
                 })}
               >
                 <Editor
                   isReadonly={isReadOnlyEditor}
-                  initialEditorStateType={session?.report ?? null}
+                  initialEditorStateType={report?.report ?? null}
                   onChange={(editorState) =>
                     (editorStateRef.current = editorState)
                   }
                 />
               </div>
 
-              {!session?.signedOffOn && (
+              {!completedOn && (
                 <div className="w-1/4 border-b pb-2 pl-2">
                   <p className="font-semibold">
                     Have you answered these questions?
@@ -351,28 +357,28 @@ export default function Index() {
 
             <div className="flex justify-end pb-2">
               <div className="flex gap-8">
-                {!session?.completedOn && (
-                  <button
-                    className="btn btn-primary w-44"
-                    onClick={saveReport("draft")}
-                    disabled={isNotMyReport}
-                  >
-                    <FloppyDiskArrowIn className="h-6 w-6" />
-                    Save as draft
-                  </button>
-                )}
-                {!session?.completedOn && (
-                  <button
-                    className="btn btn-success w-48"
-                    onClick={saveReport("completed")}
-                    disabled={isNotMyReport}
-                  >
-                    <CheckCircle className="h-6 w-6" />
-                    Mark as completed
-                  </button>
+                {!completedOn && (
+                  <>
+                    <button
+                      className="btn btn-primary w-44"
+                      onClick={saveReport("draft")}
+                      disabled={isNotMyReport}
+                    >
+                      <FloppyDiskArrowIn className="h-6 w-6" />
+                      Save as draft
+                    </button>
+                    <button
+                      className="btn btn-success w-48"
+                      onClick={saveReport("completed")}
+                      disabled={isNotMyReport}
+                    >
+                      <CheckCircle className="h-6 w-6" />
+                      Mark as completed
+                    </button>
+                  </>
                 )}
 
-                {session?.completedOn && !session?.signedOffOn && (
+                {canUnmarkReport && (
                   <button
                     className="btn btn-error w-48"
                     onClick={saveReport("remove-complete")}
@@ -385,15 +391,15 @@ export default function Index() {
               </div>
             </div>
 
-            {session?.reportFeedback && <SubTitle>Admin Feedback</SubTitle>}
+            {reportFeedback && <SubTitle>Admin Feedback</SubTitle>}
           </div>
 
-          {session?.reportFeedback && (
+          {reportFeedback && (
             <div className="flex flex-1 flex-col gap-4">
               <div className="flex-1">
                 <Editor
                   isReadonly
-                  initialEditorStateType={session.reportFeedback}
+                  initialEditorStateType={reportFeedback}
                   onChange={(editorState) =>
                     (editorStateRef.current = editorState)
                   }
@@ -402,8 +408,8 @@ export default function Index() {
 
               <div className="flex items-center gap-4">
                 <p className="flex-1 text-info">
-                  {session?.signedOffOn
-                    ? `Report has been signed off on ${dayjs(session.signedOffOn).format("MMMM D, YYYY")}`
+                  {signedOffOn
+                    ? `Report has been signed off on ${dayjs(signedOffOn).format("MMMM D, YYYY")}`
                     : ""}
                 </p>
               </div>
