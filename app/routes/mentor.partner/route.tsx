@@ -49,7 +49,7 @@ export default function Index() {
                 <td align="left">-</td>
                 <td align="right">
                   <Link
-                    to="/mentor/roster"
+                    to="/mentor/roster-students"
                     className="btn btn-success btn-xs h-8 gap-2"
                   >
                     <Calendar className="hidden h-4 w-4 lg:block" />

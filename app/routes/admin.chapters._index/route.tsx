@@ -34,27 +34,43 @@ export default function Index() {
             <h2 className="card-title uppercase">{name}</h2>
             <p className="mb-6">{address}</p>
             <div className="card-actions justify-center">
-              <Link to={`${id}/roster`} className="btn btn-accent w-64 gap-2">
-                <Calendar className="h-4 w-4" />
-                View roster
-              </Link>
+              <div className="join join-horizontal">
+                <Link
+                  to={`${id}/roster-students`}
+                  className="btn btn-accent join-item w-64 gap-2"
+                >
+                  <Calendar className="h-4 w-4" />
+                  Roster STUDENTS
+                </Link>
+                <Link
+                  to={`${id}/roster-mentors`}
+                  className="btn btn-accent join-item w-64 gap-2"
+                >
+                  <Calendar className="h-4 w-4" />
+                  Roster MENTORS
+                </Link>
+              </div>
+
+              <div className="join join-horizontal">
+                <Link
+                  to={`${id}/students`}
+                  className="btn join-item w-64 gap-2"
+                >
+                  <GraduationCap className="h-4 w-4" />
+                  Assign Mentor to Student
+                </Link>
+                <Link to={`${id}/mentors`} className="btn join-item w-64 gap-2">
+                  <Group className="h-4 w-4" />
+                  Assign Student to Mentor
+                </Link>
+              </div>
+
               <Link
                 to={`/admin/sessions?chapterId=${id}`}
                 className="btn btn-success w-64 gap-2"
               >
                 <PageEdit className="h-4 w-4" />
                 Sessions/Reports
-              </Link>
-              <Link
-                to={`${id}/students`}
-                className="btn btn-primary w-64 gap-2"
-              >
-                <GraduationCap className="h-4 w-4" />
-                Assign Mentor to Student
-              </Link>
-              <Link to={`${id}/mentors`} className="btn btn-warning w-64 gap-2">
-                <Group className="h-4 w-4" />
-                Assign Student to Mentor
               </Link>
             </div>
           </div>

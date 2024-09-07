@@ -5,7 +5,7 @@ import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
-import { Check, WarningTriangle, NavArrowRight, HomeUser } from "iconoir-react";
+import { Check, WarningTriangle, NavArrowRight, Calendar } from "iconoir-react";
 
 import { getDatesForTerm, getValueFromCircularArray } from "~/services";
 import { Select, Title } from "~/components";
@@ -58,11 +58,11 @@ export default function Index() {
         <Title to="/admin/chapters">Roster planner</Title>
 
         <Link
-          to={`/admin/chapters/${chapterId}/mentors?back_url=/admin/chapters/${chapterId}/roster`}
+          to={`/admin/chapters/${chapterId}/roster-mentors`}
           className="btn min-w-40 gap-2"
         >
-          <HomeUser className="h-6 w-6" />
-          Go to mentors view
+          <Calendar className="h-6 w-6" />
+          Roster MENTORS
         </Link>
       </div>
 
@@ -122,8 +122,8 @@ export default function Index() {
                   const isCancelled = sessionInfo?.isCancelled ?? false;
 
                   const to = sessionId
-                    ? `/admin/sessions/${sessionId}?back_url=/admin/chapters/${chapterId}/roster`
-                    : `/admin/sessions/${attendedOn}/chapters/${chapterId}/students/${studentId}/new?back_url=/admin/chapters/${chapterId}/roster`;
+                    ? `/admin/sessions/${sessionId}?back_url=/admin/chapters/${chapterId}/roster-students`
+                    : `/admin/sessions/${attendedOn}/chapters/${chapterId}/students/${studentId}/new?back_url=/admin/chapters/${chapterId}/roster-students`;
 
                   return (
                     <td key={index} className="border-r">

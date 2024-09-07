@@ -122,57 +122,6 @@ export function getSessionDatesFormatted(
     }));
 }
 
-// export async function getMentorSessionDatesAsync(
-//   userId: number,
-//   studentId: number,
-//   chapterId: number,
-//   currentTerm: Term,
-//   includeAllDates: boolean,
-// ) {
-//   const sessionDates = (
-//     await prisma.mentorToStudentSession.findMany({
-//       where: {
-//         userId,
-//         chapterId,
-//         studentId,
-//         AND: [
-//           {
-//             attendedOn: {
-//               gte: currentTerm.start.toDate(),
-//             },
-//           },
-//           {
-//             attendedOn: {
-//               lte: currentTerm.end.toDate(),
-//             },
-//           },
-//         ],
-//       },
-//       select: {
-//         attendedOn: true,
-//       },
-//     })
-//   ).map(({ attendedOn }) => dayjs(attendedOn).format("YYYY-MM-DD"));
-
-//   if (includeAllDates) {
-//     return getDatesForTerm(currentTerm.start, currentTerm.end)
-//       .map((attendedOn) => dayjs(attendedOn))
-//       .map((attendedOn) => ({
-//         value: attendedOn.format("YYYY-MM-DD") + "T00:00:00Z",
-//         label: sessionDates.includes(attendedOn.format("YYYY-MM-DD"))
-//           ? `** ${attendedOn.format("DD/MM/YYYY")} (Booked) **`
-//           : attendedOn.format("DD/MM/YYYY"),
-//       }));
-//   }
-
-//   return sessionDates
-//     .map((attendedOn) => dayjs(attendedOn))
-//     .map((attendedOn) => ({
-//       value: attendedOn.format("YYYY-MM-DD") + "T00:00:00Z",
-//       label: attendedOn.format("DD/MM/YYYY"),
-//     }));
-// }
-
 export async function saveReportAsync(
   actionType: ActionType,
   sessionId: number | null,
@@ -266,21 +215,6 @@ export function getClosestSessionDate(dates: Date[]) {
   );
 
   return dayjs(closest).format("YYYY-MM-DD") + "T00:00:00Z";
-  // const isTodayInTerm = dayjs().isBetween(term.start, term.end, "day", "[]");
-
-  // if (!isTodayInTerm) {
-  //   return null;
-  // }
-
-  // const sessionDateFromToday = dayjs().startOf("week").day(6);
-
-  // if (sessionDateFromToday > dayjs()) {
-  //   return (
-  //     sessionDateFromToday.add(-1, "week").format("YYYY-MM-DD") + "T00:00:00Z"
-  //   );
-  // }
-
-  // return sessionDateFromToday.format("YYYY-MM-DD") + "T00:00:00Z";
 }
 
 export async function getStudentsAsync(

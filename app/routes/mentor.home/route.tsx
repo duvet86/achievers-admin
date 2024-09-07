@@ -128,8 +128,8 @@ export default function Index() {
             You haven't booked a session yet
           </h1>
           <h3>
-            Go to the <Link to="/mentor/roster">Roster</Link> to book you first
-            session
+            Go to the <Link to="/mentor/roster-students">Roster</Link> to book
+            you first session
           </h3>
         </article>
       )}
