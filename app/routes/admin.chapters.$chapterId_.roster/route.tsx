@@ -122,8 +122,8 @@ export default function Index() {
                   const isCancelled = sessionInfo?.isCancelled ?? false;
 
                   const to = sessionId
-                    ? `/admin/sessions/${sessionId}?backURL=/admin/chapters/${chapterId}/roster`
-                    : `/admin/sessions/${attendedOn}/chapters/${chapterId}/students/${studentId}/new?backURL=/admin/chapters/${chapterId}/roster`;
+                    ? `/admin/sessions/${sessionId}?back_url=/admin/chapters/${chapterId}/roster`
+                    : `/admin/sessions/${attendedOn}/chapters/${chapterId}/students/${studentId}/new?back_url=/admin/chapters/${chapterId}/roster`;
 
                   return (
                     <td key={index} className="border-r">

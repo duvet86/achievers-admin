@@ -60,7 +60,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
   });
 
   const url = new URL(request.url);
-  const backURL = url.searchParams.get("backURL");
+  const backURL = url.searchParams.get("back_url");
 
   if (backURL) {
     return redirect(backURL);
@@ -76,7 +76,7 @@ export default function Index() {
     useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
 
-  const backURL = searchParams.get("backURL");
+  const backURL = searchParams.get("back_url");
 
   return (
     <>
@@ -137,27 +137,5 @@ export default function Index() {
         </div>
       </div>
     </>
-    // <>
-    //   <Title
-    //     className="mb-4"
-    //     to={backURL ? backURL : `/admin/sessions?${searchParams.toString()}`}
-    //   >
-    //     Update session of &quot;{attendedOn}&quot;
-    //   </Title>
-
-    //   <Text label="Session" text={attendedOn} />
-    //   <Text label="Chapter" text={chapter.name} />
-    //   <Text label="Student" text={student.fullName} />
-
-    //   <SubTitle>Update mentor</SubTitle>
-
-    //   <Form method="post">
-    //     <Select label="Mentor" name="userId" options={mentors} required />
-
-    //     <div className="mt-4 flex justify-end">
-    //       <SubmitFormButton />
-    //     </div>
-    //   </Form>
-    // </>
   );
 }

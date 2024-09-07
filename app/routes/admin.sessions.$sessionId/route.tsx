@@ -42,7 +42,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
   );
 
   const url = new URL(request.url);
-  const backURL = url.searchParams.get("backURL");
+  const backURL = url.searchParams.get("back_url");
 
   if (backURL) {
     return redirect(backURL);
@@ -68,16 +68,32 @@ export default function Index() {
   } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
 
-  const backURL = searchParams.get("backURL");
+  const backURL = searchParams.get("back_url");
 
   return (
     <>
-      <Title
-        to={backURL ? backURL : `/admin/sessions?${searchParams.toString()}`}
-      >
-        Session of &quot;
-        {attendedOnLabel}&quot;
-      </Title>
+      <div className="flex justify-between">
+        <Title
+          to={backURL ? backURL : `/admin/sessions?${searchParams.toString()}`}
+        >
+          Session of &quot;
+          {attendedOnLabel}&quot;
+        </Title>
+
+        {isCancelled ? (
+          <div role="alert" className="alert alert-error w-72">
+            <WarningCircle />
+            <span>Session has been cancelled</span>
+          </div>
+        ) : completedOn ? null : (
+          <Link
+            to={`cancel?${searchParams.toString()}`}
+            className="btn btn-error w-48 gap-2"
+          >
+            <Xmark className="h-6 w-6" /> Cancel session
+          </Link>
+        )}
+      </div>
 
       <div className="my-8 flex flex-col gap-12">
         <div className="flex items-center gap-2 border-b p-2">
@@ -166,22 +182,6 @@ export default function Index() {
           </>
         )}
       </div>
-
-      {isCancelled ? (
-        <div role="alert" className="alert alert-error w-72">
-          <WarningCircle />
-          <span>Session has been cancelled</span>
-        </div>
-      ) : completedOn ? null : (
-        <div className="flex justify-end">
-          <Link
-            to={`cancel?${searchParams.toString()}`}
-            className="btn btn-error w-48 gap-2"
-          >
-            <Xmark className="h-6 w-6" /> Cancel session
-          </Link>
-        </div>
-      )}
     </>
   );
 }
