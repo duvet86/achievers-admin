@@ -1,4 +1,4 @@
-import type { Chapter } from "@prisma/client";
+import type { Chapter, Prisma } from "@prisma/client";
 import type { Term } from "~/models";
 
 import dayjs from "dayjs";
@@ -58,7 +58,10 @@ export function getCurrentTermForDate(terms: Term[], date: Date): Term {
   return terms[0];
 }
 
-export async function getMentorsAsync(chapterId: Chapter["id"]) {
+export async function getMentorsAsync(
+  chapterId: Chapter["id"],
+  sortFullName: Prisma.SortOrder | undefined,
+) {
   const mentors = await prisma.user.findMany({
     where: {
       endDate: null,
@@ -81,6 +84,9 @@ export async function getMentorsAsync(chapterId: Chapter["id"]) {
           },
         },
       },
+    },
+    orderBy: {
+      fullName: sortFullName ?? "asc",
     },
   });
 

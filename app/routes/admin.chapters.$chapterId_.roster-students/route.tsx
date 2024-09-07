@@ -1,14 +1,20 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { Prisma } from "@prisma/client";
 
 import { json } from "@remix-run/node";
-import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
+import {
+  Link,
+  useFetcher,
+  useLoaderData,
+  useSearchParams,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
 import { Check, WarningTriangle, NavArrowRight, Calendar } from "iconoir-react";
 
 import { getDatesForTerm, getValueFromCircularArray } from "~/services";
-import { Select, Title } from "~/components";
+import { Select, TableHeaderSort, Title } from "~/components";
 
 import {
   getCurrentTermForDate,
@@ -22,13 +28,19 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const selectedTerm = url.searchParams.get("selectedTerm");
 
+  const sortFullNameSubmit: Prisma.SortOrder | undefined =
+    (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? undefined;
+
   const terms = await getSchoolTermsForYearAsync(dayjs().year());
 
   const currentTerm =
     terms.find((t) => t.name === selectedTerm) ??
     getCurrentTermForDate(terms, new Date());
 
-  const students = await getStudentsAsync(Number(params.chapterId));
+  const students = await getStudentsAsync(
+    Number(params.chapterId),
+    sortFullNameSubmit,
+  );
 
   return json({
     chapterId: params.chapterId,
@@ -41,21 +53,37 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     datesInTerm: getDatesForTerm(currentTerm.start, currentTerm.end).map(
       (date) => dayjs(date).format("YYYY-MM-DD"),
     ),
+    sortFullNameSubmit,
   });
 }
 
 const colours = ["#FAD7A0", "#A9DFBF", "#FADBD8", "#AED6F1"];
 
 export default function Index() {
-  const { students, currentTerm, termsList, datesInTerm, chapterId } =
-    useLoaderData<typeof loader>();
+  const initialData = useLoaderData<typeof loader>();
+  const { data, state, load, Form } = useFetcher<typeof loader>();
+  const [searchParams] = useSearchParams();
 
-  const submit = useSubmit();
+  const {
+    students,
+    currentTerm,
+    termsList,
+    datesInTerm,
+    chapterId,
+    sortFullNameSubmit,
+  } = data ?? initialData;
+
+  const isLoading = state === "loading";
+
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    searchParams.set("selectedTerm", event.target.value);
+    load(`?${searchParams.toString()}`);
+  };
 
   return (
     <>
       <div className="flex items-center justify-between">
-        <Title to="/admin/chapters">Roster planner</Title>
+        <Title to="/admin/chapters">Roster planner STUDENTS</Title>
 
         <Link
           to={`/admin/chapters/${chapterId}/roster-mentors`}
@@ -66,23 +94,33 @@ export default function Index() {
         </Link>
       </div>
 
-      <Form
-        className="mb-6 flex gap-12"
-        onChange={(e) => submit(e.currentTarget)}
-      >
-        <Select
-          label="Term"
-          name="selectedTerm"
-          defaultValue={currentTerm.name}
-          options={termsList}
-        />
-      </Form>
+      {isLoading && (
+        <div className="absolute z-30 flex h-full w-full justify-center bg-slate-300 bg-opacity-50">
+          <span className="loading loading-spinner loading-lg text-primary"></span>
+        </div>
+      )}
+
+      <Select
+        label="Term"
+        name="selectedTerm"
+        defaultValue={currentTerm.name}
+        options={termsList}
+        onChange={handleSelectChange}
+      />
 
       <div className="overflow-auto">
         <table className="table table-pin-rows table-pin-cols">
           <thead>
             <tr className="z-20">
-              <th className="border-r">Students</th>
+              <th className="border-r">
+                <Form>
+                  <TableHeaderSort
+                    sortPropName="sortFullName"
+                    sortPropValue={sortFullNameSubmit}
+                    label="Students"
+                  />
+                </Form>
+              </th>
               {datesInTerm.map((attendedOn, index) => (
                 <td key={index}>
                   <div className="flex flex-col items-center font-medium text-gray-800">
