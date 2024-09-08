@@ -4,7 +4,13 @@ import { json, redirect } from "@remix-run/node";
 import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
-import { Xmark, Check, StatsReport, WarningCircle } from "iconoir-react";
+import {
+  Xmark,
+  Check,
+  StatsReport,
+  WarningCircle,
+  EditPencil,
+} from "iconoir-react";
 
 import { Title, SubmitFormButton, Textarea, SelectSearch } from "~/components";
 
@@ -55,6 +61,7 @@ export default function Index() {
   const {
     attendedOnLabel,
     session: {
+      id,
       chapter,
       user,
       student,
@@ -152,8 +159,15 @@ export default function Index() {
                   to={`report?${searchParams.toString()}`}
                   className="btn btn-success gap-2"
                 >
-                  Go to report
-                  <StatsReport className="h-6 w-6" />
+                  <StatsReport /> Go to report
+                </Link>
+              )}
+              {!hasReport && user.id && (
+                <Link
+                  to={`/admin/sessions/${id}/mentors/${user.id}/write-report`}
+                  className="btn btn-success gap-2"
+                >
+                  <EditPencil /> Write report on behalf
                 </Link>
               )}
             </div>

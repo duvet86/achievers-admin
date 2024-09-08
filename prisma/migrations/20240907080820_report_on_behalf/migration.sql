@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE `mentortostudentsession` ADD COLUMN `writteOnBehalfByAzureId` VARCHAR(191) NULL;
+ALTER TABLE `MentorToStudentSession` ADD COLUMN `writteOnBehalfByAzureId` VARCHAR(191) NULL;
