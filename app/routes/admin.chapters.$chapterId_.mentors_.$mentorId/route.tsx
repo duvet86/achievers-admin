@@ -1,7 +1,12 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Link, useFetcher, useLoaderData } from "@remix-run/react";
+import {
+  Link,
+  useFetcher,
+  useLoaderData,
+  useSearchParams,
+} from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 import {
@@ -82,6 +87,7 @@ export default function Index() {
     message: string | null;
     studentId: string;
   }>();
+  const [searchParams] = useSearchParams();
 
   const isLoading = state === "loading";
 
@@ -98,7 +104,13 @@ export default function Index() {
 
   return (
     <>
-      <Title to={`/admin/chapters/${chapterId}/mentors`}>
+      <Title
+        to={
+          searchParams.get("back_url")
+            ? searchParams.get("back_url")!
+            : `/admin/chapters/${chapterId}/mentors`
+        }
+      >
         Assign student to mentor
       </Title>
 

@@ -1,7 +1,12 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Link, useFetcher, useLoaderData } from "@remix-run/react";
+import {
+  Link,
+  useFetcher,
+  useLoaderData,
+  useSearchParams,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
 import {
   Clock,
@@ -45,7 +50,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const formData = await request.formData();
 
   const mentorId = formData.get("mentorId")?.toString();
-  if (mentorId === mentorId) {
+  if (mentorId === undefined) {
     return json({
       mentorId: "",
       message: "You need to select a mentor first",
@@ -81,6 +86,7 @@ export default function Index() {
     message: string | null;
     mentorId: string;
   }>();
+  const [searchParams] = useSearchParams();
 
   const isLoading = state === "loading";
 
@@ -97,7 +103,13 @@ export default function Index() {
 
   return (
     <>
-      <Title to={`/admin/chapters/${chapterId}/students`}>
+      <Title
+        to={
+          searchParams.get("back_url")
+            ? searchParams.get("back_url")!
+            : `/admin/chapters/${chapterId}/students`
+        }
+      >
         Assign mentor to student
       </Title>
 
@@ -121,6 +133,7 @@ export default function Index() {
                   showClearButton
                   name="mentorId"
                   placeholder="start typing to select a mentor"
+                  required
                   options={availableMentors.map(({ id, fullName }) => ({
                     label: fullName,
                     value: id.toString(),

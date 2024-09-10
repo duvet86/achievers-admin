@@ -14,6 +14,7 @@ export type SessionLookup = Record<
   string,
   | {
       sessionId: number;
+      studentId: number;
       studentFullName: string;
       hasReport: boolean;
       isCancelled: boolean;
@@ -100,6 +101,7 @@ export async function getMentorsAsync(
     const sessionLookup = mentor.mentorToStudentSession.reduce<SessionLookup>(
       (res, session) => {
         res[dayjs.utc(session.attendedOn).format("YYYY-MM-DD")] = {
+          studentId: session.student.id,
           studentFullName: session.student.fullName,
           sessionId: session.id,
           hasReport: session.hasReport,

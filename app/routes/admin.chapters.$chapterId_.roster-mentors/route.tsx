@@ -192,9 +192,11 @@ export default function Index() {
                   const hasReport = sessionInfo?.hasReport ?? false;
                   const isCancelled = sessionInfo?.isCancelled ?? false;
 
+                  const queryString = `fixedMentorId=${mentorId}&back_url=/admin/chapters/${chapterId}/roster-mentors`;
+
                   const to = sessionId
-                    ? `/admin/sessions/${sessionId}?back_url=/admin/chapters/${chapterId}/roster-mentors`
-                    : `/admin/sessions/${attendedOn}/chapters/${chapterId}/mentors/${mentorId}/new?back_url=/admin/chapters/${chapterId}/roster-mentors`;
+                    ? `/admin/chapters/${chapterId}/sessions/${sessionId}/update-assignment?${queryString}`
+                    : `/admin/chapters/${chapterId}/sessions/${attendedOn}T00:00:00Z/new-assignment?${queryString}`;
 
                   return (
                     <td key={index} className="border-r">
