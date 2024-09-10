@@ -179,7 +179,7 @@ export default function Index() {
                   }}
                 >
                   <Link
-                    to={`/admin/chapters/${chapterId}/mentors/${mentorId}`}
+                    to={`/admin/chapters/${chapterId}/mentors/${mentorId}?back_url=/admin/chapters/${chapterId}/roster-mentors`}
                     className="link block w-36"
                   >
                     {fullName}
@@ -190,12 +190,15 @@ export default function Index() {
 
                   const sessionId = sessionInfo?.sessionId;
                   const hasReport = sessionInfo?.hasReport ?? false;
+                  const completedOn = sessionInfo?.completedOn;
                   const isCancelled = sessionInfo?.isCancelled ?? false;
 
                   const queryString = `fixedMentorId=${mentorId}&back_url=/admin/chapters/${chapterId}/roster-mentors`;
 
                   const to = sessionId
-                    ? `/admin/chapters/${chapterId}/sessions/${sessionId}/update-assignment?${queryString}`
+                    ? completedOn
+                      ? `/admin/sessions/${sessionId}?back_url=/admin/chapters/${chapterId}/roster-mentors`
+                      : `/admin/chapters/${chapterId}/sessions/${sessionId}/update-assignment?${queryString}`
                     : `/admin/chapters/${chapterId}/sessions/${attendedOn}T00:00:00Z/new-assignment?${queryString}`;
 
                   return (

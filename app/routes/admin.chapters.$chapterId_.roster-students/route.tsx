@@ -179,7 +179,7 @@ export default function Index() {
                   }}
                 >
                   <Link
-                    to={`/admin/chapters/${chapterId}/students/${studentId}`}
+                    to={`/admin/chapters/${chapterId}/students/${studentId}?back_url=/admin/chapters/${chapterId}/roster-students`}
                     className="link block w-36"
                   >
                     {fullName}
@@ -190,12 +190,15 @@ export default function Index() {
 
                   const sessionId = sessionInfo?.sessionId;
                   const hasReport = sessionInfo?.hasReport ?? false;
+                  const completedOn = sessionInfo?.completedOn;
                   const isCancelled = sessionInfo?.isCancelled ?? false;
 
                   const queryString = `fixedStudentId=${studentId}&back_url=/admin/chapters/${chapterId}/roster-students`;
 
                   const to = sessionId
-                    ? `/admin/chapters/${chapterId}/sessions/${sessionId}/update-assignment?&${queryString}`
+                    ? completedOn
+                      ? `/admin/sessions/${sessionId}?back_url=/admin/chapters/${chapterId}/roster-students`
+                      : `/admin/chapters/${chapterId}/sessions/${sessionId}/update-assignment?&${queryString}`
                     : `/admin/chapters/${chapterId}/sessions/${attendedOn}T00:00:00Z/new-assignment?${queryString}`;
 
                   return (

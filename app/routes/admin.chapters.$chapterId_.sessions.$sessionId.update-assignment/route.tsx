@@ -1,7 +1,13 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
-import { Form, useLoaderData, useSearchParams } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useLoaderData,
+  useLocation,
+  useSearchParams,
+} from "@remix-run/react";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 
@@ -15,9 +21,10 @@ import {
   getSessionsByDateAsync,
   getSessionByIdAsync,
 } from "./services.server";
-import { Xmark } from "iconoir-react";
+import { EditPencil, Xmark } from "iconoir-react";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
+  invariant(params.chapterId, "chapterId not found");
   invariant(params.sessionId, "sessionId not found");
 
   const url = new URL(request.url);
@@ -29,6 +36,12 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const studentId = fixedStudentId ? Number(fixedStudentId) : null;
 
   const session = await getSessionByIdAsync(Number(params.sessionId));
+
+  if (session.isCancelled || session.completedOn) {
+    const backURL = url.searchParams.get("back_url");
+
+    return redirect(`/admin/sessions/${session.id}?back_url=${backURL}`);
+  }
 
   const [chapter, sessionsForDate] = await Promise.all([
     getChapterByIdAsync(Number(params.chapterId)),
@@ -46,9 +59,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
     return json({
       chapter,
-      mentor: session.user,
+      session,
       mentors: null,
-      student: null,
       selectedMentorId: null,
       selectedStudentId: selectedStudentId.toString(),
       students: students
@@ -75,9 +87,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
     return json({
       chapter,
-      student: session.student,
+      session,
       students: null,
-      mentor: null,
       selectedMentorId: selectedMentorId.toString(),
       selectedStudentId: null,
       mentors: mentors
@@ -105,7 +116,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
   const selectedMentorId = fixedMentorId ?? formData.get("mentorId");
   const selectedStudentId = fixedStudentId ?? formData.get("studentId");
 
-  const session = await updateSessionAsync({
+  await updateSessionAsync({
     sessionId: Number(params.sessionId),
     mentorId: Number(selectedMentorId),
     studentId: Number(selectedStudentId),
@@ -117,22 +128,22 @@ export async function action({ params, request }: ActionFunctionArgs) {
     return redirect(backURL);
   }
 
-  return redirect(
-    `/admin/sessions/${session.id}?${url.searchParams.toString()}`,
-  );
+  const path = fixedMentorId ? `roster-mentors` : `roster-students`;
+
+  return redirect(`/admin/chapters/${params.chapterId}/${path}`);
 }
 
 export default function Index() {
   const {
     attendedOnLabel,
     chapter,
-    mentor,
-    student,
+    session,
     mentors,
     students,
     selectedMentorId,
     selectedStudentId,
   } = useLoaderData<typeof loader>();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
 
   const backURL = searchParams.get("back_url");
@@ -159,9 +170,7 @@ export default function Index() {
 
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Mentor</div>
-          {mentor ? (
-            <div className="flex-1">{mentor.fullName}</div>
-          ) : (
+          {selectedMentorId ? (
             <div className="flex flex-1 items-end gap-4">
               <SelectSearch
                 name="mentorId"
@@ -173,14 +182,14 @@ export default function Index() {
 
               <SubmitFormButton />
             </div>
+          ) : (
+            <div className="flex-1">{session.user.fullName}</div>
           )}
         </div>
 
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Student</div>
-          {student ? (
-            <div className="flex-1">{student.fullName}</div>
-          ) : (
+          {selectedStudentId ? (
             <div className="flex flex-1 items-end gap-4">
               <SelectSearch
                 name="studentId"
@@ -192,6 +201,8 @@ export default function Index() {
 
               <SubmitFormButton />
             </div>
+          ) : (
+            <div className="flex-1">{session.student.fullName}</div>
           )}
         </div>
 
@@ -200,6 +211,12 @@ export default function Index() {
           <div className="flex-1">
             <Xmark className="h-6 w-6 text-error" />
           </div>
+          <Link
+            to={`/admin/sessions/${session.id}/mentors/${session.user.id}/write-report?back_url=${location.pathname}?${selectedMentorId ? `fixedMentorId=${selectedMentorId}` : `fixedStudentId=${selectedStudentId}`}`}
+            className="btn btn-success gap-2"
+          >
+            <EditPencil /> Write report on behalf
+          </Link>
         </div>
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Is report completed?</div>

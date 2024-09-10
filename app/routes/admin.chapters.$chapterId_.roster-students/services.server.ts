@@ -17,6 +17,7 @@ export type SessionLookup = Record<
       mentorId: number;
       mentorFullName: string;
       hasReport: boolean;
+      completedOn: Date | null;
       isCancelled: boolean;
     }
   | undefined
@@ -82,6 +83,7 @@ export async function getStudentsAsync(
           id: true,
           attendedOn: true,
           hasReport: true,
+          completedOn: true,
           isCancelled: true,
           user: {
             select: {
@@ -105,6 +107,7 @@ export async function getStudentsAsync(
           mentorFullName: session.user.fullName,
           sessionId: session.id,
           hasReport: session.hasReport,
+          completedOn: session.completedOn,
           isCancelled: session.isCancelled,
         };
 

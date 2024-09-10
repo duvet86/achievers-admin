@@ -45,7 +45,10 @@ export async function getSessionByIdAsync(sessionId: number) {
       id: sessionId,
     },
     select: {
+      id: true,
+      completedOn: true,
       attendedOn: true,
+      isCancelled: true,
       user: {
         select: {
           id: true,

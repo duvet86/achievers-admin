@@ -1,7 +1,7 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { json, redirect } from "@remix-run/node";
-import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
+import { json } from "@remix-run/node";
+import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import {
@@ -12,49 +12,19 @@ import {
   EditPencil,
 } from "iconoir-react";
 
-import { Title, SubmitFormButton, Textarea, SelectSearch } from "~/components";
+import { Title, Textarea } from "~/components";
 
-import {
-  getMentorsForStudent,
-  getSessionByIdAsync,
-  updateSessionAsync,
-} from "./services.server";
+import { getSessionByIdAsync } from "./services.server";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.sessionId, "sessionId not found");
 
   const session = await getSessionByIdAsync(Number(params.sessionId));
 
-  const mentorsForStudent = await getMentorsForStudent(
-    session.chapterId,
-    session.student.id,
-  );
-
   return json({
     attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
     session,
-    mentorsForStudent,
   });
-}
-
-export async function action({ params, request }: ActionFunctionArgs) {
-  invariant(params.sessionId, "sessionId not found");
-
-  const formData = await request.formData();
-
-  await updateSessionAsync(
-    Number(params.sessionId),
-    Number(formData.get("mentorId")),
-  );
-
-  const url = new URL(request.url);
-  const backURL = url.searchParams.get("back_url");
-
-  if (backURL) {
-    return redirect(backURL);
-  }
-
-  return redirect("/admin/sessions");
 }
 
 export default function Index() {
@@ -71,7 +41,6 @@ export default function Index() {
       completedOn,
       signedOffOn,
     },
-    mentorsForStudent,
   } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
 
@@ -120,22 +89,7 @@ export default function Index() {
 
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Mentor</div>
-          {!isCancelled && (
-            <Form className="flex flex-1 items-end gap-4" method="post">
-              <SelectSearch
-                name="mentorId"
-                defaultValue={user.id.toString()}
-                options={mentorsForStudent.map(({ id, fullName }) => ({
-                  label: fullName,
-                  value: id.toString(),
-                }))}
-                disabled={!!completedOn}
-                required
-              />
-
-              {!completedOn && <SubmitFormButton label="Update" />}
-            </Form>
-          )}
+          <div className="flex-1">{user.fullName}</div>
         </div>
 
         {isCancelled ? (
@@ -164,7 +118,7 @@ export default function Index() {
               )}
               {!hasReport && user.id && (
                 <Link
-                  to={`/admin/sessions/${id}/mentors/${user.id}/write-report`}
+                  to={`/admin/sessions/${id}/mentors/${user.id}/write-report?back_url=/admin/sessions/${id}`}
                   className="btn btn-success gap-2"
                 >
                   <EditPencil /> Write report on behalf

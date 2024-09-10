@@ -136,7 +136,7 @@ export default function Index() {
             <SubTitle>Admin Feedback</SubTitle>
           </div>
 
-          <div className="flex flex-1 flex-col gap-4">
+          <div className="flex flex-1 flex-col gap-4 pb-2">
             <div className="flex-1">
               <Editor
                 initialEditorStateType={session.reportFeedback}

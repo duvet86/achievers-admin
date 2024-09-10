@@ -106,7 +106,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
   invariant(selectedMentorId, "selectedMentorId not found");
   invariant(selectedStudentId, "selectedStudentId not found");
 
-  const session = await createSessionAsync({
+  await createSessionAsync({
     attendedOn: params.attendedOn,
     chapterId: Number(params.chapterId),
     mentorId: Number(selectedMentorId),
@@ -119,9 +119,9 @@ export async function action({ params, request }: ActionFunctionArgs) {
     return redirect(backURL);
   }
 
-  return redirect(
-    `/admin/sessions/${session.id}?${url.searchParams.toString()}`,
-  );
+  const path = fixedMentorId ? `roster-mentors` : `roster-students`;
+
+  return redirect(`/admin/chapters/${params.chapterId}/${path}`);
 }
 
 export default function Index() {
