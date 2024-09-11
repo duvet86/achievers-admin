@@ -54,7 +54,7 @@ export default function Index() {
   } = useLoaderData<typeof loader>();
 
   return (
-    <div className="-m-4 h-full p-4">
+    <>
       <article className="prose relative mb-8 h-24 max-w-none lg:h-28">
         <div className="h-24 w-full rounded-md bg-achievers opacity-75 lg:h-28"></div>
         <h1 className="absolute left-6 top-6 hidden lg:block">
@@ -66,7 +66,7 @@ export default function Index() {
       </article>
 
       <div className="flex w-full justify-center">
-        <div className="stats stats-vertical w-4/5 shadow-lg lg:stats-horizontal lg:w-full">
+        <div className="stats stats-vertical shadow-lg lg:stats-horizontal">
           <StatCard
             Icon={UserCircle}
             label="Mentors with incomplete checks"
@@ -93,11 +93,11 @@ export default function Index() {
         </div>
       </div>
 
-      <div className="mt-8 h-56">
+      <div className="h-56">
         <SubTitle>Mentors over time</SubTitle>
 
         <MentorsOverTimeChart mentorsPerMonth={mentorsPerMonth} />
       </div>
-    </div>
+    </>
   );
 }

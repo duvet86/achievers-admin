@@ -14,7 +14,7 @@ interface Props {
 
 export function StatCard({ Icon, label, count, subLabel, to }: Props) {
   return (
-    <div className="stat">
+    <div className="stat w-80">
       <div className="stat-figure hidden text-secondary lg:block">
         <Icon className="inline-block h-8 w-8 stroke-current" />
       </div>

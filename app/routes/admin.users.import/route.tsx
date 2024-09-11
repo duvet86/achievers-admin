@@ -121,7 +121,7 @@ export default function Index() {
 
   return (
     <>
-      <Title>Import from file</Title>
+      <Title to="/admin/users">Import mentors from file</Title>
 
       <Form
         method="post"
