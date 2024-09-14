@@ -1,6 +1,7 @@
 import { redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
+import { trackException } from "~/services/.server";
 import { getTokenInfoAsync } from "./session.server";
 
 export const MICROSOFT_GRAPH_V1_BASEURL = "https://graph.microsoft.com/v1.0";
@@ -129,7 +130,7 @@ export async function getAzureRolesAsync(request: Request): Promise<AppRole[]> {
     },
   );
 
-  const azureApplication: Application = await response.json();
+  const azureApplication = (await response.json()) as Application;
 
   return azureApplication.appRoles;
 }
@@ -170,7 +171,7 @@ export async function getAzureUsersAsync(
     },
   );
 
-  const azureUsers: { value: AzureUser[] } = await response.json();
+  const azureUsers = (await response.json()) as { value: AzureUser[] };
 
   return azureUsers.value.map((user) => ({
     ...user,
@@ -212,18 +213,21 @@ async function getAzureUserByIdAsync(
     },
   );
 
-  const azureUser = await response.json();
+  const azureUser: unknown = await response.json();
 
   if (
     (azureUser as AzureError).error &&
     (azureUser as AzureError).error.code === "Authorization_RequestDenied"
   ) {
-    console.log("azureUser", azureUser);
-
+    trackException(
+      new Error(
+        `getAzureUserByIdAsync: user has no permissions: ${JSON.stringify(azureUser)}`,
+      ),
+    );
     throw redirect("/403");
   }
 
-  return azureUser;
+  return azureUser as AzureUserWithRole;
 }
 
 export async function getAzureUserWithRolesByIdAsync(
@@ -260,10 +264,14 @@ export async function inviteUserToAzureAsync(
   });
 
   if (!response.ok) {
-    throw new Error(await response.text());
+    const error = new Error(await response.text());
+
+    trackException(error);
+
+    throw error;
   }
 
-  return response.json();
+  return (await response.json()) as AzureInviteResponse;
 }
 
 export async function assignRoleToUserAsync(
@@ -282,7 +290,7 @@ export async function assignRoleToUserAsync(
     },
   );
 
-  return response.json();
+  return (await response.json()) as AzureAppRoleResponse;
 }
 
 export async function removeRoleFromUserAsync(

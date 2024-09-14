@@ -40,8 +40,8 @@ export function Select({ label, name, options, required, ...props }: Props) {
         required={required}
         {...props}
       >
-        {options.map(({ label, value }, index) => (
-          <option key={index} value={value}>
+        {options.map(({ label, value }) => (
+          <option key={value} value={value}>
             {label}
           </option>
         ))}

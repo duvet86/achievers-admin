@@ -6,7 +6,7 @@ import { MemoryRouter } from "react-router";
 import { Body } from "~/components";
 
 describe("Body", () => {
-  it("Body snapshot admin", async () => {
+  it("Body snapshot admin", () => {
     const { baseElement } = render(
       <MemoryRouter>
         <Body
@@ -30,13 +30,12 @@ describe("Body", () => {
     expect(baseElement).toMatchSnapshot();
   });
 
-  it("Body snapshot mentor", async () => {
+  it("Body snapshot mentor", () => {
     const { baseElement } = render(
       <MemoryRouter>
         <Body
           currentView="mentor"
           isMentorAndAdmin={false}
-          hasCompletedVolunteerAgreement
           version="1"
           environment="local"
           userName="test@test.com"
@@ -48,13 +47,12 @@ describe("Body", () => {
     expect(baseElement).toMatchSnapshot();
   });
 
-  it("Body snapshot mentor and admin permissions", async () => {
+  it("Body snapshot mentor and admin permissions", () => {
     const { baseElement } = render(
       <MemoryRouter>
         <Body
           currentView="admin"
           isMentorAndAdmin={true}
-          hasCompletedVolunteerAgreement
           version="1"
           environment="local"
           userName="test@test.com"

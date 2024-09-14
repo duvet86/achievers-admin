@@ -12,8 +12,7 @@ interface Props {
 }
 
 export function GuardianList({ loaderData: { student, isNewStudent } }: Props) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { state, Form, submit } = (useFetcher as any)();
+  const { state, Form, submit } = useFetcher();
 
   const isLoading = state === "loading";
   const noGuardiansAssigned = student === null || student.guardian.length === 0;

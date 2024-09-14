@@ -7,7 +7,7 @@ import { MemoryRouter } from "react-router";
 import { Drawer } from "~/components";
 
 describe("Drawer", () => {
-  it("should display links for admin", async () => {
+  it("should display links for admin", () => {
     render(
       <MemoryRouter>
         <Drawer
@@ -51,7 +51,7 @@ describe("Drawer", () => {
     expect(links[6]).toHaveAttribute("href", "/admin/config");
   });
 
-  it("should display links for mentor", async () => {
+  it("should display links for mentor", () => {
     render(
       <MemoryRouter>
         <Drawer
@@ -65,26 +65,27 @@ describe("Drawer", () => {
     const links: HTMLAnchorElement[] = screen.getAllByRole("link");
 
     expect(links.length).toBe(6);
+
     expect(links[0]).toHaveTextContent("Home");
     expect(links[0]).toHaveAttribute("href", "/mentor/home");
 
-    expect(links[1]).toHaveTextContent("My Students");
-    expect(links[1]).toHaveAttribute("href", "/mentor/students");
+    expect(links[1]).toHaveTextContent("Roster");
+    expect(links[1]).toHaveAttribute("href", "/mentor/roster");
 
-    expect(links[2]).toHaveTextContent("My Partner");
-    expect(links[2]).toHaveAttribute("href", "/mentor/partner");
+    expect(links[2]).toHaveTextContent("Write Report");
+    expect(links[2]).toHaveAttribute("href", "/mentor/reports");
 
-    expect(links[3]).toHaveTextContent("Roster");
-    expect(links[3]).toHaveAttribute("href", "/mentor/roster");
+    expect(links[3]).toHaveTextContent("My Students");
+    expect(links[3]).toHaveAttribute("href", "/mentor/students");
 
-    expect(links[4]).toHaveTextContent("Sessions/Reports");
-    expect(links[4]).toHaveAttribute("href", "/mentor/sessions");
+    expect(links[4]).toHaveTextContent("My Partner");
+    expect(links[4]).toHaveAttribute("href", "/mentor/partner");
 
-    expect(links[5]).toHaveTextContent("Policy");
-    expect(links[5]).toHaveAttribute("href", "/mentor/policy");
+    expect(links[5]).toHaveTextContent("Useful Resources");
+    expect(links[5]).toHaveAttribute("href", "/mentor/useful-resources");
   });
 
-  it("should display swap app link if both mentor and admin", async () => {
+  it("should display swap app link if both mentor and admin", () => {
     render(
       <MemoryRouter>
         <Drawer

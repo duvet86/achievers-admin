@@ -57,7 +57,7 @@ export async function getSessionError_dev(request: Request) {
   const cookie = request.headers.get("Cookie");
   const session = await sessionStorage_dev.getSession(cookie);
 
-  const error = session.get(authenticator_dev.sessionErrorKey);
+  const error: unknown = session.get(authenticator_dev.sessionErrorKey);
 
   return error;
 }
@@ -71,6 +71,7 @@ const microsoftStrategy = new MicrosoftStrategy(
     scopes: SCOPE,
     prompt: "login",
   },
+  // eslint-disable-next-line @typescript-eslint/require-await
   async ({ tokens }) => ({
     idToken: tokens.id_token,
     accessToken: tokens.access_token,

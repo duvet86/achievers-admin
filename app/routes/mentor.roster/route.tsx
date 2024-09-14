@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { SessionCommandRequest } from "./services.server";
 
@@ -50,18 +52,20 @@ export async function loader({ request }: LoaderFunctionArgs) {
     chapterId: user.chapterId,
     termsList: terms.map(({ start, end, name }) => ({
       value: name,
-      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})`,
+      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${currentTerm.name === name ? " (Current)" : ""}`,
     })),
-    currentTerm,
+    currentTermName: currentTerm.name,
     students,
     sessionDateToMentorIdForAllStudentsLookup,
     selectedStudent,
-    datesInTerm: getDatesForTerm(currentTerm.start, currentTerm.end),
+    datesInTerm: getDatesForTerm(currentTerm.start, currentTerm.end).map(
+      (date) => dayjs(date).format("YYYY-MM-DD"),
+    ),
   });
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const bodyData: SessionCommandRequest = await request.json();
+  const bodyData = (await request.json()) as SessionCommandRequest;
 
   const action = bodyData.action;
 
@@ -87,7 +91,7 @@ export async function action({ request }: ActionFunctionArgs) {
       break;
 
     default:
-      throw new Error(`Invalid action ${action}.`);
+      throw new Error("Invalid action");
   }
 
   return json({
@@ -102,7 +106,7 @@ export default function Index() {
     students,
     sessionDateToMentorIdForAllStudentsLookup,
     selectedStudent,
-    currentTerm,
+    currentTermName,
     termsList,
     datesInTerm,
   } = useLoaderData<typeof loader>();
@@ -121,7 +125,7 @@ export default function Index() {
         <Select
           label="Term"
           name="selectedTerm"
-          defaultValue={searchParams.get("selectedTerm") ?? currentTerm.name}
+          defaultValue={searchParams.get("selectedTerm") ?? currentTermName}
           options={termsList}
         />
         <Select
@@ -142,9 +146,9 @@ export default function Index() {
           userId={userId}
           chapterId={chapterId}
           datesInTerm={datesInTerm}
-          student={selectedStudent}
+          student={selectedStudent as any}
           sessionDateToMentorIdForAllStudentsLookup={
-            sessionDateToMentorIdForAllStudentsLookup
+            sessionDateToMentorIdForAllStudentsLookup as any
           }
         />
       )}

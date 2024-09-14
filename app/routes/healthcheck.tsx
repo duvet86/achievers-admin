@@ -1,3 +1,3 @@
-export async function loader() {
+export function loader() {
   return new Response("OK");
 }

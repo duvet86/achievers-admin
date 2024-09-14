@@ -23,6 +23,9 @@ export type SessionLookup = Record<
       userId: number;
       hasReport: boolean;
       isCancelled: boolean;
+      attendedOn: Date;
+      signedOffOn: Date | null;
+      completedOn: Date | null;
     }
   | undefined
 >;
@@ -103,6 +106,8 @@ export async function getStudentsAsync(
         select: {
           id: true,
           attendedOn: true,
+          signedOffOn: true,
+          completedOn: true,
           userId: true,
           hasReport: true,
           isCancelled: true,
@@ -121,6 +126,9 @@ export async function getStudentsAsync(
           sessionId: session.id,
           hasReport: session.hasReport,
           isCancelled: session.isCancelled,
+          attendedOn: session.attendedOn,
+          completedOn: session.completedOn,
+          signedOffOn: session.signedOffOn,
         };
 
         return res;

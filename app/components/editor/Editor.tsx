@@ -65,7 +65,7 @@ interface Props {
 }
 
 export function Editor({
-  isReadonly,
+  isReadonly = false,
   initialEditorStateType,
   onChange,
 }: Props) {

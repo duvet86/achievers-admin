@@ -13,6 +13,7 @@ export async function getNextSessionAsync(userId: number) {
       attendedOn: true,
       student: {
         select: {
+          id: true,
           fullName: true,
         },
       },
@@ -29,6 +30,12 @@ export async function getSessionsAsync(userId: number, chapterId: number) {
       attendedOn: true,
       completedOn: true,
       signedOffOn: true,
+      student: {
+        select: {
+          id: true,
+          fullName: true,
+        },
+      },
     },
     where: {
       chapterId,
@@ -43,6 +50,16 @@ export async function getSessionsAsync(userId: number, chapterId: number) {
     },
     take: 5,
   });
+}
+
+export async function hasAnyStudentsAssignedAsync(mentorId: number) {
+  return (
+    (await prisma.mentorToStudentAssignement.count({
+      where: {
+        userId: mentorId,
+      },
+    })) > 0
+  );
 }
 
 export async function getUserByAzureADIdAsync(azureADId: string) {

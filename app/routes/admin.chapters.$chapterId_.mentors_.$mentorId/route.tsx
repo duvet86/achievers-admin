@@ -1,10 +1,20 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Link, useFetcher, useLoaderData } from "@remix-run/react";
+import {
+  Link,
+  useFetcher,
+  useLoaderData,
+  useSearchParams,
+} from "@remix-run/react";
 
 import invariant from "tiny-invariant";
-import { Xmark, Clock, FloppyDiskArrowIn } from "iconoir-react";
+import {
+  Xmark,
+  Clock,
+  FloppyDiskArrowIn,
+  WarningTriangle,
+} from "iconoir-react";
 
 import { Title, SelectSearch } from "~/components";
 
@@ -42,7 +52,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const studentId = formData.get("studentId")?.toString();
   if (studentId === undefined) {
-    throw new Error();
+    return json({
+      studentId: "",
+      message: "You need to select a student first",
+    });
   }
 
   if (request.method === "POST") {
@@ -58,7 +71,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return null;
+  return json({
+    studentId,
+    message: null,
+  });
 }
 
 export default function Index() {
@@ -67,8 +83,11 @@ export default function Index() {
     availableStudents,
     mentorWithStudents: { fullName, mentorToStudentAssignement },
   } = useLoaderData<typeof loader>();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { state, Form, submit } = (useFetcher as any)();
+  const { state, Form, data, submit } = useFetcher<{
+    message: string | null;
+    studentId: string;
+  }>();
+  const [searchParams] = useSearchParams();
 
   const isLoading = state === "loading";
 
@@ -85,7 +104,13 @@ export default function Index() {
 
   return (
     <>
-      <Title to={`/admin/chapters/${chapterId}/mentors`}>
+      <Title
+        to={
+          searchParams.get("back_url")
+            ? searchParams.get("back_url")!
+            : `/admin/chapters/${chapterId}/mentors`
+        }
+      >
         Assign student to mentor
       </Title>
 
@@ -93,7 +118,7 @@ export default function Index() {
         <div className="flex flex-col gap-12 lg:flex-row">
           <div className="lg:w-1/2">
             <h4>Mentor</h4>
-            <div>{fullName}</div>
+            <div className="mt-4 text-xl">{fullName}</div>
           </div>
 
           <div>
@@ -105,6 +130,7 @@ export default function Index() {
             >
               <div className="lg:w-96">
                 <SelectSearch
+                  key={data?.studentId}
                   showClearButton
                   name="studentId"
                   placeholder="start typing to select a student"
@@ -131,6 +157,13 @@ export default function Index() {
                 )}
               </button>
             </Form>
+
+            {data?.message && (
+              <p className="flex items-center gap-2 text-error">
+                <WarningTriangle className="h-6 w-6" />
+                {data?.message}
+              </p>
+            )}
           </div>
         </div>
 

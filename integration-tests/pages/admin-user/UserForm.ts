@@ -1,7 +1,7 @@
 import type { Locator, Page } from "@playwright/test";
 
 import { expect } from "@playwright/test";
-import { CHAPTER_DATA } from "integration-tests/test-data";
+import { CHAPTER_DATA } from "../../test-data";
 
 interface FormQuery {
   email: string;

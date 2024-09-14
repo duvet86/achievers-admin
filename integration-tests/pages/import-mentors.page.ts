@@ -24,7 +24,9 @@ export class ImportMentorsPage {
   constructor(page: Page) {
     this.page = page;
 
-    this.title = page.getByRole("heading", { name: "Import from file" });
+    this.title = page.getByRole("heading", {
+      name: "Import mentors from file",
+    });
 
     this.numberHeaderCell = page.getByRole("cell", { name: "#" });
     this.fullNameHeaderCell = page.getByRole("cell", { name: "Full name" });

@@ -9,6 +9,7 @@ interface Props {
   errorMessage?: string | null;
   sticky?: boolean;
   className?: string;
+  disabled?: boolean;
 }
 
 export function SubmitFormButton({
@@ -17,6 +18,7 @@ export function SubmitFormButton({
   sticky,
   className,
   label = "Save",
+  disabled = false,
 }: Props) {
   return (
     <div
@@ -31,7 +33,11 @@ export function SubmitFormButton({
         successMessage={successMessage}
       />
 
-      <button className="btn btn-primary w-52 gap-5" type="submit">
+      <button
+        className="btn btn-primary w-48 gap-2"
+        type="submit"
+        disabled={disabled}
+      >
         <FloppyDiskArrowIn className="h-6 w-6" />
         {label}
       </button>

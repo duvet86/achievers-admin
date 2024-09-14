@@ -13,6 +13,7 @@ export async function getSessionByIdAsync(sessionId: number) {
       isCancelled: true,
       completedOn: true,
       reasonCancelled: true,
+      chapterId: true,
       chapter: {
         select: {
           name: true,
@@ -30,33 +31,6 @@ export async function getSessionByIdAsync(sessionId: number) {
           fullName: true,
         },
       },
-    },
-  });
-}
-
-export async function getMentorsForStudent(studentId: number) {
-  return await prisma.mentorToStudentAssignement.findMany({
-    where: {
-      studentId,
-    },
-    select: {
-      user: {
-        select: {
-          id: true,
-          fullName: true,
-        },
-      },
-    },
-  });
-}
-
-export async function updateSessionAsync(sessionId: number, mentorId: number) {
-  return await prisma.mentorToStudentSession.update({
-    data: {
-      userId: mentorId,
-    },
-    where: {
-      id: sessionId,
     },
   });
 }

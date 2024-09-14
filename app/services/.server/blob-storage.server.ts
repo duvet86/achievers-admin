@@ -53,11 +53,11 @@ export function getContainerClient(containerName: string): ContainerClient {
   return containerClient;
 }
 
-export async function getSASQueryStringAsync(
+export function getSASQueryString(
   containerClient: ContainerClient,
   blobPath: string,
   expiresOnMinutes: number,
-): Promise<string> {
+): string {
   const startsOn = new Date();
   const expiresOn = new Date(startsOn);
 

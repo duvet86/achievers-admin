@@ -1,3 +1,7 @@
+import type { ChangeEventHandler } from "react";
+
+import classNames from "classnames";
+
 interface Props {
   label?: string;
   name: string;
@@ -5,11 +9,19 @@ interface Props {
   required?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+  className?: string;
 }
 
-export function Checkbox({ label, name, required, ...props }: Props) {
+export function Checkbox({
+  label,
+  name,
+  required,
+  className,
+  ...props
+}: Props) {
   return (
-    <div className="form-control relative">
+    <div className={classNames("form-control relative", className)}>
       <label
         htmlFor={name}
         className="label cursor-pointer flex-col items-start"

@@ -14,7 +14,7 @@ export default function ProfileInput({ defaultValue }: Props) {
   );
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
-  const hasImage = selectedImage || profilePicturePath;
+  const hasImage = selectedImage ?? profilePicturePath;
 
   return (
     <div className="card card-side m-8 bg-base-100 shadow-xl">

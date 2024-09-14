@@ -7,17 +7,12 @@ import type { EditorState } from "lexical";
 import type { SessionCommandRequest } from "./services.server";
 
 import { json } from "@remix-run/node";
-import {
-  Link,
-  useFetcher,
-  useLoaderData,
-  useSearchParams,
-} from "@remix-run/react";
+import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
 
 import dayjs from "dayjs";
 import { useRef } from "react";
 import invariant from "tiny-invariant";
-import { ArrowLeft, DesignNib, Xmark } from "iconoir-react";
+import { DesignNib, Xmark } from "iconoir-react";
 
 import { getLoggedUserInfoAsync } from "~/services/.server";
 import { Editor, SubTitle, Title } from "~/components";
@@ -43,7 +38,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   const user = await getLoggedUserInfoAsync(request);
 
-  const bodyData: SessionCommandRequest = await request.json();
+  const bodyData = (await request.json()) as SessionCommandRequest;
 
   const sessionId = bodyData.sessionId;
   const reportFeedback = bodyData.reportFeedback;
@@ -63,8 +58,7 @@ export default function Index() {
   const [searchParams] = useSearchParams();
 
   const editorStateRef = useRef<EditorState>();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { state, submit } = (useFetcher as any)();
+  const { state, submit } = useFetcher();
 
   const isLoading = state === "loading";
 
@@ -91,7 +85,10 @@ export default function Index() {
 
   return (
     <>
-      <Title className="mb-4">
+      <Title
+        className="mb-4"
+        to={`/admin/sessions/${id}?${searchParams.toString()}`}
+      >
         Report for &quot;{student.fullName}&quot; on:{" "}
         {dayjs(attendedOn).format("MMMM D, YYYY")}
       </Title>
@@ -127,14 +124,6 @@ export default function Index() {
                   ? `Report has been signed off on ${dayjs(signedOffOn).format("MMMM D, YYYY")}`
                   : ""}
               </p>
-
-              <Link
-                to={`/admin/sessions/${id}?${searchParams}`}
-                className="btn w-44"
-              >
-                <ArrowLeft className="h-6 w-6" />
-                Back
-              </Link>
 
               {signedOffOn ? (
                 <button

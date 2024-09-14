@@ -245,7 +245,7 @@ export default function ToolbarPlugin({
             ? element.getTag()
             : element.getType();
           if (type in blockTypeToBlockName) {
-            setBlockType(type as keyof typeof blockTypeToBlockName);
+            setBlockType(type);
           }
         }
       }

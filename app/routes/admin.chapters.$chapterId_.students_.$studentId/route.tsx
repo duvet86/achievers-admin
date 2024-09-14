@@ -1,9 +1,19 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Link, useFetcher, useLoaderData } from "@remix-run/react";
+import {
+  Link,
+  useFetcher,
+  useLoaderData,
+  useSearchParams,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
-import { Clock, FloppyDiskArrowIn, Xmark } from "iconoir-react";
+import {
+  Clock,
+  FloppyDiskArrowIn,
+  WarningTriangle,
+  Xmark,
+} from "iconoir-react";
 
 import { Title, SelectSearch } from "~/components";
 
@@ -40,9 +50,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const formData = await request.formData();
 
   const mentorId = formData.get("mentorId")?.toString();
-  if (!mentorId) {
+  if (mentorId === undefined) {
     return json({
-      message: "No mentor selected",
+      mentorId: "",
+      message: "You need to select a mentor first",
     });
   }
 
@@ -59,7 +70,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return null;
+  return json({
+    mentorId,
+    message: null,
+  });
 }
 
 export default function Index() {
@@ -68,8 +82,11 @@ export default function Index() {
     availableMentors,
     studentWithMentors: { fullName, mentorToStudentAssignement },
   } = useLoaderData<typeof loader>();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { state, Form, submit } = (useFetcher as any)();
+  const { state, Form, data, submit } = useFetcher<{
+    message: string | null;
+    mentorId: string;
+  }>();
+  const [searchParams] = useSearchParams();
 
   const isLoading = state === "loading";
 
@@ -86,7 +103,13 @@ export default function Index() {
 
   return (
     <>
-      <Title to={`/admin/chapters/${chapterId}/students`}>
+      <Title
+        to={
+          searchParams.get("back_url")
+            ? searchParams.get("back_url")!
+            : `/admin/chapters/${chapterId}/students`
+        }
+      >
         Assign mentor to student
       </Title>
 
@@ -94,7 +117,7 @@ export default function Index() {
         <div className="flex flex-col gap-12 lg:flex-row">
           <div className="lg:w-1/2">
             <h4>Student</h4>
-            <div>{fullName}</div>
+            <div className="mt-4 text-xl">{fullName}</div>
           </div>
 
           <div>
@@ -106,9 +129,11 @@ export default function Index() {
             >
               <div className="lg:w-96">
                 <SelectSearch
+                  key={data?.mentorId}
                   showClearButton
                   name="mentorId"
                   placeholder="start typing to select a mentor"
+                  required
                   options={availableMentors.map(({ id, fullName }) => ({
                     label: fullName,
                     value: id.toString(),
@@ -132,6 +157,13 @@ export default function Index() {
                 )}
               </button>
             </Form>
+
+            {data?.message && (
+              <p className="flex items-center gap-2 text-error">
+                <WarningTriangle className="h-6 w-6" />
+                {data?.message}
+              </p>
+            )}
           </div>
         </div>
 

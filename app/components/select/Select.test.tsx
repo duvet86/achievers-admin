@@ -5,7 +5,7 @@ import { render, screen } from "@testing-library/react";
 import { Select } from "~/components";
 
 describe("Select", () => {
-  it("should display label", async () => {
+  it("should display label", () => {
     render(
       <Select
         name="select"
@@ -18,7 +18,7 @@ describe("Select", () => {
     expect(screen.getByLabelText("test")).toBeInTheDocument();
   });
 
-  it("should display required", async () => {
+  it("should display required", () => {
     render(
       <Select
         name="select"
@@ -32,7 +32,7 @@ describe("Select", () => {
     expect(screen.getByTestId("required")).toBeInTheDocument();
   });
 
-  it("should have initial value", async () => {
+  it("should have initial value", () => {
     render(
       <Select
         name="select"
@@ -45,7 +45,7 @@ describe("Select", () => {
     expect(screen.getByTestId("select")).toHaveValue("value");
   });
 
-  it("should ignore missing value", async () => {
+  it("should ignore missing value", () => {
     render(
       <Select
         name="select"

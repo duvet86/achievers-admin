@@ -51,45 +51,42 @@ export async function importSpreadsheetMentorsAsync(
   });
 
   await prisma.$transaction(async (tx) => {
-    for (let i = 0; i < uniqueUsers.length; i++) {
+    for (const uniqueUser of uniqueUsers) {
       const chapter = chapters.find((c) =>
-        areEqualIgnoreCase(c.name, uniqueUsers[i]["Chapter"]),
+        areEqualIgnoreCase(c.name, uniqueUser.Chapter),
       );
 
-      let error: string = "";
+      let error = "";
 
       const isDateofBirthValid =
-        uniqueUsers[i]["Date of Birth"] &&
-        isValidDate(new Date(uniqueUsers[i]["Date of Birth"]));
+        uniqueUser["Date of Birth"] &&
+        isValidDate(new Date(uniqueUser["Date of Birth"]));
 
-      if (uniqueUsers[i]["Date of Birth"] && !isDateofBirthValid) {
+      if (uniqueUser["Date of Birth"] && !isDateofBirthValid) {
         error += "Date of Birth is invalid.\n";
       }
 
       const isPoliceCheckDateValid =
-        uniqueUsers[i]["Police Check Renewal Date"] &&
-        isValidDate(new Date(uniqueUsers[i]["Police Check Renewal Date"]));
+        uniqueUser["Police Check Renewal Date"] &&
+        isValidDate(new Date(uniqueUser["Police Check Renewal Date"]));
 
-      if (
-        uniqueUsers[i]["Police Check Renewal Date"] &&
-        !isPoliceCheckDateValid
-      ) {
+      if (uniqueUser["Police Check Renewal Date"] && !isPoliceCheckDateValid) {
         error += "Police Check Renewal Date is invalid.\n";
       }
 
       const isWWCDateValid =
-        uniqueUsers[i]["WWC Check Renewal Date"] &&
-        isValidDate(new Date(uniqueUsers[i]["WWC Check Renewal Date"]));
+        uniqueUser["WWC Check Renewal Date"] &&
+        isValidDate(new Date(uniqueUser["WWC Check Renewal Date"]));
 
-      if (uniqueUsers[i]["WWC Check Renewal Date"] && !isWWCDateValid) {
+      if (uniqueUser["WWC Check Renewal Date"] && !isWWCDateValid) {
         error += "WWC Check Renewal Date is invalid.\n";
       }
 
       const isInductionDateValid =
-        uniqueUsers[i]["Induction Date"] &&
-        isValidDate(new Date(uniqueUsers[i]["Induction Date"]));
+        uniqueUser["Induction Date"] &&
+        isValidDate(new Date(uniqueUser["Induction Date"]));
 
-      if (uniqueUsers[i]["Induction Date"] && !isInductionDateValid) {
+      if (uniqueUser["Induction Date"] && !isInductionDateValid) {
         error += "Induction Date is invalid.\n";
       }
 
@@ -101,32 +98,32 @@ export async function importSpreadsheetMentorsAsync(
           addressPostcode: "",
           addressState: "",
           addressSuburb: "",
-          addressStreet: uniqueUsers[i]["Residential Address"]
-            ? uniqueUsers[i]["Residential Address"]
+          addressStreet: uniqueUser["Residential Address"]
+            ? uniqueUser["Residential Address"]
             : "",
-          email: uniqueUsers[i]["Email address"],
-          additionalEmail: uniqueUsers[i][
+          email: uniqueUser["Email address"],
+          additionalEmail: uniqueUser[
             "Additional email addresses (for intranet access)"
           ]
-            ? uniqueUsers[i]["Additional email addresses (for intranet access)"]
+            ? uniqueUser["Additional email addresses (for intranet access)"]
             : null,
           dateOfBirth: isDateofBirthValid
-            ? new Date(uniqueUsers[i]["Date of Birth"])
+            ? new Date(uniqueUser["Date of Birth"])
             : null,
-          emergencyContactAddress: uniqueUsers[i]["Emergency Contact Address"],
-          emergencyContactName: uniqueUsers[i]["Emergency Contact Name"],
-          emergencyContactNumber: uniqueUsers[i]["Emergency Contact Name"],
+          emergencyContactAddress: uniqueUser["Emergency Contact Address"],
+          emergencyContactName: uniqueUser["Emergency Contact Name"],
+          emergencyContactNumber: uniqueUser["Emergency Contact Name"],
           emergencyContactRelationship:
-            uniqueUsers[i]["Emergency Contact Relationship"],
+            uniqueUser["Emergency Contact Relationship"],
           endDate: null,
-          firstName: uniqueUsers[i]["First Name"],
+          firstName: uniqueUser["First Name"],
           azureADId: null,
-          lastName: uniqueUsers[i]["Last Name"],
-          mobile: uniqueUsers[i]["Mobile"].toString(),
+          lastName: uniqueUser["Last Name"],
+          mobile: uniqueUser.Mobile.toString(),
           hasApprovedToPublishPhotos:
-            uniqueUsers[i]["Approval to publish Potographs?"] === "Yes",
+            uniqueUser["Approval to publish Potographs?"] === "Yes",
           volunteerAgreementSignedOn:
-            uniqueUsers[i]["Volunteer Agreement Complete"] === "Yes"
+            uniqueUser["Volunteer Agreement Complete"] === "Yes"
               ? new Date()
               : undefined,
           chapterId: chapter?.id ?? chapters[0].id,
@@ -135,20 +132,18 @@ export async function importSpreadsheetMentorsAsync(
               bestTimeToContact: "Not specified",
               comment: "Existing mentor imported by file.",
               heardAboutUs: "Not specified",
-              isOver18: uniqueUsers[i]["Over the age of 18 years?"] === "Yes",
+              isOver18: uniqueUser["Over the age of 18 years?"] === "Yes",
               mentoringLevel: "",
-              occupation: uniqueUsers[i]["Occupation"]
-                ? uniqueUsers[i]["Occupation"]
-                : "",
-              preferredFrequency: uniqueUsers[i]["Attendance"]
-                ? uniqueUsers[i]["Attendance"]
+              occupation: uniqueUser.Occupation ? uniqueUser.Occupation : "",
+              preferredFrequency: uniqueUser.Attendance
+                ? uniqueUser.Attendance
                 : "Not specified",
               volunteerExperience: "Not specified",
-              role: uniqueUsers[i]["Role(s)"] ? uniqueUsers[i]["Role(s)"] : "",
+              role: uniqueUser["Role(s)"] ? uniqueUser["Role(s)"] : "",
             },
           },
           approvalbyMRC:
-            uniqueUsers[i]["Approved by MRC?"] === "Yes"
+            uniqueUser["Approved by MRC?"] === "Yes"
               ? {
                   create: {
                     completedBy: "imported mentor",
@@ -160,7 +155,7 @@ export async function importSpreadsheetMentorsAsync(
           induction: isInductionDateValid
             ? {
                 create: {
-                  completedOnDate: new Date(uniqueUsers[i]["Induction Date"]),
+                  completedOnDate: new Date(uniqueUser["Induction Date"]),
                   runBy: "imported mentor",
                   comment: "Imported mentor",
                 },
@@ -169,9 +164,7 @@ export async function importSpreadsheetMentorsAsync(
           policeCheck: isPoliceCheckDateValid
             ? {
                 create: {
-                  expiryDate: new Date(
-                    uniqueUsers[i]["Police Check Renewal Date"],
-                  ),
+                  expiryDate: new Date(uniqueUser["Police Check Renewal Date"]),
                   filePath: "",
                 },
               }
@@ -214,12 +207,10 @@ export async function importSpreadsheetMentorsAsync(
           wwcCheck: isWWCDateValid
             ? {
                 create: {
-                  expiryDate: new Date(
-                    uniqueUsers[i]["WWC Check Renewal Date"],
-                  ),
+                  expiryDate: new Date(uniqueUser["WWC Check Renewal Date"]),
                   filePath: "",
-                  wwcNumber: uniqueUsers[i]["WWC Check Number"]
-                    ? uniqueUsers[i]["WWC Check Number"].toString()
+                  wwcNumber: uniqueUser["WWC Check Number"]
+                    ? uniqueUser["WWC Check Number"].toString()
                     : "Not specified",
                 },
               }

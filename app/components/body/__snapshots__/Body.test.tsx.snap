@@ -61,7 +61,7 @@ exports[`Body > Body snapshot admin 1`] = `
             <a
               class="btn btn-ghost text-xl normal-case"
               data-discover="true"
-              href="/"
+              href="/admin/home"
             >
               <span
                 class="badge badge-lg ml-2"
@@ -125,10 +125,12 @@ exports[`Body > Body snapshot admin 1`] = `
               </label>
             </div>
             <ul
-              class="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow"
+              class="menu dropdown-content w-64 rounded-box bg-base-100 p-2 shadow"
               tabindex="0"
             >
-              <li>
+              <li
+                class="text-error"
+              >
                 <a
                   class="font-semibold"
                   data-discover="true"
@@ -190,7 +192,7 @@ exports[`Body > Body snapshot admin 1`] = `
           class="flex h-full flex-col"
         >
           <ul
-            class="menu w-80 flex-1 border-r border-primary bg-base-200 p-4 text-base-content"
+            class="menu w-64 flex-1 border-r border-primary bg-base-200 p-4 text-base-content"
           >
             <li>
               <a
@@ -679,7 +681,7 @@ exports[`Body > Body snapshot mentor 1`] = `
             <a
               class="btn btn-ghost text-xl normal-case"
               data-discover="true"
-              href="/"
+              href="/mentor/home"
             >
               <span
                 class="badge badge-lg ml-2"
@@ -743,10 +745,55 @@ exports[`Body > Body snapshot mentor 1`] = `
               </label>
             </div>
             <ul
-              class="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow"
+              class="menu dropdown-content w-64 rounded-box bg-base-100 p-2 shadow"
               tabindex="0"
             >
-              <li>
+              <li
+                class="text-info"
+              >
+                <a
+                  class="font-semibold"
+                  data-discover="true"
+                  href="/volunteer-agreement"
+                >
+                  <svg
+                    class="mr-2 w-6"
+                    color="currentColor"
+                    fill="none"
+                    height="1.5em"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                    width="1.5em"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M8.5 4H6C4.89543 4 4 4.89543 4 6V20C4 21.1046 4.89543 22 6 22H12"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M15.5 4H18C19.1046 4 20 4.89543 20 6V15"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M8 6.4V4.5C8 4.22386 8.22386 4 8.5 4C8.77614 4 9.00422 3.77604 9.05152 3.50398C9.19968 2.65171 9.77399 1 12 1C14.226 1 14.8003 2.65171 14.9485 3.50398C14.9958 3.77604 15.2239 4 15.5 4C15.7761 4 16 4.22386 16 4.5V6.4C16 6.73137 15.7314 7 15.4 7H8.6C8.26863 7 8 6.73137 8 6.4Z"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M15.5 20.5L17.5 22.5L22.5 17.5"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  Volunteer Agreement
+                </a>
+              </li>
+              <li
+                class="text-error"
+              >
                 <a
                   class="font-semibold"
                   data-discover="true"
@@ -808,7 +855,7 @@ exports[`Body > Body snapshot mentor 1`] = `
           class="flex h-full flex-col"
         >
           <ul
-            class="menu w-80 flex-1 border-r border-primary bg-base-200 p-4 text-base-content"
+            class="menu w-64 flex-1 border-r border-primary bg-base-200 p-4 text-base-content"
           >
             <li>
               <a
@@ -843,6 +890,140 @@ exports[`Body > Body snapshot mentor 1`] = `
                     />
                   </svg>
                   Home
+                </div>
+                <svg
+                  class="h-6 w-6"
+                  color="currentColor"
+                  fill="none"
+                  height="1.5em"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  width="1.5em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M9 6L15 12L9 18"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </a>
+            </li>
+            <li>
+              <a
+                class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
+                href="/mentor/roster"
+              >
+                <div
+                  class="flex items-center gap-4"
+                >
+                  <svg
+                    class="h-6 w-6"
+                    color="currentColor"
+                    fill="none"
+                    height="1.5em"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                    width="1.5em"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M15 4V2M15 4V6M15 4H10.5M3 10V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V10H3Z"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M3 10V6C3 4.89543 3.89543 4 5 4H7"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M7 2V6"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M21 10V6C21 4.89543 20.1046 4 19 4H18.5"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  Roster
+                </div>
+                <svg
+                  class="h-6 w-6"
+                  color="currentColor"
+                  fill="none"
+                  height="1.5em"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  width="1.5em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M9 6L15 12L9 18"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </a>
+            </li>
+            <li>
+              <a
+                class="mb-2 justify-between rounded font-semibold"
+                data-discover="true"
+                href="/mentor/reports"
+              >
+                <div
+                  class="flex items-center gap-4"
+                >
+                  <svg
+                    class="h-6 w-6"
+                    color="currentColor"
+                    fill="none"
+                    height="1.5em"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                    width="1.5em"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M10 9H6"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M15.5 11C14.1193 11 13 9.88071 13 8.5C13 7.11929 14.1193 6 15.5 6C16.8807 6 18 7.11929 18 8.5C18 9.88071 16.8807 11 15.5 11Z"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M6 6H9"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M18 18L13.5 15L11 17L6 13"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M3 20.4V3.6C3 3.26863 3.26863 3 3.6 3H20.4C20.7314 3 21 3.26863 21 3.6V20.4C21 20.7314 20.7314 21 20.4 21H3.6C3.26863 21 3 20.7314 3 20.4Z"
+                      stroke="currentColor"
+                    />
+                  </svg>
+                  Write Report
                 </div>
                 <svg
                   class="h-6 w-6"
@@ -989,7 +1170,7 @@ exports[`Body > Body snapshot mentor 1`] = `
               <a
                 class="mb-2 justify-between rounded font-semibold"
                 data-discover="true"
-                href="/mentor/roster"
+                href="/mentor/useful-resources"
               >
                 <div
                   class="flex items-center gap-4"
@@ -1005,147 +1186,25 @@ exports[`Body > Body snapshot mentor 1`] = `
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      d="M15 4V2M15 4V6M15 4H10.5M3 10V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V10H3Z"
+                      d="M4 21.4V2.6C4 2.26863 4.26863 2 4.6 2H16.2515C16.4106 2 16.5632 2.06321 16.6757 2.17574L19.8243 5.32426C19.9368 5.43679 20 5.5894 20 5.74853V21.4C20 21.7314 19.7314 22 19.4 22H4.6C4.26863 22 4 21.7314 4 21.4Z"
                       stroke="currentColor"
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     />
                     <path
-                      d="M3 10V6C3 4.89543 3.89543 4 5 4H7"
+                      d="M8 10L16 10"
                       stroke="currentColor"
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     />
                     <path
-                      d="M7 2V6"
+                      d="M8 18L16 18"
                       stroke="currentColor"
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     />
                     <path
-                      d="M21 10V6C21 4.89543 20.1046 4 19 4H18.5"
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                  Roster
-                </div>
-                <svg
-                  class="h-6 w-6"
-                  color="currentColor"
-                  fill="none"
-                  height="1.5em"
-                  stroke-width="1.5"
-                  viewBox="0 0 24 24"
-                  width="1.5em"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9 6L15 12L9 18"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </a>
-            </li>
-            <li>
-              <a
-                class="mb-2 justify-between rounded font-semibold"
-                data-discover="true"
-                href="/mentor/sessions"
-              >
-                <div
-                  class="flex items-center gap-4"
-                >
-                  <svg
-                    class="h-6 w-6"
-                    color="currentColor"
-                    fill="none"
-                    height="1.5em"
-                    stroke-width="1.5"
-                    viewBox="0 0 24 24"
-                    width="1.5em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M10 9H6"
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                    <path
-                      d="M15.5 11C14.1193 11 13 9.88071 13 8.5C13 7.11929 14.1193 6 15.5 6C16.8807 6 18 7.11929 18 8.5C18 9.88071 16.8807 11 15.5 11Z"
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                    <path
-                      d="M6 6H9"
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                    <path
-                      d="M18 18L13.5 15L11 17L6 13"
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                    <path
-                      d="M3 20.4V3.6C3 3.26863 3.26863 3 3.6 3H20.4C20.7314 3 21 3.26863 21 3.6V20.4C21 20.7314 20.7314 21 20.4 21H3.6C3.26863 21 3 20.7314 3 20.4Z"
-                      stroke="currentColor"
-                    />
-                  </svg>
-                  Sessions/Reports
-                </div>
-                <svg
-                  class="h-6 w-6"
-                  color="currentColor"
-                  fill="none"
-                  height="1.5em"
-                  stroke-width="1.5"
-                  viewBox="0 0 24 24"
-                  width="1.5em"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9 6L15 12L9 18"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </a>
-            </li>
-            <li>
-              <a
-                class="mb-2 justify-between rounded font-semibold"
-                data-discover="true"
-                href="/mentor/policy"
-              >
-                <div
-                  class="flex items-center gap-4"
-                >
-                  <svg
-                    class="h-6 w-6"
-                    color="currentColor"
-                    fill="none"
-                    height="1.5em"
-                    stroke-width="1.5"
-                    viewBox="0 0 24 24"
-                    width="1.5em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M20 12V5.74853C20 5.5894 19.9368 5.43679 19.8243 5.32426L16.6757 2.17574C16.5632 2.06321 16.4106 2 16.2515 2H4.6C4.26863 2 4 2.26863 4 2.6V21.4C4 21.7314 4.26863 22 4.6 22H13"
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                    <path
-                      d="M8 10H16M8 6H12M8 14H11"
+                      d="M8 14L12 14"
                       stroke="currentColor"
                       stroke-linecap="round"
                       stroke-linejoin="round"
@@ -1156,14 +1215,8 @@ exports[`Body > Body snapshot mentor 1`] = `
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     />
-                    <path
-                      d="M19.9923 15.125L22.5477 15.774C22.8137 15.8416 23.0013 16.0833 22.9931 16.3576C22.8214 22.1159 19.5 23 19.5 23C19.5 23 16.1786 22.1159 16.0069 16.3576C15.9987 16.0833 16.1863 15.8416 16.4523 15.774L19.0077 15.125C19.3308 15.043 19.6692 15.043 19.9923 15.125Z"
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
                   </svg>
-                  Policy
+                  Useful Resources
                 </div>
                 <svg
                   class="h-6 w-6"
@@ -1253,7 +1306,7 @@ exports[`Body > Body snapshot mentor and admin permissions 1`] = `
             <a
               class="btn btn-ghost text-xl normal-case"
               data-discover="true"
-              href="/"
+              href="/admin/home"
             >
               <span
                 class="badge badge-lg ml-2"
@@ -1317,10 +1370,12 @@ exports[`Body > Body snapshot mentor and admin permissions 1`] = `
               </label>
             </div>
             <ul
-              class="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow"
+              class="menu dropdown-content w-64 rounded-box bg-base-100 p-2 shadow"
               tabindex="0"
             >
-              <li>
+              <li
+                class="text-error"
+              >
                 <a
                   class="font-semibold"
                   data-discover="true"
@@ -1382,7 +1437,7 @@ exports[`Body > Body snapshot mentor and admin permissions 1`] = `
           class="flex h-full flex-col"
         >
           <ul
-            class="menu w-80 flex-1 border-r border-primary bg-base-200 p-4 text-base-content"
+            class="menu w-64 flex-1 border-r border-primary bg-base-200 p-4 text-base-content"
           >
             <li>
               <a
@@ -1439,7 +1494,7 @@ exports[`Body > Body snapshot mentor and admin permissions 1`] = `
             </li>
           </ul>
           <ul
-            class="menu w-80 border-r border-t border-primary bg-base-200 p-4 text-base-content"
+            class="menu w-64 border-r border-t border-primary bg-base-200 p-4 text-base-content"
           >
             <li>
               <a

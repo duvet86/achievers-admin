@@ -7,7 +7,7 @@ import {
   ShopFourTiles,
   Group,
   Calendar,
-  PrivacyPolicy,
+  Page,
   Settings,
   StatsReport,
   RefreshDouble,
@@ -42,37 +42,37 @@ function getLinks(
           icon: <User className="h-6 w-6" />,
           path: "/admin/users",
           label: "Mentors",
-          isVisible: linkMappings["User"],
+          isVisible: linkMappings.User,
         },
         {
           icon: <GraduationCap className="h-6 w-6" />,
           path: "/admin/students",
           label: "Students",
-          isVisible: linkMappings["Student"],
+          isVisible: linkMappings.Student,
         },
         {
           icon: <StatsReport className="h-6 w-6" />,
           path: "/admin/sessions",
           label: "Sessions/Reports",
-          isVisible: linkMappings["Session"],
+          isVisible: linkMappings.Session,
         },
         {
           icon: <ShopFourTiles className="h-6 w-6" />,
           path: "/admin/chapters",
           label: "Chapters",
-          isVisible: linkMappings["Chapter"],
+          isVisible: linkMappings.Chapter,
         },
         {
           icon: <Calendar className="h-6 w-6" />,
           path: "/admin/school-terms",
           label: "School Terms",
-          isVisible: linkMappings["SchoolTerm"],
+          isVisible: linkMappings.SchoolTerm,
         },
         {
           icon: <Settings className="h-6 w-6" />,
           path: "/admin/config",
           label: "Config",
-          isVisible: linkMappings["Config"],
+          isVisible: linkMappings.Config,
         },
       ]
     : [
@@ -80,6 +80,18 @@ function getLinks(
           icon: <Home className="h-6 w-6" />,
           path: "/mentor/home",
           label: "Home",
+          isVisible: true,
+        },
+        {
+          icon: <Calendar className="h-6 w-6" />,
+          path: "/mentor/roster",
+          label: "Roster",
+          isVisible: true,
+        },
+        {
+          icon: <StatsReport className="h-6 w-6" />,
+          path: "/mentor/reports",
+          label: "Write Report",
           isVisible: true,
         },
         {
@@ -95,21 +107,9 @@ function getLinks(
           isVisible: true,
         },
         {
-          icon: <Calendar className="h-6 w-6" />,
-          path: "/mentor/roster",
-          label: "Roster",
-          isVisible: true,
-        },
-        {
-          icon: <StatsReport className="h-6 w-6" />,
-          path: "/mentor/sessions",
-          label: "Sessions/Reports",
-          isVisible: true,
-        },
-        {
-          icon: <PrivacyPolicy className="h-6 w-6" />,
-          path: "/mentor/policy",
-          label: "Policy",
+          icon: <Page className="h-6 w-6" />,
+          path: "/mentor/useful-resources",
+          label: "Useful Resources",
           isVisible: true,
         },
       ];
@@ -127,11 +127,14 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
         className="drawer-overlay"
       ></label>
       <div className="flex h-full flex-col">
-        <ul className="menu w-80 flex-1 border-r border-primary bg-base-200 p-4 text-base-content">
+        <ul className="menu w-64 flex-1 border-r border-primary bg-base-200 p-4 text-base-content">
           {links
             .filter(({ isVisible }) => isVisible)
             .map(({ icon, label, path: value }, index) => (
-              <li key={index}>
+              <li
+                key={index}
+                onClick={() => document.getElementById("drawer")!.click()}
+              >
                 <NavLink
                   to={value}
                   className={({ isActive }) =>
@@ -150,7 +153,7 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
             ))}
         </ul>
         {isMentorAndAdmin && (
-          <ul className="menu w-80 border-r border-t border-primary bg-base-200 p-4 text-base-content">
+          <ul className="menu w-64 border-r border-t border-primary bg-base-200 p-4 text-base-content">
             <li>
               <Link
                 to={isCurrentViewAdmin ? "/mentor/home" : "/admin/home"}

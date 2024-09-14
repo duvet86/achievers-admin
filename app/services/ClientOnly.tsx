@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from "react";
 
 function subscribe() {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   return () => {};
 }
 
@@ -13,6 +14,7 @@ export function useHydrated() {
 }
 
 export function ClientOnly({
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   children,
   fallback = null,
 }: {

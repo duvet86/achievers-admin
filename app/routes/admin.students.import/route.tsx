@@ -59,9 +59,9 @@ export const action = async ({
     (res, fileStudent, index) => {
       if (!isValidDate(fileStudent["Date of Birth"])) {
         res.push(
-          `row number ${index + 1}: date of birth is incorrect: ${
-            fileStudent["Date of Birth"]
-          }`,
+          `row number ${index + 1}: date of birth is incorrect: ${fileStudent[
+            "Date of Birth"
+          ]?.toString()}`,
         );
       }
       return res;
@@ -126,7 +126,7 @@ export default function Index() {
 
   return (
     <>
-      <Title>Import from file</Title>
+      <Title to="/admin/students">Import students from file</Title>
 
       <Form
         method="post"

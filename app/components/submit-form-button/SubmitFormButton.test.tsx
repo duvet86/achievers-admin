@@ -5,7 +5,7 @@ import { render, screen } from "@testing-library/react";
 import { SubmitFormButton } from "~/components";
 
 describe("SubmitFormButton", () => {
-  it("should have initial state", async () => {
+  it("should have initial state", () => {
     render(<SubmitFormButton />);
 
     expect(screen.getByRole("button")).toHaveTextContent("Save");
@@ -13,25 +13,25 @@ describe("SubmitFormButton", () => {
     expect(screen.getByTestId("container")).toHaveClass("flex");
   });
 
-  it("should have stiky prop", async () => {
+  it("should have stiky prop", () => {
     render(<SubmitFormButton sticky />);
 
     expect(screen.getByTestId("container")).toHaveClass("flex sticky bottom-0");
   });
 
-  it("should have custom success message", async () => {
+  it("should have custom success message", () => {
     render(<SubmitFormButton successMessage="success" />);
 
     expect(screen.getByTestId("message")).toHaveTextContent("success");
   });
 
-  it("should have custom error message", async () => {
+  it("should have custom error message", () => {
     render(<SubmitFormButton errorMessage="error" />);
 
     expect(screen.getByTestId("message")).toHaveTextContent("error");
   });
 
-  it("should have custom label", async () => {
+  it("should have custom label", () => {
     render(<SubmitFormButton label="test" />);
 
     expect(screen.getByRole("button")).toHaveTextContent("test");

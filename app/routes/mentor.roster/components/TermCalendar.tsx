@@ -1,6 +1,6 @@
 import type { SessionLookup } from "../services.server";
 
-import { useFetcher } from "@remix-run/react";
+import { Link, useFetcher } from "@remix-run/react";
 import classNames from "classnames";
 import dayjs from "dayjs";
 
@@ -10,6 +10,8 @@ import {
   Check,
   WarningTriangle,
   ThumbsUp,
+  Xmark,
+  StatsReport,
 } from "iconoir-react";
 
 interface Props {
@@ -32,8 +34,7 @@ export default function TermCalendar({
   student,
   sessionDateToMentorIdForAllStudentsLookup,
 }: Props) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { state, submit } = (useFetcher as any)();
+  const { state, submit } = useFetcher();
 
   const isLoading = state === "loading";
   const sessionDateToMentorIdForStudentLookup =
@@ -110,6 +111,19 @@ export default function TermCalendar({
       )}
 
       <table className="table table-zebra table-pin-rows">
+        <thead>
+          <tr>
+            <th align="left">Session date</th>
+            <th align="left">Status</th>
+            <th align="left" className="hidden lg:table-cell">
+              Report completed
+            </th>
+            <th align="left" className="hidden lg:table-cell">
+              Signed off
+            </th>
+            <th align="right">Action</th>
+          </tr>
+        </thead>
         <tbody>
           {datesInTerm.map((attendedOn, index) => {
             const mentorIdForSessionForSelectedStudent =
@@ -128,20 +142,15 @@ export default function TermCalendar({
               sessionDateToMentorIdForAllStudentsLookup[attendedOn]?.userId ===
                 userId;
 
-            const hasReport = mentorIdForSessionForSelectedStudent?.hasReport;
             const isCancelled =
               mentorIdForSessionForSelectedStudent?.isCancelled;
-
-            const isActionDisabled = hasReport || isCancelled;
+            const completedOn =
+              mentorIdForSessionForSelectedStudent?.completedOn;
+            const signedOffOn =
+              mentorIdForSessionForSelectedStudent?.signedOffOn;
 
             return (
-              <tr
-                key={index}
-                className={classNames({
-                  "bg-success": isMySession && hasReport,
-                  "bg-error": isMySession && isCancelled,
-                })}
-              >
+              <tr key={index}>
                 <td className="w-1/6 border-r font-medium text-gray-800">
                   <div className="flex flex-col">
                     <span>{dayjs(attendedOn).format("dddd")}</span>
@@ -168,10 +177,32 @@ export default function TermCalendar({
                     </div>
                   )}
                 </td>
+                <td className="hidden lg:table-cell">
+                  {completedOn ? (
+                    <Check className="h-4 w-4 text-success" />
+                  ) : (
+                    <Xmark className="h-4 w-4 text-error" />
+                  )}
+                </td>
+                <td className="hidden lg:table-cell">
+                  {signedOffOn ? (
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-success" />
+                      {dayjs(signedOffOn).format("MMMM D, YYYY")}
+                    </div>
+                  ) : (
+                    <Xmark className="h-4 w-4 text-error" />
+                  )}
+                </td>
                 <td align="right">
                   {(() => {
-                    if (isActionDisabled) {
-                      return null;
+                    if (isCancelled) {
+                      return (
+                        <div className="badge gap-2 p-5 text-error">
+                          <WarningTriangle className="h-6 w-6" />
+                          Session cancelled
+                        </div>
+                      );
                     }
 
                     if (isCurrentDateAlreadyBookedByMe) {
@@ -183,24 +214,41 @@ export default function TermCalendar({
                       );
                     }
 
-                    if (isMySession) {
+                    if (isMySession || completedOn) {
                       return (
-                        <button
-                          className="btn btn-error w-28"
-                          onClick={removeMentorForSession(
-                            mentorIdForSessionForSelectedStudent!.sessionId,
+                        <div className="flex items-center justify-end gap-6">
+                          <Link
+                            to={`/mentor/reports?selectedStudentId=${student.id}&selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00Z&back_url=/mentor/roster`}
+                            className={classNames("btn", {
+                              "btn-warning w-40": !completedOn,
+                              // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+                              "btn-info w-36": completedOn || signedOffOn,
+                            })}
+                          >
+                            <StatsReport className="h-6 w-6" />
+                            {completedOn || signedOffOn
+                              ? "View Report"
+                              : "Write Report"}
+                          </Link>
+                          {!completedOn && (
+                            <button
+                              className="btn btn-error w-36"
+                              onClick={removeMentorForSession(
+                                mentorIdForSessionForSelectedStudent!.sessionId,
+                              )}
+                            >
+                              <WarningTriangle className="h-6 w-6" />
+                              Cancel
+                            </button>
                           )}
-                        >
-                          <WarningTriangle className="h-6 w-6" />
-                          Cancel
-                        </button>
+                        </div>
                       );
                     }
 
                     if (isSessionBookedByPartner) {
                       return (
                         <button
-                          className="btn btn-warning w-28"
+                          className="btn btn-warning w-36"
                           onClick={stealSessionFromPartner(
                             mentorIdForSessionForSelectedStudent!.sessionId,
                             userId,
@@ -214,7 +262,7 @@ export default function TermCalendar({
 
                     return (
                       <button
-                        className="btn btn-success w-28"
+                        className="btn btn-success w-36"
                         onClick={assignMentorForSession(
                           userId,
                           chapterId,
@@ -227,18 +275,6 @@ export default function TermCalendar({
                       </button>
                     );
                   })()}
-                  {isMySession && hasReport && (
-                    <div className="badge gap-2 p-5 text-success">
-                      <Check className="h-6 w-6" />
-                      Report completed
-                    </div>
-                  )}
-                  {isMySession && isCancelled && (
-                    <div className="badge gap-2 p-5 text-error">
-                      <WarningTriangle className="h-6 w-6" />
-                      Session cancelled
-                    </div>
-                  )}
                 </td>
               </tr>
             );

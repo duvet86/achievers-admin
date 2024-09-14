@@ -33,6 +33,7 @@ export async function readFormDataAsStringsAsync(
   return Object.entries(Object.fromEntries(formData)).reduce<
     Record<string, string>
   >((res, [key, value]) => {
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     res[key] = value?.toString().trim();
 
     return res;
@@ -40,6 +41,7 @@ export async function readFormDataAsStringsAsync(
 }
 
 export function parseJwt<T>(token: string): T {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
 }
 
@@ -50,11 +52,12 @@ export function isStringNullOrEmpty(
 }
 
 export function isEmail(email: string) {
-  return email
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-    );
+  const emailRegex = RegExp(
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    "g",
+  );
+
+  return emailRegex.exec(email.toLowerCase()) != null;
 }
 
 export function getEnvironment(request: Request): Environment {
@@ -234,7 +237,7 @@ export function range(start: number, end: number) {
   return Array.from({ length }, (_, i) => start + i);
 }
 
-export function getDatesForTerm(startDate: Dayjs, endDate: Dayjs) {
+export function getDatesForTerm(startDate: Dayjs, endDate: Dayjs): string[] {
   let firstDayOfTermStart = startDate.startOf("week").day(6);
   let firstDayOfTermEnd = endDate.startOf("week").day(6);
 
@@ -252,12 +255,9 @@ export function getDatesForTerm(startDate: Dayjs, endDate: Dayjs) {
 
   const dates: string[] = [];
   for (let i = 0; i <= numberOfWeeksInTerm; i++) {
-    const date = firstDayOfTermStart
-      .clone()
-      .add(i, "week")
-      .format("YYYY-MM-DD");
+    const date = firstDayOfTermStart.clone().add(i, "week");
 
-    dates.push(date);
+    dates.push(date.format("YYYY-MM-DD") + "T00:00:00Z");
   }
 
   return dates;

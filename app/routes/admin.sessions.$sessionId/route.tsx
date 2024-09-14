@@ -1,83 +1,59 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { json, redirect } from "@remix-run/node";
-import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
+import { json } from "@remix-run/node";
+import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
-import { Xmark, Check, StatsReport, WarningCircle } from "iconoir-react";
-
 import {
-  Title,
-  Select,
-  SubTitle,
-  SubmitFormButton,
-  Textarea,
-} from "~/components";
+  Xmark,
+  Check,
+  StatsReport,
+  WarningCircle,
+  EditPencil,
+} from "iconoir-react";
 
-import {
-  getMentorsForStudent,
-  getSessionByIdAsync,
-  updateSessionAsync,
-} from "./services.server";
+import { Title, Textarea } from "~/components";
+
+import { getSessionByIdAsync } from "./services.server";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.sessionId, "sessionId not found");
 
   const session = await getSessionByIdAsync(Number(params.sessionId));
 
-  const mentorsForStudent = await getMentorsForStudent(session.student.id);
-
   return json({
+    attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
     session,
-    mentorsForStudent,
   });
-}
-
-export async function action({ params, request }: ActionFunctionArgs) {
-  invariant(params.sessionId, "sessionId not found");
-
-  const formData = await request.formData();
-
-  await updateSessionAsync(
-    Number(params.sessionId),
-    Number(formData.get("mentorId")),
-  );
-
-  const url = new URL(request.url);
-  const backURL = url.searchParams.get("backURL");
-
-  if (backURL) {
-    return redirect(backURL);
-  }
-
-  return redirect("/admin/sessions");
 }
 
 export default function Index() {
   const {
+    attendedOnLabel,
     session: {
+      id,
       chapter,
       user,
       student,
-      attendedOn,
       isCancelled,
       reasonCancelled,
       hasReport,
       completedOn,
       signedOffOn,
     },
-    mentorsForStudent,
   } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
 
-  const backURL = searchParams.get("backURL");
+  const backURL = searchParams.get("back_url");
 
   return (
     <>
-      <div className="mb-4 flex justify-between">
-        <Title to={backURL ? backURL : `/admin/sessions?${searchParams}`}>
+      <div className="flex justify-between">
+        <Title
+          to={backURL ? backURL : `/admin/sessions?${searchParams.toString()}`}
+        >
           Session of &quot;
-          {dayjs(attendedOn, "YYYY-MM-DD").format("DD/MM/YYYY")}&quot;
+          {attendedOnLabel}&quot;
         </Title>
 
         {isCancelled ? (
@@ -86,25 +62,34 @@ export default function Index() {
             <span>Session has been cancelled</span>
           </div>
         ) : completedOn ? null : (
-          <div className="w-48">
-            <Link
-              to={`cancel?${searchParams}`}
-              className="btn btn-error btn-block gap-2"
-            >
-              <Xmark className="h-6 w-6" /> Cancel session
-            </Link>
-          </div>
+          <Link
+            to={`cancel?${searchParams.toString()}`}
+            className="btn btn-error w-48 gap-2"
+          >
+            <Xmark className="h-6 w-6" /> Cancel session
+          </Link>
         )}
       </div>
 
-      <div className="mb-8 flex flex-col gap-8">
+      <div className="my-8 flex flex-col gap-12">
+        <div className="flex items-center gap-2 border-b p-2">
+          <div className="w-72 font-bold">Session</div>
+          <div className="flex-1">{attendedOnLabel}</div>
+        </div>
+
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Chapter</div>
           <div className="flex-1">{chapter.name}</div>
         </div>
+
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Student</div>
           <div className="flex-1">{student.fullName}</div>
+        </div>
+
+        <div className="flex items-center gap-2 border-b p-2">
+          <div className="w-72 font-bold">Mentor</div>
+          <div className="flex-1">{user.fullName}</div>
         </div>
 
         {isCancelled ? (
@@ -125,11 +110,18 @@ export default function Index() {
               </div>
               {hasReport && (
                 <Link
-                  to={`report?${searchParams}`}
+                  to={`report?${searchParams.toString()}`}
                   className="btn btn-success gap-2"
                 >
-                  Go to report
-                  <StatsReport className="h-6 w-6" />
+                  <StatsReport /> Go to report
+                </Link>
+              )}
+              {!hasReport && user.id && (
+                <Link
+                  to={`/admin/sessions/${id}/mentors/${user.id}/write-report?back_url=/admin/sessions/${id}`}
+                  className="btn btn-success gap-2"
+                >
+                  <EditPencil /> Write report on behalf
                 </Link>
               )}
             </div>
@@ -142,7 +134,7 @@ export default function Index() {
                   <Xmark className="h-6 w-6 text-error" />
                 )}
               </div>
-              {completedOn && dayjs(completedOn).format("YYYY-MM-DD")}
+              {completedOn && dayjs(completedOn).format("MMMM D, YYYY")}
             </div>
             <div className="flex items-center gap-2 border-b p-2">
               <div className="w-72 font-bold">Is report signed off?</div>
@@ -153,34 +145,11 @@ export default function Index() {
                   <Xmark className="h-6 w-6 text-error" />
                 )}
               </div>
-              {signedOffOn && dayjs(signedOffOn).format("YYYY-MM-DD")}
+              {signedOffOn && dayjs(signedOffOn).format("MMMM D, YYYY")}
             </div>
           </>
         )}
       </div>
-
-      {!isCancelled && (
-        <>
-          <SubTitle>Update mentor</SubTitle>
-
-          <Form method="post">
-            <Select
-              label="Mentor"
-              name="mentorId"
-              defaultValue={user.id.toString()}
-              options={mentorsForStudent.map(({ user: { id, fullName } }) => ({
-                label: fullName,
-                value: id.toString(),
-              }))}
-              disabled={!!completedOn}
-            />
-
-            {!completedOn && (
-              <SubmitFormButton className="mt-6 justify-between" />
-            )}
-          </Form>
-        </>
-      )}
     </>
   );
 }

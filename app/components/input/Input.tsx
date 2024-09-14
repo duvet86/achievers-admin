@@ -1,5 +1,7 @@
 import type { HTMLInputTypeAttribute } from "react";
 
+import { Xmark } from "iconoir-react";
+
 interface Props {
   name: string;
   placeholder?: string;
@@ -9,6 +11,9 @@ interface Props {
   readOnly?: boolean;
   disabled?: boolean;
   required?: boolean;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  hasButton?: boolean;
+  onButtonClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 export function Input({
@@ -17,6 +22,9 @@ export function Input({
   name,
   type = "text",
   required,
+  hasButton,
+  onButtonClick,
+  disabled,
   ...props
 }: Props) {
   return (
@@ -34,16 +42,29 @@ export function Input({
           )}
         </label>
       )}
-      <input
-        data-testid="textinput"
-        type={type}
-        id={name}
-        name={name}
-        placeholder={placeholder ?? label}
-        required={required}
-        className="input input-bordered w-full"
-        {...props}
-      />
+      <div className="join">
+        <input
+          data-testid="textinput"
+          type={type}
+          id={name}
+          name={name}
+          placeholder={placeholder ?? label}
+          required={required}
+          className="input join-item input-bordered w-full"
+          disabled={disabled}
+          {...props}
+        />
+
+        {hasButton && (
+          <button
+            className="btn btn-square join-item"
+            onClick={onButtonClick}
+            disabled={disabled}
+          >
+            <Xmark />
+          </button>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import type { Tracer, Attributes } from "@opentelemetry/api";
 
 declare global {
+  // eslint-disable-next-line no-var
   var __appinsightsTracer__: Tracer | undefined;
 }
 

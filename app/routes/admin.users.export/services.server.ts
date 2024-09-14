@@ -78,7 +78,7 @@ export async function exportMentorsToSpreadsheetAsync() {
     utils.json_to_sheet<SpeadsheetUser>(speadsheetMentors),
   );
 
-  const buf = write(wb, { type: "buffer", bookType: "xlsx" });
+  const buf = write(wb, { type: "buffer", bookType: "xlsx" }) as ReadableStream;
 
   return buf;
 }

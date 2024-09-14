@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import type { BaseSelection, LexicalEditor } from "lexical";
 import type { Dispatch } from "react";
 
@@ -295,7 +294,7 @@ function useFloatingLinkEditorToolbar(
           focusNode,
           $isAutoLinkNode,
         );
-        if (!(focusLinkNode || focusAutoLinkNode)) {
+        if (!(focusLinkNode ?? focusAutoLinkNode)) {
           setIsLink(false);
           return;
         }

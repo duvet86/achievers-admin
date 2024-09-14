@@ -23,3 +23,5 @@ export * from "./forbidden/Forbidden";
 export * from "./unexpected-error/UnexpectedError";
 
 export * from "./editor/Editor";
+
+export * from "./table-header-sort/TableHeaderSort";

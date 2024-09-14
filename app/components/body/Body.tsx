@@ -8,7 +8,6 @@ import { Navbar } from "../navbar/Navbar";
 interface Props {
   currentView: string;
   isMentorAndAdmin: boolean;
-  hasCompletedVolunteerAgreement?: boolean;
   version: string;
   userName: string;
   environment: Environment;
@@ -17,20 +16,18 @@ interface Props {
 
 export function Body({
   userName,
-  hasCompletedVolunteerAgreement,
   currentView,
   isMentorAndAdmin,
   version,
   environment,
   linkMappings,
 }: Props) {
-  const showDrawer = currentView === "admin" || hasCompletedVolunteerAgreement;
-
   return (
     <main className="drawer lg:drawer-open">
       <input id="drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
         <Navbar
+          currentView={currentView}
           userName={userName}
           environment={environment}
           version={version}
@@ -41,13 +38,11 @@ export function Body({
         </main>
       </div>
 
-      {showDrawer && (
-        <Drawer
-          currentView={currentView}
-          isMentorAndAdmin={isMentorAndAdmin}
-          linkMappings={linkMappings}
-        />
-      )}
+      <Drawer
+        currentView={currentView}
+        isMentorAndAdmin={isMentorAndAdmin}
+        linkMappings={linkMappings}
+      />
     </main>
   );
 }

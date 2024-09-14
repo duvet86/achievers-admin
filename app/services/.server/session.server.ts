@@ -37,7 +37,7 @@ export interface CurentUserInfo {
 const loginPath = "/.auth/login/aad?post_login_redirect_uri=/";
 
 export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
-  if (process.env.CI || process.env.NODE_ENV !== "production") {
+  if (process.env.CI ?? process.env.NODE_ENV !== "production") {
     return await getSessionInfoAsync_dev(request);
   } else {
     const idToken = request.headers.get("X-MS-TOKEN-AAD-ID-TOKEN");
@@ -84,6 +84,11 @@ export async function getLoggedUserInfoAsync(
   const loggedUser = parseJwt<CurentUserInfo>(tokenInfo.idToken);
 
   if (!loggedUser.roles || loggedUser.roles.length === 0) {
+    trackException(
+      new Error(
+        `getLoggedUserInfoAsync: loggedUser has incorrect roles: ${JSON.stringify(loggedUser)}`,
+      ),
+    );
     throw redirect("/403");
   }
 
@@ -102,6 +107,32 @@ export function getPermissionsAbility(roles: ROLES[]) {
     const parts = role.split(".");
 
     if (parts[0] === "ChapterCoordinator") {
+      if (parts[3] === "all") {
+        return [
+          {
+            action: parts[1],
+            subject: "ChapterArea",
+          } as RawRuleOf<AppAbility>,
+          {
+            action: parts[1],
+            subject: "SessionArea",
+          } as RawRuleOf<AppAbility>,
+          {
+            action: parts[1],
+            subject: "StudentArea",
+          } as RawRuleOf<AppAbility>,
+          {
+            action: parts[1],
+            subject: "UserArea",
+          } as RawRuleOf<AppAbility>,
+          {
+            action: parts[1],
+            subject: "Chapter",
+            conditions: { id: Number(parts[2]) },
+          } as RawRuleOf<AppAbility>,
+        ];
+      }
+
       return [
         {
           action: parts[1],

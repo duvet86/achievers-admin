@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useEffect, useRef, useState } from "react";
 
 import { Xmark } from "iconoir-react";
@@ -16,6 +14,8 @@ interface Props {
   placeholder?: string;
   defaultValue?: string;
   showClearButton?: boolean;
+  required?: boolean;
+  disabled?: boolean;
   options: Option[];
 }
 
@@ -31,6 +31,8 @@ export function SelectSearch({
   placeholder,
   defaultValue,
   showClearButton,
+  required,
+  disabled,
 }: Props) {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedValue, setSelectedValue] = useState<Option | null>(null);
@@ -79,9 +81,19 @@ export function SelectSearch({
       ref={ref}
       onClick={() => searchInputRef.current?.focus()}
     >
-      <label htmlFor={name} className="label">
-        <span className="label-text">{label}</span>
-      </label>
+      {label && (
+        <label htmlFor={name} className="label">
+          <span className="label-text">{label}</span>
+          {required && (
+            <span
+              data-testid="required"
+              className="label-text-alt absolute right-1 top-9 text-2xl text-error"
+            >
+              *
+            </span>
+          )}
+        </label>
+      )}
 
       <div className="join w-full">
         <input
@@ -89,6 +101,8 @@ export function SelectSearch({
           className="input join-item input-bordered flex-1"
           value={selectedOption.label}
           placeholder={label ?? placeholder}
+          required={required}
+          disabled={disabled}
           readOnly
         />
         {showClearButton && (
@@ -108,6 +122,8 @@ export function SelectSearch({
         type="text"
         name={name}
         data-testid="autocomplete-hidden"
+        required={required}
+        disabled={disabled}
       />
 
       <ul
@@ -118,7 +134,7 @@ export function SelectSearch({
           <input
             ref={searchInputRef}
             type="text"
-            className="input input-bordered"
+            className="select-search-input input input-bordered"
             placeholder="Start typing to search..."
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setSearchTerm(e.target.value)
@@ -127,12 +143,18 @@ export function SelectSearch({
         </li>
         {viewOptions.map((option, index) => (
           <li key={index}>
-            <button onClick={onOptionClick(option)}>{option.label}</button>
+            <button type="button" onClick={onOptionClick(option)}>
+              {option.label}
+            </button>
           </li>
         ))}
         {viewOptions.length === 0 && (
           <li>
-            <button className="italic" onClick={(e) => e.preventDefault()}>
+            <button
+              type="button"
+              className="italic"
+              onClick={(e) => e.preventDefault()}
+            >
               No items
             </button>
           </li>

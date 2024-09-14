@@ -1,4 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { Prisma } from "@prisma/client";
 
 import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
@@ -8,7 +9,7 @@ import { useRef } from "react";
 import { CoinsSwap, PageEdit } from "iconoir-react";
 
 import { getPaginationRange } from "~/services";
-import { Title, Pagination } from "~/components";
+import { Title, Pagination, TableHeaderSort } from "~/components";
 
 import {
   getMentorsWithStudentsAsync,
@@ -26,6 +27,13 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const previousPageSubmit = url.searchParams.get("previousBtn");
   const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
   const nextPageSubmit = url.searchParams.get("nextBtn");
+
+  const sortFullNameSubmit: Prisma.SortOrder | undefined =
+    (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? undefined;
+
+  const sortCountStudentsSubmit: Prisma.SortOrder | undefined =
+    (url.searchParams.get("sortCountStudents") as Prisma.SortOrder) ??
+    undefined;
 
   let searchTerm = url.searchParams.get("searchTerm");
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
@@ -59,6 +67,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     Number(params.chapterId),
     searchTerm,
     currentPageNumber,
+    sortFullNameSubmit,
+    sortCountStudentsSubmit,
   );
 
   const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
@@ -69,12 +79,21 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     currentPageNumber,
     count,
     mentorsWithStudents,
+    sortFullNameSubmit,
+    sortCountStudentsSubmit,
   });
 }
 
 export default function Index() {
-  const { chapterId, mentorsWithStudents, count, currentPageNumber, range } =
-    useLoaderData<typeof loader>();
+  const {
+    chapterId,
+    mentorsWithStudents,
+    count,
+    currentPageNumber,
+    range,
+    sortFullNameSubmit,
+    sortCountStudentsSubmit,
+  } = useLoaderData<typeof loader>();
 
   const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -86,7 +105,15 @@ export default function Index() {
   return (
     <>
       <div className="flex items-center justify-between">
-        <Title to="/admin/chapters">Mentors with students</Title>
+        <Title
+          to={
+            searchParams.get("back_url")
+              ? searchParams.get("back_url")!
+              : "/admin/chapters"
+          }
+        >
+          Mentors with students
+        </Title>
 
         <Link
           to={`/admin/chapters/${chapterId}/students`}
@@ -107,13 +134,21 @@ export default function Index() {
             <thead>
               <tr>
                 <th align="left" className="p-2">
-                  Mentors
+                  <TableHeaderSort
+                    sortPropName="sortFullName"
+                    sortPropValue={sortFullNameSubmit}
+                    label="Mentors"
+                  />
                 </th>
                 <th align="left" className="p-2">
                   Frequency
                 </th>
                 <th align="left" className="p-2">
-                  Students
+                  <TableHeaderSort
+                    sortPropName="sortCountStudents"
+                    sortPropValue={sortCountStudentsSubmit}
+                    label="Students"
+                  />
                 </th>
                 <th align="right" className="p-2">
                   Action
@@ -142,7 +177,7 @@ export default function Index() {
                     </td>
                     <td className="border p-2">
                       <Link
-                        to={`${id}?${searchParams}`}
+                        to={`${id}?${searchParams.toString()}`}
                         className="btn btn-success btn-xs w-full gap-2"
                       >
                         <PageEdit className="h-4 w-4" />

@@ -14,7 +14,7 @@ import sourceMapSupport from "source-map-support";
 
 initAppInsightsLogger();
 sourceMapSupport.install();
-installGlobals({ nativeFetch: true });
+installGlobals();
 
 if (process.env.ENABLE_EMAIL_REMINDERS === "true") {
   import("./background-jobs/index.js").then(() => {
