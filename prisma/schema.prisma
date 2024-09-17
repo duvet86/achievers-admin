@@ -43,8 +43,10 @@ model User {
 
   profilePicturePath         String?
   hasApprovedToPublishPhotos Boolean?
-  endDate                    DateTime?
   volunteerAgreementSignedOn DateTime?
+
+  endDate   DateTime?
+  endReason String?   @db.TinyText
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

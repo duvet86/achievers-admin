@@ -311,6 +311,13 @@ export default defineConfig({
                   index: true,
                 },
               );
+              route(
+                ":userId/end-reason",
+                "routes/admin.users.$userId.end-reason/route.tsx",
+                {
+                  index: true,
+                },
+              );
               route("export", "routes/admin.users.export/route.tsx", {
                 index: true,
               });

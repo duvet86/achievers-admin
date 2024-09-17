@@ -30,6 +30,11 @@
   color: inherit;
 }
 
+.textarea:disabled,
+.textarea[disabled] {
+  color: inherit;
+}
+
 li input.input.input-bordered.select-search-input {
   @apply bg-slate-100;
 }

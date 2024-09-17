@@ -14,13 +14,14 @@ export async function getUserByIdAsync(id: number) {
   });
 }
 
-export async function archiveUserAsync(userId: number) {
+export async function archiveUserAsync(userId: number, endReason: string) {
   return await prisma.user.update({
     where: {
       id: userId,
     },
     data: {
       endDate: new Date(),
+      endReason,
     },
   });
 }

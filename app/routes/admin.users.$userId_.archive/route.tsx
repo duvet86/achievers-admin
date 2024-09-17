@@ -11,7 +11,7 @@ import {
   removeRoleFromUserAsync,
   trackEvent,
 } from "~/services/.server";
-import { Title } from "~/components";
+import { Textarea, Title } from "~/components";
 
 import { archiveUserAsync, getUserByIdAsync } from "./services.server";
 
@@ -27,6 +27,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 export async function action({ request, params }: ActionFunctionArgs) {
   invariant(params.userId, "userId not found");
+
+  const formData = await request.formData();
+  const endReason = formData.get("endReason")?.toString();
 
   const user = await getUserByIdAsync(Number(params.userId));
 
@@ -49,7 +52,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     trackEvent("REVOKE_ACCESS_MENTOR");
   }
 
-  await archiveUserAsync(user.id);
+  await archiveUserAsync(user.id, endReason!);
 
   return redirect("/admin/users");
 }
@@ -64,7 +67,11 @@ export default function Chapter() {
 
       <Form method="post">
         <fieldset disabled={transition.state === "submitting"}>
-          <p>Are you sure you want to archive &quot;{user.fullName}&quot;?</p>
+          <p className="my-4">
+            Are you sure you want to archive &quot;{user.fullName}&quot;?
+          </p>
+
+          <Textarea placeholder="Reason to Archive" name="endReason" required />
 
           <div className="mt-6 flex items-center justify-end gap-6">
             <Link

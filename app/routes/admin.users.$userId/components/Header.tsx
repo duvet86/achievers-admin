@@ -31,7 +31,7 @@ export function Header(props: Props) {
       <div className="dropdown dropdown-end">
         <div title="actions" tabIndex={0} className="btn w-40 gap-2">
           Actions
-          <NavArrowDown className="h-6 w-6" />
+          <NavArrowDown />
         </div>
         <ul
           tabIndex={0}
@@ -53,7 +53,7 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
           relative="path"
           className="gap-4 font-semibold text-success"
         >
-          <OnTag className="h-6 w-6" />
+          <OnTag />
           Re enable mentor
         </Link>
       </li>
@@ -64,7 +64,7 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
     return (
       <li>
         <Link to="archive" className="gap-4 font-semibold text-error">
-          <BinFull className="h-6 w-6" />
+          <BinFull />
           Archive
         </Link>
       </li>
@@ -75,13 +75,13 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
     <>
       <li>
         <Link to="give-access" className="gap-4 font-semibold text-success">
-          <Key className="h-6 w-6" />
+          <Key />
           Give access
         </Link>
       </li>
       <li>
         <Link to="archive" className="gap-4 font-semibold text-error">
-          <BinFull className="h-6 w-6" />
+          <BinFull />
           Archive
         </Link>
       </li>
@@ -94,10 +94,13 @@ function getMessage({ endDate, mentorAppRoleAssignmentId }: Props) {
     return (
       <p
         title="archived"
-        className="flex items-center gap-2 rounded bg-error px-6 py-2"
+        className="flex items-center gap-4 rounded bg-error px-6 py-2"
       >
-        <WarningTriangle className="h-6 w-6" />
-        This mentor is archived!
+        <WarningTriangle />
+        This mentor is archived!{" "}
+        <Link to="end-reason" className="link">
+          View reason
+        </Link>
       </p>
     );
   }
@@ -108,7 +111,7 @@ function getMessage({ endDate, mentorAppRoleAssignmentId }: Props) {
         title="No access"
         className="flex items-center gap-2 rounded bg-warning px-6 py-2"
       >
-        <WarningTriangle className="h-6 w-6" />
+        <WarningTriangle />
         This mentor does NOT have access to the system!
       </p>
     );
