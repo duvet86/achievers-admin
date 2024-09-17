@@ -1,11 +1,9 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useLoaderData, useNavigation } from "@remix-run/react";
-
+import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
-
-import { Xmark, Key } from "iconoir-react";
+import { Key } from "iconoir-react";
 
 import { Title } from "~/components";
 
@@ -70,7 +68,7 @@ export default function Chapter() {
 
   return (
     <>
-      <Title>
+      <Title to={`/admin/users/${user.id}`}>
         Invite &quot;{user.fullName}&quot; to the achievers&apos; web app
       </Title>
 
@@ -81,15 +79,7 @@ export default function Chapter() {
             achievers&apos; web app?
           </p>
 
-          <div className="mt-6 flex items-center justify-end gap-6">
-            <Link
-              className="btn btn-neutral w-44"
-              to={`/admin/users/${user.id}`}
-            >
-              <Xmark className="h-6 w-6" />
-              Cancel
-            </Link>
-
+          <div className="mt-6 flex items-center justify-end">
             <button className="btn btn-success w-44 gap-4" type="submit">
               <Key className="h-6 w-6" />
               Give access

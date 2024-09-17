@@ -1,9 +1,9 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useLoaderData, useNavigation } from "@remix-run/react";
+import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
-import { OnTag, Xmark } from "iconoir-react";
+import { OnTag } from "iconoir-react";
 
 import { Title } from "~/components";
 
@@ -33,7 +33,9 @@ export default function Index() {
 
   return (
     <>
-      <Title>Re enable &quot;{student.fullName}&quot;</Title>
+      <Title to={`/admin/students/${student.id}`}>
+        Re enable &quot;{student.fullName}&quot;
+      </Title>
 
       <Form method="post">
         <fieldset disabled={transition.state === "loading"}>
@@ -42,15 +44,7 @@ export default function Index() {
             &quot;?
           </p>
 
-          <div className="mt-6 flex items-center justify-end gap-6">
-            <Link
-              className="btn btn-neutral w-44"
-              to={`/admin/students/${student.id}`}
-            >
-              <Xmark className="h-6 w-6" />
-              Cancel
-            </Link>
-
+          <div className="mt-6 flex items-center justify-end">
             <button className="btn btn-success w-44 gap-4" type="submit">
               <OnTag className="h-6 w-6" />
               Re enable

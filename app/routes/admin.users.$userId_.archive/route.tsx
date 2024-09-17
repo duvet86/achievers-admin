@@ -1,10 +1,10 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useLoaderData, useNavigation } from "@remix-run/react";
+import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
-import { BinFull, Xmark } from "iconoir-react";
+import { BinFull } from "iconoir-react";
 
 import {
   getAzureUserWithRolesByIdAsync,
@@ -63,7 +63,9 @@ export default function Chapter() {
 
   return (
     <>
-      <Title>Archive &quot;{user.fullName}&quot;</Title>
+      <Title to={`/admin/users/${user.id}`}>
+        Archive &quot;{user.fullName}&quot;
+      </Title>
 
       <Form method="post">
         <fieldset disabled={transition.state === "submitting"}>
@@ -73,15 +75,7 @@ export default function Chapter() {
 
           <Textarea placeholder="Reason to Archive" name="endReason" required />
 
-          <div className="mt-6 flex items-center justify-end gap-6">
-            <Link
-              className="btn btn-neutral w-44"
-              to={`/admin/users/${user.id}`}
-            >
-              <Xmark className="h-6 w-6" />
-              Cancel
-            </Link>
-
+          <div className="mt-6 flex items-center justify-end">
             <button className="btn btn-error w-44 gap-4" type="submit">
               <BinFull className="h-6 w-6" />
               Archive
