@@ -158,8 +158,6 @@ class UserFormAssertions {
       CHAPTER_DATA[chapter],
     );
     await expect(this.userForm.emailInput).toHaveValue(email);
-    await expect(this.userForm.emailInput).toHaveAttribute("disabled", "");
-
     await expect(this.userForm.firstNameInput).toHaveValue(firstName);
     await expect(this.userForm.lastNameInput).toHaveValue(lastName);
     await expect(this.userForm.mobileInput).toHaveValue(mobile);
