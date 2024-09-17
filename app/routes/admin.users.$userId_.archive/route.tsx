@@ -9,7 +9,6 @@ import { BinFull, Xmark } from "iconoir-react";
 import {
   getAzureUserWithRolesByIdAsync,
   removeRoleFromUserAsync,
-  ROLE_MAPPINGS,
   trackEvent,
 } from "~/services/.server";
 import { Title } from "~/components";
@@ -38,7 +37,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
 
     const appRoleAssignmentId = azureUserInfo.appRoleAssignments.find(
-      ({ appRoleId }) => ROLE_MAPPINGS.Mentor === appRoleId,
+      ({ roleName }) => roleName === "Mentor",
     )?.id;
 
     if (appRoleAssignmentId === undefined) {
