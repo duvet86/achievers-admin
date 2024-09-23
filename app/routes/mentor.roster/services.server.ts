@@ -11,23 +11,33 @@ dayjs.extend(isBetween);
 
 export interface SessionCommand {
   chapterId: number;
-  studentId: number;
+  studentId: number | null;
   userId: number;
   attendedOn: string;
 }
 
-export type SessionLookup = Record<
+export interface SessioViewModel {
+  student: {
+    id: number;
+    fullName: string;
+  } | null;
+  id: number;
+  attendedOn: Date;
+  completedOn: Date | null;
+  signedOffOn: Date | null;
+  user: {
+    id: number;
+    fullName: string;
+  };
+  isCancelled: boolean;
+  hasReport: boolean;
+}
+
+export type SessionLookup = Record<string, SessioViewModel | undefined>;
+
+export type SessionLookupStudent = Record<
   string,
-  | {
-      sessionId: number;
-      userId: number;
-      hasReport: boolean;
-      isCancelled: boolean;
-      attendedOn: Date;
-      signedOffOn: Date | null;
-      completedOn: Date | null;
-    }
-  | undefined
+  SessioViewModel[] | undefined
 >;
 
 export interface SessionCommandRequest {
@@ -76,98 +86,155 @@ export function getCurrentTermForDate(terms: Term[], date: Date): Term {
   return terms[0];
 }
 
-export async function getStudentsAsync(
-  userId: number,
-  selectedStudentId: number,
+export async function getStudentsForSessionAsync(
+  mentorId: number,
+  attendedOn: string,
 ) {
-  const students = await prisma.student.findMany({
+  const studentsInSession = await prisma.mentorToStudentSession.findMany({
     where: {
-      endDate: null,
-      mentorToStudentAssignement: {
-        some: {
-          userId,
+      attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      userId: mentorId,
+      studentId: {
+        not: null,
+      },
+    },
+    select: {
+      studentId: true,
+    },
+  });
+
+  const studentsForSession = await prisma.mentorToStudentAssignement.findMany({
+    where: {
+      userId: mentorId,
+      studentId: {
+        notIn: studentsInSession.map(({ studentId }) => studentId!),
+      },
+      student: {
+        endDate: null,
+      },
+    },
+    select: {
+      student: {
+        select: {
+          id: true,
+          fullName: true,
         },
+      },
+    },
+  });
+
+  return studentsForSession.map(({ student }) => ({
+    label: student.fullName,
+    value: student.id.toString(),
+  }));
+}
+
+export async function getSessionsLookupAsync(
+  chapterId: number,
+  userId: number,
+  term: Term,
+) {
+  const mySessions = await prisma.mentorToStudentSession.findMany({
+    where: {
+      chapterId,
+      userId,
+      attendedOn: {
+        gte: term.start.toDate(),
+        lte: term.end.toDate(),
       },
     },
     select: {
       id: true,
-      fullName: true,
-      mentorToStudentAssignement: {
-        select: {
-          user: {
-            select: {
-              id: true,
-              fullName: true,
-            },
-          },
-        },
-      },
-      mentorToStudentSession: {
+      attendedOn: true,
+      signedOffOn: true,
+      completedOn: true,
+      hasReport: true,
+      isCancelled: true,
+      user: {
         select: {
           id: true,
-          attendedOn: true,
-          signedOffOn: true,
-          completedOn: true,
-          userId: true,
-          hasReport: true,
-          isCancelled: true,
+          fullName: true,
+        },
+      },
+      student: {
+        select: {
+          id: true,
+          fullName: true,
         },
       },
     },
   });
 
-  let sessionDateToMentorIdForAllStudentsLookup: SessionLookup = {};
-
-  const studentsWithSessions = students.map((student) => {
-    const sessionDateToMentorIdForStudentLookup =
-      student.mentorToStudentSession.reduce<SessionLookup>((res, session) => {
-        res[dayjs.utc(session.attendedOn).format("YYYY-MM-DD")] = {
-          userId: session.userId,
-          sessionId: session.id,
-          hasReport: session.hasReport,
-          isCancelled: session.isCancelled,
-          attendedOn: session.attendedOn,
-          completedOn: session.completedOn,
-          signedOffOn: session.signedOffOn,
-        };
-
-        return res;
-      }, {});
-
-    const mentorIdToMentorNameForStudentLookup =
-      student.mentorToStudentAssignement.reduce<Record<string, string>>(
-        (res, assignment) => {
-          res[assignment.user.id] = assignment.user.fullName;
-
-          return res;
-        },
-        {},
-      );
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { mentorToStudentSession, mentorToStudentAssignement, ...rest } =
-      student;
-
-    sessionDateToMentorIdForAllStudentsLookup = {
-      ...sessionDateToMentorIdForAllStudentsLookup,
-      ...sessionDateToMentorIdForStudentLookup,
-    };
-
-    return {
-      ...rest,
-      mentorIdToMentorNameForStudentLookup,
-      sessionDateToMentorIdForStudentLookup,
-    };
+  const myStudents = await prisma.mentorToStudentAssignement.findMany({
+    where: {
+      userId,
+      student: {
+        endDate: null,
+      },
+    },
+    select: {
+      studentId: true,
+    },
   });
 
-  const selectedStudent =
-    studentsWithSessions.find((s) => s.id === selectedStudentId) ??
-    studentsWithSessions[0];
+  const myStudentsSessions = await prisma.mentorToStudentSession.findMany({
+    where: {
+      chapterId,
+      attendedOn: {
+        gte: term.start.toDate(),
+        lte: term.end.toDate(),
+      },
+      studentId: {
+        in: myStudents.map(({ studentId }) => studentId),
+      },
+      id: {
+        notIn: mySessions.map(({ id }) => id),
+      },
+    },
+    select: {
+      id: true,
+      attendedOn: true,
+      signedOffOn: true,
+      completedOn: true,
+      hasReport: true,
+      isCancelled: true,
+      user: {
+        select: {
+          id: true,
+          fullName: true,
+        },
+      },
+      student: {
+        select: {
+          id: true,
+          fullName: true,
+        },
+      },
+    },
+  });
+
+  const mySessionsLookup = mySessions.reduce<SessionLookup>((res, session) => {
+    res[dayjs.utc(session.attendedOn).format("YYYY-MM-DD")] = session;
+
+    return res;
+  }, {});
+
+  const myStudentsSessionsLookup =
+    myStudentsSessions.reduce<SessionLookupStudent>((res, session) => {
+      const key = dayjs.utc(session.attendedOn).format("YYYY-MM-DD");
+
+      if (res[key]) {
+        res[key].push(session);
+      } else {
+        res[key] = [session];
+      }
+
+      return res;
+    }, {});
 
   return {
-    selectedStudent,
-    sessionDateToMentorIdForAllStudentsLookup,
-    students,
+    mySessionsLookup,
+    myStudentsSessionsLookup,
   };
 }
 
@@ -187,7 +254,7 @@ export async function createSessionAsync({
   });
 }
 
-export async function stealSessionFromParterAsync(
+export async function takeSessionFromParterAsync(
   sessionId: number,
   userId: number,
 ) {

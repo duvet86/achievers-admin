@@ -107,6 +107,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const report = selectedTermDate
     ? await getReportForSessionDateAsync(
+        user.id,
         Number(selectedStudentId),
         user.chapterId,
         selectedTermDate,

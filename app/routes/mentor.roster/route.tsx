@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import type { SessionCommandRequest } from "./services.server";
 
 import {
   Form,
@@ -17,47 +16,41 @@ import { getDatesForTerm } from "~/services";
 import { Select, Title } from "~/components";
 
 import {
-  createSessionAsync,
   getCurrentTermForDate,
-  getStudentsAsync,
+  getSessionsLookupAsync,
   getSchoolTermsForYearAsync,
-  removeSessionAsync,
   getUserByAzureADIdAsync,
-  stealSessionFromParterAsync,
+  getStudentsForSessionAsync,
+  createSessionAsync,
+  takeSessionFromParterAsync,
+  removeSessionAsync,
 } from "./services.server";
 import TermCalendar from "./components/TermCalendar";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const selectedTerm = url.searchParams.get("selectedTerm");
-  const selectedStudentId = url.searchParams.get("selectedStudentId");
 
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
   const terms = await getSchoolTermsForYearAsync(dayjs().year());
 
-  const currentTerm =
-    terms.find((t) => t.name === selectedTerm) ??
-    getCurrentTermForDate(terms, new Date());
+  const todayterm = getCurrentTermForDate(terms, new Date());
 
-  const {
-    students,
-    selectedStudent,
-    sessionDateToMentorIdForAllStudentsLookup,
-  } = await getStudentsAsync(user.id, Number(selectedStudentId));
+  const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayterm;
+
+  const { mySessionsLookup, myStudentsSessionsLookup } =
+    await getSessionsLookupAsync(user.chapterId, user.id, currentTerm);
 
   return json({
-    userId: user.id,
-    chapterId: user.chapterId,
     termsList: terms.map(({ start, end, name }) => ({
       value: name,
-      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${currentTerm.name === name ? " (Current)" : ""}`,
+      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${todayterm.name === name ? " (Current)" : ""}`,
     })),
     currentTermName: currentTerm.name,
-    students,
-    sessionDateToMentorIdForAllStudentsLookup,
-    selectedStudent,
+    mySessionsLookup,
+    myStudentsSessionsLookup,
     datesInTerm: getDatesForTerm(currentTerm.start, currentTerm.end).map(
       (date) => dayjs(date).format("YYYY-MM-DD"),
     ),
@@ -65,47 +58,71 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const bodyData = (await request.json()) as SessionCommandRequest;
+  const loggedUser = await getLoggedUserInfoAsync(request);
+  const user = await getUserByAzureADIdAsync(loggedUser.oid);
+
+  const bodyData = (await request.json()) as {
+    action: "fetch" | "create" | "update" | "remove";
+    attendedOn?: string;
+    studentId?: string;
+    sessionId?: string;
+  };
 
   const action = bodyData.action;
+  const attendedOn = bodyData.attendedOn;
+  const studentId = bodyData.studentId;
+  const sessionId = bodyData.sessionId;
 
   switch (action) {
-    case "create":
-      await createSessionAsync({
-        attendedOn: bodyData.attendedOn,
-        chapterId: Number(bodyData.chapterId),
-        studentId: Number(bodyData.studentId),
-        userId: Number(bodyData.userId),
-      });
-      break;
-
-    case "update":
-      await stealSessionFromParterAsync(
-        Number(bodyData.sessionId),
-        Number(bodyData.userId),
+    case "fetch": {
+      const studentsForSession = await getStudentsForSessionAsync(
+        user.id,
+        attendedOn!,
       );
-      break;
 
-    case "remove":
-      await removeSessionAsync(Number(bodyData.sessionId));
-      break;
+      return json({
+        studentsForSession,
+      });
+    }
+
+    case "create": {
+      await createSessionAsync({
+        attendedOn: attendedOn!,
+        chapterId: user.chapterId,
+        studentId: studentId ? Number(studentId) : null,
+        userId: user.id,
+      });
+
+      return null;
+    }
+    case "update": {
+      await takeSessionFromParterAsync(Number(sessionId), user.id);
+
+      return null;
+    }
+
+    case "remove": {
+      await removeSessionAsync(Number(sessionId));
+
+      const studentsForSession = await getStudentsForSessionAsync(
+        user.id,
+        attendedOn!,
+      );
+
+      return json({
+        studentsForSession,
+      });
+    }
 
     default:
-      throw new Error("Invalid action");
+      throw new Error("Invalid action type");
   }
-
-  return json({
-    message: "Successfully saved",
-  });
 }
 
 export default function Index() {
   const {
-    userId,
-    chapterId,
-    students,
-    sessionDateToMentorIdForAllStudentsLookup,
-    selectedStudent,
+    mySessionsLookup,
+    myStudentsSessionsLookup,
     currentTermName,
     termsList,
     datesInTerm,
@@ -128,30 +145,14 @@ export default function Index() {
           defaultValue={searchParams.get("selectedTerm") ?? currentTermName}
           options={termsList}
         />
-        <Select
-          label="Student"
-          name="selectedStudentId"
-          defaultValue={
-            searchParams.get("selectedStudentId") ?? students[0]?.id.toString()
-          }
-          options={students.map(({ id, fullName }) => ({
-            label: fullName,
-            value: id.toString(),
-          }))}
-        />
       </Form>
 
-      {selectedStudent && (
-        <TermCalendar
-          userId={userId}
-          chapterId={chapterId}
-          datesInTerm={datesInTerm}
-          student={selectedStudent as any}
-          sessionDateToMentorIdForAllStudentsLookup={
-            sessionDateToMentorIdForAllStudentsLookup as any
-          }
-        />
-      )}
+      <TermCalendar
+        key={currentTermName}
+        datesInTerm={datesInTerm}
+        mySessionsLookup={mySessionsLookup as any}
+        myStudentsSessionsLookup={myStudentsSessionsLookup as any}
+      />
     </>
   );
 }

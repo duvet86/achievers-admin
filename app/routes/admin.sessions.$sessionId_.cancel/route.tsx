@@ -56,7 +56,7 @@ export default function Index() {
         <span className="font-bold">&quot;{session.user.fullName}&quot;</span>{" "}
         and the student{" "}
         <span className="font-bold">
-          &quot;{session.student.fullName}&quot;
+          &quot;{session.student?.fullName}&quot;
         </span>
         ?
       </p>

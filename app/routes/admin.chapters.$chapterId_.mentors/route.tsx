@@ -16,6 +16,7 @@ import {
   getStudentsCountAsync,
 } from "./services.server";
 import FormInputs from "./components/FormInputs";
+import classNames from "classnames";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -171,7 +172,17 @@ export default function Index() {
                     <td className="border">
                       <ul className="list-disc pl-2">
                         {mentorToStudentAssignement.map(({ student }) => (
-                          <li key={student.id}>{student.fullName}</li>
+                          <li
+                            key={student.id}
+                            className={classNames("flex gap-2", {
+                              "text-error": student.endDate !== null,
+                            })}
+                          >
+                            {student.fullName}
+                            {student.endDate !== null && (
+                              <p className="font-bold">(Archived)</p>
+                            )}
+                          </li>
                         ))}
                       </ul>
                     </td>

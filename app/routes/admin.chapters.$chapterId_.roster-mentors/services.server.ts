@@ -13,12 +13,15 @@ dayjs.extend(isBetween);
 export type SessionLookup = Record<
   string,
   | {
-      sessionId: number;
-      studentId: number;
-      studentFullName: string;
+      id: number;
+      attendedOn: Date;
+      isCancelled: boolean;
       hasReport: boolean;
       completedOn: Date | null;
-      isCancelled: boolean;
+      student: {
+        id: number;
+        fullName: string;
+      } | null;
     }
   | undefined
 >;
@@ -102,14 +105,7 @@ export async function getMentorsAsync(
   return mentors.map((mentor) => {
     const sessionLookup = mentor.mentorToStudentSession.reduce<SessionLookup>(
       (res, session) => {
-        res[dayjs.utc(session.attendedOn).format("YYYY-MM-DD")] = {
-          studentId: session.student.id,
-          studentFullName: session.student.fullName,
-          sessionId: session.id,
-          hasReport: session.hasReport,
-          completedOn: session.completedOn,
-          isCancelled: session.isCancelled,
-        };
+        res[dayjs.utc(session.attendedOn).format("YYYY-MM-DD")] = session;
 
         return res;
       },

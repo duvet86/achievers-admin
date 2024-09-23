@@ -24,6 +24,7 @@ import {
   getStudentsInChapterAsync,
   removeMentorStudentAssignement,
 } from "./services.server";
+import classNames from "classnames";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -175,40 +176,51 @@ export default function Index() {
             <p className="italic">No students assigned</p>
           )}
           <ol>
-            {mentorToStudentAssignement.map(({ student: { id, fullName } }) => (
-              <li key={id} className="border-b pb-2">
-                <div className="flex items-center justify-between">
-                  {fullName}
-                  <div className="flex gap-6">
-                    <Link to="/admin/sessions" className="btn btn-info gap-3">
-                      <Clock className="h-6 w-6" />
-                      View sessions
-                    </Link>
+            {mentorToStudentAssignement.map(
+              ({ student: { id, fullName, endDate } }) => (
+                <li key={id} className="border-b pb-2">
+                  <div
+                    className={classNames("flex items-center justify-between", {
+                      "text-error": endDate !== null,
+                    })}
+                  >
+                    <span className="flex items-center gap-2">
+                      {fullName}
+                      {endDate !== null && (
+                        <p className="font-bold">(Archived)</p>
+                      )}
+                    </span>
+                    <div className="flex gap-6">
+                      <Link to="/admin/sessions" className="btn btn-info gap-3">
+                        <Clock className="h-6 w-6" />
+                        View sessions
+                      </Link>
 
-                    <Form onSubmit={onMentorRemoved(fullName)}>
-                      <input type="hidden" name="studentId" value={id} />
-                      <button
-                        disabled={isLoading}
-                        className="btn btn-error w-48 gap-3"
-                        type="submit"
-                      >
-                        {isLoading ? (
-                          <>
-                            <span className="loading loading-spinner"></span>{" "}
-                            Loading...
-                          </>
-                        ) : (
-                          <>
-                            <Xmark className="h-6 w-6" />
-                            Remove
-                          </>
-                        )}
-                      </button>
-                    </Form>
+                      <Form onSubmit={onMentorRemoved(fullName)}>
+                        <input type="hidden" name="studentId" value={id} />
+                        <button
+                          disabled={isLoading}
+                          className="btn btn-error w-48 gap-3"
+                          type="submit"
+                        >
+                          {isLoading ? (
+                            <>
+                              <span className="loading loading-spinner"></span>{" "}
+                              Loading...
+                            </>
+                          ) : (
+                            <>
+                              <Xmark className="h-6 w-6" />
+                              Remove
+                            </>
+                          )}
+                        </button>
+                      </Form>
+                    </div>
                   </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              ),
+            )}
           </ol>
         </div>
       </article>

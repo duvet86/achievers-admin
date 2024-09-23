@@ -185,10 +185,10 @@ export default function Index() {
                     {fullName}
                   </Link>
                 </th>
-                {datesInTerm.map((attendedOn, index) => {
+                {datesInTerm.map((attendedOn) => {
                   const sessionInfo = sessionLookup[attendedOn];
 
-                  const sessionId = sessionInfo?.sessionId;
+                  const sessionId = sessionInfo?.id;
                   const hasReport = sessionInfo?.hasReport ?? false;
                   const completedOn = sessionInfo?.completedOn;
                   const isCancelled = sessionInfo?.isCancelled ?? false;
@@ -202,7 +202,7 @@ export default function Index() {
                     : `/admin/chapters/${chapterId}/sessions/${attendedOn}T00:00:00Z/new-assignment?${queryString}`;
 
                   return (
-                    <td key={index} className="border-r">
+                    <td key={attendedOn} className="border-r">
                       <div className="indicator">
                         {hasReport && (
                           <div className="badge indicator-item badge-success indicator-center gap-1">
@@ -216,6 +216,8 @@ export default function Index() {
                               "btn btn-ghost btn-block justify-between",
                               {
                                 "font-bold text-error": isCancelled,
+                                "font-bold text-info":
+                                  sessionInfo && !sessionInfo.student,
                               },
                             )}
                           >
@@ -226,7 +228,11 @@ export default function Index() {
                               </>
                             ) : (
                               <span className="flex-1">
-                                {sessionInfo?.studentFullName}
+                                {sessionInfo
+                                  ? sessionInfo.student
+                                    ? sessionInfo.student.fullName
+                                    : "Marked available"
+                                  : ""}
                               </span>
                             )}
                             <NavArrowRight />
