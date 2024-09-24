@@ -125,7 +125,7 @@ export default function Index() {
         <article className="prose max-w-none">
           <h1 className="flex items-center gap-4 text-warning">
             <WarningTriangle />
-            You haven't booked a session yet
+            You haven&apos;t booked a session yet
           </h1>
           <h3>
             Go to the <Link to="/mentor/roster-students">Roster</Link> to book

@@ -65,6 +65,7 @@ export default tseslint.config(
       },
     },
     rules: {
+      ...pluginReact.configs.recommended.rules,
       ...pluginReact.configs.flat["jsx-runtime"].rules,
     },
   },
