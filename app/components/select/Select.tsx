@@ -1,5 +1,7 @@
 import type { ChangeEventHandler } from "react";
 
+import classNames from "classnames";
+
 interface SelectOption {
   label: string;
   value: string;
@@ -22,15 +24,21 @@ export function Select({ label, name, options, required, ...props }: Props) {
       {label && (
         <label htmlFor={name} className="label">
           <span className="label-text">{label}</span>
-          {required && (
-            <span
-              data-testid="required"
-              className="label-text-alt absolute right-1 top-9 text-2xl text-error"
-            >
-              *
-            </span>
-          )}
         </label>
+      )}
+      {required && (
+        <span
+          data-testid="required"
+          className={classNames(
+            "label-text-alt absolute right-1 text-2xl text-error",
+            {
+              "top-0": label === undefined,
+              "top-9": label !== undefined,
+            },
+          )}
+        >
+          *
+        </span>
       )}
       <select
         data-testid="select"

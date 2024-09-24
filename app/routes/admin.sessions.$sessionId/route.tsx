@@ -84,7 +84,7 @@ export default function Index() {
 
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Student</div>
-          <div className="flex-1">{student.fullName}</div>
+          <div className="flex-1">{student?.fullName}</div>
         </div>
 
         <div className="flex items-center gap-2 border-b p-2">

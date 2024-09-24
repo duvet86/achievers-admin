@@ -89,7 +89,7 @@ export default function Index() {
         className="mb-4"
         to={`/admin/sessions/${id}?${searchParams.toString()}`}
       >
-        Report for &quot;{student.fullName}&quot; on:{" "}
+        Report for &quot;{student?.fullName}&quot; on:{" "}
         {dayjs(attendedOn).format("MMMM D, YYYY")}
       </Title>
 

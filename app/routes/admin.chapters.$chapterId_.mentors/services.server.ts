@@ -20,6 +20,7 @@ export async function getStudentsCountAsync(
 ) {
   return prisma.user.count({
     where: {
+      endDate: null,
       chapterId,
       OR: getOR(searchTerm),
     },
@@ -36,6 +37,7 @@ export async function getMentorsWithStudentsAsync(
 ) {
   return prisma.user.findMany({
     where: {
+      endDate: null,
       chapterId,
       OR: getOR(searchTerm),
     },
@@ -49,6 +51,7 @@ export async function getMentorsWithStudentsAsync(
             select: {
               id: true,
               fullName: true,
+              endDate: true,
             },
           },
         },

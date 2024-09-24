@@ -95,8 +95,8 @@ export default function Index() {
         }
         className="mb-4"
       >
-        Report of "{dayjs(session.attendedOn).format("DD/MM/YYYY")}" on behalf
-        of "{session.user.fullName}"
+        Report of &quot;{dayjs(session.attendedOn).format("DD/MM/YYYY")}&quot;
+        on behalf of &quot;{session.user.fullName}&quot;
       </Title>
 
       <div className="relative flex h-full flex-col">

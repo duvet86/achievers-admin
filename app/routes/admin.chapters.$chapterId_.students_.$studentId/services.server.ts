@@ -7,6 +7,7 @@ export async function getMentorsInChapterAsync(
 ) {
   return prisma.user.findMany({
     where: {
+      endDate: null,
       chapterId,
       mentorToStudentAssignement: {
         none: {
@@ -24,6 +25,7 @@ export async function getMentorsInChapterAsync(
 export async function getStudentWithMentorsAsync(studentId: number) {
   return prisma.student.findFirstOrThrow({
     where: {
+      endDate: null,
       id: studentId,
     },
     select: {

@@ -2,7 +2,7 @@
   Warnings:
 
   - The primary key for the `mentortostudentassignement` table will be changed. If it partially fails, the table could be left without primary key constraint.
-  - The primary key for the `mentortostudentsession` table will be changed. If it partially fails, the table could be left without primary key constraint.
+  - The primary key for the `MentorToStudentSession` table will be changed. If it partially fails, the table could be left without primary key constraint.
   - A unique constraint covering the columns `[userId,studentId]` on the table `MentorToStudentAssignement` will be added. If there are existing duplicate values, this will fail.
   - A unique constraint covering the columns `[userId,studentId,chapterId,attendedOn]` on the table `MentorToStudentSession` will be added. If there are existing duplicate values, this will fail.
   - Added the required column `id` to the `MentorToStudentAssignement` table without a default value. This is not possible if the table is not empty.

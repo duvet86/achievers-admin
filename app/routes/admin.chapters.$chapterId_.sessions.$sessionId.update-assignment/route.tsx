@@ -55,14 +55,15 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     );
 
     const studentsInSession = sessionsForDate.map(({ studentId }) => studentId);
-    const selectedStudentId = session.student.id;
+    const selectedStudentId = session.student?.id;
 
     return json({
+      view: "fixedMentor",
       chapter,
       session,
       mentors: null,
       selectedMentorId: null,
-      selectedStudentId: selectedStudentId.toString(),
+      selectedStudentId: selectedStudentId?.toString() ?? null,
       students: students
         .filter(
           ({ id }) =>
@@ -86,6 +87,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     const selectedMentorId = session.user.id;
 
     return json({
+      view: "fixedStudent",
       chapter,
       session,
       students: null,
@@ -135,6 +137,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
 export default function Index() {
   const {
+    view,
     attendedOnLabel,
     chapter,
     session,
@@ -170,13 +173,13 @@ export default function Index() {
 
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Mentor</div>
-          {selectedMentorId ? (
+          {view === "fixedStudent" ? (
             <div className="flex flex-1 items-end gap-4">
               <SelectSearch
                 name="mentorId"
                 placeholder="Select a mentor"
-                defaultValue={selectedMentorId}
-                options={mentors}
+                defaultValue={selectedMentorId!}
+                options={mentors!}
                 required
               />
 
@@ -189,20 +192,20 @@ export default function Index() {
 
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Student</div>
-          {selectedStudentId ? (
+          {view === "fixedMentor" ? (
             <div className="flex flex-1 items-end gap-4">
               <SelectSearch
                 name="studentId"
                 placeholder="Select a student"
-                defaultValue={selectedStudentId}
-                options={students}
+                defaultValue={selectedStudentId ?? ""}
+                options={students!}
                 required
               />
 
               <SubmitFormButton />
             </div>
           ) : (
-            <div className="flex-1">{session.student.fullName}</div>
+            <div className="flex-1">{session.student?.fullName}</div>
           )}
         </div>
 
