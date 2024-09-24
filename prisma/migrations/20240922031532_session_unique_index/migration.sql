@@ -10,7 +10,7 @@ ALTER TABLE `MentorToStudentSession`
 	DROP FOREIGN KEY `MentorToStudentSession_userId_fkey`;
 
 -- DropIndex
-DROP INDEX `MentorToStudentSession_studentId_chapterId_attendedOn_key` ON `mentortostudentsession`;
+DROP INDEX `MentorToStudentSession_studentId_chapterId_attendedOn_key` ON `MentorToStudentSession`;
 
 -- CreateIndex
 CREATE UNIQUE INDEX `MentorToStudentSession_userId_studentId_chapterId_attendedOn_key` ON `MentorToStudentSession`(`userId`, `studentId`, `chapterId`, `attendedOn`);

@@ -1,7 +1,7 @@
 /*
   Warnings:
 
-  - You are about to drop the column `hasReport` on the `mentortostudentsession` table. All the data in the column will be lost.
+  - You are about to drop the column `hasReport` on the `MentorToStudentSession` table. All the data in the column will be lost.
 
 */
 -- AlterTable
