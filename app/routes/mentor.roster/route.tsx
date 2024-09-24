@@ -76,6 +76,7 @@ export async function action({ request }: ActionFunctionArgs) {
   switch (action) {
     case "fetch": {
       const studentsForSession = await getStudentsForSessionAsync(
+        user.chapterId,
         user.id,
         attendedOn!,
       );
@@ -105,6 +106,7 @@ export async function action({ request }: ActionFunctionArgs) {
       await removeSessionAsync(Number(sessionId));
 
       const studentsForSession = await getStudentsForSessionAsync(
+        user.chapterId,
         user.id,
         attendedOn!,
       );

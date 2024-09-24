@@ -6,7 +6,7 @@ export function debounce<T extends Function>(callback: T, wait = 500) {
   return (...args: any) => {
     window.clearTimeout(timeoutId);
     timeoutId = window.setTimeout(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
       callback(...args);
     }, wait);
   };

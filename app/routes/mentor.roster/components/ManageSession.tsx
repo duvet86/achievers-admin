@@ -106,28 +106,33 @@ export function ManageSession({
         <>
           <div className="flex gap-4">
             {studentsForSession.length > 0 ? (
-              <div className="w-72">
-                <Select
-                  name="selectedStudentId"
-                  required
-                  options={[
-                    {
-                      label: "Select a student",
-                      value: "",
-                    },
-                  ].concat(studentsForSession)}
-                />
-              </div>
+              <>
+                <div className="w-72">
+                  <Select
+                    name="selectedStudentId"
+                    required
+                    options={[
+                      {
+                        label: "Select a student",
+                        value: "",
+                      },
+                    ].concat(studentsForSession)}
+                  />
+                </div>
+                <button
+                  className="btn btn-success w-44"
+                  onClick={bookSession(attendedOn)}
+                >
+                  <BookmarkBook />
+                  Book Session
+                </button>
+              </>
             ) : (
-              <p>No students available or assigned.</p>
+              <p>
+                Cannot book session with student because no students are
+                available or assigned.
+              </p>
             )}
-            <button
-              className="btn btn-success w-44"
-              onClick={bookSession(attendedOn)}
-            >
-              <BookmarkBook />
-              Book Session
-            </button>
           </div>
           <div className="divider">OR</div>
           <div>

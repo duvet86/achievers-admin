@@ -103,67 +103,96 @@ export default function TermCalendar({
                   </div>
                 </div>
 
-                <div className="basis-2/6 p-2">
+                <div className="flex basis-2/6 flex-col gap-4">
                   {mySession ? (
                     <div className="flex gap-2">
                       <ThumbsUp />
                       {`${mySession.user.fullName} (Me) ${mySession.student ? `with ${mySession.student.fullName}` : "marked available"}`}
                     </div>
-                  ) : studentSessions ? (
-                    studentSessions.map(({ user, student }) => (
-                      <div key={user.id} className="mb-2 flex gap-2 text-info">
-                        <Group />
-                        <span className="font-bold">{user.fullName}</span>{" "}
-                        mentoring{" "}
-                        <span className="font-bold">{student?.fullName}</span>
-                      </div>
-                    ))
                   ) : (
                     <div className="flex gap-2 text-success">
                       <Check />
                       Available
                     </div>
                   )}
+                  {studentSessions?.map(({ user, student }) => (
+                    <div key={user.id} className="flex gap-2 text-info">
+                      <Group />
+                      <span className="font-bold">{user.fullName}</span>{" "}
+                      mentoring{" "}
+                      <span className="font-bold">{student?.fullName}</span>
+                    </div>
+                  ))}
                 </div>
-                <div className="basis-1/6 p-2">
-                  {mySession &&
-                    (mySession.completedOn ? (
-                      <Check className="h-4 w-4 text-success" />
+
+                <div className="flex basis-1/6 flex-col gap-4">
+                  {mySession?.student ? (
+                    mySession.completedOn ? (
+                      <div className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-success" />
+                        {dayjs(mySession.completedOn).format("MMMM D, YYYY")}
+                      </div>
                     ) : (
-                      <Xmark className="h-4 w-4 text-error" />
-                    ))}
+                      <div className="flex w-full items-center">
+                        <Xmark className="h-4 w-4 text-error" />
+                        &nbsp;
+                      </div>
+                    )
+                  ) : (
+                    <div className="flex w-full items-center">
+                      <Minus className="h-4 w-4 text-gray-400" />
+                      &nbsp;
+                    </div>
+                  )}
                   {studentSessions?.map(({ id, completedOn }) =>
                     completedOn ? (
-                      <div key={id} className="mb-2 flex items-center gap-2">
+                      <div key={id} className="flex items-center gap-2">
                         <Check className="h-4 w-4 text-success" />
                         {dayjs(completedOn).format("MMMM D, YYYY")}
                       </div>
                     ) : (
-                      <Xmark key={id} className="mb-2 h-4 w-4 text-error" />
+                      <div key={id} className="flex w-full items-center">
+                        <Xmark className="h-4 w-4 text-error" />
+                        &nbsp;
+                      </div>
                     ),
                   )}
                 </div>
-                <div className="basis-1/6 p-2">
-                  {mySession &&
-                    (mySession.signedOffOn ? (
+
+                <div className="flex basis-1/6 flex-col gap-4">
+                  {mySession?.student ? (
+                    mySession.signedOffOn ? (
                       <div className="flex items-center gap-2">
                         <Check className="h-4 w-4 text-success" />
-                        {dayjs(mySession?.signedOffOn).format("MMMM D, YYYY")}
+                        {dayjs(mySession.signedOffOn).format("MMMM D, YYYY")}
                       </div>
                     ) : (
-                      <Xmark className="h-4 w-4 text-error" />
-                    ))}
+                      <div className="flex w-full items-center">
+                        <Xmark className="h-4 w-4 text-error" />
+                        &nbsp;
+                      </div>
+                    )
+                  ) : (
+                    <div className="flex w-full items-center text-gray-400">
+                      <Minus className="h-4 w-4" />
+                      &nbsp;
+                    </div>
+                  )}
                   {studentSessions?.map(({ id, signedOffOn }) =>
                     signedOffOn ? (
-                      <div key={id} className="mb-2 flex items-center gap-2">
+                      <div key={id} className="flex items-center gap-2">
                         <Check className="h-4 w-4 text-success" />
                         {dayjs(signedOffOn).format("MMMM D, YYYY")}
                       </div>
                     ) : (
-                      <Xmark key={id} className="mb-2 h-4 w-4 text-error" />
+                      <div key={id} className="flex w-full items-center">
+                        <Xmark className="h-4 w-4 text-error" />
+                        &nbsp;
+                      </div>
                     ),
                   )}
                 </div>
+
                 <div className="flex basis-1/6 items-center justify-end p-2">
                   <button className="btn btn-outline w-36">
                     {open !== index ? (

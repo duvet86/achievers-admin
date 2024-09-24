@@ -87,13 +87,14 @@ export function getCurrentTermForDate(terms: Term[], date: Date): Term {
 }
 
 export async function getStudentsForSessionAsync(
+  chapterId: number,
   mentorId: number,
   attendedOn: string,
 ) {
   const studentsInSession = await prisma.mentorToStudentSession.findMany({
     where: {
+      chapterId,
       attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
-      userId: mentorId,
       studentId: {
         not: null,
       },
