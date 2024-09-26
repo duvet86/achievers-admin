@@ -25,7 +25,7 @@ test.describe("Mentor", () => {
     await adminLayoutPage.goToMentorView();
   });
 
-  test.only("should have volunteer agreement", async () => {
+  test("should have volunteer agreement", async () => {
     await mentorVolunteerAgreementPage.expect.toHaveTitles();
   });
 });
