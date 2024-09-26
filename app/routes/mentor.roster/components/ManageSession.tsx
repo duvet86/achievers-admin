@@ -64,7 +64,7 @@ export function ManageSession({
 
   const takeSessionFromPartner = (sessionId: number) => () => {
     if (
-      !confirm("Are you sure you want to steal the session from you partner?")
+      !confirm("Are you sure you want to take the session from you partner?")
     ) {
       return;
     }

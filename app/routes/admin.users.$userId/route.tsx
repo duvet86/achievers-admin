@@ -94,17 +94,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (
     isStringNullOrEmpty(firstName) ||
     isStringNullOrEmpty(lastName) ||
-    isStringNullOrEmpty(email) ||
     isStringNullOrEmpty(mobile) ||
     isStringNullOrEmpty(addressStreet) ||
     isStringNullOrEmpty(addressSuburb) ||
     isStringNullOrEmpty(addressState) ||
     isStringNullOrEmpty(addressPostcode)
   ) {
-    return json({
-      successMessage: null,
-      errorMessage: "Missing required fields",
-    });
+    throw new Error("Missing required fields.");
   }
 
   const dataCreate: Prisma.XOR<
