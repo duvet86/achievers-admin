@@ -191,3 +191,11 @@ export async function updateSessionAsync({
     },
   });
 }
+
+export async function removeSessionAsync(sessionId: number) {
+  return await prisma.mentorToStudentSession.delete({
+    where: {
+      id: sessionId,
+    },
+  });
+}

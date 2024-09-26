@@ -10,8 +10,9 @@ import {
 } from "@remix-run/react";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
+import { EditPencil, Xmark } from "iconoir-react";
 
-import { Title, SubmitFormButton, SelectSearch } from "~/components";
+import { Title } from "~/components";
 
 import {
   updateSessionAsync,
@@ -20,8 +21,10 @@ import {
   getMentorsForStudentAsync,
   getSessionsByDateAsync,
   getSessionByIdAsync,
+  removeSessionAsync,
 } from "./services.server";
-import { EditPencil, Xmark } from "iconoir-react";
+
+import { ManageSession } from "./components/ManageSession";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -118,11 +121,17 @@ export async function action({ params, request }: ActionFunctionArgs) {
   const selectedMentorId = fixedMentorId ?? formData.get("mentorId");
   const selectedStudentId = fixedStudentId ?? formData.get("studentId");
 
-  await updateSessionAsync({
-    sessionId: Number(params.sessionId),
-    mentorId: Number(selectedMentorId),
-    studentId: Number(selectedStudentId),
-  });
+  const action = formData.get("action");
+
+  if (action === "save") {
+    await updateSessionAsync({
+      sessionId: Number(params.sessionId),
+      mentorId: Number(selectedMentorId),
+      studentId: Number(selectedStudentId),
+    });
+  } else if (action === "remove") {
+    await removeSessionAsync(Number(params.sessionId));
+  }
 
   const backURL = url.searchParams.get("back_url");
 
@@ -174,17 +183,12 @@ export default function Index() {
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Mentor</div>
           {view === "fixedStudent" ? (
-            <div className="flex flex-1 items-end gap-4">
-              <SelectSearch
-                name="mentorId"
-                placeholder="Select a mentor"
-                defaultValue={selectedMentorId!}
-                options={mentors!}
-                required
-              />
-
-              <SubmitFormButton />
-            </div>
+            <ManageSession
+              name="mentorId"
+              defaultValue={selectedMentorId!}
+              placeholder="Select a mentor"
+              options={mentors!}
+            />
           ) : (
             <div className="flex-1">{session.user.fullName}</div>
           )}
@@ -193,17 +197,12 @@ export default function Index() {
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Student</div>
           {view === "fixedMentor" ? (
-            <div className="flex flex-1 items-end gap-4">
-              <SelectSearch
-                name="studentId"
-                placeholder="Select a student"
-                defaultValue={selectedStudentId ?? ""}
-                options={students!}
-                required
-              />
-
-              <SubmitFormButton />
-            </div>
+            <ManageSession
+              name="studentId"
+              defaultValue={selectedStudentId!}
+              placeholder="Select a student"
+              options={students!}
+            />
           ) : (
             <div className="flex-1">{session.student?.fullName}</div>
           )}

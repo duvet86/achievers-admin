@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Xmark } from "iconoir-react";
+import classNames from "classnames";
+
 import { useClientRect } from "~/services";
 
-interface Option {
+export interface Option {
   label: string;
   value: string;
 }
@@ -17,6 +19,7 @@ interface Props {
   required?: boolean;
   disabled?: boolean;
   options: Option[];
+  onChange?: (value: string) => void;
 }
 
 const EMPTY_OPTION: Option = {
@@ -33,6 +36,7 @@ export function SelectSearch({
   showClearButton,
   required,
   disabled,
+  onChange,
 }: Props) {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedValue, setSelectedValue] = useState<Option | null>(null);
@@ -56,6 +60,10 @@ export function SelectSearch({
     inputRef.current!.value = option.value;
 
     (document.activeElement as HTMLElement).blur();
+
+    if (onChange) {
+      onChange(option.value);
+    }
   };
 
   const onClearSelection = () => {
@@ -84,15 +92,21 @@ export function SelectSearch({
       {label && (
         <label htmlFor={name} className="label">
           <span className="label-text">{label}</span>
-          {required && (
-            <span
-              data-testid="required"
-              className="label-text-alt absolute right-1 top-9 text-2xl text-error"
-            >
-              *
-            </span>
-          )}
         </label>
+      )}
+      {required && (
+        <span
+          data-testid="required"
+          className={classNames(
+            "label-text-alt absolute right-1 text-2xl text-error",
+            {
+              "top-0": label === undefined,
+              "top-9": label !== undefined,
+            },
+          )}
+        >
+          *
+        </span>
       )}
 
       <div className="join w-full">
@@ -103,7 +117,6 @@ export function SelectSearch({
           placeholder={label ?? placeholder}
           required={required}
           disabled={disabled}
-          readOnly
         />
         {showClearButton && (
           <div
@@ -115,17 +128,12 @@ export function SelectSearch({
           </div>
         )}
       </div>
-
       <input
         ref={inputRef}
-        className="hidden"
-        type="text"
+        type="hidden"
         name={name}
         data-testid="autocomplete-hidden"
-        required={required}
-        disabled={disabled}
       />
-
       <ul
         className="menu dropdown-content z-[1] max-h-80 flex-nowrap overflow-auto rounded-box bg-base-100 p-0 shadow"
         style={{ width: rect.width }}
