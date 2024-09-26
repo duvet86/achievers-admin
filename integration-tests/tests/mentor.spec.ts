@@ -3,29 +3,26 @@ import { test, expect } from "@playwright/test";
 import { seedDataAsync } from "../test-data";
 
 import { AdminLayoutPage } from "integration-tests/pages/admin-layout.page";
-import { MentorVolunteerAgreementPage } from "integration-tests/pages/mentor.volunteer-agreement";
+import { MentorLayoutPage } from "integration-tests/pages/mentor-layout.page";
 
-test.describe("Mentor", () => {
+test.describe("Mentor Volunteer Agreement", () => {
   let adminLayoutPage: AdminLayoutPage;
-  let mentorVolunteerAgreementPage: MentorVolunteerAgreementPage;
+  let mentorLayoutPage: MentorLayoutPage;
 
   test.beforeEach(async ({ page }) => {
     await seedDataAsync();
 
     adminLayoutPage = new AdminLayoutPage(page);
-    mentorVolunteerAgreementPage = new MentorVolunteerAgreementPage(page);
+    mentorLayoutPage = new MentorLayoutPage(page);
 
     await page.goto("/");
 
     await expect(page).toHaveTitle(/Achievers WA/);
 
-    await adminLayoutPage.expect.toHaveTitle();
-    await adminLayoutPage.expect.toHaveDrawerLinks();
-
     await adminLayoutPage.goToMentorView();
   });
 
-  test("should have volunteer agreement", async () => {
-    await mentorVolunteerAgreementPage.expect.toHaveTitles();
+  test("should have home page", async () => {
+    await mentorLayoutPage.expect.toHaveTitle();
   });
 });

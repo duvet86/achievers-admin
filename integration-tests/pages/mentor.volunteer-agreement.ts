@@ -2,6 +2,36 @@ import type { Locator, Page } from "@playwright/test";
 
 import { expect } from "@playwright/test";
 
+interface FormQuery {
+  firstName: string;
+  lastName: string;
+  mobile: string;
+  addressStreet: string;
+  addressSuburb: string;
+  addressState: string;
+  addressPostcode: string;
+  dateOfBirth: string;
+  emergencyContactName: string;
+  emergencyContactNumber: string;
+  emergencyContactAddress: string;
+  emergencyContactRelationship: string;
+}
+
+interface FormCommand {
+  firstName: string;
+  lastName: string;
+  mobile: string;
+  addressStreet: string;
+  addressSuburb: string;
+  addressState: string;
+  addressPostcode: string;
+  dateOfBirth: string;
+  emergencyContactName: string;
+  emergencyContactNumber: string;
+  emergencyContactAddress: string;
+  emergencyContactRelationship: string;
+}
+
 export class MentorVolunteerAgreementPage {
   private page: Page;
 
@@ -80,6 +110,47 @@ export class MentorVolunteerAgreementPage {
 
     this.expect = new MentorVolunteerAgreementPageAssertions(this);
   }
+
+  async checkAgreement({
+    firstName,
+    lastName,
+    mobile,
+    addressStreet,
+    addressSuburb,
+    addressState,
+    addressPostcode,
+    dateOfBirth,
+    emergencyContactName,
+    emergencyContactNumber,
+    emergencyContactAddress,
+    emergencyContactRelationship,
+  }: FormCommand): Promise<void> {
+    await this.firstNameInput.fill(firstName);
+    await this.lastNameInput.fill(lastName);
+    await this.mobileInput.fill(mobile);
+    await this.addressStreetInput.fill(addressStreet);
+    await this.addressSuburbInput.fill(addressSuburb);
+    await this.addressStateInput.fill(addressState);
+    await this.addressPostcodeInput.fill(addressPostcode);
+    await this.dateOfBirthInput.fill(dateOfBirth);
+    await this.emergencyContactNameInput.fill(emergencyContactName);
+    await this.emergencyContactNumberInput.fill(emergencyContactNumber);
+    await this.emergencyContactAddressInput.fill(emergencyContactAddress);
+    await this.emergencyContactRelationshipInput.fill(
+      emergencyContactRelationship,
+    );
+
+    await this.hasApprovedToPublishPhotos.check();
+    await this.isInformedOfConstitution.check();
+    await this.hasApprovedSafetyDirections.check();
+    await this.hasAcceptedNoLegalResp.check();
+    await this.agree.check();
+    await this.isOver18.check();
+  }
+
+  async saveForm(): Promise<void> {
+    await this.page.getByRole("button", { name: "Save" }).click();
+  }
 }
 
 class MentorVolunteerAgreementPageAssertions {
@@ -91,24 +162,46 @@ class MentorVolunteerAgreementPageAssertions {
     await expect(this.page.subtitle).toBeVisible();
   }
 
-  async toHaveInputs(): Promise<void> {
-    await expect(this.page.firstNameInput).toBeVisible();
-    await expect(this.page.lastNameInput).toBeVisible();
-    await expect(this.page.mobileInput).toBeVisible();
-    await expect(this.page.addressStreetInput).toBeVisible();
-    await expect(this.page.addressSuburbInput).toBeVisible();
-    await expect(this.page.addressStateInput).toBeVisible();
-    await expect(this.page.addressPostcodeInput).toBeVisible();
-    await expect(this.page.dateOfBirthInput).toBeVisible();
-    await expect(this.page.emergencyContactNameInput).toBeVisible();
-    await expect(this.page.emergencyContactNumberInput).toBeVisible();
-    await expect(this.page.emergencyContactAddressInput).toBeVisible();
-    await expect(this.page.emergencyContactRelationshipInput).toBeVisible();
-    await expect(this.page.hasApprovedToPublishPhotos).toBeVisible();
-    await expect(this.page.isInformedOfConstitution).toBeVisible();
-    await expect(this.page.hasApprovedSafetyDirections).toBeVisible();
-    await expect(this.page.hasAcceptedNoLegalResp).toBeVisible();
-    await expect(this.page.agree).toBeVisible();
-    await expect(this.page.isOver18).toBeVisible();
+  async toHaveInitialInputs({
+    firstName,
+    lastName,
+    mobile,
+    addressStreet,
+    addressSuburb,
+    addressState,
+    addressPostcode,
+    dateOfBirth,
+    emergencyContactName,
+    emergencyContactNumber,
+    emergencyContactAddress,
+    emergencyContactRelationship,
+  }: FormQuery): Promise<void> {
+    await expect(this.page.firstNameInput).toHaveValue(firstName);
+    await expect(this.page.lastNameInput).toHaveValue(lastName);
+    await expect(this.page.mobileInput).toHaveValue(mobile);
+    await expect(this.page.addressStreetInput).toHaveValue(addressStreet);
+    await expect(this.page.addressSuburbInput).toHaveValue(addressSuburb);
+    await expect(this.page.addressStateInput).toHaveValue(addressState);
+    await expect(this.page.addressPostcodeInput).toHaveValue(addressPostcode);
+    await expect(this.page.dateOfBirthInput).toHaveValue(dateOfBirth);
+    await expect(this.page.emergencyContactNameInput).toHaveValue(
+      emergencyContactName,
+    );
+    await expect(this.page.emergencyContactNumberInput).toHaveValue(
+      emergencyContactNumber,
+    );
+    await expect(this.page.emergencyContactAddressInput).toHaveValue(
+      emergencyContactAddress,
+    );
+    await expect(this.page.emergencyContactRelationshipInput).toHaveValue(
+      emergencyContactRelationship,
+    );
+
+    await expect(this.page.hasApprovedToPublishPhotos).not.toBeChecked();
+    await expect(this.page.isInformedOfConstitution).not.toBeChecked();
+    await expect(this.page.hasApprovedSafetyDirections).not.toBeChecked();
+    await expect(this.page.hasAcceptedNoLegalResp).not.toBeChecked();
+    await expect(this.page.agree).not.toBeChecked();
+    await expect(this.page.isOver18).not.toBeChecked();
   }
 }

@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { createUsersAsync } from "./users";
 import { createStudentsAsync } from "./students";
 import { assignMentorsToStudentsAsync } from "./mentor-to-sudent-assignement";
+import { mentorAsync } from "./mentor";
 
 export const CHAPTER_DATA: Record<string, string> = {
   Girrawheen: "1",
@@ -14,7 +15,7 @@ const MENTOR_AZURE_ID = process.env.CI
   ? "ae59f3fc-5f22-4863-b60e-9654659d41b4"
   : "6089c9c7-6f2b-4298-865d-54bc1e42cb0e";
 
-export async function seedDataAsync() {
+export async function seedDataAsync(isMentor = false) {
   const prisma = new PrismaClient();
 
   try {
@@ -24,6 +25,10 @@ export async function seedDataAsync() {
     await createStudentsAsync(prisma);
 
     await assignMentorsToStudentsAsync(prisma);
+
+    if (isMentor) {
+      await mentorAsync(prisma);
+    }
   } catch (e) {
     console.log(e);
   } finally {

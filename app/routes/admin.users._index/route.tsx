@@ -262,7 +262,7 @@ export default function Index() {
                                 checks
                               </span>
                             )}
-                            {isReminderSent && (
+                            {isAnyChecksExpired && isReminderSent && (
                               <span className="flex items-center gap-1 text-success">
                                 <CheckCircle className="h-4 w-4" /> Reminder
                                 sent
