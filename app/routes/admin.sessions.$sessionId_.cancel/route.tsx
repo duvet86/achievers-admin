@@ -32,6 +32,11 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
   const url = new URL(request.url);
 
+  const backUrl = url.searchParams.get("back_url");
+  if (backUrl) {
+    return redirect(backUrl);
+  }
+
   return redirect(
     `/admin/sessions/${params.sessionId}?${url.searchParams.toString()}`,
   );
@@ -41,10 +46,16 @@ export default function Index() {
   const { session } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
 
+  const backUrl = searchParams.get("back_url");
+
   return (
     <>
       <Title
-        to={`/admin/sessions/${session.id}?${searchParams.toString()}`}
+        to={
+          backUrl
+            ? backUrl
+            : `/admin/sessions/${session.id}?${searchParams.toString()}`
+        }
         className="mb-4"
       >
         Cancel session of &quot;{dayjs(session.attendedOn).format("DD/MM/YYYY")}

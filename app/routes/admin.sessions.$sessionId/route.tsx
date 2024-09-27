@@ -95,7 +95,7 @@ export default function Index() {
         {isCancelled ? (
           <div className="flex items-center gap-2 p-2">
             <div className="w-72 font-bold">Reason</div>
-            <Textarea readOnly defaultValue={reasonCancelled!} />
+            <Textarea defaultValue={reasonCancelled!} disabled />
           </div>
         ) : (
           <>

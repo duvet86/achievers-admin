@@ -162,12 +162,23 @@ export default function Index() {
 
   return (
     <>
-      <Title
-        to={backURL ? backURL : `/admin/sessions?${searchParams.toString()}`}
-      >
-        Session of &quot;
-        {attendedOnLabel}&quot;
-      </Title>
+      <div className="flex justify-between">
+        <Title
+          to={backURL ? backURL : `/admin/sessions?${searchParams.toString()}`}
+        >
+          Session of &quot;
+          {attendedOnLabel}&quot;
+        </Title>
+
+        {!session.isCancelled && !session.completedOn && (
+          <Link
+            to={`/admin/sessions/${session.id}/cancel?${searchParams.toString()}`}
+            className="btn btn-error w-48 gap-2"
+          >
+            <Xmark className="h-6 w-6" /> Cancel session
+          </Link>
+        )}
+      </div>
 
       <Form method="POST" className="my-8 flex flex-col gap-12">
         <div className="flex items-center gap-2 border-b p-2">
