@@ -1107,7 +1107,7 @@ exports[`Body > Body snapshot mentor 1`] = `
               <a
                 class="mb-2 justify-between rounded font-semibold"
                 data-discover="true"
-                href="/mentor/partner"
+                href="/mentor/partners"
               >
                 <div
                   class="flex items-center gap-4"
@@ -1145,7 +1145,7 @@ exports[`Body > Body snapshot mentor 1`] = `
                       stroke-linejoin="round"
                     />
                   </svg>
-                  My Partner
+                  My Partners
                 </div>
                 <svg
                   class="h-6 w-6"

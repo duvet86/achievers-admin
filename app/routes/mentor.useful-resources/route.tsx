@@ -7,7 +7,7 @@ export default function Index() {
 
       <SubTitle>Educational Tools</SubTitle>
 
-      <ul className="list-inside list-disc">
+      <ul className="m-4 list-inside list-disc">
         <li>
           <a
             className="link"
@@ -82,7 +82,7 @@ export default function Index() {
 
       <SubTitle>Career Tools</SubTitle>
 
-      <ul className="list-inside list-disc">
+      <ul className="m-4 list-inside list-disc">
         <li>
           <a
             className="link"

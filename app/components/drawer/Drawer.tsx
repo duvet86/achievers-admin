@@ -102,8 +102,8 @@ function getLinks(
         },
         {
           icon: <Group className="h-6 w-6" />,
-          path: "/mentor/partner",
-          label: "My Partner",
+          path: "/mentor/partners",
+          label: "My Partners",
           isVisible: true,
         },
         {

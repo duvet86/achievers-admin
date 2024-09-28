@@ -1,7 +1,6 @@
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
 
-import { Link, useLoaderData } from "@remix-run/react";
-import { Calendar } from "iconoir-react";
+import { useLoaderData } from "@remix-run/react";
 
 import { getLoggedUserInfoAsync } from "~/services/.server";
 import { Title } from "~/components";
@@ -22,7 +21,7 @@ export default function Index() {
 
   return (
     <>
-      <Title>My partner</Title>
+      <Title>My partners</Title>
 
       <div className="overflow-auto bg-white">
         <table className="table table-lg">
@@ -31,7 +30,6 @@ export default function Index() {
               <th className="w-6">#</th>
               <th align="left">Full name</th>
               <th align="left">Mobile</th>
-              <th align="right">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -47,15 +45,6 @@ export default function Index() {
                 <td className="border-r">{index + 1}</td>
                 <td align="left">{fullName}</td>
                 <td align="left">-</td>
-                <td align="right">
-                  <Link
-                    to="/mentor/roster-students"
-                    className="btn btn-success btn-xs h-8 gap-2"
-                  >
-                    <Calendar className="hidden h-4 w-4 lg:block" />
-                    View roster
-                  </Link>
-                </td>
               </tr>
             ))}
           </tbody>

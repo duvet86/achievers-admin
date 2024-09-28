@@ -78,8 +78,8 @@ describe("Drawer", () => {
     expect(links[3]).toHaveTextContent("My Students");
     expect(links[3]).toHaveAttribute("href", "/mentor/students");
 
-    expect(links[4]).toHaveTextContent("My Partner");
-    expect(links[4]).toHaveAttribute("href", "/mentor/partner");
+    expect(links[4]).toHaveTextContent("My Partners");
+    expect(links[4]).toHaveAttribute("href", "/mentor/partners");
 
     expect(links[5]).toHaveTextContent("Useful Resources");
     expect(links[5]).toHaveAttribute("href", "/mentor/useful-resources");
