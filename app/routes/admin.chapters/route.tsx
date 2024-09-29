@@ -2,7 +2,7 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
 import { useLoaderData, Link } from "@remix-run/react";
-import { PageEdit, Group, Calendar, GraduationCap } from "iconoir-react";
+import { PageEdit, Group, Calendar, GraduationCap, LogIn } from "iconoir-react";
 
 import {
   getLoggedUserInfoAsync,
@@ -71,6 +71,14 @@ export default function Index() {
               >
                 <PageEdit className="h-4 w-4" />
                 Sessions/Reports
+              </Link>
+
+              <Link
+                to={`/chapters/${id}/mentor-attendances`}
+                className="btn btn-info w-64 gap-2"
+              >
+                <LogIn className="h-4 w-4" />
+                Attendaces
               </Link>
             </div>
           </div>

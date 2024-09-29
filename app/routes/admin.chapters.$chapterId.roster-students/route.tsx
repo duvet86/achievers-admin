@@ -199,7 +199,7 @@ export default function Index() {
                     ? completedOn
                       ? `/admin/sessions/${sessionId}?back_url=/admin/chapters/${chapterId}/roster-students`
                       : `/admin/chapters/${chapterId}/sessions/${sessionId}/update-assignment?&${queryString}`
-                    : `/admin/chapters/${chapterId}/sessions/${attendedOn}T00:00:00Z/new-assignment?${queryString}`;
+                    : `/admin/chapters/${chapterId}/sessions/${attendedOn}/new-assignment?${queryString}`;
 
                   return (
                     <td key={index} className="border-r">

@@ -19,7 +19,7 @@ export async function getSessionsByDateAsync(
   return await prisma.mentorToStudentSession.findMany({
     where: {
       chapterId,
-      attendedOn,
+      attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
     },
     select: {
       userId: true,

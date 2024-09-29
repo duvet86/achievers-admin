@@ -3,8 +3,6 @@
     "env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "app/services/.server/config.server.ts",
-    "app/services/.server/user.server.ts"
   ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],

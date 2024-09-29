@@ -23,6 +23,13 @@ export default defineConfig({
           route("auth/microsoft", "routes/auth.microsoft.tsx", {
             index: true,
           });
+          route(
+            "chapters/:chapterId/mentor-attendances",
+            "routes/chapters.$chapterId.mentor-attendances/route.tsx",
+            {
+              index: true,
+            },
+          );
           route("/", "routes/root/route.tsx", { index: true });
           route("admin", "routes/admin/layout.tsx", () => {
             route("home", "routes/admin.home/route.tsx", { index: true });
