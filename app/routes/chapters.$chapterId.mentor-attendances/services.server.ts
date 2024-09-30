@@ -1,3 +1,5 @@
+import type { Term } from "~/models";
+
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
@@ -6,17 +8,65 @@ import { isStringNullOrEmpty } from "~/services";
 
 dayjs.extend(utc);
 
+export async function getSchoolTermsForYearAsync(
+  year: number,
+): Promise<Term[]> {
+  const terms = await prisma.schoolTerm.findMany({
+    where: {
+      year,
+    },
+    select: {
+      startDate: true,
+      endDate: true,
+    },
+    orderBy: {
+      startDate: "asc",
+    },
+  });
+
+  return terms.map<Term>(({ startDate, endDate }, index) => ({
+    name: "Term " + (index + 1),
+    start: dayjs(startDate),
+    end: dayjs(endDate),
+  }));
+}
+
+export function getCurrentTermForDate(terms: Term[], date: Date): Term {
+  for (let i = 0; i < terms.length; i++) {
+    if (
+      dayjs(date).isBetween(terms[i].start, terms[i].end, "day", "[]") ||
+      (terms[i - 1] &&
+        dayjs(date).isBetween(terms[i - 1].end, terms[i].start, "day", "[]"))
+    ) {
+      return terms[i];
+    }
+  }
+
+  return terms[0];
+}
+
+export function getClosestSessionDate(dates: Date[]) {
+  if (dates.length === 0) {
+    throw new Error();
+  }
+
+  const today = new Date();
+  const closest = dates.reduce((a, b) =>
+    a.getDate() - today.getDate() < b.getDate() - today.getDate() ? a : b,
+  );
+
+  return dayjs(closest).format("YYYY-MM-DD") + "T00:00:00Z";
+}
+
 export async function getMentorsForSession(
   chapterId: number,
-  sessionDate: string | null,
+  sessionDate: string,
   searchTerm: string | null,
 ) {
   const sessions = await prisma.mentorToStudentSession.findMany({
     where: {
       chapterId,
-      attendedOn: sessionDate
-        ? dayjs.utc(sessionDate, "YYYY-MM-DD").toDate()
-        : new Date(),
+      attendedOn: dayjs.utc(sessionDate, "YYYY-MM-DD").toDate(),
       user: isStringNullOrEmpty(searchTerm)
         ? undefined
         : {
@@ -45,15 +95,13 @@ export async function getMentorsForSession(
 
 export async function getMentorAttendancesLookup(
   chapterId: number,
-  sessionDate: string | null,
+  sessionDate: string,
   searchTerm: string | null,
 ) {
   const attendaces = await prisma.mentorAttendance.findMany({
     where: {
       chapterId,
-      attendedOn: sessionDate
-        ? dayjs.utc(sessionDate, "YYYY-MM-DD").toDate()
-        : new Date(),
+      attendedOn: dayjs.utc(sessionDate, "YYYY-MM-DD").toDate(),
       user: isStringNullOrEmpty(searchTerm)
         ? undefined
         : {

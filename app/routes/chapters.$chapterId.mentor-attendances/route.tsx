@@ -10,30 +10,33 @@ import {
   useSearchParams,
 } from "@remix-run/react";
 import invariant from "tiny-invariant";
+import dayjs from "dayjs";
+import classNames from "classnames";
+import { CheckSquare, FloppyDiskArrowIn, Square } from "iconoir-react";
 
-import { getEnvironment } from "~/services";
+import { getDatesForTerm, getEnvironment } from "~/services";
 import {
   getLoggedUserInfoAsync,
   isLoggedUserBlockedAsync,
   trackException,
   version,
 } from "~/services/.server";
-import { Input, Navbar, Title } from "~/components";
+import { Input, Navbar, Select, Title } from "~/components";
 
 import {
   attendSession,
+  getClosestSessionDate,
+  getCurrentTermForDate,
   getMentorAttendancesLookup,
   getMentorsForSession,
+  getSchoolTermsForYearAsync,
   removeAttendace,
 } from "./services.server";
-import classNames from "classnames";
-import { CheckSquare, FloppyDiskArrowIn, Square } from "iconoir-react";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const loggedUser = await getLoggedUserInfoAsync(request);
-
   const isUserBlocked = await isLoggedUserBlockedAsync(
     request,
     "MentorAttendancesArea",
@@ -49,18 +52,33 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
 
   const url = new URL(request.url);
-  const attendaceDate = url.searchParams.get("attendaceDate");
   const searchTerm = url.searchParams.get("search");
+  const selectedTerm = url.searchParams.get("selectedTerm");
+  let selectedTermDate = url.searchParams.get("selectedTermDate");
+
+  const terms = await getSchoolTermsForYearAsync(dayjs().year());
+
+  const todayterm = getCurrentTermForDate(terms, new Date());
+
+  const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayterm;
+
+  const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
+
+  if (selectedTermDate === null || !sessionDates.includes(selectedTermDate)) {
+    selectedTermDate = getClosestSessionDate(
+      sessionDates.map((date) => dayjs(date).toDate()),
+    );
+  }
 
   const mentors = await getMentorsForSession(
     Number(params.chapterId),
-    attendaceDate,
+    selectedTermDate,
     searchTerm,
   );
 
   const attendacesLookup = await getMentorAttendancesLookup(
     Number(params.chapterId),
-    attendaceDate,
+    selectedTermDate,
     searchTerm,
   );
 
@@ -70,6 +88,18 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     version,
     mentors,
     attendacesLookup,
+    selectedTerm: selectedTerm ?? currentTerm.name,
+    selectedTermDate,
+    termsList: terms.map(({ start, end, name }) => ({
+      value: name,
+      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${todayterm.name === name ? " (Current)" : ""}`,
+    })),
+    sessionDates: sessionDates
+      .map((attendedOn) => dayjs(attendedOn))
+      .map((attendedOn) => ({
+        value: attendedOn.format("YYYY-MM-DD") + "T00:00:00Z",
+        label: attendedOn.format("DD/MM/YYYY"),
+      })),
   });
 }
 
@@ -105,8 +135,17 @@ export default function Index() {
   const { state, submit, Form, data, load } = useFetcher<typeof loader>();
   const [searchParams] = useSearchParams();
 
-  const { version, environment, userName, mentors, attendacesLookup } =
-    data ?? loaderData;
+  const {
+    version,
+    environment,
+    userName,
+    mentors,
+    attendacesLookup,
+    selectedTerm,
+    selectedTermDate,
+    termsList,
+    sessionDates,
+  } = data ?? loaderData;
 
   const attend = (mentorId: number) => () => {
     submit(
@@ -163,33 +202,61 @@ export default function Index() {
     (document.getElementById("attendaceSearchForm") as HTMLFormElement).reset();
   };
 
+  const handleSelectChange =
+    (value: string) => (event: React.ChangeEvent<HTMLSelectElement>) => {
+      searchParams.set(value, event.target.value);
+      load(`?${searchParams.toString()}`);
+    };
+
   const isLoading = state === "loading";
 
   return (
     <div className="flex flex-col">
       <Navbar userName={userName} environment={environment} version={version} />
 
-      <main className="content-main mt-16 p-4">
-        <Title to="/admin/chapters">Mentor attendances</Title>
+      <main className="content-main mt-16 flex flex-col p-4">
+        <Title to="/admin/chapters">
+          Mentor attendances &quot;
+          {dayjs(selectedTermDate).format("D MMMM YYYY")}
+          &quot;
+        </Title>
 
         <Form
           id="attendaceSearchForm"
-          className="mt-4 flex flex-col items-center gap-4 sm:flex-row"
+          className="mt-4 flex flex-col items-end gap-4 sm:flex-row"
           onSubmit={onSubmit}
         >
+          <Select
+            key={selectedTerm}
+            label="Term"
+            name="selectedTerm"
+            defaultValue={selectedTerm}
+            options={termsList}
+            onChange={handleSelectChange("selectedTerm")}
+          />
+          <Select
+            key={selectedTermDate}
+            label="Session date"
+            name="selectedTermDate"
+            defaultValue={selectedTermDate}
+            options={sessionDates}
+            onChange={handleSelectChange("selectedTermDate")}
+          />
           <Input
+            label="Search for a mentor"
             name="search"
             hasButton
             placeholder="Search for a mentor"
             onButtonClick={onResetClick}
           />
+
           <button className="btn btn-primary w-48 gap-2" type="submit">
             <FloppyDiskArrowIn />
             Search
           </button>
         </Form>
 
-        <ul className="mt-4">
+        <ul className="mt-4 overflow-auto" key={selectedTermDate}>
           {mentors.map(({ id, fullName }, index) => (
             <li
               key={id}
