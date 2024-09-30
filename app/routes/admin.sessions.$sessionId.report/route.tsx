@@ -85,10 +85,7 @@ export default function Index() {
 
   return (
     <>
-      <Title
-        className="mb-4"
-        to={`/admin/sessions/${id}?${searchParams.toString()}`}
-      >
+      <Title className="mb-4" to={`/admin/sessions?${searchParams.toString()}`}>
         Report for &quot;{student?.fullName}&quot; on:{" "}
         {dayjs(attendedOn).format("MMMM D, YYYY")}
       </Title>

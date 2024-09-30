@@ -407,7 +407,7 @@ exports[`Body > Body snapshot admin 1`] = `
                       stroke="currentColor"
                     />
                   </svg>
-                  Sessions/Reports
+                  Reports
                 </div>
                 <svg
                   class="h-6 w-6"

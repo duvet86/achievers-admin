@@ -70,7 +70,7 @@ export default function Index() {
                 className="btn btn-success w-64 gap-2"
               >
                 <PageEdit className="h-4 w-4" />
-                Sessions/Reports
+                Reports
               </Link>
 
               <Link

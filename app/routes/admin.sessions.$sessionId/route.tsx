@@ -56,18 +56,11 @@ export default function Index() {
           {attendedOnLabel}&quot;
         </Title>
 
-        {isCancelled ? (
+        {isCancelled && (
           <div role="alert" className="alert alert-error w-72">
             <WarningCircle />
             <span>Session has been cancelled</span>
           </div>
-        ) : completedOn ? null : (
-          <Link
-            to={`cancel?${searchParams.toString()}`}
-            className="btn btn-error w-48 gap-2"
-          >
-            <Xmark className="h-6 w-6" /> Cancel session
-          </Link>
         )}
       </div>
 

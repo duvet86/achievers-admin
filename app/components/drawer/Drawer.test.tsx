@@ -38,7 +38,7 @@ describe("Drawer", () => {
     expect(links[2]).toHaveTextContent("Students");
     expect(links[2]).toHaveAttribute("href", "/admin/students");
 
-    expect(links[3]).toHaveTextContent("Sessions/Reports");
+    expect(links[3]).toHaveTextContent("Reports");
     expect(links[3]).toHaveAttribute("href", "/admin/sessions");
 
     expect(links[4]).toHaveTextContent("Chapters");
@@ -114,7 +114,7 @@ describe("Drawer", () => {
     expect(links[2]).toHaveTextContent("Students");
     expect(links[2]).toHaveAttribute("href", "/admin/students");
 
-    expect(links[3]).toHaveTextContent("Sessions/Reports");
+    expect(links[3]).toHaveTextContent("Reports");
     expect(links[3]).toHaveAttribute("href", "/admin/sessions");
 
     expect(links[4]).toHaveTextContent("Chapters");

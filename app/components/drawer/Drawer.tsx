@@ -53,7 +53,7 @@ function getLinks(
         {
           icon: <StatsReport className="h-6 w-6" />,
           path: "/admin/sessions",
-          label: "Sessions/Reports",
+          label: "Reports",
           isVisible: linkMappings.Session,
         },
         {

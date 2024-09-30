@@ -242,11 +242,15 @@ export default function Index() {
                     </td>
                     <td className="border p-2">
                       <Link
-                        to={`/admin/sessions/${id}?${searchParams.toString()}`}
+                        to={
+                          completedOn
+                            ? `/admin/sessions/${id}/report?${searchParams.toString()}`
+                            : `/admin/sessions/${id}?${searchParams.toString()}`
+                        }
                         className="btn btn-success btn-xs w-full gap-2"
                       >
                         <Eye className="h-4 w-4" />
-                        View
+                        Report
                       </Link>
                     </td>
                   </tr>
