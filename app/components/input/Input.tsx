@@ -57,6 +57,7 @@ export function Input({
 
         {hasButton && (
           <button
+            type="button"
             className="btn btn-square join-item"
             onClick={onButtonClick}
             disabled={disabled}

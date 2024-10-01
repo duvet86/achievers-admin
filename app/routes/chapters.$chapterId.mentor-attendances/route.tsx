@@ -3,16 +3,11 @@ import {
   LoaderFunctionArgs,
   redirect,
 } from "@remix-run/node";
-import {
-  json,
-  useFetcher,
-  useLoaderData,
-  useSearchParams,
-} from "@remix-run/react";
+import { Form, json, useLoaderData, useSubmit } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
-import { CheckSquare, FloppyDiskArrowIn, Square } from "iconoir-react";
+import { CheckSquare, Square } from "iconoir-react";
 
 import { getDatesForTerm, getEnvironment } from "~/services";
 import {
@@ -57,11 +52,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   let selectedTermDate = url.searchParams.get("selectedTermDate");
 
   const terms = await getSchoolTermsForYearAsync(dayjs().year());
-
   const todayterm = getCurrentTermForDate(terms, new Date());
 
   const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayterm;
-
   const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
 
   if (selectedTermDate === null || !sessionDates.includes(selectedTermDate)) {
@@ -79,7 +72,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const attendacesLookup = await getMentorAttendancesLookup(
     Number(params.chapterId),
     selectedTermDate,
-    searchTerm,
   );
 
   return json({
@@ -90,6 +82,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     attendacesLookup,
     selectedTerm: selectedTerm ?? currentTerm.name,
     selectedTermDate,
+    searchTerm: searchTerm ?? "",
     termsList: terms.map(({ start, end, name }) => ({
       value: name,
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${todayterm.name === name ? " (Current)" : ""}`,
@@ -106,35 +99,30 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export async function action({ request, params }: ActionFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
 
-  const url = new URL(request.url);
-  const attendaceDate = url.searchParams.get("attendaceDate");
-
   const bodyData = (await request.json()) as {
     action: "attend" | "remove";
     mentorId: number;
     attendaceId: number;
+    attendanceDate: string;
   };
 
   if (bodyData.action === "attend") {
     await attendSession(
       Number(params.chapterId),
       bodyData.mentorId,
-      attendaceDate,
+      bodyData.attendanceDate,
     );
   } else if (bodyData.action === "remove") {
     await removeAttendace(bodyData.attendaceId);
   } else {
-    throw new Error();
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    throw new Error(`Invalid action: ${bodyData.action}`);
   }
 
   return null;
 }
 
 export default function Index() {
-  const loaderData = useLoaderData<typeof loader>();
-  const { state, submit, Form, data, load } = useFetcher<typeof loader>();
-  const [searchParams] = useSearchParams();
-
   const {
     version,
     environment,
@@ -143,15 +131,18 @@ export default function Index() {
     attendacesLookup,
     selectedTerm,
     selectedTermDate,
+    searchTerm,
     termsList,
     sessionDates,
-  } = data ?? loaderData;
+  } = useLoaderData<typeof loader>();
+  const submit = useSubmit();
 
   const attend = (mentorId: number) => () => {
     submit(
       {
         action: "attend",
         mentorId,
+        attendanceDate: selectedTermDate,
       },
       {
         method: "POST",
@@ -189,26 +180,15 @@ export default function Index() {
       );
     };
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    searchParams.set(
-      "search",
-      (document.getElementById("search") as HTMLInputElement).value,
-    );
-    load(`?${searchParams.toString()}`);
+  const submitForm = () => {
+    const form = document.getElementById("attendanceForm") as HTMLFormElement;
+    submit(form);
   };
 
   const onResetClick = () => {
-    (document.getElementById("attendaceSearchForm") as HTMLFormElement).reset();
+    (document.getElementById("search") as HTMLInputElement).value = "";
+    submitForm();
   };
-
-  const handleSelectChange =
-    (value: string) => (event: React.ChangeEvent<HTMLSelectElement>) => {
-      searchParams.set(value, event.target.value);
-      load(`?${searchParams.toString()}`);
-    };
-
-  const isLoading = state === "loading";
 
   return (
     <div className="flex flex-col">
@@ -222,9 +202,8 @@ export default function Index() {
         </Title>
 
         <Form
-          id="attendaceSearchForm"
+          id="attendanceForm"
           className="mt-4 flex flex-col items-end gap-4 sm:flex-row"
-          onSubmit={onSubmit}
         >
           <Select
             key={selectedTerm}
@@ -232,7 +211,7 @@ export default function Index() {
             name="selectedTerm"
             defaultValue={selectedTerm}
             options={termsList}
-            onChange={handleSelectChange("selectedTerm")}
+            onChange={submitForm}
           />
           <Select
             key={selectedTermDate}
@@ -240,23 +219,22 @@ export default function Index() {
             name="selectedTermDate"
             defaultValue={selectedTermDate}
             options={sessionDates}
-            onChange={handleSelectChange("selectedTermDate")}
+            onChange={submitForm}
           />
           <Input
-            label="Search for a mentor"
+            label="Search for a mentor (Press enter to submit)"
             name="search"
+            defaultValue={searchTerm}
             hasButton
             placeholder="Search for a mentor"
             onButtonClick={onResetClick}
           />
-
-          <button className="btn btn-primary w-48 gap-2" type="submit">
-            <FloppyDiskArrowIn />
-            Search
-          </button>
         </Form>
 
         <ul className="mt-4 overflow-auto" key={selectedTermDate}>
+          {mentors.length === 0 && (
+            <li className="mt-4 italic">No mentors found</li>
+          )}
           {mentors.map(({ id, fullName }, index) => (
             <li
               key={id}
@@ -273,16 +251,11 @@ export default function Index() {
                   <button
                     className="btn btn-ghost text-success"
                     onClick={removeAttendance(attendacesLookup[id])}
-                    disabled={isLoading}
                   >
                     <CheckSquare />
                   </button>
                 ) : (
-                  <button
-                    className="btn btn-ghost"
-                    onClick={attend(id)}
-                    disabled={isLoading}
-                  >
+                  <button className="btn btn-ghost" onClick={attend(id)}>
                     <Square />
                   </button>
                 )}

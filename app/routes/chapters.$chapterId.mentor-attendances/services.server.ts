@@ -63,17 +63,21 @@ export async function getMentorsForSession(
   sessionDate: string,
   searchTerm: string | null,
 ) {
+  if (!isStringNullOrEmpty(searchTerm)) {
+    return await prisma.user.findMany({
+      where: {
+        chapterId,
+        fullName: {
+          contains: searchTerm.trim(),
+        },
+      },
+    });
+  }
+
   const sessions = await prisma.mentorToStudentSession.findMany({
     where: {
       chapterId,
       attendedOn: dayjs.utc(sessionDate, "YYYY-MM-DD").toDate(),
-      user: isStringNullOrEmpty(searchTerm)
-        ? undefined
-        : {
-            fullName: {
-              contains: searchTerm.trim(),
-            },
-          },
     },
     select: {
       user: {
@@ -96,19 +100,11 @@ export async function getMentorsForSession(
 export async function getMentorAttendancesLookup(
   chapterId: number,
   sessionDate: string,
-  searchTerm: string | null,
 ) {
   const attendaces = await prisma.mentorAttendance.findMany({
     where: {
       chapterId,
       attendedOn: dayjs.utc(sessionDate, "YYYY-MM-DD").toDate(),
-      user: isStringNullOrEmpty(searchTerm)
-        ? undefined
-        : {
-            fullName: {
-              contains: searchTerm.trim(),
-            },
-          },
     },
     select: {
       id: true,
@@ -142,16 +138,34 @@ export async function getMentorAttendancesLookup(
 export async function attendSession(
   chapterId: number,
   mentorId: number,
-  attendedOn: string | null,
+  attendedOn: string,
 ) {
-  return await prisma.mentorAttendance.create({
-    data: {
-      chapterId,
-      userId: mentorId,
-      attendedOn: attendedOn
-        ? dayjs.utc(attendedOn, "YYYY-MM-DD").toDate()
-        : dayjs().format("YYYY-MM-DD") + "T00:00:00Z",
-    },
+  return await prisma.$transaction(async (tx) => {
+    const session = await tx.mentorToStudentSession.count({
+      where: {
+        chapterId,
+        attendedOn,
+        userId: mentorId,
+      },
+    });
+
+    if (session === 0) {
+      await tx.mentorToStudentSession.create({
+        data: {
+          attendedOn,
+          chapterId,
+          userId: mentorId,
+        },
+      });
+    }
+
+    return await tx.mentorAttendance.create({
+      data: {
+        chapterId,
+        userId: mentorId,
+        attendedOn,
+      },
+    });
   });
 }
 
