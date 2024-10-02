@@ -193,13 +193,13 @@ export default function Index() {
                   const completedOn = sessionInfo?.completedOn;
                   const isCancelled = sessionInfo?.isCancelled ?? false;
 
-                  const queryString = `fixedMentorId=${mentorId}&back_url=/admin/chapters/${chapterId}/roster-mentors`;
+                  const queryString = `back_url=/admin/chapters/${chapterId}/roster-mentors`;
 
                   const to = sessionId
                     ? completedOn
                       ? `/admin/sessions/${sessionId}?back_url=/admin/chapters/${chapterId}/roster-mentors`
-                      : `/admin/chapters/${chapterId}/sessions/${sessionId}/update-assignment?${queryString}`
-                    : `/admin/chapters/${chapterId}/sessions/${attendedOn}/new-assignment?${queryString}`;
+                      : `/admin/chapters/${chapterId}/sessions/${sessionId}/mentors/${mentorId}/update-assignment?${queryString}`
+                    : `/admin/chapters/${chapterId}/sessions/${attendedOn}/mentors/${mentorId}/assign?${queryString}`;
 
                   return (
                     <td key={attendedOn} className="border-r">

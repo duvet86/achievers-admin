@@ -193,13 +193,13 @@ export default function Index() {
                   const completedOn = sessionInfo?.completedOn;
                   const isCancelled = sessionInfo?.isCancelled ?? false;
 
-                  const queryString = `fixedStudentId=${studentId}&back_url=/admin/chapters/${chapterId}/roster-students`;
+                  const queryString = `back_url=/admin/chapters/${chapterId}/roster-students`;
 
                   const to = sessionId
                     ? completedOn
                       ? `/admin/sessions/${sessionId}?back_url=/admin/chapters/${chapterId}/roster-students`
-                      : `/admin/chapters/${chapterId}/sessions/${sessionId}/update-assignment?&${queryString}`
-                    : `/admin/chapters/${chapterId}/sessions/${attendedOn}/new-assignment?${queryString}`;
+                      : `/admin/chapters/${chapterId}/sessions/${sessionId}/students/${studentId}/update-assignment?${queryString}`
+                    : `/admin/chapters/${chapterId}/sessions/${attendedOn}/students/${studentId}/assign?${queryString}`;
 
                   return (
                     <td key={index} className="border-r">

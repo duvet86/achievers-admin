@@ -33,6 +33,7 @@ export function ManageSession({
         options={options}
         required
         onChange={handleChange}
+        showClearButton
       />
 
       {remove ? (

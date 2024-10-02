@@ -17,7 +17,6 @@ import { Title } from "~/components";
 import {
   updateSessionAsync,
   getChapterByIdAsync,
-  getStudentsForMentorAsync,
   getMentorsForStudentAsync,
   getSessionsByDateAsync,
   getSessionByIdAsync,
@@ -29,18 +28,14 @@ import { ManageSession } from "./components/ManageSession";
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.sessionId, "sessionId not found");
+  invariant(params.studentId, "studentId not found");
 
-  const url = new URL(request.url);
-
-  const fixedMentorId = url.searchParams.get("fixedMentorId");
-  const fixedStudentId = url.searchParams.get("fixedStudentId");
-
-  const mentorId = fixedMentorId ? Number(fixedMentorId) : null;
-  const studentId = fixedStudentId ? Number(fixedStudentId) : null;
+  const studentId = Number(params.studentId);
 
   const session = await getSessionByIdAsync(Number(params.sessionId));
 
   if (session.isCancelled || session.completedOn) {
+    const url = new URL(request.url);
     const backURL = url.searchParams.get("back_url");
 
     return redirect(`/admin/sessions/${session.id}?back_url=${backURL}`);
@@ -51,110 +46,61 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     getSessionsByDateAsync(Number(params.chapterId), session.attendedOn),
   ]);
 
-  if (mentorId) {
-    const students = await getStudentsForMentorAsync(
-      Number(params.chapterId),
-      mentorId,
-    );
+  const mentors = await getMentorsForStudentAsync(
+    Number(params.chapterId),
+    studentId,
+  );
 
-    const studentsInSession = sessionsForDate.map(({ studentId }) => studentId);
-    const selectedStudentId = session.student?.id;
+  const mentorsInSession = sessionsForDate.map(({ userId }) => userId);
+  const selectedMentorId = session.user.id;
 
-    return json({
-      view: "fixedMentor",
-      chapter,
-      session,
-      mentors: null,
-      selectedMentorId: null,
-      selectedStudentId: selectedStudentId?.toString() ?? null,
-      students: students
-        .filter(
-          ({ id }) =>
-            !studentsInSession.includes(id) || selectedStudentId === id,
-        )
-        .map(({ id, fullName }) => ({
-          label: fullName,
-          value: id.toString(),
-        })),
-      attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
-    });
-  }
-
-  if (studentId) {
-    const mentors = await getMentorsForStudentAsync(
-      Number(params.chapterId),
-      studentId,
-    );
-
-    const mentorsInSession = sessionsForDate.map(({ userId }) => userId);
-    const selectedMentorId = session.user.id;
-
-    return json({
-      view: "fixedStudent",
-      chapter,
-      session,
-      students: null,
-      selectedMentorId: selectedMentorId.toString(),
-      selectedStudentId: null,
-      mentors: mentors
-        .filter(
-          ({ id }) => !mentorsInSession.includes(id) || selectedMentorId === id,
-        )
-        .map(({ id, fullName }) => ({
-          label: fullName,
-          value: id.toString(),
-        })),
-      attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
-    });
-  }
+  return json({
+    chapter,
+    session,
+    selectedMentorId: selectedMentorId.toString(),
+    mentors: mentors
+      .filter(
+        ({ id }) => !mentorsInSession.includes(id) || selectedMentorId === id,
+      )
+      .map(({ id, fullName }) => ({
+        label: fullName,
+        value: id.toString(),
+      })),
+    attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
+  });
 }
 
 export async function action({ params, request }: ActionFunctionArgs) {
+  invariant(params.chapterId, "chapterId not found");
   invariant(params.sessionId, "sessionId not found");
-
-  const url = new URL(request.url);
-
-  const fixedMentorId = url.searchParams.get("fixedMentorId");
-  const fixedStudentId = url.searchParams.get("fixedStudentId");
+  invariant(params.studentId, "studentId not found");
 
   const formData = await request.formData();
-  const selectedMentorId = fixedMentorId ?? formData.get("mentorId");
-  const selectedStudentId = fixedStudentId ?? formData.get("studentId");
-
+  const selectedMentorId = formData.get("mentorId");
   const action = formData.get("action");
 
   if (action === "save") {
     await updateSessionAsync({
       sessionId: Number(params.sessionId),
       mentorId: Number(selectedMentorId),
-      studentId: Number(selectedStudentId),
+      studentId: Number(params.studentId),
     });
   } else if (action === "remove") {
     await removeSessionAsync(Number(params.sessionId));
   }
 
+  const url = new URL(request.url);
   const backURL = url.searchParams.get("back_url");
-
   if (backURL) {
     return redirect(backURL);
   }
 
-  const path = fixedMentorId ? `roster-mentors` : `roster-students`;
-
-  return redirect(`/admin/chapters/${params.chapterId}/${path}`);
+  return redirect(`/admin/chapters/${params.chapterId}/roster-students`);
 }
 
 export default function Index() {
-  const {
-    view,
-    attendedOnLabel,
-    chapter,
-    session,
-    mentors,
-    students,
-    selectedMentorId,
-    selectedStudentId,
-  } = useLoaderData<typeof loader>();
+  const { attendedOnLabel, chapter, session, mentors, selectedMentorId } =
+    useLoaderData<typeof loader>();
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
@@ -193,30 +139,17 @@ export default function Index() {
 
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Mentor</div>
-          {view === "fixedStudent" ? (
-            <ManageSession
-              name="mentorId"
-              defaultValue={selectedMentorId!}
-              placeholder="Select a mentor"
-              options={mentors!}
-            />
-          ) : (
-            <div className="flex-1">{session.user.fullName}</div>
-          )}
+          <ManageSession
+            name="mentorId"
+            defaultValue={selectedMentorId}
+            placeholder="Select a mentor"
+            options={mentors}
+          />
         </div>
 
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Student</div>
-          {view === "fixedMentor" ? (
-            <ManageSession
-              name="studentId"
-              defaultValue={selectedStudentId!}
-              placeholder="Select a student"
-              options={students!}
-            />
-          ) : (
-            <div className="flex-1">{session.student?.fullName}</div>
-          )}
+          <div className="flex-1">{session.student?.fullName}</div>
         </div>
 
         <div className="flex items-center gap-2 border-b p-2">
@@ -225,7 +158,7 @@ export default function Index() {
             <Xmark className="h-6 w-6 text-error" />
           </div>
           <Link
-            to={`/admin/sessions/${session.id}/mentors/${session.user.id}/write-report?back_url=${location.pathname}?${selectedMentorId ? `fixedMentorId=${selectedMentorId}` : `fixedStudentId=${selectedStudentId}`}`}
+            to={`/admin/sessions/${session.id}/mentors/${session.user.id}/write-report?back_url=${location.pathname}`}
             className="btn btn-success gap-2"
           >
             <EditPencil /> Write report on behalf

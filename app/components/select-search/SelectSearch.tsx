@@ -117,6 +117,7 @@ export function SelectSearch({
           placeholder={label ?? placeholder}
           required={required}
           disabled={disabled}
+          readOnly
         />
         {showClearButton && (
           <div

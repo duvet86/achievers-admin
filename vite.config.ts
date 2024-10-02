@@ -73,15 +73,29 @@ export default defineConfig({
                 },
               );
               route(
-                ":chapterId/sessions/:attendedOn/new-assignment",
-                "routes/admin.chapters.$chapterId.sessions.$attendedOn.new-assignment/route.tsx",
+                ":chapterId/sessions/:attendedOn/mentors/:mentorId/assign",
+                "routes/admin.chapters.$chapterId.sessions.$attendedOn.mentors.$mentorId.assign/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
-                ":chapterId/sessions/:sessionId/update-assignment",
-                "routes/admin.chapters.$chapterId.sessions.$sessionId.update-assignment/route.tsx",
+                ":chapterId/sessions/:attendedOn/students/:studentId/assign",
+                "routes/admin.chapters.$chapterId.sessions.$attendedOn.students.$studentId.assign/route.tsx",
+                {
+                  index: true,
+                },
+              );
+              route(
+                ":chapterId/sessions/:sessionId/mentors/:mentorId/update-assignment",
+                "routes/admin.chapters.$chapterId.sessions.$sessionId.mentors.$mentorId.update-assignment/route.tsx",
+                {
+                  index: true,
+                },
+              );
+              route(
+                ":chapterId/sessions/:sessionId/students/:studentId/update-assignment",
+                "routes/admin.chapters.$chapterId.sessions.$sessionId.students.$studentId.update-assignment/route.tsx",
                 {
                   index: true,
                 },
