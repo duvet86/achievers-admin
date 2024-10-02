@@ -102,6 +102,7 @@ export function SelectSearch({
             {
               "top-0": label === undefined,
               "top-9": label !== undefined,
+              "right-16": showClearButton,
             },
           )}
         >
@@ -117,7 +118,6 @@ export function SelectSearch({
           placeholder={label ?? placeholder}
           required={required}
           disabled={disabled}
-          readOnly
         />
         {showClearButton && (
           <div
