@@ -15,6 +15,7 @@ export const subjects = [
   "StudentArea",
   "UserArea",
   "MentorAttendancesArea",
+  "PermissionsArea",
   "all",
 ] as const;
 

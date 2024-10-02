@@ -20,6 +20,7 @@ describe("Drawer", () => {
             Chapter: true,
             SchoolTerm: true,
             Config: true,
+            Permissions: true,
           }}
         />
       </MemoryRouter>,
@@ -27,7 +28,7 @@ describe("Drawer", () => {
 
     const links: HTMLAnchorElement[] = screen.getAllByRole("link");
 
-    expect(links.length).toBe(7);
+    expect(links.length).toBe(8);
 
     expect(links[0]).toHaveTextContent("Home");
     expect(links[0]).toHaveAttribute("href", "/admin/home");
@@ -49,6 +50,9 @@ describe("Drawer", () => {
 
     expect(links[6]).toHaveTextContent("Config");
     expect(links[6]).toHaveAttribute("href", "/admin/config");
+
+    expect(links[7]).toHaveTextContent("Permissions");
+    expect(links[7]).toHaveAttribute("href", "/admin/user-permissions");
   });
 
   it("should display links for mentor", () => {

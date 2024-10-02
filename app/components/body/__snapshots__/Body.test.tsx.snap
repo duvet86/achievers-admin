@@ -204,7 +204,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -229,7 +228,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   Home
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -257,7 +255,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -282,7 +279,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   Mentors
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -310,7 +306,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -341,7 +336,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   Students
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -369,7 +363,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -410,7 +403,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   Reports
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -438,7 +430,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -476,7 +467,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   Chapters
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -504,7 +494,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -541,7 +530,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   School Terms
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -569,7 +557,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -594,7 +581,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   Config
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -867,7 +853,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -892,7 +877,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   Home
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -920,7 +904,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -957,7 +940,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   Roster
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -985,7 +967,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -1026,7 +1007,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   Write Report
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -1054,7 +1034,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -1085,7 +1064,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   My Students
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -1113,7 +1091,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -1148,7 +1125,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   My Partners
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -1176,7 +1152,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -1219,7 +1194,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   Useful Resources
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -1449,7 +1423,6 @@ exports[`Body > Body snapshot mentor and admin permissions 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -1474,7 +1447,6 @@ exports[`Body > Body snapshot mentor and admin permissions 1`] = `
                   Home
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
