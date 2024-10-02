@@ -1,6 +1,8 @@
-import { RawRuleOf, PureAbility } from "@casl/ability";
-import { Chapter } from "@prisma/client";
-import { createPrismaAbility, PrismaQuery, Subjects } from "@casl/prisma";
+import type { RawRuleOf, PureAbility } from "@casl/ability";
+import type { Chapter } from "@prisma/client";
+import type { PrismaQuery, Subjects } from "@casl/prisma";
+
+import { createPrismaAbility } from "@casl/prisma";
 
 export type ROLES = "Admin" | "Mentor";
 

@@ -1,8 +1,6 @@
-import {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  redirect,
-} from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+
+import { redirect } from "@remix-run/node";
 import { Form, json, useLoaderData, useSubmit } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";

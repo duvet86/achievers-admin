@@ -1,7 +1,9 @@
+import type { Option } from "~/components";
+
 import { FloppyDiskArrowIn, Trash } from "iconoir-react";
 import { useState } from "react";
 
-import { SelectSearch, Option } from "~/components";
+import { SelectSearch } from "~/components";
 
 interface Props {
   name: string;

@@ -6,6 +6,7 @@ import pluginReact from "eslint-plugin-react";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import eslintPluginReactHooks from "eslint-plugin-react-hooks";
 import eslintConfigPrettier from "eslint-config-prettier";
+import vitest from "eslint-plugin-vitest";
 
 export default tseslint.config(
   {
@@ -33,7 +34,7 @@ export default tseslint.config(
     },
     rules: {
       "@typescript-eslint/only-throw-error": "off",
-      "@typescript-eslint/consistent-type-exports": "error",
+      "@typescript-eslint/consistent-type-imports": "error",
     },
   },
   {
@@ -46,7 +47,7 @@ export default tseslint.config(
     languageOptions: {
       ...pluginReact.configs.flat.recommended.languageOptions,
       globals: {
-        ...globals.serviceworker,
+        ...globals.node,
         ...globals.browser,
       },
     },
@@ -88,6 +89,15 @@ export default tseslint.config(
     },
     rules: {
       ...eslintPluginReactHooks.configs.recommended.rules,
+    },
+  },
+  {
+    files: ["**/*.test.{ts,tsx}"],
+    plugins: {
+      vitest,
+    },
+    rules: {
+      ...vitest.configs.recommended.rules,
     },
   },
   eslintConfigPrettier,

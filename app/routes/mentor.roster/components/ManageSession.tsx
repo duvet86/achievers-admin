@@ -1,9 +1,9 @@
+import type { FetcherSubmitFunction } from "react-router-dom";
+import type { SessioViewModel } from "../services.server";
+
 import { BookmarkBook, Group } from "iconoir-react";
 
-import { FetcherSubmitFunction } from "react-router-dom";
-
 import { Select } from "~/components";
-import { SessioViewModel } from "../services.server";
 
 interface Props {
   attendedOn: string;
