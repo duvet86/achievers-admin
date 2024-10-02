@@ -18,11 +18,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const chapters = await getChaptersAsync(ability);
 
-  return json({ chapters });
+  return json({
+    chapters,
+    canAttendances: ability.can("manage", "MentorAttendancesArea"),
+  });
 }
 
 export default function Index() {
-  const { chapters } = useLoaderData<typeof loader>();
+  const { chapters, canAttendances } = useLoaderData<typeof loader>();
 
   return (
     <>
@@ -34,36 +37,31 @@ export default function Index() {
             <h2 className="card-title uppercase">{name}</h2>
             <p className="mb-6">{address}</p>
             <div className="card-actions justify-center">
-              <div className="join join-horizontal">
-                <Link
-                  to={`${id}/roster-students`}
-                  className="btn btn-accent join-item w-64 gap-2"
-                >
-                  <Calendar className="h-4 w-4" />
-                  Roster STUDENTS
-                </Link>
-                <Link
-                  to={`${id}/roster-mentors`}
-                  className="btn btn-accent join-item w-64 gap-2"
-                >
-                  <Calendar className="h-4 w-4" />
-                  Roster MENTORS
-                </Link>
-              </div>
+              <Link
+                to={`${id}/roster-students`}
+                className="btn btn-accent w-64 gap-2"
+              >
+                <Calendar className="h-4 w-4" />
+                Roster STUDENTS
+              </Link>
 
-              <div className="join join-horizontal">
-                <Link
-                  to={`${id}/students`}
-                  className="btn join-item w-64 gap-2"
-                >
-                  <GraduationCap className="h-4 w-4" />
-                  Assign Mentor to Student
-                </Link>
-                <Link to={`${id}/mentors`} className="btn join-item w-64 gap-2">
-                  <Group className="h-4 w-4" />
-                  Assign Student to Mentor
-                </Link>
-              </div>
+              <Link
+                to={`${id}/roster-mentors`}
+                className="btn btn-accent w-64 gap-2"
+              >
+                <Calendar className="h-4 w-4" />
+                Roster MENTORS
+              </Link>
+
+              <Link to={`${id}/students`} className="btn w-64 gap-2">
+                <GraduationCap className="h-4 w-4" />
+                Assign: STUDENT LIST
+              </Link>
+
+              <Link to={`${id}/mentors`} className="btn w-64 gap-2">
+                <Group className="h-4 w-4" />
+                Assign: MENTOR LIST
+              </Link>
 
               <Link
                 to={`/admin/sessions?chapterId=${id}`}
@@ -73,13 +71,15 @@ export default function Index() {
                 Reports
               </Link>
 
-              <Link
-                to={`/chapters/${id}/mentor-attendances`}
-                className="btn btn-info w-64 gap-2"
-              >
-                <LogIn className="h-4 w-4" />
-                Attendaces
-              </Link>
+              {canAttendances && (
+                <Link
+                  to={`/chapters/${id}/mentor-attendances`}
+                  className="btn btn-info w-64 gap-2"
+                >
+                  <LogIn className="h-4 w-4" />
+                  Attendaces
+                </Link>
+              )}
             </div>
           </div>
         </div>
