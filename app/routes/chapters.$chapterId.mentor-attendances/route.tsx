@@ -7,7 +7,11 @@ import dayjs from "dayjs";
 import classNames from "classnames";
 import { CheckSquare, Square } from "iconoir-react";
 
-import { getDatesForTerm, getEnvironment } from "~/services";
+import {
+  getClosestSessionDate,
+  getDatesForTerm,
+  getEnvironment,
+} from "~/services";
 import {
   getLoggedUserInfoAsync,
   isLoggedUserBlockedAsync,
@@ -18,7 +22,6 @@ import { Input, Navbar, Select, Title } from "~/components";
 
 import {
   attendSession,
-  getClosestSessionDate,
   getCurrentTermForDate,
   getMentorAttendancesLookup,
   getMentorsForSession,

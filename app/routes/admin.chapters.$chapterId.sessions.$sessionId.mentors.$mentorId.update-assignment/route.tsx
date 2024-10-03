@@ -110,7 +110,7 @@ export default function Index() {
 
   return (
     <>
-      <div className="flex justify-between">
+      <div className="flex justify-between gap-4">
         <div className="flex gap-8">
           <Title
             className="shrink-0"

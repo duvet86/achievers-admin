@@ -271,6 +271,19 @@ export function isDateExpired(expiryDate: Date | undefined) {
   return dayjs(expiryDate).isBefore(new Date(), "day");
 }
 
+export function getClosestSessionDate(dates: Date[]) {
+  if (dates.length === 0) {
+    throw new Error("Empty dates input.");
+  }
+
+  const today = new Date();
+  const closest = dates.reduce((a, b) =>
+    a.getDate() - today.getDate() < b.getDate() - today.getDate() ? a : b,
+  );
+
+  return dayjs(closest).format("YYYY-MM-DD") + "T00:00:00Z";
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export function debounce<T extends Function>(callback: T, wait = 500) {
   let timeoutId: number | undefined;

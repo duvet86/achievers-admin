@@ -215,19 +215,6 @@ export function getCurrentTermForDate(terms: Term[], date: Date): Term {
   return terms[0];
 }
 
-export function getClosestSessionDate(dates: Date[]) {
-  if (dates.length === 0) {
-    return null;
-  }
-
-  const today = new Date();
-  const closest = dates.reduce((a, b) =>
-    a.getDate() - today.getDate() < b.getDate() - today.getDate() ? a : b,
-  );
-
-  return dayjs(closest).format("YYYY-MM-DD") + "T00:00:00Z";
-}
-
 export async function getStudentsAsync(
   userId: number,
   chapterId: number,

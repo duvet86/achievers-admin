@@ -2,22 +2,13 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import type { Prisma } from "@prisma/client";
 
 import { json } from "@remix-run/node";
-import {
-  Link,
-  useFetcher,
-  useLoaderData,
-  useSearchParams,
-} from "@remix-run/react";
+import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
 import { Check, WarningTriangle, NavArrowRight, Calendar } from "iconoir-react";
 
-import {
-  debounce,
-  getDatesForTerm,
-  getValueFromCircularArray,
-} from "~/services";
+import { getDatesForTerm, getValueFromCircularArray } from "~/services";
 import { Input, Select, TableHeaderSort, Title } from "~/components";
 
 import {
@@ -31,6 +22,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const selectedTerm = url.searchParams.get("selectedTerm");
+  let selectedTermDate = url.searchParams.get("selectedTermDate") ?? "";
   const searchTerm = url.searchParams.get("search") ?? undefined;
 
   const sortFullNameSubmit: Prisma.SortOrder | undefined =
@@ -38,9 +30,17 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   const terms = await getSchoolTermsForYearAsync(dayjs().year());
 
-  const currentTerm =
-    terms.find((t) => t.name === selectedTerm) ??
-    getCurrentTermForDate(terms, new Date());
+  const todayterm = getCurrentTermForDate(terms, new Date());
+  const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayterm;
+
+  const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
+
+  if (
+    selectedTermDate !== "" &&
+    !sessionDates.includes(selectedTermDate + "T00:00:00Z")
+  ) {
+    selectedTermDate = "";
+  }
 
   const mentors = await getMentorsAsync(
     Number(params.chapterId),
@@ -48,17 +48,34 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     searchTerm,
   );
 
+  const sessionDateOptions = sessionDates
+    .map((attendedOn) => dayjs(attendedOn))
+    .map((attendedOn) => ({
+      value: attendedOn.format("YYYY-MM-DD"),
+      label: attendedOn.format("DD/MM/YYYY"),
+    }));
+
   return json({
     chapterId: params.chapterId,
     termsList: terms.map(({ start, end, name }) => ({
       value: name,
-      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})`,
+      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${todayterm.name === name ? " (Current)" : ""}`,
     })),
     currentTerm,
     mentors,
-    datesInTerm: getDatesForTerm(currentTerm.start, currentTerm.end).map(
-      (date) => dayjs(date).format("YYYY-MM-DD"),
-    ),
+    selectedTermDate,
+    searchTerm,
+    datesInTerm: sessionDateOptions
+      .filter(
+        ({ value }) => value === selectedTermDate || selectedTermDate === "",
+      )
+      .map(({ value }) => value),
+    sessionDateOptions: [
+      {
+        value: "",
+        label: "All",
+      },
+    ].concat(sessionDateOptions),
     sortFullNameSubmit,
   });
 }
@@ -66,38 +83,29 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 const colours = ["#FAD7A0", "#A9DFBF", "#FADBD8", "#AED6F1"];
 
 export default function Index() {
-  const initialData = useLoaderData<typeof loader>();
-  const { data, state, load, Form } = useFetcher<typeof loader>();
-  const [searchParams] = useSearchParams();
-
   const {
     mentors,
     currentTerm,
     termsList,
     datesInTerm,
+    selectedTermDate,
+    searchTerm,
+    sessionDateOptions,
     chapterId,
     sortFullNameSubmit,
-  } = data ?? initialData;
+  } = useLoaderData<typeof loader>();
+  const submit = useSubmit();
 
-  const isLoading = state === "loading";
-
-  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    searchParams.set("selectedTerm", event.target.value);
-    load(`?${searchParams.toString()}`);
+  const handleFormSubmit = () => {
+    const form = document.getElementById(
+      "rosterMentorsForm",
+    ) as HTMLFormElement;
+    submit(form);
   };
 
-  const handleInputChange = debounce(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      searchParams.set("search", event.target.value);
-      load(`?${searchParams.toString()}`);
-    },
-  );
-
   const handleButtonClick = () => {
-    searchParams.set("search", "");
-    load(`?${searchParams.toString()}`);
-
     (document.getElementById("search") as HTMLInputElement).value = "";
+    handleFormSubmit();
   };
 
   return (
@@ -114,38 +122,42 @@ export default function Index() {
         </Link>
       </div>
 
-      <div className="flex gap-4 pb-2">
+      <Form id="rosterMentorsForm" className="flex gap-4 pb-2">
         <Select
           label="Term"
           name="selectedTerm"
           defaultValue={currentTerm.name}
           options={termsList}
-          onChange={handleSelectChange}
-          disabled={isLoading}
+          onChange={handleFormSubmit}
+        />
+
+        <Select
+          label="Session date"
+          name="selectedTermDate"
+          defaultValue={selectedTermDate}
+          options={sessionDateOptions}
+          onChange={handleFormSubmit}
         />
 
         <Input
           hasButton
-          onButtonClick={handleButtonClick}
-          label="Filter mentor"
+          label="Filter mentor (press Enter to submit)"
           name="search"
           placeholder="Mentor name"
-          onChange={handleInputChange}
-          disabled={isLoading}
+          defaultValue={searchTerm}
+          onButtonClick={handleButtonClick}
         />
-      </div>
+      </Form>
 
-      <div className="relative overflow-auto">
-        {isLoading && (
-          <div className="absolute z-30 flex h-full w-full justify-center bg-slate-300 bg-opacity-50">
-            <span className="loading loading-spinner loading-lg text-primary"></span>
-          </div>
-        )}
-
+      <div className="overflow-auto">
         <table className="table table-pin-rows table-pin-cols">
           <thead>
             <tr className="z-20">
-              <th className="border-r">
+              <th
+                className={classNames("border-r", {
+                  "w-64": selectedTermDate !== "",
+                })}
+              >
                 <Form>
                   <TableHeaderSort
                     sortPropName="sortFullName"
@@ -203,13 +215,17 @@ export default function Index() {
 
                   return (
                     <td key={attendedOn} className="border-r">
-                      <div className="indicator">
+                      <div className="indicator w-full">
                         {hasReport && (
                           <div className="badge indicator-item badge-success indicator-center gap-1">
                             Report <Check className="h-4 w-4" />
                           </div>
                         )}
-                        <div className="w-48">
+                        <div
+                          className={
+                            selectedTermDate === "" ? "w-48" : "w-full"
+                          }
+                        >
                           <Link
                             to={to}
                             className={classNames(

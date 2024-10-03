@@ -27,6 +27,7 @@ import {
 import editorStylesheetUrl from "~/styles/editor.css?url";
 import { Checkbox, Editor, Select, SubTitle, Title } from "~/components";
 
+import { getClosestSessionDate } from "~/services";
 import { getLoggedUserInfoAsync } from "~/services/.server/session.server";
 import {
   getSchoolTermsForYearAsync,
@@ -35,7 +36,6 @@ import {
   getUserByAzureADIdAsync,
   saveReportAsync,
   getCurrentTermForDate,
-  getClosestSessionDate,
   getStudentsAsync,
   getTermFromDate,
   getSessionDatesFormatted,
@@ -356,7 +356,7 @@ export default function Index() {
               )}
             </div>
 
-            <div className="flex justify-end pb-2">
+            <div className="flex justify-end gap-4 pb-2">
               <div className="flex gap-8">
                 {!completedOn && (
                   <>
