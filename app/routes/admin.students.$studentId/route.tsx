@@ -7,7 +7,7 @@ import { json } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import { areEqualIgnoreCase } from "~/services";
+import { areEqualIgnoreCase, calculateYearLevel } from "~/services";
 
 import {
   createNewStudentAsync,
@@ -33,6 +33,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     return json({
       title: "Add new student",
       student: null,
+      yearLevel: null,
       isNewStudent,
       chapters,
     });
@@ -50,6 +51,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return json({
     title: "Edit student info",
     student,
+    yearLevel: calculateYearLevel(student.dateOfBirth)?.toString(),
     isNewStudent,
     chapters,
   });

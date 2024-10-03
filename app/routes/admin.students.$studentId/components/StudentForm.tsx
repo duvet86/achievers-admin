@@ -20,7 +20,7 @@ interface Props {
 
 export function StudentForm({
   transition,
-  loaderData: { student, chapters },
+  loaderData: { student, chapters, yearLevel },
   actionData,
 }: Props) {
   return (
@@ -70,6 +70,14 @@ export function StudentForm({
           defaultValue={student?.dateOfBirth ?? ""}
           label="Date of birth"
           name="dateOfBirth"
+        />
+
+        <Input
+          defaultValue={yearLevel ?? ""}
+          label="Year level (calculated from the DoB)"
+          name="address"
+          disabled
+          readOnly
         />
 
         <Input

@@ -118,6 +118,8 @@ export function SelectSearch({
           placeholder={label ?? placeholder}
           required={required}
           disabled={disabled}
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          onChange={() => {}}
         />
         {showClearButton && (
           <div
