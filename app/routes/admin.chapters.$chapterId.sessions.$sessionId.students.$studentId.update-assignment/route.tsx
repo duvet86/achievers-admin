@@ -58,14 +58,18 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     chapter,
     session,
     selectedMentorId: selectedMentorId.toString(),
-    mentors: mentors
-      .filter(
-        ({ id }) => !mentorsInSession.includes(id) || selectedMentorId === id,
-      )
-      .map(({ id, fullName }) => ({
-        label: fullName,
+    mentors: mentors.map(({ id, fullName }) => {
+      const isUnavailable =
+        mentorsInSession.includes(id) && selectedMentorId !== id;
+
+      return {
+        label:
+          fullName +
+          (isUnavailable ? " (Unavailable - in another session)" : ""),
         value: id.toString(),
-      })),
+        isDisabled: isUnavailable,
+      };
+    }),
     attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
   });
 }

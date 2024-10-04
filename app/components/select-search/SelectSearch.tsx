@@ -8,6 +8,7 @@ import { useClientRect } from "~/services";
 export interface Option {
   label: string;
   value: string;
+  isDisabled?: boolean;
 }
 
 interface Props {
@@ -83,6 +84,11 @@ export function SelectSearch({
       ? (options.find(({ value }) => value === defaultValue) ?? EMPTY_OPTION)
       : EMPTY_OPTION);
 
+  const onDisabledButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
     <div
       className="dropdown w-full"
@@ -138,14 +144,14 @@ export function SelectSearch({
         data-testid="autocomplete-hidden"
       />
       <ul
-        className="menu dropdown-content z-[1] max-h-80 flex-nowrap overflow-auto rounded-box bg-base-100 p-0 shadow"
+        className="dropdown-content z-[1] max-h-80 flex-nowrap overflow-auto rounded-box bg-base-100 p-0 shadow"
         style={{ width: rect.width }}
       >
         <li className="sticky top-0 z-10 mb-4 bg-white p-2">
           <input
             ref={searchInputRef}
             type="text"
-            className="select-search-input input input-bordered"
+            className="select-search-input input input-bordered w-full"
             placeholder="Start typing to search..."
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setSearchTerm(e.target.value)
@@ -154,9 +160,23 @@ export function SelectSearch({
         </li>
         {viewOptions.map((option, index) => (
           <li key={index}>
-            <button type="button" onClick={onOptionClick(option)}>
-              {option.label}
-            </button>
+            {option.isDisabled ? (
+              <button
+                type="button"
+                onClick={onDisabledButtonClick}
+                className="cursor-not-allowed p-2 text-error"
+              >
+                {option.label}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="w-full p-2 text-left hover:bg-gray-100"
+                onClick={onOptionClick(option)}
+              >
+                {option.label}
+              </button>
+            )}
           </li>
         ))}
         {viewOptions.length === 0 && (
@@ -164,7 +184,7 @@ export function SelectSearch({
             <button
               type="button"
               className="italic"
-              onClick={(e) => e.preventDefault()}
+              onClick={onDisabledButtonClick}
             >
               No items
             </button>

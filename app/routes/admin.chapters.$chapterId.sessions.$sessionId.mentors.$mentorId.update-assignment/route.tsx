@@ -58,14 +58,18 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     chapter,
     session,
     selectedStudentId: selectedStudentId?.toString() ?? null,
-    students: students
-      .filter(
-        ({ id }) => !studentsInSession.includes(id) || selectedStudentId === id,
-      )
-      .map(({ id, fullName }) => ({
-        label: fullName,
+    students: students.map(({ id, fullName }) => {
+      const isUnavailable =
+        studentsInSession.includes(id) && selectedStudentId !== id;
+
+      return {
+        label:
+          fullName +
+          (isUnavailable ? " (Unavailable - in another session)" : ""),
         value: id.toString(),
-      })),
+        isDisabled: isUnavailable,
+      };
+    }),
     attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
   });
 }

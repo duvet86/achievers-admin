@@ -2,7 +2,14 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import type { Prisma } from "@prisma/client";
 
 import { json } from "@remix-run/node";
-import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useLoaderData,
+  useNavigate,
+  useSearchParams,
+  useSubmit,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
@@ -94,6 +101,8 @@ export default function Index() {
     chapterId,
     sortFullNameSubmit,
   } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const submit = useSubmit();
 
   const handleFormSubmit = () => {
@@ -190,12 +199,17 @@ export default function Index() {
                     backgroundColor: getValueFromCircularArray(i, colours),
                   }}
                 >
-                  <Link
-                    to={`/admin/chapters/${chapterId}/mentors/${mentorId}?back_url=/admin/chapters/${chapterId}/roster-mentors`}
+                  <button
+                    onClick={() => {
+                      searchParams.set("search", fullName);
+                      navigate({
+                        search: searchParams.toString(),
+                      });
+                    }}
                     className="link block w-36"
                   >
                     {fullName}
-                  </Link>
+                  </button>
                 </th>
                 {datesInTerm.map((attendedOn) => {
                   const sessionInfo = sessionLookup[attendedOn];
@@ -205,7 +219,7 @@ export default function Index() {
                   const completedOn = sessionInfo?.completedOn;
                   const isCancelled = sessionInfo?.isCancelled ?? false;
 
-                  const queryString = `back_url=/admin/chapters/${chapterId}/roster-mentors`;
+                  const queryString = `back_url=/admin/chapters/${chapterId}/roster-mentors?${encodeURIComponent(searchParams.toString())}`;
 
                   const to = sessionId
                     ? completedOn
