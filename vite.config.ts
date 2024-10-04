@@ -353,15 +353,14 @@ export default defineConfig({
                 },
               );
             });
-            route(
-              "user-permissions",
-              "routes/admin.user-permissions/layout.tsx",
-              () => {
-                route("", "routes/admin.user-permissions/route.tsx", {
-                  index: true,
-                });
-              },
-            );
+            route("permissions", "routes/admin.permissions/layout.tsx", () => {
+              route("", "routes/admin.permissions/route.tsx", {
+                index: true,
+              });
+              route("add-user", "routes/admin.permissions.add-user/route.tsx", {
+                index: true,
+              });
+            });
           });
           route("mentor", "routes/mentor/layout.tsx", () => {
             route("home", "routes/mentor.home/route.tsx", { index: true });

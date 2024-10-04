@@ -77,7 +77,7 @@ function getLinks(
         },
         {
           icon: <TowerWarning />,
-          path: "/admin/user-permissions",
+          path: "/admin/permissions",
           label: "Permissions",
           isVisible: linkMappings.Permissions,
         },

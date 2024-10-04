@@ -23,7 +23,9 @@ describe("Body", () => {
             SchoolTerm: true,
             Config: true,
           }}
-        />
+        >
+          Test
+        </Body>
       </MemoryRouter>,
     );
 
@@ -40,7 +42,9 @@ describe("Body", () => {
           environment="local"
           userName="test@test.com"
           linkMappings={{}}
-        />
+        >
+          Test
+        </Body>
       </MemoryRouter>,
     );
 
@@ -57,7 +61,9 @@ describe("Body", () => {
           environment="local"
           userName="test@test.com"
           linkMappings={{}}
-        />
+        >
+          Test
+        </Body>
       </MemoryRouter>,
     );
 

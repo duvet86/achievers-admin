@@ -52,7 +52,7 @@ describe("Drawer", () => {
     expect(links[6]).toHaveAttribute("href", "/admin/config");
 
     expect(links[7]).toHaveTextContent("Permissions");
-    expect(links[7]).toHaveAttribute("href", "/admin/user-permissions");
+    expect(links[7]).toHaveAttribute("href", "/admin/permissions");
   });
 
   it("should display links for mentor", () => {

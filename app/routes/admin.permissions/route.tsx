@@ -2,7 +2,7 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { useLoaderData, Link } from "@remix-run/react";
 import { json } from "@remix-run/node";
-import { PageEdit } from "iconoir-react";
+import { PageEdit, Plus } from "iconoir-react";
 
 import { getAzureUsersWithRolesAsync } from "~/services/.server";
 import { Title } from "~/components";
@@ -91,6 +91,16 @@ export default function Index() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="mt-4 flex flex-row justify-end">
+        <Link
+          className="btn btn-primary mt-4 w-56 gap-4 lg:mt-0"
+          to="/admin/permissions/add-user"
+        >
+          <Plus className="h-6 w-6" />
+          Add user
+        </Link>
       </div>
     </>
   );

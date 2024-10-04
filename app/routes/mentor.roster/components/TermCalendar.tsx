@@ -104,15 +104,10 @@ export default function TermCalendar({
                 </div>
 
                 <div className="flex basis-2/6 flex-col gap-4">
-                  {mySession ? (
+                  {mySession && (
                     <div className="flex gap-2">
                       <ThumbsUp />
                       {`${mySession.user.fullName} (Me) ${mySession.student ? `with ${mySession.student.fullName}` : "marked available"}`}
-                    </div>
-                  ) : (
-                    <div className="flex gap-2 text-success">
-                      <Check />
-                      Available
                     </div>
                   )}
                   {studentSessions?.map(({ user, student }) => (

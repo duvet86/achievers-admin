@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { redirect, json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData } from "@remix-run/react";
 
 import { getEnvironment } from "~/services";
 import {
@@ -43,5 +43,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Index() {
   const loaderData = useLoaderData<typeof loader>();
 
-  return <Body {...loaderData} />;
+  return (
+    <Body {...loaderData}>
+      <Outlet />
+    </Body>
+  );
 }
