@@ -4,7 +4,7 @@ import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import { ChatBubbleEmpty, Check, WarningTriangle } from "iconoir-react";
+import { ChatBubbleEmpty, Check, WarningTriangle, Xmark } from "iconoir-react";
 
 import { Title } from "~/components";
 
@@ -40,9 +40,6 @@ export default function Index() {
               <th align="center" className="w-1/4">
                 Action
               </th>
-              <th align="center" className="w-1/4">
-                Archive Status
-              </th>
             </tr>
           </thead>
           <tbody>
@@ -53,32 +50,31 @@ export default function Index() {
                 </td>
               </tr>
             )}
-            {user.references.map(({ id, fullName, calledOndate }) => (
-              <tr key={id}>
-                <td className="border">{fullName}</td>
-                <td className="border" align="center">
-                  {calledOndate !== null ? (
-                    <Check className="h-6 w-6 text-success" />
-                  ) : (
-                    <WarningTriangle className="h-6 w-6 text-warning" />
-                  )}
-                </td>
-                <td align="right" className="border">
-                  <Link
-                    to={`${id}`}
-                    className="btn btn-success btn-xs w-full gap-2"
-                  >
-                    <ChatBubbleEmpty className="h-4 w-4" />
-                    View
-                  </Link>
-                </td>
-                <td align="center" className="border">
-                  <button className="btn btn-info btn-xs w-full">
-                    Not Archived
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {user.references.map(
+              ({ id, fullName, calledOndate, isRejected }) => (
+                <tr key={id}>
+                  <td className="border">{fullName}</td>
+                  <td className="border" align="center">
+                    {isRejected ? (
+                      <Xmark className="text-danger h-6 w-6" />
+                    ) : calledOndate !== null ? (
+                      <Check className="h-6 w-6 text-success" />
+                    ) : (
+                      <WarningTriangle className="h-6 w-6 text-warning" />
+                    )}
+                  </td>
+                  <td align="right" className="border">
+                    <Link
+                      to={`${id}`}
+                      className="btn btn-success btn-xs w-full gap-2"
+                    >
+                      <ChatBubbleEmpty className="h-4 w-4" />
+                      View
+                    </Link>
+                  </td>
+                </tr>
+              ),
+            )}
           </tbody>
         </table>
       </div>

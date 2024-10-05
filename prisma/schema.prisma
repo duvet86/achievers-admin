@@ -134,6 +134,7 @@ model Reference {
   hasKnowApplicantForAYear Boolean?
   isRelated                Boolean?
   isMentorRecommended      Boolean?
+  isRejected               Boolean?
 
   calledBy     String?
   calledOndate DateTime?
