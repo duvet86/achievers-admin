@@ -137,7 +137,7 @@ class AdminUserPageAssertions {
     await expect(this.adminUserPage.label).toBeVisible();
   }
 
-  async toHaveNoAccessWarning(): Promise<void> {
-    await expect(this.adminUserPage.noAccessText).toBeVisible();
+  async toHaveNOTNoAccessWarning(): Promise<void> {
+    await expect(this.adminUserPage.noAccessText).not.toBeVisible();
   }
 }

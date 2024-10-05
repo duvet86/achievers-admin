@@ -1,18 +1,14 @@
+import type { RawRuleOf } from "@casl/ability";
 import type { TokenInfo } from "../models";
+import type { Subject, AppAbility } from "./permissions.server";
 
 import { redirect } from "@remix-run/node";
-import { RawRuleOf } from "@casl/ability";
 
 import { getCurrentHost, parseJwt } from "../utils";
 
 import { trackException } from "./appinsights-logging.server";
 import { getSessionInfoAsync_dev } from "./session-dev.server";
-import {
-  Subject,
-  AppAbility,
-  createAbility,
-  ROLES,
-} from "./permissions.server";
+import { createAbility } from "./permissions.server";
 
 export interface CurentUserInfo {
   aud: string;
@@ -25,7 +21,7 @@ export interface CurentUserInfo {
   oid: string;
   preferred_username: string;
   rh: string;
-  roles: ROLES[];
+  roles: string[];
   sub: string;
   tid: string;
   uti: string;
@@ -102,7 +98,7 @@ export async function getLoggedUserInfoAsync(
   };
 }
 
-export function getPermissionsAbility(roles: ROLES[]) {
+export function getPermissionsAbility(roles: string[]) {
   const rules = roles.map<RawRuleOf<AppAbility>[]>((role) => {
     const parts = role.split(".");
 

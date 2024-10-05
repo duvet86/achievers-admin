@@ -20,6 +20,7 @@ describe("Drawer", () => {
             Chapter: true,
             SchoolTerm: true,
             Config: true,
+            Permissions: true,
           }}
         />
       </MemoryRouter>,
@@ -27,7 +28,7 @@ describe("Drawer", () => {
 
     const links: HTMLAnchorElement[] = screen.getAllByRole("link");
 
-    expect(links.length).toBe(7);
+    expect(links.length).toBe(8);
 
     expect(links[0]).toHaveTextContent("Home");
     expect(links[0]).toHaveAttribute("href", "/admin/home");
@@ -38,7 +39,7 @@ describe("Drawer", () => {
     expect(links[2]).toHaveTextContent("Students");
     expect(links[2]).toHaveAttribute("href", "/admin/students");
 
-    expect(links[3]).toHaveTextContent("Sessions/Reports");
+    expect(links[3]).toHaveTextContent("Reports");
     expect(links[3]).toHaveAttribute("href", "/admin/sessions");
 
     expect(links[4]).toHaveTextContent("Chapters");
@@ -49,6 +50,9 @@ describe("Drawer", () => {
 
     expect(links[6]).toHaveTextContent("Config");
     expect(links[6]).toHaveAttribute("href", "/admin/config");
+
+    expect(links[7]).toHaveTextContent("Permissions");
+    expect(links[7]).toHaveAttribute("href", "/admin/permissions");
   });
 
   it("should display links for mentor", () => {
@@ -78,8 +82,8 @@ describe("Drawer", () => {
     expect(links[3]).toHaveTextContent("My Students");
     expect(links[3]).toHaveAttribute("href", "/mentor/students");
 
-    expect(links[4]).toHaveTextContent("My Partner");
-    expect(links[4]).toHaveAttribute("href", "/mentor/partner");
+    expect(links[4]).toHaveTextContent("My Partners");
+    expect(links[4]).toHaveAttribute("href", "/mentor/partners");
 
     expect(links[5]).toHaveTextContent("Useful Resources");
     expect(links[5]).toHaveAttribute("href", "/mentor/useful-resources");
@@ -114,7 +118,7 @@ describe("Drawer", () => {
     expect(links[2]).toHaveTextContent("Students");
     expect(links[2]).toHaveAttribute("href", "/admin/students");
 
-    expect(links[3]).toHaveTextContent("Sessions/Reports");
+    expect(links[3]).toHaveTextContent("Reports");
     expect(links[3]).toHaveAttribute("href", "/admin/sessions");
 
     expect(links[4]).toHaveTextContent("Chapters");

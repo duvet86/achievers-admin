@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData } from "@remix-run/react";
 
 import {
   getLoggedUserInfoAsync,
@@ -34,6 +34,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     Chapter: ability.can("manage", "ChapterArea"),
     SchoolTerm: ability.can("manage", "SchoolTermArea"),
     Config: ability.can("manage", "ConfigArea"),
+    Permissions: ability.can("manage", "PermissionsArea"),
   };
 
   return json({
@@ -49,5 +50,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function AppLayout() {
   const loaderData = useLoaderData<typeof loader>();
 
-  return <Body {...loaderData} />;
+  return (
+    <Body {...loaderData}>
+      <Outlet />
+    </Body>
+  );
 }

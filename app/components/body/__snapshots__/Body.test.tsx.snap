@@ -178,7 +178,9 @@ exports[`Body > Body snapshot admin 1`] = `
         </nav>
         <main
           class="content-main mt-16 flex flex-col overflow-y-auto p-4"
-        />
+        >
+          Test
+        </main>
       </div>
       <div
         class="drawer-side pt-16"
@@ -204,7 +206,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -229,7 +230,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   Home
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -257,7 +257,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -282,7 +281,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   Mentors
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -310,7 +308,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -341,7 +338,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   Students
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -369,7 +365,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -407,10 +402,9 @@ exports[`Body > Body snapshot admin 1`] = `
                       stroke="currentColor"
                     />
                   </svg>
-                  Sessions/Reports
+                  Reports
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -438,7 +432,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -476,7 +469,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   Chapters
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -504,7 +496,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -541,7 +532,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   School Terms
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -569,7 +559,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -594,7 +583,6 @@ exports[`Body > Body snapshot admin 1`] = `
                   Config
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -841,7 +829,9 @@ exports[`Body > Body snapshot mentor 1`] = `
         </nav>
         <main
           class="content-main mt-16 flex flex-col overflow-y-auto p-4"
-        />
+        >
+          Test
+        </main>
       </div>
       <div
         class="drawer-side pt-16"
@@ -867,7 +857,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -892,7 +881,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   Home
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -920,7 +908,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -957,7 +944,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   Roster
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -985,7 +971,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -1026,7 +1011,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   Write Report
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -1054,7 +1038,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -1085,7 +1068,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   My Students
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -1107,13 +1089,12 @@ exports[`Body > Body snapshot mentor 1`] = `
               <a
                 class="mb-2 justify-between rounded font-semibold"
                 data-discover="true"
-                href="/mentor/partner"
+                href="/mentor/partners"
               >
                 <div
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -1145,10 +1126,9 @@ exports[`Body > Body snapshot mentor 1`] = `
                       stroke-linejoin="round"
                     />
                   </svg>
-                  My Partner
+                  My Partners
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -1176,7 +1156,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -1219,7 +1198,6 @@ exports[`Body > Body snapshot mentor 1`] = `
                   Useful Resources
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"
@@ -1423,7 +1401,9 @@ exports[`Body > Body snapshot mentor and admin permissions 1`] = `
         </nav>
         <main
           class="content-main mt-16 flex flex-col overflow-y-auto p-4"
-        />
+        >
+          Test
+        </main>
       </div>
       <div
         class="drawer-side pt-16"
@@ -1449,7 +1429,6 @@ exports[`Body > Body snapshot mentor and admin permissions 1`] = `
                   class="flex items-center gap-4"
                 >
                   <svg
-                    class="h-6 w-6"
                     color="currentColor"
                     fill="none"
                     height="1.5em"
@@ -1474,7 +1453,6 @@ exports[`Body > Body snapshot mentor and admin permissions 1`] = `
                   Home
                 </div>
                 <svg
-                  class="h-6 w-6"
                   color="currentColor"
                   fill="none"
                   height="1.5em"

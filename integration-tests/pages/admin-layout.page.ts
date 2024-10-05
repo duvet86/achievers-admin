@@ -9,6 +9,7 @@ export class AdminLayoutPage {
   mentorsLink: Locator;
   studentsLink: Locator;
   chaptersLink: Locator;
+  mentorViewLink: Locator;
 
   expect: AdminLayoutPageAssertions;
 
@@ -33,6 +34,10 @@ export class AdminLayoutPage {
       name: "Chapters",
       exact: true,
     });
+    this.mentorViewLink = page.getByRole("link", {
+      name: "Mentor View",
+      exact: true,
+    });
 
     this.expect = new AdminLayoutPageAssertions(this);
   }
@@ -51,6 +56,10 @@ export class AdminLayoutPage {
 
   async goToHome() {
     await this.homeLink.click();
+  }
+
+  async goToMentorView() {
+    await this.mentorViewLink.click();
   }
 }
 

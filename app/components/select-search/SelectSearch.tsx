@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Xmark } from "iconoir-react";
+import classNames from "classnames";
+
 import { useClientRect } from "~/services";
 
-interface Option {
+export interface Option {
   label: string;
   value: string;
+  isDisabled?: boolean;
 }
 
 interface Props {
@@ -17,6 +20,7 @@ interface Props {
   required?: boolean;
   disabled?: boolean;
   options: Option[];
+  onChange?: (value: string) => void;
 }
 
 const EMPTY_OPTION: Option = {
@@ -33,6 +37,7 @@ export function SelectSearch({
   showClearButton,
   required,
   disabled,
+  onChange,
 }: Props) {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedValue, setSelectedValue] = useState<Option | null>(null);
@@ -56,6 +61,10 @@ export function SelectSearch({
     inputRef.current!.value = option.value;
 
     (document.activeElement as HTMLElement).blur();
+
+    if (onChange) {
+      onChange(option.value);
+    }
   };
 
   const onClearSelection = () => {
@@ -75,6 +84,11 @@ export function SelectSearch({
       ? (options.find(({ value }) => value === defaultValue) ?? EMPTY_OPTION)
       : EMPTY_OPTION);
 
+  const onDisabledButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
     <div
       className="dropdown w-full"
@@ -84,15 +98,22 @@ export function SelectSearch({
       {label && (
         <label htmlFor={name} className="label">
           <span className="label-text">{label}</span>
-          {required && (
-            <span
-              data-testid="required"
-              className="label-text-alt absolute right-1 top-9 text-2xl text-error"
-            >
-              *
-            </span>
-          )}
         </label>
+      )}
+      {required && (
+        <span
+          data-testid="required"
+          className={classNames(
+            "label-text-alt absolute right-1 text-2xl text-error",
+            {
+              "top-0": label === undefined,
+              "top-9": label !== undefined,
+              "right-16": showClearButton,
+            },
+          )}
+        >
+          *
+        </span>
       )}
 
       <div className="join w-full">
@@ -103,7 +124,8 @@ export function SelectSearch({
           placeholder={label ?? placeholder}
           required={required}
           disabled={disabled}
-          readOnly
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          onChange={() => {}}
         />
         {showClearButton && (
           <div
@@ -115,26 +137,21 @@ export function SelectSearch({
           </div>
         )}
       </div>
-
       <input
         ref={inputRef}
-        className="hidden"
-        type="text"
+        type="hidden"
         name={name}
         data-testid="autocomplete-hidden"
-        required={required}
-        disabled={disabled}
       />
-
       <ul
-        className="menu dropdown-content z-[1] max-h-80 flex-nowrap overflow-auto rounded-box bg-base-100 p-0 shadow"
+        className="dropdown-content z-[1] max-h-80 flex-nowrap overflow-auto rounded-box bg-base-100 p-0 shadow"
         style={{ width: rect.width }}
       >
         <li className="sticky top-0 z-10 mb-4 bg-white p-2">
           <input
             ref={searchInputRef}
             type="text"
-            className="select-search-input input input-bordered"
+            className="select-search-input input input-bordered w-full"
             placeholder="Start typing to search..."
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setSearchTerm(e.target.value)
@@ -143,9 +160,23 @@ export function SelectSearch({
         </li>
         {viewOptions.map((option, index) => (
           <li key={index}>
-            <button type="button" onClick={onOptionClick(option)}>
-              {option.label}
-            </button>
+            {option.isDisabled ? (
+              <button
+                type="button"
+                onClick={onDisabledButtonClick}
+                className="cursor-not-allowed p-2 text-error"
+              >
+                {option.label}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="w-full p-2 text-left hover:bg-gray-100"
+                onClick={onOptionClick(option)}
+              >
+                {option.label}
+              </button>
+            )}
           </li>
         ))}
         {viewOptions.length === 0 && (
@@ -153,7 +184,7 @@ export function SelectSearch({
             <button
               type="button"
               className="italic"
-              onClick={(e) => e.preventDefault()}
+              onClick={onDisabledButtonClick}
             >
               No items
             </button>

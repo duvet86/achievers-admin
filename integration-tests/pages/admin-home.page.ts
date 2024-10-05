@@ -89,7 +89,7 @@ export class AdminHomePageAssertions {
   }
 
   async toHaveLinks(): Promise<void> {
-    await expect(this.adminHomePage.links).toHaveCount(3);
+    await expect(this.adminHomePage.links).toHaveCount(4);
 
     await expect(this.adminHomePage.links.nth(0)).toHaveAttribute(
       "href",
@@ -104,6 +104,11 @@ export class AdminHomePageAssertions {
     await expect(this.adminHomePage.links.nth(2)).toHaveAttribute(
       "href",
       "/admin/chapters",
+    );
+
+    await expect(this.adminHomePage.links.nth(3)).toHaveAttribute(
+      "href",
+      "/mentor/home",
     );
   }
 }

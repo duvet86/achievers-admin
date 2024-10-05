@@ -54,6 +54,10 @@ function Message({ successMessage, errorMessage }: MessageProps) {
   const [isActive, setIsActive] = useState(true);
 
   useEffect(() => {
+    if (!successMessage) {
+      return;
+    }
+
     let n: number | undefined;
     if (isActive) {
       n = window.setTimeout(() => {
@@ -66,7 +70,7 @@ function Message({ successMessage, errorMessage }: MessageProps) {
         clearTimeout(n);
       }
     };
-  }, [isActive]);
+  }, [isActive, successMessage]);
 
   return (
     <div data-testid="message">

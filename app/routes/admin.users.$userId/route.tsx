@@ -7,10 +7,7 @@ import { useActionData, useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
 
-import {
-  getAzureUserWithRolesByIdAsync,
-  ROLE_MAPPINGS,
-} from "~/services/.server";
+import { getAzureUserWithRolesByIdAsync } from "~/services/.server";
 import { isDateExpired, isStringNullOrEmpty } from "~/services";
 
 import {
@@ -58,7 +55,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     volunteerAgreementSignedOn: user.volunteerAgreementSignedOn,
     mentorAppRoleAssignmentId:
       azureUserInfo?.appRoleAssignments.find(
-        ({ appRoleId }) => ROLE_MAPPINGS.Mentor === appRoleId,
+        ({ roleName }) => roleName === "Mentor",
       )?.id ?? null,
     chapters,
   });
@@ -72,6 +69,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const chapterId = formData.get("chapterId")?.toString();
   const firstName = formData.get("firstName")?.toString();
   const lastName = formData.get("lastName")?.toString();
+  const email = formData.get("email")?.toString();
   const mobile = formData.get("mobile")?.toString();
 
   const addressStreet = formData.get("addressStreet")?.toString();
@@ -102,10 +100,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     isStringNullOrEmpty(addressState) ||
     isStringNullOrEmpty(addressPostcode)
   ) {
-    return json({
-      successMessage: null,
-      errorMessage: "Missing required fields",
-    });
+    throw new Error("Missing required fields.");
   }
 
   const dataCreate: Prisma.XOR<
@@ -114,6 +109,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   > = {
     firstName,
     lastName,
+    email,
     mobile,
     addressStreet,
     addressSuburb,

@@ -136,7 +136,7 @@ test.describe("Admin", () => {
       additionalEmail: "",
     });
 
-    await userInfoPage.expect.toHaveNoAccessWarning();
+    await userInfoPage.expect.toHaveNOTNoAccessWarning();
 
     // Update user info.
     await userInfoPage.userForm.updateUserForm({

@@ -16,6 +16,7 @@ export async function getSessionByIdAsync(sessionId: number) {
       chapterId: true,
       chapter: {
         select: {
+          id: true,
           name: true,
         },
       },
@@ -31,6 +32,18 @@ export async function getSessionByIdAsync(sessionId: number) {
           fullName: true,
         },
       },
+    },
+  });
+}
+
+export async function enableSession(sessionId: number) {
+  return await prisma.mentorToStudentSession.update({
+    where: {
+      id: sessionId,
+    },
+    data: {
+      isCancelled: false,
+      reasonCancelled: null,
     },
   });
 }

@@ -3,6 +3,7 @@ import type { DefaultArgs } from "@prisma/client/runtime/library";
 
 export async function createUsersAsync(
   prisma: PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+  azureId: string,
 ) {
   await prisma.$transaction(async (tx) => {
     await tx.importedHistory.deleteMany();
@@ -22,7 +23,7 @@ export async function createUsersAsync(
     for (i = 0; i < 18; i++) {
       await tx.user.create({
         data: {
-          azureADId: null,
+          azureADId: i === 0 ? azureId : null,
           email: `test_${i}@test.com`,
           firstName: `test_${i}`,
           lastName: `user_${i}`,

@@ -33,13 +33,15 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
 }
 
 export async function getReportForSessionDateAsync(
+  mentorId: number,
   studentId: number,
   chapterId: number,
   attendedOn: string,
 ) {
   return await prisma.mentorToStudentSession.findUnique({
     where: {
-      studentId_chapterId_attendedOn: {
+      userId_studentId_chapterId_attendedOn: {
+        userId: mentorId,
         attendedOn,
         chapterId,
         studentId,
@@ -79,7 +81,6 @@ export async function getMentorSessionDatesAsync(
       where: {
         userId,
         chapterId,
-        studentId,
         AND: [
           {
             attendedOn: {
@@ -90,6 +91,14 @@ export async function getMentorSessionDatesAsync(
             attendedOn: {
               lte: currentTerm.end.toDate(),
             },
+          },
+        ],
+        OR: [
+          {
+            studentId,
+          },
+          {
+            studentId: null,
           },
         ],
       },
@@ -204,19 +213,6 @@ export function getCurrentTermForDate(terms: Term[], date: Date): Term {
   }
 
   return terms[0];
-}
-
-export function getClosestSessionDate(dates: Date[]) {
-  if (dates.length === 0) {
-    return null;
-  }
-
-  const today = new Date();
-  const closest = dates.reduce((a, b) =>
-    a.getDate() - today.getDate() < b.getDate() - today.getDate() ? a : b,
-  );
-
-  return dayjs(closest).format("YYYY-MM-DD") + "T00:00:00Z";
 }
 
 export async function getStudentsAsync(

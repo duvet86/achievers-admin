@@ -1,7 +1,12 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
+import {
+  Link,
+  useLoaderData,
+  useSearchParams,
+  useSubmit,
+} from "@remix-run/react";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import {
@@ -10,11 +15,12 @@ import {
   StatsReport,
   WarningCircle,
   EditPencil,
+  OnTag,
 } from "iconoir-react";
 
 import { Title, Textarea } from "~/components";
 
-import { getSessionByIdAsync } from "./services.server";
+import { enableSession, getSessionByIdAsync } from "./services.server";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.sessionId, "sessionId not found");
@@ -25,6 +31,14 @@ export async function loader({ params }: LoaderFunctionArgs) {
     attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
     session,
   });
+}
+
+export async function action({ params }: ActionFunctionArgs) {
+  invariant(params.sessionId, "sessionId not found");
+
+  await enableSession(Number(params.sessionId));
+
+  return null;
 }
 
 export default function Index() {
@@ -42,32 +56,46 @@ export default function Index() {
       signedOffOn,
     },
   } = useLoaderData<typeof loader>();
+  const submit = useSubmit();
   const [searchParams] = useSearchParams();
 
   const backURL = searchParams.get("back_url");
 
+  const enableSession = () => {
+    if (confirm("Are you sure you want to re-enable the session?")) {
+      submit(null, { method: "post" });
+    }
+  };
+
   return (
     <>
-      <div className="flex justify-between">
-        <Title
-          to={backURL ? backURL : `/admin/sessions?${searchParams.toString()}`}
-        >
-          Session of &quot;
-          {attendedOnLabel}&quot;
-        </Title>
-
-        {isCancelled ? (
-          <div role="alert" className="alert alert-error w-72">
-            <WarningCircle />
-            <span>Session has been cancelled</span>
-          </div>
-        ) : completedOn ? null : (
-          <Link
-            to={`cancel?${searchParams.toString()}`}
-            className="btn btn-error w-48 gap-2"
+      <div className="flex justify-between gap-4">
+        <div className="flex gap-8">
+          <Title
+            className="shrink-0"
+            to={
+              backURL ? backURL : `/admin/sessions?${searchParams.toString()}`
+            }
           >
-            <Xmark className="h-6 w-6" /> Cancel session
-          </Link>
+            Session of &quot;
+            {attendedOnLabel}&quot;
+          </Title>
+
+          {isCancelled && (
+            <div role="alert" className="alert alert-error">
+              <WarningCircle />
+              <span>Session has been cancelled</span>
+            </div>
+          )}
+        </div>
+
+        {isCancelled && (
+          <button
+            onClick={enableSession}
+            className="btn btn-secondary w-48 gap-2"
+          >
+            <OnTag /> Re-enable session
+          </button>
         )}
       </div>
 
@@ -84,18 +112,39 @@ export default function Index() {
 
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Student</div>
-          <div className="flex-1">{student.fullName}</div>
+          <div className="flex-1">{student?.fullName}</div>
+          {!completedOn && (
+            <Link
+              className="btn btn-primary w-44"
+              to={`/admin/chapters/${chapter.id}/sessions/${id}/mentors/${user.id}/update-assignment`}
+            >
+              <EditPencil /> Edit student
+            </Link>
+          )}
         </div>
 
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Mentor</div>
           <div className="flex-1">{user.fullName}</div>
+          {!student && (
+            <p className="bg-info">
+              Mentor has marked available for the session.
+            </p>
+          )}
+          {student && !completedOn && (
+            <Link
+              className="btn btn-primary w-44"
+              to={`/admin/chapters/${chapter.id}/sessions/${id}/students/${student.id}/update-assignment`}
+            >
+              <EditPencil /> Edit mentor
+            </Link>
+          )}
         </div>
 
         {isCancelled ? (
           <div className="flex items-center gap-2 p-2">
             <div className="w-72 font-bold">Reason</div>
-            <Textarea readOnly defaultValue={reasonCancelled!} />
+            <Textarea defaultValue={reasonCancelled!} disabled />
           </div>
         ) : (
           <>

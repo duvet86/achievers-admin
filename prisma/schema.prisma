@@ -43,8 +43,10 @@ model User {
 
   profilePicturePath         String?
   hasApprovedToPublishPhotos Boolean?
-  endDate                    DateTime?
   volunteerAgreementSignedOn DateTime?
+
+  endDate   DateTime?
+  endReason String?   @db.TinyText
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -64,6 +66,8 @@ model User {
   mentorToStudentSession     MentorToStudentSession[]
 
   importedHistory ImportedHistory?
+
+  MentorAttendance MentorAttendance[]
 }
 
 model ImportedHistory {
@@ -214,6 +218,7 @@ model Chapter {
   mentorToStudentSession MentorToStudentSession[]
   user                   User[]
   student                Student[]
+  MentorAttendance       MentorAttendance[]
 }
 
 model Student {
@@ -314,8 +319,8 @@ model MentorToStudentSession {
 
   user        User     @relation(fields: [userId], references: [id])
   userId      Int
-  student     Student  @relation(fields: [studentId], references: [id])
-  studentId   Int
+  student     Student? @relation(fields: [studentId], references: [id])
+  studentId   Int?
   chapter     Chapter  @relation(fields: [chapterId], references: [id])
   chapterId   Int
   attendedOn  DateTime
@@ -332,7 +337,7 @@ model MentorToStudentSession {
 
   writteOnBehalfByAzureId String?
 
-  @@unique([studentId, chapterId, attendedOn])
+  @@unique([userId, studentId, chapterId, attendedOn])
 }
 
 model SchoolTerm {
@@ -343,4 +348,15 @@ model SchoolTerm {
 
   @@unique([startDate, endDate])
   @@index([year])
+}
+
+model MentorAttendance {
+  id         Int      @id @default(autoincrement())
+  chapter    Chapter  @relation(fields: [chapterId], references: [id])
+  chapterId  Int
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  attendedOn DateTime
+
+  @@unique([chapterId, userId, attendedOn])
 }

@@ -42,7 +42,7 @@ export function UserForm({
           defaultValue={user.email}
           label="Email"
           name="email"
-          disabled
+          disabled={user.azureADId !== null}
         />
 
         <Select

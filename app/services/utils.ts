@@ -270,3 +270,16 @@ export function isDateExpired(expiryDate: Date | undefined) {
 
   return dayjs(expiryDate).isBefore(new Date(), "day");
 }
+
+export function getClosestSessionDate(dates: Date[]) {
+  if (dates.length === 0) {
+    throw new Error("Empty dates input.");
+  }
+
+  const today = new Date();
+  const closest = dates.reduce((a, b) =>
+    a.getDate() - today.getDate() < b.getDate() - today.getDate() ? a : b,
+  );
+
+  return dayjs(closest).format("YYYY-MM-DD") + "T00:00:00Z";
+}

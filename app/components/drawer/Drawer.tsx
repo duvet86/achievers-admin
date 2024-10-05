@@ -11,6 +11,7 @@ import {
   Settings,
   StatsReport,
   RefreshDouble,
+  TowerWarning,
 } from "iconoir-react";
 
 interface Props {
@@ -33,81 +34,87 @@ function getLinks(
   return isAdmin
     ? [
         {
-          icon: <Home className="h-6 w-6" />,
+          icon: <Home />,
           path: "/admin/home",
           label: "Home",
           isVisible: true,
         },
         {
-          icon: <User className="h-6 w-6" />,
+          icon: <User />,
           path: "/admin/users",
           label: "Mentors",
           isVisible: linkMappings.User,
         },
         {
-          icon: <GraduationCap className="h-6 w-6" />,
+          icon: <GraduationCap />,
           path: "/admin/students",
           label: "Students",
           isVisible: linkMappings.Student,
         },
         {
-          icon: <StatsReport className="h-6 w-6" />,
+          icon: <StatsReport />,
           path: "/admin/sessions",
-          label: "Sessions/Reports",
+          label: "Reports",
           isVisible: linkMappings.Session,
         },
         {
-          icon: <ShopFourTiles className="h-6 w-6" />,
+          icon: <ShopFourTiles />,
           path: "/admin/chapters",
           label: "Chapters",
           isVisible: linkMappings.Chapter,
         },
         {
-          icon: <Calendar className="h-6 w-6" />,
+          icon: <Calendar />,
           path: "/admin/school-terms",
           label: "School Terms",
           isVisible: linkMappings.SchoolTerm,
         },
         {
-          icon: <Settings className="h-6 w-6" />,
+          icon: <Settings />,
           path: "/admin/config",
           label: "Config",
           isVisible: linkMappings.Config,
         },
+        {
+          icon: <TowerWarning />,
+          path: "/admin/permissions",
+          label: "Permissions",
+          isVisible: linkMappings.Permissions,
+        },
       ]
     : [
         {
-          icon: <Home className="h-6 w-6" />,
+          icon: <Home />,
           path: "/mentor/home",
           label: "Home",
           isVisible: true,
         },
         {
-          icon: <Calendar className="h-6 w-6" />,
+          icon: <Calendar />,
           path: "/mentor/roster",
           label: "Roster",
           isVisible: true,
         },
         {
-          icon: <StatsReport className="h-6 w-6" />,
+          icon: <StatsReport />,
           path: "/mentor/reports",
           label: "Write Report",
           isVisible: true,
         },
         {
-          icon: <GraduationCap className="h-6 w-6" />,
+          icon: <GraduationCap />,
           path: "/mentor/students",
           label: "My Students",
           isVisible: true,
         },
         {
-          icon: <Group className="h-6 w-6" />,
-          path: "/mentor/partner",
-          label: "My Partner",
+          icon: <Group />,
+          path: "/mentor/partners",
+          label: "My Partners",
           isVisible: true,
         },
         {
-          icon: <Page className="h-6 w-6" />,
+          icon: <Page />,
           path: "/mentor/useful-resources",
           label: "Useful Resources",
           isVisible: true,
@@ -147,7 +154,7 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
                     {icon}
                     {label}
                   </div>
-                  <NavArrowRight className="h-6 w-6" />
+                  <NavArrowRight />
                 </NavLink>
               </li>
             ))}

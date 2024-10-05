@@ -39,7 +39,7 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<
       student: {
         id: number;
         fullName: string;
-      };
+      } | null;
     }[];
   }>
 > {
@@ -125,7 +125,7 @@ export default function Index() {
         <article className="prose max-w-none">
           <h1 className="flex items-center gap-4 text-warning">
             <WarningTriangle />
-            You haven't booked a session yet
+            You haven&apos;t booked a session yet
           </h1>
           <h3>
             Go to the <Link to="/mentor/roster-students">Roster</Link> to book
@@ -168,7 +168,7 @@ export default function Index() {
                       <td align="left">
                         {dayjs(attendedOn).format("MMMM D, YYYY")}
                       </td>
-                      <td align="left">{student.fullName}</td>
+                      <td align="left">{student?.fullName}</td>
                       <td align="left">
                         {completedOn ? (
                           <div className="flex items-center gap-2">
@@ -190,13 +190,15 @@ export default function Index() {
                         )}
                       </td>
                       <td align="right">
-                        <Link
-                          to={`/mentor/reports?selectedStudentId=${student.id}&selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00Z&back_url=/mentor/home`}
-                          className="btn btn-success btn-xs h-8 gap-2"
-                        >
-                          <StatsReport className="hidden h-4 w-4 lg:block" />
-                          View report
-                        </Link>
+                        {student && (
+                          <Link
+                            to={`/mentor/reports?selectedStudentId=${student.id}&selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00Z&back_url=/mentor/home`}
+                            className="btn btn-success btn-xs h-8 gap-2"
+                          >
+                            <StatsReport className="hidden h-4 w-4 lg:block" />
+                            View report
+                          </Link>
+                        )}
                       </td>
                     </tr>
                   ),

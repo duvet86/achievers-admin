@@ -1,6 +1,6 @@
-import type { Environment } from "~/services";
+import React from "react";
 
-import { Outlet } from "@remix-run/react";
+import type { Environment } from "~/services";
 
 import { Drawer } from "../drawer/Drawer";
 import { Navbar } from "../navbar/Navbar";
@@ -12,6 +12,7 @@ interface Props {
   userName: string;
   environment: Environment;
   linkMappings: Record<string, boolean>;
+  children: React.ReactNode;
 }
 
 export function Body({
@@ -21,6 +22,7 @@ export function Body({
   version,
   environment,
   linkMappings,
+  children,
 }: Props) {
   return (
     <main className="drawer lg:drawer-open">
@@ -32,12 +34,10 @@ export function Body({
           environment={environment}
           version={version}
         />
-
         <main className="content-main mt-16 flex flex-col overflow-y-auto p-4">
-          <Outlet />
+          {children}
         </main>
       </div>
-
       <Drawer
         currentView={currentView}
         isMentorAndAdmin={isMentorAndAdmin}

@@ -23,11 +23,18 @@ export default defineConfig({
           route("auth/microsoft", "routes/auth.microsoft.tsx", {
             index: true,
           });
-          route("/", "routes/_index/route.tsx", { index: true });
+          route(
+            "chapters/:chapterId/mentor-attendances",
+            "routes/chapters.$chapterId.mentor-attendances/route.tsx",
+            {
+              index: true,
+            },
+          );
+          route("/", "routes/root/route.tsx", { index: true });
           route("admin", "routes/admin/layout.tsx", () => {
             route("home", "routes/admin.home/route.tsx", { index: true });
             route("chapters", "routes/admin.chapters/layout.tsx", () => {
-              route("", "routes/admin.chapters._index/route.tsx", {
+              route("", "routes/admin.chapters/route.tsx", {
                 index: true,
               });
               route(
@@ -39,63 +46,77 @@ export default defineConfig({
               );
               route(
                 ":chapterId/mentors",
-                "routes/admin.chapters.$chapterId_.mentors/route.tsx",
+                "routes/admin.chapters.$chapterId.mentors/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":chapterId/mentors/:mentorId",
-                "routes/admin.chapters.$chapterId_.mentors_.$mentorId/route.tsx",
+                "routes/admin.chapters.$chapterId.mentors.$mentorId/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":chapterId/roster-mentors",
-                "routes/admin.chapters.$chapterId_.roster-mentors/route.tsx",
+                "routes/admin.chapters.$chapterId.roster-mentors/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":chapterId/roster-students",
-                "routes/admin.chapters.$chapterId_.roster-students/route.tsx",
+                "routes/admin.chapters.$chapterId.roster-students/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
-                ":chapterId/sessions/:attendedOn/new-assignment",
-                "routes/admin.chapters.$chapterId_.sessions.$attendedOn.new-assignment/route.tsx",
+                ":chapterId/sessions/:attendedOn/mentors/:mentorId/assign",
+                "routes/admin.chapters.$chapterId.sessions.$attendedOn.mentors.$mentorId.assign/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
-                ":chapterId/sessions/:sessionId/update-assignment",
-                "routes/admin.chapters.$chapterId_.sessions.$sessionId.update-assignment/route.tsx",
+                ":chapterId/sessions/:attendedOn/students/:studentId/assign",
+                "routes/admin.chapters.$chapterId.sessions.$attendedOn.students.$studentId.assign/route.tsx",
+                {
+                  index: true,
+                },
+              );
+              route(
+                ":chapterId/sessions/:sessionId/mentors/:mentorId/update-assignment",
+                "routes/admin.chapters.$chapterId.sessions.$sessionId.mentors.$mentorId.update-assignment/route.tsx",
+                {
+                  index: true,
+                },
+              );
+              route(
+                ":chapterId/sessions/:sessionId/students/:studentId/update-assignment",
+                "routes/admin.chapters.$chapterId.sessions.$sessionId.students.$studentId.update-assignment/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":chapterId/students",
-                "routes/admin.chapters.$chapterId_.students/route.tsx",
+                "routes/admin.chapters.$chapterId.students/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":chapterId/students/:studentId",
-                "routes/admin.chapters.$chapterId_.students_.$studentId/route.tsx",
+                "routes/admin.chapters.$chapterId.students.$studentId/route.tsx",
                 {
                   index: true,
                 },
               );
             });
             route("config", "routes/admin.config/layout.tsx", () => {
-              route("", "routes/admin.config._index/route.tsx", {
+              route("", "routes/admin.config/route.tsx", {
                 index: true,
               });
               route(
@@ -128,7 +149,7 @@ export default defineConfig({
               },
             );
             route("sessions", "routes/admin.sessions/layout.tsx", () => {
-              route("", "routes/admin.sessions._index/route.tsx", {
+              route("", "routes/admin.sessions/route.tsx", {
                 index: true,
               });
               route(
@@ -154,28 +175,28 @@ export default defineConfig({
               );
               route(
                 ":sessionId/cancel",
-                "routes/admin.sessions.$sessionId_.cancel/route.tsx",
+                "routes/admin.sessions.$sessionId.cancel/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":sessionId/mentors/:mentorId/write-report",
-                "routes/admin.sessions.$sessionId_.mentors.$mentorId.write-report/route.tsx",
+                "routes/admin.sessions.$sessionId.mentors.$mentorId.write-report/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":sessionId/report",
-                "routes/admin.sessions.$sessionId_.report/route.tsx",
+                "routes/admin.sessions.$sessionId.report/route.tsx",
                 {
                   index: true,
                 },
               );
             });
             route("students", "routes/admin.students/layout.tsx", () => {
-              route("", "routes/admin.students._index/route.tsx", {
+              route("", "routes/admin.students/route.tsx", {
                 index: true,
               });
               route(
@@ -187,28 +208,28 @@ export default defineConfig({
               );
               route(
                 ":studentId/archive",
-                "routes/admin.students.$studentId_.archive/route.tsx",
+                "routes/admin.students.$studentId.archive/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":studentId/guardians/:guardianId",
-                "routes/admin.students.$studentId_.guardians.$guardianId/route.tsx",
+                "routes/admin.students.$studentId.guardians.$guardianId/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":studentId/re-enable",
-                "routes/admin.students.$studentId_.re-enable/route.tsx",
+                "routes/admin.students.$studentId.re-enable/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":studentId/teachers/:teacherId",
-                "routes/admin.students.$studentId_.teachers.$teacherId/route.tsx",
+                "routes/admin.students.$studentId.teachers.$teacherId/route.tsx",
                 {
                   index: true,
                 },
@@ -228,7 +249,7 @@ export default defineConfig({
               );
             });
             route("users", "routes/admin.users/layout.tsx", () => {
-              route("", "routes/admin.users._index/route.tsx", {
+              route("", "routes/admin.users/route.tsx", {
                 index: true,
               });
               route(":userId", "routes/admin.users.$userId/route.tsx", {
@@ -236,77 +257,84 @@ export default defineConfig({
               });
               route(
                 ":userId/approval-mrc",
-                "routes/admin.users.$userId_.approval-mrc/route.tsx",
+                "routes/admin.users.$userId.approval-mrc/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":userId/archive",
-                "routes/admin.users.$userId_.archive/route.tsx",
+                "routes/admin.users.$userId.archive/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":userId/eoiProfile",
-                "routes/admin.users.$userId_.eoiProfile/route.tsx",
+                "routes/admin.users.$userId.eoiProfile/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":userId/give-access",
-                "routes/admin.users.$userId_.give-access/route.tsx",
+                "routes/admin.users.$userId.give-access/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":userId/induction",
-                "routes/admin.users.$userId_.induction/route.tsx",
+                "routes/admin.users.$userId.induction/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":userId/police-check",
-                "routes/admin.users.$userId_.police-check/route.tsx",
+                "routes/admin.users.$userId.police-check/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":userId/re-enable",
-                "routes/admin.users.$userId_.re-enable/route.tsx",
+                "routes/admin.users.$userId.re-enable/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":userId/references",
-                "routes/admin.users.$userId_.references/route.tsx",
+                "routes/admin.users.$userId.references/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":userId/references/:referenceId",
-                "routes/admin.users.$userId_.references_.$referenceId/route.tsx",
+                "routes/admin.users.$userId.references.$referenceId/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":userId/welcomeCall",
-                "routes/admin.users.$userId_.welcomeCall/route.tsx",
+                "routes/admin.users.$userId.welcomeCall/route.tsx",
                 {
                   index: true,
                 },
               );
               route(
                 ":userId/wwc-check",
-                "routes/admin.users.$userId_.wwc-check/route.tsx",
+                "routes/admin.users.$userId.wwc-check/route.tsx",
+                {
+                  index: true,
+                },
+              );
+              route(
+                ":userId/end-reason",
+                "routes/admin.users.$userId.end-reason/route.tsx",
                 {
                   index: true,
                 },
@@ -325,10 +353,18 @@ export default defineConfig({
                 },
               );
             });
+            route("permissions", "routes/admin.permissions/layout.tsx", () => {
+              route("", "routes/admin.permissions/route.tsx", {
+                index: true,
+              });
+              route("add-user", "routes/admin.permissions.add-user/route.tsx", {
+                index: true,
+              });
+            });
           });
           route("mentor", "routes/mentor/layout.tsx", () => {
             route("home", "routes/mentor.home/route.tsx", { index: true });
-            route("partner", "routes/mentor.partner/route.tsx", {
+            route("partners", "routes/mentor.partners/route.tsx", {
               index: true,
             });
             route("reports", "routes/mentor.reports/route.tsx", {
