@@ -13,6 +13,7 @@ export async function getUserByIdAsync(id: number) {
           id: true,
           fullName: true,
           calledOndate: true,
+          isRejected: true,
         },
       },
     },

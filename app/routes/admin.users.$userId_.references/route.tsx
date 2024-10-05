@@ -63,14 +63,18 @@ export default function Index() {
                       <WarningTriangle className="h-6 w-6 text-warning" />
                     )}
                   </td>
-                  <td align="right" className="border">
-                    <Link
-                      to={`${id}`}
-                      className="btn btn-success btn-xs w-full gap-2"
-                    >
-                      <ChatBubbleEmpty className="h-4 w-4" />
-                      View
-                    </Link>
+                  <td align="center" className="border">
+                    {isRejected ? (
+                      <Xmark className="text-danger h-6 w-6" />
+                    ) : (
+                      <Link
+                        to={`${id}`}
+                        className="btn btn-success btn-xs w-full gap-2"
+                      >
+                        <ChatBubbleEmpty className="h-4 w-4" />
+                        View
+                      </Link>
+                    )}
                   </td>
                 </tr>
               ),
