@@ -60,7 +60,7 @@ export default function Index() {
   const editorStateRef = useRef<EditorState>();
   const { state, submit } = useFetcher();
 
-  const isLoading = state === "loading";
+  const isLoading = state !== "idle";
 
   const handleSignOff = (isSignedOff: boolean) => () => {
     if (!isSignedOff) {

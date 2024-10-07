@@ -57,7 +57,7 @@ export default function TermCalendar({
       }
     };
 
-  const isLoading = state === "loading";
+  const isLoading = state !== "idle";
 
   return (
     <div className="relative">

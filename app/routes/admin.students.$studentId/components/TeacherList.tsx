@@ -14,7 +14,7 @@ interface Props {
 export function TeacherList({ loaderData: { student, isNewStudent } }: Props) {
   const { state, Form, submit } = useFetcher();
 
-  const isLoading = state === "loading";
+  const isLoading = state !== "idle";
   const noTeachersAssigned =
     student === null || student.studentTeacher.length === 0;
 

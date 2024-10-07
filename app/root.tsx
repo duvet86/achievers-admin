@@ -26,8 +26,7 @@ export const links: LinksFunction = () => {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const transition = useNavigation();
-  const isLoading =
-    transition.state === "loading" || transition.state === "submitting";
+  const isLoading = transition.state !== "idle";
 
   return (
     <html lang="en" className="h-full" data-theme="bumblebee">

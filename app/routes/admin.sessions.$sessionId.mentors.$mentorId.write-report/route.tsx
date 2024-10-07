@@ -66,7 +66,7 @@ export default function Index() {
   const editorFeedbackStateRef = useRef<EditorState>();
   const [searchParams] = useSearchParams();
 
-  const isLoading = state === "loading";
+  const isLoading = state !== "idle";
 
   const saveReport = (type: ActionType) => () => {
     submit(

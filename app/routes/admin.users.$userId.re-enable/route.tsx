@@ -38,7 +38,7 @@ export default function Index() {
       </Title>
 
       <Form method="post">
-        <fieldset disabled={transition.state === "loading"}>
+        <fieldset disabled={transition.state !== "idle"}>
           <p>
             Are you sure you want to re enable &quot;{user.fullName}
             &quot;?

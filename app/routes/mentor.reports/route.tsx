@@ -176,7 +176,7 @@ export default function Index() {
     disableIncludeDates,
   } = data ?? initialData;
 
-  const isLoading = state === "loading";
+  const isLoading = state !== "idle";
   const isReadOnlyEditor =
     report !== null &&
     (report.completedOn !== null ||

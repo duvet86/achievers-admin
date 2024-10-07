@@ -114,10 +114,7 @@ export default function Index() {
   const actionData = useActionData<typeof action>();
   const transition = useNavigation();
 
-  const isLoading = transition.state === "loading";
-  const isSubmitting = transition.state === "submitting";
-
-  const isDisabled = isLoading || isSubmitting;
+  const isLoading = transition.state !== "idle";
 
   return (
     <>
@@ -140,7 +137,7 @@ export default function Index() {
             name="usersSheet"
             className="file-input file-input-bordered w-full"
             accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            disabled={isDisabled}
+            disabled={isLoading}
           />
         </div>
 
@@ -148,7 +145,7 @@ export default function Index() {
           <button
             type="submit"
             className="btn btn-primary gap-2"
-            disabled={isDisabled}
+            disabled={isLoading}
           >
             <Import className="h-6 w-6" />
             Import

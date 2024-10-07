@@ -105,7 +105,7 @@ export default function Index() {
       </Title>
 
       <Form method="post">
-        <fieldset disabled={transition.state === "loading"}>
+        <fieldset disabled={transition.state !== "idle"}>
           <Input
             defaultValue={guardian?.fullName}
             label="Full name"

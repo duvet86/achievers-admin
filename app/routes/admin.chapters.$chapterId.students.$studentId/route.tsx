@@ -88,7 +88,7 @@ export default function Index() {
   }>();
   const [searchParams] = useSearchParams();
 
-  const isLoading = state === "loading";
+  const isLoading = state !== "idle";
 
   const onMentorRemoved =
     (studentFullName: string) => (e: React.FormEvent<HTMLFormElement>) => {
