@@ -61,7 +61,7 @@ export default function TermCalendar({
 
   return (
     <div className="relative">
-      <div className="flex w-full">
+      <div className="hidden w-full sm:flex">
         <div className="m-2 basis-1/6">Session date</div>
         <div className="m-2 basis-2/6">Status</div>
         <div className="m-2 basis-1/6">Report completed</div>
@@ -95,50 +95,60 @@ export default function TermCalendar({
                 onClick={onRowClick(index, attendedOn, mySession === undefined)}
               />
 
-              <div className="collapse-title flex">
-                <div className="basis-1/6 p-2 font-medium text-gray-800">
-                  <div className="flex flex-col">
+              <div className="collapse-title flex w-full flex-col pe-0 sm:flex-row">
+                <div className="p-2 font-medium text-gray-800 sm:basis-1/6">
+                  <div className="mb-2 flex justify-center gap-4 text-lg sm:flex-col sm:justify-start sm:gap-0 sm:text-base">
                     <span>{dayjs(attendedOn).format("dddd")}</span>
                     <span>{dayjs(attendedOn).format("DD/MM/YYYY")}</span>
                   </div>
                 </div>
 
-                <div className="flex basis-2/6 flex-col gap-4">
+                <div className="mb-4 flex flex-col gap-4 sm:mb-0 sm:basis-2/6">
                   {mySession && (
-                    <div className="flex gap-2">
-                      <ThumbsUp />
+                    <div className="flex items-center justify-center gap-2 sm:justify-start">
+                      <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
                       {`${mySession.user.fullName} (Me) ${mySession.student ? `with ${mySession.student.fullName}` : "marked available"}`}
                     </div>
                   )}
                   {studentSessions?.map(({ user, student }) => (
-                    <div key={user.id} className="flex gap-2 text-info">
-                      <Group />
+                    <div
+                      key={user.id}
+                      className="flex items-center justify-center gap-2 text-info sm:justify-start"
+                    >
+                      <Group className="h-4 w-4 sm:h-6 sm:w-6" />
                       <span className="font-bold">{user.fullName}</span>{" "}
                       mentoring{" "}
                       <span className="font-bold">{student?.fullName}</span>
                     </div>
                   ))}
-                </div>
-
-                <div className="flex basis-1/6 flex-col gap-4">
-                  {mySession?.student ? (
-                    mySession.completedOn ? (
-                      <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-success" />
-                        {dayjs(mySession.completedOn).format("MMMM D, YYYY")}
-                      </div>
-                    ) : (
-                      <div className="flex w-full items-center">
-                        <Xmark className="h-4 w-4 text-error" />
-                        &nbsp;
-                      </div>
-                    )
-                  ) : (
-                    <div className="flex w-full items-center">
+                  {!mySession && !studentSessions?.length && (
+                    <div className="flex w-full items-center justify-center sm:hidden">
                       <Minus className="h-4 w-4 text-gray-400" />
                       &nbsp;
                     </div>
                   )}
+                </div>
+
+                <div className="hidden basis-1/6 flex-col gap-4 sm:flex">
+                  {mySession &&
+                    (mySession.student ? (
+                      mySession.completedOn ? (
+                        <div className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-success" />
+                          {dayjs(mySession.completedOn).format("MMMM D, YYYY")}
+                        </div>
+                      ) : (
+                        <div className="flex w-full items-center">
+                          <Xmark className="h-4 w-4 text-error" />
+                          &nbsp;
+                        </div>
+                      )
+                    ) : (
+                      <div className="flex w-full items-center">
+                        <Minus className="h-4 w-4 text-gray-400" />
+                        &nbsp;
+                      </div>
+                    ))}
                   {studentSessions?.map(({ id, completedOn }) =>
                     completedOn ? (
                       <div key={id} className="flex items-center gap-2">
@@ -154,25 +164,26 @@ export default function TermCalendar({
                   )}
                 </div>
 
-                <div className="flex basis-1/6 flex-col gap-4">
-                  {mySession?.student ? (
-                    mySession.signedOffOn ? (
-                      <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-success" />
-                        {dayjs(mySession.signedOffOn).format("MMMM D, YYYY")}
-                      </div>
+                <div className="hidden basis-1/6 flex-col gap-4 sm:flex">
+                  {mySession &&
+                    (mySession.student ? (
+                      mySession.signedOffOn ? (
+                        <div className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-success" />
+                          {dayjs(mySession.signedOffOn).format("MMMM D, YYYY")}
+                        </div>
+                      ) : (
+                        <div className="flex w-full items-center">
+                          <Xmark className="h-4 w-4 text-error" />
+                          &nbsp;
+                        </div>
+                      )
                     ) : (
                       <div className="flex w-full items-center">
-                        <Xmark className="h-4 w-4 text-error" />
+                        <Minus className="h-4 w-4 text-gray-400" />
                         &nbsp;
                       </div>
-                    )
-                  ) : (
-                    <div className="flex w-full items-center text-gray-400">
-                      <Minus className="h-4 w-4" />
-                      &nbsp;
-                    </div>
-                  )}
+                    ))}
                   {studentSessions?.map(({ id, signedOffOn }) =>
                     signedOffOn ? (
                       <div key={id} className="flex items-center gap-2">
@@ -187,8 +198,7 @@ export default function TermCalendar({
                     ),
                   )}
                 </div>
-
-                <div className="flex basis-1/6 items-center justify-end p-2">
+                <div className="flex items-center justify-center gap-4 p-2 sm:basis-1/6 sm:justify-end sm:gap-0">
                   <button className="btn btn-outline w-36">
                     {open !== index ? (
                       <>
@@ -208,7 +218,7 @@ export default function TermCalendar({
               <div className="collapse-content flex" id={`row-${index}`}>
                 {open === index && (
                   <>
-                    <div className="basis-1/6 pl-64"></div>
+                    <div className="sm:basis-1/6 sm:pl-64"></div>
                     {isLoading ? (
                       <div className="flex w-full flex-col gap-4">
                         <div className="skeleton h-8 w-full"></div>

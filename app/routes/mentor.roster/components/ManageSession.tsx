@@ -104,10 +104,10 @@ export function ManageSession({
     <div className="flex h-full w-full flex-col items-center gap-6 rounded border-t bg-gray-200 p-2">
       {mySession === undefined && studentsForSession && (
         <>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             {studentsForSession.length > 0 ? (
               <>
-                <div className="w-72">
+                <div className="w-full sm:w-72">
                   <Select
                     name="selectedStudentId"
                     required

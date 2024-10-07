@@ -155,6 +155,7 @@
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   vertical-align: middle;
+  flex-wrap: wrap;
 }
 
 .lexical .toolbar button.toolbar-item {

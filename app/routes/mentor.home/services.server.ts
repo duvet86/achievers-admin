@@ -1,8 +1,9 @@
 import { prisma } from "~/db.server";
 
-export async function getNextSessionAsync(userId: number) {
-  const nextAvailableSession = await prisma.mentorToStudentSession.findFirst({
+export async function getNextSessionAsync(userId: number, chapterId: number) {
+  return await prisma.mentorToStudentSession.findFirst({
     where: {
+      chapterId,
       userId,
       attendedOn: {
         gt: new Date(),
@@ -19,12 +20,18 @@ export async function getNextSessionAsync(userId: number) {
       },
     },
   });
-
-  return nextAvailableSession;
 }
 
 export async function getSessionsAsync(userId: number, chapterId: number) {
   return prisma.mentorToStudentSession.findMany({
+    where: {
+      chapterId,
+      userId,
+      attendedOn: {
+        lte: new Date(),
+      },
+      isCancelled: false,
+    },
     select: {
       id: true,
       attendedOn: true,
@@ -36,14 +43,6 @@ export async function getSessionsAsync(userId: number, chapterId: number) {
           fullName: true,
         },
       },
-    },
-    where: {
-      chapterId,
-      userId,
-      attendedOn: {
-        lte: new Date(),
-      },
-      isCancelled: false,
     },
     orderBy: {
       attendedOn: "desc",
