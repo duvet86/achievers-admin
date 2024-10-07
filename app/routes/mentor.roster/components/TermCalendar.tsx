@@ -233,6 +233,7 @@ export default function TermCalendar({
                         studentSessions={studentSessions}
                         studentsForSession={data?.studentsForSession}
                         submit={submit}
+                        setOpen={setOpen}
                       />
                     )}
                   </>

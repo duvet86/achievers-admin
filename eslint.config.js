@@ -68,6 +68,10 @@ export default tseslint.config(
     rules: {
       ...pluginReact.configs.recommended.rules,
       ...pluginReact.configs.flat["jsx-runtime"].rules,
+      "react/jsx-key": [
+        2,
+        { checkFragmentShorthand: true, warnOnDuplicates: true },
+      ],
     },
   },
   {
