@@ -262,29 +262,6 @@ export default function Index() {
             required
           />
 
-          <Textarea
-            label="General comment"
-            name="generalComment"
-            defaultValue={reference.generalComment ?? ""}
-          />
-
-          <Radio
-            label="Based on this reference check, do you recommend the Potential Mentor named above be accepted as a Mentor?"
-            name="isMentorRecommended"
-            defaultValue={reference.isMentorRecommended?.toString()}
-            options={[
-              {
-                label: "Yes",
-                value: "true",
-              },
-              {
-                label: "No",
-                value: "false",
-              },
-            ]}
-            required
-          />
-
           <SubTitle>Reference check completed</SubTitle>
 
           <Input
@@ -306,6 +283,29 @@ export default function Index() {
             errorMessage={actionData?.errorMessage}
             sticky
             className="justify-between"
+          />
+
+          <Radio
+            label="Based on this reference check, do you recommend the Potential Mentor named above be accepted as a Mentor?"
+            name="isMentorRecommended"
+            defaultValue={reference.isMentorRecommended?.toString()}
+            options={[
+              {
+                label: "Yes",
+                value: "true",
+              },
+              {
+                label: "No",
+                value: "false",
+              },
+            ]}
+            required
+          />
+
+          <Textarea
+            label="General comment"
+            name="generalComment"
+            defaultValue={reference.generalComment ?? ""}
           />
         </fieldset>
       </Form>
