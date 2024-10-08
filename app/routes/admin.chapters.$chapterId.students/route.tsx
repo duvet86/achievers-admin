@@ -103,7 +103,7 @@ export default function Index() {
 
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
         <Title
           to={
             searchParams.get("back_url")
@@ -116,9 +116,9 @@ export default function Index() {
 
         <Link
           to={`/admin/chapters/${chapterId}/mentors`}
-          className="btn min-w-40 gap-2"
+          className="btn w-full sm:w-56"
         >
-          <CoinsSwap className="h-6 w-6" />
+          <CoinsSwap />
           Swap to mentors view
         </Link>
       </div>
@@ -166,9 +166,9 @@ export default function Index() {
                     <td className="border p-2">
                       <Link
                         to={`${id}?${searchParams.toString()}`}
-                        className="btn btn-success btn-xs w-full gap-2"
+                        className="btn btn-success btn-xs w-full"
                       >
-                        <PageEdit className="h-4 w-4" />
+                        <PageEdit className="hidden h-4 w-4 sm:block" />
                         Edit
                       </Link>
                     </td>

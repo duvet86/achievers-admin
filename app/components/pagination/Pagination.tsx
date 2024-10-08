@@ -23,7 +23,7 @@ export function Pagination({
         type="submit"
         name="previousBtn"
         value="previousBtn"
-        className={classNames("btn btn-outline join-item", {
+        className={classNames("btn btn-outline join-item btn-sm sm:btn-md", {
           "btn-disabled": isPreviousDisabled,
         })}
         disabled={isPreviousDisabled}
@@ -35,7 +35,7 @@ export function Pagination({
         pageNumber === -1 ? (
           <button
             key={index}
-            className="btn btn-disabled btn-outline join-item"
+            className="btn btn-disabled btn-outline join-item btn-sm sm:btn-md"
           >
             <MoreHoriz />
           </button>
@@ -45,9 +45,12 @@ export function Pagination({
             type="submit"
             name="pageNumberBtn"
             value={pageNumber - 1}
-            className={classNames("btn btn-outline join-item", {
-              "btn-active": currentPageNumber === pageNumber - 1,
-            })}
+            className={classNames(
+              "btn btn-outline join-item btn-sm sm:btn-md",
+              {
+                "btn-active": currentPageNumber === pageNumber - 1,
+              },
+            )}
           >
             {pageNumber}
           </button>
@@ -57,7 +60,7 @@ export function Pagination({
         type="submit"
         name="nextBtn"
         value="nextBtn"
-        className={classNames("btn btn-outline join-item", {
+        className={classNames("btn btn-outline join-item btn-sm sm:btn-md", {
           "btn-disabled": isNextDisabled,
         })}
         disabled={isNextDisabled}

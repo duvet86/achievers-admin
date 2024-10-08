@@ -25,7 +25,7 @@ export function ManageSession({
   };
 
   return (
-    <div className="flex flex-1 items-end gap-4">
+    <div className="flex flex-1 flex-col items-end gap-4 sm:flex-row">
       <SelectSearch
         name={name}
         placeholder={placeholder}
@@ -38,7 +38,7 @@ export function ManageSession({
 
       {remove ? (
         <button
-          className="btn btn-error w-48 gap-2"
+          className="btn btn-error w-full sm:w-48"
           type="submit"
           name="action"
           value="remove"
@@ -48,7 +48,7 @@ export function ManageSession({
         </button>
       ) : (
         <button
-          className="btn btn-primary w-48 gap-2"
+          className="btn btn-primary w-full sm:w-48"
           type="submit"
           name="action"
           value="save"

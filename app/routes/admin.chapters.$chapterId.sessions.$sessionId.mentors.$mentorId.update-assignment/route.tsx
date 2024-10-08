@@ -114,10 +114,10 @@ export default function Index() {
 
   return (
     <>
-      <div className="flex justify-between gap-4">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row">
         <div className="flex gap-8">
           <Title
-            className="shrink-0"
+            className="sm:shrink-0"
             to={
               backURL ? backURL : `/admin/sessions?${searchParams.toString()}`
             }
@@ -137,30 +137,30 @@ export default function Index() {
         {!session.isCancelled && !session.completedOn && (
           <Link
             to={`/admin/sessions/${session.id}/cancel?${searchParams.toString()}`}
-            className="btn btn-error w-48 gap-2"
+            className="btn btn-error w-full sm:w-48"
           >
-            <Xmark className="h-6 w-6" /> Cancel session
+            <Xmark /> Cancel session
           </Link>
         )}
       </div>
 
       <Form method="POST" className="my-8 flex flex-col gap-12">
-        <div className="flex items-center gap-2 border-b p-2">
-          <div className="w-72 font-bold">Session</div>
-          <div className="flex-1">{attendedOnLabel}</div>
+        <div className="flex items-center justify-between gap-2 border-b p-2">
+          <div className="font-bold sm:w-72">Session</div>
+          <div className="sm:flex-1">{attendedOnLabel}</div>
         </div>
 
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center justify-between gap-2 border-b p-2">
           <div className="w-72 font-bold">Chapter</div>
           <div className="flex-1">{chapter.name}</div>
         </div>
 
-        <div className="flex items-center gap-2 border-b p-2">
-          <div className="w-72 font-bold">Mentor</div>
-          <div className="flex-1">{session.user.fullName}</div>
+        <div className="flex items-center justify-between gap-2 border-b p-2">
+          <div className="font-bold sm:w-72">Mentor</div>
+          <div className="sm:flex-1">{session.user.fullName}</div>
         </div>
 
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex flex-col gap-2 border-b p-2 sm:flex-row sm:items-center">
           <div className="w-72 font-bold">Student</div>
           <ManageSession
             name="studentId"
@@ -170,27 +170,29 @@ export default function Index() {
           />
         </div>
 
-        <div className="flex items-center gap-2 border-b p-2">
-          <div className="w-72 font-bold">Has report?</div>
-          <div className="flex-1">
-            <Xmark className="h-6 w-6 text-error" />
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b p-2">
+          <div className="font-bold sm:w-72">Has report?</div>
+          <div className="sm:flex-1">
+            <Xmark className="text-error" />
           </div>
           <Link
             to={`/admin/sessions/${session.id}/mentors/${session.user.id}/write-report?back_url=${location.pathname}}`}
-            className="btn btn-success gap-2"
+            className="btn btn-success w-full sm:w-48"
           >
-            <EditPencil /> Write report on behalf
+            <EditPencil /> Report on behalf
           </Link>
         </div>
-        <div className="flex items-center gap-2 border-b p-2">
-          <div className="w-72 font-bold">Is report completed?</div>
-          <div className="flex-1">
+
+        <div className="flex items-center justify-between gap-4 border-b p-2">
+          <div className="font-bold sm:w-72">Is report completed?</div>
+          <div className="fsm:lex-1">
             <Xmark className="h-6 w-6 text-error" />
           </div>
         </div>
-        <div className="flex items-center gap-2 border-b p-2">
-          <div className="w-72 font-bold">Is report signed off?</div>
-          <div className="flex-1">
+
+        <div className="flex items-center justify-between gap-4 border-b p-2">
+          <div className="font-bold sm:w-72">Is report signed off?</div>
+          <div className="sm:flex-1">
             <Xmark className="h-6 w-6 text-error" />
           </div>
         </div>

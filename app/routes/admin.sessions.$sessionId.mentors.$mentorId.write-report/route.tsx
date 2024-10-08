@@ -118,7 +118,7 @@ export default function Index() {
                 />
               </div>
 
-              <div className="w-1/4 border-b pb-2 pl-2">
+              <div className="hidden w-1/4 border-b pb-2 pl-2 sm:block">
                 <p className="font-semibold">
                   Have you answered these questions?
                 </p>

@@ -202,10 +202,10 @@ export default function Index() {
                 <th align="left" className="p-2">
                   Session of
                 </th>
-                <th align="left" className="p-2">
+                <th align="left" className="hidden p-2 sm:table-cell">
                   Completed on
                 </th>
-                <th align="left" className="p-2">
+                <th align="left" className="hidden p-2 sm:table-cell">
                   Signed off on
                 </th>
                 <th align="right" className="p-2">
@@ -230,12 +230,12 @@ export default function Index() {
                     <td className="border p-2">
                       {dayjs(attendedOn).format("MMMM D, YYYY")}
                     </td>
-                    <td className="border p-2">
+                    <td className="hidden border p-2 sm:table-cell">
                       {completedOn
                         ? dayjs(completedOn).format("MMMM D, YYYY")
                         : "-"}
                     </td>
-                    <td className="border p-2">
+                    <td className="hidden border p-2 sm:table-cell">
                       {signedOffOn
                         ? dayjs(signedOffOn).format("MMMM D, YYYY")
                         : "-"}
@@ -247,9 +247,9 @@ export default function Index() {
                             ? `/admin/sessions/${id}/report?${searchParams.toString()}`
                             : `/admin/sessions/${id}?${searchParams.toString()}`
                         }
-                        className="btn btn-success btn-xs w-full gap-2"
+                        className="btn btn-success btn-xs w-20"
                       >
-                        <Eye className="h-4 w-4" />
+                        <Eye className="hidden h-4 w-4 sm:block" />
                         Report
                       </Link>
                     </td>

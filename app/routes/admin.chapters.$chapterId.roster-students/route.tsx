@@ -119,19 +119,22 @@ export default function Index() {
 
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <Title to="/admin/chapters">Roster planner STUDENTS</Title>
 
         <Link
           to={`/admin/chapters/${chapterId}/roster-mentors`}
           className="btn min-w-40 gap-2"
         >
-          <Calendar className="h-6 w-6" />
+          <Calendar />
           Roster MENTORS
         </Link>
       </div>
 
-      <Form id="rosterStudentsForm" className="flex gap-4 pb-2">
+      <Form
+        id="rosterStudentsForm"
+        className="flex flex-col gap-4 pb-2 sm:flex-row"
+      >
         <Select
           label="Term"
           name="selectedTerm"
@@ -206,7 +209,7 @@ export default function Index() {
                         search: searchParams.toString(),
                       });
                     }}
-                    className="link block w-36"
+                    className="link block sm:w-36"
                   >
                     {fullName}
                   </button>

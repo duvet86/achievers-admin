@@ -116,8 +116,8 @@ export default function Index() {
       </Title>
 
       <article className="prose w-full max-w-none">
-        <div className="flex flex-col gap-12 lg:flex-row">
-          <div className="lg:w-1/2">
+        <div className="flex flex-col sm:flex-row sm:gap-12">
+          <div className="sm:w-1/2">
             <h4>Mentor</h4>
             <div className="mt-4 text-xl">{fullName}</div>
           </div>
@@ -127,9 +127,9 @@ export default function Index() {
 
             <Form
               method="POST"
-              className="flex flex-col items-end gap-6 lg:flex-row"
+              className="flex flex-col items-end gap-6 sm:flex-row"
             >
-              <div className="lg:w-96">
+              <div className="w-full sm:w-96">
                 <SelectSearch
                   key={data?.studentId}
                   showClearButton
@@ -144,7 +144,7 @@ export default function Index() {
 
               <button
                 disabled={isLoading}
-                className="btn btn-primary w-52 gap-5"
+                className="btn btn-primary w-full sm:w-52"
                 type="submit"
               >
                 {isLoading ? (
@@ -190,9 +190,12 @@ export default function Index() {
                         <p className="font-bold">(Archived)</p>
                       )}
                     </span>
-                    <div className="flex gap-6">
-                      <Link to="/admin/sessions" className="btn btn-info gap-3">
-                        <Clock className="h-6 w-6" />
+                    <div className="flex gap-2 sm:gap-6">
+                      <Link
+                        to="/admin/sessions"
+                        className="btn btn-info hidden w-40 sm:flex"
+                      >
+                        <Clock />
                         View sessions
                       </Link>
 
@@ -200,7 +203,7 @@ export default function Index() {
                         <input type="hidden" name="studentId" value={id} />
                         <button
                           disabled={isLoading}
-                          className="btn btn-error w-48 gap-3"
+                          className="btn btn-error w-40"
                           type="submit"
                         >
                           {isLoading ? (
@@ -210,7 +213,7 @@ export default function Index() {
                             </>
                           ) : (
                             <>
-                              <Xmark className="h-6 w-6" />
+                              <Xmark />
                               Remove
                             </>
                           )}

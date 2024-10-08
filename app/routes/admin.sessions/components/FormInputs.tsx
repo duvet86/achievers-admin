@@ -44,7 +44,7 @@ export default function FormInputs({
   const isSignedOff = searchParams.get("isSignedOff");
 
   return (
-    <div className="mb-6 hidden flex-col gap-4 lg:flex">
+    <div className="mb-6 flex flex-col gap-4">
       {chapters.length > 1 && (
         <Select
           label="Select a Chapter"
@@ -59,7 +59,7 @@ export default function FormInputs({
           }))}
         />
       )}
-      <div className="flex flex-1 gap-4">
+      <div className="flex flex-1 flex-col gap-4 sm:flex-row">
         <SelectSearch
           key={`${selectedChapterId}-mentorId`}
           label="Mentor"
@@ -83,7 +83,7 @@ export default function FormInputs({
         />
       </div>
 
-      <div className="flex flex-1 gap-4">
+      <div className="flex flex-1 flex-col gap-4 sm:flex-row">
         <DateInput
           defaultValue={isNotClearForm && startDate !== null ? startDate : ""}
           label="Start date"
@@ -97,8 +97,8 @@ export default function FormInputs({
         />
       </div>
 
-      <div className="flex">
-        <div className="flex flex-1 gap-8">
+      <div className="flex flex-col sm:flex-row">
+        <div className="mb-2 flex flex-1 gap-8">
           <div className="form-control">
             <label className="label cursor-pointer gap-2">
               <input
@@ -134,21 +134,21 @@ export default function FormInputs({
 
         <div className="flex items-center gap-6">
           <button
-            className="btn btn-primary w-32"
-            type="submit"
-            name="searchBtn"
-            value="searchBtn"
-          >
-            Submit
-          </button>
-
-          <button
             className="btn btn-outline w-32"
             name="clearSearchBtn"
             value="clearSearchBtn"
             onClick={onFormClear}
           >
             Clear
+          </button>
+
+          <button
+            className="btn btn-primary w-32"
+            type="submit"
+            name="searchBtn"
+            value="searchBtn"
+          >
+            Submit
           </button>
         </div>
       </div>
