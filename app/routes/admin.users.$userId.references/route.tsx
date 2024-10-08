@@ -20,6 +20,19 @@ export async function loader({ params }: LoaderFunctionArgs) {
   });
 }
 
+// Checks the isMentorRecommended status. If it is null, it returns a warning triangle icon. If it is true, it returns a check icon. If it is false, it returns a xmark icon.
+const renderMentorRecommendationStatus = (
+  isMentorRecommended: boolean | null,
+) => {
+  if (isMentorRecommended === null) {
+    return <WarningTriangle className="h-6 w-6 text-warning" />;
+  } else if (isMentorRecommended) {
+    return <Check className="h-6 w-6 text-success" />;
+  } else {
+    return <Xmark className="text-danger h-6 w-6" />;
+  }
+};
+
 export default function Index() {
   const { user } = useLoaderData<typeof loader>();
 
@@ -50,35 +63,23 @@ export default function Index() {
                 </td>
               </tr>
             )}
-            {user.references.map(
-              ({ id, fullName, calledOndate, isRejected }) => (
-                <tr key={id}>
-                  <td className="border">{fullName}</td>
-                  <td className="border" align="center">
-                    {isRejected ? (
-                      <Xmark className="text-danger h-6 w-6" />
-                    ) : calledOndate !== null ? (
-                      <Check className="h-6 w-6 text-success" />
-                    ) : (
-                      <WarningTriangle className="h-6 w-6 text-warning" />
-                    )}
-                  </td>
-                  <td align="center" className="border">
-                    {isRejected ? (
-                      <Xmark className="text-danger h-6 w-6" />
-                    ) : (
-                      <Link
-                        to={`${id}`}
-                        className="btn btn-success btn-xs w-full gap-2"
-                      >
-                        <ChatBubbleEmpty className="h-4 w-4" />
-                        View
-                      </Link>
-                    )}
-                  </td>
-                </tr>
-              ),
-            )}
+            {user.references.map(({ id, fullName, isMentorRecommended }) => (
+              <tr key={id}>
+                <td className="border">{fullName}</td>
+                <td className="border" align="center">
+                  {renderMentorRecommendationStatus(isMentorRecommended)}
+                </td>
+                <td align="center" className="border">
+                  <Link
+                    to={`${id}`}
+                    className="btn btn-success btn-xs w-full gap-2"
+                  >
+                    <ChatBubbleEmpty className="h-4 w-4" />
+                    View
+                  </Link>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

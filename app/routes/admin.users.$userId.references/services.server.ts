@@ -12,8 +12,7 @@ export async function getUserByIdAsync(id: number) {
         select: {
           id: true,
           fullName: true,
-          calledOndate: true,
-          isRejected: true,
+          isMentorRecommended: true,
         },
       },
     },
