@@ -273,7 +273,7 @@ export function isDateExpired(expiryDate: Date | undefined) {
 
 export function getClosestSessionDate(dates: Date[]) {
   if (dates.length === 0) {
-    throw new Error("Empty dates input.");
+    return null;
   }
 
   const today = new Date();

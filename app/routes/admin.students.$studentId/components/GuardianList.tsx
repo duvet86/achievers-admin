@@ -14,7 +14,7 @@ interface Props {
 export function GuardianList({ loaderData: { student, isNewStudent } }: Props) {
   const { state, Form, submit } = useFetcher();
 
-  const isLoading = state === "loading";
+  const isLoading = state !== "idle";
   const noGuardiansAssigned = student === null || student.guardian.length === 0;
 
   const onGuardianRemoved =

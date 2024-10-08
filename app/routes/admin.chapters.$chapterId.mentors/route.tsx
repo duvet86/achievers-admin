@@ -105,7 +105,7 @@ export default function Index() {
 
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
         <Title
           to={
             searchParams.get("back_url")
@@ -118,9 +118,9 @@ export default function Index() {
 
         <Link
           to={`/admin/chapters/${chapterId}/students`}
-          className="btn min-w-40 gap-2"
+          className="btn w-full sm:w-56"
         >
-          <CoinsSwap className="h-6 w-6" />
+          <CoinsSwap />
           Swap to students view
         </Link>
       </div>
@@ -141,7 +141,7 @@ export default function Index() {
                     label="Mentors"
                   />
                 </th>
-                <th align="left" className="p-2">
+                <th align="left" className="hidden p-2 sm:table-cell">
                   Frequency
                 </th>
                 <th align="left" className="p-2">
@@ -166,7 +166,7 @@ export default function Index() {
                 }) => (
                   <tr key={id}>
                     <td className="border p-2">{fullName}</td>
-                    <td className="border p-2">
+                    <td className="hidden border p-2 sm:table-cell">
                       {frequencyInDays === 14 ? "Fortnightly" : "Weekly"}
                     </td>
                     <td className="border">
@@ -191,7 +191,7 @@ export default function Index() {
                         to={`${id}?${searchParams.toString()}`}
                         className="btn btn-success btn-xs w-full gap-2"
                       >
-                        <PageEdit className="h-4 w-4" />
+                        <PageEdit className="hidden h-4 w-4 sm:block" />
                         Edit
                       </Link>
                     </td>

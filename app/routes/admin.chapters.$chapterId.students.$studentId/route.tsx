@@ -88,7 +88,7 @@ export default function Index() {
   }>();
   const [searchParams] = useSearchParams();
 
-  const isLoading = state === "loading";
+  const isLoading = state !== "idle";
 
   const onMentorRemoved =
     (studentFullName: string) => (e: React.FormEvent<HTMLFormElement>) => {
@@ -114,8 +114,8 @@ export default function Index() {
       </Title>
 
       <article className="prose w-full max-w-none">
-        <div className="flex flex-col gap-12 lg:flex-row">
-          <div className="lg:w-1/2">
+        <div className="flex flex-col sm:flex-row sm:gap-12">
+          <div className="sm:w-1/2">
             <h4>Student</h4>
             <div className="mt-4 text-xl">{fullName}</div>
           </div>
@@ -125,9 +125,9 @@ export default function Index() {
 
             <Form
               method="POST"
-              className="flex flex-col items-end gap-6 lg:flex-row"
+              className="flex flex-col items-end gap-6 sm:flex-row"
             >
-              <div className="lg:w-96">
+              <div className="w-full sm:w-96">
                 <SelectSearch
                   key={data?.mentorId}
                   showClearButton
@@ -143,7 +143,7 @@ export default function Index() {
 
               <button
                 disabled={isLoading}
-                className="btn btn-primary w-52 gap-5"
+                className="btn btn-primary w-full sm:w-52"
                 type="submit"
               >
                 {isLoading ? (
@@ -152,7 +152,7 @@ export default function Index() {
                   </>
                 ) : (
                   <>
-                    <FloppyDiskArrowIn className="h-6 w-6" /> Add
+                    <FloppyDiskArrowIn /> Add
                   </>
                 )}
               </button>
@@ -160,7 +160,7 @@ export default function Index() {
 
             {data?.message && (
               <p className="flex items-center gap-2 text-error">
-                <WarningTriangle className="h-6 w-6" />
+                <WarningTriangle />
                 {data?.message}
               </p>
             )}
@@ -174,18 +174,22 @@ export default function Index() {
           <ol>
             {mentorToStudentAssignement.map(({ user: { fullName, id } }) => (
               <li key={id} className="border-b pb-2">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between">
                   {fullName}
-                  <div className="flex gap-6">
-                    <Link to="/admin/sessions" className="btn btn-info gap-3">
-                      <Clock className="h-6 w-6" />
+                  <div className="flex gap-2 sm:gap-6">
+                    <Link
+                      to="/admin/sessions"
+                      className="btn btn-info hidden w-40 sm:flex"
+                    >
+                      <Clock />
                       View sessions
                     </Link>
+
                     <Form onSubmit={onMentorRemoved(fullName)}>
                       <input type="hidden" name="mentorId" value={id} />
                       <button
                         disabled={isLoading}
-                        className="btn btn-error w-48 gap-3"
+                        className="btn btn-error w-40"
                         type="submit"
                       >
                         {isLoading ? (
@@ -195,7 +199,7 @@ export default function Index() {
                           </>
                         ) : (
                           <>
-                            <Xmark className="h-6 w-6" />
+                            <Xmark />
                             Remove
                           </>
                         )}

@@ -24,7 +24,7 @@ export function Header(props: Props) {
         Edit mentor info
       </Title>
 
-      {getMessage(props)}
+      {getMessage(props, searchParams)}
 
       <div className="flex-1"></div>
 
@@ -89,7 +89,10 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
   );
 }
 
-function getMessage({ endDate, mentorAppRoleAssignmentId }: Props) {
+function getMessage(
+  { endDate, mentorAppRoleAssignmentId }: Props,
+  searchParams: URLSearchParams,
+) {
   if (endDate !== null) {
     return (
       <p
@@ -98,7 +101,7 @@ function getMessage({ endDate, mentorAppRoleAssignmentId }: Props) {
       >
         <WarningTriangle />
         This mentor is archived!{" "}
-        <Link to="end-reason" className="link">
+        <Link to={`end-reason?${searchParams}`} className="link">
           View reason
         </Link>
       </p>

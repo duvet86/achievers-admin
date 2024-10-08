@@ -176,7 +176,7 @@ export default function Index() {
     disableIncludeDates,
   } = data ?? initialData;
 
-  const isLoading = state === "loading";
+  const isLoading = state !== "idle";
   const isReadOnlyEditor =
     report !== null &&
     (report.completedOn !== null ||
@@ -325,7 +325,7 @@ export default function Index() {
           <div className="flex flex-1 flex-col gap-2">
             <div className="flex h-full flex-row">
               <div
-                className={classNames({
+                className={classNames("w-full sm:w-3/4", {
                   "w-3/4": !completedOn,
                   "w-full": completedOn,
                 })}
@@ -340,7 +340,7 @@ export default function Index() {
               </div>
 
               {!completedOn && (
-                <div className="w-1/4 border-b pb-2 pl-2">
+                <div className="hidden w-1/4 border-b pb-2 pl-2 sm:block">
                   <p className="font-semibold">
                     Have you answered these questions?
                   </p>
@@ -356,7 +356,7 @@ export default function Index() {
               )}
             </div>
 
-            <div className="flex justify-end gap-4 pb-2">
+            <div className="flex justify-center gap-4 pb-2 sm:justify-end">
               <div className="flex gap-8">
                 {!completedOn && (
                   <>

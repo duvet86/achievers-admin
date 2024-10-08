@@ -58,7 +58,7 @@ exports[`Navbar > Navbar snapshot 1`] = `
             local
           </span>
           <span
-            class="text-xl font-semibold tracking-tight"
+            class="hidden text-xl font-semibold tracking-tight sm:block"
           >
             Achievers WA
           </span>

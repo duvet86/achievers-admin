@@ -128,9 +128,12 @@ export async function getSessionsAsync(
         },
       },
     },
-    orderBy: {
-      completedOn: "desc",
-    },
+    orderBy: [
+      {
+        completedOn: "desc",
+      },
+      { attendedOn: "desc" },
+    ],
     skip: numberItems * pageNumber,
     take: numberItems,
   });

@@ -69,10 +69,10 @@ export default function Index() {
 
   return (
     <>
-      <div className="flex justify-between gap-4">
-        <div className="flex gap-8">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row">
+        <div className="flex flex-col gap-8 sm:flex-row">
           <Title
-            className="shrink-0"
+            className="sm:shrink-0"
             to={
               backURL ? backURL : `/admin/sessions?${searchParams.toString()}`
             }
@@ -84,7 +84,7 @@ export default function Index() {
           {isCancelled && (
             <div role="alert" className="alert alert-error">
               <WarningCircle />
-              <span>Session has been cancelled</span>
+              Session has been cancelled
             </div>
           )}
         </div>
@@ -110,12 +110,12 @@ export default function Index() {
           <div className="flex-1">{chapter.name}</div>
         </div>
 
-        <div className="flex items-center gap-2 border-b p-2">
-          <div className="w-72 font-bold">Student</div>
-          <div className="flex-1">{student?.fullName}</div>
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b p-2">
+          <div className="font-bold sm:w-72">Student</div>
+          <div className="sm:flex-1">{student?.fullName}</div>
           {!completedOn && (
             <Link
-              className="btn btn-primary w-44"
+              className="btn btn-primary w-full sm:w-48"
               to={`/admin/chapters/${chapter.id}/sessions/${id}/mentors/${user.id}/update-assignment`}
             >
               <EditPencil /> Edit student
@@ -123,9 +123,9 @@ export default function Index() {
           )}
         </div>
 
-        <div className="flex items-center gap-2 border-b p-2">
-          <div className="w-72 font-bold">Mentor</div>
-          <div className="flex-1">{user.fullName}</div>
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b p-2">
+          <div className="font-bold sm:w-72">Mentor</div>
+          <div className="sm:flex-1">{user.fullName}</div>
           {!student && (
             <p className="bg-info">
               Mentor has marked available for the session.
@@ -133,7 +133,7 @@ export default function Index() {
           )}
           {student && !completedOn && (
             <Link
-              className="btn btn-primary w-44"
+              className="btn btn-primary w-full sm:w-48"
               to={`/admin/chapters/${chapter.id}/sessions/${id}/students/${student.id}/update-assignment`}
             >
               <EditPencil /> Edit mentor
@@ -148,19 +148,19 @@ export default function Index() {
           </div>
         ) : (
           <>
-            <div className="flex items-center gap-2 border-b p-2">
-              <div className="w-72 font-bold">Has report?</div>
-              <div className="flex-1">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b p-2">
+              <div className="font-bold sm:w-72">Has report?</div>
+              <div className="sm:flex-1">
                 {hasReport ? (
-                  <Check className="h-6 w-6 text-success" />
+                  <Check className="text-success" />
                 ) : (
-                  <Xmark className="h-6 w-6 text-error" />
+                  <Xmark className="text-error" />
                 )}
               </div>
               {hasReport && (
                 <Link
                   to={`report?${searchParams.toString()}`}
-                  className="btn btn-success gap-2"
+                  className="btn btn-success w-full sm:w-48"
                 >
                   <StatsReport /> Go to report
                 </Link>
@@ -168,30 +168,30 @@ export default function Index() {
               {!hasReport && user.id && (
                 <Link
                   to={`/admin/sessions/${id}/mentors/${user.id}/write-report?back_url=/admin/sessions/${id}`}
-                  className="btn btn-success gap-2"
+                  className="btn btn-success w-full sm:w-48"
                 >
-                  <EditPencil /> Write report on behalf
+                  <EditPencil /> Report on behalf
                 </Link>
               )}
             </div>
-            <div className="flex items-center gap-2 border-b p-2">
-              <div className="w-72 font-bold">Is report completed?</div>
-              <div className="flex-1">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b p-2">
+              <div className="font-bold sm:w-72">Is report completed?</div>
+              <div className="sm:flex-1">
                 {completedOn ? (
-                  <Check className="h-6 w-6 text-success" />
+                  <Check className="text-success" />
                 ) : (
-                  <Xmark className="h-6 w-6 text-error" />
+                  <Xmark className="text-error" />
                 )}
               </div>
               {completedOn && dayjs(completedOn).format("MMMM D, YYYY")}
             </div>
-            <div className="flex items-center gap-2 border-b p-2">
-              <div className="w-72 font-bold">Is report signed off?</div>
-              <div className="flex-1">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b p-2">
+              <div className="font-bold sm:w-72">Is report signed off?</div>
+              <div className="sm:flex-1">
                 {signedOffOn ? (
-                  <Check className="h-6 w-6 text-success" />
+                  <Check className="text-success" />
                 ) : (
-                  <Xmark className="h-6 w-6 text-error" />
+                  <Xmark className="text-error" />
                 )}
               </div>
               {signedOffOn && dayjs(signedOffOn).format("MMMM D, YYYY")}

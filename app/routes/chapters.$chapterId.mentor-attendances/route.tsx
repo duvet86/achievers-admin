@@ -64,6 +64,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     );
   }
 
+  if (selectedTermDate === null) {
+    throw new Error("selectedTermDate is not defined;");
+  }
+
   const mentors = await getMentorsForSession(
     Number(params.chapterId),
     selectedTermDate,

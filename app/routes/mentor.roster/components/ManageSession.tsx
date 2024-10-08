@@ -1,6 +1,7 @@
 import type { FetcherSubmitFunction } from "react-router-dom";
 import type { SessioViewModel } from "../services.server";
 
+import { Fragment } from "react/jsx-runtime";
 import { BookmarkBook, Group } from "iconoir-react";
 
 import { Select } from "~/components";
@@ -16,6 +17,7 @@ interface Props {
       }[]
     | undefined;
   submit: FetcherSubmitFunction;
+  setOpen: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
 export function ManageSession({
@@ -24,6 +26,7 @@ export function ManageSession({
   studentSessions,
   studentsForSession,
   submit,
+  setOpen,
 }: Props) {
   const bookSession = (attendedOn: string) => () => {
     const studentId = (
@@ -46,9 +49,11 @@ export function ManageSession({
         encType: "application/json",
       },
     );
+
+    setOpen(null);
   };
 
-  const marrkAvailable = (attendedOn: string) => () => {
+  const markAvailable = (attendedOn: string) => () => {
     submit(
       {
         studentId: null,
@@ -60,6 +65,8 @@ export function ManageSession({
         encType: "application/json",
       },
     );
+
+    setOpen(null);
   };
 
   const takeSessionFromPartner = (sessionId: number) => () => {
@@ -79,6 +86,8 @@ export function ManageSession({
         encType: "application/json",
       },
     );
+
+    setOpen(null);
   };
 
   const removeMentorForSession =
@@ -104,10 +113,10 @@ export function ManageSession({
     <div className="flex h-full w-full flex-col items-center gap-6 rounded border-t bg-gray-200 p-2">
       {mySession === undefined && studentsForSession && (
         <>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             {studentsForSession.length > 0 ? (
               <>
-                <div className="w-72">
+                <div className="w-full sm:w-72">
                   <Select
                     name="selectedStudentId"
                     required
@@ -120,7 +129,7 @@ export function ManageSession({
                   />
                 </div>
                 <button
-                  className="btn btn-success w-44"
+                  className="btn btn-success w-full sm:w-44"
                   onClick={bookSession(attendedOn)}
                 >
                   <BookmarkBook />
@@ -135,37 +144,33 @@ export function ManageSession({
             )}
           </div>
           <div className="divider">OR</div>
-          <div>
-            <button
-              className="btn btn-info w-44"
-              onClick={marrkAvailable(attendedOn)}
-            >
-              <BookmarkBook />
-              Mark Available
-            </button>
-          </div>
+          <button
+            className="btn btn-info w-full sm:w-44"
+            onClick={markAvailable(attendedOn)}
+          >
+            <BookmarkBook />
+            Mark Available
+          </button>
         </>
       )}
       {mySession && mySession.completedOn === null && (
-        <div>
-          <button
-            className="btn btn-error w-44"
-            onClick={removeMentorForSession(mySession.id, attendedOn)}
-          >
-            <BookmarkBook />
-            Cancel Session
-          </button>
-        </div>
+        <button
+          className="btn btn-error w-full sm:w-44"
+          onClick={removeMentorForSession(mySession.id, attendedOn)}
+        >
+          <BookmarkBook />
+          Cancel Session
+        </button>
       )}
       {!mySession &&
         studentSessions
           ?.filter(({ completedOn }) => !completedOn)
           .map(({ id, user, student }) => (
-            <>
+            <Fragment key={id}>
               <div className="divider">OR</div>
-              <div className="flex items-center gap-4">
+              <div className="flex flex-wrap items-center gap-4">
                 <button
-                  className="btn btn-secondary w-44"
+                  className="btn btn-secondary w-full sm:w-44"
                   onClick={takeSessionFromPartner(id)}
                 >
                   <BookmarkBook />
@@ -173,13 +178,11 @@ export function ManageSession({
                 </button>
                 <div key={user.id} className="mb-2 flex gap-2">
                   <Group />
-                  <span className="font-bold">
-                    {user.fullName}
-                  </span> mentoring{" "}
+                  <span className="font-bold">{user.fullName}</span>mentoring
                   <span className="font-bold">{student?.fullName}</span>
                 </div>
               </div>
-            </>
+            </Fragment>
           ))}
     </div>
   );

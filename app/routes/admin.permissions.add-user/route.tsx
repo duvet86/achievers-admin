@@ -92,7 +92,7 @@ export default function Index() {
 
   const { selectedRole, roles, permissions, chapters } = data ?? initialData;
 
-  const isLoading = state === "loading";
+  const isLoading = state !== "idle";
 
   const handleRoleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     searchParams.set("role", event.target.value);

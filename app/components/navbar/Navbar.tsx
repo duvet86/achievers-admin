@@ -38,7 +38,7 @@ export function Navbar({ userName, environment, version, currentView }: Props) {
               alt="Logo"
             />
           )}
-          <span className="text-xl font-semibold tracking-tight">
+          <span className="hidden text-xl font-semibold tracking-tight sm:block">
             Achievers WA
           </span>
         </Link>
