@@ -185,12 +185,7 @@ export default function Index() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="h-48 lg:h-16">
-        <Header
-          title={loaderData.title}
-          endDate={loaderData.student?.endDate}
-        />
-      </div>
+      <Header title={loaderData.title} endDate={loaderData.student?.endDate} />
 
       <hr className="my-4" />
 

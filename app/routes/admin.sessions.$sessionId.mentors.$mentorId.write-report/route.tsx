@@ -146,20 +146,20 @@ export default function Index() {
               />
             </div>
 
-            <div className="flex justify-end gap-8">
+            <div className="flex flex-wrap justify-end gap-4 sm:gap-8">
               <button
-                className="btn btn-primary w-44"
+                className="btn btn-primary w-full sm:w-44"
                 onClick={saveReport("draft")}
               >
-                <FloppyDiskArrowIn className="h-6 w-6" />
+                <FloppyDiskArrowIn />
                 Save as draft
               </button>
 
               <button
-                className="btn btn-success w-44"
+                className="btn btn-success w-full sm:w-44"
                 onClick={saveReport("signoff")}
               >
-                <DesignNib className="h-6 w-6" /> Sign off
+                <DesignNib /> Sign off
               </button>
             </div>
           </div>

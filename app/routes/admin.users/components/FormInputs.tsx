@@ -17,9 +17,9 @@ export default function FormInputs({
   const searchTerm = searchParams.get("searchTerm");
 
   return (
-    <div className="mb-6 hidden flex-wrap justify-between gap-4 lg:flex">
-      <div className="flex items-center gap-6">
-        <div className="w-96">
+    <div className="mb-6 flex flex-wrap justify-between gap-4">
+      <div className="flex flex-col items-center gap-6 sm:flex-row">
+        <div className="w-full sm:w-96">
           <Input
             name="searchTerm"
             placeholder="Search by name or email"
@@ -32,7 +32,7 @@ export default function FormInputs({
         </div>
 
         {chapters.length > 1 && (
-          <div className="w-44 max-w-xs">
+          <div className="w-full sm:w-44">
             <Select
               name="chapterId"
               defaultValue={searchParams.get("chapterId") ?? ""}
@@ -46,7 +46,7 @@ export default function FormInputs({
           </div>
         )}
 
-        <div className="flex flex-wrap xl:gap-4">
+        <div className="flex flex-wrap sm:gap-4">
           <div className="form-control">
             <label className="label cursor-pointer gap-2">
               <input
@@ -77,21 +77,22 @@ export default function FormInputs({
 
       <div className="flex items-center gap-6">
         <button
-          className="btn btn-primary w-32"
-          type="submit"
-          name="searchBtn"
-          value="searchBtn"
-        >
-          Submit
-        </button>
-        <button
-          className="btn btn-outline w-32"
+          className="btn btn-outline sm:w-32"
           type="submit"
           name="clearSearchBtn"
           value="clearSearchBtn"
           onClick={onFormClear}
         >
           Clear
+        </button>
+
+        <button
+          className="btn btn-primary w-full sm:w-32"
+          type="submit"
+          name="searchBtn"
+          value="searchBtn"
+        >
+          Submit
         </button>
       </div>
     </div>

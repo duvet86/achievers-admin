@@ -138,6 +138,7 @@ export default function Index() {
     <>
       <div className="flex items-center justify-between">
         <Title>Students</Title>
+
         <ActionsDropdown />
       </div>
 
@@ -154,7 +155,7 @@ export default function Index() {
           <table className="table">
             <thead>
               <tr>
-                <th align="left" className="w-14">
+                <th align="left" className="hidden w-14 sm:table-cell">
                   #
                 </th>
                 <th align="left" className="w-1/3">
@@ -164,7 +165,9 @@ export default function Index() {
                     label="Full name"
                   />
                 </th>
-                <th align="left">Year Level</th>
+                <th align="left" className="hidden sm:table-cell">
+                  Year Level
+                </th>
                 <th align="left">
                   <TableHeaderSort
                     sortPropName="sortChapter"
@@ -172,7 +175,9 @@ export default function Index() {
                     label="Assigned chapter"
                   />
                 </th>
-                <th align="right">Action</th>
+                <th align="right" className="hidden sm:table-cell">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -198,15 +203,17 @@ export default function Index() {
                       className={className}
                       onClick={handleRowClick(id)}
                     >
-                      <td className="border">
+                      <td className="hidden border sm:table-cell">
                         <div className="flex gap-2">
                           {index + 1 + 10 * currentPageNumber} {icon}
                         </div>
                       </td>
                       <td className="border">{fullName}</td>
-                      <td className="border">{yearLevel ?? "-"}</td>
+                      <td className="hidden border sm:table-cell">
+                        {yearLevel ?? "-"}
+                      </td>
                       <td className="border">{chapter.name}</td>
-                      <td className="border">
+                      <td className="hidden border sm:table-cell">
                         <Link
                           to={`${id}?${searchParams.toString()}`}
                           className="btn btn-success btn-xs w-full gap-2"
