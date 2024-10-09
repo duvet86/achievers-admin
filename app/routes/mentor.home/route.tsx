@@ -200,7 +200,7 @@ export default function Index() {
                       <td align="right">
                         {student && (
                           <Link
-                            to={`/mentor/reports?selectedStudentId=${student.id}&selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00Z&back_url=/mentor/home`}
+                            to={`/mentor/reports?selectedStudentId=${student.id}&selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z&back_url=/mentor/home`}
                             className="btn btn-success btn-xs h-9 gap-2"
                           >
                             <StatsReport className="hidden h-4 w-4 lg:block" />

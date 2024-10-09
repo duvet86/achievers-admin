@@ -42,10 +42,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
 
-  if (
-    selectedTermDate !== "" &&
-    !sessionDates.includes(selectedTermDate + "T00:00:00Z")
-  ) {
+  if (selectedTermDate && !sessionDates.includes(selectedTermDate)) {
     selectedTermDate = "";
   }
 
@@ -58,8 +55,10 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const sessionDateOptions = sessionDates
     .map((attendedOn) => dayjs(attendedOn))
     .map((attendedOn) => ({
-      value: attendedOn.format("YYYY-MM-DD"),
-      label: attendedOn.format("DD/MM/YYYY"),
+      value: attendedOn.toISOString(),
+      label:
+        attendedOn.format("DD/MM/YYYY") +
+        (attendedOn === dayjs() ? " (Today)" : ""),
     }));
 
   return json({
@@ -72,11 +71,12 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     mentors,
     selectedTermDate,
     searchTerm,
-    datesInTerm: sessionDateOptions
+    datesInTerm: sessionDates
       .filter(
-        ({ value }) => value === selectedTermDate || selectedTermDate === "",
+        (attendedOn) =>
+          attendedOn === selectedTermDate || selectedTermDate === "",
       )
-      .map(({ value }) => value),
+      .map((attendedOn) => dayjs(attendedOn).format("YYYY-MM-DD")),
     sessionDateOptions: [
       {
         value: "",
@@ -117,21 +117,31 @@ export default function Index() {
     handleFormSubmit();
   };
 
+  const onMentorClick = (fullName: string) => () => {
+    searchParams.set("search", fullName);
+    navigate({
+      search: searchParams.toString(),
+    });
+  };
+
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <Title to="/admin/chapters">Roster planner MENTORS</Title>
 
         <Link
           to={`/admin/chapters/${chapterId}/roster-students`}
-          className="btn min-w-40 gap-2"
+          className="btn w-full sm:w-52"
         >
-          <Calendar className="h-6 w-6" />
+          <Calendar />
           Roster STUDENTS
         </Link>
       </div>
 
-      <Form id="rosterMentorsForm" className="flex gap-4 pb-2">
+      <Form
+        id="rosterMentorsForm"
+        className="flex flex-col gap-4 pb-2 sm:flex-row"
+      >
         <Select
           label="Term"
           name="selectedTerm"
@@ -162,11 +172,7 @@ export default function Index() {
         <table className="table table-pin-rows table-pin-cols">
           <thead>
             <tr className="z-20">
-              <th
-                className={classNames("border-r", {
-                  "w-64": selectedTermDate !== "",
-                })}
-              >
+              <th className="border-r sm:w-64">
                 <Form>
                   <TableHeaderSort
                     sortPropName="sortFullName"
@@ -193,20 +199,13 @@ export default function Index() {
                   backgroundColor: getValueFromCircularArray(i, colours),
                 }}
               >
-                <th
-                  className="z-10 border-r"
-                  style={{
-                    backgroundColor: getValueFromCircularArray(i, colours),
-                  }}
-                >
+                <th className="z-10 border-b border-r border-b-white bg-gray-200">
                   <button
-                    onClick={() => {
-                      searchParams.set("search", fullName);
-                      navigate({
-                        search: searchParams.toString(),
-                      });
-                    }}
-                    className="link block w-36"
+                    onClick={onMentorClick(fullName)}
+                    className={classNames(
+                      "link text-start",
+                      selectedTermDate ? "sm:w-36" : "sm:w-48",
+                    )}
                   >
                     {fullName}
                   </button>
@@ -229,45 +228,45 @@ export default function Index() {
 
                   return (
                     <td key={attendedOn} className="border-r">
-                      <div className="indicator w-full">
+                      <div
+                        className={classNames(
+                          "indicator",
+                          selectedTermDate ? "w-full" : "w-48",
+                        )}
+                      >
                         {hasReport && (
                           <div className="badge indicator-item badge-success indicator-center gap-1">
                             Report <Check className="h-4 w-4" />
                           </div>
                         )}
-                        <div
-                          className={
-                            selectedTermDate === "" ? "w-48" : "w-full"
-                          }
+
+                        <Link
+                          to={to}
+                          className={classNames(
+                            "btn btn-ghost btn-block justify-between",
+                            {
+                              "font-bold text-error": isCancelled,
+                              "font-bold text-info":
+                                sessionInfo && !sessionInfo.student,
+                            },
+                          )}
                         >
-                          <Link
-                            to={to}
-                            className={classNames(
-                              "btn btn-ghost btn-block justify-between",
-                              {
-                                "font-bold text-error": isCancelled,
-                                "font-bold text-info":
-                                  sessionInfo && !sessionInfo.student,
-                              },
-                            )}
-                          >
-                            {isCancelled ? (
-                              <>
-                                <WarningTriangle />
-                                Cancelled
-                              </>
-                            ) : (
-                              <span className="flex-1">
-                                {sessionInfo
-                                  ? sessionInfo.student
-                                    ? sessionInfo.student.fullName
-                                    : "Marked available"
-                                  : ""}
-                              </span>
-                            )}
-                            <NavArrowRight />
-                          </Link>
-                        </div>
+                          {isCancelled ? (
+                            <>
+                              <WarningTriangle />
+                              Cancelled
+                            </>
+                          ) : (
+                            <span className="flex-1">
+                              {sessionInfo
+                                ? sessionInfo.student
+                                  ? sessionInfo.student.fullName
+                                  : "Marked available"
+                                : ""}
+                            </span>
+                          )}
+                          <NavArrowRight />
+                        </Link>
                       </div>
                     </td>
                   );

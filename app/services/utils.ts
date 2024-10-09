@@ -257,7 +257,7 @@ export function getDatesForTerm(startDate: Dayjs, endDate: Dayjs): string[] {
   for (let i = 0; i <= numberOfWeeksInTerm; i++) {
     const date = firstDayOfTermStart.clone().add(i, "week");
 
-    dates.push(date.format("YYYY-MM-DD") + "T00:00:00Z");
+    dates.push(date.format("YYYY-MM-DD") + "T00:00:00.000Z");
   }
 
   return dates;
@@ -271,7 +271,7 @@ export function isDateExpired(expiryDate: Date | undefined) {
   return dayjs(expiryDate).isBefore(new Date(), "day");
 }
 
-export function getClosestSessionDate(dates: Date[]) {
+export function getClosestSessionToToday(dates: Date[]) {
   if (dates.length === 0) {
     return null;
   }
@@ -281,5 +281,5 @@ export function getClosestSessionDate(dates: Date[]) {
     a.getDate() - today.getDate() < b.getDate() - today.getDate() ? a : b,
   );
 
-  return dayjs(closest).format("YYYY-MM-DD") + "T00:00:00Z";
+  return dayjs(closest).format("YYYY-MM-DD") + "T00:00:00.000Z";
 }

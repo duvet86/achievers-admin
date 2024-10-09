@@ -240,7 +240,7 @@ export default function Index() {
                         ? dayjs(signedOffOn).format("MMMM D, YYYY")
                         : "-"}
                     </td>
-                    <td className="border p-2">
+                    <td className="border p-2" align="right">
                       <Link
                         to={
                           completedOn
