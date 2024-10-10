@@ -156,10 +156,8 @@ export default function Index() {
 
   return (
     <>
-      <div className="flex items-center">
+      <div className="flex items-center justify-between">
         <Title>Mentors</Title>
-
-        <div className="flex-1"></div>
 
         <ActionsDropdown />
       </div>
@@ -177,7 +175,7 @@ export default function Index() {
           <table className="table">
             <thead>
               <tr>
-                <th align="left" className="w-14">
+                <th align="left" className="hidden w-14 sm:table-cell">
                   #
                 </th>
                 <th align="left">
@@ -202,7 +200,9 @@ export default function Index() {
                   />
                 </th>
                 <th align="left"># Checks completed</th>
-                <th align="right">Action</th>
+                <th align="right" className="hidden sm:table-cell">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -244,7 +244,7 @@ export default function Index() {
                       className={className}
                       onClick={handleRowClick(id)}
                     >
-                      <td className="border">
+                      <td className="hidden border sm:table-cell">
                         <div className="flex gap-2">
                           {index + 1 + 10 * currentPageNumber} {icon}
                         </div>
@@ -271,12 +271,12 @@ export default function Index() {
                           </div>
                         </div>
                       </td>
-                      <td className="border">
+                      <td className="hidden border sm:table-cell">
                         <Link
                           to={`${id}?${searchParams.toString()}`}
                           className="btn btn-success btn-xs w-full gap-2"
                         >
-                          <PageEdit className="hidden h-4 w-4 lg:block" />
+                          <PageEdit className="hidden h-4 w-4 sm:block" />
                           Edit
                         </Link>
                       </td>

@@ -118,7 +118,7 @@ export function getSessionDatesFormatted(
     return getDatesForTerm(currentTerm.start, currentTerm.end)
       .map((attendedOn) => dayjs(attendedOn))
       .map((attendedOn) => ({
-        value: attendedOn.format("YYYY-MM-DD") + "T00:00:00Z",
+        value: attendedOn.toISOString(),
         label: sessionDates.includes(attendedOn.format("YYYY-MM-DD"))
           ? `** ${attendedOn.format("DD/MM/YYYY")} (Booked) **`
           : attendedOn.format("DD/MM/YYYY"),
@@ -128,7 +128,7 @@ export function getSessionDatesFormatted(
   return sessionDates
     .map((attendedOn) => dayjs(attendedOn))
     .map((attendedOn) => ({
-      value: attendedOn.format("YYYY-MM-DD") + "T00:00:00Z",
+      value: attendedOn.toISOString(),
       label: attendedOn.format("DD/MM/YYYY"),
     }));
 }

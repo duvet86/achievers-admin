@@ -17,10 +17,7 @@ import {
   getStudentByIdAsync,
   updateStudentByIdAsync,
 } from "./services.server";
-import { StudentForm } from "./components/StudentForm";
-import { GuardianList } from "./components/GuardianList";
-import { TeacherList } from "./components/TeacherList";
-import { Header } from "./components/Header";
+import { StudentForm, GuardianList, TeacherList, Header } from "./components";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.studentId, "studentId not found");
@@ -185,12 +182,7 @@ export default function Index() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="h-48 lg:h-16">
-        <Header
-          title={loaderData.title}
-          endDate={loaderData.student?.endDate}
-        />
-      </div>
+      <Header title={loaderData.title} endDate={loaderData.student?.endDate} />
 
       <hr className="my-4" />
 

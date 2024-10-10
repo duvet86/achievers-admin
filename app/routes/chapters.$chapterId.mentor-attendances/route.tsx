@@ -8,7 +8,7 @@ import classNames from "classnames";
 import { CheckSquare, Square } from "iconoir-react";
 
 import {
-  getClosestSessionDate,
+  getClosestSessionToToday,
   getDatesForTerm,
   getEnvironment,
 } from "~/services";
@@ -59,7 +59,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
 
   if (selectedTermDate === null || !sessionDates.includes(selectedTermDate)) {
-    selectedTermDate = getClosestSessionDate(
+    selectedTermDate = getClosestSessionToToday(
       sessionDates.map((date) => dayjs(date).toDate()),
     );
   }
@@ -95,7 +95,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     sessionDates: sessionDates
       .map((attendedOn) => dayjs(attendedOn))
       .map((attendedOn) => ({
-        value: attendedOn.format("YYYY-MM-DD") + "T00:00:00Z",
+        value: attendedOn.toISOString(),
         label: attendedOn.format("DD/MM/YYYY"),
       })),
   });

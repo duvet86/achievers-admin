@@ -19,7 +19,7 @@ export function Header(props: Props) {
   const [searchParams] = useSearchParams();
 
   return (
-    <div className="flex flex-col items-center gap-10 lg:flex-row">
+    <div className="flex flex-col gap-2 sm:flex-row sm:gap-10">
       <Title to={`/admin/users?${searchParams.toString()}`}>
         Edit mentor info
       </Title>
@@ -29,7 +29,7 @@ export function Header(props: Props) {
       <div className="flex-1"></div>
 
       <div className="dropdown dropdown-end">
-        <div title="actions" tabIndex={0} className="btn w-40 gap-2">
+        <div title="actions" tabIndex={0} className="btn w-full gap-2 sm:w-40">
           Actions
           <NavArrowDown />
         </div>

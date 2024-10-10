@@ -27,7 +27,7 @@ import {
 import editorStylesheetUrl from "~/styles/editor.css?url";
 import { Checkbox, Editor, Select, SubTitle, Title } from "~/components";
 
-import { getClosestSessionDate } from "~/services";
+import { getClosestSessionToToday } from "~/services";
 import { getLoggedUserInfoAsync } from "~/services/.server/session.server";
 import {
   getSchoolTermsForYearAsync,
@@ -101,7 +101,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   selectedTermDate =
     selectedTermDate ??
-    getClosestSessionDate(
+    getClosestSessionToToday(
       mentorBookedDates.map((date) => dayjs(date).toDate()),
     );
 

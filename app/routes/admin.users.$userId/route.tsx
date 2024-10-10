@@ -143,12 +143,10 @@ export default function Index() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="h-48 lg:h-16">
-        <Header
-          endDate={loaderData.user.endDate}
-          mentorAppRoleAssignmentId={loaderData.mentorAppRoleAssignmentId}
-        />
-      </div>
+      <Header
+        endDate={loaderData.user.endDate}
+        mentorAppRoleAssignmentId={loaderData.mentorAppRoleAssignmentId}
+      />
 
       <hr className="my-4" />
 

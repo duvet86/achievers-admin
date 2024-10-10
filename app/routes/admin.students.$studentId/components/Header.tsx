@@ -12,7 +12,7 @@ export function Header({ title, endDate }: Props) {
   const [searchParams] = useSearchParams();
 
   return (
-    <div className="flex flex-col items-center gap-4 lg:flex-row">
+    <div className="flex flex-col gap-2 sm:flex-row sm:gap-10">
       <Title to={`/admin/students?${searchParams.toString()}`}>{title}</Title>
 
       {endDate && (
@@ -28,7 +28,7 @@ export function Header({ title, endDate }: Props) {
       <div className="flex-1"></div>
 
       <div className="dropdown dropdown-end">
-        <div tabIndex={0} role="button" className="btn w-40 gap-2">
+        <div tabIndex={0} role="button" className="btn w-full gap-2 sm:w-40">
           Actions
           <NavArrowDown className="h-6 w-6" />
         </div>
