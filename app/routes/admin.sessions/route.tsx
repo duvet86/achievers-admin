@@ -5,6 +5,7 @@ import {
   Form,
   Link,
   useLoaderData,
+  useNavigate,
   useSearchParams,
   useSubmit,
 } from "@remix-run/react";
@@ -160,6 +161,7 @@ export default function Index() {
   } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
+  const navigate = useNavigate();
   const formRef = useRef<HTMLFormElement | null>(null);
 
   const totalPageCount = Math.ceil(count / 10);
@@ -169,6 +171,14 @@ export default function Index() {
 
     formRef.current!.reset();
     submit(formRef.current);
+  };
+
+  const handleRowClick = (id: number, completedOn: string | null) => () => {
+    const url = completedOn
+      ? `/admin/sessions/${id}/report?${searchParams.toString()}`
+      : `/admin/sessions/${id}?${searchParams.toString()}`;
+
+    navigate(url);
   };
 
   return (
@@ -190,7 +200,7 @@ export default function Index() {
         />
 
         <div className="overflow-auto bg-white">
-          <table className="table table-zebra">
+          <table className="table table-lg sm:table-md">
             <thead>
               <tr>
                 <th align="left" className="p-2">
@@ -208,7 +218,7 @@ export default function Index() {
                 <th align="left" className="hidden p-2 sm:table-cell">
                   Signed off on
                 </th>
-                <th align="right" className="p-2">
+                <th align="right" className="hidden p-2 sm:table-cell">
                   Action
                 </th>
               </tr>
@@ -220,11 +230,19 @@ export default function Index() {
                 </tr>
               )}
               {sessions.map(
-                (
-                  { id, attendedOn, completedOn, signedOffOn, student, user },
-                  index,
-                ) => (
-                  <tr key={index}>
+                ({
+                  id,
+                  attendedOn,
+                  completedOn,
+                  signedOffOn,
+                  student,
+                  user,
+                }) => (
+                  <tr
+                    key={id}
+                    className="cursor-pointer hover:bg-base-200"
+                    onClick={handleRowClick(id, completedOn)}
+                  >
                     <td className="border p-2">{user.fullName}</td>
                     <td className="border p-2">{student?.fullName}</td>
                     <td className="border p-2">
@@ -240,16 +258,19 @@ export default function Index() {
                         ? dayjs(signedOffOn).format("MMMM D, YYYY")
                         : "-"}
                     </td>
-                    <td className="border p-2" align="right">
+                    <td
+                      className="hidden border p-2 sm:table-cell"
+                      align="right"
+                    >
                       <Link
                         to={
                           completedOn
                             ? `/admin/sessions/${id}/report?${searchParams.toString()}`
                             : `/admin/sessions/${id}?${searchParams.toString()}`
                         }
-                        className="btn btn-success btn-xs w-20"
+                        className="btn btn-success btn-xs btn-block"
                       >
-                        <Eye className="hidden h-4 w-4 sm:block" />
+                        <Eye className="h-4 w-4" />
                         Report
                       </Link>
                     </td>
