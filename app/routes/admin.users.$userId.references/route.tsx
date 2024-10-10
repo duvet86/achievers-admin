@@ -48,7 +48,7 @@ export default function Index() {
             <tr>
               <th align="center">Full Name</th>
               <th align="center" className="w-1/12">
-                Completed
+                Status
               </th>
               <th align="center" className="w-1/4">
                 Action
