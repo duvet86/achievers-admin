@@ -262,6 +262,22 @@ export default function Index() {
             required
           />
 
+          <SubTitle>Reference check completed</SubTitle>
+
+          <Input
+            label="By (name)"
+            name="calledBy"
+            defaultValue={reference.calledBy ?? ""}
+            required
+          />
+
+          <DateInput
+            defaultValue={reference.calledOndate ?? ""}
+            label="On (date)"
+            name="calledOndate"
+            required
+          />
+
           <Textarea
             label="General comment"
             name="generalComment"
@@ -282,22 +298,6 @@ export default function Index() {
                 value: "false",
               },
             ]}
-            required
-          />
-
-          <SubTitle>Reference check completed</SubTitle>
-
-          <Input
-            label="By (name)"
-            name="calledBy"
-            defaultValue={reference.calledBy ?? ""}
-            required
-          />
-
-          <DateInput
-            defaultValue={reference.calledOndate ?? ""}
-            label="On (date)"
-            name="calledOndate"
             required
           />
 
