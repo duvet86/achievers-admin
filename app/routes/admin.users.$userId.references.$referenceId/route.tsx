@@ -278,11 +278,10 @@ export default function Index() {
             required
           />
 
-          <SubmitFormButton
-            successMessage={actionData?.successMessage}
-            errorMessage={actionData?.errorMessage}
-            sticky
-            className="justify-between"
+          <Textarea
+            label="General comment"
+            name="generalComment"
+            defaultValue={reference.generalComment ?? ""}
           />
 
           <Radio
@@ -302,10 +301,11 @@ export default function Index() {
             required
           />
 
-          <Textarea
-            label="General comment"
-            name="generalComment"
-            defaultValue={reference.generalComment ?? ""}
+          <SubmitFormButton
+            successMessage={actionData?.successMessage}
+            errorMessage={actionData?.errorMessage}
+            sticky
+            className="justify-between"
           />
         </fieldset>
       </Form>
