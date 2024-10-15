@@ -50,7 +50,7 @@ exports[`Navbar > Navbar snapshot 1`] = `
         <a
           class="btn btn-ghost text-xl normal-case"
           data-discover="true"
-          href="/admin/home"
+          href="/"
         >
           <span
             class="badge badge-lg ml-2"

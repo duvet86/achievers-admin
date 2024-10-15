@@ -61,7 +61,7 @@ exports[`Body > Body snapshot admin 1`] = `
             <a
               class="btn btn-ghost text-xl normal-case"
               data-discover="true"
-              href="/admin/home"
+              href="/"
             >
               <span
                 class="badge badge-lg ml-2"
@@ -669,7 +669,7 @@ exports[`Body > Body snapshot mentor 1`] = `
             <a
               class="btn btn-ghost text-xl normal-case"
               data-discover="true"
-              href="/mentor/home"
+              href="/"
             >
               <span
                 class="badge badge-lg ml-2"
@@ -1284,7 +1284,7 @@ exports[`Body > Body snapshot mentor and admin permissions 1`] = `
             <a
               class="btn btn-ghost text-xl normal-case"
               data-discover="true"
-              href="/admin/home"
+              href="/"
             >
               <span
                 class="badge badge-lg ml-2"
