@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { useLoaderData, Link } from "@remix-run/react";
-import { PageEdit, Group, Calendar, GraduationCap, LogIn } from "iconoir-react";
+import { PageEdit, Group, Calendar, GraduationCap } from "iconoir-react";
 
 import {
   getLoggedUserInfoAsync,
@@ -19,12 +19,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   return {
     chapters,
-    canAttendances: ability.can("manage", "MentorAttendancesArea"),
   };
 }
 
 export default function Index() {
-  const { chapters, canAttendances } = useLoaderData<typeof loader>();
+  const { chapters } = useLoaderData<typeof loader>();
 
   return (
     <>
@@ -69,16 +68,6 @@ export default function Index() {
                 <PageEdit className="h-4 w-4" />
                 Reports
               </Link>
-
-              {canAttendances && (
-                <Link
-                  to={`/chapters/${id}/mentor-attendances`}
-                  className="btn btn-info w-64 gap-2"
-                >
-                  <LogIn className="h-4 w-4" />
-                  Attendances
-                </Link>
-              )}
             </div>
           </div>
         </div>

@@ -203,7 +203,7 @@ export default function Index() {
       <Navbar userName={userName} environment={environment} version={version} />
 
       <main className="content-main mt-16 flex flex-col p-4">
-        <Title to="/admin/chapters">
+        <Title>
           Mentor attendances &quot;
           {dayjs(selectedTermDate).format("D MMMM YYYY")}
           &quot;
@@ -243,7 +243,7 @@ export default function Index() {
           {mentors.length === 0 && (
             <li className="mt-4 italic">No mentors found</li>
           )}
-          {mentors.map(({ id: mentorId, fullName, student }, index) => (
+          {mentors.map(({ id: mentorId, fullName, student }) => (
             <li
               key={mentorId}
               onClick={
@@ -252,9 +252,9 @@ export default function Index() {
                   : attend(mentorId)
               }
               className={classNames(
-                "flex cursor-pointer items-center rounded p-2 hover:bg-gray-400",
+                "m-2 flex cursor-pointer items-center rounded p-2 hover:bg-gray-200",
                 {
-                  "bg-gray-200": index % 2 === 0,
+                  "bg-green-200": attendacesLookup[mentorId],
                 },
               )}
             >
@@ -265,7 +265,7 @@ export default function Index() {
 
               <div>
                 {attendacesLookup[mentorId] ? (
-                  <button className="btn btn-ghost text-success">
+                  <button className="btn btn-ghost">
                     <CheckSquare />
                   </button>
                 ) : (

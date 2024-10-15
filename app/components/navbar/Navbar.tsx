@@ -25,10 +25,7 @@ export function Navbar({ userName, environment, version, currentView }: Props) {
             <Menu className="inline-block h-6 w-6 stroke-current" />
           </label>
         </div>
-        <Link
-          to={isCurrentViewMentor ? "/mentor/home" : "/admin/home"}
-          className="btn btn-ghost text-xl normal-case"
-        >
+        <Link to="/" className="btn btn-ghost text-xl normal-case">
           {showEnvBadge ? (
             <span className="badge badge-lg ml-2">{environment}</span>
           ) : (

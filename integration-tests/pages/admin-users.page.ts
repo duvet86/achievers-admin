@@ -70,16 +70,15 @@ export class AdminUsersPage {
 
   async searchUser(email: string): Promise<void> {
     await this.page.getByPlaceholder("Search").fill(email);
-    await this.page.getByRole("button", { name: "Submit" }).click();
+    await this.page.keyboard.press("Enter");
   }
 
   async clearSelection(): Promise<void> {
-    await this.page.getByRole("button", { name: "Clear" }).click();
+    await this.page.getByRole("button", { name: "Reset" }).click();
   }
 
   async includeArchivedUsers(): Promise<void> {
     await this.page.getByLabel("Include archived").check();
-    await this.page.getByRole("button", { name: "Submit" }).click();
   }
 
   async goToNextPage(): Promise<void> {
