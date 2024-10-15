@@ -2,7 +2,6 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { UpdateWWCCheckCommand } from "./services.server";
 
 import {
-  json,
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
 } from "@remix-run/node";
@@ -38,12 +37,12 @@ export async function loader({ params }: LoaderFunctionArgs) {
     ? getFileUrl(user.wwcCheck.filePath)
     : null;
 
-  return json({
+  return {
     user: {
       ...user,
       filePath,
     },
-  });
+  };
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
@@ -62,9 +61,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
     const wwcNumber = formData.get("wwcNumber")?.toString();
 
     if (expiryDate === undefined || wwcNumber === undefined) {
-      return json({
+      return {
         errorMessage: "Missing required fields",
-      });
+      };
     }
 
     const data: UpdateWWCCheckCommand = {
@@ -76,14 +75,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
     await updateWWCCheckAsync(Number(params.userId), data);
   } catch (e: unknown) {
-    return json({
+    return {
       errorMessage: (e as Error).message,
-    });
+    };
   }
 
-  return json({
+  return {
     errorMessage: null,
-  });
+  };
 }
 
 export default function Index() {

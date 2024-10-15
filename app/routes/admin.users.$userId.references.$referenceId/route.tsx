@@ -1,7 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { ReferenceUpdateCommand } from "./services.server";
 
-import { json } from "@remix-run/node";
 import {
   Form,
   useActionData,
@@ -34,9 +33,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
     Number(params.referenceId),
   );
 
-  return json({
+  return {
     user,
-  });
+  };
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
@@ -85,10 +84,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
     calledOndate === undefined ||
     outcomeComment === undefined
   ) {
-    return json({
+    return {
       successMessage: null,
       errorMessage: "Missing required fields",
-    });
+    };
   }
 
   const data: ReferenceUpdateCommand = {
@@ -118,10 +117,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
     data,
   );
 
-  return json({
+  return {
     successMessage: "Saved successfully",
     errorMessage: null,
-  });
+  };
 }
 
 export default function Index() {

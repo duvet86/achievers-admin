@@ -1,6 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
-import { json } from "@remix-run/node";
 import {
   Link,
   useLoaderData,
@@ -27,10 +26,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const session = await getSessionByIdAsync(Number(params.sessionId));
 
-  return json({
+  return {
     attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
     session,
-  });
+  };
 }
 
 export async function action({ params }: ActionFunctionArgs) {

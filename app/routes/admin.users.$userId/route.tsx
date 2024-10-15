@@ -2,7 +2,6 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { Prisma } from "@prisma/client";
 import type { AzureUserWebAppWithRole } from "~/services/.server";
 
-import { json } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigation } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
@@ -40,7 +39,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const chapters = await getChaptersAsync();
 
-  return json({
+  return {
     user,
     isWwcCheckExpired: isDateExpired(user.wwcCheck?.expiryDate),
     isPoliceCheckExpired: isDateExpired(user.policeCheck?.expiryDate),
@@ -58,7 +57,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
         ({ roleName }) => roleName === "Mentor",
       )?.id ?? null,
     chapters,
-  });
+  };
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
@@ -130,10 +129,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   await updateUserByIdAsync(Number(params.userId), dataCreate);
 
-  return json({
+  return {
     successMessage: "User successfully saved!",
     errorMessage: null,
-  });
+  };
 }
 
 export default function Index() {

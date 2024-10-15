@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { Key } from "iconoir-react";
@@ -25,9 +25,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
     throw new Error("User already part of Azure AD.");
   }
 
-  return json({
+  return {
     user,
-  });
+  };
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {

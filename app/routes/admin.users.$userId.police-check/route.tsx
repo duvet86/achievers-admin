@@ -2,7 +2,6 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { PoliceCheckUpdateCommand } from "./services.server";
 
 import {
-  json,
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
 } from "@remix-run/node";
@@ -32,12 +31,12 @@ export async function loader({ params }: LoaderFunctionArgs) {
     ? getFileUrl(user.policeCheck.filePath)
     : null;
 
-  return json({
+  return {
     user: {
       ...user,
       filePath,
     },
-  });
+  };
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
@@ -55,9 +54,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
     const expiryDate = formData.get("expiryDate")?.toString();
 
     if (expiryDate === undefined) {
-      return json({
+      return {
         errorMessage: "Missing required fields",
-      });
+      };
     }
 
     const data: PoliceCheckUpdateCommand = {
@@ -68,14 +67,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
     await updatePoliceCheckAsync(Number(params.userId), data);
   } catch (e: unknown) {
-    return json({
+    return {
       errorMessage: (e as Error).message,
-    });
+    };
   }
 
-  return json({
+  return {
     errorMessage: null,
-  });
+  };
 }
 
 export default function Index() {

@@ -1,7 +1,6 @@
-import type { LoaderFunctionArgs, TypedResponse } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import dayjs from "dayjs";
-import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 
 import {
@@ -22,45 +21,25 @@ import {
   hasAnyStudentsAssignedAsync,
 } from "./services.server";
 
-export async function loader({ request }: LoaderFunctionArgs): Promise<
-  TypedResponse<{
-    hasAnyStudentsAssigned: boolean;
-    mentorFullName: string;
-    nextSessionDate: string | null;
-    student: null | {
-      id: number;
-      fullName: string;
-    };
-    sessions: {
-      id: number;
-      attendedOn: Date;
-      completedOn: Date | null;
-      signedOffOn: Date | null;
-      student: {
-        id: number;
-        fullName: string;
-      } | null;
-    }[];
-  }>
-> {
+export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
   const hasAnyStudentsAssigned = await hasAnyStudentsAssignedAsync(user.id);
   if (!hasAnyStudentsAssigned) {
-    return json({
+    return {
       hasAnyStudentsAssigned,
       mentorFullName: user.fullName,
       nextSessionDate: null,
       student: null,
       sessions: [],
-    });
+    };
   }
 
   const nextSession = await getNextSessionAsync(user.id, user.chapterId);
   const sessions = await getSessionsAsync(user.id, user.chapterId);
 
-  return json({
+  return {
     hasAnyStudentsAssigned: true,
     mentorFullName: user.fullName,
     nextSessionDate:
@@ -69,7 +48,7 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<
         : null,
     student: nextSession !== null ? nextSession.student : null,
     sessions,
-  });
+  };
 }
 
 export default function Index() {

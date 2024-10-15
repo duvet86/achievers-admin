@@ -6,7 +6,6 @@ import type {
 import type { EditorState } from "lexical";
 import type { ActionType, SessionCommandRequest } from "./services.server";
 
-import { json } from "@remix-run/node";
 import {
   Link,
   useFetcher,
@@ -114,7 +113,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       )
     : null;
 
-  return json({
+  return {
     students,
     selectedTerm: selectedTerm ?? currentTerm.name,
     selectedTermDate,
@@ -128,7 +127,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     isNotMyReport: report !== null && report.userId !== user.id,
     includeAllDates,
     disableIncludeDates,
-  });
+  };
 }
 
 export async function action({ request }: ActionFunctionArgs) {

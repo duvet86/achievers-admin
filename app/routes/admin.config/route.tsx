@@ -1,4 +1,3 @@
-import { json } from "@remix-run/node";
 import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 
 import { Check, Xmark, CheckCircle } from "iconoir-react";
@@ -9,18 +8,18 @@ import { Title } from "~/components";
 import { sendEmailRemaniders } from "./services.server";
 
 export function loader() {
-  return json({
+  return {
     version,
     isEmailRemindersCheckEnabled: isEmailRemindersCheckEnabled,
-  });
+  };
 }
 
 export async function action() {
   const totRemindersSent = await sendEmailRemaniders();
 
-  return json({
+  return {
     message: "Reminders sent: " + totRemindersSent,
-  });
+  };
 }
 
 export default function Index() {

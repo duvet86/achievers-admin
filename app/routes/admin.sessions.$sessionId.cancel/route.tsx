@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { Form, useLoaderData, useSearchParams } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
@@ -15,9 +15,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const session = await getSessionByIdAsync(Number(params.sessionId));
 
-  return json({
+  return {
     session,
-  });
+  };
 }
 
 export async function action({ params, request }: ActionFunctionArgs) {

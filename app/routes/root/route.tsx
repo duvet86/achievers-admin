@@ -2,12 +2,21 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { redirect } from "@remix-run/node";
 
-import { getLoggedUserInfoAsync, trackException } from "~/services/.server";
+import {
+  getChapterFromAttendancesRole,
+  getLoggedUserInfoAsync,
+  trackException,
+} from "~/services/.server";
 
 import { getUserByAzureADIdAsync } from "./services.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
+
+  if (loggedUser.isAttendances) {
+    const chapterId = getChapterFromAttendancesRole(loggedUser.roles);
+    return redirect(`/chapters/${chapterId}/attendances`);
+  }
 
   if (loggedUser.isAdmin) {
     return redirect("/admin/home");

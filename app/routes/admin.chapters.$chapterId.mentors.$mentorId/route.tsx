@@ -1,6 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
-import { json } from "@remix-run/node";
 import {
   Link,
   useFetcher,
@@ -38,11 +37,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
     ),
   ]);
 
-  return json({
+  return {
     chapterId: params.chapterId,
     availableStudents,
     mentorWithStudents,
-  });
+  };
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
@@ -53,10 +52,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const studentId = formData.get("studentId")?.toString();
   if (studentId === undefined) {
-    return json({
+    return {
       studentId: "",
       message: "You need to select a student first",
-    });
+    };
   }
 
   if (request.method === "POST") {
@@ -72,10 +71,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return json({
+  return {
     studentId,
     message: null,
-  });
+  };
 }
 
 export default function Index() {

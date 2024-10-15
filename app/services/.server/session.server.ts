@@ -28,6 +28,7 @@ export interface CurentUserInfo {
   ver: string;
   isAdmin: boolean;
   isMentor: boolean;
+  isAttendances: boolean;
 }
 
 const loginPath = "/.auth/login/aad?post_login_redirect_uri=/";
@@ -95,12 +96,39 @@ export async function getLoggedUserInfoAsync(
         (role) => role.includes("Admin") || role.includes("ChapterCoordinator"),
       ) !== -1,
     isMentor: loggedUser.roles.includes("Mentor"),
+    isAttendances:
+      loggedUser.roles.findIndex((role) => role.includes("Attendances")) !== -1,
   };
+}
+
+export function getChapterFromAttendancesRole(roles: string[]) {
+  if (roles.length === 0) {
+    throw new Error();
+  }
+
+  const attendancesRole = roles.find((r) => r.includes("Attendances"));
+  if (!attendancesRole) {
+    throw new Error();
+  }
+
+  const parts = attendancesRole.split(".");
+
+  return Number(parts[2]);
 }
 
 export function getPermissionsAbility(roles: string[]) {
   const rules = roles.map<RawRuleOf<AppAbility>[]>((role) => {
     const parts = role.split(".");
+
+    if (parts[0] === "Attendances") {
+      return [
+        {
+          action: parts[1],
+          subject: "MentorAttendancesArea",
+          conditions: { id: Number(parts[2]) },
+        } as RawRuleOf<AppAbility>,
+      ];
+    }
 
     if (parts[0] === "ChapterCoordinator") {
       if (parts[3] === "all") {

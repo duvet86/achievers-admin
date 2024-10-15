@@ -1,8 +1,8 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { Prisma } from "@prisma/client";
 
-import { json } from "@remix-run/node";
 import {
+  data,
   Form,
   useActionData,
   useLoaderData,
@@ -24,22 +24,22 @@ export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.guardianId, "guardianId not found");
 
   if (params.guardianId === "new") {
-    return json({
+    return {
       studentId: params.studentId,
       guardian: null,
-    });
+    };
   } else {
     const guardian = await getGuardianByIdAsync(Number(params.guardianId));
     if (guardian === null) {
-      throw new Response("Not Found", {
+      throw data("Not Found", {
         status: 404,
       });
     }
 
-    return json({
+    return {
       studentId: params.studentId,
       guardian,
-    });
+    };
   }
 }
 
@@ -87,9 +87,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
     await updateGuardianByIdAsync(Number(params.guardianId), dataUpdate);
   }
 
-  return json({
+  return {
     message: "Successfully saved",
-  });
+  };
 }
 
 export default function Index() {

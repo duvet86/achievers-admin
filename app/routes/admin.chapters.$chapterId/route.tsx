@@ -1,6 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
@@ -14,9 +13,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const chapter = await getChapterByIdAsync(Number(params.chapterId));
 
-  return json({
+  return {
     chapter,
-  });
+  };
 }
 
 export default function Index() {

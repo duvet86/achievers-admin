@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { Link, json, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { StatsReport } from "iconoir-react";
 
 import { getLoggedUserInfoAsync } from "~/services/.server";
@@ -12,9 +12,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const students = await getMentorStudentsAsync(loggedUser.oid);
 
-  return json({
+  return {
     students,
-  });
+  };
 }
 
 export default function Index() {

@@ -1,6 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { json } from "@remix-run/node";
 import { useLoaderData, Link } from "@remix-run/react";
 import { PageEdit, Group, Calendar, GraduationCap, LogIn } from "iconoir-react";
 
@@ -18,10 +17,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const chapters = await getChaptersAsync(ability);
 
-  return json({
+  return {
     chapters,
     canAttendances: ability.can("manage", "MentorAttendancesArea"),
-  });
+  };
 }
 
 export default function Index() {
@@ -77,7 +76,7 @@ export default function Index() {
                   className="btn btn-info w-64 gap-2"
                 >
                   <LogIn className="h-4 w-4" />
-                  Attendaces
+                  Attendances
                 </Link>
               )}
             </div>

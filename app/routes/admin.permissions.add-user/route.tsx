@@ -8,7 +8,6 @@ import {
   redirect,
   useActionData,
 } from "@remix-run/react";
-import { json } from "@remix-run/node";
 
 import { Input, Select, SubmitFormButton, Title } from "~/components";
 import {
@@ -25,7 +24,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const selectedRole = url.searchParams.get("role") ?? "Admin";
 
   if (selectedRole === "Admin") {
-    return json({
+    return {
       selectedRole,
       roles: ROLES.map((role) => ({
         label: role,
@@ -36,12 +35,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
         value: subject,
       })),
       chapters: null,
-    });
+    };
   }
 
   const chapters = await getChaptersAsync();
 
-  return json({
+  return {
     selectedRole,
     roles: ROLES.map((role) => ({
       label: role,
@@ -55,7 +54,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       label: name,
       value: id.toString(),
     })),
-  });
+  };
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -69,15 +68,15 @@ export async function action({ request }: ActionFunctionArgs) {
   const chapter = formData.getAll("chapter");
 
   if (permissions.length === 0) {
-    return json({
+    return {
       errorMessage: "At least one permission has to be selected.",
-    });
+    };
   }
 
   if (role === "ChapterCoordinator" && chapter.length === 0) {
-    return json({
+    return {
       errorMessage: "At least one chapter has to be selected.",
-    });
+    };
   }
 
   return redirect("/admin/permissions");

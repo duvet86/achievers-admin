@@ -7,10 +7,9 @@ import {
   Form,
   useSearchParams,
   useNavigate,
+  useSubmit,
 } from "@remix-run/react";
-import { json } from "@remix-run/node";
 
-import { useRef } from "react";
 import { PageEdit, BinFull, CheckCircle, WarningTriangle } from "iconoir-react";
 
 import {
@@ -38,8 +37,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const chapterId = url.searchParams.get("chapterId");
 
-  const searchTermSubmit = url.searchParams.get("searchBtn");
-  const clearSearchSubmit = url.searchParams.get("clearSearchBtn");
   const previousPageSubmit = url.searchParams.get("previousBtn");
   const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
   const nextPageSubmit = url.searchParams.get("nextBtn");
@@ -59,7 +56,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const onlyExpiredChecks = url.searchParams.get("onlyExpiredChecks") === "on";
   const includeArchived = url.searchParams.get("includeArchived") === "on";
 
-  if (searchTerm?.trim() === "" || clearSearchSubmit !== null) {
+  if (searchTerm?.trim() === "") {
     searchTerm = null;
   }
 
@@ -78,11 +75,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const totalPageCount = Math.ceil(count / numberItems);
 
   let currentPageNumber = 0;
-  if (searchTermSubmit !== null) {
-    currentPageNumber = 0;
-  } else if (clearSearchSubmit !== null) {
-    currentPageNumber = 0;
-  } else if (previousPageSubmit !== null && pageNumber > 0) {
+  if (previousPageSubmit !== null && pageNumber > 0) {
     currentPageNumber = pageNumber - 1;
   } else if (nextPageSubmit !== null && pageNumber < totalPageCount) {
     currentPageNumber = pageNumber + 1;
@@ -108,7 +101,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
 
-  return json({
+  return {
     chapters,
     count,
     currentPageNumber,
@@ -124,10 +117,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
         user.wwcCheck?.reminderSentAt !== null,
     })),
     searchTerm,
+    chapterId,
+    onlyExpiredChecks,
+    includeArchived,
     sortFullNameSubmit,
     sortEmailSubmit,
     sortChapterSubmit,
-  });
+  };
 }
 
 export default function Index() {
@@ -140,15 +136,49 @@ export default function Index() {
     sortFullNameSubmit,
     sortEmailSubmit,
     sortChapterSubmit,
+    searchTerm,
+    chapterId,
+    onlyExpiredChecks,
+    includeArchived,
   } = useLoaderData<typeof loader>();
 
+  const submit = useSubmit();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const formRef = useRef<HTMLFormElement | null>(null);
 
   const totalPageCount = Math.ceil(count / 10);
 
-  const onFormClear = () => formRef.current!.reset();
+  const onFormReset = () => {
+    searchParams.set("searchTerm", "");
+    searchParams.set("chapterId", "");
+    searchParams.set("pageNumber", "");
+    searchParams.set("onlyExpiredChecks", "");
+    searchParams.set("includeArchived", "");
+
+    navigate(`?${searchParams.toString()}`);
+  };
+
+  const onChapterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    searchParams.set("chapterId", event.target.value);
+
+    submit(Object.fromEntries(searchParams));
+  };
+
+  const onOnlyExpiredChecksChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    searchParams.set("onlyExpiredChecks", event.target.checked ? "on" : "");
+
+    submit(Object.fromEntries(searchParams));
+  };
+
+  const onIncludeArchivedChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    searchParams.set("includeArchived", event.target.checked ? "on" : "");
+
+    submit(Object.fromEntries(searchParams));
+  };
 
   const handleRowClick = (id: number) => () => {
     navigate(`${id}?${searchParams.toString()}`);
@@ -164,11 +194,17 @@ export default function Index() {
 
       <hr className="my-4" />
 
-      <Form ref={formRef} method="get">
+      <Form method="get">
         <FormInputs
           chapters={chapters}
-          searchParams={searchParams}
-          onFormClear={onFormClear}
+          searchTerm={searchTerm}
+          chapterId={chapterId}
+          onlyExpiredChecks={onlyExpiredChecks}
+          includeArchived={includeArchived}
+          onFormReset={onFormReset}
+          onChapterChange={onChapterChange}
+          onOnlyExpiredChecksChange={onOnlyExpiredChecksChange}
+          onIncludeArchivedChange={onIncludeArchivedChange}
         />
 
         <div className="mt-2 overflow-auto bg-white">

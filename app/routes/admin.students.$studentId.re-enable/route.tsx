@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { OnTag } from "iconoir-react";
@@ -14,9 +14,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const student = await getStudentByIdAsync(Number(params.studentId));
 
-  return json({
+  return {
     student,
-  });
+  };
 }
 
 export async function action({ params }: ActionFunctionArgs) {

@@ -1,7 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { UpdateApprovalByMRCCommand } from "./services.server";
 
-import { json } from "@remix-run/node";
 import {
   Form,
   useActionData,
@@ -25,9 +24,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const user = await getUserByIdAsync(Number(params.userId));
 
-  return json({
+  return {
     user,
-  });
+  };
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
@@ -40,9 +39,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const comment = formData.get("comment")?.toString() ?? null;
 
   if (completedBy === undefined || submittedDate === undefined) {
-    return json({
+    return {
       errorMessage: "Missing required fields",
-    });
+    };
   }
 
   const data: UpdateApprovalByMRCCommand = {
@@ -53,9 +52,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   await updateApprovalByMRCAsync(Number(params.userId), data);
 
-  return json({
+  return {
     errorMessage: null,
-  });
+  };
 }
 
 export default function Index() {

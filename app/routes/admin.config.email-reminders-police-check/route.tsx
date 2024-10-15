@@ -1,6 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import dayjs from "dayjs";
 import classNames from "classnames";
@@ -42,12 +41,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const policeCheckEmailRemindersSent =
     await getPoliceCheckReminders(currentPageNumber);
 
-  return json({
+  return {
     range,
     currentPageNumber,
     totalPageCount,
     policeCheckEmailRemindersSent,
-  });
+  };
 }
 
 export default function Index() {

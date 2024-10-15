@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 
 import {
@@ -37,14 +37,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
     Permissions: ability.can("manage", "PermissionsArea"),
   };
 
-  return json({
+  return {
     currentView: "admin",
     isMentorAndAdmin: loggedUser.isAdmin && loggedUser.isMentor,
     linkMappings,
     environment: getEnvironment(request),
     userName: loggedUser.preferred_username,
     version,
-  });
+  };
 }
 
 export default function AppLayout() {

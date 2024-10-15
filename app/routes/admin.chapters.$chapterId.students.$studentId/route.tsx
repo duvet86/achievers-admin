@@ -1,6 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
-import { json } from "@remix-run/node";
 import {
   Link,
   useFetcher,
@@ -36,11 +35,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
     ),
   ]);
 
-  return json({
+  return {
     chapterId: params.chapterId,
     availableMentors,
     studentWithMentors,
-  });
+  };
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
@@ -51,10 +50,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const mentorId = formData.get("mentorId")?.toString();
   if (mentorId === undefined) {
-    return json({
+    return {
       mentorId: "",
       message: "You need to select a mentor first",
-    });
+    };
   }
 
   if (request.method === "POST") {
@@ -70,10 +69,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return json({
+  return {
     mentorId,
     message: null,
-  });
+  };
 }
 
 export default function Index() {

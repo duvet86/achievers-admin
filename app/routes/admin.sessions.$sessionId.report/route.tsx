@@ -6,7 +6,6 @@ import type {
 import type { EditorState } from "lexical";
 import type { SessionCommandRequest } from "./services.server";
 
-import { json } from "@remix-run/node";
 import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
 
 import dayjs from "dayjs";
@@ -30,9 +29,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const session = await getSessionByIdAsync(Number(params.sessionId));
 
-  return json({
+  return {
     session,
-  });
+  };
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -46,9 +45,9 @@ export async function action({ request }: ActionFunctionArgs) {
 
   await saveReportAsync(sessionId, reportFeedback, isSignedOff, user.oid);
 
-  return json({
+  return {
     message: "Successfully saved",
-  });
+  };
 }
 
 export default function Index() {
@@ -73,7 +72,7 @@ export default function Index() {
       {
         sessionId: id,
         reportFeedback: JSON.stringify(editorStateRef.current?.toJSON()),
-        attendedOn,
+        attendedOn: attendedOn.toISOString(),
         isSignedOff,
       },
       {

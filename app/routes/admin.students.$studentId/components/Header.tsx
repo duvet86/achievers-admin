@@ -5,7 +5,7 @@ import { Title } from "~/components";
 
 interface Props {
   title: string;
-  endDate: string | null | undefined;
+  endDate: Date | null | undefined;
 }
 
 export function Header({ title, endDate }: Props) {

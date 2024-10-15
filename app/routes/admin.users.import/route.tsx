@@ -1,10 +1,8 @@
-import type { ActionFunctionArgs, TypedResponse } from "@remix-run/node";
-import type { UserHistory } from "./services.server";
+import type { ActionFunctionArgs } from "@remix-run/node";
 
 import {
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
-  json,
 } from "@remix-run/node";
 import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 
@@ -21,14 +19,7 @@ import {
   importSpreadsheetMentorsAsync,
 } from "./services.server";
 
-export const action = async ({
-  request,
-}: ActionFunctionArgs): Promise<
-  TypedResponse<{
-    newUsers: UserHistory[];
-    message: null | string;
-  }>
-> => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const uploadHandler = unstable_createMemoryUploadHandler({
     maxPartSize: 500_000,
   });
@@ -40,19 +31,19 @@ export const action = async ({
 
   const file = formData.get("usersSheet");
   if (file === null || !(file instanceof File)) {
-    return json({
+    return {
       newUsers: [],
       message: "Choose a file",
-    });
+    };
   }
 
   const fileUsers = await readExcelFileAsync(file);
 
   if (fileUsers.length === 0) {
-    return json({
+    return {
       newUsers: [],
       message: "Nothing to import",
-    });
+    };
   }
 
   const currentMentors = await getCurrentMentorsAsync();
@@ -68,10 +59,10 @@ export const action = async ({
   }, []);
 
   if (incorrectEmails.length > 0) {
-    return json({
+    return {
       newUsers: [],
       message: `Incorrect emails: \n- ${incorrectEmails.join("\n- ")}`,
-    });
+    };
   }
 
   const existingMentorsLookup = currentMentors.reduce<Record<string, string>>(
@@ -92,10 +83,10 @@ export const action = async ({
   try {
     const users = await importSpreadsheetMentorsAsync(newUsers);
 
-    return json({
+    return {
       newUsers: users,
       message: null,
-    });
+    };
   } catch (e: unknown) {
     console.error(e);
 
@@ -103,10 +94,10 @@ export const action = async ({
 
     trackException(new Error(message));
 
-    return json({
+    return {
       newUsers: [],
       message,
-    });
+    };
   }
 };
 

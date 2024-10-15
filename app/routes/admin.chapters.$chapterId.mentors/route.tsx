@@ -1,7 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import type { Prisma } from "@prisma/client";
 
-import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { useRef } from "react";
@@ -74,7 +73,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
 
-  return json({
+  return {
     chapterId: params.chapterId,
     range,
     currentPageNumber,
@@ -82,7 +81,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     mentorsWithStudents,
     sortFullNameSubmit,
     sortCountStudentsSubmit,
-  });
+  };
 }
 
 export default function Index() {

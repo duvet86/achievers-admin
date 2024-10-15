@@ -3,8 +3,12 @@ import type { Prisma } from "@prisma/client";
 
 import dayjs from "dayjs";
 import { $Enums } from "@prisma/client";
-import { json } from "@remix-run/node";
-import { useActionData, useLoaderData, useNavigation } from "@remix-run/react";
+import {
+  data,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { areEqualIgnoreCase, calculateYearLevel } from "~/services";
@@ -27,31 +31,31 @@ export async function loader({ params }: LoaderFunctionArgs) {
   if (isNewStudent) {
     const chapters = await getChaptersAsync();
 
-    return json({
+    return {
       title: "Add new student",
       student: null,
       yearLevel: null,
       isNewStudent,
       chapters,
-    });
+    };
   }
 
   const student = await getStudentByIdAsync(Number(params.studentId));
   if (student === null) {
-    throw new Response("Not Found", {
+    throw data("Not Found", {
       status: 404,
     });
   }
 
   const chapters = await getChaptersAsync();
 
-  return json({
+  return {
     title: "Edit student info",
     student,
     yearLevel: calculateYearLevel(student.dateOfBirth)?.toString(),
     isNewStudent,
     chapters,
-  });
+  };
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
@@ -69,10 +73,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
       await deleteTeacherByIdAsync(Number(teacherId));
     }
 
-    return json({
+    return {
       successMessage: "Student successfully updated!",
       errorMessage: null,
-    });
+    };
   }
 
   const firstName = formData.get("firstName")?.toString();
@@ -169,10 +173,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
     await updateStudentByIdAsync(Number(params.studentId), dataCreate);
   }
 
-  return json({
+  return {
     successMessage: "Student successfully saved!",
     errorMessage: null,
-  });
+  };
 }
 
 export default function Index() {

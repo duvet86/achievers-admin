@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import dayjs from "dayjs";
 import { CheckSquareSolid, NavArrowLeft } from "iconoir-react";
@@ -26,14 +26,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
-  return json({
+  return {
     environment: getEnvironment(request),
     userName: loggedUser.preferred_username,
     hasAgreed: user.volunteerAgreementSignedOn !== null,
     version,
     maxDateOfBirth: `${dayjs().year() - 18}-01-01`, // At least 18 years old.
     user,
-  });
+  };
 }
 
 export async function action({ request }: ActionFunctionArgs) {

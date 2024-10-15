@@ -1,7 +1,7 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { NewSchoolTerm } from "./services.server";
 
-import { Form, json, redirect, useActionData } from "@remix-run/react";
+import { Form, redirect, useActionData } from "@remix-run/react";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
@@ -70,17 +70,17 @@ export async function action({ request }: ActionFunctionArgs) {
   ].filter((date) => date.year() !== commonYear);
 
   if (datesWithDifferrentYears.length > 0) {
-    return json({
+    return {
       errorMessage: "Dates have different years",
-    });
+    };
   }
 
   const existingYears = await getExisitingYearsAsync();
 
   if (existingYears.includes(commonYear)) {
-    return json({
+    return {
       errorMessage: `Year ${commonYear} already exists`,
-    });
+    };
   }
 
   const newTerms: NewSchoolTerm[] = [
@@ -107,9 +107,9 @@ export async function action({ request }: ActionFunctionArgs) {
   ];
 
   if (areDatesOverlapping(newTerms)) {
-    return json({
+    return {
       errorMessage: "End date before start date or overlapping terms",
-    });
+    };
   }
 
   await addTermsAsync(newTerms);

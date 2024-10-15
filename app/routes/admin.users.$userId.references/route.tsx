@@ -1,6 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
@@ -15,9 +14,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const user = await getUserByIdAsync(Number(params.userId));
 
-  return json({
+  return {
     user,
-  });
+  };
 }
 
 export default function Index() {

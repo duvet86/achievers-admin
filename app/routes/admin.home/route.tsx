@@ -1,4 +1,3 @@
-import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { UserCircle, GraduationCap, ShopFourTiles } from "iconoir-react";
 
@@ -33,14 +32,14 @@ export async function loader() {
     getMentorsPerMonth(),
   ]);
 
-  return json({
+  return {
     mentorsCount,
     incompleteMentors,
     studentsCount,
     studentsWithoutMentor,
     chaptersCount,
     mentorsPerMonth,
-  });
+  };
 }
 
 export default function Index() {

@@ -1,8 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { createRemixStub } from "@remix-run/testing";
 
-import { json } from "@remix-run/node";
-
 import Page from "./route";
 
 describe("Admin /users", () => {
@@ -12,13 +10,17 @@ describe("Admin /users", () => {
         path: "/",
         Component: Page,
         loader() {
-          return json({
+          return {
             chapters: [],
             count: 0,
             users: [],
             currentPageNumber: 0,
             range: [],
-          });
+            searchTerm: null,
+            chapterId: null,
+            onlyExpiredChecks: false,
+            includeArchived: false,
+          };
         },
       },
     ]);
@@ -39,7 +41,7 @@ describe("Admin /users", () => {
         path: "/",
         Component: Page,
         loader() {
-          return json({
+          return {
             chapters: [],
             count: 1,
             currentPageNumber: 0,
@@ -54,7 +56,11 @@ describe("Admin /users", () => {
                 },
               },
             ],
-          });
+            searchTerm: null,
+            chapterId: null,
+            onlyExpiredChecks: false,
+            includeArchived: false,
+          };
         },
       },
     ]);
@@ -75,13 +81,17 @@ describe("Admin /users", () => {
         path: "/",
         Component: Page,
         loader() {
-          return json({
+          return {
             chapters: [],
             count: 0,
             currentPageNumber: 0,
             range: [],
             users: [],
-          });
+            searchTerm: null,
+            chapterId: null,
+            onlyExpiredChecks: false,
+            includeArchived: false,
+          };
         },
       },
     ]);
@@ -99,13 +109,17 @@ describe("Admin /users", () => {
         path: "/",
         Component: Page,
         loader() {
-          return json({
+          return {
             chapters: [],
             count: 0,
             currentPageNumber: 0,
             range: [],
             users: [],
-          });
+            searchTerm: null,
+            chapterId: null,
+            onlyExpiredChecks: false,
+            includeArchived: false,
+          };
         },
       },
     ]);

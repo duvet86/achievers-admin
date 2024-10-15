@@ -4,7 +4,6 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import {
   Form,
-  json,
   useLoaderData,
   useSearchParams,
   useSubmit,
@@ -43,7 +42,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const { mySessionsLookup, myStudentsSessionsLookup } =
     await getSessionsLookupAsync(user.chapterId, user.id, currentTerm);
 
-  return json({
+  return {
     termsList: terms.map(({ start, end, name }) => ({
       value: name,
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${todayterm.name === name ? " (Current)" : ""}`,
@@ -54,7 +53,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     datesInTerm: getDatesForTerm(currentTerm.start, currentTerm.end).map(
       (date) => dayjs(date).format("YYYY-MM-DD"),
     ),
-  });
+  };
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -81,9 +80,9 @@ export async function action({ request }: ActionFunctionArgs) {
         attendedOn!,
       );
 
-      return json({
+      return {
         studentsForSession,
-      });
+      };
     }
 
     case "create": {
@@ -111,9 +110,9 @@ export async function action({ request }: ActionFunctionArgs) {
         attendedOn!,
       );
 
-      return json({
+      return {
         studentsForSession,
-      });
+      };
     }
 
     default:

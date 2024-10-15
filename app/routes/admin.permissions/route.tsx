@@ -1,7 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { useLoaderData, Link } from "@remix-run/react";
-import { json } from "@remix-run/node";
 import { PageEdit, Plus } from "iconoir-react";
 
 import { getAzureUsersWithRolesAsync } from "~/services/.server";
@@ -40,9 +39,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
       return 0;
     });
 
-  return json({
+  return {
     users: admins,
-  });
+  };
 }
 
 export default function Index() {

@@ -1,6 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import dayjs from "dayjs";
 
@@ -36,11 +35,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const history = await getImportHistoryAsync(currentPageNumber);
 
-  return json({
+  return {
     count,
     currentPageNumber,
     history,
-  });
+  };
 };
 
 export default function Index() {

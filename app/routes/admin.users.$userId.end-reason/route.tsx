@@ -1,6 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { json } from "@remix-run/node";
 import { useLoaderData, useSearchParams } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
@@ -14,10 +13,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const user = await getUserByIdAsync(Number(params.userId));
 
-  return json({
+  return {
     ...user,
     endDate: dayjs(user.endDate).format("DD/MM/YYYY"),
-  });
+  };
 }
 
 export default function Index() {

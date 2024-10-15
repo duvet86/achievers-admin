@@ -1,6 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import dayjs from "dayjs";
 import classNames from "classnames";
@@ -37,12 +36,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const wwcEmailRemindersSent = await getWWCCheckReminders(currentPageNumber);
 
-  return json({
+  return {
     range,
     currentPageNumber,
     totalPageCount,
     wwcEmailRemindersSent,
-  });
+  };
 }
 
 export default function Index() {

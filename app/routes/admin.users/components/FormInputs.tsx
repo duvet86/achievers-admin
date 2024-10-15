@@ -1,47 +1,60 @@
 import { Input, Select } from "~/components";
 
 interface Props {
+  searchTerm: string | null;
+  chapterId: string | null;
+  onlyExpiredChecks: boolean;
+  includeArchived: boolean;
   chapters: {
     id: number;
     name: string;
   }[];
-  searchParams: URLSearchParams;
-  onFormClear: () => void;
+  onFormReset: () => void;
+  onChapterChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  onOnlyExpiredChecksChange: (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => void;
+  onIncludeArchivedChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function FormInputs({
+  searchTerm,
+  chapterId,
+  onlyExpiredChecks,
+  includeArchived,
   chapters,
-  searchParams,
-  onFormClear,
+  onFormReset,
+  onChapterChange,
+  onOnlyExpiredChecksChange,
+  onIncludeArchivedChange,
 }: Props) {
-  const searchTerm = searchParams.get("searchTerm");
-
   return (
-    <div className="mb-6 flex flex-wrap justify-between gap-4">
-      <div className="flex flex-col items-center gap-6 sm:flex-row">
+    <fieldset className="mb-6 flex flex-wrap justify-between gap-4">
+      <div className="flex flex-col items-end gap-6 sm:flex-row">
         <div className="w-full sm:w-96">
           <Input
+            key={searchTerm}
+            label="Press enter to submit"
             name="searchTerm"
             placeholder="Search by name or email"
-            defaultValue={
-              searchParams.get("clearSearchBtn") === null && searchTerm !== null
-                ? searchTerm
-                : ""
-            }
+            defaultValue={searchTerm ?? ""}
           />
         </div>
 
         {chapters.length > 1 && (
           <div className="w-full sm:w-44">
             <Select
+              key={chapterId}
+              label="Chapters"
               name="chapterId"
-              defaultValue={searchParams.get("chapterId") ?? ""}
+              defaultValue={chapterId ?? ""}
               options={[{ value: "", label: "All chapters" }].concat(
                 chapters.map(({ id, name }) => ({
                   label: name,
                   value: id.toString(),
                 })),
               )}
+              onChange={onChapterChange}
             />
           </div>
         )}
@@ -50,10 +63,12 @@ export default function FormInputs({
           <div className="form-control">
             <label className="label cursor-pointer gap-2">
               <input
+                key={onlyExpiredChecks.toString()}
                 type="checkbox"
                 name="onlyExpiredChecks"
                 className="checkbox bg-base-100"
-                defaultChecked={searchParams.get("onlyExpiredChecks") === "on"}
+                defaultChecked={onlyExpiredChecks}
+                onChange={onOnlyExpiredChecksChange}
               />
               <span className="label-text">
                 Only expired or soon to expire checks
@@ -64,10 +79,12 @@ export default function FormInputs({
           <div className="form-control">
             <label className="label cursor-pointer gap-2">
               <input
+                key={includeArchived.toString()}
                 type="checkbox"
                 name="includeArchived"
                 className="checkbox bg-base-100"
-                defaultChecked={searchParams.get("includeArchived") === "on"}
+                defaultChecked={includeArchived}
+                onChange={onIncludeArchivedChange}
               />
               <span className="label-text">Include archived</span>
             </label>
@@ -75,26 +92,15 @@ export default function FormInputs({
         </div>
       </div>
 
-      <div className="flex items-center gap-6">
+      <div className="flex items-end">
         <button
           className="btn btn-outline sm:w-32"
-          type="submit"
-          name="clearSearchBtn"
-          value="clearSearchBtn"
-          onClick={onFormClear}
+          type="button"
+          onClick={onFormReset}
         >
-          Clear
-        </button>
-
-        <button
-          className="btn btn-primary w-full sm:w-32"
-          type="submit"
-          name="searchBtn"
-          value="searchBtn"
-        >
-          Submit
+          Reset
         </button>
       </div>
-    </div>
+    </fieldset>
   );
 }

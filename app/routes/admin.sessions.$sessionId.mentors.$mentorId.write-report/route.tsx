@@ -6,7 +6,7 @@ import type {
 import type { EditorState } from "lexical";
 import type { ActionType, SessionCommandRequest } from "./services.server";
 
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
@@ -29,9 +29,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const session = await getSessionAsync(Number(params.sessionId));
 
-  return json({
+  return {
     session,
-  });
+  };
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {

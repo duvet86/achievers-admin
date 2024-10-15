@@ -1,14 +1,9 @@
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  TypedResponse,
-} from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { SchoolTerm } from "./services.server";
 
 import {
   Form,
   Link,
-  json,
   redirect,
   useActionData,
   useLoaderData,
@@ -61,20 +56,15 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const terms = await getSchoolTermsForYearAsync(selectedYear);
 
-  return json({
+  return {
     availableYears,
     selectedYear: selectedYear.toString(),
     currentYear: currentYear.toString(),
     terms,
-  });
+  };
 }
 
-export async function action({ request, params }: ActionFunctionArgs): Promise<
-  TypedResponse<{
-    successMessage: string | null;
-    errorMessage: string | null;
-  }>
-> {
+export async function action({ request, params }: ActionFunctionArgs) {
   const formData = await request.formData();
 
   const termId1 = formData.get("termId0") as string;
@@ -118,10 +108,10 @@ export async function action({ request, params }: ActionFunctionArgs): Promise<
   ].filter((date) => date.year() !== commonYear);
 
   if (datesWithDifferrentYears.length > 0) {
-    return json({
+    return {
       successMessage: null,
       errorMessage: "Dates have different years",
-    });
+    };
   }
 
   const selectedYear = isStringNullOrEmpty(params.year)
@@ -129,10 +119,10 @@ export async function action({ request, params }: ActionFunctionArgs): Promise<
     : Number(params.year);
 
   if (commonYear !== selectedYear) {
-    return json({
+    return {
       successMessage: null,
       errorMessage: "Miss matching year",
-    });
+    };
   }
 
   const newTerms: SchoolTerm[] = [
@@ -159,18 +149,18 @@ export async function action({ request, params }: ActionFunctionArgs): Promise<
   ];
 
   if (areDatesOverlapping(newTerms)) {
-    return json({
+    return {
       successMessage: null,
       errorMessage: "End date before start date or overlapping terms",
-    });
+    };
   }
 
   await updateTermsAsync(newTerms);
 
-  return json({
+  return {
     successMessage: "Success",
     errorMessage: null,
-  });
+  };
 }
 
 export default function Index() {

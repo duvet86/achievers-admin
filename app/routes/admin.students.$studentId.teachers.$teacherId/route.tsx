@@ -1,8 +1,8 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import type { Prisma } from "@prisma/client";
 
-import { json } from "@remix-run/node";
 import {
+  data,
   Form,
   useActionData,
   useLoaderData,
@@ -24,22 +24,22 @@ export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.teacherId, "teacherId not found");
 
   if (params.teacherId === "new") {
-    return json({
+    return {
       studentId: params.studentId,
       teacher: null,
-    });
+    };
   } else {
     const teacher = await getTeacherByIdAsync(Number(params.teacherId));
     if (teacher === null) {
-      throw new Response("Not Found", {
+      throw data("Not Found", {
         status: 404,
       });
     }
 
-    return json({
+    return {
       studentId: params.studentId,
       teacher,
-    });
+    };
   }
 }
 
@@ -81,9 +81,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
     await updateTeacherByIdAsync(Number(params.teacherId), dataUpdate);
   }
 
-  return json({
+  return {
     message: "Successfully saved",
-  });
+  };
 }
 
 export default function Index() {

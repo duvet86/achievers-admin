@@ -1,6 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { json } from "@remix-run/node";
 import {
   Form,
   Link,
@@ -132,7 +131,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getAvailabelStudentsAsync(ability, chapterId, mentorId),
   ]);
 
-  return json({
+  return {
     mentors,
     students,
     selectedChapterId: chapterId.toString(),
@@ -143,7 +142,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     currentPageNumber,
     count,
     sessions,
-  });
+  };
 }
 
 export default function Index() {
@@ -173,7 +172,7 @@ export default function Index() {
     submit(formRef.current);
   };
 
-  const handleRowClick = (id: number, completedOn: string | null) => () => {
+  const handleRowClick = (id: number, completedOn: Date | null) => () => {
     const url = completedOn
       ? `/admin/sessions/${id}/report?${searchParams.toString()}`
       : `/admin/sessions/${id}?${searchParams.toString()}`;

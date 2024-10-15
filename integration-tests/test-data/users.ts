@@ -16,6 +16,7 @@ export async function createUsersAsync(
     await tx.reference.deleteMany();
     await tx.welcomeCall.deleteMany();
     await tx.wWCCheck.deleteMany();
+    await tx.mentorAttendance.deleteMany();
     await tx.user.deleteMany();
 
     let i: number;

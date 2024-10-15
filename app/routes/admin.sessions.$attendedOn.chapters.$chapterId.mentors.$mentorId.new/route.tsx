@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { Form, useLoaderData, useSearchParams } from "@remix-run/react";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
@@ -29,7 +29,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     ),
   ]);
 
-  return json({
+  return {
     chapter,
     mentor,
     attendedOnLabel: dayjs(params.attendedOn, "YYYY-MM-DD").format(
@@ -39,7 +39,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
       label: fullName,
       value: id.toString(),
     })),
-  });
+  };
 }
 
 export async function action({ params, request }: ActionFunctionArgs) {

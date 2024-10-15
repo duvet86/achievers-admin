@@ -1,10 +1,8 @@
-import type { ActionFunctionArgs, TypedResponse } from "@remix-run/node";
-import type { StudentHistory } from "./services.server";
+import type { ActionFunctionArgs } from "@remix-run/node";
 
 import {
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
-  json,
 } from "@remix-run/node";
 import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 import { Import, PageEdit, Archive } from "iconoir-react";
@@ -19,14 +17,7 @@ import {
   importSpreadsheetStudentsAsync,
 } from "./services.server";
 
-export const action = async ({
-  request,
-}: ActionFunctionArgs): Promise<
-  TypedResponse<{
-    newStudents: StudentHistory[];
-    message: null | string;
-  }>
-> => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const uploadHandler = unstable_createMemoryUploadHandler({
     maxPartSize: 500_000,
   });
@@ -38,19 +29,19 @@ export const action = async ({
 
   const file = formData.get("studentsSheet");
   if (file === null || !(file instanceof File)) {
-    return json({
+    return {
       newStudents: [],
       message: "Choose a file",
-    });
+    };
   }
 
   const fileStudents = await readExcelFileAsync(file);
 
   if (fileStudents.length === 0) {
-    return json({
+    return {
       newStudents: [],
       message: "Nothing to import",
-    });
+    };
   }
 
   const currentStudents = await getCurrentStudentsAsync();
@@ -70,12 +61,12 @@ export const action = async ({
   );
 
   if (incorrectDateOfBirth.length > 0) {
-    return json({
+    return {
       newStudents: [],
       message: `Incorrect date of birth: \n- ${incorrectDateOfBirth.join(
         "\n- ",
       )}`,
-    });
+    };
   }
 
   const existingStudentsLookup = currentStudents.reduce<
@@ -97,10 +88,10 @@ export const action = async ({
   try {
     const students = await importSpreadsheetStudentsAsync(newStudents);
 
-    return json({
+    return {
       newStudents: students,
       message: null,
-    });
+    };
   } catch (e: unknown) {
     console.error(e);
 
@@ -108,10 +99,10 @@ export const action = async ({
 
     trackException(new Error(message));
 
-    return json({
+    return {
       newStudents: [],
       message,
-    });
+    };
   }
 };
 

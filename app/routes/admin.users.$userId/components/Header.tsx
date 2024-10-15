@@ -11,7 +11,7 @@ import {
 import { Title } from "~/components";
 
 interface Props {
-  endDate: string | null;
+  endDate: Date | null;
   mentorAppRoleAssignmentId: string | null;
 }
 

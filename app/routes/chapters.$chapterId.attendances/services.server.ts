@@ -51,7 +51,7 @@ export async function getMentorsForSession(
   searchTerm: string | null,
 ) {
   if (!isStringNullOrEmpty(searchTerm)) {
-    return await prisma.user.findMany({
+    const mentors = await prisma.user.findMany({
       where: {
         chapterId,
         fullName: {
@@ -59,6 +59,11 @@ export async function getMentorsForSession(
         },
       },
     });
+
+    return mentors.map((mentor) => ({
+      ...mentor,
+      student: null,
+    }));
   }
 
   const sessions = await prisma.mentorToStudentSession.findMany({
@@ -73,6 +78,12 @@ export async function getMentorsForSession(
           fullName: true,
         },
       },
+      student: {
+        select: {
+          id: true,
+          fullName: true,
+        },
+      },
     },
     orderBy: {
       user: {
@@ -81,7 +92,10 @@ export async function getMentorsForSession(
     },
   });
 
-  return sessions.map(({ user }) => user);
+  return sessions.map(({ user, student }) => ({
+    ...user,
+    student,
+  }));
 }
 
 export async function getMentorAttendancesLookup(

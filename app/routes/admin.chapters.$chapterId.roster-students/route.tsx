@@ -1,7 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import type { Prisma } from "@prisma/client";
 
-import { json } from "@remix-run/node";
 import {
   Form,
   Link,
@@ -61,7 +60,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
         (attendedOn === dayjs() ? " (Today)" : ""),
     }));
 
-  return json({
+  return {
     chapterId: params.chapterId,
     termsList: terms.map(({ start, end, name }) => ({
       value: name,
@@ -84,7 +83,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       },
     ].concat(sessionDateOptions),
     sortFullNameSubmit,
-  });
+  };
 }
 
 const colours = ["#FAD7A0", "#A9DFBF", "#FADBD8", "#AED6F1"];

@@ -1,4 +1,4 @@
-import { json, type LoaderFunctionArgs } from "@remix-run/node";
+import { type LoaderFunctionArgs } from "@remix-run/node";
 
 import { useLoaderData } from "@remix-run/react";
 
@@ -11,9 +11,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const partners = await getPartnersAync(loggedUser.oid);
 
-  return json({
+  return {
     partners,
-  });
+  };
 }
 
 export default function Index() {

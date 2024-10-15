@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import {
   Form,
   Link,
@@ -54,7 +54,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const mentorsInSession = sessionsForDate.map(({ userId }) => userId);
   const selectedMentorId = session.user.id;
 
-  return json({
+  return {
     chapter,
     session,
     selectedMentorId: selectedMentorId.toString(),
@@ -71,7 +71,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       };
     }),
     attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
-  });
+  };
 }
 
 export async function action({ params, request }: ActionFunctionArgs) {

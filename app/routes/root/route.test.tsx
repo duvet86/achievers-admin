@@ -47,6 +47,7 @@ describe("Loader", () => {
       ver: "",
       isAdmin: true,
       isMentor: false,
+      isAttendances: false,
     });
 
     const response = await loader({
@@ -77,6 +78,7 @@ describe("Loader", () => {
       ver: "",
       isAdmin: false,
       isMentor: true,
+      isAttendances: false,
     });
     vi.mocked(getUserByAzureADIdAsync).mockResolvedValueOnce({
       volunteerAgreementSignedOn: null,
@@ -110,6 +112,7 @@ describe("Loader", () => {
       ver: "",
       isAdmin: false,
       isMentor: true,
+      isAttendances: false,
     });
     vi.mocked(getUserByAzureADIdAsync).mockResolvedValueOnce({
       volunteerAgreementSignedOn: new Date(),

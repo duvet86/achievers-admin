@@ -13,6 +13,7 @@ import {
   getEnvironment,
 } from "~/services";
 import {
+  getChapterFromAttendancesRole,
   getLoggedUserInfoAsync,
   isLoggedUserBlockedAsync,
   trackException,
@@ -32,13 +33,15 @@ import {
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
 
-  const loggedUser = await getLoggedUserInfoAsync(request);
   const isUserBlocked = await isLoggedUserBlockedAsync(
     request,
     "MentorAttendancesArea",
   );
 
-  if (isUserBlocked) {
+  const loggedUser = await getLoggedUserInfoAsync(request);
+  const chapterId = getChapterFromAttendancesRole(loggedUser.roles);
+
+  if (isUserBlocked || chapterId !== Number(params.chapterId)) {
     trackException(
       new Error(
         `Request url: ${request.url}. loggedUser has no MentorAttendancesArea permissions.`,
@@ -236,31 +239,37 @@ export default function Index() {
           />
         </Form>
 
-        <ul className="mt-4 overflow-auto" key={selectedTermDate}>
+        <ul key={selectedTermDate} className="mt-4 overflow-auto">
           {mentors.length === 0 && (
             <li className="mt-4 italic">No mentors found</li>
           )}
-          {mentors.map(({ id, fullName }, index) => (
+          {mentors.map(({ id: mentorId, fullName, student }, index) => (
             <li
-              key={id}
+              key={mentorId}
+              onClick={
+                attendacesLookup[mentorId]
+                  ? removeAttendance(attendacesLookup[mentorId])
+                  : attend(mentorId)
+              }
               className={classNames(
-                "flex items-center justify-between rounded p-2 hover:bg-gray-400",
+                "flex cursor-pointer items-center rounded p-2 hover:bg-gray-400",
                 {
                   "bg-gray-200": index % 2 === 0,
                 },
               )}
             >
-              <h2>{fullName}</h2>
+              <div className="flex flex-1 gap-4">
+                <h2 className="basis-56">{fullName}</h2>
+                <h2>{student?.fullName}</h2>
+              </div>
+
               <div>
-                {attendacesLookup[id] ? (
-                  <button
-                    className="btn btn-ghost text-success"
-                    onClick={removeAttendance(attendacesLookup[id])}
-                  >
+                {attendacesLookup[mentorId] ? (
+                  <button className="btn btn-ghost text-success">
                     <CheckSquare />
                   </button>
                 ) : (
-                  <button className="btn btn-ghost" onClick={attend(id)}>
+                  <button className="btn btn-ghost">
                     <Square />
                   </button>
                 )}

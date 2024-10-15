@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { redirect, json } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 
 import { getEnvironment } from "~/services";
@@ -30,14 +30,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
     return redirect("/volunteer-agreement");
   }
 
-  return json({
+  return {
     currentView: "mentor",
     isMentorAndAdmin: loggedUser.isAdmin && loggedUser.isMentor,
     userName: loggedUser.preferred_username,
     version,
     linkMappings: {},
     environment: getEnvironment(request),
-  });
+  };
 }
 
 export default function Index() {
