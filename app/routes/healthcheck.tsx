@@ -1,3 +1,5 @@
+import { data } from "@remix-run/react";
+
 export function loader() {
-  return Response.json("OK");
+  return data("OK");
 }
