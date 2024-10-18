@@ -68,7 +68,7 @@ describe("Drawer", () => {
 
     const links: HTMLAnchorElement[] = screen.getAllByRole("link");
 
-    expect(links.length).toBe(6);
+    expect(links.length).toBe(7);
 
     expect(links[0]).toHaveTextContent("Home");
     expect(links[0]).toHaveAttribute("href", "/mentor/home");
@@ -77,16 +77,19 @@ describe("Drawer", () => {
     expect(links[1]).toHaveAttribute("href", "/mentor/roster");
 
     expect(links[2]).toHaveTextContent("Write Report");
-    expect(links[2]).toHaveAttribute("href", "/mentor/reports");
+    expect(links[2]).toHaveAttribute("href", "/mentor/write-report");
 
-    expect(links[3]).toHaveTextContent("My Students");
-    expect(links[3]).toHaveAttribute("href", "/mentor/students");
+    expect(links[3]).toHaveTextContent("View Reports");
+    expect(links[3]).toHaveAttribute("href", "/mentor/sessions");
 
-    expect(links[4]).toHaveTextContent("My Partners");
-    expect(links[4]).toHaveAttribute("href", "/mentor/partners");
+    expect(links[4]).toHaveTextContent("My Students");
+    expect(links[4]).toHaveAttribute("href", "/mentor/students");
 
-    expect(links[5]).toHaveTextContent("Useful Resources");
-    expect(links[5]).toHaveAttribute("href", "/mentor/useful-resources");
+    expect(links[5]).toHaveTextContent("My Partners");
+    expect(links[5]).toHaveAttribute("href", "/mentor/partners");
+
+    expect(links[6]).toHaveTextContent("Useful Resources");
+    expect(links[6]).toHaveAttribute("href", "/mentor/useful-resources");
   });
 
   it("should display swap app link if both mentor and admin", () => {

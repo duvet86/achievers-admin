@@ -12,6 +12,7 @@ import {
   StatsReport,
   RefreshDouble,
   TowerWarning,
+  EditPencil,
 } from "iconoir-react";
 
 interface Props {
@@ -96,9 +97,15 @@ function getLinks(
           isVisible: true,
         },
         {
-          icon: <StatsReport />,
-          path: "/mentor/reports",
+          icon: <EditPencil />,
+          path: "/mentor/write-report",
           label: "Write Report",
+          isVisible: true,
+        },
+        {
+          icon: <StatsReport />,
+          path: "/mentor/sessions",
+          label: "View Reports",
           isVisible: true,
         },
         {

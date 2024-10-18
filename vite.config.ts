@@ -375,7 +375,17 @@ export default defineConfig({
             route("partners", "routes/mentor.partners/route.tsx", {
               index: true,
             });
-            route("reports", "routes/mentor.reports/route.tsx", {
+            route("sessions", "routes/mentor.sessions/route.tsx", {
+              index: true,
+            });
+            route(
+              "sessions/:sessionId",
+              "routes/mentor.sessions.$sessionId/route.tsx",
+              {
+                index: true,
+              },
+            );
+            route("write-report", "routes/mentor.write-report/route.tsx", {
               index: true,
             });
             route("roster", "routes/mentor.roster/route.tsx", {

@@ -69,6 +69,10 @@ export function SelectSearch({
 
   const onClearSelection = () => {
     setSelectedValue(EMPTY_OPTION);
+
+    if (onChange) {
+      onChange(EMPTY_OPTION.value);
+    }
   };
 
   const viewOptions =
@@ -183,7 +187,7 @@ export function SelectSearch({
           <li>
             <button
               type="button"
-              className="italic"
+              className="p-2 italic"
               onClick={onDisabledButtonClick}
             >
               No items

@@ -28,6 +28,7 @@ export async function getMentorByIdAsync(id: number) {
   return await prisma.user.findUniqueOrThrow({
     where: {
       id,
+      endDate: null,
     },
     select: {
       id: true,
@@ -62,6 +63,9 @@ export async function getStudentsForMentorAsync(
   const assignedStudents = await prisma.mentorToStudentAssignement.findMany({
     where: {
       userId: mentorId,
+      student: {
+        endDate: null,
+      },
     },
     select: {
       student: {

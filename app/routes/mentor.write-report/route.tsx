@@ -235,7 +235,9 @@ export default function Index() {
           }
           className="mb-4"
         >
-          Report of &quot;{dayjs(selectedTermDate).format("DD/MM/YYYY")}&quot;
+          Report of &quot;
+          {selectedTermDate && dayjs(selectedTermDate).format("DD/MM/YYYY")}
+          &quot;
         </Title>
 
         {isNotMyReport && report && (
