@@ -76,60 +76,54 @@ export async function getMentorSessionDatesAsync(
   chapterId: number,
   currentTerm: Term,
 ) {
-  return (
-    await prisma.mentorToStudentSession.findMany({
-      where: {
-        userId,
-        chapterId,
-        AND: [
-          {
-            attendedOn: {
-              gte: currentTerm.start.toDate(),
-            },
+  const sessions = await prisma.mentorToStudentSession.findMany({
+    distinct: "attendedOn",
+    where: {
+      isCancelled: false,
+      userId,
+      chapterId,
+      AND: [
+        {
+          attendedOn: {
+            gte: currentTerm.start.toDate(),
           },
-          {
-            attendedOn: {
-              lte: currentTerm.end.toDate(),
-            },
+        },
+        {
+          attendedOn: {
+            lte: currentTerm.end.toDate(),
           },
-        ],
-        OR: [
-          {
-            studentId,
-          },
-          {
-            studentId: null,
-          },
-        ],
-      },
-      select: {
-        attendedOn: true,
-      },
-    })
-  ).map(({ attendedOn }) => dayjs(attendedOn).format("YYYY-MM-DD"));
+        },
+      ],
+      OR: [
+        {
+          studentId,
+        },
+        {
+          studentId: null,
+        },
+      ],
+    },
+    select: {
+      attendedOn: true,
+    },
+  });
+
+  return sessions.map(({ attendedOn }) =>
+    dayjs(attendedOn).format("YYYY-MM-DD"),
+  );
 }
 
 export function getSessionDatesFormatted(
   sessionDates: string[],
   currentTerm: Term,
-  includeAllDates: boolean,
 ) {
-  if (includeAllDates) {
-    return getDatesForTerm(currentTerm.start, currentTerm.end)
-      .map((attendedOn) => dayjs(attendedOn))
-      .map((attendedOn) => ({
-        value: attendedOn.toISOString(),
-        label: sessionDates.includes(attendedOn.format("YYYY-MM-DD"))
-          ? `** ${attendedOn.format("DD/MM/YYYY")} (Booked) **`
-          : attendedOn.format("DD/MM/YYYY"),
-      }));
-  }
-
-  return sessionDates
+  return getDatesForTerm(currentTerm.start, currentTerm.end)
     .map((attendedOn) => dayjs(attendedOn))
     .map((attendedOn) => ({
       value: attendedOn.toISOString(),
-      label: attendedOn.format("DD/MM/YYYY"),
+      label: sessionDates.includes(attendedOn.format("YYYY-MM-DD"))
+        ? `** ${attendedOn.format("DD/MM/YYYY")} (Booked) **`
+        : attendedOn.format("DD/MM/YYYY"),
     }));
 }
 
@@ -160,7 +154,7 @@ export async function saveReportAsync(
         chapterId,
         studentId,
         userId,
-        attendedOn,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
         report,
         completedOn,
       },
@@ -215,14 +209,13 @@ export function getCurrentTermForDate(terms: Term[], date: Date): Term {
   return terms[0];
 }
 
-export async function getStudentsAsync(
-  userId: number,
-  chapterId: number,
-  includeAllstudents: boolean,
-) {
+export async function getStudentsAsync(userId: number, chapterId: number) {
   const assignedStudents = await prisma.mentorToStudentAssignement.findMany({
     where: {
       userId,
+      student: {
+        endDate: null,
+      },
     },
     select: {
       student: {
@@ -234,35 +227,28 @@ export async function getStudentsAsync(
     },
   });
 
-  if (includeAllstudents) {
-    const allStudents = await prisma.student.findMany({
-      where: {
-        chapterId,
-        endDate: null,
-        mentorToStudentAssignement: {
-          none: {
-            userId,
-          },
+  const allStudents = await prisma.student.findMany({
+    where: {
+      chapterId,
+      endDate: null,
+      mentorToStudentAssignement: {
+        none: {
+          userId,
         },
       },
-      select: {
-        id: true,
-        fullName: true,
-      },
-    });
+    },
+    select: {
+      id: true,
+      fullName: true,
+    },
+  });
 
-    return assignedStudents
-      .map(({ student: { id, fullName } }) => ({
-        id,
-        fullName: `** ${fullName} (Assigned) **`,
-      }))
-      .concat(allStudents);
-  }
-
-  return assignedStudents.map(({ student: { id, fullName } }) => ({
-    id,
-    fullName,
-  }));
+  return assignedStudents
+    .map(({ student: { id, fullName } }) => ({
+      id,
+      fullName: `** ${fullName} (Assigned) **`,
+    }))
+    .concat(allStudents);
 }
 
 export function getTermFromDate(terms: Term[], date: string) {

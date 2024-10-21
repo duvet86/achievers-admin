@@ -8,6 +8,7 @@ import type { ActionType, SessionCommandRequest } from "./services.server";
 
 import {
   Link,
+  redirect,
   useFetcher,
   useLoaderData,
   useSearchParams,
@@ -24,7 +25,7 @@ import {
 } from "iconoir-react";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
-import { Checkbox, Editor, Select, SubTitle, Title } from "~/components";
+import { Editor, Select, SubTitle, Title } from "~/components";
 
 import { getClosestSessionToToday } from "~/services";
 import { getLoggedUserInfoAsync } from "~/services/.server/session.server";
@@ -51,10 +52,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   let selectedTermDate = url.searchParams.get("selectedTermDate");
   let selectedStudentId = url.searchParams.get("selectedStudentId");
 
-  let includeAllDates = url.searchParams.get("includeAllDates") === "true";
-  const includeAllstudents =
-    url.searchParams.get("includeAllstudents") === "true";
-
   const terms = await getSchoolTermsForYearAsync(dayjs().year());
 
   if (selectedTerm === null && selectedTermDate !== null) {
@@ -68,11 +65,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
-  const students = await getStudentsAsync(
-    user.id,
-    user.chapterId,
-    includeAllstudents,
-  );
+  const students = await getStudentsAsync(user.id, user.chapterId);
 
   selectedStudentId = selectedStudentId ?? students[0].id.toString();
 
@@ -83,19 +76,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     currentTerm,
   );
 
-  let disableIncludeDates = false;
-  if (
-    selectedTermDate &&
-    !mentorBookedDates.includes(dayjs(selectedTermDate).format("YYYY-MM-DD"))
-  ) {
-    includeAllDates = true;
-    disableIncludeDates = true;
-  }
-
   const sessionDatesFormatted = getSessionDatesFormatted(
     mentorBookedDates,
     currentTerm,
-    includeAllDates,
   );
 
   selectedTermDate =
@@ -125,8 +108,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     sessionDates: sessionDatesFormatted,
     report,
     isNotMyReport: report !== null && report.userId !== user.id,
-    includeAllDates,
-    disableIncludeDates,
   };
 }
 
@@ -152,7 +133,9 @@ export async function action({ request }: ActionFunctionArgs) {
     report,
   );
 
-  return null;
+  return redirect(
+    `/mentor/write-report?selectedTermDate=${attendedOn}&selectedStudentId=${studentId}`,
+  );
 }
 
 export default function Index() {
@@ -171,8 +154,6 @@ export default function Index() {
     sessionDates,
     students,
     isNotMyReport,
-    includeAllDates,
-    disableIncludeDates,
   } = data ?? initialData;
 
   const isLoading = state !== "idle";
@@ -192,12 +173,6 @@ export default function Index() {
   const handleSelectChange =
     (value: string) => (event: React.ChangeEvent<HTMLSelectElement>) => {
       searchParams.set(value, event.target.value);
-      load(`?${searchParams.toString()}`);
-    };
-
-  const handleCheckBoxChange =
-    (value: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      searchParams.set(value, event.target.checked.toString());
       load(`?${searchParams.toString()}`);
     };
 
@@ -286,37 +261,21 @@ export default function Index() {
                 or include all dates
               </p>
             )}
-            <Checkbox
-              className="w-44"
-              label="Include all dates"
-              name="includeAllDates"
-              defaultChecked={includeAllDates}
-              disabled={disableIncludeDates}
-              onChange={handleCheckBoxChange("includeAllDates")}
-            />
           </div>
 
-          <div className="flex content-center gap-6">
-            <Select
-              key={searchParams.get("selectedStudentId") ?? selectedStudentId}
-              label="Student"
-              name="selectedStudentId"
-              defaultValue={
-                searchParams.get("selectedStudentId") ?? selectedStudentId
-              }
-              options={students.map(({ id, fullName }) => ({
-                label: fullName,
-                value: id.toString(),
-              }))}
-              onChange={handleSelectChange("selectedStudentId")}
-            />
-            <Checkbox
-              className="w-44"
-              label="Include all students"
-              name="includeAllstudents"
-              onChange={handleCheckBoxChange("includeAllstudents")}
-            />
-          </div>
+          <Select
+            key={searchParams.get("selectedStudentId") ?? selectedStudentId}
+            label="Student"
+            name="selectedStudentId"
+            defaultValue={
+              searchParams.get("selectedStudentId") ?? selectedStudentId
+            }
+            options={students.map(({ id, fullName }) => ({
+              label: fullName,
+              value: id.toString(),
+            }))}
+            onChange={handleSelectChange("selectedStudentId")}
+          />
         </div>
 
         <div
@@ -326,8 +285,8 @@ export default function Index() {
           <div className="flex flex-1 flex-col gap-2">
             <div className="flex h-full flex-row">
               <div
-                className={classNames("w-full sm:w-3/4", {
-                  "w-3/4": !completedOn,
+                className={classNames("w-full", {
+                  "sm:w-3/4": !completedOn,
                   "w-full": completedOn,
                 })}
               >
