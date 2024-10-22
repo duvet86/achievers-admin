@@ -118,6 +118,8 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     needs: migrate
+    env:
+      NODE_ENV: production
 
     steps:
       - name: Checkout
