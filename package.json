@@ -15,7 +15,6 @@
     "test": "vitest",
     "test:ci": "prisma generate && vitest run --silent --coverage",
     "test:watch": "vitest dev",
-    "test:commit": "vitest run --silent",
     "pretest:e2e:run": "npm run build",
     "test:e2e": "playwright test --project=chromium",
     "typecheck": "tsc",
