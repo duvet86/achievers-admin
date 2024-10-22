@@ -42,7 +42,7 @@ test.describe("Mentor Home Page", () => {
     await mentorRosterPage.expect.toHaveHeading();
   });
 
-  test.only("should have write report", async () => {
+  test("should have write report", async () => {
     await mentorLayoutPage.goToWriteReportPage();
 
     await mentorWriteReportPage.expect.toHaveHeading();
