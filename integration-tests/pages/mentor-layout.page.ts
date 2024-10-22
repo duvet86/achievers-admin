@@ -7,7 +7,7 @@ export class MentorLayoutPage {
 
   homeLink: Locator;
   rosterLink: Locator;
-  reportsLink: Locator;
+  writeReportLink: Locator;
   studentsLink: Locator;
   partnerLink: Locator;
   resourcesLink: Locator;
@@ -27,7 +27,7 @@ export class MentorLayoutPage {
       name: "Roster",
       exact: true,
     });
-    this.reportsLink = page.getByRole("link", {
+    this.writeReportLink = page.getByRole("link", {
       name: "Write Report",
       exact: true,
     });
@@ -51,8 +51,8 @@ export class MentorLayoutPage {
     await this.rosterLink.click();
   }
 
-  async goToReportsList() {
-    await this.reportsLink.click();
+  async goToWriteReportPage() {
+    await this.writeReportLink.click();
   }
 
   async goToStudentsList() {
@@ -68,7 +68,7 @@ export class MentorLayoutPage {
   }
 
   async goToResourcesView() {
-    await this.reportsLink.click();
+    await this.resourcesLink.click();
   }
 }
 
@@ -82,7 +82,7 @@ export class MentorLayoutPageAssertions {
   async toHaveDrawerLinks(): Promise<void> {
     await expect(this.page.homeLink).toBeVisible();
     await expect(this.page.rosterLink).toBeVisible();
-    await expect(this.page.reportsLink).toBeVisible();
+    await expect(this.page.writeReportLink).toBeVisible();
     await expect(this.page.studentsLink).toBeVisible();
     await expect(this.page.resourcesLink).toBeVisible();
   }

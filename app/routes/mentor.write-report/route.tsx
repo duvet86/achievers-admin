@@ -84,8 +84,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   selectedTermDate =
     selectedTermDate ??
     getClosestSessionToToday(
-      mentorBookedDates.map((date) => dayjs(date).toDate()),
-    );
+      sessionDatesFormatted.map(({ value }) => new Date(value)),
+    ) ??
+    sessionDatesFormatted[0].value;
 
   const report = selectedTermDate
     ? await getReportForSessionDateAsync(
@@ -305,7 +306,7 @@ export default function Index() {
                     Have you answered these questions?
                   </p>
                   <hr className="my-2" />
-                  <ul className="list-inside list-disc">
+                  <ul className="list-inside list-disc" data-testid="questions">
                     <li>What work did you cover this week?</li>
                     <li>What went well?</li>
                     <li>What could be improved on?</li>

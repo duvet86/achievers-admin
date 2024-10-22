@@ -26,7 +26,7 @@ export async function mentorAsync(
         addressSuburb: "Address suburb",
         addressState: "Address state",
         addressPostcode: "Address postcode",
-        dateOfBirth: "1986-07-22",
+        dateOfBirth: new Date("1986-07-22T01:44:13.938Z"),
         emergencyContactName: "Luca",
         emergencyContactNumber: "Luca",
         emergencyContactAddress: "Luca",
