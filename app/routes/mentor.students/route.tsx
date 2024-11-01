@@ -49,7 +49,7 @@ export default function Index() {
                 <td>{yearLevel ?? "-"}</td>
                 <td align="right">
                   <Link
-                    to={`/mentor/reports?selectedStudentId=${id}&back_url=/mentor/students`}
+                    to={`/mentor/student-sessions?selectedStudentId=${id}&back_url=/mentor/students`}
                     className="btn btn-success btn-xs h-12 gap-2"
                   >
                     <StatsReport className="hidden h-4 w-4 lg:block" />

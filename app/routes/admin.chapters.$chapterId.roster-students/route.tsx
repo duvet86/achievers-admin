@@ -12,7 +12,7 @@ import {
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
-import { Check, WarningTriangle, NavArrowRight, Calendar } from "iconoir-react";
+import { Check, NavArrowRight, Calendar } from "iconoir-react";
 
 import { getDatesForTerm, getValueFromCircularArray } from "~/services";
 import { Input, Select, TableHeaderSort, Title } from "~/components";
@@ -126,7 +126,15 @@ export default function Index() {
   return (
     <>
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <Title to="/admin/chapters">Roster planner STUDENTS</Title>
+        <Title
+          to={
+            searchParams.get("back_url")
+              ? searchParams.get("back_url")!
+              : `/admin/chapters`
+          }
+        >
+          Roster planner STUDENTS
+        </Title>
 
         <Link
           to={`/admin/chapters/${chapterId}/roster-mentors`}
@@ -211,20 +219,20 @@ export default function Index() {
                   </button>
                 </th>
                 {datesInTerm.map((attendedOn, index) => {
-                  const sessionInfo = sessionLookup[attendedOn];
+                  const session = sessionLookup[attendedOn];
 
-                  const sessionId = sessionInfo?.sessionId;
-                  const hasReport = sessionInfo?.hasReport ?? false;
-                  const completedOn = sessionInfo?.completedOn;
-                  const isCancelled = sessionInfo?.isCancelled ?? false;
+                  const sessionId = session?.sessionId;
+                  const studentSessionId = session?.studentSessionId;
+                  const hasReport = session?.hasReport ?? false;
+                  const completedOn = session?.completedOn;
 
                   const queryString = `back_url=/admin/chapters/${chapterId}/roster-students?${encodeURIComponent(searchParams.toString())}`;
 
                   const to = sessionId
                     ? completedOn
-                      ? `/admin/sessions/${sessionId}?back_url=/admin/chapters/${chapterId}/roster-students`
-                      : `/admin/chapters/${chapterId}/sessions/${sessionId}/students/${studentId}/update-assignment?${queryString}`
-                    : `/admin/chapters/${chapterId}/sessions/${attendedOn}/students/${studentId}/assign?${queryString}`;
+                      ? `/admin/student-sessions/${studentSessionId}?${queryString}`
+                      : `/admin/student-sessions/${studentSessionId}/remove?${queryString}`
+                    : `/admin/chapters/${chapterId}/roster-students/${studentId}/attended-on/${attendedOn}/new?${queryString}`;
 
                   return (
                     <td key={index} className="border-r">
@@ -239,22 +247,10 @@ export default function Index() {
                             Report <Check className="h-4 w-4" />
                           </div>
                         )}
-                        <Link
-                          to={to}
-                          className={classNames("btn btn-ghost btn-block", {
-                            "font-bold text-error": isCancelled,
-                          })}
-                        >
-                          {isCancelled ? (
-                            <>
-                              <WarningTriangle />
-                              Cancelled
-                            </>
-                          ) : (
-                            <span className="flex-1">
-                              {sessionInfo?.mentorFullName}
-                            </span>
-                          )}
+                        <Link to={to} className="btn btn-ghost btn-block">
+                          <span className="flex-1">
+                            {session?.mentorFullName}
+                          </span>
                           <NavArrowRight />
                         </Link>
                       </div>

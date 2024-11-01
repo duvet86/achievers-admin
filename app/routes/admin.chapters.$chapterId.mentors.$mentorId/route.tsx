@@ -191,7 +191,7 @@ export default function Index() {
                     </span>
                     <div className="flex gap-2 sm:gap-6">
                       <Link
-                        to="/admin/sessions"
+                        to="/admin/student-sessions"
                         className="btn btn-info hidden w-40 sm:flex"
                       >
                         <Clock />

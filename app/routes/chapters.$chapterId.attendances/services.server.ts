@@ -66,35 +66,39 @@ export async function getMentorsForSession(
     }));
   }
 
-  const sessions = await prisma.mentorToStudentSession.findMany({
+  const sessions = await prisma.session.findMany({
     where: {
       chapterId,
       attendedOn: dayjs.utc(sessionDate, "YYYY-MM-DD").toDate(),
     },
     select: {
-      user: {
+      mentor: {
         select: {
           id: true,
           fullName: true,
         },
       },
-      student: {
+      studentSession: {
         select: {
-          id: true,
-          fullName: true,
+          student: {
+            select: {
+              id: true,
+              fullName: true,
+            },
+          },
         },
       },
     },
     orderBy: {
-      user: {
+      mentor: {
         fullName: "asc",
       },
     },
   });
 
-  return sessions.map(({ user, student }) => ({
-    ...user,
-    student,
+  return sessions.map(({ mentor, studentSession }) => ({
+    ...mentor,
+    student: studentSession?.[0].student ?? null,
   }));
 }
 
@@ -142,20 +146,20 @@ export async function attendSession(
   attendedOn: string,
 ) {
   return await prisma.$transaction(async (tx) => {
-    const session = await tx.mentorToStudentSession.count({
+    const session = await tx.session.count({
       where: {
         chapterId,
         attendedOn,
-        userId: mentorId,
+        mentorId,
       },
     });
 
     if (session === 0) {
-      await tx.mentorToStudentSession.create({
+      await tx.session.create({
         data: {
           attendedOn,
           chapterId,
-          userId: mentorId,
+          mentorId,
         },
       });
     }

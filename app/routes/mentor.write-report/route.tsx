@@ -27,7 +27,7 @@ import {
 import editorStylesheetUrl from "~/styles/editor.css?url";
 import { Editor, Select, SubTitle, Title } from "~/components";
 
-import { getClosestSessionToToday } from "~/services";
+import { getClosestSessionToToday, getTermFromDate } from "~/services";
 import { getLoggedUserInfoAsync } from "~/services/.server/session.server";
 import {
   getSchoolTermsForYearAsync,
@@ -37,7 +37,6 @@ import {
   saveReportAsync,
   getCurrentTermForDate,
   getStudentsAsync,
-  getTermFromDate,
   getSessionDatesFormatted,
 } from "./services.server";
 
@@ -71,7 +70,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const mentorBookedDates = await getMentorSessionDatesAsync(
     user.id,
-    Number(selectedStudentId),
     user.chapterId,
     currentTerm,
   );
@@ -88,7 +86,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     ) ??
     sessionDatesFormatted[0].value;
 
-  const report = selectedTermDate
+  const studentSession = selectedTermDate
     ? await getReportForSessionDateAsync(
         user.id,
         Number(selectedStudentId),
@@ -107,8 +105,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${currentTerm.name === name ? " (Current)" : ""}`,
     })),
     sessionDates: sessionDatesFormatted,
-    report,
-    isNotMyReport: report !== null && report.userId !== user.id,
+    studentSession,
+    isNotMyReport:
+      studentSession !== null && studentSession.session.mentorId !== user.id,
   };
 }
 
@@ -119,14 +118,14 @@ export async function action({ request }: ActionFunctionArgs) {
   const bodyData = (await request.json()) as SessionCommandRequest;
 
   const type = bodyData.type;
-  const sessionId = bodyData.sessionId;
+  const studentSessionId = bodyData.studentSessionId;
   const studentId = bodyData.studentId;
   const attendedOn = bodyData.attendedOn;
   const report = bodyData.report;
 
   await saveReportAsync(
     type,
-    sessionId,
+    studentSessionId,
     user.id,
     user.chapterId,
     studentId,
@@ -147,7 +146,7 @@ export default function Index() {
   const [searchParams] = useSearchParams();
 
   const {
-    report,
+    studentSession,
     selectedTerm,
     selectedTermDate,
     selectedStudentId,
@@ -159,14 +158,14 @@ export default function Index() {
 
   const isLoading = state !== "idle";
   const isReadOnlyEditor =
-    report !== null &&
-    (report.completedOn !== null ||
-      report.signedOffOn !== null ||
+    studentSession !== null &&
+    (studentSession.completedOn !== null ||
+      studentSession.signedOffOn !== null ||
       isNotMyReport);
 
-  const signedOffOn = report?.signedOffOn;
-  const completedOn = report?.completedOn;
-  const reportFeedback = report?.reportFeedback;
+  const signedOffOn = studentSession?.signedOffOn;
+  const completedOn = studentSession?.completedOn;
+  const reportFeedback = studentSession?.reportFeedback;
 
   const isMyReport = !isNotMyReport;
   const canUnmarkReport = isMyReport && completedOn && !signedOffOn;
@@ -188,9 +187,9 @@ export default function Index() {
     submit(
       {
         type,
+        studentSessionId: studentSession?.id ?? null,
         studentId: Number(studentId),
         attendedOn,
-        sessionId: report?.id ?? null,
         report: JSON.stringify(editorStateRef.current?.toJSON()),
       },
       {
@@ -216,10 +215,13 @@ export default function Index() {
           &quot;
         </Title>
 
-        {isNotMyReport && report && (
+        {isNotMyReport && studentSession && (
           <p className="flex items-center gap-2 rounded bg-info px-6 py-2">
             <WarningTriangle className="h-6 w-6" />
-            Written By <span className="font-bold">{report.user.fullName}</span>
+            Written By{" "}
+            <span className="font-bold">
+              {studentSession.session.mentor.fullName}
+            </span>
           </p>
         )}
       </div>
@@ -233,10 +235,10 @@ export default function Index() {
 
         <div className="mb-6 flex flex-col gap-2">
           <Select
-            key={searchParams.get("selectedTerm") ?? selectedTerm}
+            key={selectedTerm}
             label="Term"
             name="selectedTerm"
-            defaultValue={searchParams.get("selectedTerm") ?? selectedTerm}
+            defaultValue={selectedTerm}
             options={termsList}
             onChange={handleSelectChange("selectedTerm")}
           />
@@ -293,7 +295,7 @@ export default function Index() {
               >
                 <Editor
                   isReadonly={isReadOnlyEditor}
-                  initialEditorStateType={report?.report ?? null}
+                  initialEditorStateType={studentSession?.report ?? null}
                   onChange={(editorState) =>
                     (editorStateRef.current = editorState)
                   }

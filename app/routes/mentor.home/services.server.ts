@@ -1,40 +1,51 @@
 import { prisma } from "~/db.server";
 
-export async function getNextSessionAsync(userId: number, chapterId: number) {
-  return await prisma.mentorToStudentSession.findFirst({
+export async function getNextStudentSessionAsync(
+  mentorId: number,
+  chapterId: number,
+) {
+  return await prisma.studentSession.findFirst({
     where: {
-      chapterId,
-      userId,
-      attendedOn: {
-        gt: new Date(),
+      session: {
+        chapterId,
+        mentorId,
+        attendedOn: {
+          gt: new Date(),
+        },
       },
-      isCancelled: false,
     },
     select: {
-      attendedOn: true,
       student: {
         select: {
           id: true,
           fullName: true,
         },
       },
+      session: {
+        select: {
+          attendedOn: true,
+        },
+      },
     },
   });
 }
 
-export async function getSessionsAsync(userId: number, chapterId: number) {
-  return prisma.mentorToStudentSession.findMany({
+export async function getStudentSessionsAsync(
+  mentorId: number,
+  chapterId: number,
+) {
+  return prisma.studentSession.findMany({
     where: {
-      chapterId,
-      userId,
-      attendedOn: {
-        lte: new Date(),
+      session: {
+        chapterId,
+        mentorId,
+        attendedOn: {
+          lte: new Date(),
+        },
       },
-      isCancelled: false,
     },
     select: {
       id: true,
-      attendedOn: true,
       completedOn: true,
       signedOffOn: true,
       student: {
@@ -43,9 +54,16 @@ export async function getSessionsAsync(userId: number, chapterId: number) {
           fullName: true,
         },
       },
+      session: {
+        select: {
+          attendedOn: true,
+        },
+      },
     },
     orderBy: {
-      attendedOn: "desc",
+      session: {
+        attendedOn: "desc",
+      },
     },
     take: 5,
   });

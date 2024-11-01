@@ -1,4 +1,5 @@
 import type { Dayjs } from "dayjs";
+import type { Term } from "~/models";
 import type { DateRange, Environment } from "./models";
 
 import dayjs from "dayjs";
@@ -277,10 +278,16 @@ export function getClosestSessionToToday(dates: Date[]) {
   }
 
   const today = new Date();
+  console.log("today", today.toISOString());
+
   const closest = dates.reduce((a, b) => {
     const adiff = a.getTime() - today.getTime();
     return adiff > 0 && adiff < b.getTime() - today.getTime() ? a : b;
   });
 
   return dayjs(closest).format("YYYY-MM-DD") + "T00:00:00.000Z";
+}
+
+export function getTermFromDate(terms: Term[], date: string) {
+  return terms.find((term) => dayjs(date).isBetween(term.start, term.end));
 }

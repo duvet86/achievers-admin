@@ -14,14 +14,17 @@ export type SessionLookup = Record<
   string,
   | {
       id: number;
+      status: string;
       attendedOn: Date;
-      isCancelled: boolean;
-      hasReport: boolean;
-      completedOn: Date | null;
-      student: {
+      studentSession: {
         id: number;
-        fullName: string;
-      } | null;
+        hasReport: boolean;
+        completedOn: Date | null;
+        student: {
+          id: number;
+          fullName: string;
+        };
+      }[];
     }
   | undefined
 >;
@@ -81,17 +84,22 @@ export async function getMentorsAsync(
     select: {
       id: true,
       fullName: true,
-      mentorToStudentSession: {
+      session: {
         select: {
           id: true,
+          status: true,
           attendedOn: true,
-          hasReport: true,
-          completedOn: true,
-          isCancelled: true,
-          student: {
+          studentSession: {
             select: {
               id: true,
-              fullName: true,
+              hasReport: true,
+              completedOn: true,
+              student: {
+                select: {
+                  id: true,
+                  fullName: true,
+                },
+              },
             },
           },
         },
@@ -103,7 +111,7 @@ export async function getMentorsAsync(
   });
 
   return mentors.map((mentor) => {
-    const sessionLookup = mentor.mentorToStudentSession.reduce<SessionLookup>(
+    const sessionLookup = mentor.session.reduce<SessionLookup>(
       (res, session) => {
         res[dayjs.utc(session.attendedOn).format("YYYY-MM-DD")] = session;
 
@@ -113,7 +121,7 @@ export async function getMentorsAsync(
     );
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { mentorToStudentSession, ...rest } = mentor;
+    const { session, ...rest } = mentor;
 
     return {
       ...rest,

@@ -1,189 +1,112 @@
-import type { FetcherSubmitFunction } from "react-router-dom";
-import type { SessioViewModel } from "../services.server";
+import { Form } from "@remix-run/react";
 
-import { Fragment } from "react/jsx-runtime";
-import { BookmarkBook, Group } from "iconoir-react";
+import { BookmarkBook, InfoCircle } from "iconoir-react";
+import { useState } from "react";
 
-import { Select } from "~/components";
+import { Select, type Option } from "~/components";
 
 interface Props {
   attendedOn: string;
-  mySession: SessioViewModel | undefined;
-  studentSessions: SessioViewModel[] | undefined;
-  studentsForSession:
-    | {
-        value: string;
-        label: string;
-      }[]
-    | undefined;
-  submit: FetcherSubmitFunction;
-  setOpen: React.Dispatch<React.SetStateAction<number | null>>;
+  studentsForSession: Option[] | null;
+  isLoading: boolean;
+  onSessionStudentClick: () => void;
 }
 
 export function ManageSession({
   attendedOn,
-  mySession,
-  studentSessions,
   studentsForSession,
-  submit,
-  setOpen,
+  isLoading,
+  onSessionStudentClick,
 }: Props) {
-  const bookSession = (attendedOn: string) => () => {
-    const studentId = (
-      document.getElementById("selectedStudentId") as HTMLSelectElement
-    ).value;
+  const [isOpen, setIsOpen] = useState(false);
 
-    if (!studentId) {
-      alert("Please elect a student.");
-      return;
+  const onSummaryOpen = () => {
+    setIsOpen(!isOpen);
+
+    if (!isOpen) {
+      onSessionStudentClick();
     }
-
-    submit(
-      {
-        studentId,
-        attendedOn,
-        action: "create",
-      },
-      {
-        method: "POST",
-        encType: "application/json",
-      },
-    );
-
-    setOpen(null);
   };
-
-  const markAvailable = (attendedOn: string) => () => {
-    submit(
-      {
-        studentId: null,
-        attendedOn,
-        action: "create",
-      },
-      {
-        method: "POST",
-        encType: "application/json",
-      },
-    );
-
-    setOpen(null);
-  };
-
-  const takeSessionFromPartner = (sessionId: number) => () => {
-    if (
-      !confirm("Are you sure you want to take the session from you partner?")
-    ) {
-      return;
-    }
-
-    submit(
-      {
-        sessionId,
-        action: "update",
-      },
-      {
-        method: "POST",
-        encType: "application/json",
-      },
-    );
-
-    setOpen(null);
-  };
-
-  const removeMentorForSession =
-    (sessionId: number, attendedOn: string) => () => {
-      if (!confirm("Are you sure you want to cancel the session?")) {
-        return;
-      }
-
-      submit(
-        {
-          sessionId,
-          attendedOn,
-          action: "remove",
-        },
-        {
-          method: "POST",
-          encType: "application/json",
-        },
-      );
-    };
 
   return (
-    <div className="flex h-full w-full flex-col items-center gap-6 rounded border-t bg-gray-200 p-2">
-      {mySession === undefined && studentsForSession && (
-        <>
-          <div className="flex flex-wrap gap-4">
-            {studentsForSession.length > 0 ? (
-              <>
-                <div className="w-full sm:w-72">
-                  <Select
-                    name="selectedStudentId"
-                    required
-                    options={[
-                      {
-                        label: "Select a student",
-                        value: "",
-                      },
-                    ].concat(studentsForSession)}
-                  />
-                </div>
-                <button
-                  className="btn btn-success w-full sm:w-44"
-                  onClick={bookSession(attendedOn)}
-                >
-                  <BookmarkBook />
-                  Book Session
-                </button>
-              </>
-            ) : (
-              <p>
-                Cannot book session with student because no students are
-                available or assigned.
-              </p>
-            )}
-          </div>
-          <div className="divider">OR</div>
-          <button
-            className="btn btn-info w-full sm:w-44"
-            onClick={markAvailable(attendedOn)}
+    <details className="collapse collapse-arrow bg-base-200">
+      <summary
+        className="collapse-title bg-base-300 text-center font-medium"
+        onClick={onSummaryOpen}
+      >
+        Manage
+      </summary>
+      {studentsForSession && !isLoading ? (
+        <div className="collapse-content flex flex-col items-center">
+          <Form
+            method="POST"
+            className="mt-4 flex w-full flex-col items-center justify-between gap-4 sm:flex-row"
           >
-            <BookmarkBook />
-            Mark Available
-          </button>
-        </>
+            <Select name="studentId" required options={studentsForSession} />
+            <input type="hidden" name="action" value="book" />
+            <input type="hidden" name="status" value="AVAILABLE" />
+            <input type="hidden" name="attendedOn" value={attendedOn} />
+            <button
+              type="submit"
+              className="btn btn-success btn-sm w-full sm:w-36"
+            >
+              <BookmarkBook />
+              Book
+            </button>
+          </Form>
+
+          <div className="divider">OR</div>
+
+          <Form
+            method="POST"
+            className="flex w-full items-center justify-center gap-4"
+          >
+            <input type="hidden" name="action" value="book" />
+            <input type="hidden" name="status" value="AVAILABLE" />
+            <input type="hidden" name="attendedOn" value={attendedOn} />
+            <button className="btn btn-info btn-sm w-full sm:w-36">
+              <BookmarkBook />
+              Available
+            </button>
+            <div
+              className="hidden sm:tooltip sm:block"
+              data-tip=" You don't have a student but are available to
+            mentor"
+            >
+              <InfoCircle />
+            </div>
+          </Form>
+
+          <div className="divider">OR</div>
+
+          <Form
+            method="POST"
+            className="flex w-full flex-wrap items-center justify-center gap-4"
+          >
+            <input type="hidden" name="action" value="book" />
+            <input type="hidden" name="status" value="UNAVAILABLE" />
+            <input type="hidden" name="attendedOn" value={attendedOn} />
+            <button className="btn btn-error btn-sm w-full sm:w-36">
+              <BookmarkBook />
+              Unavailable
+            </button>
+            <div
+              className="hidden sm:tooltip sm:block"
+              data-tip="  You are NOT available to mentor and won't be
+            contacted"
+            >
+              <InfoCircle />
+            </div>
+          </Form>
+        </div>
+      ) : (
+        <div className="collapse-content mt-4 flex w-full flex-col gap-4">
+          <div className="skeleton h-8 w-full"></div>
+          <div className="skeleton h-8 w-full"></div>
+          <div className="skeleton h-8 w-full"></div>
+          <div className="skeleton h-8 w-full"></div>
+        </div>
       )}
-      {mySession && mySession.completedOn === null && (
-        <button
-          className="btn btn-error w-full sm:w-44"
-          onClick={removeMentorForSession(mySession.id, attendedOn)}
-        >
-          <BookmarkBook />
-          Cancel Session
-        </button>
-      )}
-      {!mySession &&
-        studentSessions
-          ?.filter(({ completedOn }) => !completedOn)
-          .map(({ id, user, student }) => (
-            <Fragment key={id}>
-              <div className="divider">OR</div>
-              <div className="flex flex-wrap items-center gap-4">
-                <button
-                  className="btn btn-secondary w-full sm:w-44"
-                  onClick={takeSessionFromPartner(id)}
-                >
-                  <BookmarkBook />
-                  Take from
-                </button>
-                <div key={user.id} className="mb-2 flex gap-2">
-                  <Group />
-                  <span className="font-bold">{user.fullName}</span>mentoring
-                  <span className="font-bold">{student?.fullName}</span>
-                </div>
-              </div>
-            </Fragment>
-          ))}
-    </div>
+    </details>
   );
 }

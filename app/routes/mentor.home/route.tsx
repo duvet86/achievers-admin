@@ -15,8 +15,8 @@ import { getLoggedUserInfoAsync } from "~/services/.server";
 import { SubTitle } from "~/components";
 
 import {
-  getNextSessionAsync,
-  getSessionsAsync,
+  getNextStudentSessionAsync,
+  getStudentSessionsAsync,
   getUserByAzureADIdAsync,
   hasAnyStudentsAssignedAsync,
 } from "./services.server";
@@ -30,33 +30,39 @@ export async function loader({ request }: LoaderFunctionArgs) {
     return {
       hasAnyStudentsAssigned,
       mentorFullName: user.fullName,
-      nextSessionDate: null,
+      nextStudentSessionDate: null,
       student: null,
-      sessions: [],
+      studentSessions: [],
     };
   }
 
-  const nextSession = await getNextSessionAsync(user.id, user.chapterId);
-  const sessions = await getSessionsAsync(user.id, user.chapterId);
+  const nextStudentSession = await getNextStudentSessionAsync(
+    user.id,
+    user.chapterId,
+  );
+  const studentSessions = await getStudentSessionsAsync(
+    user.id,
+    user.chapterId,
+  );
 
   return {
     hasAnyStudentsAssigned: true,
     mentorFullName: user.fullName,
-    nextSessionDate:
-      nextSession !== null
-        ? dayjs(nextSession.attendedOn).format("MMMM D, YYYY")
+    nextStudentSessionDate:
+      nextStudentSession !== null
+        ? dayjs(nextStudentSession.session.attendedOn).format("MMMM D, YYYY")
         : null,
-    student: nextSession !== null ? nextSession.student : null,
-    sessions,
+    student: nextStudentSession !== null ? nextStudentSession.student : null,
+    studentSessions,
   };
 }
 
 export default function Index() {
   const {
     mentorFullName,
-    nextSessionDate,
+    nextStudentSessionDate,
     student,
-    sessions,
+    studentSessions,
     hasAnyStudentsAssigned,
   } = useLoaderData<typeof loader>();
 
@@ -72,7 +78,7 @@ export default function Index() {
         </h2>
       </article>
 
-      {student && nextSessionDate && (
+      {student && nextStudentSessionDate && (
         <>
           <SubTitle>Next session</SubTitle>
 
@@ -80,7 +86,7 @@ export default function Index() {
             <InfoCircle className="blink h-12 w-12 text-primary" />
 
             <div className="flex flex-col gap-4 font-bold lg:flex-row lg:items-end">
-              <span className="text-4xl">{nextSessionDate}</span>
+              <span className="text-4xl">{nextStudentSessionDate}</span>
               <span>with</span>
               <span className="text-3xl">{student.fullName}</span>
             </div>
@@ -100,9 +106,9 @@ export default function Index() {
         </article>
       )}
 
-      {nextSessionDate === null &&
+      {nextStudentSessionDate === null &&
         hasAnyStudentsAssigned &&
-        sessions.length === 0 && (
+        studentSessions.length === 0 && (
           <article className="prose max-w-none">
             <h1 className="flex items-center gap-4 text-warning">
               <WarningTriangle />
@@ -115,7 +121,7 @@ export default function Index() {
           </article>
         )}
 
-      {hasAnyStudentsAssigned && sessions.length > 0 && (
+      {hasAnyStudentsAssigned && studentSessions.length > 0 && (
         <>
           <SubTitle>Recent sessions</SubTitle>
 
@@ -136,16 +142,16 @@ export default function Index() {
                 </tr>
               </thead>
               <tbody>
-                {sessions.length === 0 && (
+                {studentSessions.length === 0 && (
                   <tr>
                     <td colSpan={6}>
                       <i>No sessions</i>
                     </td>
                   </tr>
                 )}
-                {sessions.map(
+                {studentSessions.map(
                   (
-                    { id, attendedOn, completedOn, signedOffOn, student },
+                    { id, completedOn, signedOffOn, student, session },
                     index,
                   ) => (
                     <tr key={id}>
@@ -153,9 +159,9 @@ export default function Index() {
                         {index + 1}
                       </td>
                       <td align="left">
-                        {dayjs(attendedOn).format("MMMM D, YYYY")}
+                        {dayjs(session.attendedOn).format("MMMM D, YYYY")}
                       </td>
-                      <td align="left">{student?.fullName}</td>
+                      <td align="left">{student.fullName}</td>
                       <td align="left" className="hidden lg:table-cell">
                         {completedOn ? (
                           <div className="flex items-center gap-2">
@@ -181,13 +187,13 @@ export default function Index() {
                           <Link
                             to={
                               completedOn !== null
-                                ? `/mentor/sessions/${id}?back_url=/mentor/home`
-                                : `/mentor/write-report?selectedStudentId=${student.id}&selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z&back_url=/mentor/home`
+                                ? `/mentor/student-sessions/${id}?back_url=/mentor/home`
+                                : `/mentor/write-report?selectedStudentId=${student.id}&selectedTermDate=${dayjs(session.attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z&back_url=/mentor/home`
                             }
                             className="btn btn-success btn-xs h-9 gap-2"
                           >
                             <StatsReport className="hidden h-4 w-4 lg:block" />
-                            View report
+                            Report
                           </Link>
                         )}
                       </td>

@@ -62,7 +62,7 @@ export default function Index() {
               </Link>
 
               <Link
-                to={`/admin/sessions?chapterId=${id}`}
+                to={`/admin/student-sessions?chapterId=${id}`}
                 className="btn btn-success w-64 gap-2"
               >
                 <PageEdit className="h-4 w-4" />

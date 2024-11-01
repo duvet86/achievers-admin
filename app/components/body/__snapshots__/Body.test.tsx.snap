@@ -359,7 +359,7 @@ exports[`Body > Body snapshot admin 1`] = `
               <a
                 class="mb-2 justify-between rounded font-semibold"
                 data-discover="true"
-                href="/admin/sessions"
+                href="/admin/student-sessions"
               >
                 <div
                   class="flex items-center gap-4"
@@ -1010,7 +1010,7 @@ exports[`Body > Body snapshot mentor 1`] = `
               <a
                 class="mb-2 justify-between rounded font-semibold"
                 data-discover="true"
-                href="/mentor/sessions"
+                href="/mentor/student-sessions"
               >
                 <div
                   class="flex items-center gap-4"

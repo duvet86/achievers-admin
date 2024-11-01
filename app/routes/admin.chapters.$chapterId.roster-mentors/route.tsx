@@ -12,7 +12,7 @@ import {
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
-import { Check, WarningTriangle, NavArrowRight, Calendar } from "iconoir-react";
+import { Check, NavArrowRight, Calendar } from "iconoir-react";
 
 import { getDatesForTerm, getValueFromCircularArray } from "~/services";
 import { Input, Select, TableHeaderSort, Title } from "~/components";
@@ -126,7 +126,15 @@ export default function Index() {
   return (
     <>
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <Title to="/admin/chapters">Roster planner MENTORS</Title>
+        <Title
+          to={
+            searchParams.get("back_url")
+              ? searchParams.get("back_url")!
+              : `/admin/chapters`
+          }
+        >
+          Roster planner MENTORS
+        </Title>
 
         <Link
           to={`/admin/chapters/${chapterId}/roster-students`}
@@ -210,20 +218,21 @@ export default function Index() {
                   </button>
                 </th>
                 {datesInTerm.map((attendedOn) => {
-                  const sessionInfo = sessionLookup[attendedOn];
+                  const session = sessionLookup[attendedOn];
 
-                  const sessionId = sessionInfo?.id;
-                  const hasReport = sessionInfo?.hasReport ?? false;
-                  const completedOn = sessionInfo?.completedOn;
-                  const isCancelled = sessionInfo?.isCancelled ?? false;
+                  const sessionId = session?.id;
+                  const studentSession = session?.studentSession?.[0];
+
+                  const hasReport = studentSession?.hasReport ?? false;
+                  const completedOn = studentSession?.completedOn;
 
                   const queryString = `back_url=/admin/chapters/${chapterId}/roster-mentors?${encodeURIComponent(searchParams.toString())}`;
 
                   const to = sessionId
                     ? completedOn
-                      ? `/admin/sessions/${sessionId}?back_url=/admin/chapters/${chapterId}/roster-mentors`
-                      : `/admin/chapters/${chapterId}/sessions/${sessionId}/mentors/${mentorId}/update-assignment?${queryString}`
-                    : `/admin/chapters/${chapterId}/sessions/${attendedOn}/mentors/${mentorId}/assign?${queryString}`;
+                      ? `/admin/student-sessions/${studentSession.id}?${queryString}`
+                      : `/admin/sessions/${sessionId}/remove?${queryString}`
+                    : `/admin/chapters/${chapterId}/roster-mentors/${mentorId}/attended-on/${attendedOn}/new?${queryString}`;
 
                   return (
                     <td key={attendedOn} className="border-r">
@@ -244,26 +253,18 @@ export default function Index() {
                           className={classNames(
                             "btn btn-ghost btn-block justify-between",
                             {
-                              "font-bold text-error": isCancelled,
                               "font-bold text-info":
-                                sessionInfo && !sessionInfo.student,
+                                session && !studentSession?.student,
                             },
                           )}
                         >
-                          {isCancelled ? (
-                            <>
-                              <WarningTriangle />
-                              Cancelled
-                            </>
-                          ) : (
-                            <span className="flex-1">
-                              {sessionInfo
-                                ? sessionInfo.student
-                                  ? sessionInfo.student.fullName
-                                  : "Marked available"
-                                : ""}
-                            </span>
-                          )}
+                          <span className="flex-1">
+                            {session
+                              ? studentSession?.student
+                                ? studentSession?.student.fullName
+                                : "Marked available"
+                              : ""}
+                          </span>
                           <NavArrowRight />
                         </Link>
                       </div>

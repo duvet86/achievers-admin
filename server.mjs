@@ -2,7 +2,8 @@
 import {
   initAppInsightsLogger,
   trackEvent,
-} from "./server-utils/azure-logger.js";
+  mockTime,
+} from "./server-utils/index.js";
 
 import express from "express";
 import compression from "compression";
@@ -15,6 +16,10 @@ import sourceMapSupport from "source-map-support";
 initAppInsightsLogger();
 sourceMapSupport.install();
 installGlobals();
+
+if (process.env.CI) {
+  mockTime();
+}
 
 if (process.env.ENABLE_EMAIL_REMINDERS === "true") {
   import("./background-jobs/index.js").then(() => {

@@ -17,7 +17,7 @@ export interface SessionCommandRequest {
   studentId: number;
   attendedOn: string;
   report: string;
-  sessionId: number | null;
+  studentSessionId: number | null;
 }
 
 export async function getUserByAzureADIdAsync(azureADId: string) {
@@ -38,19 +38,39 @@ export async function getReportForSessionDateAsync(
   chapterId: number,
   attendedOn: string,
 ) {
-  return await prisma.mentorToStudentSession.findUnique({
+  const session = await prisma.session.findUnique({
     where: {
-      userId_studentId_chapterId_attendedOn: {
-        userId: mentorId,
-        attendedOn,
+      mentorId_chapterId_attendedOn: {
+        mentorId,
         chapterId,
+        attendedOn,
+      },
+    },
+    select: {
+      id: true,
+      mentorId: true,
+      attendedOn: true,
+      mentor: {
+        select: {
+          fullName: true,
+        },
+      },
+    },
+  });
+
+  if (session === null) {
+    return null;
+  }
+
+  const studentSession = await prisma.studentSession.findUnique({
+    where: {
+      sessionId_studentId: {
+        sessionId: session.id,
         studentId,
       },
     },
     select: {
       id: true,
-      userId: true,
-      attendedOn: true,
       report: true,
       completedOn: true,
       signedOffOn: true,
@@ -61,26 +81,21 @@ export async function getReportForSessionDateAsync(
           fullName: true,
         },
       },
-      user: {
-        select: {
-          fullName: true,
-        },
-      },
     },
   });
+
+  return { ...studentSession, session };
 }
 
 export async function getMentorSessionDatesAsync(
-  userId: number,
-  studentId: number,
+  mentorId: number,
   chapterId: number,
   currentTerm: Term,
 ) {
-  const sessions = await prisma.mentorToStudentSession.findMany({
+  const sessions = await prisma.session.findMany({
     distinct: "attendedOn",
     where: {
-      isCancelled: false,
-      userId,
+      mentorId,
       chapterId,
       AND: [
         {
@@ -92,14 +107,6 @@ export async function getMentorSessionDatesAsync(
           attendedOn: {
             lte: currentTerm.end.toDate(),
           },
-        },
-      ],
-      OR: [
-        {
-          studentId,
-        },
-        {
-          studentId: null,
         },
       ],
     },
@@ -129,8 +136,8 @@ export function getSessionDatesFormatted(
 
 export async function saveReportAsync(
   actionType: ActionType,
-  sessionId: number | null,
-  userId: number,
+  studentSessionId: number | null,
+  mentorId: number,
   chapterId: number,
   studentId: number,
   attendedOn: string,
@@ -148,22 +155,26 @@ export async function saveReportAsync(
       break;
   }
 
-  if (sessionId === null) {
-    return await prisma.mentorToStudentSession.create({
+  if (studentSessionId === null) {
+    return await prisma.session.create({
       data: {
         chapterId,
-        studentId,
-        userId,
+        mentorId,
         attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
-        report,
-        completedOn,
+        studentSession: {
+          create: {
+            studentId,
+            report,
+            completedOn,
+          },
+        },
       },
     });
   }
 
-  return await prisma.mentorToStudentSession.update({
+  return await prisma.studentSession.update({
     where: {
-      id: sessionId,
+      id: studentSessionId,
     },
     data: {
       report,
@@ -249,8 +260,4 @@ export async function getStudentsAsync(userId: number, chapterId: number) {
       fullName: `** ${fullName} (Assigned) **`,
     }))
     .concat(allStudents);
-}
-
-export function getTermFromDate(terms: Term[], date: string) {
-  return terms.find((term) => dayjs(date).isBetween(term.start, term.end));
 }

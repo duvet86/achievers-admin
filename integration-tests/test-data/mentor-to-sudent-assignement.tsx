@@ -8,7 +8,6 @@ export async function assignMentorsToStudentsAsync(
     await tx.mentorToStudentAssignement.deleteMany();
 
     const mentorsAtChapter = await tx.user.findMany();
-
     const studentsAtChapter = await tx.student.findMany();
 
     await tx.mentorToStudentAssignement.createMany({

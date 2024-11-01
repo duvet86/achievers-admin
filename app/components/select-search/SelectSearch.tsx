@@ -50,6 +50,10 @@ export function SelectSearch({
       setSelectedValue(EMPTY_OPTION);
     };
 
+    if (defaultValue) {
+      inputRef.current!.value = defaultValue;
+    }
+
     inputRef.current?.form?.addEventListener("reset", resetHandler);
 
     return () => document.removeEventListener("reset", resetHandler);

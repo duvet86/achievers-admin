@@ -14,11 +14,11 @@ export type SessionLookup = Record<
   string,
   | {
       sessionId: number;
+      studentSessionId: number;
       mentorId: number;
       mentorFullName: string;
       hasReport: boolean;
       completedOn: Date | null;
-      isCancelled: boolean;
     }
   | undefined
 >;
@@ -78,17 +78,21 @@ export async function getStudentsAsync(
     select: {
       id: true,
       fullName: true,
-      mentorToStudentSession: {
+      studentSession: {
         select: {
           id: true,
-          attendedOn: true,
           hasReport: true,
           completedOn: true,
-          isCancelled: true,
-          user: {
+          session: {
             select: {
               id: true,
-              fullName: true,
+              attendedOn: true,
+              mentor: {
+                select: {
+                  id: true,
+                  fullName: true,
+                },
+              },
             },
           },
         },
@@ -100,16 +104,17 @@ export async function getStudentsAsync(
   });
 
   return students.map((student) => {
-    const sessionLookup = student.mentorToStudentSession.reduce<SessionLookup>(
-      (res, session) => {
-        res[dayjs.utc(session.attendedOn).format("YYYY-MM-DD")] = {
-          mentorId: session.user.id,
-          mentorFullName: session.user.fullName,
-          sessionId: session.id,
-          hasReport: session.hasReport,
-          completedOn: session.completedOn,
-          isCancelled: session.isCancelled,
-        };
+    const sessionLookup = student.studentSession.reduce<SessionLookup>(
+      (res, studentSession) => {
+        res[dayjs.utc(studentSession.session.attendedOn).format("YYYY-MM-DD")] =
+          {
+            sessionId: studentSession.session.id,
+            studentSessionId: studentSession.id,
+            mentorId: studentSession.session.mentor.id,
+            mentorFullName: studentSession.session.mentor.fullName,
+            hasReport: studentSession.hasReport,
+            completedOn: studentSession.completedOn,
+          };
 
         return res;
       },
@@ -117,7 +122,7 @@ export async function getStudentsAsync(
     );
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { mentorToStudentSession, ...rest } = student;
+    const { studentSession, ...rest } = student;
 
     return {
       ...rest,

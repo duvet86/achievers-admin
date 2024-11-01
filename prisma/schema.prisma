@@ -13,6 +13,11 @@ enum Gender {
   FEMALE
 }
 
+enum SessionStatus {
+  AVAILABLE
+  UNAVAILABLE
+}
+
 model User {
   id        Int     @id @default(autoincrement())
   azureADId String? @unique // Defined by Azure Active Directory.
@@ -63,11 +68,11 @@ model User {
   chapter   Chapter @relation(fields: [chapterId], references: [id])
 
   mentorToStudentAssignement MentorToStudentAssignement[]
-  mentorToStudentSession     MentorToStudentSession[]
+  session                    Session[]
 
   importedHistory ImportedHistory?
 
-  MentorAttendance MentorAttendance[]
+  mentorAttendance MentorAttendance[]
 }
 
 model ImportedHistory {
@@ -214,10 +219,11 @@ model Chapter {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  mentorToStudentSession MentorToStudentSession[]
-  user                   User[]
-  student                Student[]
-  MentorAttendance       MentorAttendance[]
+  user    User[]
+  student Student[]
+  session Session[]
+
+  mentorAttendance MentorAttendance[]
 }
 
 model Student {
@@ -255,7 +261,7 @@ model Student {
   chapter   Chapter @relation(fields: [chapterId], references: [id])
 
   mentorToStudentAssignement MentorToStudentAssignement[]
-  mentorToStudentSession     MentorToStudentSession[]
+  studentSession             StudentSession[]
 
   importedStudentHistory ImportedStudentHistory?
 }
@@ -313,32 +319,6 @@ model MentorToStudentAssignement {
   @@unique([userId, studentId])
 }
 
-model MentorToStudentSession {
-  id Int @id @default(autoincrement())
-
-  user        User     @relation(fields: [userId], references: [id])
-  userId      Int
-  student     Student? @relation(fields: [studentId], references: [id])
-  studentId   Int?
-  chapter     Chapter  @relation(fields: [chapterId], references: [id])
-  chapterId   Int
-  attendedOn  DateTime
-  isCancelled Boolean  @default(false)
-
-  report          String?   @db.Text
-  hasReport       Boolean   @default(dbgenerated()) // Calculated column based on report != null.
-  completedOn     DateTime?
-  reasonCancelled String?   @db.Text
-
-  reportFeedback     String?   @db.Text
-  signedOffOn        DateTime?
-  signedOffByAzureId String?
-
-  writteOnBehalfByAzureId String?
-
-  @@unique([userId, studentId, chapterId, attendedOn])
-}
-
 model SchoolTerm {
   id        Int      @id @default(autoincrement())
   year      Int
@@ -358,4 +338,41 @@ model MentorAttendance {
   attendedOn DateTime
 
   @@unique([chapterId, userId, attendedOn])
+}
+
+model Session {
+  id Int @id @default(autoincrement())
+
+  chapter   Chapter @relation(fields: [chapterId], references: [id])
+  chapterId Int
+  mentor    User    @relation(fields: [mentorId], references: [id])
+  mentorId  Int
+
+  attendedOn DateTime      @db.Date
+  status     SessionStatus @default(AVAILABLE)
+
+  studentSession StudentSession[]
+
+  @@unique([mentorId, chapterId, attendedOn])
+}
+
+model StudentSession {
+  id Int @id @default(autoincrement())
+
+  session   Session @relation(fields: [sessionId], references: [id])
+  sessionId Int
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId Int
+
+  report      String?   @db.Text
+  hasReport   Boolean   @default(dbgenerated()) // Calculated column based on report != null.
+  completedOn DateTime?
+
+  reportFeedback     String?   @db.Text
+  signedOffOn        DateTime?
+  signedOffByAzureId String?
+
+  writteOnBehalfByAzureId String?
+
+  @@unique([sessionId, studentId])
 }

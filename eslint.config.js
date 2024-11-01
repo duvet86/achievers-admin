@@ -34,6 +34,7 @@ export default tseslint.config(
     rules: {
       "@typescript-eslint/only-throw-error": "off",
       "@typescript-eslint/consistent-type-imports": "error",
+      "@typescript-eslint/no-base-to-string": "off",
     },
   },
   {
