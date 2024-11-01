@@ -1,8 +1,15 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { Option } from "~/components";
 
 import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
 import dayjs from "dayjs";
-import { BookmarkBook, Group, ThumbsDown, ThumbsUp } from "iconoir-react";
+import {
+  BookmarkBook,
+  Group,
+  ThumbsDown,
+  ThumbsUp,
+  Xmark,
+} from "iconoir-react";
 
 import { getLoggedUserInfoAsync } from "~/services/.server";
 import { getDatesForTerm } from "~/services";
@@ -43,6 +50,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
       )
     : null;
 
+  const datesInTerm = getDatesForTerm(currentTerm.start, currentTerm.end).map(
+    (date) => dayjs(date).format("YYYY-MM-DD"),
+  );
+
+  const manageSessionState = datesInTerm.reduce<
+    Record<string, Option[] | null>
+  >((res, val) => {
+    if (val === attendedOn) {
+      res[val] = studentsForSession as Option[];
+    } else {
+      res[val] = null;
+    }
+
+    return res;
+  }, {});
+
   return {
     termsList: terms.map(({ start, end, name }) => ({
       value: name,
@@ -51,10 +74,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
     currentTermName: currentTerm.name,
     mySessionsLookup,
     myStudentsSessionsLookup,
-    datesInTerm: getDatesForTerm(currentTerm.start, currentTerm.end).map(
-      (date) => dayjs(date).format("YYYY-MM-DD"),
-    ),
-    studentsForSession,
+    datesInTerm,
+    manageSessionState,
   };
 }
 
@@ -115,7 +136,7 @@ export default function Index() {
     currentTermName,
     termsList,
     datesInTerm,
-    studentsForSession,
+    manageSessionState,
   } = data ?? initialData;
 
   const isLoading = state !== "idle";
@@ -154,7 +175,13 @@ export default function Index() {
   };
 
   const onSessionStudentClick = (attendedOn: string) => () => {
-    searchParams.set("attendedOn", attendedOn);
+    const currentAttendedOn = searchParams.get("attendedOn");
+
+    searchParams.set(
+      "attendedOn",
+      currentAttendedOn === attendedOn ? "" : attendedOn,
+    );
+
     load(`?${searchParams.toString()}`);
   };
 
@@ -192,20 +219,11 @@ export default function Index() {
                 </div>
 
                 <div className="flex w-full flex-col gap-4 p-4 sm:basis-5/6">
-                  {!mySession && !studentSessions && (
-                    <ManageSession
-                      attendedOn={attendedOn}
-                      isLoading={isLoading}
-                      studentsForSession={studentsForSession}
-                      onSessionStudentClick={onSessionStudentClick(attendedOn)}
-                    />
-                  )}
-
                   {mySession && mySession.studentSession.length === 0 && (
                     <div className="flex flex-col items-center justify-between gap-2 sm:flex-row">
                       {mySession.status === "AVAILABLE" ? (
                         <>
-                          <div className="flex items-center justify-center gap-2 text-info sm:justify-start">
+                          <div className="flex items-center justify-center gap-2 text-success sm:justify-start">
                             <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
                             <span>Marked available</span>
                           </div>
@@ -216,7 +234,7 @@ export default function Index() {
                               null,
                             )}
                           >
-                            <BookmarkBook />
+                            <Xmark />
                             Cancel
                           </button>
                         </>
@@ -240,6 +258,7 @@ export default function Index() {
                       )}
                     </div>
                   )}
+
                   {mySession &&
                     mySession.studentSession.length > 0 &&
                     mySession.studentSession.map(({ id, student }) => (
@@ -249,7 +268,8 @@ export default function Index() {
                       >
                         <div className="flex items-center justify-center gap-2 text-success sm:justify-start">
                           <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
-                          <span>{`Booked with ${student.fullName}`}</span>
+                          <span>Booked with</span>{" "}
+                          <span className="font-bold">{student.fullName}</span>
                         </div>
                         <button
                           onClick={handleCancelSessionSubmit(mySession.id, id)}
@@ -260,6 +280,7 @@ export default function Index() {
                         </button>
                       </div>
                     ))}
+
                   {studentSessions?.map(
                     ({ id, session, student, completedOn }) => (
                       <div
@@ -285,6 +306,15 @@ export default function Index() {
                         )}
                       </div>
                     ),
+                  )}
+
+                  {!mySession && (
+                    <ManageSession
+                      attendedOn={attendedOn}
+                      isLoading={isLoading}
+                      studentsForSession={manageSessionState[attendedOn]}
+                      onSessionStudentClick={onSessionStudentClick(attendedOn)}
+                    />
                   )}
                 </div>
               </div>
