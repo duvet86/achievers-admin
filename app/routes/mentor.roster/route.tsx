@@ -11,14 +11,15 @@ import {
   Xmark,
 } from "iconoir-react";
 
-import { getLoggedUserInfoAsync } from "~/services/.server";
-import { getDatesForTerm } from "~/services";
+import {
+  getLoggedUserInfoAsync,
+  getSchoolTermsForYearAsync,
+} from "~/services/.server";
+import { getCurrentTermForDate, getDatesForTerm } from "~/services";
 import { Select, Title } from "~/components";
 
 import {
-  getCurrentTermForDate,
   getSessionsLookupAsync,
-  getSchoolTermsForYearAsync,
   getUserByAzureADIdAsync,
   getAvailableStudentsForSessionAsync,
   createSessionAsync,
@@ -155,6 +156,8 @@ export default function Index() {
         formData.append("studentSessionId", studentSessionId.toString());
       }
 
+      searchParams.set("attendedOn", "");
+
       submit(formData, {
         method: "POST",
       });
@@ -168,6 +171,8 @@ export default function Index() {
     const formData = new FormData();
     formData.append("action", "take");
     formData.append("studentSessionId", studentSessionId.toString());
+
+    searchParams.set("attendedOn", "");
 
     submit(formData, {
       method: "POST",
@@ -187,6 +192,8 @@ export default function Index() {
 
   const onTermChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     searchParams.set("selectedTerm", event.target.value);
+    searchParams.set("attendedOn", "");
+
     load(`?${searchParams.toString()}`);
   };
 

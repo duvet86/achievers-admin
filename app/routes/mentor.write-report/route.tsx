@@ -27,15 +27,21 @@ import {
 import editorStylesheetUrl from "~/styles/editor.css?url";
 import { Editor, Select, SubTitle, Title } from "~/components";
 
-import { getClosestSessionToToday, getTermFromDate } from "~/services";
-import { getLoggedUserInfoAsync } from "~/services/.server/session.server";
+import {
+  getClosestSessionToToday,
+  getCurrentTermForDate,
+  getTermFromDate,
+} from "~/services";
 import {
   getSchoolTermsForYearAsync,
+  getLoggedUserInfoAsync,
+} from "~/services/.server";
+
+import {
   getReportForSessionDateAsync,
   getMentorSessionDatesAsync,
   getUserByAzureADIdAsync,
   saveReportAsync,
-  getCurrentTermForDate,
   getStudentsAsync,
   getSessionDatesFormatted,
 } from "./services.server";

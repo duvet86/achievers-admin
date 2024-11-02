@@ -75,43 +75,6 @@ export interface SessionCommandRequest {
   attendedOn: string;
 }
 
-export async function getSchoolTermsForYearAsync(
-  year: number,
-): Promise<Term[]> {
-  const terms = await prisma.schoolTerm.findMany({
-    where: {
-      year,
-    },
-    select: {
-      startDate: true,
-      endDate: true,
-    },
-    orderBy: {
-      startDate: "asc",
-    },
-  });
-
-  return terms.map<Term>(({ startDate, endDate }, index) => ({
-    name: "Term " + (index + 1),
-    start: dayjs(startDate),
-    end: dayjs(endDate),
-  }));
-}
-
-export function getCurrentTermForDate(terms: Term[], date: Date): Term {
-  for (let i = 0; i < terms.length; i++) {
-    if (
-      dayjs(date).isBetween(terms[i].start, terms[i].end, "day", "[]") ||
-      (terms[i - 1] &&
-        dayjs(date).isBetween(terms[i - 1].end, terms[i].start, "day", "[]"))
-    ) {
-      return terms[i];
-    }
-  }
-
-  return terms[0];
-}
-
 export async function getAvailableStudentsForSessionAsync(
   chapterId: number,
   mentorId: number,

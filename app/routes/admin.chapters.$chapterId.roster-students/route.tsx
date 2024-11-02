@@ -14,14 +14,15 @@ import dayjs from "dayjs";
 import classNames from "classnames";
 import { Check, NavArrowRight, Calendar } from "iconoir-react";
 
-import { getDatesForTerm, getValueFromCircularArray } from "~/services";
-import { Input, Select, TableHeaderSort, Title } from "~/components";
-
 import {
   getCurrentTermForDate,
-  getSchoolTermsForYearAsync,
-  getStudentsAsync,
-} from "./services.server";
+  getDatesForTerm,
+  getValueFromCircularArray,
+} from "~/services";
+import { getSchoolTermsForYearAsync } from "~/services/.server";
+import { Input, Select, TableHeaderSort, Title } from "~/components";
+
+import { getStudentsAsync } from "./services.server";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");

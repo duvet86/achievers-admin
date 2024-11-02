@@ -291,3 +291,17 @@ export function getClosestSessionToToday(dates: Date[]) {
 export function getTermFromDate(terms: Term[], date: string) {
   return terms.find((term) => dayjs(date).isBetween(term.start, term.end));
 }
+
+export function getCurrentTermForDate(terms: Term[], date: Date): Term {
+  for (let i = 0; i < terms.length; i++) {
+    if (
+      dayjs(date).isBetween(terms[i].start, terms[i].end, "day", "[]") ||
+      (terms[i - 1] &&
+        dayjs(date).isBetween(terms[i - 1].end, terms[i].start, "day", "[]"))
+    ) {
+      return terms[i];
+    }
+  }
+
+  return terms[0];
+}

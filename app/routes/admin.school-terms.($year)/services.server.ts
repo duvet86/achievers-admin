@@ -17,7 +17,7 @@ export async function getAvailableYearsAsync() {
   return years.map(({ year }) => year.toString());
 }
 
-export async function getSchoolTermsForYearAsync(year: number) {
+export async function getSchoolTermsAsync(year: number) {
   return await prisma.schoolTerm.findMany({
     where: {
       year,

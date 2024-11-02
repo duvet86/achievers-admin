@@ -14,6 +14,7 @@ import utc from "dayjs/plugin/utc";
 import { Plus } from "iconoir-react";
 
 import { areDatesOverlapping, isStringNullOrEmpty } from "~/services";
+import { isLoggedUserBlockedAsync, trackException } from "~/services/.server";
 import {
   DateInput,
   Select,
@@ -25,9 +26,8 @@ import {
 import {
   updateTermsAsync,
   getAvailableYearsAsync,
-  getSchoolTermsForYearAsync,
+  getSchoolTermsAsync,
 } from "./services.server";
-import { isLoggedUserBlockedAsync, trackException } from "~/services/.server";
 
 dayjs.extend(utc);
 
@@ -54,7 +54,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const availableYears = await getAvailableYearsAsync();
 
-  const terms = await getSchoolTermsForYearAsync(selectedYear);
+  const terms = await getSchoolTermsAsync(selectedYear);
 
   return {
     availableYears,

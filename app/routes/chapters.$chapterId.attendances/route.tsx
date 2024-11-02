@@ -9,12 +9,14 @@ import { CheckSquare, Square } from "iconoir-react";
 
 import {
   getClosestSessionToToday,
+  getCurrentTermForDate,
   getDatesForTerm,
   getEnvironment,
 } from "~/services";
 import {
   getChapterFromAttendancesRole,
   getLoggedUserInfoAsync,
+  getSchoolTermsForYearAsync,
   isLoggedUserBlockedAsync,
   trackException,
   version,
@@ -23,10 +25,8 @@ import { Input, Navbar, Select, Title } from "~/components";
 
 import {
   attendSession,
-  getCurrentTermForDate,
   getMentorAttendancesLookup,
   getMentorsForSession,
-  getSchoolTermsForYearAsync,
   removeAttendace,
 } from "./services.server";
 
@@ -73,7 +73,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const mentors = await getMentorsForSession(
     Number(params.chapterId),
-    selectedTermDate,
     searchTerm,
   );
 
@@ -243,7 +242,7 @@ export default function Index() {
           {mentors.length === 0 && (
             <li className="mt-4 italic">No mentors found</li>
           )}
-          {mentors.map(({ id: mentorId, fullName, student }) => (
+          {mentors.map(({ id: mentorId, fullName }) => (
             <li
               key={mentorId}
               onClick={
@@ -260,7 +259,6 @@ export default function Index() {
             >
               <div className="flex flex-1 gap-4">
                 <h2 className="basis-56">{fullName}</h2>
-                <h2>{student?.fullName}</h2>
               </div>
 
               <div>
