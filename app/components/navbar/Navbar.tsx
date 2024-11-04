@@ -18,7 +18,7 @@ export function Navbar({ userName, environment, version, currentView }: Props) {
     environment === Environments.Local || environment === Environments.Staging;
 
   return (
-    <nav className="navbar absolute left-0 top-0 z-10 h-16 justify-between bg-primary text-primary-content shadow-md">
+    <nav className="navbar absolute left-0 top-0 z-30 h-16 justify-between bg-primary text-primary-content shadow-md">
       <div className="flex">
         <div className="flex-none lg:hidden">
           <label htmlFor="drawer" className="btn btn-square btn-ghost">

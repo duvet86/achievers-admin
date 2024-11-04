@@ -13,6 +13,7 @@ import {
   RefreshDouble,
   TowerWarning,
   EditPencil,
+  BubbleWarning,
 } from "iconoir-react";
 
 interface Props {
@@ -134,7 +135,7 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
   const links = getLinks(linkMappings, isCurrentViewAdmin);
 
   return (
-    <div className="drawer-side pt-16">
+    <div className="drawer-side z-20 pt-16">
       <label
         htmlFor="drawer"
         aria-label="close sidebar"
@@ -166,8 +167,25 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
               </li>
             ))}
         </ul>
-        {isMentorAndAdmin && (
-          <ul className="menu w-64 border-r border-t border-primary bg-base-200 p-4 text-base-content">
+        <ul className="menu w-64 border-r border-t border-primary bg-base-200 p-4 text-base-content">
+          <li>
+            <button
+              className="mb-2 justify-between rounded font-semibold"
+              onClick={() =>
+                (
+                  document.getElementById(
+                    "report-error-modal",
+                  ) as HTMLDialogElement
+                ).showModal()
+              }
+            >
+              <div className="flex items-center gap-4">
+                <BubbleWarning className="text-secondary" />
+                Report Error
+              </div>
+            </button>
+          </li>
+          {isMentorAndAdmin && (
             <li>
               <Link
                 to={isCurrentViewAdmin ? "/mentor/home" : "/admin/home"}
@@ -179,8 +197,8 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
                 </div>
               </Link>
             </li>
-          </ul>
-        )}
+          )}
+        </ul>
       </div>
     </div>
   );

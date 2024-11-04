@@ -23,5 +23,9 @@ export * from "./forbidden/Forbidden";
 export * from "./unexpected-error/UnexpectedError";
 
 export * from "./editor/Editor";
+export * from "./editor-questions/EditorQuestions";
 
 export * from "./table-header-sort/TableHeaderSort";
+export * from "./message/Message";
+
+export * from "./report-error-modal/ReportErrorModal";

@@ -19,7 +19,7 @@ import dayjs from "dayjs";
 import { FloppyDiskArrowIn, DesignNib } from "iconoir-react";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
-import { Editor, SubTitle, Title } from "~/components";
+import { Editor, EditorQuestions, SubTitle, Title } from "~/components";
 
 import { getLoggedUserInfoAsync } from "~/services/.server/session.server";
 import { getStudentSessionIdAsync, saveReportAsync } from "./services.server";
@@ -132,19 +132,7 @@ export default function Index() {
                 />
               </div>
 
-              <div className="hidden w-1/4 border-b pb-2 pl-2 sm:block">
-                <p className="font-semibold">
-                  Have you answered these questions?
-                </p>
-                <hr className="my-2" />
-                <ul className="list-inside list-disc">
-                  <li>What work did you cover this week?</li>
-                  <li>What went well?</li>
-                  <li>What could be improved on?</li>
-                  <li>Any notes for next week for your partner mentor?</li>
-                  <li>Any notes for your Chapter Coordinator?</li>
-                </ul>
-              </div>
+              <EditorQuestions />
             </div>
 
             <SubTitle>Admin Feedback</SubTitle>

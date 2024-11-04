@@ -4,6 +4,7 @@ import type { Environment } from "~/services";
 
 import { Drawer } from "../drawer/Drawer";
 import { Navbar } from "../navbar/Navbar";
+import { ReportErrorModal } from "../report-error-modal/ReportErrorModal";
 
 interface Props {
   currentView: string;
@@ -27,6 +28,7 @@ export function Body({
   return (
     <main className="drawer lg:drawer-open">
       <input id="drawer" type="checkbox" className="drawer-toggle" />
+
       <div className="drawer-content flex flex-col">
         <Navbar
           currentView={currentView}
@@ -38,11 +40,14 @@ export function Body({
           {children}
         </main>
       </div>
+
       <Drawer
         currentView={currentView}
         isMentorAndAdmin={isMentorAndAdmin}
         linkMappings={linkMappings}
       />
+
+      <ReportErrorModal />
     </main>
   );
 }

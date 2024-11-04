@@ -25,7 +25,7 @@ import {
 } from "iconoir-react";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
-import { Editor, Select, SubTitle, Title } from "~/components";
+import { Editor, EditorQuestions, Select, SubTitle, Title } from "~/components";
 
 import {
   getClosestSessionToToday,
@@ -308,42 +308,29 @@ export default function Index() {
                 />
               </div>
 
-              {!completedOn && (
-                <div className="hidden w-1/4 border-b pb-2 pl-2 sm:block">
-                  <p className="font-semibold">
-                    Have you answered these questions?
-                  </p>
-                  <hr className="my-2" />
-                  <ul className="list-inside list-disc" data-testid="questions">
-                    <li>What work did you cover this week?</li>
-                    <li>What went well?</li>
-                    <li>What could be improved on?</li>
-                    <li>Any notes for next week for your partner mentor?</li>
-                    <li>Any notes for your Chapter Coordinator?</li>
-                  </ul>
-                </div>
-              )}
+              {!completedOn && <EditorQuestions />}
             </div>
 
-            <div className="flex justify-center gap-4 pb-2 sm:justify-end">
+            <div className="flex justify-around gap-4 pb-2 sm:justify-end">
               <div className="flex gap-8">
                 {!completedOn && (
                   <>
                     <button
-                      className="btn btn-primary w-44"
+                      className="btn btn-primary w-36"
                       onClick={saveReport("draft")}
                       disabled={isNotMyReport}
                     >
-                      <FloppyDiskArrowIn className="h-6 w-6" />
-                      Save as draft
+                      <FloppyDiskArrowIn />
+                      Save
                     </button>
+
                     <button
-                      className="btn btn-success w-48"
+                      className="btn btn-success w-36"
                       onClick={saveReport("completed")}
                       disabled={isNotMyReport}
                     >
-                      <CheckCircle className="h-6 w-6" />
-                      Mark as completed
+                      <CheckCircle />
+                      Completed
                     </button>
                   </>
                 )}
@@ -354,7 +341,7 @@ export default function Index() {
                     onClick={saveReport("remove-complete")}
                     disabled={isNotMyReport}
                   >
-                    <WarningTriangle className="h-6 w-6" />
+                    <WarningTriangle />
                     Unmark completed
                   </button>
                 )}
