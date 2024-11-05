@@ -4,7 +4,7 @@ import {
   type ActionFunctionArgs,
 } from "@remix-run/node";
 
-import { getLoggedUserInfoAsync } from "~/services/.server";
+import { getLoggedUserInfoAsync, trackException } from "~/services/.server";
 
 import {
   getUserByAzureADIdAsync,
@@ -12,12 +12,12 @@ import {
 } from "./services.server";
 
 export async function action({ request }: ActionFunctionArgs) {
-  const loggedUser = await getLoggedUserInfoAsync(request);
-  const user = await getUserByAzureADIdAsync(loggedUser.oid);
-
-  const uploadHandler = unstable_createMemoryUploadHandler();
-
   try {
+    const loggedUser = await getLoggedUserInfoAsync(request);
+    const user = await getUserByAzureADIdAsync(loggedUser.oid);
+
+    const uploadHandler = unstable_createMemoryUploadHandler();
+
     const formData = await unstable_parseMultipartFormData(
       request,
       uploadHandler,
@@ -55,7 +55,9 @@ export async function action({ request }: ActionFunctionArgs) {
       errorMessage: null,
       successMessage: "Successfully submitted. You can close the window now.",
     };
-  } catch {
+  } catch (e) {
+    trackException(e as Error);
+
     return {
       errorMessage: "File too large. Max size is 1 MB.",
       successMessage: null,

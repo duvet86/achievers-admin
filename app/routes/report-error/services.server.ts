@@ -25,7 +25,7 @@ export async function submitSupportRequestAsync(
 ) {
   const REPORT_ERROR_PATH = process.env.REPORT_ERROR_PATH;
   if (REPORT_ERROR_PATH === undefined) {
-    throw new Error();
+    throw new Error("Missing REPORT_ERROR_PATH");
   }
 
   const resp = await fetch(REPORT_ERROR_PATH, {
@@ -37,6 +37,6 @@ export async function submitSupportRequestAsync(
   });
 
   if (resp.status !== 202) {
-    throw new Error();
+    throw new Error(`Logic app status: ${resp.status}`);
   }
 }
