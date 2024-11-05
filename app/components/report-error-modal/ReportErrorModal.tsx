@@ -17,20 +17,42 @@ export function ReportErrorModal() {
   return (
     <dialog id="report-error-modal" className="modal">
       <div className="modal-box w-11/12 max-w-5xl">
-        <Title>Report error</Title>
+        <div className="mb-4 flex justify-between">
+          <Title>Report error</Title>
+          <button
+            className="btn btn-circle btn-ghost"
+            onClick={() => {
+              (
+                document.getElementById(
+                  "report-error-modal",
+                ) as HTMLDialogElement
+              ).close();
+            }}
+          >
+            <Xmark />
+          </button>
+        </div>
 
         <Form
           method="POST"
           action="/report-error"
           encType="multipart/form-data"
-          className="flex flex-col gap-4"
           onSubmit={(e) => {
             e.preventDefault();
             submit(e.currentTarget);
             e.currentTarget.reset();
           }}
         >
-          <fieldset disabled={isLoading}>
+          <fieldset
+            disabled={isLoading}
+            className="relative flex flex-col gap-4"
+          >
+            {isLoading && (
+              <div className="absolute z-10 flex h-full w-full justify-center bg-slate-300 bg-opacity-50">
+                <span className="loading loading-spinner loading-lg text-primary"></span>
+              </div>
+            )}
+
             <Textarea label="Description" name="description" required />
             <FileInput
               label="You can attach a screenshot of the error"
