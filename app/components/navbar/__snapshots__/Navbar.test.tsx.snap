@@ -4,7 +4,7 @@ exports[`Navbar > Navbar snapshot 1`] = `
 <body>
   <div>
     <nav
-      class="navbar absolute left-0 top-0 z-10 h-16 justify-between bg-primary text-primary-content shadow-md"
+      class="navbar absolute left-0 top-0 z-30 h-16 justify-between bg-primary text-primary-content shadow-md"
     >
       <div
         class="flex"
