@@ -44,10 +44,10 @@ export class MentorWriteReportPage {
       .first();
 
     this.saveAsDraftButton = page.getByRole("button", {
-      name: "Save as draft",
+      name: "Save",
     });
     this.completeButton = page.getByRole("button", {
-      name: "Mark as completed",
+      name: "Completed",
     });
 
     this.reportText = page
