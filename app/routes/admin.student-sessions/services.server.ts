@@ -73,7 +73,6 @@ export async function getCountAsync(
   studentId: number | undefined,
   startDate: Date | undefined,
   endDate: Date | undefined,
-  isCompleted: boolean | undefined,
   isSignedOff: boolean | undefined,
 ) {
   return await prisma.studentSession.count({
@@ -83,7 +82,6 @@ export async function getCountAsync(
       studentId,
       startDate,
       endDate,
-      isCompleted,
       isSignedOff,
     ),
   });
@@ -95,45 +93,19 @@ export async function getStudentSessionsAsync(
   studentId: number | undefined,
   startDate: Date | undefined,
   endDate: Date | undefined,
-  isCompleted: boolean | undefined,
   isSignedOff: boolean | undefined,
   pageNumber: number,
   numberItems = 10,
 ) {
   return await prisma.studentSession.findMany({
-    where: {
+    where: whereClause(
+      chapterId,
+      mentorId,
       studentId,
-
-      completedOn: isCompleted
-        ? {
-            not: null,
-          }
-        : undefined,
-      signedOffOn: isSignedOff
-        ? {
-            not: null,
-          }
-        : undefined,
-      session: {
-        mentorId,
-        chapterId,
-        AND:
-          startDate && endDate
-            ? [
-                {
-                  attendedOn: {
-                    lte: endDate,
-                  },
-                },
-                {
-                  attendedOn: {
-                    gte: startDate,
-                  },
-                },
-              ]
-            : undefined,
-      },
-    },
+      startDate,
+      endDate,
+      isSignedOff,
+    ),
     select: {
       id: true,
       completedOn: true,
@@ -172,17 +144,13 @@ function whereClause(
   studentId: number | undefined,
   startDate: Date | undefined,
   endDate: Date | undefined,
-  isCompleted: boolean | undefined,
   isSignedOff: boolean | undefined,
 ) {
   return {
     studentId,
-
-    completedOn: isCompleted
-      ? {
-          not: null,
-        }
-      : undefined,
+    completedOn: {
+      not: null,
+    },
     signedOffOn: isSignedOff
       ? {
           not: null,

@@ -113,7 +113,7 @@ export default function Index() {
           </div>
 
           <div className="flex flex-1 flex-col gap-4">
-            <div className="flex-1">
+            <div className="min-h-56 flex-1">
               <Editor
                 isReadonly={signedOffOn !== null}
                 initialEditorStateType={reportFeedback}

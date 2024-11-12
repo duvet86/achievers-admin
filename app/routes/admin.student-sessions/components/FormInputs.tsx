@@ -40,7 +40,6 @@ export default function FormInputs({
 
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
-  const isCompleted = searchParams.get("isCompleted");
   const isSignedOff = searchParams.get("isSignedOff");
 
   return (
@@ -99,22 +98,6 @@ export default function FormInputs({
 
       <div className="flex flex-col sm:flex-row">
         <div className="mb-2 flex flex-1 gap-8">
-          <div className="form-control">
-            <label className="label cursor-pointer gap-2">
-              <input
-                type="checkbox"
-                name="isCompleted"
-                className="checkbox bg-base-100"
-                defaultChecked={
-                  isNotClearForm && isCompleted !== null
-                    ? isCompleted === "on"
-                    : false
-                }
-              />
-              <span className="label-text">Only completed</span>
-            </label>
-          </div>
-
           <div className="form-control">
             <label className="label cursor-pointer gap-2">
               <input

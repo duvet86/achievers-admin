@@ -47,7 +47,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const startDate = url.searchParams.get("startDate");
   const endDate = url.searchParams.get("endDate");
-  const isCompleted = url.searchParams.get("isCompleted") === "on";
   const isSignedOff = url.searchParams.get("isSignedOff") === "on";
 
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
@@ -94,7 +93,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     studentId,
     startDateConverted,
     endDateConverted,
-    isCompleted,
     isSignedOff,
   );
 
@@ -119,7 +117,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     studentId,
     startDateConverted,
     endDateConverted,
-    isCompleted,
     isSignedOff,
     currentPageNumber,
   );

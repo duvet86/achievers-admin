@@ -34,7 +34,6 @@ export async function readFormDataAsStringsAsync(
   return Object.entries(Object.fromEntries(formData)).reduce<
     Record<string, string>
   >((res, [key, value]) => {
-    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     res[key] = value?.toString().trim();
 
     return res;
@@ -130,55 +129,46 @@ export function calculateYearLevel(dateOfBirth: Date | null): number | null {
     return null;
   }
 
-  const cutoffDateMonth = 6;
-  const cutoffDateDay = 30;
-
   const currentYear = new Date().getFullYear();
-
   const dateOfBirthYear = dateOfBirth.getFullYear();
-  const dateOfBirthMonth = dateOfBirth.getMonth() + 1;
-  const dateOfBirthDay = dateOfBirth.getDate();
 
-  const isWithinCutoffDate =
-    dateOfBirthMonth <= cutoffDateMonth && dateOfBirthDay <= cutoffDateDay;
-
-  if (dateOfBirthYear + 17 <= currentYear && isWithinCutoffDate) {
+  if (dateOfBirthYear + 17 <= currentYear) {
     return 12;
   }
-  if (dateOfBirthYear + 16 <= currentYear && isWithinCutoffDate) {
+  if (dateOfBirthYear + 16 <= currentYear) {
     return 11;
   }
-  if (dateOfBirthYear + 15 <= currentYear && isWithinCutoffDate) {
+  if (dateOfBirthYear + 15 <= currentYear) {
     return 10;
   }
-  if (dateOfBirthYear + 14 <= currentYear && isWithinCutoffDate) {
+  if (dateOfBirthYear + 14 <= currentYear) {
     return 9;
   }
-  if (dateOfBirthYear + 13 <= currentYear && isWithinCutoffDate) {
+  if (dateOfBirthYear + 13 <= currentYear) {
     return 8;
   }
-  if (dateOfBirthYear + 12 <= currentYear && isWithinCutoffDate) {
+  if (dateOfBirthYear + 12 <= currentYear) {
     return 7;
   }
-  if (dateOfBirthYear + 11 <= currentYear && isWithinCutoffDate) {
+  if (dateOfBirthYear + 11 <= currentYear) {
     return 6;
   }
-  if (dateOfBirthYear + 10 <= currentYear && isWithinCutoffDate) {
+  if (dateOfBirthYear + 10 <= currentYear) {
     return 5;
   }
-  if (dateOfBirthYear + 9 <= currentYear && isWithinCutoffDate) {
+  if (dateOfBirthYear + 9 <= currentYear) {
     return 4;
   }
-  if (dateOfBirthYear + 8 <= currentYear && isWithinCutoffDate) {
+  if (dateOfBirthYear + 8 <= currentYear) {
     return 3;
   }
-  if (dateOfBirthYear + 7 <= currentYear && isWithinCutoffDate) {
+  if (dateOfBirthYear + 7 <= currentYear) {
     return 2;
   }
-  if (dateOfBirthYear + 6 <= currentYear && isWithinCutoffDate) {
+  if (dateOfBirthYear + 6 <= currentYear) {
     return 1;
   }
-  if (dateOfBirthYear + 5 <= currentYear && isWithinCutoffDate) {
+  if (dateOfBirthYear + 5 <= currentYear) {
     return 0;
   }
 
