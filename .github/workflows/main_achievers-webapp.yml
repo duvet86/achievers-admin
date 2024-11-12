@@ -89,6 +89,7 @@ jobs:
           path: |
             playwright-report/
             coverage/
+            test-results/
           retention-days: 1
 
   migrate:

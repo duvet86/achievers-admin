@@ -50,6 +50,8 @@ const config: PlaywrightTestConfig = {
     trace: "on-first-retry",
     // Tell all tests to load signed-in state from 'storageState.json'.
     storageState: "storageState.json",
+
+    screenshot: "only-on-failure",
   },
 
   /* Configure projects for major browsers */
