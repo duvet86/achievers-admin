@@ -232,7 +232,7 @@ export default function Index() {
                   const to = sessionId
                     ? completedOn
                       ? `/admin/student-sessions/${studentSession.id}?${queryString}`
-                      : `/admin/sessions/${sessionId}/remove?${queryString}`
+                      : `/admin/sessions/${sessionId}?${queryString}`
                     : `/admin/chapters/${chapterId}/roster-mentors/${mentorId}/attended-on/${attendedOn}/new?${queryString}`;
 
                   return (

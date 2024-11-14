@@ -16,7 +16,7 @@ export default defineConfig({
         v3_fetcherPersist: true,
         v3_relativeSplatPath: true,
         v3_throwAbortReason: true,
-        v3_lazyRouteDiscovery: !process.env.CI,
+        v3_lazyRouteDiscovery: false, //!process.env.CI,
         v3_singleFetch: true,
       },
       routes(defineRoutes) {
@@ -143,8 +143,8 @@ export default defineConfig({
               },
             );
             route(
-              "sessions/:sessionId/remove",
-              "routes/admin.sessions.$sessionId.remove/route.tsx",
+              "sessions/:sessionId",
+              "routes/admin.sessions.$sessionId/route.tsx",
               {
                 index: true,
               },

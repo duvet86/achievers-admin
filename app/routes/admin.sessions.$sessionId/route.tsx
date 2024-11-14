@@ -2,6 +2,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 
 import { redirect } from "@remix-run/node";
 import {
+  Form,
   Link,
   useLoaderData,
   useLocation,
@@ -13,17 +14,21 @@ import invariant from "tiny-invariant";
 import {
   Check,
   EditPencil,
+  FloppyDiskArrowIn,
   InfoCircle,
   StatsReport,
   Trash,
   Xmark,
 } from "iconoir-react";
 
-import { Title } from "~/components";
+import { SelectSearch, Title } from "~/components";
 
 import {
+  addStudentToSessionAsync,
   getChapterByIdAsync,
   getSessionByIdAsync,
+  getSessionsByDateAsync,
+  getStudentsForMentorAsync,
   removeSessionAsync,
 } from "./services.server";
 
@@ -35,10 +40,45 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const session = await getSessionByIdAsync(Number(params.sessionId));
   const chapter = await getChapterByIdAsync(session.chapterId);
 
+  if (session.studentSession.length > 0) {
+    return {
+      chapter,
+      session,
+      attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
+      studentsOptions: [],
+    };
+  }
+
+  const students = await getStudentsForMentorAsync(
+    session.chapterId,
+    session.mentor.id,
+  );
+
+  const sessionsForDate = await getSessionsByDateAsync(
+    session.chapterId,
+    session.attendedOn,
+  );
+
+  const studentsInSession = sessionsForDate
+    .filter(({ studentSession }) => studentSession.length > 0)
+    .map(({ studentSession }) => studentSession[0].student.id);
+
+  const studentsOptions = students.map(({ id, fullName }) => {
+    const isUnavailable = studentsInSession.includes(id);
+
+    return {
+      label:
+        fullName + (isUnavailable ? " (Unavailable - in another session)" : ""),
+      value: id.toString(),
+      isDisabled: isUnavailable,
+    };
+  });
+
   return {
     chapter,
     session,
     attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
+    studentsOptions,
   };
 }
 
@@ -46,9 +86,21 @@ export async function action({ params, request }: ActionFunctionArgs) {
   invariant(params.sessionId, "sessionId not found");
 
   const formData = await request.formData();
+  const addStudent = formData.get("addStudent");
   const selectedStudentId = formData.get("studentId");
 
   const url = new URL(request.url);
+
+  if (addStudent !== null) {
+    const studentSession = await addStudentToSessionAsync(
+      Number(params.sessionId),
+      Number(selectedStudentId),
+    );
+
+    return redirect(
+      `/admin/chapters/${studentSession.session.chapterId}/roster-mentors`,
+    );
+  }
 
   const session = await removeSessionAsync({
     sessionId: Number(params.sessionId),
@@ -61,7 +113,8 @@ export async function action({ params, request }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { attendedOnLabel, chapter, session } = useLoaderData<typeof loader>();
+  const { attendedOnLabel, chapter, session, studentsOptions } =
+    useLoaderData<typeof loader>();
   const lcation = useLocation();
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
@@ -114,20 +167,44 @@ export default function Index() {
         </div>
 
         {session.studentSession.length === 0 && (
-          <div className="flex items-center gap-4">
-            <p className="alert alert-info">
-              <InfoCircle />
-              Mentor is marked as available for this session
-            </p>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-4">
+              <p className="alert alert-info">
+                <InfoCircle />
+                Mentor is marked as available for this session
+              </p>
 
-            <button
-              className="btn btn-error w-full sm:w-48"
-              type="button"
-              onClick={handleFormSubmit(null)}
-            >
-              <Trash />
-              Cancel
-            </button>
+              <button
+                className="btn btn-error w-full sm:w-48"
+                type="button"
+                onClick={handleFormSubmit(null)}
+              >
+                <Trash />
+                Cancel
+              </button>
+            </div>
+
+            <div className="divider">OR</div>
+
+            <Form method="POST" className="flex w-full items-end gap-4">
+              <SelectSearch
+                name="studentId"
+                placeholder="Select a student"
+                options={studentsOptions}
+                required
+                showClearButton
+              />
+
+              <button
+                className="btn btn-primary w-48 gap-2"
+                type="submit"
+                name="addStudent"
+                value="addStudent"
+              >
+                <FloppyDiskArrowIn />
+                Book
+              </button>
+            </Form>
           </div>
         )}
 

@@ -104,3 +104,101 @@ export async function removeSessionAsync({
     return session;
   });
 }
+
+export async function getStudentsForMentorAsync(
+  chapterId: number,
+  mentorId: number | null,
+) {
+  const allStudents = await prisma.student.findMany({
+    where: {
+      chapterId,
+      endDate: null,
+      mentorToStudentAssignement: mentorId
+        ? {
+            none: {
+              userId: mentorId,
+            },
+          }
+        : undefined,
+    },
+    select: {
+      id: true,
+      fullName: true,
+    },
+    orderBy: {
+      fullName: "asc",
+    },
+  });
+
+  const assignedStudents = mentorId
+    ? await prisma.mentorToStudentAssignement.findMany({
+        where: {
+          userId: mentorId,
+        },
+        select: {
+          student: {
+            select: {
+              id: true,
+              fullName: true,
+            },
+          },
+        },
+        orderBy: {
+          user: {
+            fullName: "asc",
+          },
+        },
+      })
+    : [];
+
+  return assignedStudents
+    .map(({ student: { id, fullName } }) => ({
+      id,
+      fullName: `** ${fullName} (Assigned) **`,
+    }))
+    .concat(allStudents);
+}
+
+export async function getSessionsByDateAsync(
+  chapterId: number,
+  attendedOn: Date,
+) {
+  return await prisma.session.findMany({
+    where: {
+      chapterId,
+      attendedOn,
+    },
+    select: {
+      mentorId: true,
+      studentSession: {
+        select: {
+          student: {
+            select: {
+              id: true,
+              fullName: true,
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+export async function addStudentToSessionAsync(
+  sessionId: number,
+  studentId: number,
+) {
+  return await prisma.studentSession.create({
+    data: {
+      studentId,
+      sessionId,
+    },
+    select: {
+      session: {
+        select: {
+          chapterId: true,
+        },
+      },
+    },
+  });
+}
