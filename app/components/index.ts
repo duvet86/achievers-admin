@@ -28,4 +28,4 @@ export * from "./editor-questions/EditorQuestions";
 export * from "./table-header-sort/TableHeaderSort";
 export * from "./message/Message";
 
-export * from "./report-error-modal/ReportErrorModal";
+export * from "./feeback-modal/FeedbackModal";

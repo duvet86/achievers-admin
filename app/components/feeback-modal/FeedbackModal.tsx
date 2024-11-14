@@ -6,7 +6,7 @@ import { Textarea } from "../textarea/Textarea";
 import { FileInput } from "../file-input/FileInput";
 import { Message } from "../message/Message";
 
-export function ReportErrorModal() {
+export function FeedbackModal() {
   const { Form, data, submit, state } = useFetcher<{
     successMessage: string | null;
     errorMessage: string | null;
@@ -18,7 +18,7 @@ export function ReportErrorModal() {
     <dialog id="report-error-modal" className="modal">
       <div className="modal-box w-11/12 max-w-5xl">
         <div className="mb-4 flex justify-between">
-          <Title>Report error</Title>
+          <Title>Feedback</Title>
           <button
             className="btn btn-circle btn-ghost"
             onClick={() => {

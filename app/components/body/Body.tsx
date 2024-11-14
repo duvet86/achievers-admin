@@ -4,7 +4,7 @@ import type { Environment } from "~/services";
 
 import { Drawer } from "../drawer/Drawer";
 import { Navbar } from "../navbar/Navbar";
-import { ReportErrorModal } from "../report-error-modal/ReportErrorModal";
+import { FeedbackModal } from "../feeback-modal/FeedbackModal";
 
 interface Props {
   currentView: string;
@@ -47,7 +47,7 @@ export function Body({
         linkMappings={linkMappings}
       />
 
-      <ReportErrorModal />
+      <FeedbackModal />
     </main>
   );
 }

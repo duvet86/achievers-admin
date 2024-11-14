@@ -181,7 +181,7 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
             >
               <div className="flex items-center gap-4">
                 <BubbleWarning className="text-secondary" />
-                Report Error
+                Feedback
               </div>
             </button>
           </li>
