@@ -55,6 +55,8 @@ export class MentorWriteReportPage {
       .first();
 
     this.expect = new MentorWriteReportPageAssertions(this);
+
+    this.page.on("dialog", (dialog) => dialog.accept());
   }
 
   async typeReport() {
