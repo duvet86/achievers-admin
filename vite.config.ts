@@ -74,6 +74,13 @@ export default defineConfig({
                 },
               );
               route(
+                ":chapterId/roster-mentors/export",
+                "routes/admin.chapters.$chapterId.roster-mentors.export/route.tsx",
+                {
+                  index: true,
+                },
+              );
+              route(
                 ":chapterId/roster-mentors/sessions/:sessionId",
                 "routes/admin.chapters.$chapterId.roster-mentors.sessions.$sessionId/route.tsx",
                 {
