@@ -14,6 +14,7 @@ on:
 env:
   TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
   TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+  TEST_MENTOR_AZURE_ID: ${{ secrets.TEST_MENTOR_AZURE_ID }}
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
   CLIENT_ID: ${{ secrets.CLIENT_ID }}
   CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}

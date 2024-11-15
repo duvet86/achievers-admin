@@ -17,7 +17,7 @@ export async function seedDataAsync(isMentor = false) {
   try {
     await prisma.$connect();
 
-    await createUsersAsync(prisma, "0df7b421-a2a9-4975-8873-9c00fcf4a21b");
+    await createUsersAsync(prisma, process.env.TEST_MENTOR_AZURE_ID!);
     await createStudentsAsync(prisma);
 
     await assignMentorsToStudentsAsync(prisma);
