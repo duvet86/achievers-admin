@@ -222,17 +222,31 @@ export default function Index() {
                   const session = sessionLookup[attendedOn];
 
                   const sessionId = session?.id;
-                  const studentSession = session?.studentSession?.[0];
+                  const studentSessions = session?.studentSession;
 
-                  const hasReport = studentSession?.hasReport ?? false;
-                  const completedOn = studentSession?.completedOn;
+                  let studentSession = null;
+                  let hasReport = false;
+                  let label = "";
+                  let textHighlight = false;
+                  if (studentSessions) {
+                    if (studentSessions.length === 0) {
+                      textHighlight = true;
+                      label = "Marked available";
+                    } else if (studentSessions.length === 1) {
+                      studentSession = session.studentSession[0];
+                      hasReport = studentSession.hasReport;
+
+                      label = studentSession.student.fullName;
+                    } else {
+                      textHighlight = true;
+                      label = `${studentSessions.length} Students`;
+                    }
+                  }
 
                   const queryString = `back_url=/admin/chapters/${chapterId}/roster-mentors?${encodeURIComponent(searchParams.toString())}`;
 
                   const to = sessionId
-                    ? completedOn
-                      ? `/admin/student-sessions/${studentSession.id}?${queryString}`
-                      : `/admin/sessions/${sessionId}?${queryString}`
+                    ? `/admin/chapters/${chapterId}/roster-mentors/sessions/${sessionId}?${queryString}`
                     : `/admin/chapters/${chapterId}/roster-mentors/${mentorId}/attended-on/${attendedOn}/new?${queryString}`;
 
                   return (
@@ -252,20 +266,13 @@ export default function Index() {
                         <Link
                           to={to}
                           className={classNames(
-                            "btn btn-ghost btn-block justify-between",
+                            "btn btn-ghost btn-block justify-between font-bold",
                             {
-                              "font-bold text-info":
-                                session && !studentSession?.student,
+                              "text-info": textHighlight,
                             },
                           )}
                         >
-                          <span className="flex-1">
-                            {session
-                              ? studentSession?.student
-                                ? studentSession?.student.fullName
-                                : "Marked available"
-                              : ""}
-                          </span>
+                          <span className="flex-1">{label}</span>
                           <NavArrowRight />
                         </Link>
                       </div>

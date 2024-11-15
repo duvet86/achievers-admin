@@ -14,7 +14,7 @@ import {
   getSessionsByDateAsync,
   getMentorByIdAsync,
 } from "./services.server";
-import { FloppyDiskArrowIn, Xmark } from "iconoir-react";
+import { FloppyDiskArrowIn } from "iconoir-react";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -103,7 +103,7 @@ export default function Index() {
         {attendedOnLabel}&quot;
       </Title>
 
-      <div className="my-8 flex flex-col gap-12">
+      <div className="my-8 flex flex-col gap-6">
         <div className="flex items-center gap-2 border-b p-2">
           <div className="w-72 font-bold">Chapter</div>
           <div className="flex-1">{chapter.name}</div>
@@ -119,10 +119,19 @@ export default function Index() {
           <div className="flex-1">{mentor.fullName}</div>
         </div>
 
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center gap-2 p-2">
           <div className="w-72 font-bold">Student</div>
 
           <div className="flex flex-1 flex-col items-center border-opacity-50">
+            <Form method="POST" className="w-full">
+              <button className="btn btn-info btn-block gap-2" type="submit">
+                <FloppyDiskArrowIn />
+                Set available
+              </button>
+            </Form>
+
+            <div className="divider">OR</div>
+
             <Form method="POST" className="flex w-full items-end gap-4">
               <SelectSearch
                 name="studentId"
@@ -137,34 +146,6 @@ export default function Index() {
                 Book
               </button>
             </Form>
-
-            <div className="divider">OR</div>
-
-            <Form method="POST">
-              <button className="btn btn-info w-48 gap-2" type="submit">
-                <FloppyDiskArrowIn />
-                Set available
-              </button>
-            </Form>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 border-b p-2">
-          <div className="w-72 font-bold">Has report?</div>
-          <div className="flex-1">
-            <Xmark className="h-6 w-6 text-error" />
-          </div>
-        </div>
-        <div className="flex items-center gap-2 border-b p-2">
-          <div className="w-72 font-bold">Is report completed?</div>
-          <div className="flex-1">
-            <Xmark className="h-6 w-6 text-error" />
-          </div>
-        </div>
-        <div className="flex items-center gap-2 border-b p-2">
-          <div className="w-72 font-bold">Is report signed off?</div>
-          <div className="flex-1">
-            <Xmark className="h-6 w-6 text-error" />
           </div>
         </div>
       </div>

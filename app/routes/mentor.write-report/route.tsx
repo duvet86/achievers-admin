@@ -190,6 +190,15 @@ export default function Index() {
       document.getElementById("selectedTermDate") as HTMLSelectElement
     ).value;
 
+    if (
+      type !== "remove-complete" &&
+      !confirm(
+        `Please double check the date: ${dayjs(attendedOn).format("DD/MM/YYYY")}`,
+      )
+    ) {
+      return;
+    }
+
     submit(
       {
         type,

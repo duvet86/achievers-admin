@@ -16,7 +16,7 @@ export default defineConfig({
         v3_fetcherPersist: true,
         v3_relativeSplatPath: true,
         v3_throwAbortReason: true,
-        v3_lazyRouteDiscovery: false, //!process.env.CI,
+        v3_lazyRouteDiscovery: !process.env.CI,
         v3_singleFetch: true,
       },
       routes(defineRoutes) {
@@ -69,6 +69,13 @@ export default defineConfig({
               route(
                 ":chapterId/roster-mentors",
                 "routes/admin.chapters.$chapterId.roster-mentors/route.tsx",
+                {
+                  index: true,
+                },
+              );
+              route(
+                ":chapterId/roster-mentors/sessions/:sessionId",
+                "routes/admin.chapters.$chapterId.roster-mentors.sessions.$sessionId/route.tsx",
                 {
                   index: true,
                 },
@@ -138,13 +145,6 @@ export default defineConfig({
             route(
               "school-terms/new",
               "routes/admin.school-terms.new/route.tsx",
-              {
-                index: true,
-              },
-            );
-            route(
-              "sessions/:sessionId",
-              "routes/admin.sessions.$sessionId/route.tsx",
               {
                 index: true,
               },
