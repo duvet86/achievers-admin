@@ -159,31 +159,6 @@ export async function getStudentsForMentorAsync(
     .concat(allStudents);
 }
 
-export async function getSessionsByDateAsync(
-  chapterId: number,
-  attendedOn: Date,
-) {
-  return await prisma.session.findMany({
-    where: {
-      chapterId,
-      attendedOn,
-    },
-    select: {
-      mentorId: true,
-      studentSession: {
-        select: {
-          student: {
-            select: {
-              id: true,
-              fullName: true,
-            },
-          },
-        },
-      },
-    },
-  });
-}
-
 export async function addStudentToSessionAsync(
   sessionId: number,
   studentId: number,

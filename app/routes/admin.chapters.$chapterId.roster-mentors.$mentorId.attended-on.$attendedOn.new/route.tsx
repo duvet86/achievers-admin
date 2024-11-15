@@ -4,6 +4,7 @@ import { redirect } from "@remix-run/node";
 import { Form, useLoaderData, useSearchParams } from "@remix-run/react";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
+import { FloppyDiskArrowIn } from "iconoir-react";
 
 import { Title, SelectSearch } from "~/components";
 
@@ -11,10 +12,8 @@ import {
   createSessionAsync,
   getChapterByIdAsync,
   getStudentsForMentorAsync,
-  getSessionsByDateAsync,
   getMentorByIdAsync,
 } from "./services.server";
-import { FloppyDiskArrowIn } from "iconoir-react";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -23,10 +22,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const selectedMentorId = Number(params.mentorId);
 
-  const [chapter, sessionsForDate] = await Promise.all([
-    getChapterByIdAsync(Number(params.chapterId)),
-    getSessionsByDateAsync(Number(params.chapterId), params.attendedOn),
-  ]);
+  const chapter = await getChapterByIdAsync(Number(params.chapterId));
 
   const mentor = await getMentorByIdAsync(selectedMentorId);
   const students = await getStudentsForMentorAsync(
@@ -34,24 +30,13 @@ export async function loader({ params }: LoaderFunctionArgs) {
     selectedMentorId,
   );
 
-  const studentsInSession = sessionsForDate
-    .filter(({ studentSession }) => studentSession.length > 0)
-    .map(({ studentSession }) => studentSession[0].student.id);
-
   return {
     chapter,
     mentor,
-    students: students.map(({ id, fullName }) => {
-      const isUnavailable = studentsInSession.includes(id);
-
-      return {
-        label:
-          fullName +
-          (isUnavailable ? " (Unavailable - in another session)" : ""),
-        value: id.toString(),
-        isDisabled: isUnavailable,
-      };
-    }),
+    students: students.map(({ id, fullName }) => ({
+      label: fullName,
+      value: id.toString(),
+    })),
     attendedOnLabel: dayjs(params.attendedOn, "YYYY-MM-DD").format(
       "MMMM D, YYYY",
     ),
@@ -66,7 +51,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const selectedStudentId = formData.get("studentId");
 
-  await createSessionAsync({
+  const { id } = await createSessionAsync({
     attendedOn: params.attendedOn,
     chapterId: Number(params.chapterId),
     mentorId: Number(params.mentorId),
@@ -74,13 +59,10 @@ export async function action({ params, request }: ActionFunctionArgs) {
   });
 
   const url = new URL(request.url);
-  const backURL = url.searchParams.get("back_url");
 
-  if (backURL) {
-    return redirect(backURL);
-  }
-
-  return redirect(`/admin/chapters/${params.chapterId}/roster-mentors`);
+  return redirect(
+    `/admin/chapters/${params.chapterId}/roster-mentors/sessions/${id}?${url.searchParams}`,
+  );
 }
 
 export default function Index() {

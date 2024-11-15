@@ -25,7 +25,6 @@ import {
   addStudentToSessionAsync,
   getChapterByIdAsync,
   getSessionByIdAsync,
-  getSessionsByDateAsync,
   getStudentsForMentorAsync,
   removeSessionAsync,
 } from "./services.server";
@@ -34,39 +33,30 @@ export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.sessionId, "sessionId not found");
 
-  const chapter = await getChapterByIdAsync(Number(params.chapterId));
-  const session = await getSessionByIdAsync(Number(params.sessionId));
+  const [chapter, session] = await Promise.all([
+    getChapterByIdAsync(Number(params.chapterId)),
+    getSessionByIdAsync(Number(params.sessionId)),
+  ]);
 
   const students = await getStudentsForMentorAsync(
     session.chapterId,
     session.mentor.id,
   );
 
-  const sessionsForDate = await getSessionsByDateAsync(
-    session.chapterId,
-    session.attendedOn,
+  const studentIdsInSession = session.studentSession.map(
+    ({ student: { id } }) => id,
   );
-
-  const studentsInSession = sessionsForDate
-    .filter(({ studentSession }) => studentSession.length > 0)
-    .map(({ studentSession }) => studentSession[0].student.id);
-
-  const studentsOptions = students.map(({ id, fullName }) => {
-    const isUnavailable = studentsInSession.includes(id);
-
-    return {
-      label:
-        fullName + (isUnavailable ? " (Unavailable - in another session)" : ""),
-      value: id.toString(),
-      isDisabled: isUnavailable,
-    };
-  });
 
   return {
     chapter,
     session,
     attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
-    studentsOptions,
+    students: students
+      .filter(({ id }) => !studentIdsInSession.includes(id))
+      .map(({ id, fullName }) => ({
+        label: fullName,
+        value: id.toString(),
+      })),
   };
 }
 
@@ -102,7 +92,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { attendedOnLabel, chapter, session, studentsOptions } =
+  const { attendedOnLabel, chapter, session, students } =
     useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
@@ -176,7 +166,7 @@ export default function Index() {
           <SelectSearch
             name="studentId"
             placeholder="Select a student"
-            options={studentsOptions}
+            options={students}
             required
             showClearButton
           />

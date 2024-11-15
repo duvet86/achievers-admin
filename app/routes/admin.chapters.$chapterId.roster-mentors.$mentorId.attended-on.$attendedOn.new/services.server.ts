@@ -12,31 +12,6 @@ export interface SessionCommand {
   attendedOn: string;
 }
 
-export async function getSessionsByDateAsync(
-  chapterId: number,
-  attendedOn: string,
-) {
-  return await prisma.session.findMany({
-    where: {
-      chapterId,
-      attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
-    },
-    select: {
-      mentorId: true,
-      studentSession: {
-        select: {
-          student: {
-            select: {
-              id: true,
-              fullName: true,
-            },
-          },
-        },
-      },
-    },
-  });
-}
-
 export async function getChapterByIdAsync(id: number) {
   return await prisma.chapter.findUniqueOrThrow({
     where: {
