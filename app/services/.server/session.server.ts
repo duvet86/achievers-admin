@@ -29,6 +29,7 @@ export interface CurentUserInfo {
   isAdmin: boolean;
   isMentor: boolean;
   isAttendances: boolean;
+  email?: string;
 }
 
 const loginPath = "/.auth/login/aad?post_login_redirect_uri=/";

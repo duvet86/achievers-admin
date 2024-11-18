@@ -46,7 +46,7 @@ export async function action({ request }: ActionFunctionArgs) {
     await submitSupportRequestAsync({
       azureId: loggedUser.oid,
       userId: user?.id,
-      email: user?.email,
+      email: user?.email ?? loggedUser?.email ?? loggedUser.preferred_username,
       description: formData.get("description")!.toString(),
       attachments,
     });

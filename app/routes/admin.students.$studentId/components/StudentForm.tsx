@@ -1,6 +1,5 @@
 import type { SerializeFrom } from "@remix-run/node";
-import type { Navigation } from "@remix-run/router";
-import type { action, loader } from "../route";
+import type { loader } from "../route";
 
 import { Form } from "@remix-run/react";
 
@@ -13,22 +12,20 @@ import {
 } from "~/components";
 
 interface Props {
-  transition: Navigation;
+  isLoading: boolean;
   loaderData: SerializeFrom<typeof loader>;
-  actionData: SerializeFrom<typeof action> | undefined;
 }
 
 export function StudentForm({
-  transition,
+  isLoading,
   loaderData: { student, chapters, yearLevel },
-  actionData,
 }: Props) {
   return (
     <Form
       method="post"
       className="relative flex-1 overflow-y-auto border-primary md:mb-0 md:mr-8 md:border-r md:pr-4"
     >
-      <fieldset disabled={transition.state === "submitting"}>
+      <fieldset disabled={isLoading}>
         <Select
           name="chapterId"
           label="Chapter"
@@ -39,6 +36,7 @@ export function StudentForm({
               value: id.toString(),
             })),
           )}
+          required
         />
 
         <Input
@@ -172,11 +170,7 @@ export function StudentForm({
           name="startDate"
         />
 
-        <SubmitFormButton
-          sticky
-          successMessage={actionData?.successMessage}
-          className="mt-4 justify-between"
-        />
+        <SubmitFormButton sticky className="mt-4 justify-between" />
       </fieldset>
     </Form>
   );

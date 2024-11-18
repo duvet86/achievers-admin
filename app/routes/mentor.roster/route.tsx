@@ -288,6 +288,8 @@ export default function Index() {
                       </div>
                     ))}
 
+                  {mySession && <hr />}
+
                   {studentSessions?.map(
                     ({ id, session, student, completedOn }) => (
                       <div

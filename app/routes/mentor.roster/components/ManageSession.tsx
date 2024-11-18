@@ -2,7 +2,7 @@ import type { Option } from "~/components";
 
 import { Form } from "@remix-run/react";
 import classNames from "classnames";
-import { BookmarkBook, InfoCircle } from "iconoir-react";
+import { BookmarkBook, InfoCircleSolid, Xmark } from "iconoir-react";
 
 import { Select } from "~/components";
 
@@ -48,7 +48,7 @@ export function ManageSession({
                 <input type="hidden" name="attendedOn" value={attendedOn} />
                 <button
                   type="submit"
-                  className="btn btn-success btn-sm w-full sm:w-36"
+                  className="btn btn-success w-full sm:w-36"
                 >
                   <BookmarkBook />
                   Book
@@ -71,17 +71,17 @@ export function ManageSession({
             <input type="hidden" name="action" value="book" />
             <input type="hidden" name="status" value="AVAILABLE" />
             <input type="hidden" name="attendedOn" value={attendedOn} />
-            <button className="btn btn-info btn-sm w-full sm:w-36">
+            <button className="btn btn-info btn-block">
               <BookmarkBook />
               Available
-            </button>
-            <div
-              className="hidden sm:tooltip sm:block"
-              data-tip=" You don't have a student but are available to
+              <div
+                className="hidden sm:tooltip"
+                data-tip=" You don't have a student but are available to
             mentor"
-            >
-              <InfoCircle />
-            </div>
+              >
+                <InfoCircleSolid />
+              </div>
+            </button>
           </Form>
 
           <div className="divider">OR</div>
@@ -93,17 +93,17 @@ export function ManageSession({
             <input type="hidden" name="action" value="book" />
             <input type="hidden" name="status" value="UNAVAILABLE" />
             <input type="hidden" name="attendedOn" value={attendedOn} />
-            <button className="btn btn-error btn-sm w-full sm:w-36">
-              <BookmarkBook />
+            <button className="btn btn-error btn-block">
+              <Xmark />
               Unavailable
-            </button>
-            <div
-              className="hidden sm:tooltip sm:block"
-              data-tip="  You are NOT available to mentor and won't be
+              <div
+                className="hidden sm:tooltip"
+                data-tip="  You are NOT available to mentor and won't be
             contacted"
-            >
-              <InfoCircle />
-            </div>
+              >
+                <InfoCircleSolid />
+              </div>
+            </button>
           </Form>
         </div>
       ) : (

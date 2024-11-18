@@ -3,12 +3,7 @@ import type { Prisma } from "@prisma/client";
 
 import dayjs from "dayjs";
 import { $Enums } from "@prisma/client";
-import {
-  data,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-} from "@remix-run/react";
+import { data, redirect, useLoaderData, useNavigation } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { areEqualIgnoreCase, calculateYearLevel } from "~/services";
@@ -73,10 +68,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       await deleteTeacherByIdAsync(Number(teacherId));
     }
 
-    return {
-      successMessage: "Student successfully updated!",
-      errorMessage: null,
-    };
+    return null;
   }
 
   const firstName = formData.get("firstName")?.toString();
@@ -108,6 +100,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
     ?.toString();
   const startDate = formData.get("startDate")?.toString();
   const chapterId = formData.get("chapterId")?.toString();
+
+  let studentId;
 
   if (areEqualIgnoreCase(params.studentId, "new")) {
     if (firstName === undefined || lastName === undefined) {
@@ -141,7 +135,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       chapterId: Number(chapterId),
     };
 
-    await createNewStudentAsync(dataCreate);
+    studentId = await createNewStudentAsync(dataCreate);
   } else {
     const dataCreate: Prisma.XOR<
       Prisma.StudentUpdateInput,
@@ -170,19 +164,20 @@ export async function action({ request, params }: ActionFunctionArgs) {
       chapterId: Number(chapterId),
     };
 
-    await updateStudentByIdAsync(Number(params.studentId), dataCreate);
+    studentId = await updateStudentByIdAsync(
+      Number(params.studentId),
+      dataCreate,
+    );
   }
 
-  return {
-    successMessage: "Student successfully saved!",
-    errorMessage: null,
-  };
+  return redirect(`/admin/students/${studentId}`);
 }
 
 export default function Index() {
   const loaderData = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
   const transition = useNavigation();
+
+  const isLoading = transition.state !== "idle";
 
   return (
     <div className="flex h-full flex-col">
@@ -191,11 +186,7 @@ export default function Index() {
       <hr className="my-4" />
 
       <div className="content-area md:flex">
-        <StudentForm
-          transition={transition}
-          loaderData={loaderData}
-          actionData={actionData}
-        />
+        <StudentForm isLoading={isLoading} loaderData={loaderData} />
 
         <hr className="my-8 md:hidden" />
 

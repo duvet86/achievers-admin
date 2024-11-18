@@ -57,7 +57,7 @@ export function SelectSearch({
     inputRef.current?.form?.addEventListener("reset", resetHandler);
 
     return () => document.removeEventListener("reset", resetHandler);
-  }, []);
+  }, [defaultValue]);
 
   const onOptionClick = (option: Option) => () => {
     setSelectedValue(option);
