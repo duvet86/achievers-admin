@@ -126,12 +126,17 @@ export function getSessionDatesFormatted(
 ) {
   return getDatesForTerm(currentTerm.start, currentTerm.end)
     .map((attendedOn) => dayjs(attendedOn))
-    .map((attendedOn) => ({
-      value: attendedOn.toISOString(),
-      label: sessionDates.includes(attendedOn.format("YYYY-MM-DD"))
-        ? `** ${attendedOn.format("DD/MM/YYYY")} (Booked) **`
-        : attendedOn.format("DD/MM/YYYY"),
-    }));
+    .map((attendedOn) => {
+      const isBooked = sessionDates.includes(attendedOn.format("YYYY-MM-DD"));
+
+      return {
+        value: attendedOn.toISOString(),
+        label: isBooked
+          ? `** ${attendedOn.format("DD/MM/YYYY")} (Booked) **`
+          : attendedOn.format("DD/MM/YYYY"),
+        isBooked,
+      };
+    });
 }
 
 export async function saveReportAsync(

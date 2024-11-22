@@ -88,7 +88,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   selectedTermDate =
     selectedTermDate ??
     getClosestSessionToToday(
-      sessionDatesFormatted.map(({ value }) => new Date(value)),
+      sessionDatesFormatted
+        .filter(({ isBooked }) => isBooked)
+        .map(({ value }) => new Date(value)),
     ) ??
     sessionDatesFormatted[0].value;
 

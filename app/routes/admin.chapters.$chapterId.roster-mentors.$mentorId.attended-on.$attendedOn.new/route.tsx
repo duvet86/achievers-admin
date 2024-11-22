@@ -4,7 +4,7 @@ import { redirect } from "@remix-run/node";
 import { Form, useLoaderData, useSearchParams } from "@remix-run/react";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
-import { FloppyDiskArrowIn } from "iconoir-react";
+import { FloppyDiskArrowIn, Xmark } from "iconoir-react";
 
 import { Title, SelectSearch } from "~/components";
 
@@ -143,7 +143,7 @@ export default function Index() {
                 name="status"
                 value="UNAVAILABLE"
               >
-                <FloppyDiskArrowIn />
+                <Xmark />
                 Unavailable
               </button>
             </Form>
