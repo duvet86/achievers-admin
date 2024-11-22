@@ -12,6 +12,25 @@ export interface SessionCommand {
   attendedOn: string;
 }
 
+export async function getStudentSessionByDateAsync(
+  chapterId: number,
+  studentId: number,
+  attendedOn: string,
+) {
+  return await prisma.studentSession.findFirst({
+    where: {
+      studentId,
+      session: {
+        chapterId,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      },
+    },
+    select: {
+      id: true,
+    },
+  });
+}
+
 export async function getSessionsByDateAsync(
   chapterId: number,
   attendedOn: string,

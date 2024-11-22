@@ -1,3 +1,5 @@
+import type { $Enums } from "@prisma/client";
+
 import { prisma } from "~/db.server";
 
 import dayjs from "dayjs";
@@ -10,6 +12,26 @@ export interface SessionCommand {
   mentorId: number;
   studentId: number | null;
   attendedOn: string;
+  status: string;
+}
+
+export async function getSessionForDateAsync(
+  chapterId: number,
+  mentorId: number,
+  attendedOn: string,
+) {
+  return await prisma.session.findUnique({
+    where: {
+      mentorId_chapterId_attendedOn: {
+        chapterId,
+        mentorId,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      },
+    },
+    select: {
+      id: true,
+    },
+  });
 }
 
 export async function getChapterByIdAsync(id: number) {
@@ -95,6 +117,7 @@ export async function createSessionAsync({
   mentorId,
   studentId,
   attendedOn,
+  status,
 }: SessionCommand) {
   if (studentId === null) {
     return await prisma.session.create({
@@ -102,7 +125,7 @@ export async function createSessionAsync({
         chapterId,
         mentorId,
         attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
-        status: "AVAILABLE",
+        status: status as $Enums.SessionStatus,
       },
       select: {
         id: true,

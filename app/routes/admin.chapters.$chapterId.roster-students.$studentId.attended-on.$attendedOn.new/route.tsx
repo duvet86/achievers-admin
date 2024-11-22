@@ -13,15 +13,30 @@ import {
   getMentorsForStudentAsync,
   getSessionsByDateAsync,
   getStudentByIdAsync,
+  getStudentSessionByDateAsync,
 } from "./services.server";
 import { Xmark } from "iconoir-react";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
-  invariant(params.attendedOn, "attendedOn not found");
   invariant(params.studentId, "studentId not found");
+  invariant(params.attendedOn, "attendedOn not found");
 
   const selectedStudentId = Number(params.studentId);
+
+  const studentSession = await getStudentSessionByDateAsync(
+    Number(params.chapterId),
+    selectedStudentId,
+    params.attendedOn,
+  );
+
+  if (studentSession !== null) {
+    const url = new URL(request.url);
+
+    return redirect(
+      `/admin/student-sessions/${studentSession.id}/remove?${url.searchParams}`,
+    );
+  }
 
   const [chapter, sessionsForDate] = await Promise.all([
     getChapterByIdAsync(Number(params.chapterId)),

@@ -56,7 +56,7 @@ export async function exportRosterToSpreadsheetAsync(
         let label = "";
         if (studentSessions) {
           if (studentSessions.length === 0) {
-            label = "Marked available";
+            label = "Available";
           } else if (studentSessions.length === 1) {
             label = session.studentSession[0].student.fullName;
           } else {

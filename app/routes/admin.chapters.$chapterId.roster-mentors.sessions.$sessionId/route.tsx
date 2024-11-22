@@ -11,6 +11,7 @@ import {
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import {
+  BookmarkBook,
   Check,
   FloppyDiskArrowIn,
   InfoCircle,
@@ -65,30 +66,47 @@ export async function action({ params, request }: ActionFunctionArgs) {
   invariant(params.sessionId, "sessionId not found");
 
   const formData = await request.formData();
-  const addStudent = formData.get("addStudent");
-  const selectedStudentId = formData.get("studentId");
+  const action = formData.get("action");
 
   const url = new URL(request.url);
 
-  if (addStudent !== null) {
-    const studentSession = await addStudentToSessionAsync(
-      Number(params.sessionId),
-      Number(selectedStudentId),
-    );
+  switch (action) {
+    case "addStudent": {
+      const selectedStudentId = formData.get("studentId");
 
-    return redirect(
-      `/admin/chapters/${studentSession.session.chapterId}/roster-mentors`,
-    );
+      await addStudentToSessionAsync(
+        Number(params.sessionId),
+        Number(selectedStudentId),
+      );
+
+      return null;
+    }
+    case "restore":
+    case "cancelAvailable": {
+      const session = await removeSessionAsync({
+        sessionId: Number(params.sessionId),
+        studentId: null,
+      });
+
+      return redirect(
+        `/admin/chapters/${session.chapterId}/roster-mentors/${session.mentorId}/attended-on/${dayjs(session.attendedOn).format("YYYY-MM-DD")}/new?${url.searchParams}`,
+      );
+    }
+    case "cancelStudent": {
+      const selectedStudentId = formData.get("studentId");
+
+      const session = await removeSessionAsync({
+        sessionId: Number(params.sessionId),
+        studentId: Number(selectedStudentId),
+      });
+
+      return redirect(
+        `/admin/chapters/${session.chapterId}/roster-mentors/${session.mentorId}/attended-on/${dayjs(session.attendedOn).format("YYYY-MM-DD")}/new?${url.searchParams}`,
+      );
+    }
+    default:
+      throw new Error();
   }
-
-  const session = await removeSessionAsync({
-    sessionId: Number(params.sessionId),
-    studentId: selectedStudentId !== null ? Number(selectedStudentId) : null,
-  });
-
-  return redirect(
-    `/admin/chapters/${session.chapterId}/roster-mentors/${session.mentorId}/attended-on/${dayjs(session.attendedOn).format("YYYY-MM-DD")}/new?${url.searchParams}`,
-  );
 }
 
 export default function Index() {
@@ -99,19 +117,43 @@ export default function Index() {
 
   const backURL = searchParams.get("back_url");
 
-  const handleFormSubmit = (studentId: number | null) => () => {
+  const handleRemoveSession = () => {
     if (!confirm(`Are you sure?`)) {
       return;
     }
 
     const formData = new FormData();
-
-    if (studentId !== null) {
-      formData.append("studentId", studentId.toString());
-    }
+    formData.append("action", "cancelAvailable");
 
     submit(formData, {
-      method: "DELETE",
+      method: "POST",
+    });
+  };
+
+  const handleStudentRemoveSession = (studentId: number) => () => {
+    if (!confirm(`Are you sure?`)) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("action", "cancelStudent");
+    formData.append("studentId", studentId.toString());
+
+    submit(formData, {
+      method: "POST",
+    });
+  };
+
+  const handleRestoreUnavailableSession = () => {
+    if (!confirm(`Are you sure?`)) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("action", "restore");
+
+    submit(formData, {
+      method: "POST",
     });
   };
 
@@ -144,118 +186,141 @@ export default function Index() {
           <div className="sm:flex-1">{session.mentor.fullName}</div>
         </div>
 
-        {session.studentSession.length === 0 && (
+        {session.status === "UNAVAILABLE" ? (
           <div className="flex items-center gap-4">
-            <p className="alert alert-info">
+            <p className="alert alert-error">
               <InfoCircle />
-              Mentor is marked as available for this session
+              Mentor is marked as unavailable for this session
             </p>
 
             <button
-              className="btn btn-error w-full sm:w-48"
+              className="btn btn-secondary w-full sm:w-48"
               type="button"
-              onClick={handleFormSubmit(null)}
+              onClick={handleRestoreUnavailableSession}
             >
-              <Trash />
-              Cancel
+              <BookmarkBook />
+              Restore
             </button>
           </div>
+        ) : (
+          session.studentSession.length === 0 && (
+            <div className="flex items-center gap-4">
+              <p className="alert alert-info">
+                <InfoCircle />
+                Mentor is marked as available for this session
+              </p>
+
+              <button
+                className="btn btn-error w-full sm:w-48"
+                type="button"
+                onClick={handleRemoveSession}
+              >
+                <Trash />
+                Cancel
+              </button>
+            </div>
+          )
         )}
 
-        <Form method="POST" className="flex w-full items-end gap-4">
-          <SelectSearch
-            name="studentId"
-            placeholder="Select a student"
-            options={students}
-            required
-            showClearButton
-          />
+        {session.status !== "UNAVAILABLE" && (
+          <>
+            <Form method="POST" className="flex w-full items-end gap-4">
+              <SelectSearch
+                key={session.studentSession.length}
+                name="studentId"
+                placeholder="Select a student"
+                options={students}
+                required
+                showClearButton
+              />
 
-          <button
-            className="btn btn-primary w-48 gap-2"
-            type="submit"
-            name="addStudent"
-            value="addStudent"
-          >
-            <FloppyDiskArrowIn />
-            Book
-          </button>
-        </Form>
+              <button
+                className="btn btn-primary w-48 gap-2"
+                type="submit"
+                name="action"
+                value="addStudent"
+              >
+                <FloppyDiskArrowIn />
+                Book
+              </button>
+            </Form>
 
-        <div className="overflow-auto bg-white">
-          <table className="table">
-            <thead>
-              <tr>
-                <th align="left" className="p-2">
-                  Student
-                </th>
-                <th align="left" className="p-2">
-                  Completed On
-                </th>
-                <th align="left" className="p-2">
-                  Signed Off On
-                </th>
-                <th align="right" className="p-2">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {session.studentSession.map(
-                ({ id, student, completedOn, signedOffOn }) => (
-                  <tr key={id}>
-                    <td className="border p-2">{student.fullName}</td>
-                    <td className="border">
-                      <div className="flex items-center gap-2">
-                        {completedOn ? (
-                          <Check className="text-success" />
-                        ) : (
-                          <Xmark className="text-error" />
-                        )}
-                        <span>
-                          {completedOn &&
-                            dayjs(completedOn).format("MMMM D, YYYY")}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="border p-2">
-                      <div className="flex items-center gap-2">
-                        {signedOffOn ? (
-                          <Check className="text-success" />
-                        ) : (
-                          <Xmark className="text-error" />
-                        )}
-                        <span>
-                          {signedOffOn &&
-                            dayjs(signedOffOn).format("MMMM D, YYYY")}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="border p-2" align="right">
-                      {completedOn ? (
-                        <Link
-                          to={`report?${searchParams.toString()}`}
-                          className="btn btn-success btn-sm"
-                        >
-                          <StatsReport /> Go to report
-                        </Link>
-                      ) : (
-                        <button
-                          className="btn btn-error btn-sm"
-                          type="button"
-                          onClick={handleFormSubmit(student.id)}
-                        >
-                          <Trash />
-                          Cancel
-                        </button>
-                      )}
-                    </td>
+            <div className="overflow-auto bg-white">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th align="left" className="p-2">
+                      Student
+                    </th>
+                    <th align="left" className="p-2">
+                      Completed On
+                    </th>
+                    <th align="left" className="p-2">
+                      Signed Off On
+                    </th>
+                    <th align="right" className="p-2">
+                      Action
+                    </th>
                   </tr>
-                ),
-              )}
-            </tbody>
-          </table>
-        </div>
+                </thead>
+                <tbody>
+                  {session.studentSession.map(
+                    ({ id, student, completedOn, signedOffOn }) => (
+                      <tr key={id}>
+                        <td className="border p-2">{student.fullName}</td>
+                        <td className="border">
+                          <div className="flex items-center gap-2">
+                            {completedOn ? (
+                              <Check className="text-success" />
+                            ) : (
+                              <Xmark className="text-error" />
+                            )}
+                            <span>
+                              {completedOn &&
+                                dayjs(completedOn).format("MMMM D, YYYY")}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="border p-2">
+                          <div className="flex items-center gap-2">
+                            {signedOffOn ? (
+                              <Check className="text-success" />
+                            ) : (
+                              <Xmark className="text-error" />
+                            )}
+                            <span>
+                              {signedOffOn &&
+                                dayjs(signedOffOn).format("MMMM D, YYYY")}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="border p-2" align="right">
+                          {completedOn ? (
+                            <Link
+                              to={`report?${searchParams.toString()}`}
+                              className="btn btn-success btn-sm"
+                            >
+                              <StatsReport /> Go to report
+                            </Link>
+                          ) : (
+                            <button
+                              className="btn btn-error btn-sm"
+                              type="button"
+                              onClick={handleStudentRemoveSession(student.id)}
+                            >
+                              <Trash />
+                              Cancel
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ),
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
       </div>
     </>
   );

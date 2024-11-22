@@ -232,7 +232,7 @@ export default function Index() {
                         <>
                           <div className="flex items-center justify-center gap-2 text-success sm:justify-start">
                             <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
-                            <span>Marked available</span>
+                            <span>Available</span>
                           </div>
                           <button
                             className="btn btn-error btn-sm w-full sm:w-36"
@@ -249,7 +249,7 @@ export default function Index() {
                         <>
                           <div className="flex items-center justify-center gap-2 text-error sm:justify-start">
                             <ThumbsDown className="h-4 w-4 sm:h-6 sm:w-6" />
-                            <span>Marked UNavailable</span>
+                            <span>Unavailable</span>
                           </div>
                           <button
                             className="btn btn-primary btn-sm w-full sm:w-36"

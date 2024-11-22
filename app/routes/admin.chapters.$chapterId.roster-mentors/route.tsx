@@ -233,24 +233,28 @@ export default function Index() {
                   const session = sessionLookup[attendedOn];
 
                   const sessionId = session?.id;
-                  const studentSessions = session?.studentSession;
 
-                  let studentSession = null;
                   let hasReport = false;
                   let label = "";
                   let textHighlight = false;
-                  if (studentSessions) {
-                    if (studentSessions.length === 0) {
-                      textHighlight = true;
-                      label = "Marked available";
-                    } else if (studentSessions.length === 1) {
-                      studentSession = session.studentSession[0];
-                      hasReport = studentSession.hasReport;
+                  let textHighlightError = false;
 
-                      label = studentSession.student.fullName;
+                  if (session) {
+                    if (session.status === "UNAVAILABLE") {
+                      textHighlightError = true;
+                      label = "Unavailable";
                     } else {
-                      textHighlight = true;
-                      label = `${studentSessions.length} Students`;
+                      if (session.studentSession.length === 0) {
+                        textHighlight = true;
+                        label = "Available";
+                      } else if (session.studentSession.length === 1) {
+                        const studentSession = session.studentSession[0];
+                        hasReport = studentSession.hasReport;
+
+                        label = studentSession.student.fullName;
+                      } else {
+                        label = `${session.studentSession.length} Students`;
+                      }
                     }
                   }
 
@@ -280,6 +284,7 @@ export default function Index() {
                             "btn btn-ghost btn-block justify-between font-bold",
                             {
                               "text-info": textHighlight,
+                              "text-error": textHighlightError,
                             },
                           )}
                         >

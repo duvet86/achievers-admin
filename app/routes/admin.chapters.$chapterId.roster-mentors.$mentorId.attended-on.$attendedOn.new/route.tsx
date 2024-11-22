@@ -13,14 +13,29 @@ import {
   getChapterByIdAsync,
   getStudentsForMentorAsync,
   getMentorByIdAsync,
+  getSessionForDateAsync,
 } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
-  invariant(params.attendedOn, "attendedOn not found");
   invariant(params.mentorId, "mentorId not found");
+  invariant(params.attendedOn, "attendedOn not found");
 
   const selectedMentorId = Number(params.mentorId);
+
+  const session = await getSessionForDateAsync(
+    Number(params.chapterId),
+    Number(params.mentorId),
+    params.attendedOn,
+  );
+
+  if (session !== null) {
+    const url = new URL(request.url);
+
+    return redirect(
+      `/admin/chapters/${params.chapterId}/roster-mentors/sessions/${session.id}?${url.searchParams}`,
+    );
+  }
 
   const chapter = await getChapterByIdAsync(Number(params.chapterId));
 
@@ -49,6 +64,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
   invariant(params.mentorId, "mentorId not found");
 
   const formData = await request.formData();
+  const status = formData.get("status")!;
   const selectedStudentId = formData.get("studentId");
 
   const { id } = await createSessionAsync({
@@ -56,6 +72,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
     chapterId: Number(params.chapterId),
     mentorId: Number(params.mentorId),
     studentId: selectedStudentId ? Number(selectedStudentId) : null,
+    status: status.toString(),
   });
 
   const url = new URL(request.url);
@@ -106,9 +123,28 @@ export default function Index() {
 
           <div className="flex flex-1 flex-col items-center border-opacity-50">
             <Form method="POST" className="w-full">
-              <button className="btn btn-info btn-block gap-2" type="submit">
+              <button
+                className="btn btn-info btn-block gap-2"
+                type="submit"
+                name="status"
+                value="AVAILABLE"
+              >
                 <FloppyDiskArrowIn />
-                Set available
+                Available
+              </button>
+            </Form>
+
+            <div className="divider">OR</div>
+
+            <Form method="POST" className="w-full">
+              <button
+                className="btn btn-error btn-block gap-2"
+                type="submit"
+                name="status"
+                value="UNAVAILABLE"
+              >
+                <FloppyDiskArrowIn />
+                Unavailable
               </button>
             </Form>
 

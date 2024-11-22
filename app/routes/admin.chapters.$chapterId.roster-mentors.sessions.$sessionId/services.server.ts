@@ -36,6 +36,7 @@ export async function getSessionByIdAsync(sessionId: number) {
       id: true,
       chapterId: true,
       attendedOn: true,
+      status: true,
       mentor: {
         select: {
           id: true,
