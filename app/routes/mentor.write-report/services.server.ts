@@ -32,7 +32,7 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
   });
 }
 
-export async function getReportForSessionDateAsync(
+export async function geSessionAsync(
   mentorId: number,
   studentId: number,
   chapterId: number,
@@ -84,7 +84,7 @@ export async function getReportForSessionDateAsync(
     },
   });
 
-  return { ...studentSession, session };
+  return { ...session, studentSession };
 }
 
 export async function getMentorSessionDatesAsync(

@@ -38,7 +38,7 @@ import {
 } from "~/services/.server";
 
 import {
-  getReportForSessionDateAsync,
+  geSessionAsync,
   getMentorSessionDatesAsync,
   getUserByAzureADIdAsync,
   saveReportAsync,
@@ -94,14 +94,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
     ) ??
     sessionDatesFormatted[0].value;
 
-  const studentSession = selectedTermDate
-    ? await getReportForSessionDateAsync(
+  const session = selectedTermDate
+    ? await geSessionAsync(
         user.id,
         Number(selectedStudentId),
         user.chapterId,
         selectedTermDate,
       )
     : null;
+
+  const isNotMyReport = session !== null && session.mentorId !== user.id;
 
   return {
     students,
@@ -113,9 +115,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${currentTerm.name === name ? " (Current)" : ""}`,
     })),
     sessionDates: sessionDatesFormatted,
-    studentSession,
-    isNotMyReport:
-      studentSession !== null && studentSession.session.mentorId !== user.id,
+    session,
+    isNotMyReport,
+    isReadOnlyEditor:
+      session?.studentSession != null &&
+      (session.studentSession.completedOn !== null ||
+        session.studentSession.signedOffOn !== null ||
+        isNotMyReport),
   };
 }
 
@@ -154,7 +160,7 @@ export default function Index() {
   const [searchParams] = useSearchParams();
 
   const {
-    studentSession,
+    session,
     selectedTerm,
     selectedTermDate,
     selectedStudentId,
@@ -162,14 +168,12 @@ export default function Index() {
     sessionDates,
     students,
     isNotMyReport,
+    isReadOnlyEditor,
   } = data ?? initialData;
 
   const isLoading = state !== "idle";
-  const isReadOnlyEditor =
-    studentSession !== null &&
-    (studentSession.completedOn !== null ||
-      studentSession.signedOffOn !== null ||
-      isNotMyReport);
+
+  const studentSession = session?.studentSession;
 
   const signedOffOn = studentSession?.signedOffOn;
   const completedOn = studentSession?.completedOn;
@@ -236,9 +240,7 @@ export default function Index() {
           <p className="flex items-center gap-2 rounded bg-info px-6 py-2">
             <WarningTriangle className="h-6 w-6" />
             Written By{" "}
-            <span className="font-bold">
-              {studentSession.session.mentor.fullName}
-            </span>
+            <span className="font-bold">{session?.mentor.fullName}</span>
           </p>
         )}
       </div>
