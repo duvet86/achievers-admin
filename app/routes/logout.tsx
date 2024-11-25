@@ -2,7 +2,7 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import { redirect } from "react-router";
 
 import { getCurrentHost, isProduction } from "~/services";
-import { authenticator_dev } from "~/services/.server/session-dev.server";
+import { sessionStorage_dev } from "~/services/.server/session-dev.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   if (isProduction()) {
@@ -10,6 +10,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
       getCurrentHost(request) + "/.auth/logout?post_logout_redirect_uri=/",
     );
   } else {
-    return await authenticator_dev.logout(request, { redirectTo: "/" });
+    const session = await sessionStorage_dev.getSession(
+      request.headers.get("cookie"),
+    );
+
+    return redirect("/", {
+      headers: {
+        "Set-Cookie": await sessionStorage_dev.destroySession(session),
+      },
+    });
   }
 }

@@ -7,7 +7,7 @@ import { redirect } from "@remix-run/node";
 import { getCurrentHost, parseJwt } from "../utils";
 
 import { trackException } from "./appinsights-logging.server";
-import { getSessionInfoAsync_dev } from "./session-dev.server";
+import { authenticator_dev, sessionStorage_dev } from "./session-dev.server";
 import { createAbility } from "./permissions.server";
 
 export interface CurentUserInfo {
@@ -36,7 +36,18 @@ const loginPath = "/.auth/login/aad?post_login_redirect_uri=/";
 
 export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
   if (process.env.CI ?? process.env.NODE_ENV !== "production") {
-    return await getSessionInfoAsync_dev(request);
+    const session = await sessionStorage_dev.getSession(
+      request.headers.get("cookie"),
+    );
+    const user = session.get("user") as TokenInfo | undefined;
+
+    if (user === undefined) {
+      await sessionStorage_dev.destroySession(session);
+
+      return await authenticator_dev.authenticate("microsoft", request);
+    }
+
+    return user;
   } else {
     const idToken = request.headers.get("X-MS-TOKEN-AAD-ID-TOKEN");
     const accessToken = request.headers.get("X-MS-TOKEN-AAD-ACCESS-TOKEN");

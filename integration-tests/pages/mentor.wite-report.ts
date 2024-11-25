@@ -24,7 +24,7 @@ export class MentorWriteReportPage {
 
   constructor(private page: Page) {
     this.header = page.getByRole("heading", {
-      name: 'Report of "26/10/2024"',
+      name: 'Report of "23/11/2024"',
     });
 
     this.termSelect = page.getByLabel("Term");
@@ -83,7 +83,7 @@ export class MentorWriteReportPageAssertions {
   async toHaveSelectedInputs(): Promise<void> {
     await expect(this.page.termSelect).toHaveValue("Term 4");
     await expect(this.page.sessionDateSelect).toHaveValue(
-      "2024-10-26T00:00:00.000Z",
+      "2024-11-23T00:00:00.000Z",
     );
     await expect(this.page.studentSelect).toHaveValue("1");
   }

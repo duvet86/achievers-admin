@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { seedDataAsync } from "../test-data";
+import { seedBookSessionAsync, seedDataAsync } from "../test-data";
 
 import { AdminLayoutPage } from "integration-tests/pages/admin-layout.page";
 import { MentorLayoutPage } from "integration-tests/pages/mentor-layout.page";
@@ -42,7 +42,9 @@ test.describe("Mentor Home Page", () => {
     await mentorRosterPage.expect.toHaveHeading();
   });
 
-  test("should have write report", async () => {
+  test("should write report", async () => {
+    await seedBookSessionAsync();
+
     await mentorLayoutPage.goToWriteReportPage();
 
     await mentorWriteReportPage.expect.toHaveHeading();

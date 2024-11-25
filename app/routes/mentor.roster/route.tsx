@@ -268,25 +268,35 @@ export default function Index() {
 
                   {mySession &&
                     mySession.studentSession.length > 0 &&
-                    mySession.studentSession.map(({ id, student }) => (
-                      <div
-                        key={id}
-                        className="flex flex-col items-center justify-between gap-2 sm:flex-row"
-                      >
-                        <div className="flex items-center justify-center gap-2 text-success sm:justify-start">
-                          <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
-                          <span>Booked with</span>{" "}
-                          <span className="font-bold">{student.fullName}</span>
-                        </div>
-                        <button
-                          onClick={handleCancelSessionSubmit(mySession.id, id)}
-                          className="btn btn-error btn-sm w-full sm:w-36"
+                    mySession.studentSession.map(
+                      ({ id, student, hasReport }) => (
+                        <div
+                          key={id}
+                          className="flex flex-col items-center justify-between gap-2 sm:flex-row"
                         >
-                          <BookmarkBook />
-                          Cancel
-                        </button>
-                      </div>
-                    ))}
+                          <div className="flex items-center justify-center gap-2 text-success sm:justify-start">
+                            <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
+                            <span>Booked with</span>{" "}
+                            <span className="font-bold">
+                              {student.fullName}
+                            </span>
+                          </div>
+
+                          {!hasReport && (
+                            <button
+                              onClick={handleCancelSessionSubmit(
+                                mySession.id,
+                                id,
+                              )}
+                              className="btn btn-error btn-sm w-full sm:w-36"
+                            >
+                              <BookmarkBook />
+                              Cancel
+                            </button>
+                          )}
+                        </div>
+                      ),
+                    )}
 
                   {mySession && <hr />}
 

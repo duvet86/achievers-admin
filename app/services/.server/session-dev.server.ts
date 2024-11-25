@@ -2,21 +2,21 @@ import type { TokenInfo } from "../models";
 
 import path from "node:path";
 
+import { Authenticator } from "remix-auth";
+import invariant from "tiny-invariant";
+
+import { OAuth2Strategy } from "remix-auth-oauth2";
 import {
   createCookie,
   createFileSessionStorage,
   redirect,
 } from "@remix-run/node";
-import { Authenticator } from "remix-auth";
-import invariant from "tiny-invariant";
 
-import { MicrosoftStrategy, SCOPE } from "./auth.server";
-
-invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");
 invariant(process.env.CLIENT_SECRET, "CLIENT_SECRET must be set");
 invariant(process.env.TENANT_ID, "TENANT_ID must be set");
 invariant(process.env.REDIRECT_URI, "REDIRECT_URI must be set");
+invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 
 const sessionCookie = createCookie("__session", {
   sameSite: "lax", // this helps with CSRF
@@ -25,60 +25,36 @@ const sessionCookie = createCookie("__session", {
   secrets: [process.env.SESSION_SECRET], // replace this with an actual secret
 });
 
-const sessionStorage_dev = createFileSessionStorage({
+export const sessionStorage_dev = createFileSessionStorage({
   cookie: sessionCookie,
   dir: path.join(process.cwd(), "dev_sessions"),
 });
 
-export const authenticator_dev = new Authenticator<TokenInfo>(
-  sessionStorage_dev,
-);
+export const authenticator_dev = new Authenticator<TokenInfo>();
 
-export async function getSessionInfoAsync_dev(
-  request: Request,
-): Promise<TokenInfo> {
-  const tokenInfo = await authenticator_dev.isAuthenticated(request, {
-    failureRedirect: "/auth/microsoft",
-  });
-
-  if (
-    new Date() >=
-    new Date(
-      new Date(tokenInfo.issuedAt).setSeconds(Number(tokenInfo.expiresOn)),
-    )
-  ) {
-    throw redirect("/logout");
-  }
-
-  return tokenInfo;
-}
-
-export async function getSessionError_dev(request: Request) {
-  const cookie = request.headers.get("Cookie");
-  const session = await sessionStorage_dev.getSession(cookie);
-
-  const error: unknown = session.get(authenticator_dev.sessionErrorKey);
-
-  return error;
-}
-
-const microsoftStrategy = new MicrosoftStrategy(
+const strategy = new OAuth2Strategy(
   {
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
+
+    authorizationEndpoint: `https://login.microsoftonline.com/${process.env.TENANT_ID}/oauth2/v2.0/authorize`,
+    tokenEndpoint: `https://login.microsoftonline.com/${process.env.TENANT_ID}/oauth2/v2.0/token`,
     redirectURI: process.env.REDIRECT_URI,
-    tenantId: process.env.TENANT_ID,
-    scopes: SCOPE,
-    prompt: "login",
+    scopes: ["openid", "profile", "email", "offline_access"],
   },
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async ({ tokens }) => ({
-    idToken: tokens.id_token,
-    accessToken: tokens.access_token,
-    expiresOn: tokens.expires_in.toString(),
-    refreshToken: tokens.refresh_token ?? null,
-    issuedAt: new Date().toISOString(),
-  }),
+  ({ tokens }) => {
+    if (new Date() >= tokens.accessTokenExpiresAt()) {
+      throw redirect("/logout");
+    }
+
+    return Promise.resolve({
+      idToken: tokens.idToken(),
+      accessToken: tokens.accessToken(),
+      expiresOn: tokens.accessTokenExpiresAt().toISOString(),
+      refreshToken: tokens.hasRefreshToken() ? tokens.refreshToken() : null,
+      issuedAt: new Date().toISOString(),
+    });
+  },
 );
 
-authenticator_dev.use(microsoftStrategy);
+authenticator_dev.use(strategy, "microsoft");

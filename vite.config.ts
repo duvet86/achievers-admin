@@ -28,9 +28,6 @@ export default defineConfig({
               index: true,
             },
           );
-          route("auth/microsoft", "routes/auth.microsoft.tsx", {
-            index: true,
-          });
           route(
             "chapters/:chapterId/attendances",
             "routes/chapters.$chapterId.attendances/route.tsx",
@@ -400,9 +397,6 @@ export default defineConfig({
             index: true,
           });
           route("403", "routes/403.tsx", {
-            index: true,
-          });
-          route("error", "routes/error.tsx", {
             index: true,
           });
           route("healthcheck", "routes/healthcheck.tsx", {
