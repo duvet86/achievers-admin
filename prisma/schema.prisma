@@ -223,7 +223,8 @@ model Chapter {
   student Student[]
   session Session[]
 
-  mentorAttendance MentorAttendance[]
+  mentorAttendance  MentorAttendance[]
+  studentAttendance StudentAttendance[]
 }
 
 model Student {
@@ -262,6 +263,7 @@ model Student {
 
   mentorToStudentAssignement MentorToStudentAssignement[]
   studentSession             StudentSession[]
+  studentAttendance          StudentAttendance[]
 
   importedStudentHistory ImportedStudentHistory?
 }
@@ -338,6 +340,17 @@ model MentorAttendance {
   attendedOn DateTime
 
   @@unique([chapterId, userId, attendedOn])
+}
+
+model StudentAttendance {
+  id         Int      @id @default(autoincrement())
+  chapter    Chapter  @relation(fields: [chapterId], references: [id])
+  chapterId  Int
+  student    Student  @relation(fields: [studentId], references: [id])
+  studentId  Int
+  attendedOn DateTime
+
+  @@unique([chapterId, studentId, attendedOn])
 }
 
 model Session {

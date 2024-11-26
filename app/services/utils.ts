@@ -268,7 +268,6 @@ export function getClosestSessionToToday(dates: Date[]) {
   }
 
   const today = new Date();
-  console.log("today", today.toISOString());
 
   const closest = dates.reduce((a, b) => {
     const adiff = a.getTime() - today.getTime();

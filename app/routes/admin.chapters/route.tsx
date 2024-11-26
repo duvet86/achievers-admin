@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { useLoaderData, Link } from "@remix-run/react";
-import { PageEdit, Group, Calendar, GraduationCap } from "iconoir-react";
+import { UserPlus, Calendar, Community } from "iconoir-react";
 
 import {
   getLoggedUserInfoAsync,
@@ -35,39 +35,50 @@ export default function Index() {
             <h2 className="card-title uppercase">{name}</h2>
             <p className="mb-6">{address}</p>
             <div className="card-actions justify-center">
-              <Link
-                to={`${id}/roster-students`}
-                className="btn btn-accent w-64 gap-2"
-              >
-                <Calendar className="h-4 w-4" />
-                Roster STUDENTS
-              </Link>
+              <div className="join join-vertical w-full sm:join-horizontal sm:w-auto">
+                <Link
+                  to={`${id}/roster-students`}
+                  className="btn btn-accent join-item"
+                >
+                  <Calendar />
+                  Roster STUDENTS
+                </Link>
+                <Link
+                  to={`${id}/roster-mentors`}
+                  className="btn btn-accent join-item"
+                >
+                  <Calendar />
+                  Roster MENTORS
+                </Link>
+              </div>
 
-              <Link
-                to={`${id}/roster-mentors`}
-                className="btn btn-accent w-64 gap-2"
-              >
-                <Calendar className="h-4 w-4" />
-                Roster MENTORS
-              </Link>
+              <div className="join join-vertical w-full sm:join-horizontal sm:w-auto">
+                <Link to={`${id}/students`} className="btn join-item">
+                  <UserPlus />
+                  Assign: STUDENT LIST
+                </Link>
+                <Link to={`${id}/mentors`} className="btn join-item">
+                  <UserPlus />
+                  Assign: MENTOR LIST
+                </Link>
+              </div>
 
-              <Link to={`${id}/students`} className="btn w-64 gap-2">
-                <GraduationCap className="h-4 w-4" />
-                Assign: STUDENT LIST
-              </Link>
-
-              <Link to={`${id}/mentors`} className="btn w-64 gap-2">
-                <Group className="h-4 w-4" />
-                Assign: MENTOR LIST
-              </Link>
-
-              <Link
-                to={`/admin/student-sessions?chapterId=${id}`}
-                className="btn btn-success w-64 gap-2"
-              >
-                <PageEdit className="h-4 w-4" />
-                Reports
-              </Link>
+              <div className="join join-vertical w-full sm:join-horizontal sm:w-auto">
+                <Link
+                  to={`/admin/chapters/${id}/attendances/mentors`}
+                  className="btn btn-info join-item"
+                >
+                  <Community />
+                  Attendances: MENTORS
+                </Link>
+                <Link
+                  to={`/admin/chapters/${id}/attendances/students`}
+                  className="btn btn-info join-item"
+                >
+                  <Community />
+                  Attendances: STUDENTS
+                </Link>
+              </div>
             </div>
           </div>
         </div>

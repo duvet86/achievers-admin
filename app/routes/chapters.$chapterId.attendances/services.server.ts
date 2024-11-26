@@ -1,91 +1,12 @@
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-
 import { prisma } from "~/db.server";
-import { isStringNullOrEmpty } from "~/services";
 
-dayjs.extend(utc);
-
-export async function getMentorsForSession(
-  chapterId: number,
-  searchTerm: string | null,
-) {
-  return await prisma.user.findMany({
+export async function getChapterAsync(chapterId: number) {
+  return await prisma.chapter.findUniqueOrThrow({
     where: {
-      endDate: null,
-      chapterId,
-      fullName: isStringNullOrEmpty(searchTerm)
-        ? undefined
-        : {
-            contains: searchTerm.trim(),
-          },
-    },
-    orderBy: {
-      fullName: "asc",
+      id: chapterId,
     },
     select: {
-      id: true,
-      fullName: true,
-    },
-  });
-}
-
-export async function getMentorAttendancesLookup(
-  chapterId: number,
-  sessionDate: string,
-) {
-  const attendaces = await prisma.mentorAttendance.findMany({
-    where: {
-      chapterId,
-      attendedOn: dayjs.utc(sessionDate, "YYYY-MM-DD").toDate(),
-    },
-    select: {
-      id: true,
-      user: {
-        select: {
-          id: true,
-          fullName: true,
-        },
-      },
-    },
-  });
-
-  return attendaces.reduce<
-    Record<
-      number,
-      {
-        id: number;
-        user: {
-          id: number;
-          fullName: string;
-        };
-      }
-    >
-  >((result, attendace) => {
-    result[attendace.user.id] = attendace;
-
-    return result;
-  }, {});
-}
-
-export async function attendSession(
-  chapterId: number,
-  mentorId: number,
-  attendedOn: string,
-) {
-  return await prisma.mentorAttendance.create({
-    data: {
-      chapterId,
-      userId: mentorId,
-      attendedOn,
-    },
-  });
-}
-
-export async function removeAttendace(attendanceId: number) {
-  return await prisma.mentorAttendance.delete({
-    where: {
-      id: attendanceId,
+      name: true,
     },
   });
 }

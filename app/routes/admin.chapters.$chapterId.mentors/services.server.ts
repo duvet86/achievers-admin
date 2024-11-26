@@ -1,4 +1,4 @@
-import type { Chapter, Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
@@ -15,7 +15,7 @@ function getOR(searchTerm: string | null) {
 }
 
 export async function getStudentsCountAsync(
-  chapterId: Chapter["id"],
+  chapterId: number,
   searchTerm: string | null,
 ) {
   return prisma.user.count({
@@ -28,7 +28,7 @@ export async function getStudentsCountAsync(
 }
 
 export async function getMentorsWithStudentsAsync(
-  chapterId: Chapter["id"],
+  chapterId: number,
   searchTerm: string | null,
   pageNumber: number,
   sortFullName: Prisma.SortOrder | undefined,

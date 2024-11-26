@@ -30,11 +30,28 @@ export default defineConfig({
           );
           route(
             "chapters/:chapterId/attendances",
-            "routes/chapters.$chapterId.attendances/route.tsx",
-            {
-              index: true,
+            "routes/chapters.$chapterId.attendances/layout.tsx",
+            () => {
+              route("", "routes/chapters.$chapterId.attendances/route.tsx", {
+                index: true,
+              });
+              route(
+                "mentors",
+                "routes/chapters.$chapterId.attendances.mentors/route.tsx",
+                {
+                  index: true,
+                },
+              );
+              route(
+                "students",
+                "routes/chapters.$chapterId.attendances.students/route.tsx",
+                {
+                  index: true,
+                },
+              );
             },
           );
+
           route("/", "routes/root/route.tsx", { index: true });
           route("admin", "routes/admin/layout.tsx", () => {
             route("home", "routes/admin.home/route.tsx", { index: true });
@@ -115,6 +132,20 @@ export default defineConfig({
               route(
                 ":chapterId/students/:studentId",
                 "routes/admin.chapters.$chapterId.students.$studentId/route.tsx",
+                {
+                  index: true,
+                },
+              );
+              route(
+                ":chapterId/attendances/mentors",
+                "routes/admin.chapters.$chapterId.attendances.mentors/route.tsx",
+                {
+                  index: true,
+                },
+              );
+              route(
+                ":chapterId/attendances/students",
+                "routes/admin.chapters.$chapterId.attendances.students/route.tsx",
                 {
                   index: true,
                 },

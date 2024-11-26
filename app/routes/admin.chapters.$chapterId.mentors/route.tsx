@@ -4,7 +4,7 @@ import type { Prisma } from "@prisma/client";
 import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { useRef } from "react";
-
+import classNames from "classnames";
 import { CoinsSwap, PageEdit } from "iconoir-react";
 
 import { getPaginationRange } from "~/services";
@@ -15,7 +15,6 @@ import {
   getStudentsCountAsync,
 } from "./services.server";
 import FormInputs from "./components/FormInputs";
-import classNames from "classnames";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
