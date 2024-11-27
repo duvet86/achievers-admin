@@ -1,7 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
-import { useLoaderData, Link } from "@remix-run/react";
-import { PageEdit, Plus } from "iconoir-react";
+import { useLoaderData } from "@remix-run/react";
 
 import { getAzureUsersWithRolesAsync } from "~/services/.server";
 import { Title } from "~/components";
@@ -16,7 +15,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
     .filter(
       ({ appRoleAssignments }) =>
         appRoleAssignments.length > 0 &&
-        !appRoleAssignments.map(({ roleName }) => roleName).includes("Mentor"),
+        !(
+          appRoleAssignments.length === 1 &&
+          appRoleAssignments.map(({ roleName }) => roleName).includes("Mentor")
+        ),
     )
     .map((user) => ({
       ...user,
@@ -54,16 +56,15 @@ export default function Index() {
       <hr className="my-4" />
 
       <div className="mt-2 overflow-auto bg-white">
-        <table className="table">
+        <table className="table table-pin-rows">
           <thead>
             <tr>
               <th align="left" className="w-14">
                 #
               </th>
-              <th align="left">Full name</th>
+              <th align="left">Name</th>
               <th align="left">Email</th>
               <th align="left">Permissions</th>
-              <th align="right">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -80,26 +81,10 @@ export default function Index() {
                 <td className="border">{displayName}</td>
                 <td className="border">{email}</td>
                 <td className="border">{roles.join(", ")}</td>
-                <td className="border">
-                  <Link to="" className="btn btn-success btn-xs w-full gap-2">
-                    <PageEdit className="hidden h-4 w-4 lg:block" />
-                    Edit
-                  </Link>
-                </td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
-
-      <div className="mt-4 flex flex-row justify-end">
-        <Link
-          className="btn btn-primary mt-4 w-56 gap-4 lg:mt-0"
-          to="/admin/permissions/add-user"
-        >
-          <Plus className="h-6 w-6" />
-          Add user
-        </Link>
       </div>
     </>
   );
