@@ -1,17 +1,11 @@
-import type { HTMLInputTypeAttribute } from "react";
-
 import { Xmark } from "iconoir-react";
 
-interface Props {
-  name: string;
-  placeholder?: string;
+interface Props
+  extends React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  > {
   label?: string;
-  defaultValue?: string;
-  type?: HTMLInputTypeAttribute;
-  readOnly?: boolean;
-  disabled?: boolean;
-  required?: boolean;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
   hasButton?: boolean;
   onButtonClick?: React.MouseEventHandler<HTMLButtonElement>;
 }

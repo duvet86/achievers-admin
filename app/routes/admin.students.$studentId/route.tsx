@@ -47,7 +47,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return {
     title: "Edit student info",
     student,
-    yearLevel: calculateYearLevel(student.dateOfBirth)?.toString(),
+    yearLevelCalculated:
+      student.yearLevel === null
+        ? calculateYearLevel(student.dateOfBirth)?.toString()
+        : null,
     isNewStudent,
     chapters,
   };
@@ -74,6 +77,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const firstName = formData.get("firstName")?.toString();
   const lastName = formData.get("lastName")?.toString();
   const dateOfBirth = formData.get("dateOfBirth")?.toString();
+  const yearLevel = formData.get("yearLevel")?.toString();
   const gender = formData.get("gender")?.toString();
   const address = formData.get("address")?.toString();
   const allergies = formData.get("allergies")?.toString();
@@ -116,6 +120,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       lastName,
       gender: gender === "MALE" ? $Enums.Gender.MALE : $Enums.Gender.FEMALE,
       dateOfBirth: dateOfBirth ? dayjs(dateOfBirth).toDate() : null,
+      yearLevel: yearLevel ? Number(yearLevel) : null,
       address,
       allergies: allergies ? (allergies === "true" ? true : false) : undefined,
       hasApprovedToPublishPhotos: hasApprovedToPublishPhotos
@@ -145,6 +150,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       lastName,
       gender: gender === "MALE" ? $Enums.Gender.MALE : $Enums.Gender.FEMALE,
       dateOfBirth: dateOfBirth ? dayjs(dateOfBirth).toDate() : null,
+      yearLevel: yearLevel ? Number(yearLevel) : null,
       address,
       allergies: allergies ? (allergies === "true" ? true : false) : undefined,
       hasApprovedToPublishPhotos: hasApprovedToPublishPhotos

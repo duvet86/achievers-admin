@@ -62,6 +62,7 @@ export async function getStudentsAsync(
       fullName: true,
       endDate: true,
       dateOfBirth: true,
+      yearLevel: true,
       chapter: {
         select: {
           name: true,
@@ -102,6 +103,6 @@ export async function getStudentsAsync(
 
   return students.map((student) => ({
     ...student,
-    yearLevel: calculateYearLevel(student.dateOfBirth),
+    yearLevel: student.yearLevel ?? calculateYearLevel(student.dateOfBirth),
   }));
 }

@@ -18,7 +18,7 @@ interface Props {
 
 export function StudentForm({
   isLoading,
-  loaderData: { student, chapters, yearLevel },
+  loaderData: { student, chapters, yearLevelCalculated },
 }: Props) {
   return (
     <Form
@@ -71,15 +71,22 @@ export function StudentForm({
         />
 
         <Input
-          defaultValue={yearLevel ?? ""}
-          label="Year level (calculated from the DoB)"
-          name="address"
-          disabled
-          readOnly
+          type="number"
+          min="1"
+          max="12"
+          defaultValue={
+            student?.yearLevel?.toString() ?? yearLevelCalculated ?? ""
+          }
+          label={
+            yearLevelCalculated == null
+              ? "Year level"
+              : "Year level (calculated from the DoB)"
+          }
+          name="yearLevel"
         />
 
         <Input
-          defaultValue={student?.address ?? undefined}
+          defaultValue={student?.address ?? ""}
           label="Address"
           name="address"
         />

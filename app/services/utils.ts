@@ -172,7 +172,7 @@ export function calculateYearLevel(dateOfBirth: Date | null): number | null {
     return 0;
   }
 
-  return null;
+  return 12;
 }
 
 export function getPaginationRange(

@@ -28,6 +28,7 @@ export async function getStudentByIdAsync(id: number) {
       gender: true,
       address: true,
       allergies: true,
+      yearLevel: true,
       hasApprovedToPublishPhotos: true,
       bestPersonToContact: true,
       bestContactMethod: true,
