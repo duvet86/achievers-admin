@@ -1,14 +1,12 @@
-import {
-  unstable_createMemoryUploadHandler,
-  unstable_parseMultipartFormData,
-  type ActionFunctionArgs,
-} from "@remix-run/node";
+import { type ActionFunctionArgs } from "react-router";
 
+import { parseFormData } from "@mjackson/form-data-parser";
 import { getLoggedUserInfoAsync, trackException } from "~/services/.server";
 
 import {
   getUserByAzureADIdAsync,
   submitSupportRequestAsync,
+  uploadHandler,
 } from "./services.server";
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -16,12 +14,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const loggedUser = await getLoggedUserInfoAsync(request);
     const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
-    const uploadHandler = unstable_createMemoryUploadHandler();
-
-    const formData = await unstable_parseMultipartFormData(
-      request,
-      uploadHandler,
-    );
+    const formData = await parseFormData(request, uploadHandler);
 
     const file = formData.get("file") as File | null;
 

@@ -1,7 +1,7 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
 
 import invariant from "tiny-invariant";
-import { Form, useLoaderData, useSubmit } from "@remix-run/react";
+import { Form, useLoaderData, useSubmit } from "react-router";
 import dayjs from "dayjs";
 
 import { getSchoolTermsForYearAsync } from "~/services/.server";
@@ -77,7 +77,7 @@ export default function Index() {
 
   const submitForm = () => {
     const form = document.getElementById("attendanceForm") as HTMLFormElement;
-    submit(form);
+    void submit(form);
   };
 
   const onResetClick = () => {

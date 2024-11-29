@@ -1,7 +1,7 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { Option } from "~/components";
 
-import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
+import { useFetcher, useLoaderData, useSearchParams } from "react-router";
 import dayjs from "dayjs";
 import {
   BookmarkBook,
@@ -158,7 +158,7 @@ export default function Index() {
 
       searchParams.set("attendedOn", "");
 
-      submit(formData, {
+      void submit(formData, {
         method: "POST",
       });
     };
@@ -174,7 +174,7 @@ export default function Index() {
 
     searchParams.set("attendedOn", "");
 
-    submit(formData, {
+    void submit(formData, {
       method: "POST",
     });
   };
@@ -187,14 +187,14 @@ export default function Index() {
       currentAttendedOn === attendedOn ? "" : attendedOn,
     );
 
-    load(`?${searchParams.toString()}`);
+    void load(`?${searchParams.toString()}`);
   };
 
   const onTermChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     searchParams.set("selectedTerm", event.target.value);
     searchParams.set("attendedOn", "");
 
-    load(`?${searchParams.toString()}`);
+    void load(`?${searchParams.toString()}`);
   };
 
   return (

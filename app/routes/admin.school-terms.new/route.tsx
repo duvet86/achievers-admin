@@ -1,7 +1,7 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { NewSchoolTerm } from "./services.server";
 
-import { Form, redirect, useActionData } from "@remix-run/react";
+import { Form, redirect, useActionData } from "react-router";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
@@ -114,7 +114,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   await addTermsAsync(newTerms);
 
-  return redirect(`/admin/school-terms/${commonYear}`);
+  throw redirect(`/admin/school-terms/${commonYear}`);
 }
 
 export default function Index() {

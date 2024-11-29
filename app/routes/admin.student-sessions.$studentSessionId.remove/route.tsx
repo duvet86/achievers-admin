@@ -1,13 +1,13 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
-import { redirect } from "@remix-run/node";
+import { redirect } from "react-router";
 import {
   Link,
   useLoaderData,
   useLocation,
   useSearchParams,
   useSubmit,
-} from "@remix-run/react";
+} from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import { EditPencil, Trash, Xmark } from "iconoir-react";
@@ -31,7 +31,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     const url = new URL(request.url);
     const backURL = url.searchParams.get("back_url");
 
-    return redirect(
+    throw redirect(
       `/admin/student-sessions/${studentSession.id}?back_url=${backURL}`,
     );
   }
@@ -76,7 +76,7 @@ export default function Index() {
     if (!confirm(`Are you sure?`)) {
       return;
     }
-    submit(null, {
+    void submit(null, {
       method: "DELETE",
     });
   };

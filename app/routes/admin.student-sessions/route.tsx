@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
 
 import {
   Form,
@@ -7,7 +7,7 @@ import {
   useNavigate,
   useSearchParams,
   useSubmit,
-} from "@remix-run/react";
+} from "react-router";
 
 import { useRef } from "react";
 import { Eye } from "iconoir-react";
@@ -166,7 +166,7 @@ export default function Index() {
     e.preventDefault();
 
     formRef.current!.reset();
-    submit(formRef.current);
+    void submit(formRef.current);
   };
 
   const handleRowClick = (id: number, completedOn: Date | null) => () => {
@@ -174,7 +174,7 @@ export default function Index() {
       ? `/admin/student-sessions/${id}/report?${searchParams.toString()}`
       : `/admin/student-sessions/${id}?${searchParams.toString()}`;
 
-    navigate(url);
+    void navigate(url);
   };
 
   return (

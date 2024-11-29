@@ -1,7 +1,7 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { EoiUpdateCommand } from "./services.server";
 
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
 import { Input, Radio, SubmitFormButton, Textarea, Title } from "~/components";

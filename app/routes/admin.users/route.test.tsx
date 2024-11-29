@@ -1,11 +1,11 @@
 import { render, screen } from "@testing-library/react";
-import { createRemixStub } from "@remix-run/testing";
+import { createRoutesStub } from "react-router";
 
 import Page from "./route";
 
 describe("Admin /users", () => {
   it("should return empty list", async () => {
-    const RemixStub = createRemixStub([
+    const RemixStub = createRoutesStub([
       {
         path: "/",
         Component: Page,
@@ -36,7 +36,7 @@ describe("Admin /users", () => {
   });
 
   it("should return list of users", async () => {
-    const RemixStub = createRemixStub([
+    const RemixStub = createRoutesStub([
       {
         path: "/",
         Component: Page,
@@ -76,7 +76,7 @@ describe("Admin /users", () => {
   });
 
   it("should have title", async () => {
-    const RemixStub = createRemixStub([
+    const RemixStub = createRoutesStub([
       {
         path: "/",
         Component: Page,
@@ -104,7 +104,7 @@ describe("Admin /users", () => {
   });
 
   it("should have link to 'import from file'", async () => {
-    const RemixStub = createRemixStub([
+    const RemixStub = createRoutesStub([
       {
         path: "/",
         Component: Page,

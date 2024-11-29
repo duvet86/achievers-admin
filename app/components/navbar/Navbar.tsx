@@ -1,6 +1,6 @@
 import type { Environment } from "~/services";
 
-import { Link } from "@remix-run/react";
+import { Link } from "react-router";
 import { ProfileCircle, Menu, LogOut, ClipboardCheck } from "iconoir-react";
 
 import { Environments } from "~/services";

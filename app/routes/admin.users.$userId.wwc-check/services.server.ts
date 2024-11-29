@@ -1,4 +1,7 @@
+import { type FileUpload } from "@mjackson/form-data-parser";
+
 import dayjs from "dayjs";
+import { MemoryFileStorage } from "@mjackson/file-storage/memory";
 
 import { prisma } from "~/db.server";
 import {
@@ -7,6 +10,8 @@ import {
   uploadBlobAsync,
   USER_DATA_BLOB_CONTAINER_NAME,
 } from "~/services/.server";
+
+const memoryFileStorage = new MemoryFileStorage();
 
 export interface UpdateWWCCheckCommand {
   wwcNumber: string;
@@ -81,4 +86,12 @@ export async function saveFileAsync(
   await uploadBlobAsync(containerClient, file, path);
 
   return path;
+}
+
+export function uploadHandler(fileUpload: FileUpload) {
+  const storageKey = fileUpload.fieldName ?? "file";
+
+  memoryFileStorage.set(storageKey, fileUpload);
+
+  return memoryFileStorage.get(storageKey);
 }

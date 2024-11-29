@@ -1,9 +1,4 @@
-import type { SerializeFrom } from "@remix-run/node";
-import type { action, loader } from "../route";
-
-import type { Navigation } from "@remix-run/router";
-
-import { Form } from "@remix-run/react";
+import { Form, useNavigation } from "react-router";
 
 import {
   DateInput,
@@ -16,16 +11,37 @@ import {
 import ProfilePicture from "./ProfilePicture";
 
 interface Props {
-  transition: Navigation;
-  loaderData: SerializeFrom<typeof loader>;
-  actionData: SerializeFrom<typeof action> | undefined;
+  user: {
+    profilePicturePath: string | null;
+    fullName: string;
+    email: string;
+    azureADId: string | null;
+    chapterId: number;
+    firstName: string;
+    lastName: string;
+    mobile: string;
+    addressStreet: string;
+    addressSuburb: string;
+    addressState: string;
+    addressPostcode: string;
+    dateOfBirth: Date | null;
+    emergencyContactName: string | null;
+    emergencyContactNumber: string | null;
+    emergencyContactAddress: string | null;
+    emergencyContactRelationship: string | null;
+    additionalEmail: string | null;
+    hasApprovedToPublishPhotos: boolean | null;
+  };
+  chapters: {
+    id: number;
+    name: string;
+  }[];
+  successMessage: string | undefined;
 }
 
-export function UserForm({
-  transition,
-  loaderData: { user, chapters },
-  actionData,
-}: Props) {
+export function UserForm({ user, chapters, successMessage }: Props) {
+  const transition = useNavigation();
+
   return (
     <Form
       method="post"
@@ -34,7 +50,7 @@ export function UserForm({
       <fieldset disabled={transition.state === "submitting"}>
         <ProfilePicture
           profilePicturePath={user.profilePicturePath}
-          fullName={`${user.firstName} ${user.lastName}`}
+          fullName={`${user.fullName}`}
         />
 
         <Input
@@ -59,49 +75,49 @@ export function UserForm({
         />
 
         <Input
-          defaultValue={user.firstName ?? ""}
+          defaultValue={user.firstName}
           label="First name"
           name="firstName"
           required
         />
 
         <Input
-          defaultValue={user.lastName ?? ""}
+          defaultValue={user.lastName}
           label="Last name"
           name="lastName"
           required
         />
 
         <Input
-          defaultValue={user.mobile ?? ""}
+          defaultValue={user.mobile}
           label="Mobile"
           name="mobile"
           required
         />
 
         <Input
-          defaultValue={user.addressStreet ?? ""}
+          defaultValue={user.addressStreet}
           label="Address street"
           name="addressStreet"
           required
         />
 
         <Input
-          defaultValue={user.addressSuburb ?? ""}
+          defaultValue={user.addressSuburb}
           label="Address suburb"
           name="addressSuburb"
           required
         />
 
         <Input
-          defaultValue={user.addressState ?? ""}
+          defaultValue={user.addressState}
           label="Address state"
           name="addressState"
           required
         />
 
         <Input
-          defaultValue={user.addressPostcode ?? ""}
+          defaultValue={user.addressPostcode}
           label="Address postcode"
           name="addressPostcode"
           required
@@ -162,7 +178,7 @@ export function UserForm({
 
         <SubmitFormButton
           sticky
-          successMessage={actionData?.successMessage}
+          successMessage={successMessage}
           className="justify-between"
         />
       </fieldset>

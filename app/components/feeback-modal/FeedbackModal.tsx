@@ -1,4 +1,4 @@
-import { useFetcher } from "@remix-run/react";
+import { useFetcher } from "react-router";
 import { Send, Xmark } from "iconoir-react";
 
 import { Title } from "../title/Title";
@@ -39,7 +39,7 @@ export function FeedbackModal() {
           encType="multipart/form-data"
           onSubmit={(e) => {
             e.preventDefault();
-            submit(e.currentTarget);
+            void submit(e.currentTarget);
             e.currentTarget.reset();
           }}
         >

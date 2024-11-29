@@ -1,13 +1,13 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
-import { redirect } from "@remix-run/node";
+import { redirect } from "react-router";
 import {
   Form,
   Link,
   useLoaderData,
   useSearchParams,
   useSubmit,
-} from "@remix-run/react";
+} from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import {
@@ -125,7 +125,7 @@ export default function Index() {
     const formData = new FormData();
     formData.append("action", "cancelAvailable");
 
-    submit(formData, {
+    void submit(formData, {
       method: "POST",
     });
   };
@@ -139,7 +139,7 @@ export default function Index() {
     formData.append("action", "cancelStudent");
     formData.append("studentId", studentId.toString());
 
-    submit(formData, {
+    void submit(formData, {
       method: "POST",
     });
   };
@@ -152,7 +152,7 @@ export default function Index() {
     const formData = new FormData();
     formData.append("action", "restore");
 
-    submit(formData, {
+    void submit(formData, {
       method: "POST",
     });
   };

@@ -6,11 +6,8 @@ import { Authenticator } from "remix-auth";
 import invariant from "tiny-invariant";
 
 import { OAuth2Strategy } from "remix-auth-oauth2";
-import {
-  createCookie,
-  createFileSessionStorage,
-  redirect,
-} from "@remix-run/node";
+import { createCookie, redirect } from "react-router";
+import { createFileSessionStorage } from "@react-router/node";
 
 invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");
 invariant(process.env.CLIENT_SECRET, "CLIENT_SECRET must be set");

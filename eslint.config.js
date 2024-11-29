@@ -15,6 +15,7 @@ export default tseslint.config(
       "**/build",
       "**/dev_sessions",
       "**/tailwind.config.*",
+      ".react-router",
     ],
   },
   {

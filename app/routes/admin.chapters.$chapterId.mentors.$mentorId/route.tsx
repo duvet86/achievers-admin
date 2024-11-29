@@ -1,11 +1,6 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
-import {
-  Link,
-  useFetcher,
-  useLoaderData,
-  useSearchParams,
-} from "@remix-run/react";
+import { Link, useFetcher, useLoaderData, useSearchParams } from "react-router";
 
 import invariant from "tiny-invariant";
 import {
@@ -96,7 +91,7 @@ export default function Index() {
       e.preventDefault();
 
       if (confirm(`Are you sure you want to unassign "${studentFullName}"?`)) {
-        submit(e.currentTarget, {
+        void submit(e.currentTarget, {
           method: "DELETE",
         });
       }

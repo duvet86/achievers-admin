@@ -1,16 +1,13 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { PoliceCheckUpdateCommand } from "./services.server";
 
-import {
-  unstable_createMemoryUploadHandler,
-  unstable_parseMultipartFormData,
-} from "@remix-run/node";
+import { parseFormData } from "@mjackson/form-data-parser";
 import {
   Form,
   useActionData,
   useLoaderData,
   useNavigation,
-} from "@remix-run/react";
+} from "react-router";
 import invariant from "tiny-invariant";
 
 import { DateInput, Title, FileInput, SubmitFormButton } from "~/components";
@@ -20,6 +17,7 @@ import {
   getUserByIdAsync,
   updatePoliceCheckAsync,
   saveFileAsync,
+  uploadHandler,
 } from "./services.server";
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -43,12 +41,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   invariant(params.userId, "userId not found");
 
   try {
-    const uploadHandler = unstable_createMemoryUploadHandler();
-
-    const formData = await unstable_parseMultipartFormData(
-      request,
-      uploadHandler,
-    );
+    const formData = await parseFormData(request, uploadHandler);
 
     const file = formData.get("file") as File;
     const expiryDate = formData.get("expiryDate")?.toString();

@@ -2,7 +2,7 @@ import type {
   ActionFunctionArgs,
   LinksFunction,
   LoaderFunctionArgs,
-} from "@remix-run/node";
+} from "react-router";
 import type { EditorState } from "lexical";
 import type { ActionType, SessionCommandRequest } from "./services.server";
 
@@ -11,7 +11,7 @@ import {
   useFetcher,
   useLoaderData,
   useSearchParams,
-} from "@remix-run/react";
+} from "react-router";
 import invariant from "tiny-invariant";
 
 import { useRef } from "react";
@@ -83,7 +83,7 @@ export default function Index() {
   const isLoading = state !== "idle";
 
   const saveReport = (type: ActionType) => () => {
-    submit(
+    void submit(
       {
         actionType: type,
         studentSessionId: id,

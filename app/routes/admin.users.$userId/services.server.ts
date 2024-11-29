@@ -24,6 +24,7 @@ export async function getUserByIdAsync(id: number) {
     },
     select: {
       azureADId: true,
+      fullName: true,
       firstName: true,
       lastName: true,
       email: true,

@@ -2,7 +2,7 @@ import type { RawRuleOf } from "@casl/ability";
 import type { TokenInfo } from "../models";
 import type { Subject, AppAbility } from "./permissions.server";
 
-import { redirect } from "@remix-run/node";
+import { redirect } from "react-router";
 
 import { getCurrentHost, parseJwt } from "../utils";
 

@@ -1,6 +1,6 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
 
-import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
+import { Link, useLoaderData, useSearchParams } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import { Xmark, Check, StatsReport, EditPencil } from "iconoir-react";

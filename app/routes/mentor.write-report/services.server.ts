@@ -1,12 +1,14 @@
 import type { Term } from "~/models";
 
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import isBetween from "dayjs/plugin/isBetween";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
 import { prisma } from "~/db.server";
 import { getDatesForTerm } from "~/services";
 
+dayjs.extend(utc);
 dayjs.extend(isBetween);
 dayjs.extend(customParseFormat);
 
@@ -14,10 +16,11 @@ export type ActionType = "completed" | "remove-complete" | "draft";
 
 export interface SessionCommandRequest {
   type: ActionType;
+  sessionId: number | null;
+  studentSessionId: number | null;
   studentId: number;
   attendedOn: string;
   report: string;
-  studentSessionId: number | null;
 }
 
 export async function getUserByAzureADIdAsync(azureADId: string) {
@@ -43,7 +46,7 @@ export async function geSessionAsync(
       mentorId_chapterId_attendedOn: {
         mentorId,
         chapterId,
-        attendedOn,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
       },
     },
     select: {
@@ -141,6 +144,7 @@ export function getSessionDatesFormatted(
 
 export async function saveReportAsync(
   actionType: ActionType,
+  sessionId: number | null,
   studentSessionId: number | null,
   mentorId: number,
   chapterId: number,
@@ -160,7 +164,7 @@ export async function saveReportAsync(
       break;
   }
 
-  if (studentSessionId === null) {
+  if (sessionId === null) {
     return await prisma.session.create({
       data: {
         chapterId,
@@ -177,11 +181,20 @@ export async function saveReportAsync(
     });
   }
 
-  return await prisma.studentSession.update({
+  return await prisma.studentSession.upsert({
     where: {
-      id: studentSessionId,
+      sessionId_studentId: {
+        sessionId: sessionId,
+        studentId,
+      },
     },
-    data: {
+    create: {
+      report,
+      completedOn,
+      sessionId,
+      studentId,
+    },
+    update: {
       report,
       completedOn,
     },

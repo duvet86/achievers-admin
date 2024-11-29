@@ -1,7 +1,6 @@
-import type { SerializeFrom } from "@remix-run/node";
-import type { loader } from "../route";
+import type { $Enums } from "@prisma/client";
 
-import { Form } from "@remix-run/react";
+import { Form } from "react-router";
 
 import {
   DateInput,
@@ -13,12 +12,38 @@ import {
 
 interface Props {
   isLoading: boolean;
-  loaderData: SerializeFrom<typeof loader>;
+  student: {
+    chapterId: number;
+    firstName: string;
+    lastName: string;
+    gender: $Enums.Gender | null;
+    dateOfBirth: Date | null;
+    yearLevel: number | null;
+    address: string | null;
+    allergies: boolean;
+    hasApprovedToPublishPhotos: boolean;
+    bestPersonToContact: string | null;
+    bestContactMethod: string | null;
+    schoolName: string | null;
+    emergencyContactFullName: string | null;
+    emergencyContactRelationship: string | null;
+    emergencyContactPhone: string | null;
+    emergencyContactEmail: string | null;
+    emergencyContactAddress: string | null;
+    startDate: Date | null;
+  } | null;
+  chapters: {
+    id: number;
+    name: string;
+  }[];
+  yearLevelCalculated: number | null;
 }
 
 export function StudentForm({
   isLoading,
-  loaderData: { student, chapters, yearLevelCalculated },
+  student,
+  chapters,
+  yearLevelCalculated,
 }: Props) {
   return (
     <Form
@@ -78,7 +103,7 @@ export function StudentForm({
             student?.yearLevel?.toString() ?? yearLevelCalculated ?? ""
           }
           label={
-            yearLevelCalculated == null
+            yearLevelCalculated === null
               ? "Year level"
               : "Year level (calculated from the DoB)"
           }

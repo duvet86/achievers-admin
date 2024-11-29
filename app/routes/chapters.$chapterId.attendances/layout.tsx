@@ -1,7 +1,7 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
 
-import { redirect } from "@remix-run/node";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { redirect } from "react-router";
+import { Outlet, useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
 import { getEnvironment } from "~/services";

@@ -1,7 +1,7 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
-import { redirect } from "@remix-run/node";
-import { Form, useLoaderData, useSearchParams } from "@remix-run/react";
+import { redirect } from "react-router";
+import { Form, useLoaderData, useSearchParams } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 
@@ -33,7 +33,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   if (studentSession !== null) {
     const url = new URL(request.url);
 
-    return redirect(
+    throw redirect(
       `/admin/student-sessions/${studentSession.id}/remove?${url.searchParams}`,
     );
   }
@@ -95,10 +95,10 @@ export async function action({ params, request }: ActionFunctionArgs) {
   const backURL = url.searchParams.get("back_url");
 
   if (backURL) {
-    return redirect(backURL);
+    throw redirect(backURL);
   }
 
-  return redirect(`/admin/chapters/${params.chapterId}/roster-students`);
+  throw redirect(`/admin/chapters/${params.chapterId}/roster-students`);
 }
 
 export default function Index() {

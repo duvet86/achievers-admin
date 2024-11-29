@@ -1,8 +1,8 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { Prisma } from "@prisma/client";
 import type { AzureUserWebAppWithRole } from "~/services/.server";
 
-import { useActionData, useLoaderData, useNavigation } from "@remix-run/react";
+import { useActionData, useLoaderData } from "react-router";
 
 import invariant from "tiny-invariant";
 
@@ -138,7 +138,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 export default function Index() {
   const loaderData = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
-  const transition = useNavigation();
 
   return (
     <div className="flex h-full flex-col">
@@ -151,15 +150,25 @@ export default function Index() {
 
       <div className="content-area md:flex">
         <UserForm
-          loaderData={loaderData}
-          actionData={actionData}
-          transition={transition}
+          user={loaderData.user}
+          chapters={loaderData.chapters}
+          successMessage={actionData?.successMessage}
         />
 
         <hr className="my-8 md:hidden" />
 
         <div className="flex-1 overflow-y-auto">
-          <CheckList loaderData={loaderData} />
+          <CheckList
+            approvalbyMRCCompleted={loaderData.approvalbyMRCCompleted}
+            inductionCompleted={loaderData.inductionCompleted}
+            isPoliceCheckExpired={loaderData.isPoliceCheckExpired}
+            isWwcCheckExpired={loaderData.isWwcCheckExpired}
+            policeCheckCompleted={loaderData.policeCheckCompleted}
+            referencesCompleted={loaderData.referencesCompleted}
+            volunteerAgreementSignedOn={loaderData.volunteerAgreementSignedOn}
+            welcomeCallCompleted={loaderData.welcomeCallCompleted}
+            wwcCheckCompleted={loaderData.wwcCheckCompleted}
+          />
         </div>
       </div>
     </div>

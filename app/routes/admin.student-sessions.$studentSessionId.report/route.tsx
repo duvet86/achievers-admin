@@ -2,11 +2,11 @@ import type {
   ActionFunctionArgs,
   LinksFunction,
   LoaderFunctionArgs,
-} from "@remix-run/node";
+} from "react-router";
 import type { EditorState } from "lexical";
 import type { SessionCommandRequest } from "./services.server";
 
-import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
+import { useFetcher, useLoaderData, useSearchParams } from "react-router";
 
 import dayjs from "dayjs";
 import { useRef } from "react";
@@ -76,7 +76,7 @@ export default function Index() {
       }
     }
 
-    submit(
+    void submit(
       {
         reportFeedback: JSON.stringify(editorStateRef.current?.toJSON()),
         isSignedOff,

@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from "@remix-run/react";
+import { Link, useSearchParams } from "react-router";
 import { BinFull, NavArrowDown, OnTag, WarningTriangle } from "iconoir-react";
 
 import { Title } from "~/components";

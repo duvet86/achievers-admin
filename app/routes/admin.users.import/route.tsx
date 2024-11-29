@@ -1,10 +1,7 @@
-import type { ActionFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs } from "react-router";
 
-import {
-  unstable_createMemoryUploadHandler,
-  unstable_parseMultipartFormData,
-} from "@remix-run/node";
-import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
+import { parseFormData } from "@mjackson/form-data-parser";
+import { Form, Link, useActionData, useNavigation } from "react-router";
 
 import { trackException } from "~/services/.server";
 import { isEmail, isStringNullOrEmpty } from "~/services";
@@ -17,17 +14,11 @@ import {
   readExcelFileAsync,
   getCurrentMentorsAsync,
   importSpreadsheetMentorsAsync,
+  uploadHandler,
 } from "./services.server";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const uploadHandler = unstable_createMemoryUploadHandler({
-    maxPartSize: 500_000,
-  });
-
-  const formData = await unstable_parseMultipartFormData(
-    request,
-    uploadHandler,
-  );
+  const formData = await parseFormData(request, uploadHandler);
 
   const file = formData.get("usersSheet");
   if (file === null || !(file instanceof File)) {

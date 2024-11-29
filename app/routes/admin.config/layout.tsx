@@ -1,7 +1,7 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
 
-import { redirect } from "@remix-run/node";
-import { Outlet } from "@remix-run/react";
+import { redirect } from "react-router";
+import { Outlet } from "react-router";
 
 import { isLoggedUserBlockedAsync, trackException } from "~/services/.server";
 

@@ -1,28 +1,30 @@
-import type { SerializeFrom } from "@remix-run/node";
-import type { loader } from "../route";
-
-import { Link, useFetcher } from "@remix-run/react";
+import { Link, useFetcher } from "react-router";
 import classnames from "classnames";
 
 import { Xmark, HomeShield, PageEdit } from "iconoir-react";
 import { SubTitle } from "~/components";
 
 interface Props {
-  loaderData: SerializeFrom<typeof loader>;
+  isNewStudent: boolean;
+  guardian: {
+    id: number;
+    fullName: string;
+    relationship: string;
+  }[];
 }
 
-export function GuardianList({ loaderData: { student, isNewStudent } }: Props) {
+export function GuardianList({ guardian, isNewStudent }: Props) {
   const { state, Form, submit } = useFetcher();
 
   const isLoading = state !== "idle";
-  const noGuardiansAssigned = student === null || student.guardian.length === 0;
+  const noGuardiansAssigned = guardian.length === 0;
 
   const onGuardianRemoved =
     (fullName: string) => (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
       if (confirm(`Are you sure you want to remove "${fullName}"?`)) {
-        submit(e.currentTarget, {
+        void submit(e.currentTarget, {
           method: "DELETE",
         });
       }
@@ -45,7 +47,7 @@ export function GuardianList({ loaderData: { student, isNewStudent } }: Props) {
               </tr>
             </thead>
             <tbody>
-              {student?.guardian.map(({ id, fullName, relationship }) => (
+              {guardian.map(({ id, fullName, relationship }) => (
                 <tr key={id}>
                   <td className="border">{fullName}</td>
                   <td className="border">{relationship}</td>

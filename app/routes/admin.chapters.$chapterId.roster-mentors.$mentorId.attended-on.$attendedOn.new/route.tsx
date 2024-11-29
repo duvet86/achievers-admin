@@ -1,7 +1,7 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
-import { redirect } from "@remix-run/node";
-import { Form, useLoaderData, useSearchParams } from "@remix-run/react";
+import { redirect } from "react-router";
+import { Form, useLoaderData, useSearchParams } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import { FloppyDiskArrowIn, Xmark } from "iconoir-react";
@@ -32,7 +32,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   if (session !== null) {
     const url = new URL(request.url);
 
-    return redirect(
+    throw redirect(
       `/admin/chapters/${params.chapterId}/roster-mentors/sessions/${session.id}?${url.searchParams}`,
     );
   }
@@ -77,7 +77,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
   const url = new URL(request.url);
 
-  return redirect(
+  throw redirect(
     `/admin/chapters/${params.chapterId}/roster-mentors/sessions/${id}?${url.searchParams}`,
   );
 }
@@ -159,7 +159,12 @@ export default function Index() {
                 showClearButton
               />
 
-              <button className="btn btn-primary w-48 gap-2" type="submit">
+              <button
+                className="btn btn-primary w-48 gap-2"
+                type="submit"
+                name="status"
+                value="AVAILABLE"
+              >
                 <FloppyDiskArrowIn />
                 Book
               </button>

@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useMatches } from "@remix-run/react";
+import { useMatches } from "react-router";
 
 export function useClientRect<T extends HTMLElement>(): [
   { width: number; height: number },

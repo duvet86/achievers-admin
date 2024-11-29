@@ -1,7 +1,7 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
 import type { Prisma } from "@prisma/client";
 
-import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
+import { Form, Link, useLoaderData, useSearchParams } from "react-router";
 import invariant from "tiny-invariant";
 import { useRef } from "react";
 import classNames from "classnames";

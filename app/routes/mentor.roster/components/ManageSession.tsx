@@ -1,6 +1,6 @@
 import type { Option } from "~/components";
 
-import { Form } from "@remix-run/react";
+import { Form } from "react-router";
 import classNames from "classnames";
 import { BookmarkBook, InfoCircleSolid, Xmark } from "iconoir-react";
 

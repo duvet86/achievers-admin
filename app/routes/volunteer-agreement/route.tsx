@@ -1,7 +1,7 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
-import { redirect } from "@remix-run/node";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { redirect } from "react-router";
+import { Form, Link, useLoaderData } from "react-router";
 import dayjs from "dayjs";
 import { CheckSquareSolid, NavArrowLeft } from "iconoir-react";
 

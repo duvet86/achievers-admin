@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
 import {
   useLoaderData,
@@ -7,7 +7,7 @@ import {
   useSearchParams,
   redirect,
   useActionData,
-} from "@remix-run/react";
+} from "react-router";
 
 import { Input, Select, SubmitFormButton, Title } from "~/components";
 import {
@@ -60,8 +60,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
 
-  // const displayName = formData.get("displayName");
-  // const email = formData.get("email");
   const role = formData.get("role");
 
   const permissions = formData.getAll("permissions");
@@ -79,7 +77,7 @@ export async function action({ request }: ActionFunctionArgs) {
     };
   }
 
-  return redirect("/admin/permissions");
+  throw redirect("/admin/permissions");
 }
 
 export default function Index() {
@@ -95,7 +93,7 @@ export default function Index() {
 
   const handleRoleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     searchParams.set("role", event.target.value);
-    load(`?${searchParams.toString()}`);
+    void load(`?${searchParams.toString()}`);
   };
 
   return (

@@ -1,6 +1,6 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
 
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
 import { ChatBubbleEmpty, Check, WarningTriangle, Xmark } from "iconoir-react";

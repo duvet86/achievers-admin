@@ -1,6 +1,6 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
 
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
 import { Title, Input, SubmitFormButton } from "~/components";

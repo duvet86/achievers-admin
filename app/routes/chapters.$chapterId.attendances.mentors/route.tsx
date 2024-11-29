@@ -1,7 +1,7 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { Attendace } from "./services.server";
 
-import { Form, useLoaderData, useSubmit } from "@remix-run/react";
+import { Form, useLoaderData, useSubmit } from "react-router";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
@@ -116,7 +116,7 @@ export default function Index() {
   const submit = useSubmit();
 
   const attend = (mentorId: number) => () => {
-    submit(
+    void submit(
       {
         action: "attend",
         mentorId,
@@ -138,7 +138,7 @@ export default function Index() {
       return;
     }
 
-    submit(
+    void submit(
       {
         action: "remove",
         attendaceId: attendace.id,
@@ -152,7 +152,7 @@ export default function Index() {
 
   const submitForm = () => {
     const form = document.getElementById("attendanceForm") as HTMLFormElement;
-    submit(form);
+    void submit(form);
   };
 
   const onResetClick = () => {

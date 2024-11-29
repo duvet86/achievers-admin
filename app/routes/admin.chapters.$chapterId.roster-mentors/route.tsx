@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
 import type { Prisma } from "@prisma/client";
 
 import {
@@ -8,7 +8,7 @@ import {
   useNavigate,
   useSearchParams,
   useSubmit,
-} from "@remix-run/react";
+} from "react-router";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
@@ -109,7 +109,7 @@ export default function Index() {
     const form = document.getElementById(
       "rosterMentorsForm",
     ) as HTMLFormElement;
-    submit(form);
+    void submit(form);
   };
 
   const handleButtonClick = () => {
@@ -119,7 +119,7 @@ export default function Index() {
 
   const onMentorClick = (fullName: string) => () => {
     searchParams.set("search", fullName);
-    navigate({
+    void navigate({
       search: searchParams.toString(),
     });
   };

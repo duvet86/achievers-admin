@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { SchoolTerm } from "./services.server";
 
 import {
@@ -8,7 +8,7 @@ import {
   useActionData,
   useLoaderData,
   useNavigate,
-} from "@remix-run/react";
+} from "react-router";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { Plus } from "iconoir-react";
@@ -171,7 +171,7 @@ export default function Index() {
   const navigate = useNavigate();
 
   function goToSelectedYear(event: React.ChangeEvent<HTMLSelectElement>) {
-    navigate(`/admin/school-terms/${event.target.value}`);
+    void navigate(`/admin/school-terms/${event.target.value}`);
   }
 
   return (

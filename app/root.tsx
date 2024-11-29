@@ -1,4 +1,4 @@
-import type { LinksFunction } from "@remix-run/node";
+import type { LinksFunction } from "react-router";
 
 import {
   Links,
@@ -9,7 +9,7 @@ import {
   isRouteErrorResponse,
   useNavigation,
   useRouteError,
-} from "@remix-run/react";
+} from "react-router";
 
 import tailwindStylesheetUrl from "~/styles/tailwind.css?url";
 

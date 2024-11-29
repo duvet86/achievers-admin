@@ -1,29 +1,30 @@
-import type { SerializeFrom } from "@remix-run/node";
-import type { loader } from "../route";
-
-import { Link, useFetcher } from "@remix-run/react";
+import { Link, useFetcher } from "react-router";
 import classnames from "classnames";
 
 import { PageEdit, GraduationCap, Xmark } from "iconoir-react";
 import { SubTitle } from "~/components";
 
 interface Props {
-  loaderData: SerializeFrom<typeof loader>;
+  isNewStudent: boolean;
+  studentTeacher: {
+    id: number;
+    fullName: string;
+    schoolName: string;
+  }[];
 }
 
-export function TeacherList({ loaderData: { student, isNewStudent } }: Props) {
+export function TeacherList({ studentTeacher, isNewStudent }: Props) {
   const { state, Form, submit } = useFetcher();
 
   const isLoading = state !== "idle";
-  const noTeachersAssigned =
-    student === null || student.studentTeacher.length === 0;
+  const noTeachersAssigned = studentTeacher.length === 0;
 
   const onTeacherRemoved =
     (fullName: string) => (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
       if (confirm(`Are you sure you want to remove "${fullName}"?`)) {
-        submit(e.currentTarget, {
+        void submit(e.currentTarget, {
           method: "DELETE",
         });
       }
@@ -46,7 +47,7 @@ export function TeacherList({ loaderData: { student, isNewStudent } }: Props) {
               </tr>
             </thead>
             <tbody>
-              {student?.studentTeacher.map(({ id, fullName, schoolName }) => (
+              {studentTeacher.map(({ id, fullName, schoolName }) => (
                 <tr key={id}>
                   <td className="border">{fullName}</td>
                   <td className="border">{schoolName}</td>
@@ -87,7 +88,7 @@ export function TeacherList({ loaderData: { student, isNewStudent } }: Props) {
                   </td>
                 </tr>
               ))}
-              {(student === null || student.studentTeacher.length === 0) && (
+              {studentTeacher.length === 0 && (
                 <tr>
                   <td colSpan={3} className="border">
                     <i>No teachers assigned to this student</i>

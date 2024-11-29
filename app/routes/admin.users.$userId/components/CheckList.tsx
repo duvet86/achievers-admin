@@ -1,7 +1,4 @@
-import type { SerializeFrom } from "@remix-run/node";
-import type { loader } from "../route";
-
-import { Link, useNavigate } from "@remix-run/react";
+import { Link, useNavigate } from "react-router";
 
 import dayjs from "dayjs";
 import {
@@ -19,7 +16,15 @@ import {
 } from "iconoir-react";
 
 interface Props {
-  loaderData: SerializeFrom<typeof loader>;
+  isWwcCheckExpired: boolean;
+  isPoliceCheckExpired: boolean;
+  welcomeCallCompleted: boolean;
+  referencesCompleted: boolean;
+  inductionCompleted: boolean;
+  policeCheckCompleted: boolean;
+  wwcCheckCompleted: boolean;
+  approvalbyMRCCompleted: boolean;
+  volunteerAgreementSignedOn: Date | null;
 }
 
 interface CheckStatusProps {
@@ -52,22 +57,20 @@ function CheckStatus({ isCompleted, isExpired }: CheckStatusProps) {
 }
 
 export function CheckList({
-  loaderData: {
-    isWwcCheckExpired,
-    isPoliceCheckExpired,
-    welcomeCallCompleted,
-    referencesCompleted,
-    inductionCompleted,
-    policeCheckCompleted,
-    wwcCheckCompleted,
-    approvalbyMRCCompleted,
-    volunteerAgreementSignedOn,
-  },
+  isWwcCheckExpired,
+  isPoliceCheckExpired,
+  welcomeCallCompleted,
+  referencesCompleted,
+  inductionCompleted,
+  policeCheckCompleted,
+  wwcCheckCompleted,
+  approvalbyMRCCompleted,
+  volunteerAgreementSignedOn,
 }: Props) {
   const navigate = useNavigate();
 
   const handleRowClick = (to: string) => () => {
-    navigate(to);
+    void navigate(to);
   };
 
   return (

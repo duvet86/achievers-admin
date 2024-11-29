@@ -1,6 +1,6 @@
-import type { SubmitFunction } from "@remix-run/react";
+import type { SubmitFunction } from "react-router";
 
-import { useSearchParams } from "@remix-run/react";
+import { useSearchParams } from "react-router";
 
 import { DateInput, Select, SelectSearch } from "~/components";
 
@@ -50,7 +50,7 @@ export default function FormInputs({
           name="chapterId"
           defaultValue={selectedChapterId}
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-            submit(e.currentTarget.form)
+            void submit(e.currentTarget.form)
           }
           options={chapters.map(({ id, name }) => ({
             label: name,

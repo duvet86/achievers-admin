@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
 import type { Prisma } from "@prisma/client";
 
 import {
@@ -8,7 +8,7 @@ import {
   useSearchParams,
   useNavigate,
   useSubmit,
-} from "@remix-run/react";
+} from "react-router";
 
 import { PageEdit, BinFull, CheckCircle, WarningTriangle } from "iconoir-react";
 
@@ -155,13 +155,13 @@ export default function Index() {
     searchParams.set("onlyExpiredChecks", "");
     searchParams.set("includeArchived", "");
 
-    navigate(`?${searchParams.toString()}`);
+    void navigate(`?${searchParams.toString()}`);
   };
 
   const onChapterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     searchParams.set("chapterId", event.target.value);
 
-    submit(Object.fromEntries(searchParams));
+    void submit(Object.fromEntries(searchParams));
   };
 
   const onOnlyExpiredChecksChange = (
@@ -169,7 +169,7 @@ export default function Index() {
   ) => {
     searchParams.set("onlyExpiredChecks", event.target.checked ? "on" : "");
 
-    submit(Object.fromEntries(searchParams));
+    void submit(Object.fromEntries(searchParams));
   };
 
   const onIncludeArchivedChange = (
@@ -177,11 +177,11 @@ export default function Index() {
   ) => {
     searchParams.set("includeArchived", event.target.checked ? "on" : "");
 
-    submit(Object.fromEntries(searchParams));
+    void submit(Object.fromEntries(searchParams));
   };
 
   const handleRowClick = (id: number) => () => {
-    navigate(`${id}?${searchParams.toString()}`);
+    void navigate(`${id}?${searchParams.toString()}`);
   };
 
   return (

@@ -2,17 +2,17 @@ import type {
   ActionFunctionArgs,
   LinksFunction,
   LoaderFunctionArgs,
-} from "@remix-run/node";
+} from "react-router";
 import type { EditorState } from "lexical";
 import type { ActionType, SessionCommandRequest } from "./services.server";
 
 import {
   Link,
   redirect,
-  useFetcher,
   useLoaderData,
   useSearchParams,
-} from "@remix-run/react";
+  useSubmit,
+} from "react-router";
 
 import { useRef } from "react";
 import dayjs from "dayjs";
@@ -94,14 +94,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
     ) ??
     sessionDatesFormatted[0].value;
 
-  const session = selectedTermDate
-    ? await geSessionAsync(
-        user.id,
-        Number(selectedStudentId),
-        user.chapterId,
-        selectedTermDate,
-      )
-    : null;
+  if (selectedTermDate === null) {
+    throw new Error();
+  }
+
+  const session = await geSessionAsync(
+    user.id,
+    Number(selectedStudentId),
+    user.chapterId,
+    selectedTermDate,
+  );
 
   const isNotMyReport = session !== null && session.mentorId !== user.id;
 
@@ -132,6 +134,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const bodyData = (await request.json()) as SessionCommandRequest;
 
   const type = bodyData.type;
+  const sessionId = bodyData.sessionId;
   const studentSessionId = bodyData.studentSessionId;
   const studentId = bodyData.studentId;
   const attendedOn = bodyData.attendedOn;
@@ -139,6 +142,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   await saveReportAsync(
     type,
+    sessionId,
     studentSessionId,
     user.id,
     user.chapterId,
@@ -153,12 +157,6 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const initialData = useLoaderData<typeof loader>();
-  const { data, state, load, submit } = useFetcher<typeof loader>();
-
-  const editorStateRef = useRef<EditorState>();
-  const [searchParams] = useSearchParams();
-
   const {
     session,
     selectedTerm,
@@ -169,9 +167,10 @@ export default function Index() {
     students,
     isNotMyReport,
     isReadOnlyEditor,
-  } = data ?? initialData;
-
-  const isLoading = state !== "idle";
+  } = useLoaderData<typeof loader>();
+  const submit = useSubmit();
+  const editorStateRef = useRef<EditorState>();
+  const [searchParams] = useSearchParams();
 
   const studentSession = session?.studentSession;
 
@@ -185,7 +184,7 @@ export default function Index() {
   const handleSelectChange =
     (value: string) => (event: React.ChangeEvent<HTMLSelectElement>) => {
       searchParams.set(value, event.target.value);
-      load(`?${searchParams.toString()}`);
+      void submit(`?${searchParams.toString()}`);
     };
 
   const saveReport = (type: ActionType) => () => {
@@ -205,9 +204,10 @@ export default function Index() {
       return;
     }
 
-    submit(
+    void submit(
       {
         type,
+        sessionId: session?.id ?? null,
         studentSessionId: studentSession?.id ?? null,
         studentId: Number(studentId),
         attendedOn,
@@ -246,12 +246,6 @@ export default function Index() {
       </div>
 
       <div className="relative flex h-full flex-col">
-        {isLoading && (
-          <div className="absolute z-30 flex h-full w-full justify-center bg-slate-300 bg-opacity-50">
-            <span className="loading loading-spinner loading-lg text-primary"></span>
-          </div>
-        )}
-
         <div className="mb-6 flex flex-col gap-2">
           <Select
             key={selectedTerm}
@@ -265,12 +259,10 @@ export default function Index() {
           <div className="flex content-center gap-6">
             {sessionDates.length > 0 ? (
               <Select
-                key={searchParams.get("selectedTermDate") ?? selectedTermDate}
+                key={selectedTermDate}
                 label="Session date"
                 name="selectedTermDate"
-                defaultValue={
-                  searchParams.get("selectedTermDate") ?? selectedTermDate ?? ""
-                }
+                defaultValue={selectedTermDate ?? ""}
                 options={sessionDates}
                 onChange={handleSelectChange("selectedTermDate")}
               />
@@ -286,12 +278,10 @@ export default function Index() {
           </div>
 
           <Select
-            key={searchParams.get("selectedStudentId") ?? selectedStudentId}
+            key={selectedStudentId}
             label="Student"
             name="selectedStudentId"
-            defaultValue={
-              searchParams.get("selectedStudentId") ?? selectedStudentId
-            }
+            defaultValue={selectedStudentId}
             options={students.map(({ id, fullName }) => ({
               label: fullName,
               value: id.toString(),

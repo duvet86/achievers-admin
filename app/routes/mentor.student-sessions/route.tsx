@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
 
 import {
   Form,
@@ -7,7 +7,7 @@ import {
   useNavigate,
   useSearchParams,
   useSubmit,
-} from "@remix-run/react";
+} from "react-router";
 import { Eye } from "iconoir-react";
 import dayjs from "dayjs";
 
@@ -106,25 +106,25 @@ export default function Index() {
     searchParams.set("studentId", "");
     searchParams.set("mentorId", "");
 
-    submit(Object.fromEntries(searchParams));
+    void submit(Object.fromEntries(searchParams));
   };
 
   const onStudentChange = (studentId: string) => {
     searchParams.set("studentId", studentId);
 
-    submit(Object.fromEntries(searchParams));
+    void submit(Object.fromEntries(searchParams));
   };
 
   const onMentorIdChange = (mentorId: string) => {
     searchParams.set("mentorId", mentorId);
 
-    submit(Object.fromEntries(searchParams));
+    void submit(Object.fromEntries(searchParams));
   };
 
   const handleRowClick = (id: number) => () => {
     const url = `/mentor/student-sessions/${id}?${searchParams.toString()}`;
 
-    navigate(url);
+    void navigate(url);
   };
 
   return (

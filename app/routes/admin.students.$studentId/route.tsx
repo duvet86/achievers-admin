@@ -1,9 +1,9 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { Prisma } from "@prisma/client";
 
 import dayjs from "dayjs";
 import { $Enums } from "@prisma/client";
-import { data, redirect, useLoaderData, useNavigation } from "@remix-run/react";
+import { data, redirect, useLoaderData, useNavigation } from "react-router";
 import invariant from "tiny-invariant";
 
 import { areEqualIgnoreCase, calculateYearLevel } from "~/services";
@@ -29,7 +29,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     return {
       title: "Add new student",
       student: null,
-      yearLevel: null,
+      yearLevelCalculated: null,
       isNewStudent,
       chapters,
     };
@@ -49,7 +49,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     student,
     yearLevelCalculated:
       student.yearLevel === null
-        ? calculateYearLevel(student.dateOfBirth)?.toString()
+        ? calculateYearLevel(student.dateOfBirth)
         : null,
     isNewStudent,
     chapters,
@@ -180,26 +180,38 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const loaderData = useLoaderData<typeof loader>();
+  const { chapters, isNewStudent, student, title, yearLevelCalculated } =
+    useLoaderData<typeof loader>();
   const transition = useNavigation();
 
   const isLoading = transition.state !== "idle";
 
   return (
     <div className="flex h-full flex-col">
-      <Header title={loaderData.title} endDate={loaderData.student?.endDate} />
+      <Header title={title} endDate={student?.endDate} />
 
       <hr className="my-4" />
 
       <div className="content-area md:flex">
-        <StudentForm isLoading={isLoading} loaderData={loaderData} />
+        <StudentForm
+          isLoading={isLoading}
+          student={student}
+          chapters={chapters}
+          yearLevelCalculated={yearLevelCalculated}
+        />
 
         <hr className="my-8 md:hidden" />
 
         <div className="flex-1 overflow-y-auto pb-4 lg:pb-0">
-          <GuardianList loaderData={loaderData} />
+          <GuardianList
+            isNewStudent={isNewStudent}
+            guardian={student?.guardian ?? []}
+          />
 
-          <TeacherList loaderData={loaderData} />
+          <TeacherList
+            isNewStudent={isNewStudent}
+            studentTeacher={student?.studentTeacher ?? []}
+          />
         </div>
       </div>
     </div>
