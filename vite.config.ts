@@ -4,11 +4,13 @@ import tailwindcss from "tailwindcss";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
   build: {
-    rollupOptions: {
-      input: "./server-dev/app.ts",
-    },
+    rollupOptions: isSsrBuild
+      ? {
+          input: "./server-dev/app.ts",
+        }
+      : undefined,
   },
   css: {
     postcss: {
@@ -16,4 +18,4 @@ export default defineConfig({
     },
   },
   plugins: [reactRouter(), tsconfigPaths()],
-});
+}));
