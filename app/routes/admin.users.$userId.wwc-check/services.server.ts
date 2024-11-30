@@ -88,10 +88,13 @@ export async function saveFileAsync(
   return path;
 }
 
-export function uploadHandler(fileUpload: FileUpload) {
+export async function uploadHandler(fileUpload: FileUpload) {
   const storageKey = fileUpload.fieldName ?? "file";
 
-  memoryFileStorage.set(storageKey, fileUpload);
+  memoryFileStorage.set(
+    storageKey,
+    new File([await fileUpload.bytes()], fileUpload.name),
+  );
 
   return memoryFileStorage.get(storageKey);
 }
