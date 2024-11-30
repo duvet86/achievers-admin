@@ -107,7 +107,7 @@ test.describe("Admin", () => {
     await importMentorsPage.expect.toHaveTableRows(4);
   });
 
-  test("should edit mentor info", async ({ page }) => {
+  test("should edit mentor info", async () => {
     await adminLayoutPage.goToMentorsList();
 
     await usersListPage.goToEditUser();
@@ -158,7 +158,7 @@ test.describe("Admin", () => {
 
     await userInfoPage.userForm.saveForm();
 
-    await page.reload();
+    await userInfoPage.userForm.expect.toHaveSaved();
 
     await userInfoPage.userForm.expect.toHaveValues({
       email: "test_0@test.com",

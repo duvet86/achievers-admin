@@ -59,6 +59,8 @@ export class UserForm {
   emergencyContactRelationshipInput: Locator;
   additionalEmailInput: Locator;
 
+  saveMessage: Locator;
+
   expect: UserFormAssertions;
 
   constructor(page: Page) {
@@ -87,6 +89,8 @@ export class UserForm {
       "Emergency contact relationship",
     );
     this.additionalEmailInput = page.getByLabel("Additional email");
+
+    this.saveMessage = page.getByTestId("container").getByTestId("message");
 
     this.expect = new UserFormAssertions(this);
   }
@@ -135,6 +139,10 @@ class UserFormAssertions {
 
   async toHaveProfilePicture(): Promise<void> {
     await expect(this.userForm.profilePicture).toBeVisible();
+  }
+
+  async toHaveSaved(): Promise<void> {
+    await expect(this.userForm.saveMessage).toBeVisible();
   }
 
   async toHaveValues({

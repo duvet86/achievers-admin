@@ -46,7 +46,7 @@ export class AdminUsersPage {
       .getByRole("cell", { name: "Girrawheen" });
     this.actionCell = page
       .getByRole("row", { name: "test_0@test.com" })
-      .getByRole("cell", { name: "Edit" });
+      .getByRole("link", { name: "Edit" });
 
     this.tableRows = page.getByRole("row");
 
