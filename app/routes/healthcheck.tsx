@@ -1,5 +1,5 @@
-import { data } from "react-router";
-
 export function loader() {
-  return data("OK");
+  return new Response("OK", {
+    status: 200,
+  });
 }
