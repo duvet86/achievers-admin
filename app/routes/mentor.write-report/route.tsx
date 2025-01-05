@@ -169,7 +169,7 @@ export default function Index() {
     isReadOnlyEditor,
   } = useLoaderData<typeof loader>();
   const submit = useSubmit();
-  const editorStateRef = useRef<EditorState>();
+  const editorStateRef = useRef<EditorState>(null);
   const [searchParams] = useSearchParams();
 
   const studentSession = session?.studentSession;

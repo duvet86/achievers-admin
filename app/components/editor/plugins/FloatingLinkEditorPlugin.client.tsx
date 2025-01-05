@@ -1,5 +1,5 @@
 import type { BaseSelection, LexicalEditor } from "lexical";
-import type { Dispatch } from "react";
+import type { JSX, Dispatch } from "react";
 
 import {
   $createLinkNode,

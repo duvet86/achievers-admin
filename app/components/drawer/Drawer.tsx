@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import { Link, NavLink } from "react-router";
 import {
   NavArrowRight,

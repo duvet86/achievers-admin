@@ -64,7 +64,7 @@ export default function Index() {
   } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
 
-  const editorStateRef = useRef<EditorState>();
+  const editorStateRef = useRef<EditorState>(null);
   const { state, submit } = useFetcher();
 
   const isLoading = state !== "idle";

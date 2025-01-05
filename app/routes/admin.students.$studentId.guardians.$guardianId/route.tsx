@@ -2,7 +2,6 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { Prisma } from "@prisma/client";
 
 import {
-  data,
   Form,
   useActionData,
   useLoaderData,
@@ -31,7 +30,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   } else {
     const guardian = await getGuardianByIdAsync(Number(params.guardianId));
     if (guardian === null) {
-      throw data("Not Found", {
+      throw new Response("Not Found", {
         status: 404,
       });
     }

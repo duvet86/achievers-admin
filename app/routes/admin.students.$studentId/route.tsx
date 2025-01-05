@@ -3,7 +3,7 @@ import type { Prisma } from "@prisma/client";
 
 import dayjs from "dayjs";
 import { $Enums } from "@prisma/client";
-import { data, redirect, useLoaderData, useNavigation } from "react-router";
+import { redirect, useLoaderData, useNavigation } from "react-router";
 import invariant from "tiny-invariant";
 
 import { areEqualIgnoreCase, calculateYearLevel } from "~/services";
@@ -37,7 +37,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const student = await getStudentByIdAsync(Number(params.studentId));
   if (student === null) {
-    throw data("Not Found", {
+    throw new Response("Not Found", {
       status: 404,
     });
   }
