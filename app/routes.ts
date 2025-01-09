@@ -16,14 +16,14 @@ export default [
     prefix("chapters/:chapterId/attendances", [
       index("routes/chapters.$chapterId.attendances/route.tsx"),
       route(
-        "chapters/:chapterId/attendances/mentors",
+        "mentors",
         "routes/chapters.$chapterId.attendances.mentors/route.tsx",
         {
           index: true,
         },
       ),
       route(
-        "chapters/:chapterId/attendances/students",
+        "students",
         "routes/chapters.$chapterId.attendances.students/route.tsx",
         {
           index: true,
