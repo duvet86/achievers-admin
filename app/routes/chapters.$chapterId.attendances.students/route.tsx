@@ -1,11 +1,17 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { Attendance } from "./services.server";
 
-import { Form, useLoaderData, useSubmit } from "react-router";
+import { Form, Link, useLoaderData, useSubmit } from "react-router";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
-import { CheckSquare, Square } from "iconoir-react";
+import {
+  Xmark,
+  Check,
+  NavArrowRight,
+  Group,
+  GraduationCap,
+} from "iconoir-react";
 
 import {
   getClosestSessionToToday,
@@ -33,7 +39,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const terms = await getSchoolTermsForYearAsync(dayjs().year());
   const todayterm = getCurrentTermForDate(terms, new Date());
 
-  const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayterm;
+  const currentTerm =
+    terms.find((t) => t.id.toString() === selectedTerm) ?? todayterm;
   const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
 
   if (selectedTermDate === null || !sessionDates.includes(selectedTermDate)) {
@@ -60,11 +67,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     chapterId: params.chapterId,
     students,
     attendacesLookup,
-    selectedTerm: selectedTerm ?? currentTerm.name,
+    selectedTerm: selectedTerm ?? currentTerm.id.toString(),
     selectedTermDate,
     searchTerm: searchTerm ?? "",
-    termsList: terms.map(({ start, end, name }) => ({
-      value: name,
+    termsList: terms.map(({ start, end, name, id }) => ({
+      value: id.toString(),
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${todayterm.name === name ? " (Current)" : ""}`,
     })),
     sessionDates: sessionDates
@@ -205,30 +212,61 @@ export default function Index() {
         {students.map(({ id: studentId, fullName }) => (
           <li
             key={studentId}
-            onClick={
-              attendacesLookup[studentId]
-                ? removeAttendance(attendacesLookup[studentId])
-                : attend(studentId)
-            }
             className={classNames(
-              "m-2 flex cursor-pointer items-center rounded p-2 hover:bg-gray-200",
+              "m-2 flex items-center gap-2 border-b p-2 hover:bg-gray-200",
               {
                 "bg-green-200": attendacesLookup[studentId],
               },
             )}
           >
-            <div className="flex flex-1 gap-4">
+            <div className="flex flex-1 items-center gap-4">
               <h2 className="basis-56">{fullName}</h2>
+
+              <div className="dropdown">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn btn-primary sm:basis-32"
+                >
+                  Surveys <NavArrowRight className="hidden sm:block" />
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
+                >
+                  <li>
+                    <Link
+                      className="m-2"
+                      to={`${studentId}/student-survey?selectedTerm=${selectedTerm}`}
+                    >
+                      <GraduationCap /> Student Survey
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="m-2"
+                      to={`${studentId}/parent-survey?selectedTerm=${selectedTerm}`}
+                    >
+                      <Group /> Parent Survey (Re-enrolment)
+                    </Link>
+                  </li>
+                </ul>
+              </div>
             </div>
 
             <div>
               {attendacesLookup[studentId] ? (
-                <button className="btn btn-ghost">
-                  <CheckSquare />
+                <button
+                  className="btn btn-error"
+                  onClick={removeAttendance(attendacesLookup[studentId])}
+                >
+                  <span className="hidden sm:block">Remove attendance</span>
+                  <Xmark />
                 </button>
               ) : (
-                <button className="btn btn-ghost">
-                  <Square />
+                <button className="btn btn-outline" onClick={attend(studentId)}>
+                  <span className="hidden sm:block">Mark attendance</span>
+                  <Check />
                 </button>
               )}
             </div>

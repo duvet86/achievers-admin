@@ -29,7 +29,7 @@ export const sessionStorage_dev = createFileSessionStorage({
 
 export const authenticator_dev = new Authenticator<TokenInfo>();
 
-const strategy = new OAuth2Strategy(
+export const strategy_dev = new OAuth2Strategy(
   {
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
@@ -38,6 +38,8 @@ const strategy = new OAuth2Strategy(
     tokenEndpoint: `https://login.microsoftonline.com/${process.env.TENANT_ID}/oauth2/v2.0/token`,
     redirectURI: process.env.REDIRECT_URI,
     scopes: ["openid", "profile", "email", "offline_access"],
+
+    tokenRevocationEndpoint: `https://login.windows.net/${process.env.TENANT_ID}/oauth2/logout`,
   },
   ({ tokens }) => {
     if (new Date() >= tokens.accessTokenExpiresAt()) {
@@ -54,4 +56,4 @@ const strategy = new OAuth2Strategy(
   },
 );
 
-authenticator_dev.use(strategy, "microsoft");
+authenticator_dev.use(strategy_dev, "microsoft");

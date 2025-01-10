@@ -1,11 +1,11 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { Attendace } from "./services.server";
 
-import { Form, useLoaderData, useSubmit } from "react-router";
+import { Form, Link, useLoaderData, useSubmit } from "react-router";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
-import { CheckSquare, Square } from "iconoir-react";
+import { Check, NavArrowRight, Xmark } from "iconoir-react";
 
 import {
   getClosestSessionToToday,
@@ -33,7 +33,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const terms = await getSchoolTermsForYearAsync(dayjs().year());
   const todayterm = getCurrentTermForDate(terms, new Date());
 
-  const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayterm;
+  const currentTerm =
+    terms.find((t) => t.id.toString() === selectedTerm) ?? todayterm;
   const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
 
   if (selectedTermDate === null || !sessionDates.includes(selectedTermDate)) {
@@ -60,11 +61,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     chapterId: params.chapterId,
     mentors,
     attendacesLookup,
-    selectedTerm: selectedTerm ?? currentTerm.name,
+    selectedTerm: selectedTerm ?? currentTerm.id.toString(),
     selectedTermDate,
     searchTerm: searchTerm ?? "",
-    termsList: terms.map(({ start, end, name }) => ({
-      value: name,
+    termsList: terms.map(({ start, end, name, id }) => ({
+      value: id.toString(),
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${todayterm.name === name ? " (Current)" : ""}`,
     })),
     sessionDates: sessionDates
@@ -205,30 +206,37 @@ export default function Index() {
         {mentors.map(({ id: mentorId, fullName }) => (
           <li
             key={mentorId}
-            onClick={
-              attendacesLookup[mentorId]
-                ? removeAttendance(attendacesLookup[mentorId])
-                : attend(mentorId)
-            }
             className={classNames(
-              "m-2 flex cursor-pointer items-center rounded p-2 hover:bg-gray-200",
+              "m-2 flex items-center gap-2 border-b p-2 hover:bg-gray-200",
               {
                 "bg-green-200": attendacesLookup[mentorId],
               },
             )}
           >
-            <div className="flex flex-1 gap-4">
+            <div className="flex flex-1 items-center gap-4">
               <h2 className="basis-56">{fullName}</h2>
+
+              <Link
+                className="btn btn-primary sm:basis-32"
+                to={`${mentorId}/survey?selectedTerm=${selectedTerm}`}
+              >
+                Survey <NavArrowRight className="hidden sm:block" />
+              </Link>
             </div>
 
             <div>
               {attendacesLookup[mentorId] ? (
-                <button className="btn btn-ghost">
-                  <CheckSquare />
+                <button
+                  className="btn btn-error"
+                  onClick={removeAttendance(attendacesLookup[mentorId])}
+                >
+                  <span className="hidden sm:block">Remove attendance</span>
+                  <Xmark />
                 </button>
               ) : (
-                <button className="btn btn-ghost">
-                  <Square />
+                <button className="btn btn-outline" onClick={attend(mentorId)}>
+                  <span className="hidden sm:block">Mark attendance</span>
+                  <Check />
                 </button>
               )}
             </div>

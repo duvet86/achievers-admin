@@ -19,6 +19,7 @@ export async function getSchoolTermsForYearAsync(
       year,
     },
     select: {
+      id: true,
       startDate: true,
       endDate: true,
     },
@@ -27,7 +28,8 @@ export async function getSchoolTermsForYearAsync(
     },
   });
 
-  return terms.map<Term>(({ startDate, endDate }, index) => ({
+  return terms.map<Term>(({ id, startDate, endDate }, index) => ({
+    id,
     name: "Term " + (index + 1),
     start: dayjs(startDate),
     end: dayjs(endDate),
