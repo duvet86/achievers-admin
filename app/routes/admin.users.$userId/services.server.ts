@@ -110,6 +110,7 @@ export async function saveProfilePicture(
   }
 
   const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
+  await containerClient.createIfNotExists();
 
   const path = `${userId}/profile-picture`;
 

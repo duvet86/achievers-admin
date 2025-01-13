@@ -80,6 +80,7 @@ export async function saveFileAsync(
   }
 
   const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
+  await containerClient.createIfNotExists();
 
   const path = `${userId}/wwc-check`;
 

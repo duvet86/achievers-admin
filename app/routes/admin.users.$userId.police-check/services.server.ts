@@ -82,6 +82,7 @@ export async function saveFileAsync(
   }
 
   const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
+  await containerClient.createIfNotExists();
 
   const path = `${userId}/police-check`;
 
@@ -95,7 +96,9 @@ export async function uploadHandler(fileUpload: FileUpload) {
 
   memoryFileStorage.set(
     storageKey,
-    new File([await fileUpload.bytes()], fileUpload.name),
+    new File([await fileUpload.bytes()], fileUpload.name, {
+      type: fileUpload.type,
+    }),
   );
 
   return memoryFileStorage.get(storageKey);
