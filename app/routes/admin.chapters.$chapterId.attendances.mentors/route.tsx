@@ -4,7 +4,7 @@ import invariant from "tiny-invariant";
 import { Form, useLoaderData, useSubmit } from "react-router";
 import dayjs from "dayjs";
 
-import { getSchoolTermsForYearAsync } from "~/services/.server";
+import { getSchoolTermsAsync } from "~/services/.server";
 import {
   getClosestSessionToToday,
   getCurrentTermForDate,
@@ -22,7 +22,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const selectedTerm = url.searchParams.get("selectedTerm");
   let selectedTermDate = url.searchParams.get("selectedTermDate");
 
-  const terms = await getSchoolTermsForYearAsync(dayjs().year());
+  const terms = await getSchoolTermsAsync(dayjs().year());
   const todayterm = getCurrentTermForDate(terms, new Date());
 
   const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayterm;

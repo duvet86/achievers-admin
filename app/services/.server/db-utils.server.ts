@@ -11,9 +11,7 @@ export const searchAcrossFields = (
   return searchTerm?.trim().split(" ").flatMap(cb);
 };
 
-export async function getSchoolTermsForYearAsync(
-  year: number,
-): Promise<Term[]> {
+export async function getSchoolTermsAsync(year?: number): Promise<Term[]> {
   const terms = await prisma.schoolTerm.findMany({
     where: {
       year,

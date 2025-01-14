@@ -22,6 +22,7 @@ export async function getStudentByIdAsync(id: number) {
       id,
     },
     select: {
+      id: true,
       firstName: true,
       lastName: true,
       dateOfBirth: true,

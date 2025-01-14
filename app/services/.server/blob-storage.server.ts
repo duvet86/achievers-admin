@@ -13,6 +13,7 @@ import {
 import invariant from "tiny-invariant";
 
 export const USER_DATA_BLOB_CONTAINER_NAME = "user-data";
+export const STUDENT_DATA_BLOB_CONTAINER_NAME = "student-data";
 
 function getBlobUrl(): string {
   invariant(

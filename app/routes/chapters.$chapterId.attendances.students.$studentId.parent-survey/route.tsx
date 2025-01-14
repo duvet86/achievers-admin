@@ -8,7 +8,7 @@ import {
   getHappinessSurveyOptions,
   getSatisfactionSurveyOptions,
 } from "~/services";
-import { getSchoolTermsForYearAsync } from "~/services/.server";
+import { getSchoolTermsAsync } from "~/services/.server";
 import {
   Select,
   SubmitFormButton,
@@ -31,7 +31,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     getStudentByIdAsync(Number(params.studentId)),
   ]);
 
-  const terms = await getSchoolTermsForYearAsync(dayjs().year());
+  const terms = await getSchoolTermsAsync(dayjs().year());
   const todayterm = getCurrentTermForDate(terms, new Date());
 
   const currentTerm =

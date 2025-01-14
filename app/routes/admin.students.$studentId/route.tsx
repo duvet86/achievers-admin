@@ -3,8 +3,9 @@ import type { Prisma } from "@prisma/client";
 
 import dayjs from "dayjs";
 import { $Enums } from "@prisma/client";
-import { redirect, useLoaderData, useNavigation } from "react-router";
+import { Link, redirect, useLoaderData, useNavigation } from "react-router";
 import invariant from "tiny-invariant";
+import { NavArrowRight } from "iconoir-react";
 
 import { areEqualIgnoreCase, calculateYearLevel } from "~/services";
 
@@ -212,6 +213,17 @@ export default function Index() {
             isNewStudent={isNewStudent}
             studentTeacher={student?.studentTeacher ?? []}
           />
+
+          <hr className="my-8 border-primary" />
+
+          {student && (
+            <Link
+              className="btn btn-block sm:w-52"
+              to={`/admin/students/${student.id}/school-reports`}
+            >
+              School reports <NavArrowRight />
+            </Link>
+          )}
         </div>
       </div>
     </div>

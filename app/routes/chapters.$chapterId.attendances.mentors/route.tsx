@@ -12,7 +12,7 @@ import {
   getCurrentTermForDate,
   getDatesForTerm,
 } from "~/services";
-import { getSchoolTermsForYearAsync } from "~/services/.server";
+import { getSchoolTermsAsync } from "~/services/.server";
 import { Input, Select, Title } from "~/components";
 
 import {
@@ -30,7 +30,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const selectedTerm = url.searchParams.get("selectedTerm");
   let selectedTermDate = url.searchParams.get("selectedTermDate");
 
-  const terms = await getSchoolTermsForYearAsync(dayjs().year());
+  const terms = await getSchoolTermsAsync(dayjs().year());
   const todayterm = getCurrentTermForDate(terms, new Date());
 
   const currentTerm =

@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 
 import { prisma } from "~/db.server";
 import { getCurrentTermForDate, getDatesForTerm } from "~/services";
-import { getSchoolTermsForYearAsync } from "~/services/.server";
+import { getSchoolTermsAsync } from "~/services/.server";
 
 type SessionLookup = Record<
   string,
@@ -29,7 +29,7 @@ export async function exportRosterToSpreadsheetAsync(
   selectedTerm: string | null,
   selectedTermDate: string | null,
 ) {
-  const terms = await getSchoolTermsForYearAsync(dayjs().year());
+  const terms = await getSchoolTermsAsync(dayjs().year());
 
   const todayterm = getCurrentTermForDate(terms, new Date());
   const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayterm;

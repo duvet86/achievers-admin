@@ -103,7 +103,7 @@ export function TeacherList({ studentTeacher, isNewStudent }: Props) {
       <div className="mt-6 flex justify-end">
         <Link
           to="teachers/new"
-          className={classnames("btn btn-primary w-48 gap-4", {
+          className={classnames("btn btn-primary btn-block gap-4 sm:w-48", {
             invisible: isNewStudent,
           })}
         >

@@ -11,7 +11,7 @@ import {
   Title,
 } from "~/components";
 import { getChaptersAsync, getStudentByIdAsync } from "./services.server";
-import { getSchoolTermsForYearAsync } from "~/services/.server";
+import { getSchoolTermsAsync } from "~/services/.server";
 import dayjs from "dayjs";
 import {
   getCurrentTermForDate,
@@ -31,7 +31,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     getStudentByIdAsync(Number(params.studentId)),
   ]);
 
-  const terms = await getSchoolTermsForYearAsync(dayjs().year());
+  const terms = await getSchoolTermsAsync(dayjs().year());
   const todayterm = getCurrentTermForDate(terms, new Date());
 
   const currentTerm =

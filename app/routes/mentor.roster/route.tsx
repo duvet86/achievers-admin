@@ -13,7 +13,7 @@ import {
 
 import {
   getLoggedUserInfoAsync,
-  getSchoolTermsForYearAsync,
+  getSchoolTermsAsync,
 } from "~/services/.server";
 import { getCurrentTermForDate, getDatesForTerm } from "~/services";
 import { Select, Title } from "~/components";
@@ -35,7 +35,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
-  const terms = await getSchoolTermsForYearAsync(dayjs().year());
+  const terms = await getSchoolTermsAsync(dayjs().year());
 
   const todayterm = getCurrentTermForDate(terms, new Date());
   const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayterm;

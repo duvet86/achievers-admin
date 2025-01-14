@@ -19,7 +19,7 @@ import {
   getDatesForTerm,
   getValueFromCircularArray,
 } from "~/services";
-import { getSchoolTermsForYearAsync } from "~/services/.server";
+import { getSchoolTermsAsync } from "~/services/.server";
 import { Input, Select, TableHeaderSort, Title } from "~/components";
 
 import { getMentorsAsync } from "./services.server";
@@ -35,7 +35,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const sortFullNameSubmit: Prisma.SortOrder | undefined =
     (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? undefined;
 
-  const terms = await getSchoolTermsForYearAsync(dayjs().year());
+  const terms = await getSchoolTermsAsync(dayjs().year());
 
   const todayterm = getCurrentTermForDate(terms, new Date());
   const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayterm;

@@ -33,7 +33,7 @@ import {
   getTermFromDate,
 } from "~/services";
 import {
-  getSchoolTermsForYearAsync,
+  getSchoolTermsAsync,
   getLoggedUserInfoAsync,
 } from "~/services/.server";
 
@@ -57,7 +57,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   let selectedTermDate = url.searchParams.get("selectedTermDate");
   let selectedStudentId = url.searchParams.get("selectedStudentId");
 
-  const terms = await getSchoolTermsForYearAsync(dayjs().year());
+  const terms = await getSchoolTermsAsync(dayjs().year());
 
   if (selectedTerm === null && selectedTermDate !== null) {
     selectedTerm = getTermFromDate(terms, selectedTermDate)?.name ?? null;

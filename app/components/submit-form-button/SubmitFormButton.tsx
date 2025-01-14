@@ -38,7 +38,7 @@ export function SubmitFormButton({
         type="submit"
         disabled={disabled}
       >
-        <FloppyDiskArrowIn className="h-6 w-6" />
+        <FloppyDiskArrowIn />
         {label}
       </button>
     </div>

@@ -266,6 +266,8 @@ model Student {
   studentSession             StudentSession[]
   studentAttendance          StudentAttendance[]
 
+  studentSchoolReport StudentSchoolReport[]
+
   importedStudentHistory ImportedStudentHistory?
 }
 
@@ -328,6 +330,8 @@ model SchoolTerm {
   startDate DateTime
   endDate   DateTime
 
+  studentSchoolReport StudentSchoolReport[]
+
   @@unique([startDate, endDate])
   @@index([year])
 }
@@ -389,4 +393,19 @@ model StudentSession {
   writteOnBehalfByAzureId String?
 
   @@unique([sessionId, studentId])
+}
+
+model StudentSchoolReport {
+  id Int @id @default(autoincrement())
+
+  filePath String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId Int
+
+  schoolTerm   SchoolTerm @relation(fields: [schoolTermId], references: [id])
+  schoolTermId Int
 }
