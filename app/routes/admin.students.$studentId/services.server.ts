@@ -3,7 +3,7 @@ import type {
   Student,
   StudentGuardian,
   StudentTeacher,
-} from "@prisma/client";
+} from "@prisma/client/index.js";
 
 import { prisma } from "~/db.server";
 

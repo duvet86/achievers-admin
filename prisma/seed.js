@@ -1,6 +1,6 @@
 /*eslint-env node*/
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client/index.js";
 import dayjs from "dayjs";
 
 const prisma = new PrismaClient();

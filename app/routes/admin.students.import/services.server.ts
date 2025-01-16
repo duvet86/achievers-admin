@@ -1,11 +1,11 @@
-import type { ImportedStudentHistory, Student } from "@prisma/client";
-import { type FileUpload } from "@mjackson/form-data-parser";
+import type { ImportedStudentHistory, Student } from "@prisma/client/index.js";
+import type { FileUpload } from "@mjackson/form-data-parser";
 import type { SpeadsheetStudent } from "~/models/speadsheet";
 
 import { Readable } from "node:stream";
 import { stream, read, utils } from "xlsx";
 import { MemoryFileStorage } from "@mjackson/file-storage/memory";
-import { $Enums } from "@prisma/client";
+import { $Enums } from "@prisma/client/index.js";
 
 import { prisma } from "~/db.server";
 import { isValidDate } from "~/services";

@@ -1,6 +1,6 @@
 /*eslint-env node*/
 import cron from "node-cron";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client/index.js";
 
 import { trackEvent, trackException } from "../server-utils/azure-logger.js";
 import sendPoliceCheckReminder from "./police-check-reminder.js";

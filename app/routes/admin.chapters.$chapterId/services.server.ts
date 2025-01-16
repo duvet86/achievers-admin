@@ -1,4 +1,4 @@
-import type { Chapter } from "@prisma/client";
+import type { Chapter } from "@prisma/client/index.js";
 
 import { prisma } from "~/db.server";
 

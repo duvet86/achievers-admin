@@ -1,4 +1,4 @@
-import type { $Enums } from "@prisma/client";
+import type { $Enums } from "@prisma/client/index.js";
 
 import { prisma } from "~/db.server";
 

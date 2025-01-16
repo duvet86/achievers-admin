@@ -1,4 +1,4 @@
-import type { SessionStatus } from "@prisma/client";
+import type { SessionStatus } from "@prisma/client/index.js";
 import type { Term } from "~/models";
 
 import dayjs from "dayjs";

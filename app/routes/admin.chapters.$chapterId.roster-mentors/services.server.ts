@@ -1,4 +1,4 @@
-import type { Chapter, Prisma } from "@prisma/client";
+import type { Chapter, Prisma } from "@prisma/client/index.js";
 
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";

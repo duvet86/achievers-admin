@@ -1,4 +1,4 @@
-import type { Prisma, StudentTeacher } from "@prisma/client";
+import type { Prisma, StudentTeacher } from "@prisma/client/index.js";
 
 import { prisma } from "~/db.server";
 

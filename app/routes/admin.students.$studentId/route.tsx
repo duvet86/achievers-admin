@@ -1,8 +1,8 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client/index.js";
 
 import dayjs from "dayjs";
-import { $Enums } from "@prisma/client";
+import { $Enums } from "@prisma/client/index.js";
 import { Link, redirect, useLoaderData, useNavigation } from "react-router";
 import invariant from "tiny-invariant";
 import { NavArrowRight } from "iconoir-react";
