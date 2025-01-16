@@ -12,7 +12,7 @@
     "lint": "eslint",
     "seed": "prisma db seed",
     "setup": "prisma generate && prisma migrate deploy && prisma db seed",
-    "test": "vitest",
+    "test": "cross-env VITEST=true vitest",
     "test:ci": "prisma generate && vitest run --silent --coverage",
     "test:watch": "vitest dev",
     "pretest:e2e:run": "npm run build",

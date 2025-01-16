@@ -20,7 +20,7 @@ export default function ActionsDropdown() {
           </Link>
         </li>
         <li>
-          <a className="gap-4" href="/students/export" download>
+          <a className="gap-4" href="/admin/students/export" download>
             <DatabaseExport className="h-6 w-6" />
             Export students
           </a>
