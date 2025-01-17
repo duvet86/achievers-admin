@@ -9,6 +9,8 @@ export async function createStudentsAsync(
     await tx.mentorToStudentAssignement.deleteMany();
     await tx.studentGuardian.deleteMany();
     await tx.studentTeacher.deleteMany();
+    await tx.studentAttendance.deleteMany();
+    await tx.studentSchoolReport.deleteMany();
 
     await tx.student.deleteMany();
     await tx.$queryRaw`ALTER TABLE Student AUTO_INCREMENT = 1;`;
