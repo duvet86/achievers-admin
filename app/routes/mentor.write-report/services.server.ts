@@ -12,7 +12,7 @@ dayjs.extend(utc);
 dayjs.extend(isBetween);
 dayjs.extend(customParseFormat);
 
-export type ActionType = "completed" | "remove-complete" | "draft";
+export type ActionType = "completed" | "remove-complete" | "draft" | "cancel";
 
 export interface SessionCommandRequest {
   type: ActionType;
@@ -78,6 +78,7 @@ export async function geSessionAsync(
       completedOn: true,
       signedOffOn: true,
       reportFeedback: true,
+      isCancelled: true,
       student: {
         select: {
           id: true,
@@ -145,7 +146,6 @@ export function getSessionDatesFormatted(
 export async function saveReportAsync(
   actionType: ActionType,
   sessionId: number | null,
-  studentSessionId: number | null,
   mentorId: number,
   chapterId: number,
   studentId: number,
@@ -153,7 +153,12 @@ export async function saveReportAsync(
   report: string,
 ) {
   let completedOn: Date | null;
+  let isCancelled = false;
   switch (actionType) {
+    case "cancel":
+      completedOn = new Date();
+      isCancelled = true;
+      break;
     case "completed":
       completedOn = new Date();
       break;
@@ -175,6 +180,7 @@ export async function saveReportAsync(
             studentId,
             report,
             completedOn,
+            isCancelled,
           },
         },
       },
@@ -193,10 +199,12 @@ export async function saveReportAsync(
       completedOn,
       sessionId,
       studentId,
+      isCancelled,
     },
     update: {
       report,
       completedOn,
+      isCancelled,
     },
   });
 }

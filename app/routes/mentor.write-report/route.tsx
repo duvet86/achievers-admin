@@ -22,6 +22,8 @@ import {
   CheckCircle,
   WarningTriangle,
   Calendar,
+  UserXmark,
+  InfoCircle,
 } from "iconoir-react";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
@@ -135,7 +137,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const type = bodyData.type;
   const sessionId = bodyData.sessionId;
-  const studentSessionId = bodyData.studentSessionId;
   const studentId = bodyData.studentId;
   const attendedOn = bodyData.attendedOn;
   const report = bodyData.report;
@@ -143,7 +144,6 @@ export async function action({ request }: ActionFunctionArgs) {
   await saveReportAsync(
     type,
     sessionId,
-    studentSessionId,
     user.id,
     user.chapterId,
     studentId,
@@ -177,6 +177,7 @@ export default function Index() {
   const signedOffOn = studentSession?.signedOffOn;
   const completedOn = studentSession?.completedOn;
   const reportFeedback = studentSession?.reportFeedback;
+  const isCancelled = studentSession?.isCancelled;
 
   const isMyReport = !isNotMyReport;
   const canUnmarkReport = isMyReport && completedOn && !signedOffOn;
@@ -195,12 +196,10 @@ export default function Index() {
       document.getElementById("selectedTermDate") as HTMLSelectElement
     ).value;
 
-    if (
-      type !== "remove-complete" &&
-      !confirm(
-        `Please double check the date: ${dayjs(attendedOn).format("DD/MM/YYYY")}`,
-      )
-    ) {
+    const resportState = editorStateRef.current?.toJSON();
+
+    if (!resportState?.root.direction) {
+      alert("Report cannot be blank.");
       return;
     }
 
@@ -223,18 +222,29 @@ export default function Index() {
   return (
     <>
       <div className="flex flex-col gap-10 lg:flex-row">
-        <Title
-          to={
-            searchParams.get("back_url")
-              ? searchParams.get("back_url")!
-              : undefined
-          }
-          className="mb-4"
-        >
-          Report of &quot;
-          {selectedTermDate && dayjs(selectedTermDate).format("DD/MM/YYYY")}
-          &quot;
-        </Title>
+        <div className="flex w-full items-center gap-8">
+          <Title
+            to={
+              searchParams.get("back_url")
+                ? searchParams.get("back_url")!
+                : undefined
+            }
+            className={classNames({
+              "text-error": isCancelled,
+            })}
+          >
+            Report of &quot;
+            {selectedTermDate && dayjs(selectedTermDate).format("DD/MM/YYYY")}
+            &quot;
+          </Title>
+
+          {isCancelled && (
+            <p className="flex gap-4 font-medium text-error">
+              <InfoCircle />
+              Session has been cancelled
+            </p>
+          )}
+        </div>
 
         {isNotMyReport && studentSession && (
           <p className="flex items-center gap-2 rounded bg-info px-6 py-2">
@@ -315,11 +325,20 @@ export default function Index() {
             </div>
 
             <div className="flex justify-around gap-4 pb-2 sm:justify-end">
-              <div className="flex gap-8">
+              <div className="flex flex-wrap gap-8">
                 {!completedOn && (
                   <>
                     <button
-                      className="btn btn-primary w-36"
+                      className="btn btn-error btn-block sm:mr-6 sm:w-44"
+                      onClick={saveReport("cancel")}
+                      disabled={isNotMyReport}
+                    >
+                      <UserXmark />
+                      Cancel session
+                    </button>
+
+                    <button
+                      className="btn btn-primary btn-block sm:w-36"
                       onClick={saveReport("draft")}
                       disabled={isNotMyReport}
                     >
@@ -328,7 +347,7 @@ export default function Index() {
                     </button>
 
                     <button
-                      className="btn btn-success w-36"
+                      className="btn btn-success btn-block sm:w-36"
                       onClick={saveReport("completed")}
                       disabled={isNotMyReport}
                     >
@@ -340,12 +359,12 @@ export default function Index() {
 
                 {canUnmarkReport && (
                   <button
-                    className="btn btn-error w-48"
+                    className="btn btn-error btn-block sm:w-48"
                     onClick={saveReport("remove-complete")}
                     disabled={isNotMyReport}
                   >
                     <WarningTriangle />
-                    Unmark completed
+                    {isCancelled ? "Re enable session" : "Unmark completed"}
                   </button>
                 )}
               </div>

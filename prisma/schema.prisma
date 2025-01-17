@@ -392,6 +392,8 @@ model StudentSession {
 
   writteOnBehalfByAzureId String?
 
+  isCancelled Boolean @default(false)
+
   @@unique([sessionId, studentId])
 }
 

@@ -10,7 +10,7 @@ import {
 } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
-import { EditPencil, Trash, Xmark } from "iconoir-react";
+import { EditPencil, UserXmark, Xmark } from "iconoir-react";
 
 import { Title } from "~/components";
 
@@ -100,8 +100,8 @@ export default function Index() {
           type="button"
           onClick={handleFormSubmit}
         >
-          <Trash />
-          Cancel
+          <UserXmark />
+          Remove assignment
         </button>
       </div>
 
