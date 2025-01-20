@@ -3,7 +3,14 @@ import type { LoaderFunctionArgs } from "react-router";
 import { Link, useLoaderData, useSearchParams } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
-import { Xmark, Check, StatsReport, EditPencil } from "iconoir-react";
+import {
+  Xmark,
+  Check,
+  StatsReport,
+  EditPencil,
+  InfoCircle,
+} from "iconoir-react";
+import classNames from "classnames";
 
 import { Title } from "~/components";
 
@@ -34,6 +41,7 @@ export default function Index() {
       completedOn,
       signedOffOn,
       hasReport,
+      isCancelled,
     },
   } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
@@ -42,16 +50,28 @@ export default function Index() {
 
   return (
     <>
-      <Title
-        to={
-          backURL
-            ? backURL
-            : `/admin/student-sessions?${searchParams.toString()}`
-        }
-      >
-        Session of &quot;
-        {attendedOnLabel}&quot;
-      </Title>
+      <div className="flex w-full items-center gap-8">
+        <Title
+          to={
+            backURL
+              ? backURL
+              : `/admin/student-sessions?${searchParams.toString()}`
+          }
+          className={classNames({
+            "text-error": isCancelled,
+          })}
+        >
+          Session of &quot;
+          {attendedOnLabel}&quot;
+        </Title>
+
+        {isCancelled && (
+          <p className="flex gap-4 font-medium text-error">
+            <InfoCircle />
+            Session has been cancelled
+          </p>
+        )}
+      </div>
 
       <div className="my-8 flex flex-col gap-12">
         <div className="flex items-center gap-2 border-b p-2">

@@ -3,6 +3,8 @@ import type { LinksFunction, LoaderFunctionArgs } from "react-router";
 import { useLoaderData, useSearchParams } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
+import classNames from "classnames";
+import { InfoCircle } from "iconoir-react";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
 import { Editor, SubTitle, Title } from "~/components";
@@ -31,11 +33,25 @@ export default function Index() {
 
   return (
     <>
-      <Title to={`/mentor/student-sessions?${searchParams.toString()}`}>
-        Report of &quot;
-        {dayjs(studentSession.session.attendedOn).format("DD/MM/YYYY")}
-        &quot;
-      </Title>
+      <div className="flex w-full items-center gap-8">
+        <Title
+          to={`/mentor/student-sessions?${searchParams.toString()}`}
+          className={classNames({
+            "text-error": studentSession.isCancelled,
+          })}
+        >
+          Report of &quot;
+          {dayjs(studentSession.session.attendedOn).format("DD/MM/YYYY")}
+          &quot;
+        </Title>
+
+        {studentSession.isCancelled && (
+          <p className="flex gap-4 font-medium text-error">
+            <InfoCircle />
+            Session has been cancelled
+          </p>
+        )}
+      </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6">
         <h3 className="my-4 font-bold">Mentor:</h3>

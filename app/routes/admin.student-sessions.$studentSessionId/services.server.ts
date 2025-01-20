@@ -10,6 +10,7 @@ export async function getStudentSessionByIdAsync(studentSessionId: number) {
       signedOffOn: true,
       hasReport: true,
       completedOn: true,
+      isCancelled: true,
       student: {
         select: {
           id: true,

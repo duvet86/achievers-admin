@@ -12,7 +12,7 @@ import {
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
-import { Check, NavArrowRight, Calendar } from "iconoir-react";
+import { Check, NavArrowRight, Calendar, WarningTriangle } from "iconoir-react";
 
 import {
   getCurrentTermForDate,
@@ -225,6 +225,7 @@ export default function Index() {
                   const sessionId = session?.sessionId;
                   const studentSessionId = session?.studentSessionId;
                   const hasReport = session?.hasReport ?? false;
+                  const isCancelled = session?.isCancelled ?? false;
                   const completedOn = session?.completedOn;
 
                   const queryString = `back_url=/admin/chapters/${chapterId}/roster-students?${encodeURIComponent(searchParams.toString())}`;
@@ -243,7 +244,12 @@ export default function Index() {
                           selectedTermDate ? "w-full" : "w-48",
                         )}
                       >
-                        {hasReport && (
+                        {isCancelled && (
+                          <div className="badge indicator-item badge-error indicator-center gap-1">
+                            Cancelled <WarningTriangle className="h-4 w-4" />
+                          </div>
+                        )}
+                        {!isCancelled && hasReport && (
                           <div className="badge indicator-item badge-success indicator-center gap-1">
                             Report <Check className="h-4 w-4" />
                           </div>
