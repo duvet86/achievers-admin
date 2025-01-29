@@ -239,7 +239,7 @@ export default function Index() {
           </Title>
 
           {isCancelled && (
-            <p className="flex gap-4 font-medium text-error">
+            <p className="text-error flex gap-4 font-medium">
               <InfoCircle />
               Session has been cancelled
             </p>
@@ -247,7 +247,7 @@ export default function Index() {
         </div>
 
         {isNotMyReport && studentSession && (
-          <p className="flex items-center gap-2 rounded bg-info px-6 py-2">
+          <p className="bg-info flex items-center gap-2 rounded-sm px-6 py-2">
             <WarningTriangle className="h-6 w-6" />
             Written By{" "}
             <span className="font-bold">{session?.mentor.fullName}</span>
@@ -257,25 +257,29 @@ export default function Index() {
 
       <div className="relative flex h-full flex-col">
         <div className="mb-6 flex flex-col gap-2">
-          <Select
-            key={selectedTerm}
-            label="Term"
-            name="selectedTerm"
-            defaultValue={selectedTerm}
-            options={termsList}
-            onChange={handleSelectChange("selectedTerm")}
-          />
+          <div>
+            <Select
+              key={selectedTerm}
+              label="Term"
+              name="selectedTerm"
+              defaultValue={selectedTerm}
+              options={termsList}
+              onChange={handleSelectChange("selectedTerm")}
+            />
+          </div>
 
           <div className="flex content-center gap-6">
             {sessionDates.length > 0 ? (
-              <Select
-                key={selectedTermDate}
-                label="Session date"
-                name="selectedTermDate"
-                defaultValue={selectedTermDate ?? ""}
-                options={sessionDates}
-                onChange={handleSelectChange("selectedTermDate")}
-              />
+              <div className="w-full">
+                <Select
+                  key={selectedTermDate}
+                  label="Session date"
+                  name="selectedTermDate"
+                  defaultValue={selectedTermDate ?? ""}
+                  options={sessionDates}
+                  onChange={handleSelectChange("selectedTermDate")}
+                />
+              </div>
             ) : (
               <p className="text-warning">
                 No sessions booked for the selected term, go to{" "}
@@ -287,17 +291,19 @@ export default function Index() {
             )}
           </div>
 
-          <Select
-            key={selectedStudentId}
-            label="Student"
-            name="selectedStudentId"
-            defaultValue={selectedStudentId}
-            options={students.map(({ id, fullName }) => ({
-              label: fullName,
-              value: id.toString(),
-            }))}
-            onChange={handleSelectChange("selectedStudentId")}
-          />
+          <div>
+            <Select
+              key={selectedStudentId}
+              label="Student"
+              name="selectedStudentId"
+              defaultValue={selectedStudentId}
+              options={students.map(({ id, fullName }) => ({
+                label: fullName,
+                value: id.toString(),
+              }))}
+              onChange={handleSelectChange("selectedStudentId")}
+            />
+          </div>
         </div>
 
         <div
@@ -386,7 +392,7 @@ export default function Index() {
               </div>
 
               <div className="flex items-center gap-4">
-                <p className="flex-1 text-info">
+                <p className="text-info flex-1">
                   {signedOffOn
                     ? `Report has been signed off on ${dayjs(signedOffOn).format("MMMM D, YYYY")}`
                     : ""}

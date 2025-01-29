@@ -6,7 +6,7 @@ export { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 export { ContentEditable } from "@lexical/react/LexicalContentEditable";
 export { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 export { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-export { default as LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
+export { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 export { HeadingNode, QuoteNode } from "@lexical/rich-text";
 export { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 export { ListItemNode, ListNode } from "@lexical/list";

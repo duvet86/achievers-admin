@@ -21,7 +21,7 @@ export function ManageSession({
 }: Props) {
   return (
     <details
-      className="collapse collapse-arrow bg-base-200"
+      className="collapse-arrow bg-base-200 collapse"
       open={studentsForSession !== null}
     >
       <summary
@@ -75,7 +75,7 @@ export function ManageSession({
               <BookmarkBook />
               Available
               <div
-                className="hidden sm:tooltip"
+                className="sm:tooltip hidden"
                 data-tip=" You don't have a student but are available to
             mentor"
               >
@@ -97,7 +97,7 @@ export function ManageSession({
               <Xmark />
               Unavailable
               <div
-                className="hidden sm:tooltip"
+                className="sm:tooltip hidden"
                 data-tip="  You are NOT available to mentor and won't be
             contacted"
               >

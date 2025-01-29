@@ -46,7 +46,7 @@ export default function Index() {
         </Title>
 
         {studentSession.isCancelled && (
-          <p className="flex gap-4 font-medium text-error">
+          <p className="text-error flex gap-4 font-medium">
             <InfoCircle />
             Session has been cancelled
           </p>

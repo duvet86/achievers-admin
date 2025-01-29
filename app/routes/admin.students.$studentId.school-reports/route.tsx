@@ -5,6 +5,7 @@ import {
   Form,
   useActionData,
   useLoaderData,
+  useNavigation,
   useSearchParams,
 } from "react-router";
 import invariant from "tiny-invariant";
@@ -75,6 +76,7 @@ export default function Index() {
   const { student, termsList, selectedTermId } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const [searchParams] = useSearchParams();
+  const transition = useNavigation();
 
   return (
     <>
@@ -82,24 +84,31 @@ export default function Index() {
         School reports for &quot;{student.fullName}&quot;
       </Title>
 
+      <hr className="my-4" />
+
       <Form method="post" encType="multipart/form-data">
-        <Select
-          label="Term"
-          name="selectedTermId"
-          defaultValue={selectedTermId}
-          options={termsList}
-        />
+        <fieldset
+          className="fieldset"
+          disabled={transition.state === "submitting"}
+        >
+          <Select
+            label="Term"
+            name="selectedTermId"
+            defaultValue={selectedTermId}
+            options={termsList}
+          />
 
-        <FileInput
-          label="Upload a school report (.pdf/.png/.jpeg supported)"
-          name="file"
-          accept="application/pdf, image/png, image/jpeg"
-        />
+          <FileInput
+            label="Upload a school report (.pdf/.png/.jpeg supported)"
+            name="file"
+            accept="application/pdf, image/png, image/jpeg"
+          />
 
-        <SubmitFormButton
-          errorMessage={actionData?.errorMessage}
-          className="mt-6 justify-between"
-        />
+          <SubmitFormButton
+            errorMessage={actionData?.errorMessage}
+            className="mt-6 justify-between"
+          />
+        </fieldset>
       </Form>
 
       <div className="overflow-x-auto">

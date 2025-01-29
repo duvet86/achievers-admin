@@ -214,7 +214,7 @@ export default function Index() {
             studentTeacher={student?.studentTeacher ?? []}
           />
 
-          <hr className="my-8 border-primary" />
+          <hr className="border-primary my-8" />
 
           {student && (
             <Link

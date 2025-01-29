@@ -45,9 +45,12 @@ export function UserForm({ user, chapters, successMessage }: Props) {
   return (
     <Form
       method="post"
-      className="relative mb-8 flex-1 overflow-y-auto border-primary md:mb-0 md:mr-8 md:border-r md:pr-4"
+      className="border-primary relative mb-8 flex-1 overflow-y-auto md:mr-8 md:mb-0 md:border-r md:pr-4"
     >
-      <fieldset disabled={transition.state === "submitting"}>
+      <fieldset
+        className="fieldset"
+        disabled={transition.state === "submitting"}
+      >
         <ProfilePicture
           profilePicturePath={user.profilePicturePath}
           fullName={`${user.fullName}`}

@@ -36,7 +36,7 @@ function CheckStatus({ isCompleted, isExpired }: CheckStatusProps) {
   if (isExpired) {
     return (
       <div className="flex items-center gap-4">
-        <WarningTriangle className="h-6 w-6 text-warning" /> Expired
+        <WarningTriangle className="text-warning h-6 w-6" /> Expired
       </div>
     );
   }
@@ -45,11 +45,11 @@ function CheckStatus({ isCompleted, isExpired }: CheckStatusProps) {
     <div className="flex items-center gap-4">
       {isCompleted ? (
         <>
-          <Check className="h-6 w-6 text-success" /> Yes
+          <Check className="text-success h-6 w-6" /> Yes
         </>
       ) : (
         <>
-          <Xmark className="h-6 w-6 text-error" /> No
+          <Xmark className="text-error h-6 w-6" /> No
         </>
       )}
     </div>
@@ -86,21 +86,21 @@ export function CheckList({
 
         <tbody>
           <tr
-            className="cursor-pointer hover:bg-base-200"
+            className="hover:bg-base-200 cursor-pointer"
             onClick={handleRowClick("eoiProfile")}
           >
-            <td className="border">
+            <td>
               <div className="flex items-center gap-4">
                 <Sparks className="h-6 w-6" />
                 Expression of interest
               </div>
             </td>
-            <td className="border">
+            <td>
               <div className="flex items-center gap-4">
-                <Check className="h-6 w-6 text-success" /> Yes
+                <Check className="text-success h-6 w-6" /> Yes
               </div>
             </td>
-            <td className="border">
+            <td>
               <Link
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="eoiProfile"
@@ -110,19 +110,19 @@ export function CheckList({
             </td>
           </tr>
           <tr
-            className="cursor-pointer hover:bg-base-200"
+            className="hover:bg-base-200 cursor-pointer"
             onClick={handleRowClick("welcomeCall")}
           >
-            <td className="border">
+            <td>
               <div className="flex items-center gap-4">
                 <Phone className="h-6 w-6" />
                 Welcome call
               </div>
             </td>
-            <td className="border">
+            <td>
               <CheckStatus isCompleted={welcomeCallCompleted} />
             </td>
-            <td className="border">
+            <td>
               <Link
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="welcomeCall"
@@ -132,19 +132,19 @@ export function CheckList({
             </td>
           </tr>
           <tr
-            className="cursor-pointer hover:bg-base-200"
+            className="hover:bg-base-200 cursor-pointer"
             onClick={handleRowClick("references")}
           >
-            <td className="border">
+            <td>
               <div className="flex items-center gap-4">
                 <MultiBubble className="h-6 w-6" />
                 References
               </div>
             </td>
-            <td className="border">
+            <td>
               <CheckStatus isCompleted={referencesCompleted} />
             </td>
-            <td className="border">
+            <td>
               <Link
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="references"
@@ -154,19 +154,19 @@ export function CheckList({
             </td>
           </tr>
           <tr
-            className="cursor-pointer hover:bg-base-200"
+            className="hover:bg-base-200 cursor-pointer"
             onClick={handleRowClick("induction")}
           >
-            <td className="border">
+            <td>
               <div className="flex items-center gap-4">
                 <Journal className="h-6 w-6" />
                 Induction
               </div>
             </td>
-            <td className="border">
+            <td>
               <CheckStatus isCompleted={inductionCompleted} />
             </td>
-            <td className="border">
+            <td>
               <Link
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="induction"
@@ -176,22 +176,22 @@ export function CheckList({
             </td>
           </tr>
           <tr
-            className="cursor-pointer hover:bg-base-200"
+            className="hover:bg-base-200 cursor-pointer"
             onClick={handleRowClick("police-check")}
           >
-            <td className="border">
+            <td>
               <div className="flex items-center gap-4">
                 <ShieldCheck className="h-6 w-6" />
                 Police check
               </div>
             </td>
-            <td className="border">
+            <td>
               <CheckStatus
                 isCompleted={policeCheckCompleted}
                 isExpired={isPoliceCheckExpired}
               />
             </td>
-            <td className="border">
+            <td>
               <Link
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="police-check"
@@ -201,22 +201,22 @@ export function CheckList({
             </td>
           </tr>
           <tr
-            className="cursor-pointer hover:bg-base-200"
+            className="hover:bg-base-200 cursor-pointer"
             onClick={handleRowClick("wwc-check")}
           >
-            <td className="border">
+            <td>
               <div className="flex items-center gap-4">
                 <Group className="h-6 w-6" />
                 WWC check
               </div>
             </td>
-            <td className="border">
+            <td>
               <CheckStatus
                 isCompleted={wwcCheckCompleted}
                 isExpired={isWwcCheckExpired}
               />
             </td>
-            <td className="border">
+            <td>
               <Link
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="wwc-check"
@@ -226,19 +226,19 @@ export function CheckList({
             </td>
           </tr>
           <tr
-            className="cursor-pointer hover:bg-base-200"
+            className="hover:bg-base-200 cursor-pointer"
             onClick={handleRowClick("approval-mrc")}
           >
-            <td className="border">
+            <td>
               <div className="flex items-center gap-4">
                 <ThumbsUp className="h-6 w-6" />
                 Approval by MRC
               </div>
             </td>
-            <td className="border">
+            <td>
               <CheckStatus isCompleted={approvalbyMRCCompleted} />
             </td>
-            <td className="border">
+            <td>
               <Link
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="approval-mrc"

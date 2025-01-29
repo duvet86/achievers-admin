@@ -333,7 +333,7 @@ export default function ToolbarPlugin({
   }, [editor, isLink, setIsLinkEditMode]);
 
   return (
-    <div className="toolbar border-b" ref={toolbarRef}>
+    <div className="toolbar border-b border-b-gray-300" ref={toolbarRef}>
       <button
         disabled={!canUndo}
         onClick={() => {

@@ -1,7 +1,12 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { EoiUpdateCommand } from "./services.server";
 
-import { Form, useActionData, useLoaderData } from "react-router";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "react-router";
 import invariant from "tiny-invariant";
 
 import { Input, Radio, SubmitFormButton, Textarea, Title } from "~/components";
@@ -79,6 +84,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 export default function Index() {
   const { user } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
+  const transition = useNavigation();
 
   const eoIProfile = user.eoIProfile;
 
@@ -88,99 +94,106 @@ export default function Index() {
         Expression of interest for &quot;{user.fullName}&quot;
       </Title>
 
+      <hr className="my-4" />
+
       <Form method="post">
-        <Textarea
-          defaultValue={eoIProfile?.bestTimeToContact ?? ""}
-          label="Best time to contact"
-          name="bestTimeToContact"
-          required
-        />
+        <fieldset
+          className="fieldset"
+          disabled={transition.state === "submitting"}
+        >
+          <Textarea
+            defaultValue={eoIProfile?.bestTimeToContact ?? ""}
+            label="Best time to contact"
+            name="bestTimeToContact"
+            required
+          />
 
-        <Input
-          defaultValue={eoIProfile?.occupation ?? ""}
-          label="Occupation"
-          name="occupation"
-          required
-        />
+          <Input
+            defaultValue={eoIProfile?.occupation ?? ""}
+            label="Occupation"
+            name="occupation"
+            required
+          />
 
-        <Textarea
-          defaultValue={eoIProfile?.volunteerExperience ?? ""}
-          label="Volunteer experience"
-          name="volunteerExperience"
-          required
-        />
+          <Textarea
+            defaultValue={eoIProfile?.volunteerExperience ?? ""}
+            label="Volunteer experience"
+            name="volunteerExperience"
+            required
+          />
 
-        <Input
-          defaultValue={eoIProfile?.role ?? ""}
-          label="Role"
-          name="role"
-          required
-        />
+          <Input
+            defaultValue={eoIProfile?.role ?? ""}
+            label="Role"
+            name="role"
+            required
+          />
 
-        <Input
-          defaultValue={eoIProfile?.mentoringLevel ?? ""}
-          label="Mentoring level"
-          name="mentoringLevel"
-          required
-        />
+          <Input
+            defaultValue={eoIProfile?.mentoringLevel ?? ""}
+            label="Mentoring level"
+            name="mentoringLevel"
+            required
+          />
 
-        <Input
-          defaultValue={eoIProfile?.heardAboutUs ?? ""}
-          label="How did you hear about us?"
-          name="heardAboutUs"
-          required
-        />
+          <Input
+            defaultValue={eoIProfile?.heardAboutUs ?? ""}
+            label="How did you hear about us?"
+            name="heardAboutUs"
+            required
+          />
 
-        <Input
-          defaultValue={eoIProfile?.preferredFrequency ?? ""}
-          label="Preferred frequency"
-          name="preferredFrequency"
-          required
-        />
+          <Input
+            defaultValue={eoIProfile?.preferredFrequency ?? ""}
+            label="Preferred frequency"
+            name="preferredFrequency"
+            required
+          />
 
-        <Input
-          defaultValue={eoIProfile?.preferredSubject ?? ""}
-          label="Preferred subject"
-          name="preferredSubject"
-          required
-        />
+          <Input
+            defaultValue={eoIProfile?.preferredSubject ?? ""}
+            label="Preferred subject"
+            name="preferredSubject"
+            required
+          />
 
-        <Radio
-          label="Is over 18?"
-          name="isOver18"
-          defaultValue={eoIProfile?.isOver18.toString()}
-          options={[
-            {
-              label: "Yes",
-              value: "true",
-            },
-            {
-              label: "No",
-              value: "false",
-            },
-          ]}
-          required
-        />
+          <Radio
+            label="Is over 18?"
+            name="isOver18"
+            defaultValue={eoIProfile?.isOver18.toString()}
+            options={[
+              {
+                label: "Yes",
+                value: "true",
+              },
+              {
+                label: "No",
+                value: "false",
+              },
+            ]}
+            required
+          />
 
-        <Textarea
-          defaultValue={eoIProfile?.comment ?? ""}
-          label="Why a volunteer?"
-          name="comment"
-          required
-        />
+          <Textarea
+            defaultValue={eoIProfile?.comment ?? ""}
+            label="Why a volunteer?"
+            name="comment"
+            required
+          />
 
-        <Input
-          defaultValue={eoIProfile?.aboutMe ?? ""}
-          label="About me"
-          name="aboutMe"
-          required
-        />
+          <Input
+            defaultValue={eoIProfile?.aboutMe ?? ""}
+            label="About me"
+            name="aboutMe"
+            required
+          />
 
-        <SubmitFormButton
-          successMessage={actionData?.successMessage}
-          errorMessage={actionData?.errorMessage}
-          className="mt-6 justify-between"
-        />
+          <SubmitFormButton
+            successMessage={actionData?.successMessage}
+            errorMessage={actionData?.errorMessage}
+            className="mt-6 justify-between"
+          />
+        </fieldset>
       </Form>
     </>
   );

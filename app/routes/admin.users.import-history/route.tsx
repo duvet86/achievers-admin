@@ -2,10 +2,10 @@ import type { LoaderFunctionArgs } from "react-router";
 
 import { Form, Link, useLoaderData } from "react-router";
 import dayjs from "dayjs";
+import { PageEdit } from "iconoir-react";
 
-import { FastArrowLeft, FastArrowRight, PageEdit } from "iconoir-react";
-
-import { Title } from "~/components";
+import { getPaginationRange } from "~/services";
+import { Pagination, Title } from "~/components";
 
 import {
   getImportHistoryAsync,
@@ -15,35 +15,39 @@ import {
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
 
-  const previousPageSubmit = url.searchParams.get("previousBtn")?.toString();
-  const pageNumberSubmit = url.searchParams.get("pageNumberBtn")?.toString();
-  const nextPageSubmit = url.searchParams.get("nextBtn")?.toString();
+  const previousPageSubmit = url.searchParams.get("previousBtn");
+  const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
+  const nextPageSubmit = url.searchParams.get("nextBtn");
 
-  const pageNumber = Number(url.searchParams.get("pageNumber")!.toString());
+  const pageNumber = Number(url.searchParams.get("pageNumber"));
 
   const count = await getImportHistoryCountAsync();
   const totalPageCount = Math.ceil(count / 10);
 
   let currentPageNumber = 0;
-  if (previousPageSubmit !== undefined && pageNumber > 0) {
+  if (previousPageSubmit !== null && pageNumber > 0) {
     currentPageNumber = pageNumber - 1;
-  } else if (nextPageSubmit !== undefined && pageNumber < totalPageCount) {
+  } else if (nextPageSubmit !== null && pageNumber < totalPageCount) {
     currentPageNumber = pageNumber + 1;
-  } else if (pageNumberSubmit !== undefined) {
+  } else if (pageNumberSubmit !== null) {
     currentPageNumber = Number(pageNumberSubmit);
   }
 
   const history = await getImportHistoryAsync(currentPageNumber);
 
+  const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
+
   return {
     count,
     currentPageNumber,
     history,
+    range,
   };
 };
 
 export default function Index() {
-  const { history, count, currentPageNumber } = useLoaderData<typeof loader>();
+  const { history, count, currentPageNumber, range } =
+    useLoaderData<typeof loader>();
 
   const totalPageCount = Math.ceil(count / 10);
 
@@ -70,7 +74,7 @@ export default function Index() {
             <tbody>
               {history.length === 0 && (
                 <tr>
-                  <td colSpan={3} className="border">
+                  <td colSpan={3}>
                     <i>No mentors imported</i>
                   </td>
                 </tr>
@@ -81,13 +85,11 @@ export default function Index() {
                     key={id}
                     className={error !== null ? "bg-error" : undefined}
                   >
-                    <td className="border">{index + 1}</td>
-                    <td className="border">{fullName}</td>
-                    <td className="border">{error}</td>
-                    <td className="border">
-                      {dayjs(createdAt).format("YYYY/MM/DD hh:mm")}
-                    </td>
-                    <td className="border">
+                    <td>{index + 1 + currentPageNumber * 10}</td>
+                    <td>{fullName}</td>
+                    <td>{error}</td>
+                    <td>{dayjs(createdAt).format("YYYY/MM/DD hh:mm")}</td>
+                    <td>
                       <Link
                         to={`/admin/users/${id.toString()}`}
                         className="btn btn-success btn-xs w-full gap-2"
@@ -105,47 +107,11 @@ export default function Index() {
 
         <input type="hidden" name="pageNumber" value={currentPageNumber} />
 
-        <div className="join mt-4">
-          <button
-            type="submit"
-            name="previousBtn"
-            value="previousBtn"
-            className="btn btn-outline join-item"
-            disabled={currentPageNumber === 0}
-            title="previous"
-          >
-            <FastArrowLeft />
-          </button>
-          {Array(totalPageCount)
-            .fill(null)
-            .map((_, index) => (
-              <button
-                key={index}
-                type="submit"
-                name="pageNumberBtn"
-                value={index}
-                className={
-                  currentPageNumber === index
-                    ? "btn btn-outline join-item btn-active"
-                    : "btn btn-outline join-item"
-                }
-              >
-                {index + 1}
-              </button>
-            ))}
-          <button
-            type="submit"
-            name="nextBtn"
-            value="nextBtn"
-            className="btn btn-outline join-item"
-            disabled={
-              currentPageNumber === totalPageCount - 1 || totalPageCount === 0
-            }
-            title="next"
-          >
-            <FastArrowRight />
-          </button>
-        </div>
+        <Pagination
+          range={range}
+          currentPageNumber={currentPageNumber}
+          totalPageCount={totalPageCount}
+        />
       </Form>
     </>
   );

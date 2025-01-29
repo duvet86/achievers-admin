@@ -58,9 +58,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const transition = useNavigation();
   const { user } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
+  const transition = useNavigation();
 
   return (
     <>
@@ -69,8 +69,13 @@ export default function Index() {
         &quot;
       </Title>
 
+      <hr className="my-4" />
+
       <Form method="post">
-        <fieldset disabled={transition.state === "submitting"}>
+        <fieldset
+          className="fieldset"
+          disabled={transition.state === "submitting"}
+        >
           <Input
             label="Called by"
             name="calledBy"

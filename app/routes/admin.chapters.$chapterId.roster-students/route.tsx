@@ -146,41 +146,49 @@ export default function Index() {
         </Link>
       </div>
 
+      <hr className="my-4" />
+
       <Form
         id="rosterStudentsForm"
-        className="flex flex-col gap-4 pb-2 sm:flex-row"
+        className="flex flex-col gap-6 pb-2 sm:flex-row"
       >
-        <Select
-          label="Term"
-          name="selectedTerm"
-          defaultValue={currentTerm.name}
-          options={termsList}
-          onChange={handleFormSubmit}
-        />
+        <div className="w-full sm:w-auto">
+          <Select
+            label="Term"
+            name="selectedTerm"
+            defaultValue={currentTerm.name}
+            options={termsList}
+            onChange={handleFormSubmit}
+          />
+        </div>
 
-        <Select
-          label="Session date"
-          name="selectedTermDate"
-          defaultValue={selectedTermDate}
-          options={sessionDateOptions}
-          onChange={handleFormSubmit}
-        />
+        <div className="w-full sm:w-auto">
+          <Select
+            label="Session date"
+            name="selectedTermDate"
+            defaultValue={selectedTermDate}
+            options={sessionDateOptions}
+            onChange={handleFormSubmit}
+          />
+        </div>
 
-        <Input
-          hasButton
-          label="Filter student (press Enter to submit)"
-          name="search"
-          placeholder="Student name"
-          defaultValue={searchTerm}
-          onButtonClick={handleButtonClick}
-        />
+        <div className="w-full sm:w-auto">
+          <Input
+            hasButton
+            label="Filter student (press Enter to submit)"
+            name="search"
+            placeholder="Student name"
+            defaultValue={searchTerm}
+            onButtonClick={handleButtonClick}
+          />
+        </div>
       </Form>
 
       <div className="overflow-auto">
-        <table className="table table-pin-rows table-pin-cols">
+        <table className="table-pin-rows table-pin-cols table">
           <thead>
             <tr className="z-20">
-              <th className="border-r sm:w-64">
+              <th className="border-r border-gray-300 sm:w-64">
                 <Form>
                   <TableHeaderSort
                     sortPropName="sortFullName"
@@ -207,7 +215,7 @@ export default function Index() {
                   backgroundColor: getValueFromCircularArray(i, colours),
                 }}
               >
-                <th className="z-10 border-b border-r border-b-white bg-gray-200">
+                <th className="z-10 border-r border-b border-gray-300 border-b-white bg-gray-200">
                   <button
                     type="button"
                     onClick={onStudentClick(fullName)}
@@ -237,7 +245,7 @@ export default function Index() {
                     : `/admin/chapters/${chapterId}/roster-students/${studentId}/attended-on/${attendedOn}/new?${queryString}`;
 
                   return (
-                    <td key={index} className="border-r">
+                    <td key={index} className="border-r border-gray-300">
                       <div
                         className={classNames(
                           "indicator",

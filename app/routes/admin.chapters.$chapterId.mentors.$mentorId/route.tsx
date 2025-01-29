@@ -154,7 +154,7 @@ export default function Index() {
             </Form>
 
             {data?.message && (
-              <p className="flex items-center gap-2 text-error">
+              <p className="text-error flex items-center gap-2">
                 <WarningTriangle className="h-6 w-6" />
                 {data?.message}
               </p>
@@ -172,7 +172,7 @@ export default function Index() {
           <ol>
             {mentorToStudentAssignement.map(
               ({ student: { id, fullName, endDate } }) => (
-                <li key={id} className="border-b pb-2">
+                <li key={id} className="border-b border-gray-300 pb-2">
                   <div
                     className={classNames("flex items-center justify-between", {
                       "text-error": endDate !== null,

@@ -43,12 +43,9 @@ export function FeedbackModal() {
             e.currentTarget.reset();
           }}
         >
-          <fieldset
-            disabled={isLoading}
-            className="relative flex flex-col gap-4"
-          >
+          <fieldset disabled={isLoading} className="fieldset relative">
             {isLoading && (
-              <div className="absolute z-10 flex h-full w-full justify-center bg-slate-300 bg-opacity-50">
+              <div className="bg-opacity-50 absolute z-10 flex h-full w-full justify-center bg-slate-300">
                 <span className="loading loading-spinner loading-lg text-primary"></span>
               </div>
             )}

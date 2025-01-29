@@ -49,9 +49,9 @@ export function GuardianList({ guardian, isNewStudent }: Props) {
             <tbody>
               {guardian.map(({ id, fullName, relationship }) => (
                 <tr key={id}>
-                  <td className="border">{fullName}</td>
-                  <td className="border">{relationship}</td>
-                  <td className="border">
+                  <td>{fullName}</td>
+                  <td>{relationship}</td>
+                  <td>
                     <div className="join w-full">
                       <Link
                         className="btn btn-success join-item btn-xs w-1/2 gap-2"

@@ -18,7 +18,7 @@ export function Navbar({ userName, environment, version, currentView }: Props) {
     environment === Environments.Local || environment === Environments.Staging;
 
   return (
-    <nav className="navbar absolute left-0 top-0 z-30 h-16 justify-between bg-primary text-primary-content shadow-md">
+    <nav className="navbar bg-primary text-primary-content absolute top-0 left-0 z-30 h-16 justify-between shadow-md">
       <div className="flex">
         <div className="flex-none lg:hidden">
           <label htmlFor="drawer" className="btn btn-square btn-ghost">
@@ -30,7 +30,7 @@ export function Navbar({ userName, environment, version, currentView }: Props) {
             <span className="badge badge-lg ml-2">{environment}</span>
           ) : (
             <img
-              className="mr-4 w-16 rounded"
+              className="mr-4 w-16 rounded-sm"
               src="/images/logo.png"
               alt="Logo"
             />
@@ -52,7 +52,7 @@ export function Navbar({ userName, environment, version, currentView }: Props) {
         </div>
         <ul
           tabIndex={0}
-          className="menu dropdown-content w-64 rounded-box bg-base-100 p-2 shadow"
+          className="menu dropdown-content rounded-box bg-base-100 w-64 p-2 shadow-sm"
         >
           {isCurrentViewMentor && (
             <li className="text-info">

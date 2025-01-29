@@ -23,7 +23,7 @@ export function SubmitFormButton({
   return (
     <div
       data-testid="container"
-      className={classnames("flex", className, {
+      className={classnames("z-10 flex", className, {
         "sticky bottom-0": sticky,
       })}
     >

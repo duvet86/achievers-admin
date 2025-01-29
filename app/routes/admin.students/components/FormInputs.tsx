@@ -70,7 +70,7 @@ export default function FormInputs({
 
       <div className="flex items-end">
         <button
-          className="btn btn-outline w-full sm:w-32"
+          className="btn btn-neutral w-full sm:w-32"
           type="button"
           onClick={onFormClear}
         >

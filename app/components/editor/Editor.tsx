@@ -89,7 +89,7 @@ export function Editor({
             editorState: initialEditorStateType,
           }}
         >
-          <div className="lexical flex h-full w-full flex-col border">
+          <div className="lexical flex h-full w-full flex-col border border-gray-300">
             {!isReadonly && (
               <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
             )}
@@ -102,7 +102,7 @@ export function Editor({
               <RichTextPlugin
                 contentEditable={
                   <div className="relative h-full" ref={onRef}>
-                    <ContentEditable className="h-full p-4 outline-none" />
+                    <ContentEditable className="h-full p-4 outline-hidden" />
                   </div>
                 }
                 placeholder={

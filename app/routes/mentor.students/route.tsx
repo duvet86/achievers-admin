@@ -25,7 +25,7 @@ export default function Index() {
       <Title>My students</Title>
 
       <div className="overflow-auto bg-white">
-        <table className="table table-lg">
+        <table className="table-lg table">
           <thead>
             <tr>
               <th className="w-16">#</th>

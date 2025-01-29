@@ -24,7 +24,7 @@ export default function Index() {
       <Title>My partners</Title>
 
       <div className="overflow-auto bg-white">
-        <table className="table table-lg">
+        <table className="table-lg table">
           <thead>
             <tr>
               <th className="w-6">#</th>
@@ -42,7 +42,7 @@ export default function Index() {
             )}
             {partners.map(({ user: { id, fullName } }, index) => (
               <tr key={id}>
-                <td className="border-r">{index + 1}</td>
+                <td className="border-r border-gray-300">{index + 1}</td>
                 <td align="left">{fullName}</td>
                 <td align="left">-</td>
               </tr>

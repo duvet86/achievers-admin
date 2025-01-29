@@ -1,9 +1,8 @@
 import { reactRouter } from "@react-router/dev/vite";
-import autoprefixer from "autoprefixer";
-import tailwindcss from "tailwindcss";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { configDefaults } from "vitest/config";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig(({ isSsrBuild }) => ({
   build: {
@@ -13,12 +12,11 @@ export default defineConfig(({ isSsrBuild }) => ({
         }
       : undefined,
   },
-  css: {
-    postcss: {
-      plugins: [tailwindcss, autoprefixer],
-    },
-  },
-  plugins: [!process.env.VITEST && reactRouter(), tsconfigPaths()],
+  plugins: [
+    tailwindcss(),
+    !process.env.VITEST && reactRouter(),
+    tsconfigPaths(),
+  ],
   test: {
     globals: true,
     environment: "jsdom",

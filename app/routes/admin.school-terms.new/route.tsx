@@ -130,7 +130,7 @@ export default function Index() {
         {Array(4)
           .fill(null)
           .map((_, index) => (
-            <div key={index} className="rounded bg-gray-100 p-4 shadow-xl">
+            <div key={index} className="rounded-sm bg-gray-100 p-4 shadow-xl">
               <SubTitle>Term {index + 1}</SubTitle>
               <DateInput
                 label="Start date"

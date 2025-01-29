@@ -6,32 +6,35 @@ interface Props {
   disabled?: boolean;
   required?: boolean;
   accept?: string;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-export function FileInput({ name, label, required, ...props }: Props) {
+export function FileInput({
+  name,
+  label,
+  required,
+  onChange,
+  ...props
+}: Props) {
   return (
-    <div className="form-control relative w-full">
-      <label htmlFor={name} className="label">
-        <span className="label-text">{label}</span>
+    <>
+      <label className="fieldset-label">{label}</label>
+      <div className="indicator w-full">
         {required && (
-          <span
-            data-testid="required"
-            className="label-text-alt absolute right-1 top-9 text-2xl text-error"
-          >
-            *
-          </span>
+          <span className="indicator-item badge text-error text-xl">*</span>
         )}
-      </label>
-      <input
-        data-testid="fileinput"
-        type="file"
-        className="file-input file-input-bordered file-input-primary w-full"
-        id={name}
-        name={name}
-        placeholder={label}
-        required={required}
-        {...props}
-      />
-    </div>
+        <input
+          data-testid="fileinput"
+          type="file"
+          className="file-input file-input-bordered file-input-primary w-full"
+          id={name}
+          name={name}
+          placeholder={label}
+          required={required}
+          onChange={onChange}
+          {...props}
+        />
+      </div>
+    </>
   );
 }

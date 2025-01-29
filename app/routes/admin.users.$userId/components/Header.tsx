@@ -35,7 +35,7 @@ export function Header(props: Props) {
         </div>
         <ul
           tabIndex={0}
-          className="menu dropdown-content z-[1] w-56 rounded-box border border-base-300 bg-base-100 p-2 shadow"
+          className="menu dropdown-content rounded-box border-base-300 bg-base-100 z-1 w-56 border p-2 shadow-sm"
         >
           {getLinks(props)}
         </ul>
@@ -51,7 +51,7 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
         <Link
           to="re-enable"
           relative="path"
-          className="gap-4 font-semibold text-success"
+          className="text-success gap-4 font-semibold"
         >
           <OnTag />
           Re enable mentor
@@ -63,7 +63,7 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
   if (mentorAppRoleAssignmentId !== null) {
     return (
       <li>
-        <Link to="archive" className="gap-4 font-semibold text-error">
+        <Link to="archive" className="text-error gap-4 font-semibold">
           <BinFull />
           Archive
         </Link>
@@ -74,13 +74,13 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
   return (
     <>
       <li>
-        <Link to="give-access" className="gap-4 font-semibold text-success">
+        <Link to="give-access" className="text-success gap-4 font-semibold">
           <Key />
           Give access
         </Link>
       </li>
       <li>
-        <Link to="archive" className="gap-4 font-semibold text-error">
+        <Link to="archive" className="text-error gap-4 font-semibold">
           <BinFull />
           Archive
         </Link>
@@ -97,7 +97,7 @@ function getMessage(
     return (
       <p
         title="archived"
-        className="flex items-center gap-4 rounded bg-error px-6 py-2"
+        className="bg-error flex items-center gap-4 rounded-sm px-6 py-2"
       >
         <WarningTriangle />
         This mentor is archived!{" "}
@@ -112,7 +112,7 @@ function getMessage(
     return (
       <p
         title="No access"
-        className="flex items-center gap-2 rounded bg-warning px-6 py-2"
+        className="bg-warning flex items-center gap-2 rounded-sm px-6 py-2"
       >
         <WarningTriangle />
         This mentor does NOT have access to the system!

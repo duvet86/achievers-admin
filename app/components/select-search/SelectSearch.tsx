@@ -98,107 +98,101 @@ export function SelectSearch({
   };
 
   return (
-    <div
-      className="dropdown w-full"
-      ref={ref}
-      onClick={() => searchInputRef.current?.focus()}
-    >
-      {label && (
-        <label htmlFor={name} className="label">
-          <span className="label-text">{label}</span>
-        </label>
-      )}
-      {required && (
-        <span
-          data-testid="required"
-          className={classNames(
-            "label-text-alt absolute right-1 text-2xl text-error",
-            {
-              "top-0": label === undefined,
-              "top-9": label !== undefined,
-              "right-16": showClearButton,
-            },
-          )}
-        >
-          *
-        </span>
-      )}
+    <>
+      <label className="fieldset-label">{label}</label>
 
-      <div className="join w-full">
-        <input
-          type="text"
-          className="input join-item input-bordered flex-1"
-          value={selectedOption.label}
-          placeholder={label ?? placeholder}
-          required={required}
-          disabled={disabled}
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          onChange={() => {}}
-        />
-        {showClearButton && (
+      <div className="indicator w-full">
+        {required && (
+          <span className="indicator-item badge text-error text-xl">*</span>
+        )}
+        <div
+          className="dropdown w-full"
+          ref={ref}
+          onClick={() => searchInputRef.current?.focus()}
+        >
           <div
-            className="btn join-item text-error"
-            data-testid="clear-text"
-            onClick={onClearSelection}
+            className={classNames("w-full", {
+              join: showClearButton,
+            })}
           >
-            <Xmark className="h-6 w-6" />
-          </div>
-        )}
-      </div>
-      <input
-        ref={inputRef}
-        type="hidden"
-        name={name}
-        data-testid="autocomplete-hidden"
-      />
-      <ul
-        className="dropdown-content z-[1] max-h-80 flex-nowrap overflow-auto rounded-box bg-base-100 p-0 shadow"
-        style={{ width: rect.width }}
-      >
-        <li className="sticky top-0 z-10 mb-4 bg-white p-2">
-          <input
-            ref={searchInputRef}
-            type="text"
-            className="select-search-input input input-bordered w-full"
-            placeholder="Start typing to search..."
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSearchTerm(e.target.value)
-            }
-          />
-        </li>
-        {viewOptions.map((option, index) => (
-          <li key={index}>
-            {option.isDisabled ? (
-              <button
-                type="button"
-                onClick={onDisabledButtonClick}
-                className="cursor-not-allowed p-2 text-error"
+            <input
+              type="text"
+              className={classNames("input input-bordered w-full flex-1", {
+                "join-item": showClearButton,
+              })}
+              value={selectedOption.label}
+              placeholder={label ?? placeholder}
+              required={required}
+              disabled={disabled}
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
+              onChange={() => {}}
+            />
+            {showClearButton && (
+              <div
+                className="btn join-item text-error"
+                data-testid="clear-text"
+                onClick={onClearSelection}
               >
-                {option.label}
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="w-full p-2 text-left hover:bg-gray-100"
-                onClick={onOptionClick(option)}
-              >
-                {option.label}
-              </button>
+                <Xmark className="h-6 w-6" />
+              </div>
             )}
-          </li>
-        ))}
-        {viewOptions.length === 0 && (
-          <li>
-            <button
-              type="button"
-              className="p-2 italic"
-              onClick={onDisabledButtonClick}
-            >
-              No items
-            </button>
-          </li>
-        )}
-      </ul>
-    </div>
+          </div>
+          <input
+            ref={inputRef}
+            type="hidden"
+            name={name}
+            data-testid="autocomplete-hidden"
+          />
+          <ul
+            className="dropdown-content rounded-box bg-base-100 z-1 max-h-80 flex-nowrap overflow-auto p-0 shadow-sm"
+            style={{ width: rect.width }}
+          >
+            <li className="sticky top-0 z-10 mb-4 bg-white p-2">
+              <input
+                ref={searchInputRef}
+                type="text"
+                className="select-search-input input input-bordered w-full"
+                placeholder="Start typing to search..."
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearchTerm(e.target.value)
+                }
+              />
+            </li>
+            {viewOptions.map((option, index) => (
+              <li key={index}>
+                {option.isDisabled ? (
+                  <button
+                    type="button"
+                    onClick={onDisabledButtonClick}
+                    className="text-error cursor-not-allowed p-2"
+                  >
+                    {option.label}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="w-full p-2 text-left hover:bg-gray-100"
+                    onClick={onOptionClick(option)}
+                  >
+                    {option.label}
+                  </button>
+                )}
+              </li>
+            ))}
+            {viewOptions.length === 0 && (
+              <li>
+                <button
+                  type="button"
+                  className="p-2 italic"
+                  onClick={onDisabledButtonClick}
+                >
+                  No items
+                </button>
+              </li>
+            )}
+          </ul>
+        </div>
+      </div>
+    </>
   );
 }

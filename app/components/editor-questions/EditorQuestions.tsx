@@ -1,6 +1,6 @@
 export function EditorQuestions() {
   return (
-    <div className="hidden w-1/4 text-pretty border bg-slate-100 p-2 sm:block">
+    <div className="hidden w-1/4 border bg-slate-100 p-2 text-pretty sm:block">
       <p className="font-semibold">Have you answered these questions?</p>
       <hr className="my-2" />
       <ul className="list-inside list-disc p-2" data-testid="questions">

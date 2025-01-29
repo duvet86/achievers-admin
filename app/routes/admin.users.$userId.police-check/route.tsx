@@ -91,7 +91,10 @@ export default function Index() {
       </a>
 
       <Form method="post" encType="multipart/form-data">
-        <fieldset disabled={transition.state === "submitting"}>
+        <fieldset
+          className="fieldset"
+          disabled={transition.state === "submitting"}
+        >
           <DateInput
             defaultValue={user.policeCheck?.expiryDate ?? ""}
             label="Expiry Date (3 years from issue)"

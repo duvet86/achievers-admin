@@ -145,7 +145,7 @@ export default function Index() {
         />
 
         <div className="overflow-auto bg-white">
-          <table className="table table-lg sm:table-md">
+          <table className="table-lg sm:table-md table">
             <thead>
               <tr>
                 <th align="left" className="p-2">
@@ -178,28 +178,25 @@ export default function Index() {
                 ({ id, completedOn, signedOffOn, student, session }) => (
                   <tr
                     key={id}
-                    className="cursor-pointer hover:bg-base-200"
+                    className="hover:bg-base-200 cursor-pointer"
                     onClick={handleRowClick(id)}
                   >
-                    <td className="border p-2">{session.mentor.fullName}</td>
-                    <td className="border p-2">{student.fullName}</td>
-                    <td className="border p-2">
+                    <td className="p-2">{session.mentor.fullName}</td>
+                    <td className="p-2">{student.fullName}</td>
+                    <td className="p-2">
                       {dayjs(session.attendedOn).format("MMMM D, YYYY")}
                     </td>
-                    <td className="hidden border p-2 sm:table-cell">
+                    <td className="hidden p-2 sm:table-cell">
                       {completedOn
                         ? dayjs(completedOn).format("MMMM D, YYYY")
                         : "-"}
                     </td>
-                    <td className="hidden border p-2 sm:table-cell">
+                    <td className="hidden p-2 sm:table-cell">
                       {signedOffOn
                         ? dayjs(signedOffOn).format("MMMM D, YYYY")
                         : "-"}
                     </td>
-                    <td
-                      className="hidden border p-2 sm:table-cell"
-                      align="right"
-                    >
+                    <td className="hidden p-2 sm:table-cell" align="right">
                       <Link
                         to={`/mentor/student-sessions/${id}?${searchParams.toString()}`}
                         className="btn btn-success btn-xs btn-block"

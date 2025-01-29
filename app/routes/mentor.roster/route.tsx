@@ -217,10 +217,10 @@ export default function Index() {
           const studentSessions = myStudentsSessionsLookup[attendedOn];
 
           return (
-            <div key={attendedOn} className="border-b-2 border-slate-400">
+            <div key={attendedOn} className="border-b border-slate-400">
               <div className="flex w-full flex-col sm:flex-row">
                 <div className="p-2 font-medium text-gray-800 sm:basis-1/6">
-                  <div className="mb-2 flex h-full items-center justify-center gap-4 border-r text-lg sm:text-base">
+                  <div className="mb-2 flex h-full items-center justify-center gap-4 border-r border-gray-300 text-lg sm:text-base">
                     {dayjs(attendedOn).format("DD/MM/YYYY")}
                   </div>
                 </div>
@@ -230,7 +230,7 @@ export default function Index() {
                     <div className="flex flex-col items-center justify-between gap-2 sm:flex-row">
                       {mySession.status === "AVAILABLE" ? (
                         <>
-                          <div className="flex items-center justify-center gap-2 text-success sm:justify-start">
+                          <div className="text-success flex items-center justify-center gap-2 sm:justify-start">
                             <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
                             <span>Available</span>
                           </div>
@@ -247,7 +247,7 @@ export default function Index() {
                         </>
                       ) : (
                         <>
-                          <div className="flex items-center justify-center gap-2 text-error sm:justify-start">
+                          <div className="text-error flex items-center justify-center gap-2 sm:justify-start">
                             <ThumbsDown className="h-4 w-4 sm:h-6 sm:w-6" />
                             <span>Unavailable</span>
                           </div>
@@ -274,7 +274,7 @@ export default function Index() {
                           key={id}
                           className="flex flex-col items-center justify-between gap-2 sm:flex-row"
                         >
-                          <div className="flex items-center justify-center gap-2 text-success sm:justify-start">
+                          <div className="text-success flex items-center justify-center gap-2 sm:justify-start">
                             <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
                             <span>Booked with</span>{" "}
                             <span className="font-bold">
@@ -298,15 +298,13 @@ export default function Index() {
                       ),
                     )}
 
-                  {mySession && <hr />}
-
                   {studentSessions?.map(
                     ({ id, session, student, completedOn }) => (
                       <div
                         key={id}
                         className="flex flex-col items-center justify-between gap-4 sm:flex-row"
                       >
-                        <div className="flex items-center justify-center gap-2 text-info sm:justify-start">
+                        <div className="text-info flex items-center justify-center gap-2 sm:justify-start">
                           <Group className="h-4 w-4 sm:h-6 sm:w-6" />
                           <span className="font-bold">
                             {session.mentor.fullName}

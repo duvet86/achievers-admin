@@ -56,7 +56,7 @@ export default function Index() {
       <hr className="my-4" />
 
       <div className="mt-2 overflow-auto bg-white">
-        <table className="table table-pin-rows">
+        <table className="table-pin-rows table">
           <thead>
             <tr>
               <th align="left" className="w-14">

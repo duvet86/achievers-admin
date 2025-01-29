@@ -139,7 +139,10 @@ export default function Index() {
       </Title>
 
       <Form className="relative" method="post">
-        <fieldset disabled={transition.state === "submitting"}>
+        <fieldset
+          className="fieldset"
+          disabled={transition.state === "submitting"}
+        >
           <SubTitle>Details</SubTitle>
 
           <Input

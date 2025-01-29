@@ -8,7 +8,7 @@ interface Props {
 export function LoadingSpinner({ dark = false, large = false }: Props) {
   return (
     <svg
-      className={classNames("-ml-1 mr-3 animate-spin", {
+      className={classNames("mr-3 -ml-1 animate-spin", {
         "text-primary": dark,
         "text-white": !dark,
         "h-48 w-48": large,

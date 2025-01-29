@@ -97,34 +97,42 @@ export default function Index() {
         id="attendanceForm"
         className="mt-4 flex flex-col items-end gap-4 sm:flex-row"
       >
-        <Select
-          key={selectedTerm}
-          label="Term"
-          name="selectedTerm"
-          defaultValue={selectedTerm}
-          options={termsList}
-          onChange={submitForm}
-        />
-        <Select
-          key={selectedTermDate}
-          label="Session date"
-          name="selectedTermDate"
-          defaultValue={selectedTermDate}
-          options={sessionDates}
-          onChange={submitForm}
-        />
-        <Input
-          label="Search for a mentor (Press enter to submit)"
-          name="search"
-          defaultValue={searchTerm}
-          hasButton
-          placeholder="Search for a mentor"
-          onButtonClick={onResetClick}
-        />
+        <div className="w-full sm:w-auto">
+          <Select
+            key={selectedTerm}
+            label="Term"
+            name="selectedTerm"
+            defaultValue={selectedTerm}
+            options={termsList}
+            onChange={submitForm}
+          />
+        </div>
+
+        <div className="w-full sm:w-auto">
+          <Select
+            key={selectedTermDate}
+            label="Session date"
+            name="selectedTermDate"
+            defaultValue={selectedTermDate}
+            options={sessionDates}
+            onChange={submitForm}
+          />
+        </div>
+
+        <div className="w-full sm:w-auto">
+          <Input
+            label="Search for a mentor (Press enter to submit)"
+            name="search"
+            defaultValue={searchTerm}
+            hasButton
+            placeholder="Search for a mentor"
+            onButtonClick={onResetClick}
+          />
+        </div>
       </Form>
 
       <div className="mt-4 overflow-auto bg-white">
-        <table className="table table-zebra table-pin-rows">
+        <table className="table-zebra table-pin-rows table">
           <thead>
             <tr>
               <th align="left" className="p-2">
@@ -148,11 +156,11 @@ export default function Index() {
             )}
             {attendances.map(({ id, attendedOn, chapter, user }) => (
               <tr key={id}>
-                <td className="border p-2">
+                <td className="p-2">
                   {dayjs(attendedOn).format("D MMMM YYYY")}
                 </td>
-                <td className="border p-2">{chapter.name}</td>
-                <td className="border">{user.fullName}</td>
+                <td className="p-2">{chapter.name}</td>
+                <td>{user.fullName}</td>
               </tr>
             ))}
           </tbody>

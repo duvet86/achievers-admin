@@ -45,12 +45,10 @@ export function Pagination({
             type="submit"
             name="pageNumberBtn"
             value={pageNumber - 1}
-            className={classNames(
-              "btn btn-outline join-item btn-sm sm:btn-md",
-              {
-                "btn-active": currentPageNumber === pageNumber - 1,
-              },
-            )}
+            className={classNames("btn join-item btn-sm sm:btn-md", {
+              "btn-outline": currentPageNumber !== pageNumber - 1,
+              "btn-primary": currentPageNumber === pageNumber - 1,
+            })}
           >
             {pageNumber}
           </button>

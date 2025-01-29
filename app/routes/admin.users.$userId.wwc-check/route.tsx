@@ -89,8 +89,13 @@ export default function Index() {
         WWC check for &quot;{user.fullName}&quot;
       </Title>
 
+      <hr className="my-4" />
+
       <Form method="post" encType="multipart/form-data">
-        <fieldset disabled={transition.state === "submitting"}>
+        <fieldset
+          className="fieldset"
+          disabled={transition.state === "submitting"}
+        >
           <Input
             defaultValue={user?.wwcCheck?.wwcNumber ?? ""}
             label="WWC number"

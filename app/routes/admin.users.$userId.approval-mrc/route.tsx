@@ -68,8 +68,13 @@ export default function Index() {
         Approval by MRC for &quot;{user.fullName}&quot;
       </Title>
 
+      <hr className="my-4" />
+
       <Form method="post">
-        <fieldset disabled={transition.state === "submitting"}>
+        <fieldset
+          className="fieldset"
+          disabled={transition.state === "submitting"}
+        >
           <Input
             label="Completed by"
             name="completedBy"

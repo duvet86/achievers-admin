@@ -55,8 +55,8 @@ export default function Index() {
   return (
     <>
       <article className="prose relative mb-8 h-24 max-w-none lg:h-28">
-        <div className="h-24 w-full rounded-md bg-achievers opacity-75 lg:h-28"></div>
-        <h1 className="absolute left-6 top-6 hidden lg:block">
+        <div className="bg-achievers h-24 w-full rounded-md opacity-75 lg:h-28"></div>
+        <h1 className="absolute top-6 left-6 hidden lg:block">
           Welcome to Achievers Club WA admin system
         </h1>
         <h2 className="absolute top-0 mt-0 p-4 lg:hidden">
@@ -65,7 +65,7 @@ export default function Index() {
       </article>
 
       <div className="flex w-full justify-center">
-        <div className="stats stats-vertical shadow-lg lg:stats-horizontal">
+        <div className="stats stats-vertical lg:stats-horizontal shadow-lg">
           <StatCard
             Icon={UserCircle}
             label="Mentors with incomplete checks"

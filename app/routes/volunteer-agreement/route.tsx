@@ -101,7 +101,7 @@ export default function Index() {
       <Navbar userName={userName} environment={environment} version={version} />
 
       <main className="content-main mt-16 flex flex-col overflow-y-auto p-4">
-        <div className="hero rounded-md bg-base-200">
+        <div className="hero bg-base-200 h-full rounded-md">
           <div className="hero-content flex-col">
             <div className="text-center">
               <h1 className="text-4xl font-bold uppercase">
@@ -113,7 +113,7 @@ export default function Index() {
               </p>
             </div>
 
-            <div className="card w-full bg-base-100 shadow-2xl">
+            <div className="card bg-base-100 w-full shadow-2xl">
               <Form method="post" className="card-body">
                 {!hasAgreed && <Title>Confirm your details</Title>}
 

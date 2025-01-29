@@ -232,7 +232,7 @@ export default function Index() {
                 </div>
                 <ul
                   tabIndex={0}
-                  className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
+                  className="menu dropdown-content rounded-box bg-base-100 z-1 w-52 p-2 shadow-sm"
                 >
                   <li>
                     <Link

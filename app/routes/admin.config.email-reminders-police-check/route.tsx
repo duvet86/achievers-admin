@@ -79,7 +79,7 @@ export default function Index() {
           <tbody>
             {policeCheckEmailRemindersSent.length === 0 && (
               <tr>
-                <td className="border" colSpan={6}>
+                <td colSpan={6}>
                   <i>No reminders sent</i>
                 </td>
               </tr>
@@ -103,11 +103,13 @@ export default function Index() {
                     "bg-error text-white": hasExpired,
                   })}
                 >
-                  <td className="border">
-                    <div className="flex gap-2">{index + 1}</div>
+                  <td>
+                    <div className="flex gap-2">
+                      {index + 1 + 10 * currentPageNumber}
+                    </div>
                   </td>
-                  <td className="border">{user.fullName}</td>
-                  <td className="border">
+                  <td>{user.fullName}</td>
+                  <td>
                     <div className="flex items-center gap-4">
                       {dayjs(expiryDate).format("MMMM D, YYYY")}
                       {hasExpired && <span className="badge">Expired</span>}
@@ -116,12 +118,12 @@ export default function Index() {
                       )}
                     </div>
                   </td>
-                  <td className="border">
+                  <td>
                     {reminderSentAt
                       ? dayjs(reminderSentAt).format("MMMM D, YYYY")
                       : "-"}
                   </td>
-                  <td className="border">
+                  <td>
                     <Link
                       to={`/admin/users/${user.id}/police-check`}
                       className="btn btn-success btn-xs w-full gap-2"

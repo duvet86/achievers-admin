@@ -5,7 +5,7 @@ interface Props {
 
 export function Text({ label, text }: Props) {
   return (
-    <section className="mb-4 w-full border-b border-l border-base-300 p-1">
+    <section className="border-base-300 mb-4 w-full border-b border-l p-1">
       <h6 className="label">
         <span className="label-text font-semibold">{label}</span>
       </h6>

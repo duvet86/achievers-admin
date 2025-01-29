@@ -35,24 +35,24 @@ export default function Index() {
             <h2 className="card-title uppercase">{name}</h2>
             <p className="mb-6">{address}</p>
             <div className="card-actions justify-center">
-              <div className="join join-vertical w-full sm:join-horizontal sm:w-auto">
+              <div className="join join-vertical sm:join-horizontal w-full sm:w-auto">
                 <Link
                   to={`${id}/roster-students`}
-                  className="btn btn-accent join-item"
+                  className="btn btn-primary join-item"
                 >
                   <Calendar />
                   Roster STUDENTS
                 </Link>
                 <Link
                   to={`${id}/roster-mentors`}
-                  className="btn btn-accent join-item"
+                  className="btn btn-primary join-item"
                 >
                   <Calendar />
                   Roster MENTORS
                 </Link>
               </div>
 
-              <div className="join join-vertical w-full sm:join-horizontal sm:w-auto">
+              <div className="join join-vertical sm:join-horizontal w-full sm:w-auto">
                 <Link to={`${id}/students`} className="btn join-item">
                   <UserPlus />
                   Assign: STUDENT LIST
@@ -63,17 +63,17 @@ export default function Index() {
                 </Link>
               </div>
 
-              <div className="join join-vertical w-full sm:join-horizontal sm:w-auto">
+              <div className="join join-vertical sm:join-horizontal w-full sm:w-auto">
                 <Link
                   to={`/admin/chapters/${id}/attendances/mentors`}
-                  className="btn btn-info join-item"
+                  className="btn btn-secondary join-item"
                 >
                   <Community />
                   Attendances: MENTORS
                 </Link>
                 <Link
                   to={`/admin/chapters/${id}/attendances/students`}
-                  className="btn btn-info join-item"
+                  className="btn btn-secondary join-item"
                 >
                   <Community />
                   Attendances: STUDENTS

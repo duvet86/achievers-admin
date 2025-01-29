@@ -207,7 +207,7 @@ export default function Index() {
             <tbody>
               {students.length === 0 && (
                 <tr>
-                  <td className="border" colSpan={6}>
+                  <td colSpan={6}>
                     <i>No students</i>
                   </td>
                 </tr>
@@ -227,17 +227,17 @@ export default function Index() {
                       className={className}
                       onClick={handleRowClick(id)}
                     >
-                      <td className="hidden border sm:table-cell">
+                      <td className="hidden sm:table-cell">
                         <div className="flex gap-2">
                           {index + 1 + 10 * currentPageNumber} {icon}
                         </div>
                       </td>
-                      <td className="border">{fullName}</td>
-                      <td className="hidden border sm:table-cell">
+                      <td>{fullName}</td>
+                      <td className="hidden sm:table-cell">
                         {yearLevel ?? "-"}
                       </td>
-                      <td className="border">{chapter.name}</td>
-                      <td className="hidden border sm:table-cell">
+                      <td>{chapter.name}</td>
+                      <td className="hidden sm:table-cell">
                         <Link
                           to={`${id}?${searchParams.toString()}`}
                           className="btn btn-success btn-xs w-full gap-2"

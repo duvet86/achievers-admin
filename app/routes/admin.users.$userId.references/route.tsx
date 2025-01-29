@@ -24,9 +24,9 @@ const renderMentorRecommendationStatus = (
   isMentorRecommended: boolean | null,
 ) => {
   if (isMentorRecommended === null) {
-    return <WarningTriangle className="h-6 w-6 text-warning" />;
+    return <WarningTriangle className="text-warning h-6 w-6" />;
   } else if (isMentorRecommended) {
-    return <Check className="h-6 w-6 text-success" />;
+    return <Check className="text-success h-6 w-6" />;
   } else {
     return <Xmark className="text-danger h-6 w-6" />;
   }
@@ -57,18 +57,18 @@ export default function Index() {
           <tbody>
             {user.references.length === 0 && (
               <tr>
-                <td colSpan={3} className="border">
+                <td colSpan={3}>
                   <i>No References defined for this user</i>
                 </td>
               </tr>
             )}
             {user.references.map(({ id, fullName, isMentorRecommended }) => (
               <tr key={id}>
-                <td className="border">{fullName}</td>
-                <td className="border" align="center">
+                <td>{fullName}</td>
+                <td align="center">
                   {renderMentorRecommendationStatus(isMentorRecommended)}
                 </td>
-                <td align="center" className="border">
+                <td align="center">
                   <Link
                     to={`${id}`}
                     className="btn btn-success btn-xs w-full gap-2"

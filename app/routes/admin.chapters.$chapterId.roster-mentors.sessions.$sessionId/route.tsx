@@ -160,34 +160,30 @@ export default function Index() {
   return (
     <>
       <Title
-        to={
-          backURL
-            ? backURL
-            : `/admin/student-sessions?${searchParams.toString()}`
-        }
+        to={backURL ?? `/admin/student-sessions?${searchParams.toString()}`}
       >
         Session of &quot;
         {attendedOnLabel}&quot;
       </Title>
 
       <div className="my-8 flex flex-col gap-6">
-        <div className="flex items-center justify-between gap-2 border-b p-2">
+        <div className="flex items-center justify-between gap-2 border-b border-gray-300 p-2">
           <div className="w-72 font-bold">Chapter</div>
           <div className="flex-1">{chapter.name}</div>
         </div>
 
-        <div className="flex items-center justify-between gap-2 border-b p-2">
+        <div className="flex items-center justify-between gap-2 border-b border-gray-300 p-2">
           <div className="font-bold sm:w-72">Session</div>
           <div className="sm:flex-1">{attendedOnLabel}</div>
         </div>
 
-        <div className="flex items-center justify-between gap-2 border-b p-2">
+        <div className="flex items-center justify-between gap-2 border-b border-gray-300 p-2">
           <div className="font-bold sm:w-72">Mentor</div>
           <div className="sm:flex-1">{session.mentor.fullName}</div>
         </div>
 
         {session.status === "UNAVAILABLE" ? (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between gap-4">
             <p className="alert alert-error">
               <InfoCircle />
               Mentor is marked as unavailable for this session
@@ -267,8 +263,8 @@ export default function Index() {
                   {session.studentSession.map(
                     ({ id, student, completedOn, signedOffOn }) => (
                       <tr key={id}>
-                        <td className="border p-2">{student.fullName}</td>
-                        <td className="border">
+                        <td className="p-2">{student.fullName}</td>
+                        <td>
                           <div className="flex items-center gap-2">
                             {completedOn ? (
                               <Check className="text-success" />
@@ -281,7 +277,7 @@ export default function Index() {
                             </span>
                           </div>
                         </td>
-                        <td className="border p-2">
+                        <td className="p-2">
                           <div className="flex items-center gap-2">
                             {signedOffOn ? (
                               <Check className="text-success" />
@@ -294,7 +290,7 @@ export default function Index() {
                             </span>
                           </div>
                         </td>
-                        <td className="border p-2" align="right">
+                        <td className="p-2" align="right">
                           {completedOn ? (
                             <Link
                               to={`report?${searchParams.toString()}`}

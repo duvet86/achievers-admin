@@ -129,7 +129,7 @@ export default function Index() {
         <FormInputs searchParams={searchParams} onFormClear={onFormClear} />
 
         <div className="overflow-auto bg-white">
-          <table className="table table-zebra">
+          <table className="table-zebra table">
             <thead>
               <tr>
                 <th align="left" className="p-2">
@@ -163,11 +163,11 @@ export default function Index() {
                   mentorToStudentAssignement,
                 }) => (
                   <tr key={id}>
-                    <td className="border p-2">{fullName}</td>
-                    <td className="hidden border p-2 sm:table-cell">
+                    <td className="p-2">{fullName}</td>
+                    <td className="hidden p-2 sm:table-cell">
                       {frequencyInDays === 14 ? "Fortnightly" : "Weekly"}
                     </td>
-                    <td className="border">
+                    <td>
                       <ul className="list-disc pl-2">
                         {mentorToStudentAssignement.map(({ student }) => (
                           <li
@@ -184,7 +184,7 @@ export default function Index() {
                         ))}
                       </ul>
                     </td>
-                    <td className="border p-2">
+                    <td className="p-2">
                       <Link
                         to={`${id}?${searchParams.toString()}`}
                         className="btn btn-success btn-xs w-full gap-2"

@@ -136,7 +136,10 @@ export default function Index() {
 
           <div key={selectedRole} className="flex flex-wrap gap-4">
             {permissions.map(({ label, value }) => (
-              <div key={value} className="form-control rounded bg-gray-100 p-2">
+              <div
+                key={value}
+                className="form-control rounded-sm bg-gray-100 p-2"
+              >
                 <label className="label cursor-pointer gap-4">
                   <span className="label-text">{label}</span>
                   <input
@@ -160,7 +163,7 @@ export default function Index() {
                 {chapters.map(({ label, value }) => (
                   <div
                     key={value}
-                    className="form-control rounded bg-gray-100 p-2"
+                    className="form-control rounded-sm bg-gray-100 p-2"
                   >
                     <label className="label cursor-pointer gap-4">
                       <span className="label-text">{label}</span>

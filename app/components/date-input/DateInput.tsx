@@ -24,29 +24,24 @@ export function DateInput({
       : defaultValue;
 
   return (
-    <div className="form-control relative w-full">
-      <label htmlFor={name} className="label">
-        <span className="label-text">{label}</span>
+    <>
+      <label className="fieldset-label">{label}</label>
+      <div className="indicator w-full">
         {required && (
-          <span
-            data-testid="required"
-            className="label-text-alt absolute right-1 top-9 text-2xl text-error"
-          >
-            *
-          </span>
+          <span className="indicator-item badge text-error text-xl">*</span>
         )}
-      </label>
-      <input
-        data-testid="dateinput"
-        type="date"
-        id={name}
-        name={name}
-        placeholder={label}
-        className="input input-bordered w-full"
-        defaultValue={value}
-        required={required}
-        {...props}
-      />
-    </div>
+        <input
+          data-testid="dateinput"
+          type="date"
+          id={name}
+          name={name}
+          placeholder={label}
+          className="input input-bordered w-full"
+          defaultValue={value}
+          required={required}
+          {...props}
+        />
+      </div>
+    </>
   );
 }

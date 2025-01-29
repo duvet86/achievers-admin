@@ -161,7 +161,7 @@ export default function Index() {
           label="8) Technology & enterprise"
         />
 
-        <hr className="my-4 border-primary" />
+        <hr className="border-primary my-4" />
 
         <Select
           name="improved"

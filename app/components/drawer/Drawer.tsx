@@ -136,6 +136,10 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
   const isCurrentViewAdmin = currentView === "admin";
   const links = getLinks(linkMappings, isCurrentViewAdmin);
 
+  const stopProp = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.stopPropagation();
+  };
+
   return (
     <div className="drawer-side z-20 pt-16">
       <label
@@ -144,7 +148,7 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
         className="drawer-overlay"
       ></label>
       <div className="flex h-full flex-col">
-        <ul className="menu w-64 flex-1 border-r border-primary bg-base-200 p-4 text-base-content">
+        <ul className="menu border-primary bg-base-200 text-base-content w-64 flex-1 border-r p-4">
           {links
             .filter(({ isVisible }) => isVisible)
             .map(({ icon, label, path: value }, index) => (
@@ -154,10 +158,11 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
               >
                 <NavLink
                   to={value}
+                  onClick={stopProp}
                   className={({ isActive }) =>
                     isActive
-                      ? "active mb-2 justify-between rounded font-semibold"
-                      : "mb-2 justify-between rounded font-semibold"
+                      ? "mb-2 justify-between rounded-sm bg-black/20 font-semibold"
+                      : "mb-2 justify-between rounded-sm font-semibold"
                   }
                 >
                   <div className="flex items-center gap-4">
@@ -169,10 +174,10 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
               </li>
             ))}
         </ul>
-        <ul className="menu w-64 border-r border-t border-primary bg-base-200 p-4 text-base-content">
+        <ul className="menu border-primary bg-base-200 text-base-content w-64 border-t border-r p-4">
           <li>
             <button
-              className="mb-2 justify-between rounded font-semibold"
+              className="mb-2 justify-between rounded-sm font-semibold"
               onClick={() =>
                 (
                   document.getElementById(
@@ -191,7 +196,7 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
             <li>
               <Link
                 to={isCurrentViewAdmin ? "/mentor/home" : "/admin/home"}
-                className="mb-2 justify-between rounded font-semibold"
+                className="mb-2 justify-between rounded-sm font-semibold"
               >
                 <div className="flex items-center gap-4">
                   <RefreshDouble />{" "}

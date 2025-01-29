@@ -245,7 +245,7 @@ export default function Index() {
             <tbody>
               {users.length === 0 && (
                 <tr>
-                  <td className="border" colSpan={6}>
+                  <td colSpan={6}>
                     <i>No users</i>
                   </td>
                 </tr>
@@ -281,26 +281,26 @@ export default function Index() {
                       className={className}
                       onClick={handleRowClick(id)}
                     >
-                      <td className="hidden border sm:table-cell">
+                      <td className="hidden sm:table-cell">
                         <div className="flex gap-2">
                           {index + 1 + 10 * currentPageNumber} {icon}
                         </div>
                       </td>
-                      <td className="border">{fullName}</td>
-                      <td className="border">{email}</td>
-                      <td className="border">{chapter.name}</td>
-                      <td className="border">
+                      <td>{fullName}</td>
+                      <td>{email}</td>
+                      <td>{chapter.name}</td>
+                      <td>
                         <div className="flex items-center gap-4">
                           <span>{checksCompleted}/8</span>
                           <div className="flex flex-col gap-1">
                             {isAnyChecksExpired && (
-                              <span className="flex items-center gap-1 text-warning">
+                              <span className="text-warning flex items-center gap-1">
                                 <WarningTriangle className="h-4 w-4" /> Expired
                                 checks
                               </span>
                             )}
                             {isAnyChecksExpired && isReminderSent && (
-                              <span className="flex items-center gap-1 text-success">
+                              <span className="text-success flex items-center gap-1">
                                 <CheckCircle className="h-4 w-4" /> Reminder
                                 sent
                               </span>
@@ -308,7 +308,7 @@ export default function Index() {
                           </div>
                         </div>
                       </td>
-                      <td className="hidden border sm:table-cell">
+                      <td className="hidden sm:table-cell">
                         <Link
                           to={`${id}?${searchParams.toString()}`}
                           className="btn btn-success btn-xs w-full gap-2"

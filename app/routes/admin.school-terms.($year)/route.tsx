@@ -178,17 +178,21 @@ export default function Index() {
     <>
       <Title>School terms</Title>
 
+      <hr className="my-4" />
+
       <div className="mb-6 flex items-end gap-6">
-        <Select
-          label="Select a year"
-          name="selectedYear"
-          defaultValue={selectedYear}
-          options={availableYears.map((year) => ({
-            label: currentYear === year ? `${year} - current` : year,
-            value: year,
-          }))}
-          onChange={goToSelectedYear}
-        />
+        <div className="w-full">
+          <Select
+            label="Select a year"
+            name="selectedYear"
+            defaultValue={selectedYear}
+            options={availableYears.map((year) => ({
+              label: currentYear === year ? `${year} - current` : year,
+              value: year,
+            }))}
+            onChange={goToSelectedYear}
+          />
+        </div>
 
         <Link to="/admin/school-terms/new" className="btn btn-primary">
           <Plus className="h-6 w-6" />
@@ -198,7 +202,7 @@ export default function Index() {
 
       <Form method="post" className="flex flex-col gap-6">
         {terms.map(({ id, startDate, endDate }, index) => (
-          <div key={id} className="rounded bg-gray-100 p-4 shadow-xl">
+          <div key={id} className="rounded-sm bg-gray-100 p-4 shadow-xl">
             <SubTitle>Term {index + 1}</SubTitle>
             <DateInput
               defaultValue={startDate}

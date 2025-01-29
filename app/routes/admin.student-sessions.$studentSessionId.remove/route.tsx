@@ -85,11 +85,7 @@ export default function Index() {
     <>
       <div className="flex flex-col justify-between gap-2 sm:flex-row">
         <Title
-          to={
-            backURL
-              ? backURL
-              : `/admin/student-sessions?${searchParams.toString()}`
-          }
+          to={backURL ?? `/admin/student-sessions?${searchParams.toString()}`}
         >
           Session of &quot;
           {attendedOnLabel}&quot;
@@ -106,29 +102,29 @@ export default function Index() {
       </div>
 
       <div className="my-8 flex flex-col gap-12">
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="font-bold sm:w-72">Chapter</div>
           <div className="sm:flex-1">{chapter.name}</div>
         </div>
 
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="font-bold sm:w-72">Session</div>
           <div className="sm:flex-1">{attendedOnLabel}</div>
         </div>
 
-        <div className="flex flex-col gap-2 border-b p-2 sm:flex-row sm:items-center">
+        <div className="flex flex-col gap-2 border-b border-gray-300 p-2 sm:flex-row sm:items-center">
           <div className="w-72 font-bold">Mentor</div>
           <div className="sm:flex-1">
             {studentSession.session.mentor.fullName}
           </div>
         </div>
 
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="font-bold sm:w-72">Student</div>
           <div className="sm:flex-1">{studentSession.student.fullName}</div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4 border-b p-2">
+        <div className="flex flex-wrap items-center gap-4 border-b border-gray-300 p-2">
           <div className="font-bold sm:w-72">Has report?</div>
           <div className="sm:flex-1">
             <Xmark className="text-error" />
@@ -141,14 +137,14 @@ export default function Index() {
           </Link>
         </div>
 
-        <div className="flex items-center gap-4 border-b p-2">
+        <div className="flex items-center gap-4 border-b border-gray-300 p-2">
           <div className="font-bold sm:w-72">Is report completed?</div>
           <div className="sm:flex-1">
             <Xmark className="text-error" />
           </div>
         </div>
 
-        <div className="items-centerd flex gap-4 border-b p-2">
+        <div className="items-centerd flex gap-4 border-b border-gray-300 p-2">
           <div className="font-bold sm:w-72">Is report signed off?</div>
           <div className="sm:flex-1">
             <Xmark className="text-error" />

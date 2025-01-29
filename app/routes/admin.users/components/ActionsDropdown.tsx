@@ -11,7 +11,7 @@ export default function ActionsDropdown() {
       </div>
       <ul
         tabIndex={0}
-        className="menu dropdown-content w-52 rounded-box border border-base-300 bg-base-100 p-2 shadow"
+        className="menu dropdown-content rounded-box border-base-300 bg-base-100 w-52 border p-2 shadow-sm"
       >
         <li>
           <Link className="gap-4" to="import">

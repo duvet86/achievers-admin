@@ -29,78 +29,70 @@ export default function FormInputs({
   onIncludeArchivedChange,
 }: Props) {
   return (
-    <fieldset className="mb-6 flex flex-wrap justify-between gap-4">
-      <div className="flex flex-col items-end gap-6 sm:flex-row">
+    <fieldset className="mb-9 flex flex-wrap items-center gap-4">
+      <div className="w-full sm:w-96">
+        <Input
+          key={searchTerm}
+          label="Press enter to submit"
+          name="searchTerm"
+          placeholder="Search by name or email"
+          defaultValue={searchTerm ?? ""}
+        />
+      </div>
+
+      {chapters.length > 1 && (
         <div className="w-full sm:w-96">
-          <Input
-            key={searchTerm}
-            label="Press enter to submit"
-            name="searchTerm"
-            placeholder="Search by name or email"
-            defaultValue={searchTerm ?? ""}
+          <Select
+            key={chapterId}
+            label="Chapters"
+            name="chapterId"
+            defaultValue={chapterId ?? ""}
+            options={[{ value: "", label: "All chapters" }].concat(
+              chapters.map(({ id, name }) => ({
+                label: name,
+                value: id.toString(),
+              })),
+            )}
+            onChange={onChapterChange}
           />
         </div>
+      )}
 
-        {chapters.length > 1 && (
-          <div className="w-full sm:w-44">
-            <Select
-              key={chapterId}
-              label="Chapters"
-              name="chapterId"
-              defaultValue={chapterId ?? ""}
-              options={[{ value: "", label: "All chapters" }].concat(
-                chapters.map(({ id, name }) => ({
-                  label: name,
-                  value: id.toString(),
-                })),
-              )}
-              onChange={onChapterChange}
-            />
-          </div>
-        )}
+      <div className="flex w-96 flex-col gap-4">
+        <label className="fieldset-label">
+          <input
+            key={onlyExpiredChecks.toString()}
+            type="checkbox"
+            name="onlyExpiredChecks"
+            className="checkbox"
+            defaultChecked={onlyExpiredChecks}
+            onChange={onOnlyExpiredChecksChange}
+          />
+          <span className="label-text">
+            Only expired or soon to expire checks
+          </span>
+        </label>
 
-        <div className="flex flex-wrap sm:gap-4">
-          <div className="form-control">
-            <label className="label cursor-pointer gap-2">
-              <input
-                key={onlyExpiredChecks.toString()}
-                type="checkbox"
-                name="onlyExpiredChecks"
-                className="checkbox bg-base-100"
-                defaultChecked={onlyExpiredChecks}
-                onChange={onOnlyExpiredChecksChange}
-              />
-              <span className="label-text">
-                Only expired or soon to expire checks
-              </span>
-            </label>
-          </div>
-
-          <div className="form-control">
-            <label className="label cursor-pointer gap-2">
-              <input
-                key={includeArchived.toString()}
-                type="checkbox"
-                name="includeArchived"
-                className="checkbox bg-base-100"
-                defaultChecked={includeArchived}
-                onChange={onIncludeArchivedChange}
-              />
-              <span className="label-text">Include archived</span>
-            </label>
-          </div>
-        </div>
+        <label className="fieldset-label">
+          <input
+            key={includeArchived.toString()}
+            type="checkbox"
+            name="includeArchived"
+            className="checkbox"
+            defaultChecked={includeArchived}
+            onChange={onIncludeArchivedChange}
+          />
+          <span className="label-text">Include archived</span>
+        </label>
       </div>
 
-      <div className="flex items-end">
-        <button
-          className="btn btn-outline sm:w-32"
-          type="button"
-          onClick={onFormReset}
-        >
-          Reset
-        </button>
-      </div>
+      <button
+        className="btn btn-neutral btn-block sm:w-32"
+        type="button"
+        onClick={onFormReset}
+      >
+        Reset
+      </button>
     </fieldset>
   );
 }

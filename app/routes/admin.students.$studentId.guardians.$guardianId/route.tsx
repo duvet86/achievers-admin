@@ -103,8 +103,10 @@ export default function Index() {
         {guardianId === "new" ? "Add new guardian" : "Edit info for guardian"}
       </Title>
 
+      <hr className="my-4" />
+
       <Form method="post">
-        <fieldset disabled={transition.state !== "idle"}>
+        <fieldset className="fieldset" disabled={transition.state !== "idle"}>
           <Input
             defaultValue={guardian?.fullName}
             label="Full name"

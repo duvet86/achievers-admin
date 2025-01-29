@@ -69,8 +69,8 @@ export default function Index() {
   return (
     <div className="-m-4 h-full p-4">
       <article className="prose relative mb-4 h-24 max-w-none lg:h-28">
-        <div className="h-24 w-full rounded-md bg-achievers opacity-75 lg:h-28"></div>
-        <h1 className="absolute left-6 top-6 hidden lg:block">
+        <div className="bg-achievers h-24 w-full rounded-md opacity-75 lg:h-28"></div>
+        <h1 className="absolute top-6 left-6 hidden lg:block">
           Welcome {mentorFullName}
         </h1>
         <h2 className="absolute top-0 mt-0 p-4 lg:hidden">
@@ -82,8 +82,8 @@ export default function Index() {
         <>
           <SubTitle>Next session</SubTitle>
 
-          <div className="mb-8 flex items-center gap-4 rounded bg-slate-100 p-4">
-            <InfoCircle className="blink h-12 w-12 text-primary" />
+          <div className="mb-8 flex items-center gap-4 rounded-sm bg-slate-100 p-4">
+            <InfoCircle className="blink text-primary h-12 w-12" />
 
             <div className="flex flex-col gap-4 font-bold lg:flex-row lg:items-end">
               <span className="text-4xl">{nextStudentSessionDate}</span>
@@ -96,7 +96,7 @@ export default function Index() {
 
       {!hasAnyStudentsAssigned && (
         <article className="prose max-w-none">
-          <h1 className="flex items-center gap-4 text-warning">
+          <h1 className="text-warning flex items-center gap-4">
             <WarningTriangle />
             You have no students assigned
           </h1>
@@ -110,7 +110,7 @@ export default function Index() {
         hasAnyStudentsAssigned &&
         studentSessions.length === 0 && (
           <article className="prose max-w-none">
-            <h1 className="flex items-center gap-4 text-warning">
+            <h1 className="text-warning flex items-center gap-4">
               <WarningTriangle />
               You haven&apos;t booked a session yet
             </h1>
@@ -126,7 +126,7 @@ export default function Index() {
           <SubTitle>Recent sessions</SubTitle>
 
           <div className="overflow-auto bg-white">
-            <table className="table table-lg">
+            <table className="table-lg table">
               <thead>
                 <tr>
                   <th className="hidden w-6 lg:table-cell">#</th>
@@ -155,7 +155,7 @@ export default function Index() {
                     index,
                   ) => (
                     <tr key={id}>
-                      <td className="hidden border-r lg:table-cell">
+                      <td className="hidden border-r border-gray-300 lg:table-cell">
                         {index + 1}
                       </td>
                       <td align="left">
@@ -165,21 +165,21 @@ export default function Index() {
                       <td align="left" className="hidden lg:table-cell">
                         {completedOn ? (
                           <div className="flex items-center gap-2">
-                            <Check className="h-4 w-4 text-success" />
+                            <Check className="text-success h-4 w-4" />
                             {dayjs(completedOn).format("MMMM D, YYYY")}
                           </div>
                         ) : (
-                          <Xmark className="h-4 w-4 text-error" />
+                          <Xmark className="text-error h-4 w-4" />
                         )}
                       </td>
                       <td align="left" className="hidden lg:table-cell">
                         {signedOffOn ? (
                           <div className="flex items-center gap-2">
-                            <Check className="h-4 w-4 text-success" />
+                            <Check className="text-success h-4 w-4" />
                             {dayjs(signedOffOn).format("MMMM D, YYYY")}
                           </div>
                         ) : (
-                          <Xmark className="h-4 w-4 text-error" />
+                          <Xmark className="text-error h-4 w-4" />
                         )}
                       </td>
                       <td align="right">

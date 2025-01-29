@@ -97,8 +97,10 @@ export default function Index() {
         {teacherId === "new" ? "Add new teacher" : "Edit info for teacher"}
       </Title>
 
+      <hr className="my-4" />
+
       <Form method="post">
-        <fieldset disabled={transition.state !== "idle"}>
+        <fieldset className="fieldset" disabled={transition.state !== "idle"}>
           <Input
             defaultValue={teacher?.fullName}
             label="Full name"

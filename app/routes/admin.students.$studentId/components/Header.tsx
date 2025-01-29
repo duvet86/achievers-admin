@@ -18,7 +18,7 @@ export function Header({ title, endDate }: Props) {
       {endDate && (
         <p
           title="archived"
-          className="mb-4 flex items-center gap-2 rounded bg-error px-6 py-2"
+          className="bg-error mb-4 flex items-center gap-2 rounded-sm px-6 py-2"
         >
           <WarningTriangle className="h-6 w-6" />
           This student is archived!
@@ -34,14 +34,14 @@ export function Header({ title, endDate }: Props) {
         </div>
         <ul
           tabIndex={0}
-          className="menu dropdown-content w-52 rounded-box border border-base-300 bg-base-100 p-2 shadow"
+          className="menu dropdown-content rounded-box border-base-300 bg-base-100 w-52 border p-2 shadow-sm"
         >
           {endDate ? (
             <li>
               <Link
                 to="re-enable"
                 relative="path"
-                className="gap-4 font-semibold text-success"
+                className="text-success gap-4 font-semibold"
               >
                 <OnTag className="h-6 w-6" />
                 Re enable student
@@ -49,7 +49,7 @@ export function Header({ title, endDate }: Props) {
             </li>
           ) : (
             <li>
-              <Link to="archive" className="gap-4 font-semibold text-error">
+              <Link to="archive" className="text-error gap-4 font-semibold">
                 <BinFull className="h-6 w-6" />
                 Archive
               </Link>

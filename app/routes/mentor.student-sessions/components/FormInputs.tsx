@@ -28,34 +28,38 @@ export default function FormInputs({
   return (
     <fieldset className="mb-6 flex flex-col gap-4">
       <div className="flex flex-1 flex-col gap-4 sm:flex-row">
-        <SelectSearch
-          key={selectedStudentId}
-          label="Student"
-          name="studentId"
-          defaultValue={selectedStudentId}
-          options={students.map(({ id, fullName }) => ({
-            label: fullName,
-            value: id.toString(),
-          }))}
-          onChange={onStudentChange}
-        />
+        <div className="flex-1">
+          <SelectSearch
+            key={selectedStudentId}
+            label="Student"
+            name="studentId"
+            defaultValue={selectedStudentId}
+            options={students.map(({ id, fullName }) => ({
+              label: fullName,
+              value: id.toString(),
+            }))}
+            onChange={onStudentChange}
+          />
+        </div>
 
-        <SelectSearch
-          key={selectedMentorId}
-          label="Mentor"
-          name="mentorId"
-          defaultValue={selectedMentorId}
-          options={mentors.map(({ id, fullName }) => ({
-            label: fullName,
-            value: id.toString(),
-          }))}
-          onChange={onMentorIdChange}
-        />
+        <div className="flex-1">
+          <SelectSearch
+            key={selectedMentorId}
+            label="Mentor"
+            name="mentorId"
+            defaultValue={selectedMentorId}
+            options={mentors.map(({ id, fullName }) => ({
+              label: fullName,
+              value: id.toString(),
+            }))}
+            onChange={onMentorIdChange}
+          />
+        </div>
       </div>
 
       <div className="flex justify-end">
         <button
-          className="btn btn-outline w-32"
+          className="btn btn-neutral w-32"
           type="button"
           onClick={onFormClear}
         >

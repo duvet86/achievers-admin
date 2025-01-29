@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { Xmark } from "iconoir-react";
 
 interface Props
@@ -22,44 +23,42 @@ export function Input({
   ...props
 }: Props) {
   return (
-    <div className="form-control relative w-full">
-      {label && (
-        <label htmlFor={name} className="label">
-          <span className="label-text">{label}</span>
-          {required && (
-            <span
-              data-testid="required"
-              className="label-text-alt absolute right-1 top-9 text-2xl text-error"
-            >
-              *
-            </span>
-          )}
-        </label>
-      )}
-      <div className="join">
-        <input
-          data-testid="textinput"
-          type={type}
-          id={name}
-          name={name}
-          placeholder={placeholder ?? label}
-          required={required}
-          className="input join-item input-bordered w-full"
-          disabled={disabled}
-          {...props}
-        />
-
-        {hasButton && (
-          <button
-            type="button"
-            className="btn btn-square join-item"
-            onClick={onButtonClick}
-            disabled={disabled}
-          >
-            <Xmark />
-          </button>
+    <>
+      <label className="fieldset-label">{label}</label>
+      <div className="indicator w-full">
+        {required && (
+          <span className="indicator-item badge text-error text-xl">*</span>
         )}
+        <div
+          className={classNames("w-full", {
+            join: hasButton,
+          })}
+        >
+          <input
+            type={type}
+            id={name}
+            name={name}
+            placeholder={placeholder ?? label}
+            required={required}
+            disabled={disabled}
+            className={classNames("input w-full", {
+              validator: required,
+              "join-item": hasButton,
+            })}
+            {...props}
+          />
+          {hasButton && (
+            <button
+              type="button"
+              className="btn btn-neutral join-item"
+              onClick={onButtonClick}
+              disabled={disabled}
+            >
+              <Xmark />
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

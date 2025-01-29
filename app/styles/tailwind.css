@@ -1,13 +1,40 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@plugin "daisyui" {
+  themes: bumblebee --default;
+}
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --height-screen: 100dvh;
+
+  --background-image-achievers: url("/images/header.jpeg");
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
 
 .content-main {
-  height: calc(100vh - theme(spacing.16));
+  height: calc(100vh - (--spacing(16)));
 }
 
 .content-area {
-  height: calc(100vh - theme(spacing.44));
+  height: calc(100vh - (--spacing(44)));
 }
 
 .blink {
@@ -36,5 +63,5 @@
 }
 
 li input.input.input-bordered.select-search-input {
-  @apply bg-slate-100;
+  background-color: var(--color-slate-100);
 }

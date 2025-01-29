@@ -52,11 +52,7 @@ export default function Index() {
     <>
       <div className="flex w-full items-center gap-8">
         <Title
-          to={
-            backURL
-              ? backURL
-              : `/admin/student-sessions?${searchParams.toString()}`
-          }
+          to={backURL ?? `/admin/student-sessions?${searchParams.toString()}`}
           className={classNames({
             "text-error": isCancelled,
           })}
@@ -66,7 +62,7 @@ export default function Index() {
         </Title>
 
         {isCancelled && (
-          <p className="flex gap-4 font-medium text-error">
+          <p className="text-error flex gap-4 font-medium">
             <InfoCircle />
             Session has been cancelled
           </p>
@@ -74,27 +70,27 @@ export default function Index() {
       </div>
 
       <div className="my-8 flex flex-col gap-12">
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="w-72 font-bold">Session</div>
           <div className="flex-1">{attendedOnLabel}</div>
         </div>
 
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="w-72 font-bold">Chapter</div>
           <div className="flex-1">{session.chapter.name}</div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 border-b p-2">
+        <div className="flex flex-wrap items-center gap-2 border-b border-gray-300 p-2">
           <div className="font-bold sm:w-72">Student</div>
           <div className="sm:flex-1">{student.fullName}</div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 border-b p-2">
+        <div className="flex flex-wrap items-center gap-2 border-b border-gray-300 p-2">
           <div className="font-bold sm:w-72">Mentor</div>
           <div className="sm:flex-1">{session.mentor.fullName}</div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 border-b p-2">
+        <div className="flex flex-wrap items-center gap-2 border-b border-gray-300 p-2">
           <div className="font-bold sm:w-72">Has report?</div>
           <div>
             {hasReport ? (
@@ -121,7 +117,7 @@ export default function Index() {
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 border-b p-2">
+        <div className="flex flex-wrap items-center gap-2 border-b border-gray-300 p-2">
           <div className="font-bold sm:w-72">Is report completed?</div>
           <div className="flex gap-2">
             {completedOn ? (
@@ -133,7 +129,7 @@ export default function Index() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 border-b p-2">
+        <div className="flex flex-wrap items-center gap-2 border-b border-gray-300 p-2">
           <div className="font-bold sm:w-72">Is report signed off?</div>
           <div className="flex gap-2">
             {signedOffOn ? (

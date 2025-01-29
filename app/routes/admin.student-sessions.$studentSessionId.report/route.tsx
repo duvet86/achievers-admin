@@ -100,7 +100,7 @@ export default function Index() {
 
       <div className="relative flex h-full flex-col">
         {isLoading && (
-          <div className="absolute z-30 flex h-full w-full justify-center bg-slate-300 bg-opacity-50">
+          <div className="bg-opacity-50 absolute z-30 flex h-full w-full justify-center bg-slate-300">
             <span className="loading loading-spinner loading-lg text-primary"></span>
           </div>
         )}
@@ -124,7 +124,7 @@ export default function Index() {
             </div>
 
             <div className="flex items-center gap-4">
-              <p className="flex-1 text-info">
+              <p className="text-info flex-1">
                 {signedOffOn
                   ? `Report has been signed off on ${dayjs(signedOffOn).format("MMMM D, YYYY")}`
                   : ""}

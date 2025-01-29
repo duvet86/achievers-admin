@@ -17,7 +17,7 @@ export function Title({ className, to, children }: Props) {
         </Link>
       )}
 
-      <h1 className="text-wrap text-2xl font-bold uppercase">{children}</h1>
+      <h1 className="text-2xl font-bold text-wrap uppercase">{children}</h1>
     </div>
   );
 }

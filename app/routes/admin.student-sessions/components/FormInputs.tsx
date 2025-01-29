@@ -45,55 +45,65 @@ export default function FormInputs({
   return (
     <div className="mb-6 flex flex-col gap-4">
       {chapters.length > 1 && (
-        <Select
-          label="Select a Chapter"
-          name="chapterId"
-          defaultValue={selectedChapterId}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-            void submit(e.currentTarget.form)
-          }
-          options={chapters.map(({ id, name }) => ({
-            label: name,
-            value: id.toString(),
-          }))}
-        />
+        <div>
+          <Select
+            label="Select a Chapter"
+            name="chapterId"
+            defaultValue={selectedChapterId}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              void submit(e.currentTarget.form)
+            }
+            options={chapters.map(({ id, name }) => ({
+              label: name,
+              value: id.toString(),
+            }))}
+          />
+        </div>
       )}
       <div className="flex flex-1 flex-col gap-4 sm:flex-row">
-        <SelectSearch
-          key={`${selectedChapterId}-mentorId`}
-          label="Mentor"
-          name="mentorId"
-          defaultValue={selectedMentorId}
-          options={mentors.map(({ id, fullName }) => ({
-            label: fullName,
-            value: id.toString(),
-          }))}
-        />
+        <div className="w-full">
+          <SelectSearch
+            key={`${selectedChapterId}-mentorId`}
+            label="Mentor"
+            name="mentorId"
+            defaultValue={selectedMentorId}
+            options={mentors.map(({ id, fullName }) => ({
+              label: fullName,
+              value: id.toString(),
+            }))}
+          />
+        </div>
 
-        <SelectSearch
-          key={`${selectedChapterId}-studentId`}
-          label="Student"
-          name="studentId"
-          defaultValue={selectedStudentId}
-          options={students.map(({ id, fullName }) => ({
-            label: fullName,
-            value: id.toString(),
-          }))}
-        />
+        <div className="w-full">
+          <SelectSearch
+            key={`${selectedChapterId}-studentId`}
+            label="Student"
+            name="studentId"
+            defaultValue={selectedStudentId}
+            options={students.map(({ id, fullName }) => ({
+              label: fullName,
+              value: id.toString(),
+            }))}
+          />
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-4 sm:flex-row">
-        <DateInput
-          defaultValue={isNotClearForm && startDate !== null ? startDate : ""}
-          label="Start date"
-          name="startDate"
-        />
+        <div className="w-full">
+          <DateInput
+            defaultValue={isNotClearForm && startDate !== null ? startDate : ""}
+            label="Start date"
+            name="startDate"
+          />
+        </div>
 
-        <DateInput
-          defaultValue={isNotClearForm && endDate !== null ? endDate : ""}
-          label="End date"
-          name="endDate"
-        />
+        <div className="w-full">
+          <DateInput
+            defaultValue={isNotClearForm && endDate !== null ? endDate : ""}
+            label="End date"
+            name="endDate"
+          />
+        </div>
       </div>
 
       <div className="flex flex-col sm:flex-row">
@@ -117,7 +127,7 @@ export default function FormInputs({
 
         <div className="flex items-center gap-6">
           <button
-            className="btn btn-outline w-32"
+            className="btn btn-neutral w-32"
             name="clearSearchBtn"
             value="clearSearchBtn"
             onClick={onFormClear}

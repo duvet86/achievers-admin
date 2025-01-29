@@ -30,7 +30,7 @@ export function Checkbox({
         {required && (
           <span
             data-testid="required"
-            className="label-text-alt absolute bottom-2 left-8 text-2xl text-error"
+            className="label-text-alt text-error absolute bottom-2 left-8 text-2xl"
           >
             *
           </span>

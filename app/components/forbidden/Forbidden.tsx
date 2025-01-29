@@ -4,12 +4,12 @@ import { WarningTriangle, LogOut, Home } from "iconoir-react";
 
 export function Forbidden() {
   return (
-    <div className="hero min-h-screen bg-base-100">
+    <div className="hero bg-base-100 min-h-screen">
       <div className="hero-content">
         <div className="flex max-w-md flex-col items-center justify-center">
           <h1 className="mt-4 flex h-40 flex-col items-center text-4xl font-extrabold tracking-tight">
             <WarningTriangle className="mr-4 w-24 text-red-500" />
-            <span className="block text-center uppercase text-red-500 drop-shadow-md">
+            <span className="block text-center text-red-500 uppercase drop-shadow-md">
               Sorry, you have no permissions!
             </span>
           </h1>

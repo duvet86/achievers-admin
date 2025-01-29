@@ -48,9 +48,9 @@ export function StudentForm({
   return (
     <Form
       method="post"
-      className="relative flex-1 overflow-y-auto border-primary md:mb-0 md:mr-8 md:border-r md:pr-4"
+      className="border-primary relative flex-1 overflow-y-auto md:mr-8 md:mb-0 md:border-r md:pr-4"
     >
-      <fieldset disabled={isLoading}>
+      <fieldset className="fieldset" disabled={isLoading}>
         <Select
           name="chapterId"
           label="Chapter"

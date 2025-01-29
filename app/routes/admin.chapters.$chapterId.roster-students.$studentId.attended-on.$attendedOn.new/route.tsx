@@ -111,28 +111,24 @@ export default function Index() {
   return (
     <>
       <Title
-        to={
-          backURL
-            ? backURL
-            : `/admin/student-sessions?${searchParams.toString()}`
-        }
+        to={backURL ?? `/admin/student-sessions?${searchParams.toString()}`}
       >
         Session of &quot;
         {attendedOnLabel}&quot;
       </Title>
 
       <Form method="POST" className="my-8 flex flex-col gap-12">
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="w-72 font-bold">Session</div>
           <div className="flex-1">{attendedOnLabel}</div>
         </div>
 
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="w-72 font-bold">Chapter</div>
           <div className="flex-1">{chapter.name}</div>
         </div>
 
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="w-72 font-bold">Mentor</div>
           <div className="flex flex-1 items-end gap-4">
             <SelectSearch
@@ -147,27 +143,27 @@ export default function Index() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="w-72 font-bold">Student</div>
           <div className="flex-1">{student.fullName}</div>
         </div>
 
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="w-72 font-bold">Has report?</div>
           <div className="flex-1">
-            <Xmark className="h-6 w-6 text-error" />
+            <Xmark className="text-error" />
           </div>
         </div>
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="w-72 font-bold">Is report completed?</div>
           <div className="flex-1">
-            <Xmark className="h-6 w-6 text-error" />
+            <Xmark className="text-error" />
           </div>
         </div>
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="w-72 font-bold">Is report signed off?</div>
           <div className="flex-1">
-            <Xmark className="h-6 w-6 text-error" />
+            <Xmark className="text-error" />
           </div>
         </div>
       </Form>

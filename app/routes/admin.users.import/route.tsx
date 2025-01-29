@@ -8,7 +8,7 @@ import { isEmail, isStringNullOrEmpty } from "~/services";
 
 import { Import, PageEdit, Archive } from "iconoir-react";
 
-import { Title, SubTitle } from "~/components";
+import { Title, SubTitle, FileInput } from "~/components";
 
 import {
   readExcelFileAsync,
@@ -96,114 +96,105 @@ export default function Index() {
   const actionData = useActionData<typeof action>();
   const transition = useNavigation();
 
-  const isLoading = transition.state !== "idle";
-
   return (
     <>
       <Title to="/admin/users">Import mentors from file</Title>
+
+      <hr className="my-4" />
 
       <Form
         method="post"
         encType="multipart/form-data"
         className="relative flex h-full flex-col gap-4"
       >
-        <div className="form-control w-full max-w-xs">
-          <label htmlFor="usersSheet" className="label">
-            <span className="label-text">
-              Upload a spreadsheet with new users
-            </span>
-          </label>
-          <input
-            type="file"
-            id="usersSheet"
+        <fieldset
+          className="fieldset"
+          disabled={transition.state === "submitting"}
+        >
+          <FileInput
+            label="Upload a spreadsheet with new users"
             name="usersSheet"
-            className="file-input file-input-bordered w-full"
             accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            disabled={isLoading}
           />
-        </div>
 
-        <div className="flex items-center gap-20">
-          <button
-            type="submit"
-            className="btn btn-primary gap-2"
-            disabled={isLoading}
-          >
-            <Import className="h-6 w-6" />
-            Import
-          </button>
+          <div className="mt-4 flex items-center justify-between">
+            <button type="submit" className="btn btn-primary gap-2">
+              <Import className="h-6 w-6" />
+              Import
+            </button>
 
-          <Link to="/admin/users/import-history" className="btn gap-2">
-            <Archive className="h-4 w-4" />
-            View history
-          </Link>
-        </div>
+            <Link to="/admin/users/import-history" className="btn gap-2">
+              <Archive className="h-4 w-4" />
+              View history
+            </Link>
+          </div>
 
-        {actionData?.message && (
-          <div className="card bg-error">
-            <div className="card-body">
-              <h2 className="card-title">Error!</h2>
-              <pre className="whitespace-pre-wrap">{actionData.message}</pre>
+          {actionData?.message && (
+            <div className="card bg-error">
+              <div className="card-body">
+                <h2 className="card-title">Error!</h2>
+                <pre className="whitespace-pre-wrap">{actionData.message}</pre>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {!actionData?.message && actionData?.newUsers.length === 0 && (
-          <div className="text-info">
-            <p>No new users to import.</p>
-          </div>
-        )}
+          {!actionData?.message && actionData?.newUsers.length === 0 && (
+            <div className="text-info">
+              <p>No new users to import.</p>
+            </div>
+          )}
 
-        <SubTitle>Imported mentors</SubTitle>
+          <SubTitle>Imported mentors</SubTitle>
 
-        <div className="overflow-auto bg-white">
-          <table className="table">
-            <thead>
-              <tr>
-                <th align="left" className="w-12">
-                  #
-                </th>
-                <th align="left">Full name</th>
-                <th align="left">Errors</th>
-                <th align="right">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {actionData?.newUsers.length === 0 && (
+          <div className="overflow-auto bg-white">
+            <table className="table">
+              <thead>
                 <tr>
-                  <td colSpan={3} className="border">
-                    <i>No mentors imported</i>
-                  </td>
+                  <th align="left" className="w-12">
+                    #
+                  </th>
+                  <th align="left">Full name</th>
+                  <th align="left">Errors</th>
+                  <th align="right">Action</th>
                 </tr>
-              )}
-              {actionData?.newUsers.map(
-                ({ id, firstName, lastName, importedHistory }, index) => (
-                  <tr
-                    key={id}
-                    className={
-                      importedHistory?.error !== null ? "bg-error" : undefined
-                    }
-                  >
-                    <td className="border">{index + 1}</td>
-                    <td className="border">
-                      {firstName} {lastName}
-                    </td>
-                    <td className="border">{importedHistory?.error}</td>
-                    <td className="border">
-                      <Link
-                        to={`/admin/users/${id.toString()}`}
-                        className="btn btn-success btn-xs w-full gap-2"
-                      >
-                        <PageEdit className="h-4 w-4" />
-                        Edit
-                      </Link>
+              </thead>
+              <tbody>
+                {actionData?.newUsers.length === 0 && (
+                  <tr>
+                    <td colSpan={3}>
+                      <i>No mentors imported</i>
                     </td>
                   </tr>
-                ),
-              )}
-            </tbody>
-          </table>
-        </div>
+                )}
+                {actionData?.newUsers.map(
+                  ({ id, firstName, lastName, importedHistory }, index) => (
+                    <tr
+                      key={id}
+                      className={
+                        importedHistory?.error !== null ? "bg-error" : undefined
+                      }
+                    >
+                      <td>{index + 1}</td>
+                      <td>
+                        {firstName} {lastName}
+                      </td>
+                      <td>{importedHistory?.error}</td>
+                      <td>
+                        <Link
+                          to={`/admin/users/${id.toString()}`}
+                          className="btn btn-success btn-xs w-full gap-2"
+                        >
+                          <PageEdit className="h-4 w-4" />
+                          Edit
+                        </Link>
+                      </td>
+                    </tr>
+                  ),
+                )}
+              </tbody>
+            </table>
+          </div>
+        </fieldset>
       </Form>
     </>
   );

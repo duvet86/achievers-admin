@@ -17,15 +17,13 @@ export default function ProfileInput({ defaultValue }: Props) {
   const hasImage = selectedImage ?? profilePicturePath;
 
   return (
-    <div className="card card-side m-8 bg-base-100 shadow-xl">
+    <div className="card card-side bg-base-100 m-8 shadow-xl">
       <figure>
         <img
           src={
             selectedImage
               ? URL.createObjectURL(selectedImage)
-              : profilePicturePath
-                ? profilePicturePath
-                : "/images/profile-picture.webp"
+              : (profilePicturePath ?? "/images/profile-picture.webp")
           }
           alt="profile"
           className="h-44 w-44"

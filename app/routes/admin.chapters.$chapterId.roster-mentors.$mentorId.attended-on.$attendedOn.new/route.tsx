@@ -92,28 +92,24 @@ export default function Index() {
   return (
     <>
       <Title
-        to={
-          backURL
-            ? backURL
-            : `/admin/student-sessions?${searchParams.toString()}`
-        }
+        to={backURL ?? `/admin/student-sessions?${searchParams.toString()}`}
       >
         Session of &quot;
         {attendedOnLabel}&quot;
       </Title>
 
       <div className="my-8 flex flex-col gap-6">
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="w-72 font-bold">Chapter</div>
           <div className="flex-1">{chapter.name}</div>
         </div>
 
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="w-72 font-bold">Session</div>
           <div className="flex-1">{attendedOnLabel}</div>
         </div>
 
-        <div className="flex items-center gap-2 border-b p-2">
+        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="w-72 font-bold">Mentor</div>
           <div className="flex-1">{mentor.fullName}</div>
         </div>
@@ -121,7 +117,7 @@ export default function Index() {
         <div className="flex items-center gap-2 p-2">
           <div className="w-72 font-bold">Student</div>
 
-          <div className="flex flex-1 flex-col items-center border-opacity-50">
+          <div className="border-opacity-50 flex flex-1 flex-col items-center">
             <Form method="POST" className="w-full">
               <button
                 className="btn btn-info btn-block gap-2"
