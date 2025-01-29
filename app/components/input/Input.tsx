@@ -24,7 +24,9 @@ export function Input({
 }: Props) {
   return (
     <>
-      <label className="fieldset-label">{label}</label>
+      <label htmlFor={name} className="fieldset-label">
+        {label}
+      </label>
       <div className="indicator w-full">
         {required && (
           <span className="indicator-item badge text-error text-xl">*</span>

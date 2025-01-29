@@ -108,21 +108,19 @@ export default function FormInputs({
 
       <div className="flex flex-col sm:flex-row">
         <div className="mb-2 flex flex-1 gap-8">
-          <div className="form-control">
-            <label className="label cursor-pointer gap-2">
-              <input
-                type="checkbox"
-                name="isSignedOff"
-                className="checkbox bg-base-100"
-                defaultChecked={
-                  isNotClearForm && isSignedOff !== null
-                    ? isSignedOff === "on"
-                    : false
-                }
-              />
-              <span className="label-text">Only signed off</span>
-            </label>
-          </div>
+          <label className="label cursor-pointer gap-2">
+            <input
+              type="checkbox"
+              name="isSignedOff"
+              className="checkbox bg-base-100"
+              defaultChecked={
+                isNotClearForm && isSignedOff !== null
+                  ? isSignedOff === "on"
+                  : false
+              }
+            />
+            <span className="label-text">Only signed off</span>
+          </label>
         </div>
 
         <div className="flex items-center gap-6">

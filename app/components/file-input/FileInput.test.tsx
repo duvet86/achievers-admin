@@ -17,6 +17,6 @@ describe("FileInput", () => {
     render(<FileInput name="file" label="test" required />);
 
     expect(screen.getByTestId("fileinput")).toBeInTheDocument();
-    expect(screen.getByTestId("required")).toBeInTheDocument();
+    expect(screen.getByTestId("fileinput")).toHaveAttribute("required");
   });
 });

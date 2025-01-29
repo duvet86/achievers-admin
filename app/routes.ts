@@ -369,14 +369,6 @@ export default [
           ),
         ]),
       ]),
-      ...prefix("permissions", [
-        layout("routes/admin.permissions/layout.tsx", [
-          index("routes/admin.permissions/route.tsx"),
-          route("add-user", "routes/admin.permissions.add-user/route.tsx", {
-            index: true,
-          }),
-        ]),
-      ]),
     ]),
   ),
   layout(

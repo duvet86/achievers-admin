@@ -17,6 +17,6 @@ describe("Checkbox", () => {
     render(<Checkbox name="checkbox" label="test" required />);
 
     expect(screen.getByRole("checkbox")).not.toBeChecked();
-    expect(screen.getByTestId("required")).toBeInTheDocument();
+    expect(screen.getByRole("checkbox")).toHaveAttribute("required");
   });
 });

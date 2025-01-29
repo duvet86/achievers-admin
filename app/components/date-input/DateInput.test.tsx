@@ -9,15 +9,13 @@ describe("DateInput", () => {
   it("should display label", () => {
     render(<DateInput name="date" label="test" />);
 
-    expect(screen.getByTestId("dateinput")).toHaveValue("");
     expect(screen.getByLabelText("test")).toBeInTheDocument();
   });
 
   it("should display required", () => {
     render(<DateInput name="date" label="test" required />);
 
-    expect(screen.getByTestId("dateinput")).toHaveValue("");
-    expect(screen.getByTestId("required")).toBeInTheDocument();
+    expect(screen.getByLabelText("test")).toHaveAttribute("required");
   });
 
   it("should have initial value type date", () => {
@@ -29,14 +27,12 @@ describe("DateInput", () => {
       />,
     );
 
-    expect(screen.getByTestId("dateinput")).toHaveValue("1995-12-17");
-    expect(screen.getByLabelText("test")).toBeInTheDocument();
+    expect(screen.getByLabelText("test")).toHaveValue("1995-12-17");
   });
 
   it("should have initial value type string", () => {
     render(<DateInput name="date" label="test" defaultValue="1995-12-17" />);
 
-    expect(screen.getByTestId("dateinput")).toHaveValue("1995-12-17");
-    expect(screen.getByLabelText("test")).toBeInTheDocument();
+    expect(screen.getByLabelText("test")).toHaveValue("1995-12-17");
   });
 });

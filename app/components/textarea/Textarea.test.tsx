@@ -16,7 +16,7 @@ describe("Input", () => {
     render(<Textarea name="text" label="test" required />);
 
     expect(screen.getByTestId("textarea")).toBeInTheDocument();
-    expect(screen.getByTestId("required")).toBeInTheDocument();
+    expect(screen.getByTestId("textarea")).toHaveAttribute("required");
   });
 
   it("should have initial value", () => {

@@ -21,9 +21,10 @@ interface Props {
 export function Select({ label, name, options, required, ...props }: Props) {
   return (
     <>
-      <label className="fieldset-label">{label}</label>
+      <label htmlFor={name} className="fieldset-label">
+        {label}
+      </label>
       <select
-        data-testid="select"
         name={name}
         id={name}
         className={classNames("select w-full", {

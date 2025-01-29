@@ -4,7 +4,7 @@ exports[`LoadingSpinner > LoadingSpinner snapshot 1`] = `
 <body>
   <div>
     <svg
-      class="-ml-1 mr-3 animate-spin text-white h-5 w-5"
+      class="mr-3 -ml-1 animate-spin text-white h-5 w-5"
       fill="none"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
@@ -31,7 +31,7 @@ exports[`LoadingSpinner > LoadingSpinner snapshot dark large 1`] = `
 <body>
   <div>
     <svg
-      class="-ml-1 mr-3 animate-spin text-primary h-48 w-48"
+      class="mr-3 -ml-1 animate-spin text-primary h-48 w-48"
       fill="none"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"

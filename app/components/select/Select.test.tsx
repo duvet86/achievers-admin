@@ -14,7 +14,6 @@ describe("Select", () => {
       />,
     );
 
-    expect(screen.getByTestId("select")).toBeInTheDocument();
     expect(screen.getByLabelText("test")).toBeInTheDocument();
   });
 
@@ -28,8 +27,7 @@ describe("Select", () => {
       />,
     );
 
-    expect(screen.getByTestId("select")).toBeInTheDocument();
-    expect(screen.getByTestId("required")).toBeInTheDocument();
+    expect(screen.getByLabelText("test")).toHaveAttribute("required");
   });
 
   it("should have initial value", () => {
@@ -42,7 +40,7 @@ describe("Select", () => {
       />,
     );
 
-    expect(screen.getByTestId("select")).toHaveValue("value");
+    expect(screen.getByLabelText("test")).toHaveValue("value");
   });
 
   it("should ignore missing value", () => {
@@ -58,6 +56,6 @@ describe("Select", () => {
       />,
     );
 
-    expect(screen.getByTestId("select")).toHaveValue("");
+    expect(screen.getByLabelText("test")).toHaveValue("");
   });
 });

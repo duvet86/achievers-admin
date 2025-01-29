@@ -1,7 +1,5 @@
 import type { ChangeEventHandler } from "react";
 
-import classNames from "classnames";
-
 interface Props {
   label?: string;
   name: string;
@@ -13,37 +11,18 @@ interface Props {
   className?: string;
 }
 
-export function Checkbox({
-  label,
-  name,
-  required,
-  className,
-  ...props
-}: Props) {
+export function Checkbox({ label, name, required, ...props }: Props) {
   return (
-    <div className={classNames("form-control relative", className)}>
-      <label
-        htmlFor={name}
-        className="label cursor-pointer flex-col items-start"
-      >
-        {label && <span className="label-text mb-1">{label}</span>}
-        {required && (
-          <span
-            data-testid="required"
-            className="label-text-alt text-error absolute bottom-2 left-8 text-2xl"
-          >
-            *
-          </span>
-        )}
-        <input
-          type="checkbox"
-          className="checkbox"
-          id={name}
-          name={name}
-          required={required}
-          {...props}
-        />
-      </label>
-    </div>
+    <label className="fieldset-label">
+      {label}
+      <input
+        type="checkbox"
+        className="checkbox"
+        id={name}
+        name={name}
+        required={required}
+        {...props}
+      />
+    </label>
   );
 }

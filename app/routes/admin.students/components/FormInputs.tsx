@@ -24,7 +24,7 @@ export default function FormInputs({
 }: Props) {
   return (
     <fieldset className="mb-6 flex flex-wrap justify-between gap-4">
-      <div className="flex flex-col items-end gap-6 sm:flex-row">
+      <div className="flex flex-col items-center gap-6 sm:flex-row">
         <div className="w-full sm:w-96">
           <Input
             key={searchTerm}
@@ -53,19 +53,17 @@ export default function FormInputs({
           </div>
         )}
 
-        <div className="form-control">
-          <label className="label cursor-pointer gap-2">
-            <input
-              key={includeArchived.toString()}
-              type="checkbox"
-              name="includeArchived"
-              className="checkbox bg-base-100"
-              defaultChecked={includeArchived}
-              onChange={onIncludeArchivedChange}
-            />
-            <span className="label-text">Include archived students</span>
-          </label>
-        </div>
+        <label className="label cursor-pointer gap-2">
+          <input
+            key={includeArchived.toString()}
+            type="checkbox"
+            name="includeArchived"
+            className="checkbox bg-base-100"
+            defaultChecked={includeArchived}
+            onChange={onIncludeArchivedChange}
+          />
+          <span className="label-text">Include archived students</span>
+        </label>
       </div>
 
       <div className="flex items-end">

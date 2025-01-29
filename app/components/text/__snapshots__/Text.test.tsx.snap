@@ -4,7 +4,7 @@ exports[`Text > should display component 1`] = `
 <body>
   <div>
     <section
-      class="mb-4 w-full border-b border-l border-base-300 p-1"
+      class="border-base-300 mb-4 w-full border-b border-l p-1"
     >
       <h6
         class="label"

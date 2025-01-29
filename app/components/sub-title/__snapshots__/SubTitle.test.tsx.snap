@@ -4,7 +4,7 @@ exports[`SubTitle > should display component 1`] = `
 <body>
   <div>
     <h3
-      class="my-4 border-b border-primary font-bold uppercase"
+      class="border-primary my-4 border-b font-bold uppercase"
     >
       Test
     </h3>

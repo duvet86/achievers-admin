@@ -4,7 +4,7 @@ exports[`Navbar > Navbar snapshot 1`] = `
 <body>
   <div>
     <nav
-      class="navbar absolute left-0 top-0 z-30 h-16 justify-between bg-primary text-primary-content shadow-md"
+      class="navbar bg-primary text-primary-content absolute top-0 left-0 z-30 h-16 justify-between shadow-md"
     >
       <div
         class="flex"
@@ -114,7 +114,7 @@ exports[`Navbar > Navbar snapshot 1`] = `
           </label>
         </div>
         <ul
-          class="menu dropdown-content w-64 rounded-box bg-base-100 p-2 shadow"
+          class="menu dropdown-content rounded-box bg-base-100 w-64 p-2 shadow-sm"
           tabindex="0"
         >
           <li
