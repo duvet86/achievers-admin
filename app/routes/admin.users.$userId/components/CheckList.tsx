@@ -73,6 +73,10 @@ export function CheckList({
     void navigate(to);
   };
 
+  const stopLinkPropagation = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.stopPropagation();
+  };
+
   return (
     <div className="overflow-auto bg-white">
       <table className="table">
@@ -104,6 +108,7 @@ export function CheckList({
               <Link
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="eoiProfile"
+                onClick={stopLinkPropagation}
               >
                 View
               </Link>
@@ -126,6 +131,7 @@ export function CheckList({
               <Link
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="welcomeCall"
+                onClick={stopLinkPropagation}
               >
                 View
               </Link>
@@ -148,6 +154,7 @@ export function CheckList({
               <Link
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="references"
+                onClick={stopLinkPropagation}
               >
                 View
               </Link>
@@ -170,6 +177,7 @@ export function CheckList({
               <Link
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="induction"
+                onClick={stopLinkPropagation}
               >
                 View
               </Link>
@@ -195,6 +203,7 @@ export function CheckList({
               <Link
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="police-check"
+                onClick={stopLinkPropagation}
               >
                 View
               </Link>
@@ -220,6 +229,7 @@ export function CheckList({
               <Link
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="wwc-check"
+                onClick={stopLinkPropagation}
               >
                 View
               </Link>
@@ -242,6 +252,7 @@ export function CheckList({
               <Link
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="approval-mrc"
+                onClick={stopLinkPropagation}
               >
                 View
               </Link>
