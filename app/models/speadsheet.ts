@@ -18,28 +18,20 @@ export interface SpeadsheetUser {
   "Approved by MRC?": BooleanAnswer;
   Chapter: Chapter;
   "Role(s)": Roles;
-  "Committee Member": BooleanAnswer; // Not used.
-  "Current Member": BooleanAnswer; // Not used.
   "Induction Date": string;
   Attendance: Attendance;
-  Mentee: string; // Not used.
-  "Mentee Year Level": string; // Not used.
   "Police Check Renewal Date": string;
   "WWC Check Renewal Date": string;
   "Volunteer Agreement Complete": BooleanAnswer;
-  "Board Member": BooleanAnswer; // Not used.
   "Emergency Contact Name": string;
   "Emergency Contact Number": string;
   "Emergency Contact Address": string;
   "Emergency Contact Relationship": string;
-  "Director Identification Number": string; // Not used.
-  "Board Term Expiry": string; // Not used.
   "End Date": string;
   Occupation: string;
-  "Vaccination Status": VaccinationStatus; // Not used.
   "WWC Check Number": string;
   "Missing Information": string;
-  "Active Volunteer": BooleanAnswer;
+  "Is Archived": BooleanAnswer;
 }
 
 export interface SpeadsheetStudent {

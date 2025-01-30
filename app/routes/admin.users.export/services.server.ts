@@ -1,6 +1,7 @@
 import type { Attendance, Chapter, SpeadsheetUser } from "~/models/speadsheet";
 
 import { write, utils } from "xlsx";
+import dayjs from "dayjs";
 
 import { prisma } from "~/db.server";
 
@@ -37,7 +38,8 @@ export async function exportMentorsToSpreadsheetAsync() {
       m.addressState +
       " " +
       m.addressPostcode,
-    "Date of Birth": m.dateOfBirth?.toString() ?? "",
+    "Date of Birth":
+      m.dateOfBirth !== null ? dayjs(m.dateOfBirth).format("MM/DD/YYYY") : "",
     "Over the age of 18 years?": m.eoIProfile?.isOver18 === true ? "Yes" : "No",
     "Approval to publish Potographs?": m.hasApprovedToPublishPhotos
       ? "Yes"
@@ -45,30 +47,23 @@ export async function exportMentorsToSpreadsheetAsync() {
     "Approved by MRC?": m.approvalbyMRC ? "Yes" : "No",
     Chapter: (m.chapter.name as Chapter) ?? "Girraween",
     "Role(s)": "Mentor",
-    "Committee Member": "No", // Not used.
-    "Current Member": m.endDate !== undefined ? "Yes" : "No", // Not used.
     "Induction Date": m.induction?.completedOnDate.toString() ?? "",
-    "Active Mentor": m.endDate !== undefined ? "Yes" : "No", // Not used.
-    Attendance: m.eoIProfile?.preferredFrequency as Attendance, // Not used.
-    Mentee: "", // Not used.
-    "Mentee Year Level": "", // Not used.
+    Attendance: m.eoIProfile?.preferredFrequency as Attendance,
     "Police Check Renewal Date": m.policeCheck?.expiryDate.toString() ?? "",
-    "WWC Check Renewal Date": m.wwcCheck?.expiryDate.toString() ?? "",
+    "WWC Check Renewal Date": m.wwcCheck?.expiryDate
+      ? dayjs(m.wwcCheck.expiryDate).format("MM/DD/YYYY")
+      : "",
     "Volunteer Agreement Complete":
       m.volunteerAgreementSignedOn !== undefined ? "Yes" : "No",
-    "Board Member": "No", // Not used.
     "Emergency Contact Name": m.emergencyContactName ?? "",
     "Emergency Contact Number": m.emergencyContactNumber ?? "",
     "Emergency Contact Address": m.emergencyContactAddress ?? "",
     "Emergency Contact Relationship": m.emergencyContactRelationship ?? "",
-    "Director Identification Number": "", // Not used.
-    "Board Term Expiry": "", // Not used.
-    "End Date": m.endDate?.toString() ?? "",
     Occupation: m.eoIProfile?.occupation ?? "",
-    "Vaccination Status": "Unconfirmed", // Not used.
     "WWC Check Number": m.wwcCheck?.wwcNumber ?? "",
     "Missing Information": m.importedHistory?.error ?? "",
-    "Active Volunteer": m.endDate === null ? "No" : "Yes",
+    "End Date": m.endDate ? dayjs(m.endDate).format("MM/DD/YYYY") : "",
+    "Is Archived": m.endDate !== null ? "Yes" : "No",
   }));
 
   const wb = utils.book_new();
