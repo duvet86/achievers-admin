@@ -15,7 +15,7 @@ export function Radio({ label, name, options, defaultValue, required }: Props) {
   return (
     <>
       <label className="fieldset-label">{label}</label>
-      <div className="flex gap-8">
+      <div data-testid={name} className="flex gap-8">
         {options.map(({ label, value }) => (
           <label key={value} className="flex cursor-pointer gap-2">
             <input

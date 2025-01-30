@@ -185,6 +185,10 @@ export default function Index() {
     void navigate(`${id}?${searchParams.toString()}`);
   };
 
+  const stopLinkPropagation = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.stopPropagation();
+  };
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -311,6 +315,7 @@ export default function Index() {
                       <td className="hidden sm:table-cell">
                         <Link
                           to={`${id}?${searchParams.toString()}`}
+                          onClick={stopLinkPropagation}
                           className="btn btn-success btn-xs w-full gap-2"
                         >
                           <PageEdit className="hidden h-4 w-4 sm:block" />
