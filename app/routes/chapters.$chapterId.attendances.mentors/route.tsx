@@ -1,11 +1,11 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { Attendace } from "./services.server";
 
-import { Form, Link, useLoaderData, useSubmit } from "react-router";
+import { Form, useLoaderData, useSubmit } from "react-router";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
-import { Check, NavArrowRight, Xmark } from "iconoir-react";
+import { Check, Xmark } from "iconoir-react";
 
 import {
   getClosestSessionToToday,
@@ -173,68 +173,68 @@ export default function Index() {
         id="attendanceForm"
         className="mt-4 flex flex-col items-end gap-4 sm:flex-row"
       >
-        <Select
-          key={selectedTerm}
-          label="Term"
-          name="selectedTerm"
-          defaultValue={selectedTerm}
-          options={termsList}
-          onChange={submitForm}
-        />
-        <Select
-          key={selectedTermDate}
-          label="Session date"
-          name="selectedTermDate"
-          defaultValue={selectedTermDate}
-          options={sessionDates}
-          onChange={submitForm}
-        />
-        <Input
-          label="Search for a mentor (Press enter to submit)"
-          name="search"
-          defaultValue={searchTerm}
-          hasButton
-          placeholder="Search for a mentor"
-          onButtonClick={onResetClick}
-        />
+        <div className="w-full sm:w-auto">
+          <Select
+            key={selectedTerm}
+            label="Term"
+            name="selectedTerm"
+            defaultValue={selectedTerm}
+            options={termsList}
+            onChange={submitForm}
+          />
+        </div>
+
+        <div className="w-full sm:w-auto">
+          <Select
+            key={selectedTermDate}
+            label="Session date"
+            name="selectedTermDate"
+            defaultValue={selectedTermDate}
+            options={sessionDates}
+            onChange={submitForm}
+          />
+        </div>
+
+        <div className="w-full sm:w-auto">
+          <Input
+            label="Search for a mentor (Press enter to submit)"
+            name="search"
+            defaultValue={searchTerm}
+            hasButton
+            placeholder="Search for a mentor"
+            onButtonClick={onResetClick}
+          />
+        </div>
       </Form>
 
-      <ul key={selectedTermDate} className="mt-4 overflow-auto">
-        {mentors.length === 0 && (
-          <li className="mt-4 italic">No mentors found</li>
-        )}
-        {mentors.map(({ id: mentorId, fullName }) => (
+      <ul className="list bg-base-100 mt-2">
+        {mentors.map(({ id: mentorId, fullName }, index) => (
           <li
             key={mentorId}
-            className={classNames(
-              "m-2 flex items-center gap-2 border-b p-2 hover:bg-gray-200",
-              {
-                "bg-green-200": attendacesLookup[mentorId],
-              },
-            )}
+            className={classNames("list-row flex cursor-pointer items-center", {
+              "bg-green-200": attendacesLookup[mentorId],
+              "hover:bg-gray-200": !attendacesLookup[mentorId],
+            })}
+            onClick={
+              attendacesLookup[mentorId]
+                ? removeAttendance(attendacesLookup[mentorId])
+                : attend(mentorId)
+            }
           >
-            <div className="flex flex-1 items-center gap-4">
-              <h2 className="basis-56">{fullName}</h2>
-
-              <Link
-                className="btn btn-primary sm:basis-32"
-                to={`${mentorId}/survey?selectedTerm=${selectedTerm}`}
-              >
-                Survey <NavArrowRight className="hidden sm:block" />
-              </Link>
+            <div className="border-r pr-2 text-4xl font-thin tabular-nums opacity-30">
+              {index}
             </div>
+
+            <h2 className="flex-1 text-2xl font-thin">{fullName}</h2>
 
             <div>
               {attendacesLookup[mentorId] ? (
-                <button
-                  className="btn btn-error"
-                  onClick={removeAttendance(attendacesLookup[mentorId])}
-                >
+                <button className="btn btn-error">
                   <span className="hidden sm:block">Remove attendance</span>
                   <Xmark />
                 </button>
               ) : (
-                <button className="btn btn-outline" onClick={attend(mentorId)}>
+                <button className="btn btn-outline">
                   <span className="hidden sm:block">Mark attendance</span>
                   <Check />
                 </button>

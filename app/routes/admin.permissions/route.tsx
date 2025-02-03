@@ -70,17 +70,17 @@ export default function Index() {
           <tbody>
             {users.length === 0 && (
               <tr>
-                <td className="border" colSpan={6}>
+                <td colSpan={6}>
                   <i>No users</i>
                 </td>
               </tr>
             )}
             {users.map(({ id, displayName, email, roles }, index) => (
               <tr key={id}>
-                <td className="border">{index + 1}</td>
-                <td className="border">{displayName}</td>
-                <td className="border">{email}</td>
-                <td className="border">{roles.join(", ")}</td>
+                <td>{index + 1}</td>
+                <td>{displayName}</td>
+                <td>{email}</td>
+                <td>{roles.join(", ")}</td>
               </tr>
             ))}
           </tbody>

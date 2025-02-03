@@ -29,27 +29,6 @@ export default [
           index: true,
         },
       ),
-      route(
-        "mentors/:mentorId/survey",
-        "routes/chapters.$chapterId.attendances.mentors.$mentorId.survey/route.tsx",
-        {
-          index: true,
-        },
-      ),
-      route(
-        "students/:studentId/parent-survey",
-        "routes/chapters.$chapterId.attendances.students.$studentId.parent-survey/route.tsx",
-        {
-          index: true,
-        },
-      ),
-      route(
-        "students/:studentId/student-survey",
-        "routes/chapters.$chapterId.attendances.students.$studentId.student-survey/route.tsx",
-        {
-          index: true,
-        },
-      ),
     ]),
   ),
   layout(
@@ -367,6 +346,11 @@ export default [
               index: true,
             },
           ),
+        ]),
+      ]),
+      ...prefix("permissions", [
+        layout("routes/admin.permissions/layout.tsx", [
+          index("routes/admin.permissions/route.tsx"),
         ]),
       ]),
     ]),
