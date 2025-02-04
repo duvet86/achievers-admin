@@ -73,6 +73,7 @@ model User {
   importedHistory ImportedHistory?
 
   mentorAttendance MentorAttendance[]
+  goal             Goal[]
 }
 
 model ImportedHistory {
@@ -267,6 +268,7 @@ model Student {
   studentAttendance          StudentAttendance[]
 
   studentSchoolReport StudentSchoolReport[]
+  goal                Goal[]
 
   importedStudentHistory ImportedStudentHistory?
 }
@@ -410,4 +412,21 @@ model StudentSchoolReport {
 
   schoolTerm   SchoolTerm @relation(fields: [schoolTermId], references: [id])
   schoolTermId Int
+}
+
+model Goal {
+  id Int @id @default(autoincrement())
+
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId Int
+  mentor    User    @relation(fields: [mentorId], references: [id])
+  mentorId  Int
+
+  title      String
+  goal       String   @db.Text
+  result     String?  @db.Text
+  isAchieved Boolean  @default(false)
+  endDate    DateTime
+
+  @@index([studentId, mentorId])
 }

@@ -1,10 +1,5 @@
 import { prisma } from "~/db.server";
 
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-
-dayjs.extend(utc);
-
 export interface SessionCommandCteate {
   sessionId: number;
   studentId: number;

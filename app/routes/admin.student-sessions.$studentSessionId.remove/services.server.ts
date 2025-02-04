@@ -1,10 +1,5 @@
 import { prisma } from "~/db.server";
 
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-
-dayjs.extend(utc);
-
 export async function getChapterByIdAsync(id: number) {
   return await prisma.chapter.findUniqueOrThrow({
     where: {

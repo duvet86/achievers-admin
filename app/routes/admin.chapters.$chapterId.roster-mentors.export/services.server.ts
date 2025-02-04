@@ -1,9 +1,12 @@
 import { write, utils } from "xlsx";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 
 import { prisma } from "~/db.server";
 import { getCurrentTermForDate, getDatesForTerm } from "~/services";
 import { getSchoolTermsAsync } from "~/services/.server";
+
+dayjs.extend(utc);
 
 type SessionLookup = Record<
   string,

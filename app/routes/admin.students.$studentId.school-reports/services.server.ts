@@ -57,7 +57,7 @@ export async function getStudentByIdAsync(studentId: number) {
 export async function uploadHandler(fileUpload: FileUpload) {
   const storageKey = fileUpload.fieldName ?? "file";
 
-  memoryFileStorage.set(
+  await memoryFileStorage.set(
     storageKey,
     new File([await fileUpload.bytes()], fileUpload.name, {
       type: fileUpload.type,

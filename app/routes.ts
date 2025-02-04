@@ -378,9 +378,23 @@ export default [
       route("roster", "routes/mentor.roster/route.tsx", {
         index: true,
       }),
-      route("students", "routes/mentor.students/route.tsx", {
-        index: true,
-      }),
+      ...prefix("students", [
+        index("routes/mentor.students/route.tsx"),
+        route(
+          ":studentId/goals",
+          "routes/mentor.students.$studentId.goals/route.tsx",
+          {
+            index: true,
+          },
+        ),
+        route(
+          ":studentId/goals/:goalId",
+          "routes/mentor.students.$studentId.goals.$goalId/route.tsx",
+          {
+            index: true,
+          },
+        ),
+      ]),
       route("useful-resources", "routes/mentor.useful-resources/route.tsx", {
         index: true,
       }),

@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "react-router";
 
 import { Link, useLoaderData } from "react-router";
-import { StatsReport } from "iconoir-react";
+import { Archery, StatsReport } from "iconoir-react";
 
 import { getLoggedUserInfoAsync } from "~/services/.server";
 import { Title } from "~/components";
@@ -47,14 +47,23 @@ export default function Index() {
                 <td>{index + 1}</td>
                 <td>{fullName}</td>
                 <td>{yearLevel ?? "-"}</td>
-                <td align="right">
-                  <Link
-                    to={`/mentor/student-sessions?selectedStudentId=${id}&back_url=/mentor/students`}
-                    className="btn btn-success btn-xs h-12 gap-2"
-                  >
-                    <StatsReport className="hidden h-4 w-4 lg:block" />
-                    View latest report
-                  </Link>
+                <td>
+                  <div className="flex justify-end gap-4">
+                    <Link
+                      to={`/mentor/student-sessions?selectedStudentId=${id}&back_url=/mentor/students`}
+                      className="btn btn-success w-48 gap-2"
+                    >
+                      <StatsReport className="hidden h-4 w-4 lg:block" />
+                      View reports
+                    </Link>
+                    <Link
+                      to={`/mentor/students/${id}/goals?back_url=/mentor/students`}
+                      className="btn btn-primary w-48 gap-2"
+                    >
+                      <Archery className="hidden h-4 w-4 lg:block" />
+                      Goals
+                    </Link>
+                  </div>
                 </td>
               </tr>
             ))}

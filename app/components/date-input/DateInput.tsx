@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import dayjs from "dayjs";
 
 interface Props {
@@ -5,6 +6,7 @@ interface Props {
   label: string;
   defaultValue?: Date | string;
   readOnly?: boolean;
+  disabled?: boolean;
   required?: boolean;
   min?: string;
   max?: string;
@@ -15,6 +17,7 @@ export function DateInput({
   name,
   defaultValue,
   required,
+  disabled,
   ...props
 }: Props) {
   const value =
@@ -38,9 +41,12 @@ export function DateInput({
           id={name}
           name={name}
           placeholder={label}
-          className="input input-bordered w-full"
+          className={classNames("input input-bordered w-full", {
+            validator: required,
+          })}
           defaultValue={value}
           required={required}
+          disabled={disabled}
           {...props}
         />
       </div>

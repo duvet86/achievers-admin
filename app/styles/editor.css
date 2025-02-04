@@ -80,6 +80,7 @@
   margin: 0;
   margin-bottom: 8px;
   position: relative;
+  font-size: medium;
 }
 
 .lexical .editor-paragraph:last-child {

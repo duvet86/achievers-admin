@@ -80,7 +80,7 @@ export function Editor({
   };
 
   return (
-    <ClientOnly fallback={<div>Loading...</div>}>
+    <ClientOnly fallback={<div className="h-full w-full">Loading...</div>}>
       {() => (
         <LexicalComposer
           initialConfig={{
