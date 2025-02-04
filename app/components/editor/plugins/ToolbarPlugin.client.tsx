@@ -341,6 +341,7 @@ export default function ToolbarPlugin({
         }}
         className="toolbar-item spaced"
         aria-label="Undo"
+        type="button"
       >
         <i className="format undo" />
       </button>
@@ -351,6 +352,7 @@ export default function ToolbarPlugin({
         }}
         className="toolbar-item"
         aria-label="Redo"
+        type="button"
       >
         <i className="format redo" />
       </button>
@@ -359,6 +361,7 @@ export default function ToolbarPlugin({
         className="toolbar-item block-controls"
         onClick={() => setShowBlockOptionsDropDown(!showBlockOptionsDropDown)}
         aria-label="Formatting Options"
+        type="button"
       >
         <span className={"icon block-type " + blockType} />
         <span className="text">{blockTypeToBlockName[blockType]}</span>
@@ -381,6 +384,7 @@ export default function ToolbarPlugin({
         }}
         className={"toolbar-item spaced " + (isBold ? "active" : "")}
         aria-label="Format Bold"
+        type="button"
       >
         <i className="format bold" />
       </button>
@@ -390,6 +394,7 @@ export default function ToolbarPlugin({
         }}
         className={"toolbar-item spaced " + (isItalic ? "active" : "")}
         aria-label="Format Italics"
+        type="button"
       >
         <i className="format italic" />
       </button>
@@ -399,6 +404,7 @@ export default function ToolbarPlugin({
         }}
         className={"toolbar-item spaced " + (isUnderline ? "active" : "")}
         aria-label="Format Underline"
+        type="button"
       >
         <i className="format underline" />
       </button>
@@ -408,6 +414,7 @@ export default function ToolbarPlugin({
         }}
         className={"toolbar-item spaced " + (isStrikethrough ? "active" : "")}
         aria-label="Format Strikethrough"
+        type="button"
       >
         <i className="format strikethrough" />
       </button>
@@ -415,6 +422,7 @@ export default function ToolbarPlugin({
         onClick={insertLink}
         className={"toolbar-item spaced " + (isLink ? "active" : "")}
         aria-label="Insert Link"
+        type="button"
       >
         <i className="format link" />
       </button>
@@ -425,6 +433,7 @@ export default function ToolbarPlugin({
         }}
         className="toolbar-item spaced"
         aria-label="Left Align"
+        type="button"
       >
         <i className="format left-align" />
       </button>
@@ -434,6 +443,7 @@ export default function ToolbarPlugin({
         }}
         className="toolbar-item spaced"
         aria-label="Center Align"
+        type="button"
       >
         <i className="format center-align" />
       </button>
@@ -443,6 +453,7 @@ export default function ToolbarPlugin({
         }}
         className="toolbar-item spaced"
         aria-label="Right Align"
+        type="button"
       >
         <i className="format right-align" />
       </button>
@@ -452,6 +463,7 @@ export default function ToolbarPlugin({
         }}
         className="toolbar-item"
         aria-label="Justify Align"
+        type="button"
       >
         <i className="format justify-align" />
       </button>
