@@ -54,10 +54,19 @@ export default function Index() {
                       className="btn btn-success w-48 gap-2"
                     >
                       <StatsReport className="hidden h-4 w-4 lg:block" />
-                      View reports
+                      Mentor reports
                     </Link>
+
                     <Link
-                      to={`/mentor/students/${id}/goals?back_url=/mentor/students`}
+                      to={`/mentor/students/${id}/school-reports`}
+                      className="btn w-48 gap-2"
+                    >
+                      <StatsReport className="hidden h-4 w-4 lg:block" />
+                      School reports
+                    </Link>
+
+                    <Link
+                      to={`/mentor/students/${id}/goals`}
                       className="btn btn-primary w-48 gap-2"
                     >
                       <Archery className="hidden h-4 w-4 lg:block" />

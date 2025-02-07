@@ -204,6 +204,15 @@ export default function Index() {
         <hr className="my-8 md:hidden" />
 
         <div className="flex-1 overflow-y-auto pb-4 lg:pb-0">
+          {student && (
+            <Link
+              className="btn btn-block mb-4 sm:w-52"
+              to={`/admin/students/${student.id}/school-reports`}
+            >
+              School reports <NavArrowRight />
+            </Link>
+          )}
+
           <GuardianList
             isNewStudent={isNewStudent}
             guardian={student?.guardian ?? []}
@@ -213,17 +222,6 @@ export default function Index() {
             isNewStudent={isNewStudent}
             studentTeacher={student?.studentTeacher ?? []}
           />
-
-          <hr className="border-primary my-8" />
-
-          {student && (
-            <Link
-              className="btn btn-block sm:w-52"
-              to={`/admin/students/${student.id}/school-reports`}
-            >
-              School reports <NavArrowRight />
-            </Link>
-          )}
         </div>
       </div>
     </div>

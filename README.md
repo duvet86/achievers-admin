@@ -65,7 +65,7 @@ Update the `schema.prisma` file in the prisma folder to update the database sche
 Run this command to apply the migrations locally:
 
 ```bash
-npx prisma migrate dev --name {name}
+npx prisma migrate dev --name {name} --create-only
 ```
 
 ## Update packages
