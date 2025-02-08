@@ -88,6 +88,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   if (params.goalId === "new") {
     id = await createGoalAsync({
+      chapterId: user.chapterId,
       mentorId: user.id,
       studentId: Number(params.studentId),
       endDate,
@@ -98,6 +99,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     });
   } else {
     id = await updateGoalByIdAsync(Number(params.goalId), {
+      chapterId: user.chapterId,
       mentorId: user.id,
       studentId: Number(params.studentId),
       endDate,

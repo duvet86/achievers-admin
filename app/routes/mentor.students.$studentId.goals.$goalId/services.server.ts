@@ -6,6 +6,7 @@ import { prisma } from "~/db.server";
 dayjs.extend(utc);
 
 export interface GoalCommad {
+  chapterId: number;
   mentorId: number;
   studentId: number;
   result: string | null;
@@ -22,6 +23,7 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
     },
     select: {
       id: true,
+      chapterId: true,
     },
   });
 }
@@ -57,6 +59,7 @@ export async function getGoalById(id: number) {
 export async function createGoalAsync(data: GoalCommad) {
   const { id } = await prisma.goal.create({
     data: {
+      chapterId: data.chapterId,
       mentorId: data.mentorId,
       studentId: data.studentId,
       endDate: dayjs.utc(data.endDate, "YYYY-MM-DD").toDate(),

@@ -35,6 +35,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     SchoolTerm: ability.can("manage", "SchoolTermArea"),
     Config: ability.can("manage", "ConfigArea"),
     Permissions: ability.can("manage", "PermissionsArea"),
+    Goals: ability.can("manage", "GoalsArea"),
   };
 
   return {

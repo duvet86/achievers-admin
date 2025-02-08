@@ -223,6 +223,7 @@ model Chapter {
   user    User[]
   student Student[]
   session Session[]
+  goal    Goal[]
 
   mentorAttendance  MentorAttendance[]
   studentAttendance StudentAttendance[]
@@ -417,6 +418,8 @@ model StudentSchoolReport {
 model Goal {
   id Int @id @default(autoincrement())
 
+  chapter   Chapter @relation(fields: [chapterId], references: [id])
+  chapterId Int
   student   Student @relation(fields: [studentId], references: [id])
   studentId Int
   mentor    User    @relation(fields: [mentorId], references: [id])
@@ -427,6 +430,9 @@ model Goal {
   result     String?  @db.Text
   isAchieved Boolean  @default(false)
   endDate    DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([studentId, mentorId])
 }

@@ -16,6 +16,7 @@ export const SUBJECTS_ADMIN = [
   "UserArea",
   "MentorAttendancesArea",
   "PermissionsArea",
+  "GoalsArea",
 ] as const;
 
 export const SUBJECTS_CHAPTERCOORDINATOR = [
@@ -24,6 +25,7 @@ export const SUBJECTS_CHAPTERCOORDINATOR = [
   "SessionArea",
   "StudentArea",
   "UserArea",
+  "GoalsArea",
 ] as const;
 
 export type Action = (typeof ACTIONS)[number];

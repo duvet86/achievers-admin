@@ -16,6 +16,7 @@ import {
   TowerWarning,
   EditPencil,
   BubbleWarning,
+  Archery,
 } from "iconoir-react";
 
 interface Props {
@@ -60,6 +61,12 @@ function getLinks(
           path: "/admin/student-sessions",
           label: "Reports",
           isVisible: linkMappings.Session,
+        },
+        {
+          icon: <Archery />,
+          path: "/admin/goals",
+          label: "Goals",
+          isVisible: linkMappings.Goals,
         },
         {
           icon: <ShopFourTiles />,

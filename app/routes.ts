@@ -187,6 +187,14 @@ export default [
           ),
         ]),
       ]),
+      ...prefix("goals", [
+        layout("routes/admin.goals/layout.tsx", [
+          index("routes/admin.goals/route.tsx"),
+          route(":goalId", "routes/admin.goals.$goalId/route.tsx", {
+            index: true,
+          }),
+        ]),
+      ]),
       ...prefix("students", [
         layout("routes/admin.students/layout.tsx", [
           index("routes/admin.students/route.tsx"),
