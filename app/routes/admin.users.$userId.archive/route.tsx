@@ -6,11 +6,7 @@ import { Form, useLoaderData, useNavigation } from "react-router";
 import invariant from "tiny-invariant";
 import { BinFull } from "iconoir-react";
 
-import {
-  getAzureUserWithRolesByIdAsync,
-  removeRoleFromUserAsync,
-  trackEvent,
-} from "~/services/.server";
+import { deleteAzureUserAsync } from "~/services/.server";
 import { Textarea, Title } from "~/components";
 
 import { archiveUserAsync, getUserByIdAsync } from "./services.server";
@@ -34,22 +30,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const user = await getUserByIdAsync(Number(params.userId));
 
   if (user.azureADId !== null) {
-    const azureUserInfo = await getAzureUserWithRolesByIdAsync(
-      request,
-      user.azureADId,
-    );
-
-    const appRoleAssignmentId = azureUserInfo.appRoleAssignments.find(
-      ({ roleName }) => roleName === "Mentor",
-    )?.id;
-
-    if (appRoleAssignmentId === undefined) {
-      throw new Error("appRoleAssignmentId must be defined.");
-    }
-
-    await removeRoleFromUserAsync(request, appRoleAssignmentId);
-
-    trackEvent("REVOKE_ACCESS_MENTOR");
+    await deleteAzureUserAsync(request, user.azureADId);
   }
 
   await archiveUserAsync(user.id, endReason!);

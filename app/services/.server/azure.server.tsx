@@ -1,7 +1,7 @@
 import { redirect } from "react-router";
 import invariant from "tiny-invariant";
 
-import { trackException } from "~/services/.server";
+import { trackEvent, trackException } from "~/services/.server";
 import { getTokenInfoAsync } from "./session.server";
 
 export const MICROSOFT_GRAPH_V1_BASEURL = "https://graph.microsoft.com/v1.0";
@@ -293,19 +293,18 @@ export async function assignRoleToUserAsync(
   return (await response.json()) as AzureAppRoleResponse;
 }
 
-export async function removeRoleFromUserAsync(
+export async function deleteAzureUserAsync(
   request: Request,
-  appRoleAssignmentId: string,
+  id: string,
 ): Promise<void> {
   const tokenInfo = await getTokenInfoAsync(request);
 
-  await fetch(
-    `${MICROSOFT_GRAPH_V1_BASEURL}/servicePrincipals/${APP_ID}/appRoleAssignedTo/${appRoleAssignmentId}`,
-    {
-      method: "DELETE",
-      headers: getHeaders(tokenInfo.accessToken),
-    },
-  );
+  await fetch(`${MICROSOFT_GRAPH_V1_BASEURL}/users/${id}`, {
+    method: "DELETE",
+    headers: getHeaders(tokenInfo.accessToken),
+  });
+
+  trackEvent("DELETE_AZURE_USER");
 }
 
 function getHeaders(accessToken: string): HeadersInit {

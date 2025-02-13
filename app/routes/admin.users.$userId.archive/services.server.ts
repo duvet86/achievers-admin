@@ -20,6 +20,7 @@ export async function archiveUserAsync(userId: number, endReason: string) {
       id: userId,
     },
     data: {
+      azureADId: null,
       endDate: new Date(),
       endReason,
     },
