@@ -81,7 +81,7 @@ export class MentorWriteReportPageAssertions {
   }
 
   async toHaveSelectedInputs(): Promise<void> {
-    await expect(this.page.termSelect).toHaveValue("Term 4");
+    await expect(this.page.termSelect).toHaveValue("4");
     await expect(this.page.sessionDateSelect).toHaveValue(
       "2024-11-23T00:00:00.000Z",
     );
