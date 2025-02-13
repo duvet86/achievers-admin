@@ -270,13 +270,12 @@ export default function Index() {
                 ) => {
                   let className = "cursor-pointer hover:bg-base-200 ";
                   let icon: JSX.Element | undefined;
-                  if (checksCompleted === 8) {
-                    className += "text-success";
-                    icon = <CheckCircle data-testid="completed" />;
-                  }
                   if (endDate) {
                     className += "text-error";
                     icon = <BinFull data-testid="archived" />;
+                  } else if (checksCompleted === 8) {
+                    className += "text-success";
+                    icon = <CheckCircle data-testid="completed" />;
                   }
 
                   return (

@@ -51,7 +51,7 @@ model User {
   volunteerAgreementSignedOn DateTime?
 
   endDate   DateTime?
-  endReason String?   @db.TinyText
+  endReason String?   @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
