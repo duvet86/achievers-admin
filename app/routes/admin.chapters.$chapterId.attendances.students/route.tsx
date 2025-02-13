@@ -19,13 +19,14 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchTerm = url.searchParams.get("search");
-  const selectedTerm = url.searchParams.get("selectedTerm");
+  const selectedTermId = url.searchParams.get("selectedTermId");
   let selectedTermDate = url.searchParams.get("selectedTermDate");
 
   const terms = await getSchoolTermsAsync(dayjs().year());
   const todayterm = getCurrentTermForDate(terms, new Date());
 
-  const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayterm;
+  const currentTerm =
+    terms.find((t) => t.id.toString() === selectedTermId) ?? todayterm;
   const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
 
   if (selectedTermDate === null || !sessionDates.includes(selectedTermDate)) {
@@ -46,12 +47,12 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   return {
     attendances,
-    selectedTerm: selectedTerm ?? currentTerm.name,
+    selectedTermId: selectedTermId ?? currentTerm.id.toString(),
     selectedTermDate,
     searchTerm: searchTerm ?? "",
     selectedTermDateLabel: dayjs(selectedTermDate).format("D MMMM YYYY"),
-    termsList: terms.map(({ start, end, name }) => ({
-      value: name,
+    termsList: terms.map(({ id, start, end, name }) => ({
+      value: id.toString(),
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${todayterm.name === name ? " (Current)" : ""}`,
     })),
     sessionDates: sessionDates
@@ -69,7 +70,7 @@ export default function Index() {
     selectedTermDate,
     selectedTermDateLabel,
     sessionDates,
-    selectedTerm,
+    selectedTermId,
     termsList,
     searchTerm,
   } = useLoaderData<typeof loader>();
@@ -99,10 +100,10 @@ export default function Index() {
       >
         <div className="w-full sm:w-auto">
           <Select
-            key={selectedTerm}
+            key={selectedTermId}
             label="Term"
-            name="selectedTerm"
-            defaultValue={selectedTerm}
+            name="selectedTermId"
+            defaultValue={selectedTermId}
             options={termsList}
             onChange={submitForm}
           />

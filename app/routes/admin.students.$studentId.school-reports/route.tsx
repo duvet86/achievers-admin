@@ -31,7 +31,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const todayterm = getCurrentTermForDate(terms, new Date());
 
   return {
-    termsList: terms.map(({ start, end, name, id }) => ({
+    termsList: terms.map(({ id, start, end, name }) => ({
       value: id.toString(),
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${todayterm.name === name ? " (Current)" : ""}`,
     })),

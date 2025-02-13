@@ -55,18 +55,19 @@ export const links: LinksFunction = () => {
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
 
-  let selectedTerm = url.searchParams.get("selectedTerm");
+  let selectedTermId = url.searchParams.get("selectedTermId");
   let selectedTermDate = url.searchParams.get("selectedTermDate");
   let selectedStudentId = url.searchParams.get("selectedStudentId");
 
   const terms = await getSchoolTermsAsync(dayjs().year());
 
-  if (selectedTerm === null && selectedTermDate !== null) {
-    selectedTerm = getTermFromDate(terms, selectedTermDate)?.name ?? null;
+  if (selectedTermId === null && selectedTermDate !== null) {
+    selectedTermId =
+      getTermFromDate(terms, selectedTermDate)?.id.toString() ?? null;
   }
 
   const currentTerm =
-    terms.find((t) => t.name === selectedTerm) ??
+    terms.find((t) => t.id.toString() === selectedTermId) ??
     getCurrentTermForDate(terms, new Date());
 
   const loggedUser = await getLoggedUserInfoAsync(request);
@@ -111,11 +112,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   return {
     students,
-    selectedTerm: selectedTerm ?? currentTerm.name,
+    selectedTermId: selectedTermId ?? currentTerm.id.toString(),
     selectedTermDate,
     selectedStudentId,
-    termsList: terms.map(({ start, end, name }) => ({
-      value: name,
+    termsList: terms.map(({ id, start, end, name }) => ({
+      value: id.toString(),
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${currentTerm.name === name ? " (Current)" : ""}`,
     })),
     sessionDates: sessionDatesFormatted,
@@ -159,7 +160,7 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function Index() {
   const {
     session,
-    selectedTerm,
+    selectedTermId,
     selectedTermDate,
     selectedStudentId,
     termsList,
@@ -259,12 +260,12 @@ export default function Index() {
         <div className="mb-6 flex flex-col gap-2">
           <div>
             <Select
-              key={selectedTerm}
+              key={selectedTermId}
               label="Term"
-              name="selectedTerm"
-              defaultValue={selectedTerm}
+              name="selectedTermId"
+              defaultValue={selectedTermId}
               options={termsList}
-              onChange={handleSelectChange("selectedTerm")}
+              onChange={handleSelectChange("selectedTermId")}
             />
           </div>
 
@@ -307,7 +308,7 @@ export default function Index() {
         </div>
 
         <div
-          key={selectedTerm + selectedTermDate + selectedStudentId}
+          key={selectedTermId + selectedTermDate + selectedStudentId}
           className="flex h-full flex-col gap-4"
         >
           <div className="flex flex-1 flex-col gap-2">

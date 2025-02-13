@@ -30,7 +30,7 @@ import { ManageSession } from "./components/ManageSession";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
-  const selectedTerm = url.searchParams.get("selectedTerm");
+  const selectedTermId = url.searchParams.get("selectedTermId");
   const attendedOn = url.searchParams.get("attendedOn");
 
   const loggedUser = await getLoggedUserInfoAsync(request);
@@ -38,7 +38,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const terms = await getSchoolTermsAsync(dayjs().year());
 
   const todayterm = getCurrentTermForDate(terms, new Date());
-  const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayterm;
+  const currentTerm =
+    terms.find((t) => t.id.toString() === selectedTermId) ?? todayterm;
 
   const { mySessionsLookup, myStudentsSessionsLookup } =
     await getSessionsLookupAsync(user.chapterId, user.id, currentTerm);
@@ -68,11 +69,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }, {});
 
   return {
-    termsList: terms.map(({ start, end, name }) => ({
-      value: name,
+    termsList: terms.map(({ id, start, end, name }) => ({
+      value: id.toString(),
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${todayterm.name === name ? " (Current)" : ""}`,
     })),
-    currentTermName: currentTerm.name,
+    selectedTermId: selectedTermId ?? currentTerm.id.toString(),
     mySessionsLookup,
     myStudentsSessionsLookup,
     datesInTerm,
@@ -134,7 +135,7 @@ export default function Index() {
   const {
     mySessionsLookup,
     myStudentsSessionsLookup,
-    currentTermName,
+    selectedTermId,
     termsList,
     datesInTerm,
     manageSessionState,
@@ -191,7 +192,7 @@ export default function Index() {
   };
 
   const onTermChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    searchParams.set("selectedTerm", event.target.value);
+    searchParams.set("selectedTermId", event.target.value);
     searchParams.set("attendedOn", "");
 
     void load(`?${searchParams.toString()}`);
@@ -204,8 +205,8 @@ export default function Index() {
       <div className="mb-6">
         <Select
           label="Term"
-          name="selectedTerm"
-          defaultValue={currentTermName}
+          name="selectedTermId"
+          defaultValue={selectedTermId}
           options={termsList}
           onChange={onTermChange}
         />

@@ -28,7 +28,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const url = new URL(request.url);
-  const selectedTerm = url.searchParams.get("selectedTerm");
+  const selectedTermId = url.searchParams.get("selectedTermId");
   let selectedTermDate = url.searchParams.get("selectedTermDate") ?? "";
   const searchTerm = url.searchParams.get("search") ?? undefined;
 
@@ -38,7 +38,8 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const terms = await getSchoolTermsAsync(dayjs().year());
 
   const todayTerm = getCurrentTermForDate(terms, new Date());
-  const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayTerm;
+  const currentTerm =
+    terms.find((t) => t.id.toString() === selectedTermId) ?? todayTerm;
 
   const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
 
@@ -63,11 +64,11 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   return {
     chapterId: params.chapterId,
-    termsList: terms.map(({ start, end, name }) => ({
-      value: name,
+    termsList: terms.map(({ id, start, end, name }) => ({
+      value: id.toString(),
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${todayTerm.name === name ? " (Current)" : ""}`,
     })),
-    currentTerm,
+    selectedTermId: selectedTermId ?? currentTerm.id.toString(),
     students,
     selectedTermDate,
     searchTerm,
@@ -92,7 +93,7 @@ const colours = ["#FAD7A0", "#A9DFBF", "#FADBD8", "#AED6F1"];
 export default function Index() {
   const {
     students,
-    currentTerm,
+    selectedTermId,
     termsList,
     datesInTerm,
     selectedTermDate,
@@ -155,8 +156,8 @@ export default function Index() {
         <div className="w-full sm:w-auto">
           <Select
             label="Term"
-            name="selectedTerm"
-            defaultValue={currentTerm.name}
+            name="selectedTermId"
+            defaultValue={selectedTermId}
             options={termsList}
             onChange={handleFormSubmit}
           />
