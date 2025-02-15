@@ -18,10 +18,7 @@ type SessionLookup = Record<
         id: number;
         hasReport: boolean;
         completedOn: Date | null;
-        student: {
-          id: number;
-          fullName: string;
-        };
+        student: { id: number; fullName: string };
       }[];
     }
   | undefined
@@ -32,7 +29,7 @@ export async function exportRosterToSpreadsheetAsync(
   selectedTerm: string | null,
   selectedTermDate: string | null,
 ) {
-  const terms = await getSchoolTermsAsync(dayjs().year());
+  const terms = await getSchoolTermsAsync();
 
   const todayterm = getCurrentTermForDate(terms, new Date());
   const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayterm;
@@ -41,9 +38,7 @@ export async function exportRosterToSpreadsheetAsync(
   const mentors = await getMentorsAsync(chapterId);
 
   const spreadsheet = mentors.map(({ fullName, sessionLookup }) => {
-    const result: Record<string, string> = {
-      Mentors: fullName,
-    };
+    const result: Record<string, string> = { Mentors: fullName };
 
     sessionDates
       .filter(
@@ -83,10 +78,7 @@ export async function exportRosterToSpreadsheetAsync(
 
 async function getMentorsAsync(chapterId: number) {
   const mentors = await prisma.user.findMany({
-    where: {
-      endDate: null,
-      chapterId,
-    },
+    where: { endDate: null, chapterId },
     select: {
       id: true,
       fullName: true,
@@ -100,20 +92,13 @@ async function getMentorsAsync(chapterId: number) {
               id: true,
               hasReport: true,
               completedOn: true,
-              student: {
-                select: {
-                  id: true,
-                  fullName: true,
-                },
-              },
+              student: { select: { id: true, fullName: true } },
             },
           },
         },
       },
     },
-    orderBy: {
-      fullName: "asc",
-    },
+    orderBy: { fullName: "asc" },
   });
 
   return mentors.map((mentor) => {
@@ -129,9 +114,6 @@ async function getMentorsAsync(chapterId: number) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { session, ...rest } = mentor;
 
-    return {
-      ...rest,
-      sessionLookup,
-    };
+    return { ...rest, sessionLookup };
   });
 }

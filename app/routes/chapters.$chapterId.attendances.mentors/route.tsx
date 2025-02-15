@@ -2,6 +2,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { Attendace } from "./services.server";
 
 import { Form, useLoaderData, useSubmit } from "react-router";
+import { useRef } from "react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
@@ -25,17 +26,36 @@ import {
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
 
+  const CURRENT_YEAR = dayjs().year();
+
   const url = new URL(request.url);
   const searchTerm = url.searchParams.get("search");
-  const selectedTerm = url.searchParams.get("selectedTerm");
+  const selectedTermYear =
+    url.searchParams.get("selectedTermYear") ?? CURRENT_YEAR.toString();
+  const selectedTermId = url.searchParams.get("selectedTermId");
   let selectedTermDate = url.searchParams.get("selectedTermDate");
 
-  const terms = await getSchoolTermsAsync(dayjs().year());
-  const todayterm = getCurrentTermForDate(terms, new Date());
+  const terms = await getSchoolTermsAsync();
+  const currentTerm = getCurrentTermForDate(terms, new Date());
 
-  const currentTerm =
-    terms.find((t) => t.id.toString() === selectedTerm) ?? todayterm;
-  const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
+  const distinctTermYears = Array.from(new Set(terms.map(({ year }) => year)));
+  const termsForYear = terms.filter(
+    ({ year }) => year.toString() === selectedTermYear,
+  );
+
+  let selectedTerm = termsForYear.find(
+    (t) => t.id.toString() === selectedTermId,
+  );
+
+  if (!selectedTerm) {
+    if (selectedTermYear === CURRENT_YEAR.toString()) {
+      selectedTerm = currentTerm;
+    } else {
+      selectedTerm = termsForYear[0];
+    }
+  }
+
+  const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
 
   if (selectedTermDate === null || !sessionDates.includes(selectedTermDate)) {
     selectedTermDate = getClosestSessionToToday(
@@ -61,12 +81,17 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     chapterId: params.chapterId,
     mentors,
     attendacesLookup,
-    selectedTerm: selectedTerm ?? currentTerm.id.toString(),
+    selectedTermYear,
+    selectedTermId: selectedTerm.id.toString(),
     selectedTermDate,
     searchTerm: searchTerm ?? "",
-    termsList: terms.map(({ start, end, name, id }) => ({
+    termYearsOptions: distinctTermYears.map((year) => ({
+      value: year.toString(),
+      label: year.toString(),
+    })),
+    termsOptions: termsForYear.map(({ id, start, end, name }) => ({
       value: id.toString(),
-      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${todayterm.name === name ? " (Current)" : ""}`,
+      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
     })),
     sessionDates: sessionDates
       .map((attendedOn) => dayjs(attendedOn))
@@ -108,25 +133,21 @@ export default function Index() {
     chapterId,
     mentors,
     attendacesLookup,
-    selectedTerm,
+    selectedTermYear,
+    selectedTermId,
     selectedTermDate,
     searchTerm,
-    termsList,
+    termYearsOptions,
+    termsOptions,
     sessionDates,
   } = useLoaderData<typeof loader>();
   const submit = useSubmit();
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   const attend = (mentorId: number) => () => {
     void submit(
-      {
-        action: "attend",
-        mentorId,
-        attendanceDate: selectedTermDate,
-      },
-      {
-        method: "POST",
-        encType: "application/json",
-      },
+      { action: "attend", mentorId, attendanceDate: selectedTermDate },
+      { method: "POST", encType: "application/json" },
     );
   };
 
@@ -140,25 +161,20 @@ export default function Index() {
     }
 
     void submit(
-      {
-        action: "remove",
-        attendaceId: attendace.id,
-      },
-      {
-        method: "POST",
-        encType: "application/json",
-      },
+      { action: "remove", attendaceId: attendace.id },
+      { method: "POST", encType: "application/json" },
     );
   };
 
   const submitForm = () => {
-    const form = document.getElementById("attendanceForm") as HTMLFormElement;
-    void submit(form);
+    const formData = new FormData(formRef.current!);
+    void submit(formData);
   };
 
   const onResetClick = () => {
-    (document.getElementById("search") as HTMLInputElement).value = "";
-    submitForm();
+    const formData = new FormData(formRef.current!);
+    formData.set("search", "");
+    void submit(formData);
   };
 
   return (
@@ -170,18 +186,41 @@ export default function Index() {
       </Title>
 
       <Form
-        id="attendanceForm"
+        ref={formRef}
         className="mt-4 flex flex-col items-end gap-4 sm:flex-row"
       >
         <div className="w-full sm:w-auto">
-          <Select
-            key={selectedTerm}
-            label="Term"
-            name="selectedTerm"
-            defaultValue={selectedTerm}
-            options={termsList}
-            onChange={submitForm}
-          />
+          <div className="w-full sm:w-auto">
+            <div key={selectedTermId} className="w-full sm:w-auto">
+              <label className="fieldset-label">Term</label>
+              <div className="join">
+                <select
+                  className="select join-item basis-28"
+                  name="selectedTermYear"
+                  defaultValue={selectedTermYear}
+                  onChange={submitForm}
+                >
+                  {termYearsOptions.map(({ label, value }) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  className="select join-item"
+                  name="selectedTermId"
+                  defaultValue={selectedTermId}
+                  onChange={submitForm}
+                >
+                  {termsOptions.map(({ label, value }) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="w-full sm:w-auto">

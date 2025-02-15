@@ -35,11 +35,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
-  const terms = await getSchoolTermsAsync(dayjs().year());
+  const terms = await getSchoolTermsAsync();
 
-  const todayterm = getCurrentTermForDate(terms, new Date());
+  const termsForYear = terms.filter(({ year }) => year === dayjs().year());
+
+  const todayterm = getCurrentTermForDate(termsForYear, new Date());
   const currentTerm =
-    terms.find((t) => t.id.toString() === selectedTermId) ?? todayterm;
+    termsForYear.find((t) => t.id.toString() === selectedTermId) ?? todayterm;
 
   const { mySessionsLookup, myStudentsSessionsLookup } =
     await getSessionsLookupAsync(user.chapterId, user.id, currentTerm);
@@ -69,7 +71,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }, {});
 
   return {
-    termsList: terms.map(({ id, start, end, name }) => ({
+    termsList: termsForYear.map(({ id, start, end, name }) => ({
       value: id.toString(),
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${todayterm.name === name ? " (Current)" : ""}`,
     })),
@@ -159,9 +161,7 @@ export default function Index() {
 
       searchParams.set("attendedOn", "");
 
-      void submit(formData, {
-        method: "POST",
-      });
+      void submit(formData, { method: "POST" });
     };
 
   const handleTakeSessionSubmit = (studentSessionId: number) => () => {
@@ -175,9 +175,7 @@ export default function Index() {
 
     searchParams.set("attendedOn", "");
 
-    void submit(formData, {
-      method: "POST",
-    });
+    void submit(formData, { method: "POST" });
   };
 
   const onSessionStudentClick = (attendedOn: string) => () => {

@@ -59,16 +59,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
   let selectedTermDate = url.searchParams.get("selectedTermDate");
   let selectedStudentId = url.searchParams.get("selectedStudentId");
 
-  const terms = await getSchoolTermsAsync(dayjs().year());
+  const terms = await getSchoolTermsAsync();
+
+  const termsForYear = terms.filter(({ year }) => year === dayjs().year());
 
   if (selectedTermId === null && selectedTermDate !== null) {
     selectedTermId =
-      getTermFromDate(terms, selectedTermDate)?.id.toString() ?? null;
+      getTermFromDate(termsForYear, selectedTermDate)?.id.toString() ?? null;
   }
 
   const currentTerm =
-    terms.find((t) => t.id.toString() === selectedTermId) ??
-    getCurrentTermForDate(terms, new Date());
+    termsForYear.find((t) => t.id.toString() === selectedTermId) ??
+    getCurrentTermForDate(termsForYear, new Date());
 
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
@@ -213,10 +215,7 @@ export default function Index() {
         attendedOn,
         report: JSON.stringify(editorStateRef.current?.toJSON()),
       },
-      {
-        method: "POST",
-        encType: "application/json",
-      },
+      { method: "POST", encType: "application/json" },
     );
   };
 
@@ -230,9 +229,7 @@ export default function Index() {
                 ? searchParams.get("back_url")!
                 : undefined
             }
-            className={classNames({
-              "text-error": isCancelled,
-            })}
+            className={classNames({ "text-error": isCancelled })}
           >
             Report of &quot;
             {selectedTermDate && dayjs(selectedTermDate).format("DD/MM/YYYY")}

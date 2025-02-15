@@ -9,6 +9,7 @@ import {
   useSearchParams,
   useSubmit,
 } from "react-router";
+import { useRef } from "react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
@@ -27,7 +28,11 @@ import { getStudentsAsync } from "./services.server";
 export async function loader({ params, request }: LoaderFunctionArgs) {
   invariant(params.chapterId, "chapterId not found");
 
+  const CURRENT_YEAR = dayjs().year();
+
   const url = new URL(request.url);
+  const selectedTermYear =
+    url.searchParams.get("selectedTermYear") ?? CURRENT_YEAR.toString();
   const selectedTermId = url.searchParams.get("selectedTermId");
   let selectedTermDate = url.searchParams.get("selectedTermDate") ?? "";
   const searchTerm = url.searchParams.get("search") ?? undefined;
@@ -35,13 +40,27 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const sortFullNameSubmit: Prisma.SortOrder | undefined =
     (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? undefined;
 
-  const terms = await getSchoolTermsAsync(dayjs().year());
+  const terms = await getSchoolTermsAsync();
+  const currentTerm = getCurrentTermForDate(terms, new Date());
 
-  const todayTerm = getCurrentTermForDate(terms, new Date());
-  const currentTerm =
-    terms.find((t) => t.id.toString() === selectedTermId) ?? todayTerm;
+  const distinctTermYears = Array.from(new Set(terms.map(({ year }) => year)));
+  const termsForYear = terms.filter(
+    ({ year }) => year.toString() === selectedTermYear,
+  );
 
-  const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
+  let selectedTerm = termsForYear.find(
+    (t) => t.id.toString() === selectedTermId,
+  );
+
+  if (!selectedTerm) {
+    if (selectedTermYear === CURRENT_YEAR.toString()) {
+      selectedTerm = currentTerm;
+    } else {
+      selectedTerm = termsForYear[0];
+    }
+  }
+
+  const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
 
   if (selectedTermDate && !sessionDates.includes(selectedTermDate)) {
     selectedTermDate = "";
@@ -64,11 +83,16 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   return {
     chapterId: params.chapterId,
-    termsList: terms.map(({ id, start, end, name }) => ({
-      value: id.toString(),
-      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${todayTerm.name === name ? " (Current)" : ""}`,
+    termYearsOptions: distinctTermYears.map((year) => ({
+      value: year.toString(),
+      label: year.toString(),
     })),
-    selectedTermId: selectedTermId ?? currentTerm.id.toString(),
+    termsOptions: termsForYear.map(({ id, start, end, name }) => ({
+      value: id.toString(),
+      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
+    })),
+    selectedTermYear,
+    selectedTermId: selectedTerm.id.toString(),
     students,
     selectedTermDate,
     searchTerm,
@@ -78,12 +102,9 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
           attendedOn === selectedTermDate || selectedTermDate === "",
       )
       .map((attendedOn) => dayjs(attendedOn).format("YYYY-MM-DD")),
-    sessionDateOptions: [
-      {
-        value: "",
-        label: "All",
-      },
-    ].concat(sessionDateOptions),
+    sessionDateOptions: [{ value: "", label: "All" }].concat(
+      sessionDateOptions,
+    ),
     sortFullNameSubmit,
   };
 }
@@ -93,8 +114,10 @@ const colours = ["#FAD7A0", "#A9DFBF", "#FADBD8", "#AED6F1"];
 export default function Index() {
   const {
     students,
+    selectedTermYear,
     selectedTermId,
-    termsList,
+    termYearsOptions,
+    termsOptions,
     datesInTerm,
     selectedTermDate,
     searchTerm,
@@ -105,24 +128,22 @@ export default function Index() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   const handleFormSubmit = () => {
-    const form = document.getElementById(
-      "rosterStudentsForm",
-    ) as HTMLFormElement;
-    void submit(form);
+    const formData = new FormData(formRef.current!);
+    void submit(formData);
   };
 
   const handleButtonClick = () => {
-    (document.getElementById("search") as HTMLInputElement).value = "";
-    handleFormSubmit();
+    const formData = new FormData(formRef.current!);
+    formData.set("search", "");
+    void submit(formData);
   };
 
   const onStudentClick = (fullName: string) => () => {
     searchParams.set("search", fullName);
-    void navigate({
-      search: searchParams.toString(),
-    });
+    void navigate({ search: searchParams.toString() });
   };
 
   return (
@@ -149,18 +170,35 @@ export default function Index() {
 
       <hr className="my-4" />
 
-      <Form
-        id="rosterStudentsForm"
-        className="flex flex-col gap-6 pb-2 sm:flex-row"
-      >
-        <div className="w-full sm:w-auto">
-          <Select
-            label="Term"
-            name="selectedTermId"
-            defaultValue={selectedTermId}
-            options={termsList}
-            onChange={handleFormSubmit}
-          />
+      <Form ref={formRef} className="flex flex-col gap-6 pb-2 sm:flex-row">
+        <div key={selectedTermId} className="w-full sm:w-auto">
+          <label className="fieldset-label">Term</label>
+          <div className="join">
+            <select
+              className="select join-item basis-28"
+              name="selectedTermYear"
+              defaultValue={selectedTermYear}
+              onChange={handleFormSubmit}
+            >
+              {termYearsOptions.map(({ label, value }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            <select
+              className="select join-item"
+              name="selectedTermId"
+              defaultValue={selectedTermId}
+              onChange={handleFormSubmit}
+            >
+              {termsOptions.map(({ label, value }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="w-full sm:w-auto">

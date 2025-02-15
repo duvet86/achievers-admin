@@ -5,4 +5,5 @@ export interface Term {
   name: string;
   start: Dayjs;
   end: Dayjs;
+  year: number;
 }

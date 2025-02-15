@@ -11,20 +11,10 @@ export const searchAcrossFields = (
   return searchTerm?.trim().split(" ").flatMap(cb);
 };
 
-export async function getSchoolTermsAsync(year?: number): Promise<Term[]> {
+export async function getSchoolTermsAsync(): Promise<Term[]> {
   const terms = await prisma.schoolTerm.findMany({
-    where: {
-      year,
-    },
-    select: {
-      id: true,
-      startDate: true,
-      endDate: true,
-      year: true,
-    },
-    orderBy: {
-      startDate: "asc",
-    },
+    select: { id: true, startDate: true, endDate: true, year: true },
+    orderBy: { startDate: "asc" },
   });
 
   let index = 1;
@@ -40,9 +30,10 @@ export async function getSchoolTermsAsync(year?: number): Promise<Term[]> {
 
     return {
       id,
-      name: `Term ${index} - ${year}`,
+      name: `Term ${index}`,
       start: dayjs(startDate),
       end: dayjs(endDate),
+      year,
     };
   });
 }
