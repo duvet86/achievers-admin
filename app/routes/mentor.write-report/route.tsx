@@ -53,24 +53,39 @@ export const links: LinksFunction = () => {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const url = new URL(request.url);
+  const CURRENT_YEAR = dayjs().year();
 
+  const url = new URL(request.url);
+  const selectedTermYear =
+    url.searchParams.get("selectedTermYear") ?? CURRENT_YEAR.toString();
   let selectedTermId = url.searchParams.get("selectedTermId");
   let selectedTermDate = url.searchParams.get("selectedTermDate");
   let selectedStudentId = url.searchParams.get("selectedStudentId");
 
   const terms = await getSchoolTermsAsync();
+  const currentTerm = getCurrentTermForDate(terms, new Date());
 
-  const termsForYear = terms.filter(({ year }) => year === dayjs().year());
+  const distinctTermYears = Array.from(new Set(terms.map(({ year }) => year)));
+  const termsForYear = terms.filter(
+    ({ year }) => year.toString() === selectedTermYear,
+  );
 
   if (selectedTermId === null && selectedTermDate !== null) {
     selectedTermId =
       getTermFromDate(termsForYear, selectedTermDate)?.id.toString() ?? null;
   }
 
-  const currentTerm =
-    termsForYear.find((t) => t.id.toString() === selectedTermId) ??
-    getCurrentTermForDate(termsForYear, new Date());
+  let selectedTerm = termsForYear.find(
+    (t) => t.id.toString() === selectedTermId,
+  );
+
+  if (!selectedTerm) {
+    if (selectedTermYear === CURRENT_YEAR.toString()) {
+      selectedTerm = currentTerm;
+    } else {
+      selectedTerm = termsForYear[0];
+    }
+  }
 
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
@@ -82,12 +97,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const mentorBookedDates = await getMentorSessionDatesAsync(
     user.id,
     user.chapterId,
-    currentTerm,
+    selectedTerm,
   );
 
   const sessionDatesFormatted = getSessionDatesFormatted(
     mentorBookedDates,
-    currentTerm,
+    selectedTerm,
   );
 
   selectedTermDate =
@@ -114,12 +129,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   return {
     students,
-    selectedTermId: selectedTermId ?? currentTerm.id.toString(),
+    selectedTermYear,
+    selectedTermId: selectedTerm.id.toString(),
     selectedTermDate,
     selectedStudentId,
-    termsList: terms.map(({ id, start, end, name }) => ({
+    termYearsOptions: distinctTermYears.map((year) => ({
+      value: year.toString(),
+      label: year.toString(),
+    })),
+    termsOptions: termsForYear.map(({ id, start, end, name }) => ({
       value: id.toString(),
-      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${currentTerm.name === name ? " (Current)" : ""}`,
+      label: `${id} ${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
     })),
     sessionDates: sessionDatesFormatted,
     session,
@@ -162,10 +182,12 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function Index() {
   const {
     session,
+    selectedTermYear,
     selectedTermId,
     selectedTermDate,
     selectedStudentId,
-    termsList,
+    termYearsOptions,
+    termsOptions,
     sessionDates,
     students,
     isNotMyReport,
@@ -255,15 +277,34 @@ export default function Index() {
 
       <div className="relative flex h-full flex-col">
         <div className="mb-6 flex flex-col gap-2">
-          <div>
-            <Select
-              key={selectedTermId}
-              label="Term"
-              name="selectedTermId"
-              defaultValue={selectedTermId}
-              options={termsList}
-              onChange={handleSelectChange("selectedTermId")}
-            />
+          <div key={selectedTermId} className="w-full">
+            <label className="fieldset-label">Term</label>
+            <div className="join w-full">
+              <select
+                className="select join-item basis-28"
+                name="selectedTermYear"
+                defaultValue={selectedTermYear}
+                onChange={handleSelectChange("selectedTermYear")}
+              >
+                {termYearsOptions.map(({ label, value }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="select join-item w-full"
+                name="selectedTermId"
+                defaultValue={selectedTermId}
+                onChange={handleSelectChange("selectedTermId")}
+              >
+                {termsOptions.map(({ label, value }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="flex content-center gap-6">

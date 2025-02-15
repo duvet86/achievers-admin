@@ -200,9 +200,8 @@ export default function Index() {
     <>
       <Title>Roster planner</Title>
 
-      <div className="mb-6">
+      <div className="mt-2 mb-6">
         <Select
-          label="Term"
           name="selectedTermId"
           defaultValue={selectedTermId}
           options={termsList}
