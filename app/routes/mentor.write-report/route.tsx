@@ -7,8 +7,8 @@ import type { EditorState } from "lexical";
 import type { ActionType, SessionCommandRequest } from "./services.server";
 
 import {
+  Form,
   Link,
-  redirect,
   useLoaderData,
   useSearchParams,
   useSubmit,
@@ -32,7 +32,7 @@ import { Editor, EditorQuestions, Select, SubTitle, Title } from "~/components";
 import {
   getClosestSessionToToday,
   getCurrentTermForDate,
-  getTermFromDate,
+  getDatesForTerm,
 } from "~/services";
 import {
   getSchoolTermsAsync,
@@ -58,28 +58,24 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const selectedTermYear =
     url.searchParams.get("selectedTermYear") ?? CURRENT_YEAR.toString();
-  let selectedTermId = url.searchParams.get("selectedTermId");
+  const selectedTermId = url.searchParams.get("selectedTermId");
   let selectedTermDate = url.searchParams.get("selectedTermDate");
+
   let selectedStudentId = url.searchParams.get("selectedStudentId");
 
   const terms = await getSchoolTermsAsync();
-  const currentTerm = getCurrentTermForDate(terms, new Date());
 
-  const distinctTermYears = Array.from(new Set(terms.map(({ year }) => year)));
   const termsForYear = terms.filter(
     ({ year }) => year.toString() === selectedTermYear,
   );
-
-  if (selectedTermId === null && selectedTermDate !== null) {
-    selectedTermId =
-      getTermFromDate(termsForYear, selectedTermDate)?.id.toString() ?? null;
-  }
 
   let selectedTerm = termsForYear.find(
     (t) => t.id.toString() === selectedTermId,
   );
 
-  if (!selectedTerm) {
+  const currentTerm = getCurrentTermForDate(terms, new Date());
+
+  if (selectedTerm === undefined) {
     if (selectedTermYear === CURRENT_YEAR.toString()) {
       selectedTerm = currentTerm;
     } else {
@@ -100,19 +96,21 @@ export async function loader({ request }: LoaderFunctionArgs) {
     selectedTerm,
   );
 
+  const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
+
   const sessionDatesFormatted = getSessionDatesFormatted(
+    sessionDates,
     mentorBookedDates,
-    selectedTerm,
   );
 
-  selectedTermDate =
-    selectedTermDate ??
-    getClosestSessionToToday(
-      sessionDatesFormatted
-        .filter(({ isBooked }) => isBooked)
-        .map(({ value }) => new Date(value)),
-    ) ??
-    sessionDatesFormatted[0].value;
+  if (!selectedTermDate || !sessionDates.includes(selectedTermDate)) {
+    selectedTermDate =
+      getClosestSessionToToday(
+        sessionDatesFormatted
+          .filter(({ isBooked }) => isBooked)
+          .map(({ value }) => new Date(value)),
+      ) ?? sessionDates[0];
+  }
 
   if (selectedTermDate === null) {
     throw new Error();
@@ -127,6 +125,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const isNotMyReport = session !== null && session.mentorId !== user.id;
 
+  const distinctTermYears = Array.from(new Set(terms.map(({ year }) => year)));
+
   return {
     students,
     selectedTermYear,
@@ -139,7 +139,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     })),
     termsOptions: termsForYear.map(({ id, start, end, name }) => ({
       value: id.toString(),
-      label: `${id} ${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
+      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
     })),
     sessionDates: sessionDatesFormatted,
     session,
@@ -174,9 +174,7 @@ export async function action({ request }: ActionFunctionArgs) {
     report,
   );
 
-  return redirect(
-    `/mentor/write-report?selectedTermDate=${attendedOn}&selectedStudentId=${studentId}`,
-  );
+  return null;
 }
 
 export default function Index() {
@@ -194,8 +192,9 @@ export default function Index() {
     isReadOnlyEditor,
   } = useLoaderData<typeof loader>();
   const submit = useSubmit();
-  const editorStateRef = useRef<EditorState>(null);
   const [searchParams] = useSearchParams();
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const editorStateRef = useRef<EditorState>(null);
 
   const studentSession = session?.studentSession;
 
@@ -209,17 +208,17 @@ export default function Index() {
 
   const handleSelectChange =
     (value: string) => (event: React.ChangeEvent<HTMLSelectElement>) => {
-      searchParams.set(value, event.target.value);
-      void submit(`?${searchParams.toString()}`);
+      const formData = new FormData(formRef.current!);
+      formData.set(value, event.target.value);
+
+      void submit(formData);
     };
 
   const saveReport = (type: ActionType) => () => {
-    const studentId = (
-      document.getElementById("selectedStudentId") as HTMLSelectElement
-    ).value;
-    const attendedOn = (
-      document.getElementById("selectedTermDate") as HTMLSelectElement
-    ).value;
+    const formData = new FormData(formRef.current!);
+
+    const studentId = formData.get("selectedStudentId")!.toString();
+    const attendedOn = formData.get("selectedTermDate")!.toString();
 
     const resportState = editorStateRef.current?.toJSON();
 
@@ -275,12 +274,13 @@ export default function Index() {
         )}
       </div>
 
-      <div className="relative flex h-full flex-col">
+      <Form ref={formRef} className="relative flex h-full flex-col">
         <div className="mb-6 flex flex-col gap-2">
           <div key={selectedTermId} className="w-full">
             <label className="fieldset-label">Term</label>
             <div className="join w-full">
               <select
+                data-testid="selectedTermYear"
                 className="select join-item basis-28"
                 name="selectedTermYear"
                 defaultValue={selectedTermYear}
@@ -293,6 +293,7 @@ export default function Index() {
                 ))}
               </select>
               <select
+                data-testid="selectedTermId"
                 className="select join-item w-full"
                 name="selectedTermId"
                 defaultValue={selectedTermId}
@@ -346,7 +347,12 @@ export default function Index() {
         </div>
 
         <div
-          key={selectedTermId + selectedTermDate + selectedStudentId}
+          key={
+            selectedTermYear +
+            selectedTermId +
+            selectedTermDate +
+            selectedStudentId
+          }
           className="flex h-full flex-col gap-4"
         >
           <div className="flex flex-1 flex-col gap-2">
@@ -375,6 +381,7 @@ export default function Index() {
                   <>
                     <button
                       className="btn btn-error btn-block sm:mr-6 sm:w-44"
+                      type="button"
                       onClick={saveReport("cancel")}
                       disabled={isNotMyReport}
                     >
@@ -384,6 +391,7 @@ export default function Index() {
 
                     <button
                       className="btn btn-primary btn-block sm:w-36"
+                      type="button"
                       onClick={saveReport("draft")}
                       disabled={isNotMyReport}
                     >
@@ -393,6 +401,7 @@ export default function Index() {
 
                     <button
                       className="btn btn-success btn-block sm:w-36"
+                      type="button"
                       onClick={saveReport("completed")}
                       disabled={isNotMyReport}
                     >
@@ -405,6 +414,7 @@ export default function Index() {
                 {canUnmarkReport && (
                   <button
                     className="btn btn-error btn-block sm:w-48"
+                    type="button"
                     onClick={saveReport("remove-complete")}
                     disabled={isNotMyReport}
                   >
@@ -440,7 +450,7 @@ export default function Index() {
             </div>
           )}
         </div>
-      </div>
+      </Form>
     </>
   );
 }

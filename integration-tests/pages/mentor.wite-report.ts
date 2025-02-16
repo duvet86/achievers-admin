@@ -5,7 +5,9 @@ import { expect } from "@playwright/test";
 export class MentorWriteReportPage {
   header: Locator;
 
-  termSelect: Locator;
+  termYearSelect: Locator;
+  termIdSelect: Locator;
+
   sessionDateSelect: Locator;
   studentSelect: Locator;
 
@@ -27,7 +29,9 @@ export class MentorWriteReportPage {
       name: 'Report of "23/11/2024"',
     });
 
-    this.termSelect = page.getByLabel("Term");
+    this.termYearSelect = page.getByTestId("selectedTermYear");
+    this.termIdSelect = page.getByTestId("selectedTermId");
+
     this.sessionDateSelect = page.getByLabel("Session Date");
     this.studentSelect = page.getByLabel("Student");
 
@@ -81,7 +85,8 @@ export class MentorWriteReportPageAssertions {
   }
 
   async toHaveSelectedInputs(): Promise<void> {
-    await expect(this.page.termSelect).toHaveValue("4");
+    await expect(this.page.termYearSelect).toHaveValue("2024");
+    await expect(this.page.termIdSelect).toHaveValue("4");
     await expect(this.page.sessionDateSelect).toHaveValue(
       "2024-11-23T00:00:00.000Z",
     );

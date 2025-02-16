@@ -6,7 +6,6 @@ import isBetween from "dayjs/plugin/isBetween";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
 import { prisma } from "~/db.server";
-import { getDatesForTerm } from "~/services";
 
 dayjs.extend(utc);
 dayjs.extend(isBetween);
@@ -126,12 +125,12 @@ export async function getMentorSessionDatesAsync(
 
 export function getSessionDatesFormatted(
   sessionDates: string[],
-  currentTerm: Term,
+  bookedSessions: string[],
 ) {
-  return getDatesForTerm(currentTerm.start, currentTerm.end)
+  return sessionDates
     .map((attendedOn) => dayjs(attendedOn))
     .map((attendedOn) => {
-      const isBooked = sessionDates.includes(attendedOn.format("YYYY-MM-DD"));
+      const isBooked = bookedSessions.includes(attendedOn.format("YYYY-MM-DD"));
 
       return {
         value: attendedOn.toISOString(),
