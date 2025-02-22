@@ -6,7 +6,7 @@ import { isStringNullOrEmpty } from "~/services";
 
 dayjs.extend(utc);
 
-export interface Attendace {
+export interface Attendance {
   id: number;
   user: {
     id: number;
@@ -58,7 +58,7 @@ export async function getMentorAttendancesLookup(
     },
   });
 
-  return attendaces.reduce<Record<number, Attendace>>((result, attendace) => {
+  return attendaces.reduce<Record<number, Attendance>>((result, attendace) => {
     result[attendace.user.id] = attendace;
 
     return result;

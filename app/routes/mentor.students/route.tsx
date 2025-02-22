@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "react-router";
 
 import { Link, useLoaderData } from "react-router";
-import { Archery, StatsReport } from "iconoir-react";
+import { Archery, StatsReport, WarningTriangle } from "iconoir-react";
 
 import { getLoggedUserInfoAsync } from "~/services/.server";
 import { Title } from "~/components";
@@ -49,6 +49,14 @@ export default function Index() {
                 <td>{yearLevel ?? "-"}</td>
                 <td>
                   <div className="flex justify-end gap-4">
+                    <a
+                      className="btn btn-error w-48 gap-2"
+                      href="mailto:admin@achieversclubwa.org.au"
+                    >
+                      <WarningTriangle className="hidden h-4 w-4 lg:block" />
+                      Report to Admin
+                    </a>
+
                     <Link
                       to={`/mentor/student-sessions?selectedStudentId=${id}&back_url=/mentor/students`}
                       className="btn btn-success w-48 gap-2"

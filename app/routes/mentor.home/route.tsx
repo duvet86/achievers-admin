@@ -101,7 +101,7 @@ export default function Index() {
             You have no students assigned
           </h1>
           <h3>
-            Please contact your chapter coordinator to get a stundent assigned
+            Please contact your chapter coordinator to get a student assigned
           </h3>
         </article>
       )}

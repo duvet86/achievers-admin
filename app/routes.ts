@@ -97,6 +97,13 @@ export default [
           },
         ),
         route(
+          ":chapterId/roster-students/export",
+          "routes/admin.chapters.$chapterId.roster-students.export/route.tsx",
+          {
+            index: true,
+          },
+        ),
+        route(
           ":chapterId/students",
           "routes/admin.chapters.$chapterId.students/route.tsx",
           {

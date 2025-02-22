@@ -7,15 +7,19 @@ import {
   useLoaderData,
   useNavigation,
   useSearchParams,
+  useSubmit,
 } from "react-router";
 import invariant from "tiny-invariant";
 import { parseFormData } from "@mjackson/form-data-parser";
+import { Xmark } from "iconoir-react";
 
 import { getCurrentTermForDate } from "~/services";
 import { getSchoolTermsAsync } from "~/services/.server";
 import { FileInput, Select, SubmitFormButton, Title } from "~/components";
 
 import {
+  deleteFileAsync,
+  deleteSchoolReportAsync,
   getStudentByIdAsync,
   saveFileAsync,
   saveSchoolReportAsync,
@@ -44,23 +48,34 @@ export async function action({ request, params }: ActionFunctionArgs) {
   invariant(params.studentId, "studentId not found");
 
   try {
-    const formData = await parseFormData(request, uploadHandler);
+    if (request.method === "DELETE") {
+      const formData = await request.formData();
 
-    const file = formData.get("file") as File;
-    const selectedTermId = formData.get("selectedTermId")?.toString();
+      const reportId = formData.get("reportId")!.toString();
+      const fileName = formData.get("fileName")!.toString();
 
-    if (selectedTermId === undefined) {
-      return {
-        errorMessage: "Missing required fields",
+      await deleteFileAsync(params.studentId, fileName);
+
+      await deleteSchoolReportAsync(Number(reportId));
+    } else {
+      const formData = await parseFormData(request, uploadHandler);
+
+      const file = formData.get("file") as File;
+      const selectedTermId = formData.get("selectedTermId")?.toString();
+
+      if (selectedTermId === undefined) {
+        return {
+          errorMessage: "Missing required fields",
+        };
+      }
+
+      const data: SchoolReportCommand = {
+        schoolTermId: Number(selectedTermId),
+        filePath: await saveFileAsync(params.studentId, file),
       };
+
+      await saveSchoolReportAsync(Number(params.studentId), data);
     }
-
-    const data: SchoolReportCommand = {
-      schoolTermId: Number(selectedTermId),
-      filePath: await saveFileAsync(params.studentId, file),
-    };
-
-    await saveSchoolReportAsync(Number(params.studentId), data);
   } catch (e: unknown) {
     return {
       errorMessage: (e as Error).message,
@@ -76,7 +91,20 @@ export default function Index() {
   const { student, termsList, selectedTermId } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const [searchParams] = useSearchParams();
+  const submit = useSubmit();
   const transition = useNavigation();
+
+  const deleteReport = (reportId: number, fileName: string) => () => {
+    void submit(
+      {
+        reportId,
+        fileName,
+      },
+      {
+        method: "DELETE",
+      },
+    );
+  };
 
   return (
     <>
@@ -118,6 +146,7 @@ export default function Index() {
               <th>#</th>
               <th>Name</th>
               <th>Term</th>
+              <th align="right">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -144,6 +173,16 @@ export default function Index() {
                     </a>
                   </td>
                   <td>{schoolTermLabel}</td>
+                  <td>
+                    <button
+                      className="btn btn-error btn-xs w-full gap-2"
+                      type="button"
+                      onClick={deleteReport(id, fileName)}
+                    >
+                      <Xmark className="h-4 w-4" />
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ),
             )}

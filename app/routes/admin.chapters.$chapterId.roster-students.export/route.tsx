@@ -18,7 +18,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   return new Response(buf, {
     status: 200,
     headers: new Headers({
-      "Content-Disposition": 'attachment; filename="roster_mentors.xlsx"',
+      "Content-Disposition": 'attachment; filename="roster_students.xlsx"',
       "Content-Type": "application/vnd.ms-excel",
     }),
   });

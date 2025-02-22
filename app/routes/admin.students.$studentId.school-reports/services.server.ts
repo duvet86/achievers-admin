@@ -4,6 +4,7 @@ import { MemoryFileStorage } from "@mjackson/file-storage/memory";
 
 import { prisma } from "~/db.server";
 import {
+  deleteBlobAsync,
   getContainerClient,
   getSASQueryString,
   STUDENT_DATA_BLOB_CONTAINER_NAME,
@@ -88,6 +89,27 @@ export async function saveFileAsync(
   await uploadBlobAsync(containerClient, file, path);
 
   return path;
+}
+
+export async function deleteFileAsync(
+  studentId: string,
+  fileName: string,
+): Promise<boolean> {
+  const containerClient = getContainerClient(STUDENT_DATA_BLOB_CONTAINER_NAME);
+
+  const path = `${studentId}/${fileName}`;
+
+  const result = await deleteBlobAsync(containerClient, path);
+
+  return result.succeeded;
+}
+
+export async function deleteSchoolReportAsync(reportId: number) {
+  return await prisma.studentSchoolReport.delete({
+    where: {
+      id: reportId,
+    },
+  });
 }
 
 export async function saveSchoolReportAsync(

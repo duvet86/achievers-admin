@@ -1,5 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { Option } from "~/components";
+import type { SessionLookup, SessionLookupStudent } from "./services.server";
 
 import { useFetcher, useLoaderData, useSearchParams } from "react-router";
 import dayjs from "dayjs";
@@ -143,6 +144,14 @@ export default function Index() {
     manageSessionState,
   } = data ?? initialData;
 
+  const mySessionsLookup2 = mySessionsLookup as SessionLookup;
+  const myStudentsSessionsLookup2 =
+    myStudentsSessionsLookup as SessionLookupStudent;
+  const manageSessionState2 = manageSessionState as Record<
+    string,
+    Option[] | null
+  >;
+
   const isLoading = state !== "idle";
 
   const handleCancelSessionSubmit =
@@ -211,8 +220,8 @@ export default function Index() {
 
       <div className="join join-vertical w-full">
         {datesInTerm.map((attendedOn) => {
-          const mySession = mySessionsLookup[attendedOn];
-          const studentSessions = myStudentsSessionsLookup[attendedOn];
+          const mySession = mySessionsLookup2[attendedOn];
+          const studentSessions = myStudentsSessionsLookup2[attendedOn];
 
           return (
             <div key={attendedOn} className="border-b border-slate-400">
@@ -327,7 +336,7 @@ export default function Index() {
                     <ManageSession
                       attendedOn={attendedOn}
                       isLoading={isLoading}
-                      studentsForSession={manageSessionState[attendedOn]}
+                      studentsForSession={manageSessionState2[attendedOn]}
                       onSessionStudentClick={onSessionStudentClick(attendedOn)}
                     />
                   )}

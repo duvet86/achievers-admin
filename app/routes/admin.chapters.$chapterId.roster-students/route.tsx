@@ -13,7 +13,13 @@ import { useRef } from "react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
-import { Check, NavArrowRight, Calendar, WarningTriangle } from "iconoir-react";
+import {
+  Check,
+  NavArrowRight,
+  Calendar,
+  WarningTriangle,
+  DatabaseExport,
+} from "iconoir-react";
 
 import {
   getCurrentTermForDate,
@@ -159,13 +165,24 @@ export default function Index() {
           Roster planner STUDENTS
         </Title>
 
-        <Link
-          to={`/admin/chapters/${chapterId}/roster-mentors`}
-          className="btn w-full sm:w-52"
-        >
-          <Calendar />
-          Roster MENTORS
-        </Link>
+        <div className="flex gap-4">
+          <a
+            className="btn w-full sm:w-52"
+            href={`/admin/chapters/${chapterId}/roster-students/export/?${searchParams}`}
+            download
+          >
+            <DatabaseExport />
+            Export roster
+          </a>
+
+          <Link
+            to={`/admin/chapters/${chapterId}/roster-mentors`}
+            className="btn w-full sm:w-52"
+          >
+            <Calendar />
+            Roster MENTORS
+          </Link>
+        </div>
       </div>
 
       <hr className="my-4" />
