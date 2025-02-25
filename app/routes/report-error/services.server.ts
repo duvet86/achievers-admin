@@ -52,7 +52,9 @@ export async function uploadHandler(fileUpload: FileUpload) {
 
   await memoryFileStorage.set(
     storageKey,
-    new File([await fileUpload.bytes()], fileUpload.name),
+    new File([await fileUpload.bytes()], fileUpload.name, {
+      type: fileUpload.type,
+    }),
   );
 
   return memoryFileStorage.get(storageKey);
