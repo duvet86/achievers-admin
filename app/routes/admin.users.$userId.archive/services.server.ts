@@ -15,14 +15,22 @@ export async function getUserByIdAsync(id: number) {
 }
 
 export async function archiveUserAsync(userId: number, endReason: string) {
-  return await prisma.user.update({
-    where: {
-      id: userId,
-    },
-    data: {
-      azureADId: null,
-      endDate: new Date(),
-      endReason,
-    },
+  return await prisma.$transaction(async (tx) => {
+    await tx.mentorToStudentAssignement.deleteMany({
+      where: {
+        userId,
+      },
+    });
+
+    return await tx.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        azureADId: null,
+        endDate: new Date(),
+        endReason,
+      },
+    });
   });
 }
