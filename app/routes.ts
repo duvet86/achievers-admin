@@ -293,6 +293,13 @@ export default [
             },
           ),
           route(
+            ":userId/remove-access",
+            "routes/admin.users.$userId.remove-access/route.tsx",
+            {
+              index: true,
+            },
+          ),
+          route(
             ":userId/induction",
             "routes/admin.users.$userId.induction/route.tsx",
             {

@@ -2,19 +2,21 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
 import { redirect } from "react-router";
 import { Form, useLoaderData, useNavigation } from "react-router";
-
 import invariant from "tiny-invariant";
 import { BinFull } from "iconoir-react";
 
 import { deleteAzureUserAsync } from "~/services/.server";
-import { Textarea, Title } from "~/components";
+import { Title } from "~/components";
 
-import { archiveUserAsync, getUserByIdAsync } from "./services.server";
+import { getUserByIdAsync, removeUserAccessAsync } from "./services.server";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.userId, "userId not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
+  if (user.azureADId === null) {
+    throw new Error("User not part of Azure AD.");
+  }
 
   return {
     user,
@@ -24,18 +26,16 @@ export async function loader({ params }: LoaderFunctionArgs) {
 export async function action({ request, params }: ActionFunctionArgs) {
   invariant(params.userId, "userId not found");
 
-  const formData = await request.formData();
-  const endReason = formData.get("endReason")?.toString();
-
   const user = await getUserByIdAsync(Number(params.userId));
-
-  if (user.azureADId !== null) {
-    await deleteAzureUserAsync(request, user.azureADId);
+  if (user.azureADId === null) {
+    throw new Error("User not part of Azure AD.");
   }
 
-  await archiveUserAsync(user.id, endReason!);
+  await deleteAzureUserAsync(request, user.azureADId);
 
-  return redirect("/admin/users");
+  await removeUserAccessAsync(user.id);
+
+  return redirect(`/admin/users/${params.userId}`);
 }
 
 export default function Chapter() {
@@ -45,21 +45,21 @@ export default function Chapter() {
   return (
     <>
       <Title to={`/admin/users/${user.id}`}>
-        Archive &quot;{user.fullName}&quot;
+        Remove access to the achievers&apos; web app for &quot;{user.fullName}
+        &quot;
       </Title>
 
       <Form method="post">
         <fieldset disabled={transition.state === "submitting"}>
-          <p className="my-4">
-            Are you sure you want to archive &quot;{user.fullName}&quot;?
+          <p>
+            Are you sure you want to remove the access of &quot;{user.fullName}
+            &quot; to the achievers&apos; web app?
           </p>
-
-          <Textarea placeholder="Reason to Archive" name="endReason" required />
 
           <div className="mt-6 flex items-center justify-end">
             <button className="btn btn-error w-44 gap-4" type="submit">
               <BinFull />
-              Archive
+              Remove access
             </button>
           </div>
         </fieldset>

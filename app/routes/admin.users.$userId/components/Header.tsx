@@ -62,12 +62,20 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
 
   if (mentorAppRoleAssignmentId !== null) {
     return (
-      <li>
-        <Link to="archive" className="text-error gap-4 font-semibold">
-          <BinFull />
-          Archive
-        </Link>
-      </li>
+      <>
+        <li>
+          <Link to="remove-access" className="text-warning gap-4 font-semibold">
+            <Key />
+            Remove access
+          </Link>
+        </li>
+        <li>
+          <Link to="archive" className="text-error gap-4 font-semibold">
+            <BinFull />
+            Archive
+          </Link>
+        </li>
+      </>
     );
   }
 
