@@ -7,6 +7,7 @@ import { BookmarkBook, InfoCircleSolid, Xmark } from "iconoir-react";
 import { Select } from "~/components";
 
 interface Props {
+  selectedTermId: string;
   attendedOn: string;
   studentsForSession: Option[] | null;
   isLoading: boolean;
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function ManageSession({
+  selectedTermId,
   attendedOn,
   studentsForSession,
   isLoading,
@@ -46,6 +48,11 @@ export function ManageSession({
                 <input type="hidden" name="action" value="book" />
                 <input type="hidden" name="status" value="AVAILABLE" />
                 <input type="hidden" name="attendedOn" value={attendedOn} />
+                <input
+                  type="hidden"
+                  name="selectedTermId"
+                  value={selectedTermId}
+                />
                 <button
                   type="submit"
                   className="btn btn-success w-full sm:w-36"
