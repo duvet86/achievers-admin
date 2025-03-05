@@ -78,6 +78,7 @@ export function ManageSession({
             <input type="hidden" name="action" value="book" />
             <input type="hidden" name="status" value="AVAILABLE" />
             <input type="hidden" name="attendedOn" value={attendedOn} />
+            <input type="hidden" name="selectedTermId" value={selectedTermId} />
             <button className="btn btn-info btn-block">
               <BookmarkBook />
               Available
@@ -100,6 +101,7 @@ export function ManageSession({
             <input type="hidden" name="action" value="book" />
             <input type="hidden" name="status" value="UNAVAILABLE" />
             <input type="hidden" name="attendedOn" value={attendedOn} />
+            <input type="hidden" name="selectedTermId" value={selectedTermId} />
             <button className="btn btn-error btn-block">
               <Xmark />
               Unavailable

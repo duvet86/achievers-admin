@@ -135,7 +135,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   return redirect(
-    `/mentor/roster?selectedTermId=${selectedTermId?.toString()}`,
+    `/mentor/roster?selectedTermId=${selectedTermId!.toString()}`,
   );
 }
 
@@ -179,8 +179,6 @@ export default function Index() {
         formData.append("studentSessionId", studentSessionId.toString());
       }
 
-      // searchParams.set("attendedOn", "");
-
       void submit(formData, { method: "POST" });
     };
 
@@ -193,8 +191,6 @@ export default function Index() {
     formData.append("action", "take");
     formData.append("studentSessionId", studentSessionId.toString());
     formData.append("selectedTermId", selectedTermId);
-
-    // searchParams.set("attendedOn", "");
 
     void submit(formData, { method: "POST" });
   };
@@ -310,7 +306,7 @@ export default function Index() {
                               )}
                               className="btn btn-error btn-sm w-full sm:w-36"
                             >
-                              <BookmarkBook />
+                              <Xmark />
                               Cancel
                             </button>
                           )}
