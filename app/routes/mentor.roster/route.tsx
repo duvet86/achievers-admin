@@ -2,7 +2,13 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { Option } from "~/components";
 import type { SessionLookup, SessionLookupStudent } from "./services.server";
 
-import { useFetcher, useLoaderData, useSearchParams } from "react-router";
+import {
+  redirect,
+  useFetcher,
+  useLoaderData,
+  useNavigate,
+  useSearchParams,
+} from "react-router";
 import dayjs from "dayjs";
 import {
   BookmarkBook,
@@ -91,6 +97,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const bodyData = await request.formData();
 
   const action = bodyData.get("action");
+  const selectedTermId = bodyData.get("selectedTermId");
   const attendedOn = bodyData.get("attendedOn");
   const studentId = bodyData.get("studentId");
   const status = bodyData.get("status");
@@ -127,12 +134,15 @@ export async function action({ request }: ActionFunctionArgs) {
       throw new Error("Invalid action type");
   }
 
-  return null;
+  return redirect(
+    `/mentor/roster?selectedTermId=${selectedTermId!.toString()}`,
+  );
 }
 
 export default function Index() {
   const initialData = useLoaderData<typeof loader>();
-  const { data, submit, load, state } = useFetcher<typeof loader>();
+  const { data, submit, state } = useFetcher<typeof loader>();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const {
@@ -163,12 +173,11 @@ export default function Index() {
       const formData = new FormData();
       formData.append("action", "cancel");
       formData.append("sessionId", sessionId.toString());
+      formData.append("selectedTermId", selectedTermId);
 
       if (studentSessionId !== null) {
         formData.append("studentSessionId", studentSessionId.toString());
       }
-
-      searchParams.set("attendedOn", "");
 
       void submit(formData, { method: "POST" });
     };
@@ -181,8 +190,7 @@ export default function Index() {
     const formData = new FormData();
     formData.append("action", "take");
     formData.append("studentSessionId", studentSessionId.toString());
-
-    searchParams.set("attendedOn", "");
+    formData.append("selectedTermId", selectedTermId);
 
     void submit(formData, { method: "POST" });
   };
@@ -190,19 +198,20 @@ export default function Index() {
   const onSessionStudentClick = (attendedOn: string) => () => {
     const currentAttendedOn = searchParams.get("attendedOn");
 
+    searchParams.set("selectedTermId", selectedTermId);
     searchParams.set(
       "attendedOn",
       currentAttendedOn === attendedOn ? "" : attendedOn,
     );
 
-    void load(`?${searchParams.toString()}`);
+    void navigate(`?${searchParams.toString()}`);
   };
 
   const onTermChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     searchParams.set("selectedTermId", event.target.value);
     searchParams.set("attendedOn", "");
 
-    void load(`?${searchParams.toString()}`);
+    void navigate(`?${searchParams.toString()}`);
   };
 
   return (
@@ -297,7 +306,7 @@ export default function Index() {
                               )}
                               className="btn btn-error btn-sm w-full sm:w-36"
                             >
-                              <BookmarkBook />
+                              <Xmark />
                               Cancel
                             </button>
                           )}
@@ -334,6 +343,7 @@ export default function Index() {
 
                   {!mySession && (
                     <ManageSession
+                      selectedTermId={selectedTermId}
                       attendedOn={attendedOn}
                       isLoading={isLoading}
                       studentsForSession={manageSessionState2[attendedOn]}
