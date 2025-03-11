@@ -188,16 +188,16 @@ export async function getAzureUsersAsync(
 export async function getAzureUserByAzureEmailAsync(
   request: Request,
   email: string,
-): Promise<AzureUser | null> {
+): Promise<AzureUser> {
   const tokenInfo = await getTokenInfoAsync(request);
 
   const response = await fetch(`${MICROSOFT_GRAPH_V1_BASEURL}/users/${email}`, {
     headers: getHeaders(tokenInfo.accessToken),
   });
 
-  const azureUsers = (await response.json()) as { value: AzureUser[] };
+  const azureUser = (await response.json()) as AzureUser;
 
-  return azureUsers.value.length > 0 ? azureUsers.value[0] : null;
+  return azureUser;
 }
 
 export async function getAzureUsersWithRolesAsync(

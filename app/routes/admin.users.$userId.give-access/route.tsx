@@ -44,10 +44,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
         user.email,
       );
 
-      if (azureUser === null) {
-        throw new Error("User does not exist in Azure.");
-      }
-
       azureUserId = azureUser.id;
     } else {
       const inviteUserToAzureResponse = await inviteUserToAzureAsync(request, {
