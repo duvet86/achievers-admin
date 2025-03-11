@@ -4,8 +4,14 @@ import invariant from "tiny-invariant";
 import { trackEvent, trackException } from "~/services/.server";
 import { getTokenInfoAsync } from "./session.server";
 
+const IS_DEV = process.env.NODE_ENV === "development";
+const IS_CI = !!process.env.CI;
+
 export const MICROSOFT_GRAPH_V1_BASEURL = "https://graph.microsoft.com/v1.0";
-export const APP_ID = "35499ecd-d259-4e81-9a12-e503a69b91b1";
+export const APP_ID =
+  IS_DEV || IS_CI
+    ? "e8a824bf-49a5-4104-aeaa-43d9b31cc1e2"
+    : "35499ecd-d259-4e81-9a12-e503a69b91b1";
 export const ACHIEVERS_DOMAIN = "achieversclubwa.org.au";
 
 interface AppRoleAssignment {
@@ -179,6 +185,21 @@ export async function getAzureUsersAsync(
   }));
 }
 
+export async function getAzureUserByAzureEmailAsync(
+  request: Request,
+  email: string,
+): Promise<AzureUser | null> {
+  const tokenInfo = await getTokenInfoAsync(request);
+
+  const response = await fetch(`${MICROSOFT_GRAPH_V1_BASEURL}/users/${email}`, {
+    headers: getHeaders(tokenInfo.accessToken),
+  });
+
+  const azureUsers = (await response.json()) as { value: AzureUser[] };
+
+  return azureUsers.value.length > 0 ? azureUsers.value[0] : null;
+}
+
 export async function getAzureUsersWithRolesAsync(
   request: Request,
   azureIds?: string[],
@@ -264,11 +285,11 @@ export async function inviteUserToAzureAsync(
   });
 
   if (!response.ok) {
-    const error = new Error(await response.text());
+    const textError = await response.text();
 
-    trackException(error);
+    trackException(new Error(textError));
 
-    throw error;
+    throw (JSON.parse(textError) as { error: string }).error;
   }
 
   return (await response.json()) as AzureInviteResponse;
@@ -289,6 +310,14 @@ export async function assignRoleToUserAsync(
       body: JSON.stringify(azureAppRoleRequest),
     },
   );
+
+  if (!response.ok) {
+    const textError = await response.text();
+
+    trackException(new Error(textError));
+
+    throw (JSON.parse(textError) as { error: string }).error;
+  }
 
   return (await response.json()) as AzureAppRoleResponse;
 }

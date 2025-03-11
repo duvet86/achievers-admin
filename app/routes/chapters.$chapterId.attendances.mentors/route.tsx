@@ -141,7 +141,6 @@ export default function Index() {
     termsOptions,
     sessionDates,
   } = useLoaderData<typeof loader>();
-  const attendacesLookup2 = attendacesLookup as Record<number, Attendance>;
   const submit = useSubmit();
   const formRef = useRef<HTMLFormElement | null>(null);
 
@@ -252,12 +251,12 @@ export default function Index() {
           <li
             key={mentorId}
             className={classNames("list-row flex cursor-pointer items-center", {
-              "bg-green-200": attendacesLookup2[mentorId],
-              "hover:bg-gray-200": !attendacesLookup2[mentorId],
+              "bg-green-200": attendacesLookup[mentorId],
+              "hover:bg-gray-200": !attendacesLookup[mentorId],
             })}
             onClick={
-              attendacesLookup2[mentorId]
-                ? removeAttendance(attendacesLookup2[mentorId])
+              attendacesLookup[mentorId]
+                ? removeAttendance(attendacesLookup[mentorId])
                 : attend(mentorId)
             }
           >
@@ -268,7 +267,7 @@ export default function Index() {
             <h2 className="flex-1 text-2xl font-thin">{fullName}</h2>
 
             <div>
-              {attendacesLookup2[mentorId] ? (
+              {attendacesLookup[mentorId] ? (
                 <button className="btn btn-error">
                   <span className="hidden sm:block">Remove attendance</span>
                   <Xmark />

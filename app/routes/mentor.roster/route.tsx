@@ -157,10 +157,6 @@ export default function Index() {
   const mySessionsLookup2 = mySessionsLookup as SessionLookup;
   const myStudentsSessionsLookup2 =
     myStudentsSessionsLookup as SessionLookupStudent;
-  const manageSessionState2 = manageSessionState as Record<
-    string,
-    Option[] | null
-  >;
 
   const isLoading = state !== "idle";
 
@@ -346,7 +342,7 @@ export default function Index() {
                       selectedTermId={selectedTermId}
                       attendedOn={attendedOn}
                       isLoading={isLoading}
-                      studentsForSession={manageSessionState2[attendedOn]}
+                      studentsForSession={manageSessionState[attendedOn]}
                       onSessionStudentClick={onSessionStudentClick(attendedOn)}
                     />
                   )}
