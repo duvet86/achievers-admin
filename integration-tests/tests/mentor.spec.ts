@@ -16,7 +16,7 @@ test.describe("Mentor Home Page", () => {
   let mentorWriteReportPage: MentorWriteReportPage;
 
   test.beforeEach(async ({ page }) => {
-    await page.clock.setFixedTime(new Date("2024-10-22T00:00:00.000Z"));
+    await page.clock.setFixedTime(new Date("2024-11-24T00:00:00.000Z"));
 
     await seedDataAsync(true);
 
