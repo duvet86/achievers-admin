@@ -5,7 +5,7 @@ export function mockTime() {
       if (options.length) {
         super(...options);
       } else {
-        super(2024, 9, 22, 0, 0);
+        super(2024, 9, 23, 0, 0);
       }
     }
   };
