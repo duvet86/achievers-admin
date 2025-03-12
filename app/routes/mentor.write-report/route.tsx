@@ -16,6 +16,7 @@ import {
 
 import { useRef } from "react";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import classNames from "classnames";
 import {
   FloppyDiskArrowIn,
@@ -47,6 +48,8 @@ import {
   getStudentsAsync,
   getSessionDatesFormatted,
 } from "./services.server";
+
+dayjs.extend(utc);
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
@@ -158,14 +161,18 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const bodyData = (await request.json()) as SessionCommandRequest;
 
-  const type = bodyData.type;
+  const actionType = bodyData.type;
   const sessionId = bodyData.sessionId;
   const studentId = bodyData.studentId;
   const attendedOn = bodyData.attendedOn;
   const report = bodyData.report;
 
+  if (dayjs.utc(attendedOn, "YYYY-MM-DD") > dayjs.utc()) {
+    throw new Error("Session date is in the future.");
+  }
+
   await saveReportAsync(
-    type,
+    actionType,
     sessionId,
     user.id,
     user.chapterId,
@@ -223,7 +230,18 @@ export default function Index() {
     const resportState = editorStateRef.current?.toJSON();
 
     if (!resportState?.root.direction) {
-      alert("Report cannot be blank.");
+      (
+        document.getElementById("errorModalContent") as HTMLDivElement
+      ).textContent = "Report cannot be blank.";
+      (document.getElementById("errorModal") as HTMLDialogElement).showModal();
+      return;
+    }
+
+    if (dayjs.utc(attendedOn, "YYYY-MM-DD") > dayjs.utc()) {
+      (
+        document.getElementById("errorModalContent") as HTMLDivElement
+      ).textContent = "Session date is in the future.";
+      (document.getElementById("errorModal") as HTMLDialogElement).showModal();
       return;
     }
 
@@ -451,6 +469,20 @@ export default function Index() {
           )}
         </div>
       </Form>
+      <dialog id="errorModal" className="modal">
+        <div className="modal-box">
+          <h3 className="flex gap-2 text-lg font-bold">
+            <WarningTriangle className="text-error" />
+            Error
+          </h3>
+          <p className="py-4" id="errorModalContent"></p>
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Close</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </>
   );
 }
