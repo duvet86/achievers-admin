@@ -48,6 +48,7 @@ import {
   getStudentsAsync,
   getSessionDatesFormatted,
 } from "./services.server";
+import { isSessionDateInTheFuture } from "./services.client";
 
 dayjs.extend(utc);
 
@@ -167,10 +168,6 @@ export async function action({ request }: ActionFunctionArgs) {
   const attendedOn = bodyData.attendedOn;
   const report = bodyData.report;
 
-  if (dayjs.utc(attendedOn, "YYYY-MM-DD") > dayjs.utc()) {
-    throw new Error("Session date is in the future.");
-  }
-
   await saveReportAsync(
     actionType,
     sessionId,
@@ -237,7 +234,7 @@ export default function Index() {
       return;
     }
 
-    if (dayjs.utc(attendedOn, "YYYY-MM-DD") > dayjs.utc()) {
+    if (isSessionDateInTheFuture(attendedOn)) {
       (
         document.getElementById("errorModalContent") as HTMLDivElement
       ).textContent = "Session date is in the future.";
