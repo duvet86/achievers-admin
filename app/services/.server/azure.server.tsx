@@ -328,10 +328,18 @@ export async function deleteAzureUserAsync(
 ): Promise<void> {
   const tokenInfo = await getTokenInfoAsync(request);
 
-  await fetch(`${MICROSOFT_GRAPH_V1_BASEURL}/users/${id}`, {
+  const response = await fetch(`${MICROSOFT_GRAPH_V1_BASEURL}/users/${id}`, {
     method: "DELETE",
     headers: getHeaders(tokenInfo.accessToken),
   });
+
+  if (!response.ok) {
+    const textError = await response.text();
+
+    trackException(new Error(textError));
+
+    throw (JSON.parse(textError) as { error: string }).error;
+  }
 
   trackEvent("DELETE_AZURE_USER");
 }

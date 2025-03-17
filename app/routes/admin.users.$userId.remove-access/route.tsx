@@ -1,9 +1,9 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
-import { redirect } from "react-router";
+import { redirect, useActionData } from "react-router";
 import { Form, useLoaderData, useNavigation } from "react-router";
 import invariant from "tiny-invariant";
-import { BinFull } from "iconoir-react";
+import { BinFull, WarningCircle } from "iconoir-react";
 
 import { deleteAzureUserAsync } from "~/services/.server";
 import { Title } from "~/components";
@@ -31,15 +31,20 @@ export async function action({ request, params }: ActionFunctionArgs) {
     throw new Error("User not part of Azure AD.");
   }
 
-  await deleteAzureUserAsync(request, user.azureADId);
+  try {
+    await deleteAzureUserAsync(request, user.azureADId);
 
-  await removeUserAccessAsync(user.id);
+    await removeUserAccessAsync(user.id);
+  } catch (error) {
+    return { error: error as Error };
+  }
 
   return redirect(`/admin/users/${params.userId}`);
 }
 
 export default function Chapter() {
   const transition = useNavigation();
+  const actionData = useActionData<typeof action>();
   const { user } = useLoaderData<typeof loader>();
 
   return (
@@ -49,12 +54,19 @@ export default function Chapter() {
         &quot;
       </Title>
 
-      <Form method="post">
+      <Form method="post" className="mt-4">
         <fieldset disabled={transition.state === "submitting"}>
           <p>
             Are you sure you want to remove the access of &quot;{user.fullName}
             &quot; to the achievers&apos; web app?
           </p>
+
+          {actionData && (
+            <div role="alert" className="alert alert-error mt-4">
+              <WarningCircle />
+              <span>{actionData?.error?.message}</span>
+            </div>
+          )}
 
           <div className="mt-6 flex items-center justify-end">
             <button className="btn btn-error w-44 gap-4" type="submit">
