@@ -16,13 +16,15 @@ import invariant from "tiny-invariant";
 
 import { useRef } from "react";
 import dayjs from "dayjs";
-import { FloppyDiskArrowIn, DesignNib } from "iconoir-react";
+import { FloppyDiskArrowIn, DesignNib, WarningTriangle } from "iconoir-react";
+
+import { getLoggedUserInfoAsync } from "~/services/.server/session.server";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
 import { Editor, EditorQuestions, SubTitle, Title } from "~/components";
 
-import { getLoggedUserInfoAsync } from "~/services/.server/session.server";
 import { getStudentSessionIdAsync, saveReportAsync } from "./services.server";
+import { isEditorEmpty, isSessionDateInTheFuture } from "./services.client";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
@@ -83,14 +85,46 @@ export default function Index() {
   const isLoading = state !== "idle";
 
   const saveReport = (type: ActionType) => () => {
+    const reportState = editorReportStateRef.current!;
+
+    if (isEditorEmpty(reportState)) {
+      (
+        document.getElementById("errorModalContent") as HTMLDivElement
+      ).textContent = "Report cannot be blank.";
+      (document.getElementById("errorModal") as HTMLDialogElement).showModal();
+      return;
+    }
+
+    if (isSessionDateInTheFuture(session.attendedOn)) {
+      (
+        document.getElementById("errorModalContent") as HTMLDivElement
+      ).textContent = "Session date is in the future.";
+      (document.getElementById("errorModal") as HTMLDialogElement).showModal();
+      return;
+    }
+
+    const reportFeedbackState = editorFeedbackStateRef.current!;
+
+    if (type === "signoff") {
+      if (isEditorEmpty(reportFeedbackState)) {
+        (
+          document.getElementById("errorModalContent") as HTMLDivElement
+        ).textContent = "Report Feedback cannot be blank.";
+        (
+          document.getElementById("errorModal") as HTMLDialogElement
+        ).showModal();
+        return;
+      }
+    }
+
     void submit(
       {
         actionType: type,
         studentSessionId: id,
-        report: JSON.stringify(editorReportStateRef.current?.toJSON()),
-        reportFeedback: JSON.stringify(
-          editorFeedbackStateRef.current?.toJSON(),
-        ),
+        report: JSON.stringify(reportState.toJSON()),
+        reportFeedback: isEditorEmpty(reportFeedbackState)
+          ? null
+          : JSON.stringify(reportFeedbackState.toJSON()),
       },
       {
         method: "POST",
@@ -167,6 +201,20 @@ export default function Index() {
           </div>
         </div>
       </div>
+      <dialog id="errorModal" className="modal">
+        <div className="modal-box">
+          <h3 className="flex gap-2 text-lg font-bold">
+            <WarningTriangle className="text-error" />
+            Error
+          </h3>
+          <p className="py-4" id="errorModalContent"></p>
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Close</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </>
   );
 }

@@ -16,7 +16,6 @@ import {
 
 import { useRef } from "react";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 import classNames from "classnames";
 import {
   FloppyDiskArrowIn,
@@ -48,9 +47,7 @@ import {
   getStudentsAsync,
   getSessionDatesFormatted,
 } from "./services.server";
-import { isSessionDateInTheFuture } from "./services.client";
-
-dayjs.extend(utc);
+import { isEditorEmpty, isSessionDateInTheFuture } from "./services.client";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
@@ -224,9 +221,9 @@ export default function Index() {
     const studentId = formData.get("selectedStudentId")!.toString();
     const attendedOn = formData.get("selectedTermDate")!.toString();
 
-    const resportState = editorStateRef.current?.toJSON();
+    const resportState = editorStateRef.current!;
 
-    if (!resportState?.root.direction) {
+    if (isEditorEmpty(resportState)) {
       (
         document.getElementById("errorModalContent") as HTMLDivElement
       ).textContent = "Report cannot be blank.";
@@ -249,7 +246,7 @@ export default function Index() {
         studentSessionId: studentSession?.id ?? null,
         studentId: Number(studentId),
         attendedOn,
-        report: JSON.stringify(editorStateRef.current?.toJSON()),
+        report: JSON.stringify(resportState.toJSON()),
       },
       { method: "POST", encType: "application/json" },
     );
