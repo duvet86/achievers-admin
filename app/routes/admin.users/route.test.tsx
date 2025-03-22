@@ -20,6 +20,7 @@ describe("Admin /users", () => {
             chapterId: null,
             onlyExpiredChecks: false,
             includeArchived: false,
+            includeCompleteChecks: false,
           };
         },
       },
@@ -30,7 +31,7 @@ describe("Admin /users", () => {
     const rows = await screen.findAllByRole("row");
 
     expect(rows[0]).toHaveTextContent(
-      /#Full nameEmailAssigned chapter# Checks completedAction/,
+      /#Full nameAssigned chapter# Checks completedAction/,
     );
     expect(rows[1]).toHaveTextContent(/No users/);
   });
@@ -49,17 +50,22 @@ describe("Admin /users", () => {
             users: [
               {
                 id: 1,
-                email: "test@test.com",
                 fullName: "Test User",
-                chapter: {
-                  name: "Chapter 1",
-                },
+                chapterName: "Chapter 1",
+                volunteerAgreementSignedOn: null,
+                endDate: null,
+                policeCheckExpiryDate: null,
+                policeCheckReminderSentAt: null,
+                wwccheckExpiryDate: null,
+                wwccheckReminderSentAt: null,
+                checksCompleted: 2,
               },
             ],
             searchTerm: null,
             chapterId: null,
             onlyExpiredChecks: false,
             includeArchived: false,
+            includeCompleteChecks: false,
           };
         },
       },
@@ -70,9 +76,9 @@ describe("Admin /users", () => {
     const rows = await screen.findAllByRole("row");
 
     expect(rows[0]).toHaveTextContent(
-      /#Full nameEmailAssigned chapter# Checks completedAction/,
+      /#Full nameAssigned chapter# Checks completedAction/,
     );
-    expect(rows[1]).toHaveTextContent(/Test Usertest@test.comChapter 1\/8Edit/);
+    expect(rows[1]).toHaveTextContent(/1 Test UserChapter 12\/8Edit/);
   });
 
   it("should have title", async () => {
@@ -91,6 +97,7 @@ describe("Admin /users", () => {
             chapterId: null,
             onlyExpiredChecks: false,
             includeArchived: false,
+            includeCompleteChecks: false,
           };
         },
       },
@@ -119,6 +126,7 @@ describe("Admin /users", () => {
             chapterId: null,
             onlyExpiredChecks: false,
             includeArchived: false,
+            includeCompleteChecks: false,
           };
         },
       },
