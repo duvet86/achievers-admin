@@ -24,7 +24,6 @@ import {
   getChaptersAsync,
   getUsersAsync,
   getUsersCountAsync,
-  getNumberCompletedChecks,
 } from "./services.server";
 
 import ActionsDropdown from "./components/ActionsDropdown";
@@ -45,9 +44,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const sortFullNameSubmit: Prisma.SortOrder | undefined =
     (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? undefined;
 
-  const sortEmailSubmit: Prisma.SortOrder | undefined =
-    (url.searchParams.get("sortEmail") as Prisma.SortOrder) ?? undefined;
-
   const sortChapterSubmit: Prisma.SortOrder | undefined =
     (url.searchParams.get("sortChapter") as Prisma.SortOrder) ?? undefined;
 
@@ -56,6 +52,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const onlyExpiredChecks = url.searchParams.get("onlyExpiredChecks") === "on";
   const includeArchived = url.searchParams.get("includeArchived") === "on";
+  const includeCompleteChecks =
+    url.searchParams.get("includeCompleteChecks") === "on";
 
   if (searchTerm?.trim() === "") {
     searchTerm = null;
@@ -72,6 +70,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     chapterIdValue,
     onlyExpiredChecks,
     includeArchived,
+    includeCompleteChecks,
   );
   const totalPageCount = Math.ceil(count / numberItems);
 
@@ -92,10 +91,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
       searchTerm,
       chapterIdValue,
       sortFullNameSubmit,
-      sortEmailSubmit,
       sortChapterSubmit,
       onlyExpiredChecks,
       includeArchived,
+      includeCompleteChecks,
       numberItems,
     ),
   ]);
@@ -109,20 +108,28 @@ export async function loader({ request }: LoaderFunctionArgs) {
     range,
     users: users.map((user) => ({
       ...user,
-      checksCompleted: getNumberCompletedChecks(user),
+      checksCompleted: Number(user.checksCompleted),
       isAnyChecksExpired:
-        isDateExpired(user.policeCheck?.expiryDate) ||
-        isDateExpired(user.wwcCheck?.expiryDate),
+        isDateExpired(
+          user.policeCheckExpiryDate
+            ? new Date(user.policeCheckExpiryDate)
+            : undefined,
+        ) ||
+        isDateExpired(
+          user.wwccheckExpiryDate
+            ? new Date(user.wwccheckExpiryDate)
+            : undefined,
+        ),
       isReminderSent:
-        user.policeCheck?.reminderSentAt !== null ||
-        user.wwcCheck?.reminderSentAt !== null,
+        user.policeCheckReminderSentAt !== null ||
+        user.wwccheckReminderSentAt !== null,
     })),
     searchTerm,
     chapterId,
     onlyExpiredChecks,
+    includeCompleteChecks,
     includeArchived,
     sortFullNameSubmit,
-    sortEmailSubmit,
     sortChapterSubmit,
   };
 }
@@ -135,11 +142,11 @@ export default function Index() {
     currentPageNumber,
     range,
     sortFullNameSubmit,
-    sortEmailSubmit,
     sortChapterSubmit,
     searchTerm,
     chapterId,
     onlyExpiredChecks,
+    includeCompleteChecks,
     includeArchived,
   } = useLoaderData<typeof loader>();
 
@@ -169,6 +176,14 @@ export default function Index() {
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     searchParams.set("onlyExpiredChecks", event.target.checked ? "on" : "");
+
+    void submit(Object.fromEntries(searchParams));
+  };
+
+  const onIncludeCompleteChecksChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    searchParams.set("includeCompleteChecks", event.target.checked ? "on" : "");
 
     void submit(Object.fromEntries(searchParams));
   };
@@ -206,9 +221,11 @@ export default function Index() {
           chapterId={chapterId}
           onlyExpiredChecks={onlyExpiredChecks}
           includeArchived={includeArchived}
+          includeCompleteChecks={includeCompleteChecks}
           onFormReset={onFormReset}
           onChapterChange={onChapterChange}
           onOnlyExpiredChecksChange={onOnlyExpiredChecksChange}
+          onIncludeCompleteChecksChange={onIncludeCompleteChecksChange}
           onIncludeArchivedChange={onIncludeArchivedChange}
         />
 
@@ -224,13 +241,6 @@ export default function Index() {
                     sortPropName="sortFullName"
                     sortPropValue={sortFullNameSubmit}
                     label="Full name"
-                  />
-                </th>
-                <th align="left">
-                  <TableHeaderSort
-                    sortPropName="sortEmail"
-                    sortPropValue={sortEmailSubmit}
-                    label="Email"
                   />
                 </th>
                 <th align="left">
@@ -259,8 +269,7 @@ export default function Index() {
                   {
                     id,
                     fullName,
-                    email,
-                    chapter,
+                    chapterName,
                     checksCompleted,
                     endDate,
                     isAnyChecksExpired,
@@ -290,8 +299,7 @@ export default function Index() {
                         </div>
                       </td>
                       <td>{fullName}</td>
-                      <td>{email}</td>
-                      <td>{chapter.name}</td>
+                      <td>{chapterName}</td>
                       <td>
                         <div className="flex items-center gap-4">
                           <span>{checksCompleted}/8</span>

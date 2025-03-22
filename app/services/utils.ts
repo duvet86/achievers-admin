@@ -255,7 +255,7 @@ export function getDatesForTerm(startDate: Dayjs, endDate: Dayjs): string[] {
 }
 
 export function isDateExpired(expiryDate: Date | undefined) {
-  if (expiryDate === undefined) {
+  if (expiryDate === null) {
     return false;
   }
 
