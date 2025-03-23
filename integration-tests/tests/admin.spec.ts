@@ -63,6 +63,8 @@ test.describe("Admin", () => {
 
     await usersListPage.expect.toHaveTableRows(11);
     await usersListPage.expect.toHavePreviousPageButtonDisabled();
+
+    await usersListPage.includeCompleteChecksUsers();
     await usersListPage.expect.toHaveCompletedMentor();
 
     await usersListPage.goToNextPage();
@@ -87,7 +89,7 @@ test.describe("Admin", () => {
 
     await usersListPage.goToNextPage();
 
-    await usersListPage.expect.toHaveTableRows(10);
+    await usersListPage.expect.toHaveTableRows(9);
   });
 
   test("should import mentors from file", async () => {

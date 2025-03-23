@@ -10,7 +10,7 @@ import {
   useNavigate,
   useSubmit,
 } from "react-router";
-
+import dayjs from "dayjs";
 import { PageEdit, BinFull, CheckCircle, WarningTriangle } from "iconoir-react";
 
 import {
@@ -25,7 +25,6 @@ import {
   getUsersAsync,
   getUsersCountAsync,
 } from "./services.server";
-
 import ActionsDropdown from "./components/ActionsDropdown";
 import FormInputs from "./components/FormInputs";
 
@@ -46,6 +45,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const sortChapterSubmit: Prisma.SortOrder | undefined =
     (url.searchParams.get("sortChapter") as Prisma.SortOrder) ?? undefined;
+
+  const sortCreatedAtSubmit: Prisma.SortOrder | undefined =
+    (url.searchParams.get("sortCreatedAt") as Prisma.SortOrder) ?? "desc";
 
   let searchTerm = url.searchParams.get("searchTerm");
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
@@ -92,6 +94,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       chapterIdValue,
       sortFullNameSubmit,
       sortChapterSubmit,
+      sortCreatedAtSubmit,
       onlyExpiredChecks,
       includeArchived,
       includeCompleteChecks,
@@ -131,6 +134,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     includeArchived,
     sortFullNameSubmit,
     sortChapterSubmit,
+    sortCreatedAtSubmit,
   };
 }
 
@@ -143,6 +147,7 @@ export default function Index() {
     range,
     sortFullNameSubmit,
     sortChapterSubmit,
+    sortCreatedAtSubmit,
     searchTerm,
     chapterId,
     onlyExpiredChecks,
@@ -161,6 +166,7 @@ export default function Index() {
     searchParams.set("chapterId", "");
     searchParams.set("pageNumber", "");
     searchParams.set("onlyExpiredChecks", "");
+    searchParams.set("includeCompleteChecks", "");
     searchParams.set("includeArchived", "");
 
     void navigate(`?${searchParams.toString()}`);
@@ -250,6 +256,13 @@ export default function Index() {
                     label="Assigned chapter"
                   />
                 </th>
+                <th align="left">
+                  <TableHeaderSort
+                    sortPropName="sortCreatedAt"
+                    sortPropValue={sortCreatedAtSubmit}
+                    label="Created At"
+                  />
+                </th>
                 <th align="left"># Checks completed</th>
                 <th align="right" className="hidden sm:table-cell">
                   Action
@@ -272,6 +285,7 @@ export default function Index() {
                     chapterName,
                     checksCompleted,
                     endDate,
+                    createdAt,
                     isAnyChecksExpired,
                     isReminderSent,
                   },
@@ -300,6 +314,7 @@ export default function Index() {
                       </td>
                       <td>{fullName}</td>
                       <td>{chapterName}</td>
+                      <td>{dayjs(createdAt).format("DD/MM/YYYY")}</td>
                       <td>
                         <div className="flex items-center gap-4">
                           <span>{checksCompleted}/8</span>

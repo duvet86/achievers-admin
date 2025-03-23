@@ -10,6 +10,7 @@ export interface UserQuery {
   fullName: string;
   volunteerAgreementSignedOn: string | null;
   endDate: string | null;
+  createdAt: string;
   chapterName: string;
   policeCheckExpiryDate: string | null;
   policeCheckReminderSentAt: string | null;
@@ -52,18 +53,28 @@ export async function getUsersAsync(
   chapterId: number | null,
   sortFullName: Prisma.SortOrder,
   sortChapter: Prisma.SortOrder,
+  sortCreatedAtSubmit: Prisma.SortOrder,
   onlyExpiredChecks = false,
   includeArchived = false,
   includeCompleteChecks = false,
   numberItems = 10,
 ) {
+  let orderBy = "createdAt DESC";
+  if (sortFullName) {
+    orderBy = `fullName ${sortFullName}`;
+  }
+  if (sortChapter) {
+    orderBy = `chapterName ${sortChapter}`;
+  }
+  if (sortCreatedAtSubmit) {
+    orderBy = `createdAt ${sortCreatedAtSubmit}`;
+  }
+
   const query = `
-  ${getUserQuery(ability, searchTerm, chapterId, onlyExpiredChecks, includeArchived, includeCompleteChecks)}
-  ORDER BY
-    ${sortChapter ? "" : `fullName ${sortFullName ?? "asc"}`}
-    ${sortChapter ? `chapterName ${sortChapter}` : ""}
-  LIMIT ${numberItems}
-  OFFSET ${numberItems * pageNumber}`;
+    ${getUserQuery(ability, searchTerm, chapterId, onlyExpiredChecks, includeArchived, includeCompleteChecks)}
+    ORDER BY ${orderBy}
+    LIMIT ${numberItems}
+    OFFSET ${numberItems * pageNumber}`;
 
   return await prisma.$queryRawUnsafe<UserQuery[]>(
     query,
@@ -86,24 +97,24 @@ export function getUserQuery(
   }
   let searchTermWhereClause = "1 = ?";
   if (searchTerm !== null) {
-    searchTermWhereClause = `(fullName LIKE ? OR email LIKE ?)`;
+    searchTermWhereClause = `fullName LIKE ?`;
   }
   let archivedWhereClause = "endDate IS NULL";
   if (includeArchived) {
-    archivedWhereClause = "endDate IS NOT NULL";
+    archivedWhereClause = "1 = 1";
   }
   let expiredChecksWhereClause = "1 = 1";
   if (onlyExpiredChecks) {
     expiredChecksWhereClause = `(pc.expiryDate <= DATE_ADD(NOW(), INTERVAL 3 MONTH) OR  wcc.expiryDate <= DATE_ADD(NOW(), INTERVAL 3 MONTH))`;
   }
   let includeCompleteChecksWhereClause = `(approvalbymrcId IS NULL 
-  OR eoiprofileId IS NULL
-  OR policecheckId IS NULL
-  OR wwccheckId IS NULL
-  OR welcomecallId IS NULL
-  OR inductionId IS NULL
-  OR volunteerAgreementSignedOn IS NULL
-  OR count < 2)`;
+    OR eoiprofileId IS NULL
+    OR policecheckId IS NULL
+    OR wwccheckId IS NULL
+    OR welcomecallId IS NULL
+    OR inductionId IS NULL
+    OR volunteerAgreementSignedOn IS NULL
+    OR count < 2)`;
   if (includeCompleteChecks) {
     includeCompleteChecksWhereClause = "1 = 1";
   }
@@ -126,6 +137,7 @@ export function getUserQuery(
         u.email,
         u.volunteerAgreementSignedOn,
         u.endDate,
+        u.createdAt,
         c.name chapterName,
         pc.expiryDate policeCheckExpiryDate,
         pc.reminderSentAt policeCheckReminderSentAt,

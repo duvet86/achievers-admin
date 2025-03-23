@@ -11,12 +11,10 @@ export class AdminUsersPage {
   nextPageBtn: Locator;
 
   fullNameHeaderCell: Locator;
-  emailHeaderCell: Locator;
   assigndChapterHeaderCell: Locator;
   actionHeaderCell: Locator;
 
   fullNameCell: Locator;
-  emailCell: Locator;
   assigndChapterCell: Locator;
   actionCell: Locator;
 
@@ -33,19 +31,17 @@ export class AdminUsersPage {
     this.title = page.getByRole("heading", { name: "Mentors", exact: true });
 
     this.fullNameHeaderCell = page.getByRole("cell", { name: "Full name" });
-    this.emailHeaderCell = page.getByRole("cell", { name: "Email" });
     this.assigndChapterHeaderCell = page.getByRole("cell", {
       name: "Assigned chapter",
     });
     this.actionHeaderCell = page.getByRole("cell", { name: "Action" });
 
     this.fullNameCell = page.getByRole("cell", { name: "test_0 user_0" });
-    this.emailCell = page.getByRole("cell", { name: "test_0@test.com" });
     this.assigndChapterCell = page
-      .getByRole("row", { name: "test_0@test.com" })
+      .getByRole("row", { name: "test_0 user_0" })
       .getByRole("cell", { name: "Girrawheen" });
     this.actionCell = page
-      .getByRole("row", { name: "test_0@test.com" })
+      .getByRole("row", { name: "test_0 user_0" })
       .getByRole("link", { name: "Edit" });
 
     this.tableRows = page.getByRole("row");
@@ -55,26 +51,30 @@ export class AdminUsersPage {
 
     this.completedMentorRow = page
       .getByRole("row", {
-        name: "test_18@test.com",
+        name: /test_18/,
       })
       .getByTestId("completed");
 
     this.archivedMentorRow = page
       .getByRole("row", {
-        name: "	test_17@test.com",
+        name: /test_17/,
       })
       .getByTestId("archived");
 
     this.expect = new AdminUsersPageAssertions(this);
   }
 
-  async searchUser(email: string): Promise<void> {
-    await this.page.getByPlaceholder("Search").fill(email);
+  async searchUser(firstName: string): Promise<void> {
+    await this.page.getByPlaceholder("Search").fill(firstName);
     await this.page.keyboard.press("Enter");
   }
 
   async clearSelection(): Promise<void> {
     await this.page.getByRole("button", { name: "Reset" }).click();
+  }
+
+  async includeCompleteChecksUsers(): Promise<void> {
+    await this.page.getByLabel("Include complete checks").check();
   }
 
   async includeArchivedUsers(): Promise<void> {
@@ -127,14 +127,12 @@ export class AdminUsersPageAssertions {
 
   async toHaveTableHeaders(): Promise<void> {
     await expect(this.adminUsersPage.fullNameHeaderCell).toBeVisible();
-    await expect(this.adminUsersPage.emailHeaderCell).toBeVisible();
     await expect(this.adminUsersPage.assigndChapterHeaderCell).toBeVisible();
     await expect(this.adminUsersPage.actionHeaderCell).toBeVisible();
   }
 
   async toHaveTableCells(): Promise<void> {
     await expect(this.adminUsersPage.fullNameCell).toBeVisible();
-    await expect(this.adminUsersPage.emailCell).toBeVisible();
     await expect(this.adminUsersPage.assigndChapterCell).toBeVisible();
     await expect(this.adminUsersPage.actionCell).toBeVisible();
   }
