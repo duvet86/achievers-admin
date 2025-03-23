@@ -31,7 +31,7 @@ describe("Admin /users", () => {
     const rows = await screen.findAllByRole("row");
 
     expect(rows[0]).toHaveTextContent(
-      /#Full nameAssigned chapter# Checks completedAction/,
+      /#Full nameAssigned chapterCreated At# Checks completedAction/,
     );
     expect(rows[1]).toHaveTextContent(/No users/);
   });
@@ -76,9 +76,11 @@ describe("Admin /users", () => {
     const rows = await screen.findAllByRole("row");
 
     expect(rows[0]).toHaveTextContent(
-      /#Full nameAssigned chapter# Checks completedAction/,
+      /#Full nameAssigned chapterCreated At# Checks completedAction/,
     );
-    expect(rows[1]).toHaveTextContent(/1 Test UserChapter 12\/8Edit/);
+    expect(rows[1]).toHaveTextContent(
+      /1 Test UserChapter 123\/03\/20252\/8Edit/,
+    );
   });
 
   it("should have title", async () => {
