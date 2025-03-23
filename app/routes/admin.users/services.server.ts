@@ -147,7 +147,7 @@ export function getUserQuery(
         pc.reminderSentAt policeCheckReminderSentAt,
         wcc.expiryDate wwccheckExpiryDate,
         wcc.reminderSentAt wwccheckReminderSent,
-        (SELECT COUNT(r.userId) FROM achievers.reference r WHERE r.userId = u.id GROUP BY r.userId) as count,
+        (SELECT COUNT(r.userId) FROM achievers.Reference r WHERE r.userId = u.id GROUP BY r.userId) as count,
         ap.id approvalbymrcId,
         p.id eoiprofileId,
         pc.id policecheckId,
@@ -155,14 +155,14 @@ export function getUserQuery(
         wc.id welcomecallId,
         i.id inductionId,
         c.id chapterId
-      FROM achievers.user u
-      INNER JOIN achievers.chapter c ON c.id = u.chapterId
-      LEFT JOIN achievers.approvalbymrc ap ON ap.userId = u.id
-      LEFT JOIN achievers.eoiprofile p ON p.userId = u.id
-      LEFT JOIN achievers.policecheck pc ON pc.userId = u.id
-      LEFT JOIN achievers.wwccheck wcc ON wcc.userId = u.id
-      LEFT JOIN achievers.welcomecall wc ON wc.userId = u.id
-      LEFT JOIN achievers.induction i ON i.userId = u.id
+      FROM achievers.User u
+      INNER JOIN achievers.Chapter c ON c.id = u.chapterId
+      LEFT JOIN achievers.ApprovalbyMRC ap ON ap.userId = u.id
+      LEFT JOIN achievers.EoIProfile p ON p.userId = u.id
+      LEFT JOIN achievers.PoliceCheck pc ON pc.userId = u.id
+      LEFT JOIN achievers.WWCCheck wcc ON wcc.userId = u.id
+      LEFT JOIN achievers.WelcomeCall wc ON wc.userId = u.id
+      LEFT JOIN achievers.Induction i ON i.userId = u.id
   ) as s
   WHERE
     ${chapterWhereClause}
