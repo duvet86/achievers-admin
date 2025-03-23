@@ -41,13 +41,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const nextPageSubmit = url.searchParams.get("nextBtn");
 
   const sortFullNameSubmit: Prisma.SortOrder | undefined =
-    (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? undefined;
+    (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? "ASC";
 
   const sortChapterSubmit: Prisma.SortOrder | undefined =
     (url.searchParams.get("sortChapter") as Prisma.SortOrder) ?? undefined;
 
   const sortCreatedAtSubmit: Prisma.SortOrder | undefined =
-    (url.searchParams.get("sortCreatedAt") as Prisma.SortOrder) ?? "desc";
+    (url.searchParams.get("sortCreatedAt") as Prisma.SortOrder) ?? undefined;
+
+  const sortChecksCompletedSubmit: Prisma.SortOrder | undefined =
+    (url.searchParams.get("sortChecksCompleted") as Prisma.SortOrder) ??
+    undefined;
 
   let searchTerm = url.searchParams.get("searchTerm");
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
@@ -95,6 +99,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       sortFullNameSubmit,
       sortChapterSubmit,
       sortCreatedAtSubmit,
+      sortChecksCompletedSubmit,
       onlyExpiredChecks,
       includeArchived,
       includeCompleteChecks,
@@ -135,6 +140,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     sortFullNameSubmit,
     sortChapterSubmit,
     sortCreatedAtSubmit,
+    sortChecksCompletedSubmit,
   };
 }
 
@@ -148,6 +154,7 @@ export default function Index() {
     sortFullNameSubmit,
     sortChapterSubmit,
     sortCreatedAtSubmit,
+    sortChecksCompletedSubmit,
     searchTerm,
     chapterId,
     onlyExpiredChecks,
@@ -263,7 +270,13 @@ export default function Index() {
                     label="Created At"
                   />
                 </th>
-                <th align="left"># Checks completed</th>
+                <th align="left">
+                  <TableHeaderSort
+                    sortPropName="sortChecksCompleted"
+                    sortPropValue={sortChecksCompletedSubmit}
+                    label="# Checks completed"
+                  />
+                </th>
                 <th align="right" className="hidden sm:table-cell">
                   Action
                 </th>

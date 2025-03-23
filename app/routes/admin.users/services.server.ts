@@ -54,12 +54,13 @@ export async function getUsersAsync(
   sortFullName: Prisma.SortOrder,
   sortChapter: Prisma.SortOrder,
   sortCreatedAtSubmit: Prisma.SortOrder,
+  sortChecksCompletedSubmit: Prisma.SortOrder,
   onlyExpiredChecks = false,
   includeArchived = false,
   includeCompleteChecks = false,
   numberItems = 10,
 ) {
-  let orderBy = "createdAt DESC";
+  let orderBy = "";
   if (sortFullName) {
     orderBy = `fullName ${sortFullName}`;
   }
@@ -68,6 +69,9 @@ export async function getUsersAsync(
   }
   if (sortCreatedAtSubmit) {
     orderBy = `createdAt ${sortCreatedAtSubmit}`;
+  }
+  if (sortChecksCompletedSubmit) {
+    orderBy = `checksCompleted ${sortChecksCompletedSubmit}`;
   }
 
   const query = `
