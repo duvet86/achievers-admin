@@ -223,7 +223,7 @@ export default function Index() {
 
     const resportState = editorStateRef.current!;
 
-    if (isEditorEmpty(resportState)) {
+    if (isEditorEmpty(resportState) && type !== "cancel") {
       (
         document.getElementById("errorModalContent") as HTMLDivElement
       ).textContent = "Report cannot be blank.";
