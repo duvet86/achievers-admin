@@ -274,6 +274,11 @@ export function getClosestSessionToToday(dates: Date[]) {
     return adiff > 0 && adiff < b.getTime() - today.getTime() ? a : b;
   });
 
+  if (closest > today) {
+    const index = dates.findIndex((date) => date === closest);
+    return dayjs(dates[index - 1]).format("YYYY-MM-DD") + "T00:00:00.000Z";
+  }
+
   return dayjs(closest).format("YYYY-MM-DD") + "T00:00:00.000Z";
 }
 

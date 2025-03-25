@@ -59,6 +59,7 @@ describe("Admin /users", () => {
                 wwccheckExpiryDate: null,
                 wwccheckReminderSentAt: null,
                 checksCompleted: 2,
+                createdAt: new Date("2025-01-01T00:00:00.000Z"),
               },
             ],
             searchTerm: null,
@@ -79,7 +80,7 @@ describe("Admin /users", () => {
       /#Full nameAssigned chapterCreated At# Checks completedAction/,
     );
     expect(rows[1]).toHaveTextContent(
-      /1 Test UserChapter 123\/03\/20252\/8Edit/,
+      /1 Test UserChapter 101\/01\/20252\/8Edit/,
     );
   });
 

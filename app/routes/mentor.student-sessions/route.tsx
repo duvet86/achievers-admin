@@ -10,6 +10,7 @@ import {
 } from "react-router";
 import { Eye } from "iconoir-react";
 import dayjs from "dayjs";
+import classNames from "classnames";
 
 import { getPaginationRange } from "~/services";
 import { getLoggedUserInfoAsync } from "~/services/.server";
@@ -49,7 +50,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const mentors = await getMentorsAsync(chapterId, studentId);
 
-  const mentorId = mentorIdUrl ? Number(mentorIdUrl) : loggedUserId;
+  const mentorId = mentorIdUrl ? Number(mentorIdUrl) : undefined;
 
   const count = await getCountAsync(chapterId, studentId, mentorId);
 
@@ -74,6 +75,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
 
   return {
+    loggedUserId,
     students,
     mentors,
     selectedStudentId: studentId?.toString(),
@@ -87,6 +89,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Index() {
   const {
+    loggedUserId,
     students,
     mentors,
     selectedStudentId,
@@ -178,10 +181,15 @@ export default function Index() {
                 ({ id, completedOn, signedOffOn, student, session }) => (
                   <tr
                     key={id}
-                    className="hover:bg-base-200 cursor-pointer"
+                    className={classNames("hover:bg-base-200 cursor-pointer", {
+                      "bg-success/20": session.mentor.id === loggedUserId,
+                    })}
                     onClick={handleRowClick(id)}
                   >
-                    <td className="p-2">{session.mentor.fullName}</td>
+                    <td className="p-2">
+                      {session.mentor.fullName}{" "}
+                      {session.mentor.id === loggedUserId ? "(Me)" : ""}
+                    </td>
                     <td className="p-2">{student.fullName}</td>
                     <td className="p-2">
                       {dayjs(session.attendedOn).format("MMMM D, YYYY")}

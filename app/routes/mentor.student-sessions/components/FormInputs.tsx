@@ -2,7 +2,7 @@ import { SelectSearch } from "~/components";
 
 interface Props {
   selectedStudentId: string;
-  selectedMentorId: string;
+  selectedMentorId: string | undefined;
   students: {
     id: number;
     fullName: string;

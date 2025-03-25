@@ -77,12 +77,14 @@ model User {
 }
 
 model ImportedHistory {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  error     String?  @db.Text
+  id    Int     @id @default(autoincrement())
+  error String? @db.Text
 
   user   User @relation(fields: [userId], references: [id])
   userId Int  @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model EoIProfile {
@@ -305,12 +307,14 @@ model StudentTeacher {
 }
 
 model ImportedStudentHistory {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  error     String?  @db.Text
+  id    Int     @id @default(autoincrement())
+  error String? @db.Text
 
   student   Student @relation(fields: [studentId], references: [id])
   studentId Int     @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model MentorToStudentAssignement {
@@ -324,6 +328,9 @@ model MentorToStudentAssignement {
   assignedBy String
   assignedAt DateTime @default(now())
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([userId, studentId])
 }
 
@@ -334,6 +341,9 @@ model SchoolTerm {
   endDate   DateTime
 
   studentSchoolReport StudentSchoolReport[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([startDate, endDate])
   @@index([year])
@@ -347,6 +357,9 @@ model MentorAttendance {
   userId     Int
   attendedOn DateTime
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([chapterId, userId, attendedOn])
 }
 
@@ -357,6 +370,9 @@ model StudentAttendance {
   student    Student  @relation(fields: [studentId], references: [id])
   studentId  Int
   attendedOn DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([chapterId, studentId, attendedOn])
 }
@@ -373,6 +389,9 @@ model Session {
   status     SessionStatus @default(AVAILABLE)
 
   studentSession StudentSession[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([mentorId, chapterId, attendedOn])
 }
@@ -396,6 +415,9 @@ model StudentSession {
   writteOnBehalfByAzureId String?
 
   isCancelled Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([sessionId, studentId])
 }

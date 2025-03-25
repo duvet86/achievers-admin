@@ -115,6 +115,7 @@ export async function getStudentSessionsAsync(
   const sessions = await prisma.studentSession.findMany({
     where: {
       studentId,
+      hasReport: true,
       session: {
         chapterId,
         mentorId,
