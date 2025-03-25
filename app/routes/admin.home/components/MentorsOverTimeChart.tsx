@@ -7,14 +7,14 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement);
+
 interface Props {
   mentorsPerMonth: {
     x: string[];
     y: number[];
   };
 }
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement);
 
 const options = {
   responsive: true,
@@ -38,6 +38,9 @@ export function MentorsOverTimeChart({ mentorsPerMonth }: Props) {
         borderColor: "blue",
       },
     ],
+    animation: {
+      duration: 0,
+    },
   };
 
   return <Line options={options} data={data} />;

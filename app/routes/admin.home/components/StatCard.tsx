@@ -23,7 +23,7 @@ export function StatCard({ Icon, label, count, subLabel, to }: Props) {
       <h2 className="stat-value">{count}</h2>
       <h3 className="stat-desc">{subLabel}</h3>
 
-      <div className="stat-actions col-span-2 w-max">
+      <div className="stat-actions col-span-2 mt-2 w-max">
         <Link to={to} className="btn w-max">
           View <NavArrowRight className="h-6 w-6" />
         </Link>

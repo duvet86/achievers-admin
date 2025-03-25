@@ -1,11 +1,16 @@
-import { useLoaderData } from "react-router";
-import { UserCircle, GraduationCap, ShopFourTiles } from "iconoir-react";
+import type { LoaderFunctionArgs } from "react-router";
 
-import { SubTitle } from "~/components";
+import { useLoaderData, useNavigate, useSearchParams } from "react-router";
+import { UserCircle, GraduationCap, ShopFourTiles } from "iconoir-react";
+import dayjs from "dayjs";
+
+import { Select, SubTitle } from "~/components";
 
 import {
+  getChaptersAsync,
   getIncompleteMentorsAsync,
   getMentorsPerMonth,
+  getReportsPerSession,
   getStudentsWithoutMentorAsync,
   getTotalChaptersAsync,
   getTotalMentorsAsync,
@@ -14,8 +19,23 @@ import {
 
 import { MentorsOverTimeChart } from "./components/MentorsOverTimeChart";
 import { StatCard } from "./components/StatCard";
+import { MissingReportsBarChart } from "./components/MissingReportsBarChart";
+import {
+  getLoggedUserInfoAsync,
+  getPermissionsAbility,
+} from "~/services/.server";
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
+  const loggedUser = await getLoggedUserInfoAsync(request);
+  const ability = getPermissionsAbility(loggedUser.roles);
+
+  const chapters = await getChaptersAsync(ability);
+
+  const url = new URL(request.url);
+
+  const selectedChapterId =
+    url.searchParams.get("selectedChapterId") ?? chapters[0].id;
+
   const [
     mentorsCount,
     incompleteMentors,
@@ -23,6 +43,7 @@ export async function loader() {
     studentsWithoutMentor,
     chaptersCount,
     mentorsPerMonth,
+    reports,
   ] = await Promise.all([
     getTotalMentorsAsync(),
     getIncompleteMentorsAsync(),
@@ -30,32 +51,68 @@ export async function loader() {
     getStudentsWithoutMentorAsync(),
     getTotalChaptersAsync(),
     getMentorsPerMonth(),
+    getReportsPerSession(Number(selectedChapterId)),
   ]);
 
+  const reportsData = {
+    labels: reports.map(({ attendedOn }) =>
+      dayjs(attendedOn).format("DD/MM/YYYY"),
+    ),
+    datasets: [
+      {
+        label: "Has Report",
+        data: reports.map(({ reportCounter }) => Number(reportCounter)),
+        backgroundColor: "rgba(75, 192, 192, 0.8)",
+      },
+      {
+        label: "Missing Report",
+        data: reports.map(({ noReportCounter }) => Number(noReportCounter)),
+        backgroundColor: "rgba(255, 99, 132, 0.8)",
+      },
+    ],
+  };
+
   return {
+    selectedChapterId: selectedChapterId.toString(),
+    chapterOptions: chapters.map(({ id, name }) => ({
+      label: name,
+      value: id.toString(),
+    })),
     mentorsCount,
     incompleteMentors,
     studentsCount,
     studentsWithoutMentor,
     chaptersCount,
     mentorsPerMonth,
+    reportsData,
   };
 }
 
 export default function Index() {
   const {
+    selectedChapterId,
+    chapterOptions,
     mentorsCount,
     incompleteMentors,
     studentsCount,
     studentsWithoutMentor,
     chaptersCount,
     mentorsPerMonth,
+    reportsData,
   } = useLoaderData<typeof loader>();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const onChapterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    searchParams.set("selectedChapterId", event.target.value);
+
+    void navigate(`?${searchParams.toString()}`);
+  };
 
   return (
     <>
-      <article className="prose relative mb-8 h-24 max-w-none lg:h-28">
-        <div className="bg-achievers h-24 w-full rounded-md opacity-75 lg:h-28"></div>
+      <article className="prose relative mb-4 h-24 max-w-none">
+        <div className="bg-achievers h-24 w-full rounded-md opacity-75"></div>
         <h1 className="absolute top-6 left-6 hidden lg:block">
           Welcome to Achievers Club WA admin system
         </h1>
@@ -92,10 +149,26 @@ export default function Index() {
         </div>
       </div>
 
-      <div className="h-56">
-        <SubTitle>Mentors over time</SubTitle>
+      <div className="w-full">
+        <SubTitle>Reports completed during last session</SubTitle>
 
-        <MentorsOverTimeChart mentorsPerMonth={mentorsPerMonth} />
+        <Select
+          label="Chapters"
+          name="selectedChapterId"
+          defaultValue={selectedChapterId}
+          options={chapterOptions}
+          onChange={onChapterChange}
+        />
+
+        <div className="h-96">
+          <MissingReportsBarChart data={reportsData} />
+        </div>
+
+        <SubTitle>Mentors over last 6 months</SubTitle>
+
+        <div className="h-96">
+          <MentorsOverTimeChart mentorsPerMonth={mentorsPerMonth} />
+        </div>
       </div>
     </>
   );
