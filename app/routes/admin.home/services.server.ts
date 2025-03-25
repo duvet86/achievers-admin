@@ -152,7 +152,7 @@ export async function getReportsPerSession(chapterId: number) {
     SELECT 
       MIN(startDate) startDate,
       MIN(endDate) endDate
-    FROM achievers.schoolterm
+    FROM achievers.SchoolTerm
     WHERE year = ? AND endDate >= NOW()
     GROUP BY year`,
     new Date().getFullYear(),
