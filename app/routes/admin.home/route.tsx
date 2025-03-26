@@ -60,9 +60,25 @@ export async function loader({ request }: LoaderFunctionArgs) {
     ),
     datasets: [
       {
-        label: "Has Report",
-        data: reports.map(({ reportCounter }) => Number(reportCounter)),
+        label: "Has Report With Feedback",
+        data: reports.map(({ reportWithFeedbackCounter }) =>
+          Number(reportWithFeedbackCounter),
+        ),
         backgroundColor: "rgba(75, 192, 192, 0.8)",
+      },
+      {
+        label: "Has Report No Feedback",
+        data: reports.map(({ reportNoFeedbackCounter }) =>
+          Number(reportNoFeedbackCounter),
+        ),
+        backgroundColor: "rgba(255, 205, 86, 0.8)",
+      },
+      {
+        label: "Incomplete Report",
+        data: reports.map(({ incompleteReportCounter }) =>
+          Number(incompleteReportCounter),
+        ),
+        backgroundColor: "rgba(201, 203, 207, 0.8)",
       },
       {
         label: "Missing Report",
@@ -161,7 +177,10 @@ export default function Index() {
         />
 
         <div className="h-96">
-          <MissingReportsBarChart data={reportsData} />
+          <MissingReportsBarChart
+            chapterId={selectedChapterId}
+            data={reportsData}
+          />
         </div>
 
         <SubTitle>Mentors over last 6 months</SubTitle>

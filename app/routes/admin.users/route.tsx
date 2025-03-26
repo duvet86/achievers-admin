@@ -66,7 +66,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   const chapterIdValue =
-    chapterId !== null && chapterId !== "" ? parseInt(chapterId) : null;
+    chapterId !== null && chapterId !== "" ? Number(chapterId) : null;
 
   const numberItems = 10;
 

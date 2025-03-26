@@ -1,4 +1,5 @@
 import type { AppAbility } from "~/services/.server";
+import type { Term } from "~/models";
 
 import { accessibleBy } from "@casl/prisma";
 
@@ -69,19 +70,19 @@ export async function getAvailabelStudentsAsync(
 
 export async function getCountAsync(
   chapterId: number,
+  term: Term,
+  termDate: string | undefined,
   mentorId: number | undefined,
   studentId: number | undefined,
-  startDate: Date | undefined,
-  endDate: Date | undefined,
   isSignedOff: boolean | undefined,
 ) {
   return await prisma.studentSession.count({
     where: whereClause(
       chapterId,
+      term,
+      termDate,
       mentorId,
       studentId,
-      startDate,
-      endDate,
       isSignedOff,
     ),
   });
@@ -89,10 +90,10 @@ export async function getCountAsync(
 
 export async function getStudentSessionsAsync(
   chapterId: number,
+  term: Term,
+  termDate: string | undefined,
   mentorId: number | undefined,
   studentId: number | undefined,
-  startDate: Date | undefined,
-  endDate: Date | undefined,
   isSignedOff: boolean | undefined,
   pageNumber: number,
   numberItems = 10,
@@ -100,10 +101,10 @@ export async function getStudentSessionsAsync(
   return await prisma.studentSession.findMany({
     where: whereClause(
       chapterId,
+      term,
+      termDate,
       mentorId,
       studentId,
-      startDate,
-      endDate,
       isSignedOff,
     ),
     select: {
@@ -140,10 +141,10 @@ export async function getStudentSessionsAsync(
 
 function whereClause(
   chapterId: number,
+  term: Term,
+  termDate: string | undefined,
   mentorId: number | undefined,
   studentId: number | undefined,
-  startDate: Date | undefined,
-  endDate: Date | undefined,
   isSignedOff: boolean | undefined,
 ) {
   return {
@@ -159,21 +160,24 @@ function whereClause(
     session: {
       mentorId,
       chapterId,
-      AND:
-        startDate && endDate
-          ? [
-              {
-                attendedOn: {
-                  lte: endDate,
-                },
+      AND: termDate
+        ? [
+            {
+              attendedOn: termDate,
+            },
+          ]
+        : [
+            {
+              attendedOn: {
+                lte: term.end.toDate(),
               },
-              {
-                attendedOn: {
-                  gte: startDate,
-                },
+            },
+            {
+              attendedOn: {
+                gte: term.start.toDate(),
               },
-            ]
-          : undefined,
+            },
+          ],
     },
   };
 }

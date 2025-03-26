@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import type { LoaderFunctionArgs } from "react-router";
+import type { Term } from "~/models";
 
 import {
   Form,
@@ -6,18 +8,22 @@ import {
   useLoaderData,
   useNavigate,
   useSearchParams,
-  useSubmit,
 } from "react-router";
 
-import { useRef } from "react";
 import { Eye } from "iconoir-react";
 import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
 
 import {
   getLoggedUserInfoAsync,
   getPermissionsAbility,
+  getSchoolTermsAsync,
 } from "~/services/.server";
-import { getPaginationRange } from "~/services";
+import {
+  getCurrentTermForDate,
+  getDatesForTerm,
+  getPaginationRange,
+} from "~/services";
 import { Pagination, Title } from "~/components";
 
 import {
@@ -29,81 +35,88 @@ import {
 } from "./services.server";
 import FormInputs from "./components/FormInputs";
 
+dayjs.extend(isBetween);
+
 export async function loader({ request }: LoaderFunctionArgs) {
+  const CURRENT_YEAR = dayjs().year();
+
   const loggedUser = await getLoggedUserInfoAsync(request);
   const ability = getPermissionsAbility(loggedUser.roles);
 
   const url = new URL(request.url);
 
-  const searchTermSubmit = url.searchParams.get("searchBtn");
-  const clearSearchSubmit = url.searchParams.get("clearSearchBtn");
   const previousPageSubmit = url.searchParams.get("previousBtn");
   const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
   const nextPageSubmit = url.searchParams.get("nextBtn");
 
-  const chapterIdUrl = url.searchParams.get("chapterId");
-  const mentorIdUrl = url.searchParams.get("mentorId");
-  const studentIdUrl = url.searchParams.get("studentId");
+  const chapterId = url.searchParams.get("chapterId");
+  const mentorId = url.searchParams.get("mentorId");
+  const studentId = url.searchParams.get("studentId");
 
-  const startDate = url.searchParams.get("startDate");
-  const endDate = url.searchParams.get("endDate");
-  const isSignedOff = url.searchParams.get("isSignedOff") === "on";
+  const selectedTermYear =
+    url.searchParams.get("selectedTermYear") || CURRENT_YEAR.toString();
+  const selectedTermId = url.searchParams.get("selectedTermId");
+  const selectedTermDate =
+    url.searchParams.get("selectedTermDate") || undefined;
+
+  const isSignedOff = url.searchParams.get("isSignedOff");
 
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
 
-  let chapterId: number;
-  let startDateConverted: Date | undefined;
-  let endDateConverted: Date | undefined;
-  let mentorId: number | undefined;
-  let studentId: number | undefined;
+  const [chapters, terms] = await Promise.all([
+    getChaptersAsync(ability),
+    getSchoolTermsAsync(),
+  ]);
 
-  const chapters = await getChaptersAsync(ability);
+  let selectedTerm: Term;
+  let termsForYear: Term[];
 
-  if (clearSearchSubmit !== null || startDate?.trim() === "") {
-    startDateConverted = undefined;
-  } else if (startDate) {
-    startDateConverted = dayjs(startDate, "YYYY/MM/DD").toDate();
-  }
-  if (clearSearchSubmit !== null || endDate?.trim() === "") {
-    endDateConverted = undefined;
-  } else if (endDate) {
-    endDateConverted = dayjs(endDate, "YYYY/MM/DD").toDate();
-  }
-  if (clearSearchSubmit !== null || chapterIdUrl === "") {
-    chapterId = chapters[0].id;
+  if (!selectedTermId && selectedTermDate) {
+    const termYear = dayjs(selectedTermDate).year();
+
+    termsForYear = terms.filter(({ year }) => year === termYear);
+
+    selectedTerm = termsForYear.find(({ start, end }) =>
+      dayjs(selectedTermDate).isBetween(start, end),
+    )!;
   } else {
-    chapterId =
-      chapters.find(({ id }) => id === Number(chapterIdUrl))?.id ??
-      chapters[0].id;
+    termsForYear = terms.filter(
+      ({ year }) => year.toString() === selectedTermYear,
+    );
+
+    selectedTerm = termsForYear.find(
+      (t) => t.id.toString() === selectedTermId,
+    )!;
+
+    if (selectedTerm === undefined) {
+      if (selectedTermYear === CURRENT_YEAR.toString()) {
+        selectedTerm = getCurrentTermForDate(terms, new Date());
+      } else {
+        selectedTerm = termsForYear[0];
+      }
+    }
   }
-  if (clearSearchSubmit !== null || mentorIdUrl === "") {
-    mentorId = undefined;
-  } else if (mentorIdUrl) {
-    mentorId = Number(mentorIdUrl);
-  }
-  if (clearSearchSubmit !== null || studentIdUrl === "") {
-    studentId = undefined;
-  } else if (studentIdUrl) {
-    studentId = Number(studentIdUrl);
-  }
+
+  const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
+
+  const selectedChapterId = chapterId ? Number(chapterId) : chapters[0].id;
+  const selectedMentorId = mentorId ? Number(mentorId) : undefined;
+  const selectedStudentId = studentId ? Number(studentId) : undefined;
+  const selectedIsSignedOff = isSignedOff ? isSignedOff === "on" : false;
 
   const count = await getCountAsync(
-    chapterId,
-    mentorId,
-    studentId,
-    startDateConverted,
-    endDateConverted,
-    isSignedOff,
+    selectedChapterId,
+    selectedTerm,
+    selectedTermDate,
+    selectedMentorId,
+    selectedStudentId,
+    selectedIsSignedOff,
   );
 
   const totalPageCount = Math.ceil(count / 10);
 
   let currentPageNumber = 0;
-  if (searchTermSubmit !== null) {
-    currentPageNumber = 0;
-  } else if (clearSearchSubmit !== null) {
-    currentPageNumber = 0;
-  } else if (previousPageSubmit !== null && pageNumber > 0) {
+  if (previousPageSubmit !== null && pageNumber > 0) {
     currentPageNumber = pageNumber - 1;
   } else if (nextPageSubmit !== null && pageNumber < totalPageCount) {
     currentPageNumber = pageNumber + 1;
@@ -112,29 +125,63 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   const studentSessions = await getStudentSessionsAsync(
-    chapterId,
-    mentorId,
-    studentId,
-    startDateConverted,
-    endDateConverted,
-    isSignedOff,
+    selectedChapterId,
+    selectedTerm,
+    selectedTermDate,
+    selectedMentorId,
+    selectedStudentId,
+    selectedIsSignedOff,
     currentPageNumber,
   );
 
   const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
 
   const [mentors, students] = await Promise.all([
-    getAvailabelMentorsAsync(ability, chapterId, studentId),
-    getAvailabelStudentsAsync(ability, chapterId, mentorId),
+    getAvailabelMentorsAsync(ability, selectedChapterId, selectedStudentId),
+    getAvailabelStudentsAsync(ability, selectedChapterId, selectedMentorId),
   ]);
 
   return {
-    mentors,
-    students,
-    selectedChapterId: chapterId.toString(),
-    selectedMentorId: mentorId?.toString(),
-    selectedStudentId: studentId?.toString(),
-    chapters,
+    chaptersOptions: chapters.map(({ id, name }) => ({
+      label: name,
+      value: id.toString(),
+    })),
+    mentorsOptions: mentors.map(({ id, fullName }) => ({
+      label: fullName,
+      value: id.toString(),
+    })),
+    studentsOptions: students.map(({ id, fullName }) => ({
+      label: fullName,
+      value: id.toString(),
+    })),
+    selectedChapterId: selectedChapterId.toString(),
+    selectedMentorId: selectedMentorId?.toString(),
+    selectedStudentId: selectedStudentId?.toString(),
+    selectedIsSignedOff,
+    selectedTermYear,
+    selectedTermId: selectedTerm.id.toString(),
+    selectedTermDate: selectedTermDate ?? undefined,
+    termYearsOptions: Array.from(new Set(terms.map(({ year }) => year))).map(
+      (year) => ({
+        value: year.toString(),
+        label: year.toString(),
+      }),
+    ),
+    termsOptions: termsForYear.map(({ id, name }) => ({
+      value: id.toString(),
+      label: name,
+    })),
+    sessionDatesOptions: [
+      {
+        value: "",
+        label: "All",
+      },
+    ].concat(
+      sessionDates.map((date) => ({
+        value: dayjs(date).toISOString(),
+        label: dayjs(date).format("DD/MM/YYYY"),
+      })),
+    ),
     range,
     currentPageNumber,
     count,
@@ -144,30 +191,28 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Index() {
   const {
-    mentors,
-    students,
+    chaptersOptions,
+    mentorsOptions,
+    studentsOptions,
+    termYearsOptions,
+    termsOptions,
+    sessionDatesOptions,
     selectedChapterId,
     selectedMentorId,
     selectedStudentId,
-    chapters,
+    selectedIsSignedOff,
+    selectedTermYear,
+    selectedTermId,
+    selectedTermDate,
     studentSessions,
     count,
     currentPageNumber,
     range,
   } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
-  const submit = useSubmit();
   const navigate = useNavigate();
-  const formRef = useRef<HTMLFormElement | null>(null);
 
   const totalPageCount = Math.ceil(count / 10);
-
-  const onFormClear = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-
-    formRef.current!.reset();
-    void submit(formRef.current);
-  };
 
   const handleRowClick = (id: number, completedOn: Date | null) => () => {
     const url = completedOn
@@ -183,16 +228,21 @@ export default function Index() {
 
       <hr className="my-4" />
 
-      <Form ref={formRef}>
+      <Form method="GET">
         <FormInputs
-          selectedChapterId={selectedChapterId}
-          selectedMentorId={selectedMentorId}
-          selectedStudentId={selectedStudentId}
-          chapters={chapters}
-          mentors={mentors}
-          students={students}
-          submit={submit}
-          onFormClear={onFormClear}
+          chapterId={selectedChapterId}
+          selectedTermId={selectedTermId}
+          selectedTermYear={selectedTermYear}
+          selectedTermDate={selectedTermDate}
+          mentorId={selectedMentorId}
+          studentId={selectedStudentId}
+          isSignedOff={selectedIsSignedOff}
+          chaptersOptions={chaptersOptions}
+          mentorsOptions={mentorsOptions}
+          studentsOptions={studentsOptions}
+          termYearsOptions={termYearsOptions}
+          termsOptions={termsOptions}
+          sessionDatesOptions={sessionDatesOptions}
         />
 
         <div className="overflow-auto bg-white">

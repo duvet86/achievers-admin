@@ -1,4 +1,4 @@
-import type { ChartData } from "chart.js";
+import type { ChartData, ChartOptions } from "chart.js";
 
 import {
   Chart as ChartJS,
@@ -9,10 +9,26 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
+import { useNavigate, useSearchParams } from "react-router";
 
-export const options = {
+dayjs.extend(utc);
+dayjs.extend(customParseFormat);
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend,
+  ChartDataLabels,
+);
+
+const options: ChartOptions<"bar"> = {
   responsive: true,
   maintainAspectRatio: false,
   animation: {
@@ -26,12 +42,39 @@ export const options = {
       stacked: true,
     },
   },
+  plugins: {
+    datalabels: {
+      formatter: (value: number) => (value !== 0 ? value : ""),
+    },
+  },
+  onHover: function (event, elements) {
+    (event.native!.target as HTMLElement).style.cursor = elements[0]
+      ? "pointer"
+      : "default";
+  },
 };
 
 interface Props {
+  chapterId: string;
   data: ChartData<"bar", (number | [number, number] | null)[], unknown>;
 }
 
-export function MissingReportsBarChart({ data }: Props) {
+export function MissingReportsBarChart({ chapterId, data }: Props) {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  options.onClick = (event, elements, chart) => {
+    if (elements.length > 0 && chart.data.labels) {
+      const sessionDate = chart.data.labels[elements[0].index] as string;
+
+      const selectedTermDate = dayjs.utc(sessionDate, "DD/MM/YYYY").toDate();
+
+      searchParams.set("chapterId", chapterId);
+      searchParams.set("selectedTermDate", selectedTermDate.toISOString());
+
+      void navigate(`/admin/student-sessions?${searchParams.toString()}`);
+    }
+  };
+
   return <Bar options={options} data={data} />;
 }

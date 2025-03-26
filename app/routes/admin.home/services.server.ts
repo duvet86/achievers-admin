@@ -168,19 +168,24 @@ export async function getReportsPerSession(chapterId: number) {
   const reports = await prisma.$queryRawUnsafe<
     {
       attendedOn: string;
-      reportCounter: string;
+      reportWithFeedbackCounter: string;
+      reportNoFeedbackCounter: string;
+      incompleteReportCounter: string;
       noReportCounter: string;
     }[]
   >(
     `
     SELECT
       s.attendedOn,
-      SUM(IF(st.hasReport = 1, 1, 0)) reportCounter,
-      SUM(IF(st.hasReport = 0, 1, 0)) + SUM(IF(st.hasReport IS NULL, 1, 0)) noReportCounter
+      SUM(IF(st.report IS NOT NULL AND st.reportFeedback IS NOT NULL AND st.completedOn IS NOT NULL, 1, 0)) reportWithFeedbackCounter,
+      SUM(IF(st.report IS NOT NULL AND st.reportFeedback IS NULL AND st.completedOn IS NOT NULL, 1, 0)) reportNoFeedbackCounter,
+      SUM(IF(st.report IS NOT NULL AND st.completedOn IS NULL, 1, 0)) incompleteReportCounter,
+      SUM(IF(st.report IS NULL, 1, 0)) noReportCounter
     FROM achievers.Session s
-    LEFT JOIN achievers.StudentSession st ON st.sessionId = s.id
+    INNER JOIN achievers.StudentSession st ON st.sessionId = s.id
     WHERE s.attendedOn BETWEEN ? AND ? AND s.chapterId = ?
-    GROUP BY s.attendedOn`,
+    GROUP BY s.attendedOn
+    ORDER BY s.attendedOn ASC`,
     dayjs(currentTermQuery[0].startDate).format("YYYY-MM-DD"),
     dayjs(currentTermQuery[0].endDate).format("YYYY-MM-DD"),
     chapterId,

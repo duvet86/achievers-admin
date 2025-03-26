@@ -35,6 +35,7 @@
     "@react-router/node": "^7.4.0",
     "@tailwindcss/vite": "^4.0.16",
     "chart.js": "^4.4.8",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "classnames": "^2.5.1",
     "compression": "^1.8.0",
     "dayjs": "^1.11.13",
