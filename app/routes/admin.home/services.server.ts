@@ -3,6 +3,7 @@ import type { AppAbility } from "~/services/.server";
 import { accessibleBy } from "@casl/prisma";
 import dayjs from "dayjs";
 
+import { trackException } from "~/services/.server";
 import { prisma } from "~/db.server";
 
 export const MONTHS = [
@@ -153,10 +154,16 @@ export async function getReportsPerSession(chapterId: number) {
       MIN(startDate) startDate,
       MIN(endDate) endDate
     FROM achievers.SchoolTerm
-    WHERE year = ? AND endDate >= NOW()
+    WHERE year = ? AND endDate >= ?
     GROUP BY year`,
     new Date().getFullYear(),
+    dayjs().format("YYYY-MM-DD"),
   );
+
+  if (currentTermQuery.length === 0) {
+    trackException(new Error("getReportsPerSession has no terms."));
+    return [];
+  }
 
   const reports = await prisma.$queryRawUnsafe<
     {
