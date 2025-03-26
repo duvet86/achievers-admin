@@ -24,6 +24,11 @@ export async function getStudentSessionByIdAsync(studentSessionId: number) {
       session: {
         select: {
           attendedOn: true,
+          mentor: {
+            select: {
+              fullName: true,
+            },
+          },
         },
       },
     },

@@ -94,8 +94,9 @@ export default function Index() {
         className="mb-4"
         to={`/admin/student-sessions?${searchParams.toString()}`}
       >
-        Report for &quot;{student?.fullName}&quot; on:{" "}
-        {dayjs(session.attendedOn).format("MMMM D, YYYY")}
+        {dayjs(session.attendedOn).format("MMMM D, YYYY")} - mentor: &quot;
+        {session.mentor.fullName}&quot; student: &quot;
+        {student.fullName}&quot;
       </Title>
 
       <div className="relative flex h-full flex-col">

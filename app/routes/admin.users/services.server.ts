@@ -109,7 +109,7 @@ export function getUserQuery(
   }
   let expiredChecksWhereClause = "1 = 1";
   if (onlyExpiredChecks) {
-    expiredChecksWhereClause = `(pc.expiryDate <= DATE_ADD(NOW(), INTERVAL 3 MONTH) OR  wcc.expiryDate <= DATE_ADD(NOW(), INTERVAL 3 MONTH))`;
+    expiredChecksWhereClause = `(policeCheckExpiryDate <= DATE_ADD(NOW(), INTERVAL 3 MONTH) OR  wwccheckExpiryDate <= DATE_ADD(NOW(), INTERVAL 3 MONTH))`;
   }
   let includeCompleteChecksWhereClause = `(approvalbymrcId IS NULL 
     OR eoiprofileId IS NULL
