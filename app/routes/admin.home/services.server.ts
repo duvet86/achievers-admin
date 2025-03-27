@@ -177,8 +177,8 @@ export async function getReportsPerSession(chapterId: number) {
     `
     SELECT
       s.attendedOn,
-      SUM(IF(st.report IS NOT NULL AND st.reportFeedback IS NOT NULL AND st.completedOn IS NOT NULL, 1, 0)) reportWithFeedbackCounter,
-      SUM(IF(st.report IS NOT NULL AND st.reportFeedback IS NULL AND st.completedOn IS NOT NULL, 1, 0)) reportNoFeedbackCounter,
+      SUM(IF(st.report IS NOT NULL AND st.signedOffOn IS NOT NULL AND st.completedOn IS NOT NULL, 1, 0)) reportWithFeedbackCounter,
+      SUM(IF(st.report IS NOT NULL AND st.signedOffOn IS NULL AND st.completedOn IS NOT NULL, 1, 0)) reportNoFeedbackCounter,
       SUM(IF(st.report IS NOT NULL AND st.completedOn IS NULL, 1, 0)) incompleteReportCounter,
       SUM(IF(st.report IS NULL, 1, 0)) noReportCounter
     FROM achievers.Session s

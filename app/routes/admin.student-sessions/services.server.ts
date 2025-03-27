@@ -74,7 +74,7 @@ export async function getCountAsync(
   termDate: string | undefined,
   mentorId: number | undefined,
   studentId: number | undefined,
-  isSignedOff: boolean | undefined,
+  includeSignedOff: boolean | undefined,
 ) {
   return await prisma.studentSession.count({
     where: whereClause(
@@ -83,7 +83,7 @@ export async function getCountAsync(
       termDate,
       mentorId,
       studentId,
-      isSignedOff,
+      includeSignedOff,
     ),
   });
 }
@@ -94,7 +94,7 @@ export async function getStudentSessionsAsync(
   termDate: string | undefined,
   mentorId: number | undefined,
   studentId: number | undefined,
-  isSignedOff: boolean | undefined,
+  includeSignedOff: boolean | undefined,
   pageNumber: number,
   numberItems = 10,
 ) {
@@ -105,7 +105,7 @@ export async function getStudentSessionsAsync(
       termDate,
       mentorId,
       studentId,
-      isSignedOff,
+      includeSignedOff,
     ),
     select: {
       id: true,
@@ -145,18 +145,14 @@ function whereClause(
   termDate: string | undefined,
   mentorId: number | undefined,
   studentId: number | undefined,
-  isSignedOff: boolean | undefined,
+  includeSignedOff: boolean | undefined,
 ) {
   return {
     studentId,
     completedOn: {
       not: null,
     },
-    signedOffOn: isSignedOff
-      ? {
-          not: null,
-        }
-      : undefined,
+    signedOffOn: includeSignedOff ? undefined : null,
     session: {
       mentorId,
       chapterId,

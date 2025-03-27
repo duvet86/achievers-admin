@@ -59,7 +59,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const selectedTermDate =
     url.searchParams.get("selectedTermDate") || undefined;
 
-  const isSignedOff = url.searchParams.get("isSignedOff");
+  const includeSignedOff = url.searchParams.get("includeSignedOff");
 
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
 
@@ -102,7 +102,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const selectedChapterId = chapterId ? Number(chapterId) : chapters[0].id;
   const selectedMentorId = mentorId ? Number(mentorId) : undefined;
   const selectedStudentId = studentId ? Number(studentId) : undefined;
-  const selectedIsSignedOff = isSignedOff ? isSignedOff === "on" : false;
+  const selectedIncludeSignedOff = includeSignedOff
+    ? includeSignedOff === "on"
+    : false;
 
   const count = await getCountAsync(
     selectedChapterId,
@@ -110,7 +112,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     selectedTermDate,
     selectedMentorId,
     selectedStudentId,
-    selectedIsSignedOff,
+    selectedIncludeSignedOff,
   );
 
   const totalPageCount = Math.ceil(count / 10);
@@ -130,7 +132,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     selectedTermDate,
     selectedMentorId,
     selectedStudentId,
-    selectedIsSignedOff,
+    selectedIncludeSignedOff,
     currentPageNumber,
   );
 
@@ -157,7 +159,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     selectedChapterId: selectedChapterId.toString(),
     selectedMentorId: selectedMentorId?.toString(),
     selectedStudentId: selectedStudentId?.toString(),
-    selectedIsSignedOff,
+    selectedIncludeSignedOff,
     selectedTermYear,
     selectedTermId: selectedTerm.id.toString(),
     selectedTermDate: selectedTermDate ?? undefined,
@@ -200,7 +202,7 @@ export default function Index() {
     selectedChapterId,
     selectedMentorId,
     selectedStudentId,
-    selectedIsSignedOff,
+    selectedIncludeSignedOff,
     selectedTermYear,
     selectedTermId,
     selectedTermDate,
@@ -236,7 +238,7 @@ export default function Index() {
           selectedTermDate={selectedTermDate}
           mentorId={selectedMentorId}
           studentId={selectedStudentId}
-          isSignedOff={selectedIsSignedOff}
+          includeSignedOff={selectedIncludeSignedOff}
           chaptersOptions={chaptersOptions}
           mentorsOptions={mentorsOptions}
           studentsOptions={studentsOptions}
@@ -272,7 +274,7 @@ export default function Index() {
             <tbody>
               {studentSessions.length === 0 && (
                 <tr>
-                  <td colSpan={6}>No sessions available</td>
+                  <td colSpan={6}>No reports available</td>
                 </tr>
               )}
               {studentSessions.map(

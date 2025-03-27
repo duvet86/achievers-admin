@@ -11,7 +11,7 @@ interface Props {
   selectedTermDate: string | undefined;
   mentorId: string | undefined;
   studentId: string | undefined;
-  isSignedOff: boolean;
+  includeSignedOff: boolean;
   chaptersOptions: Option[];
   mentorsOptions: Option[];
   studentsOptions: Option[];
@@ -27,7 +27,7 @@ export default function FormInputs({
   selectedTermDate,
   mentorId,
   studentId,
-  isSignedOff,
+  includeSignedOff,
   chaptersOptions,
   mentorsOptions,
   studentsOptions,
@@ -45,7 +45,7 @@ export default function FormInputs({
     searchParams.set("selectedTermYear", "");
     searchParams.set("selectedTermId", "");
     searchParams.set("selectedTermDate", "");
-    searchParams.set("isSignedOff", "");
+    searchParams.set("includeSignedOff", "");
     searchParams.set("pageNumber", "");
 
     void navigate(`?${searchParams.toString()}`);
@@ -105,6 +105,14 @@ export default function FormInputs({
     searchParams.set("studentId", value);
 
     searchParams.set("mentorId", "");
+
+    void navigate(`?${searchParams.toString()}`);
+  };
+
+  const onIncludeSignedOffChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    searchParams.set("includeSignedOff", event.target.checked ? "on" : "");
 
     void navigate(`?${searchParams.toString()}`);
   };
@@ -195,11 +203,12 @@ export default function FormInputs({
           <label className="label cursor-pointer gap-2">
             <input
               type="checkbox"
-              name="isSignedOff"
+              name="includeSignedOff"
               className="checkbox bg-base-100"
-              defaultChecked={isSignedOff}
+              defaultChecked={includeSignedOff}
+              onChange={onIncludeSignedOffChange}
             />
-            <span className="label-text">Only signed off</span>
+            <span className="label-text">Include signed off</span>
           </label>
         </div>
 
