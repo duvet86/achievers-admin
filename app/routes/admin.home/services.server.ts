@@ -3,8 +3,17 @@ import type { AppAbility } from "~/services/.server";
 import { accessibleBy } from "@casl/prisma";
 import dayjs from "dayjs";
 
-import { trackException } from "~/services/.server";
 import { prisma } from "~/db.server";
+import { getSchoolTermsAsync } from "~/services/.server";
+import { getCurrentTermForDate, getDatesForTerm } from "~/services";
+
+interface Report {
+  attendedOn: Date;
+  reportWithFeedbackCounter: string;
+  reportNoFeedbackCounter: string;
+  incompleteReportCounter: string;
+  noReportCounter: string;
+}
 
 export const MONTHS = [
   "January",
@@ -143,37 +152,10 @@ export async function getMentorsPerMonth() {
 }
 
 export async function getReportsPerSession(chapterId: number) {
-  const currentTermQuery = await prisma.$queryRawUnsafe<
-    {
-      startDate: string;
-      endDate: string;
-    }[]
-  >(
-    `
-    SELECT 
-      MIN(startDate) startDate,
-      MIN(endDate) endDate
-    FROM achievers.SchoolTerm
-    WHERE year = ? AND endDate >= ?
-    GROUP BY year`,
-    new Date().getFullYear(),
-    dayjs().format("YYYY-MM-DD"),
-  );
+  const terms = await getSchoolTermsAsync(new Date().getFullYear());
+  const currentTerm = getCurrentTermForDate(terms, new Date());
 
-  if (currentTermQuery.length === 0) {
-    trackException(new Error("getReportsPerSession has no terms."));
-    return [];
-  }
-
-  const reports = await prisma.$queryRawUnsafe<
-    {
-      attendedOn: string;
-      reportWithFeedbackCounter: string;
-      reportNoFeedbackCounter: string;
-      incompleteReportCounter: string;
-      noReportCounter: string;
-    }[]
-  >(
+  const reports = await prisma.$queryRawUnsafe<Report[]>(
     `
     SELECT
       s.attendedOn,
@@ -186,10 +168,32 @@ export async function getReportsPerSession(chapterId: number) {
     WHERE s.attendedOn BETWEEN ? AND ? AND s.chapterId = ?
     GROUP BY s.attendedOn
     ORDER BY s.attendedOn ASC`,
-    dayjs(currentTermQuery[0].startDate).format("YYYY-MM-DD"),
-    dayjs(currentTermQuery[0].endDate).format("YYYY-MM-DD"),
+    currentTerm.start.format("YYYY-MM-DD"),
+    currentTerm.end.format("YYYY-MM-DD"),
     chapterId,
   );
 
-  return reports;
+  const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
+
+  const reportsLookup = reports.reduce<Record<string, Report>>(
+    (res, report) => {
+      res[report.attendedOn.toISOString()] = report;
+      return res;
+    },
+    {},
+  );
+
+  return sessionDates.map<Report>((date) => {
+    if (reportsLookup[date]) {
+      return reportsLookup[date];
+    }
+
+    return {
+      attendedOn: new Date(date),
+      incompleteReportCounter: "0",
+      noReportCounter: "0",
+      reportNoFeedbackCounter: "0",
+      reportWithFeedbackCounter: "0",
+    };
+  });
 }
