@@ -296,8 +296,8 @@ export default function Index() {
 
                   const to = sessionId
                     ? completedOn
-                      ? `/admin/student-sessions/${studentSessionId}?${queryString}`
-                      : `/admin/student-sessions/${studentSessionId}/remove?${queryString}`
+                      ? `/admin/student-sessions/${studentSessionId}/report?${queryString}`
+                      : `/admin/student-sessions/${studentSessionId}?${queryString}`
                     : `/admin/chapters/${chapterId}/roster-students/${studentId}/attended-on/${attendedOn}/new?${queryString}`;
 
                   return (

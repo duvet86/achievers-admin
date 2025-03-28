@@ -34,7 +34,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     const url = new URL(request.url);
 
     throw redirect(
-      `/admin/student-sessions/${studentSession.id}/remove?${url.searchParams}`,
+      `/admin/student-sessions/${studentSession.id}?${url.searchParams}`,
     );
   }
 

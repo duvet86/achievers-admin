@@ -184,7 +184,7 @@ export default function Index() {
 
         {session.status === "UNAVAILABLE" ? (
           <div className="flex items-center justify-between gap-4">
-            <p className="alert alert-error">
+            <p className="alert alert-error w-full">
               <InfoCircle />
               Mentor is marked as unavailable for this session
             </p>
@@ -201,7 +201,7 @@ export default function Index() {
         ) : (
           session.studentSession.length === 0 && (
             <div className="flex items-center gap-4">
-              <p className="alert alert-info">
+              <p className="alert alert-info w-full">
                 <InfoCircle />
                 Mentor is marked as available for this session
               </p>
@@ -212,7 +212,7 @@ export default function Index() {
                 onClick={handleRemoveSession}
               >
                 <Trash />
-                Cancel
+                Remove
               </button>
             </div>
           )
@@ -293,7 +293,7 @@ export default function Index() {
                         <td className="p-2" align="right">
                           {completedOn ? (
                             <Link
-                              to={`report?${searchParams.toString()}`}
+                              to={`/admin/student-sessions/${id}/report?${searchParams.toString()}`}
                               className="btn btn-success btn-sm"
                             >
                               <StatsReport /> Go to report
@@ -305,7 +305,7 @@ export default function Index() {
                               onClick={handleStudentRemoveSession(student.id)}
                             >
                               <Trash />
-                              Cancel
+                              Remove
                             </button>
                           )}
                         </td>

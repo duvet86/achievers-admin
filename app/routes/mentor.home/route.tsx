@@ -187,7 +187,7 @@ export default function Index() {
                           <Link
                             to={
                               completedOn !== null
-                                ? `/mentor/student-sessions/${id}?back_url=/mentor/home`
+                                ? `/mentor/student-sessions/${id}/report?back_url=/mentor/home`
                                 : `/mentor/write-report?selectedStudentId=${student.id}&selectedTermDate=${dayjs(session.attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z&back_url=/mentor/home`
                             }
                             className="btn btn-success btn-xs h-9 gap-2"

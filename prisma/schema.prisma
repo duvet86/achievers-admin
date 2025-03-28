@@ -414,7 +414,9 @@ model StudentSession {
 
   writteOnBehalfByAzureId String?
 
-  isCancelled Boolean @default(false)
+  isCancelled     Boolean   @default(false)
+  cancelledAt     DateTime?
+  cancelledReason String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

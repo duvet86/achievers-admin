@@ -186,8 +186,8 @@ export default [
             },
           ),
           route(
-            ":studentSessionId/remove",
-            "routes/admin.student-sessions.$studentSessionId.remove/route.tsx",
+            ":studentSessionId/cancel",
+            "routes/admin.student-sessions.$studentSessionId.cancel/route.tsx",
             {
               index: true,
             },
