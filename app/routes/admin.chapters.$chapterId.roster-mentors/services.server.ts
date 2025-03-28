@@ -18,7 +18,7 @@ export type SessionLookup = Record<
       studentSession: {
         id: number;
         hasReport: boolean;
-        completedOn: Date | null;
+        isCancelled: boolean;
         student: {
           id: number;
           fullName: string;
@@ -56,6 +56,7 @@ export async function getMentorsAsync(
               id: true,
               hasReport: true,
               completedOn: true,
+              isCancelled: true,
               student: {
                 select: {
                   id: true,

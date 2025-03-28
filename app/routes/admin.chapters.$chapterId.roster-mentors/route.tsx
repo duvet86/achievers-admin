@@ -13,7 +13,13 @@ import { useRef } from "react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import classNames from "classnames";
-import { Check, NavArrowRight, Calendar, DatabaseExport } from "iconoir-react";
+import {
+  Check,
+  NavArrowRight,
+  Calendar,
+  DatabaseExport,
+  WarningTriangle,
+} from "iconoir-react";
 
 import {
   getCurrentTermForDate,
@@ -284,6 +290,7 @@ export default function Index() {
                   const sessionId = session?.id;
 
                   let hasReport = false;
+                  let isCancelled = false;
                   let label = "";
                   let textHighlight = false;
                   let textHighlightError = false;
@@ -299,6 +306,7 @@ export default function Index() {
                       } else if (session.studentSession.length === 1) {
                         const studentSession = session.studentSession[0];
                         hasReport = studentSession.hasReport;
+                        isCancelled = studentSession.isCancelled;
 
                         label = studentSession.student.fullName;
                       } else {
@@ -321,7 +329,12 @@ export default function Index() {
                           selectedTermDate ? "w-full" : "w-48",
                         )}
                       >
-                        {hasReport && (
+                        {isCancelled && (
+                          <div className="badge indicator-item badge-error indicator-center gap-1">
+                            Canceled <WarningTriangle className="h-4 w-4" />
+                          </div>
+                        )}
+                        {!isCancelled && hasReport && (
                           <div className="badge indicator-item badge-success indicator-center gap-1">
                             Report <Check className="h-4 w-4" />
                           </div>

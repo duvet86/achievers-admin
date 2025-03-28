@@ -17,6 +17,7 @@ import {
   InfoCircle,
   StatsReport,
   Trash,
+  WarningTriangle,
   Xmark,
 } from "iconoir-react";
 
@@ -261,54 +262,91 @@ export default function Index() {
                 </thead>
                 <tbody>
                   {session.studentSession.map(
-                    ({ id, student, completedOn, signedOffOn }) => (
+                    ({
+                      id,
+                      student,
+                      completedOn,
+                      signedOffOn,
+                      isCancelled,
+                    }) => (
                       <tr key={id}>
                         <td className="p-2">{student.fullName}</td>
-                        <td>
-                          <div className="flex items-center gap-2">
-                            {completedOn ? (
-                              <Check className="text-success" />
-                            ) : (
-                              <Xmark className="text-error" />
-                            )}
-                            <span>
-                              {completedOn &&
-                                dayjs(completedOn).format("MMMM D, YYYY")}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="p-2">
-                          <div className="flex items-center gap-2">
-                            {signedOffOn ? (
-                              <Check className="text-success" />
-                            ) : (
-                              <Xmark className="text-error" />
-                            )}
-                            <span>
-                              {signedOffOn &&
-                                dayjs(signedOffOn).format("MMMM D, YYYY")}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="p-2" align="right">
-                          {completedOn ? (
-                            <Link
-                              to={`/admin/student-sessions/${id}/report?${searchParams.toString()}`}
-                              className="btn btn-success btn-sm"
-                            >
-                              <StatsReport /> Go to report
-                            </Link>
-                          ) : (
-                            <button
-                              className="btn btn-error btn-sm"
-                              type="button"
-                              onClick={handleStudentRemoveSession(student.id)}
-                            >
-                              <Trash />
-                              Remove
-                            </button>
-                          )}
-                        </td>
+                        {isCancelled ? (
+                          <>
+                            <td colSpan={2}>
+                              <div className="bg-error flex gap-2 rounded p-2">
+                                <WarningTriangle /> Session has been cancelled
+                              </div>
+                            </td>
+                            <td align="right">
+                              <Link
+                                to={`/admin/student-sessions/${id}?${searchParams.toString()}`}
+                                className="btn btn-sm"
+                              >
+                                <StatsReport /> View reason
+                              </Link>
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td>
+                              <div className="flex items-center gap-2">
+                                {completedOn ? (
+                                  <Check className="text-success" />
+                                ) : (
+                                  <Xmark className="text-error" />
+                                )}
+                                <span>
+                                  {completedOn &&
+                                    dayjs(completedOn).format("MMMM D, YYYY")}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="p-2">
+                              <div className="flex items-center gap-2">
+                                {signedOffOn ? (
+                                  <Check className="text-success" />
+                                ) : (
+                                  <Xmark className="text-error" />
+                                )}
+                                <span>
+                                  {signedOffOn &&
+                                    dayjs(signedOffOn).format("MMMM D, YYYY")}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="p-2" align="right">
+                              {completedOn ? (
+                                <Link
+                                  to={`/admin/student-sessions/${id}/report?${searchParams.toString()}`}
+                                  className="btn btn-success btn-sm"
+                                >
+                                  <StatsReport /> Go to report
+                                </Link>
+                              ) : (
+                                <div className="flex justify-end gap-4">
+                                  <button
+                                    className="btn btn-warning btn-sm"
+                                    type="button"
+                                    onClick={handleStudentRemoveSession(
+                                      student.id,
+                                    )}
+                                  >
+                                    <Xmark />
+                                    Remove
+                                  </button>
+                                  <Link
+                                    className="btn btn-error btn-sm"
+                                    to={`/admin/student-sessions/${id}/cancel`}
+                                  >
+                                    <Trash />
+                                    Cancel
+                                  </Link>
+                                </div>
+                              )}
+                            </td>
+                          </>
+                        )}
                       </tr>
                     ),
                   )}
