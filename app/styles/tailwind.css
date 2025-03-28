@@ -37,16 +37,6 @@
   height: calc(100vh - (--spacing(44)));
 }
 
-.blink {
-  animation: blinker 1.4s linear infinite;
-}
-
-@keyframes blinker {
-  50% {
-    opacity: 0;
-  }
-}
-
 .select:disabled,
 .select[disabled] {
   color: inherit;

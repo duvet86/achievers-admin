@@ -4,6 +4,7 @@ export async function getStudentSessionAsync(studentSessionId: number) {
   return await prisma.studentSession.findUniqueOrThrow({
     where: {
       id: studentSessionId,
+      hasReport: true,
     },
     select: {
       completedOn: true,

@@ -3,19 +3,17 @@ import type { LoaderFunctionArgs } from "react-router";
 import dayjs from "dayjs";
 import { Link, useLoaderData } from "react-router";
 
-import {
-  StatsReport,
-  Check,
-  Xmark,
-  InfoCircle,
-  WarningTriangle,
-} from "iconoir-react";
+import { StatsReport, Check, Xmark, WarningTriangle } from "iconoir-react";
 
-import { getLoggedUserInfoAsync } from "~/services/.server";
+import {
+  getLoggedUserInfoAsync,
+  getSchoolTermsAsync,
+} from "~/services/.server";
+import { getCurrentTermForDate } from "~/services";
 import { SubTitle } from "~/components";
 
 import {
-  getNextStudentSessionAsync,
+  getNextStudentSessionsAsync,
   getStudentSessionsAsync,
   getUserByAzureADIdAsync,
   hasAnyStudentsAssignedAsync,
@@ -25,43 +23,45 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
+  const terms = await getSchoolTermsAsync();
+  const currentTerm = getCurrentTermForDate(terms, new Date());
+
   const hasAnyStudentsAssigned = await hasAnyStudentsAssignedAsync(user.id);
   if (!hasAnyStudentsAssigned) {
     return {
+      currentTermLabel: `${currentTerm.name} (${currentTerm.start.format("D MMMM")} - ${currentTerm.end.format("D MMMM")})`,
       hasAnyStudentsAssigned,
       mentorFullName: user.fullName,
-      nextStudentSessionDate: null,
-      student: null,
+      nextStudentSessions: [],
       studentSessions: [],
     };
   }
 
-  const nextStudentSession = await getNextStudentSessionAsync(
+  const nextStudentSessions = await getNextStudentSessionsAsync(
     user.id,
     user.chapterId,
+    currentTerm,
   );
   const studentSessions = await getStudentSessionsAsync(
     user.id,
     user.chapterId,
+    currentTerm,
   );
 
   return {
+    currentTermLabel: `${currentTerm.name} (${currentTerm.start.format("D MMMM")} - ${currentTerm.end.format("D MMMM")})`,
     hasAnyStudentsAssigned: true,
     mentorFullName: user.fullName,
-    nextStudentSessionDate:
-      nextStudentSession !== null
-        ? dayjs(nextStudentSession.session.attendedOn).format("MMMM D, YYYY")
-        : null,
-    student: nextStudentSession !== null ? nextStudentSession.student : null,
+    nextStudentSessions,
     studentSessions,
   };
 }
 
 export default function Index() {
   const {
+    currentTermLabel,
     mentorFullName,
-    nextStudentSessionDate,
-    student,
+    nextStudentSessions,
     studentSessions,
     hasAnyStudentsAssigned,
   } = useLoaderData<typeof loader>();
@@ -71,25 +71,38 @@ export default function Index() {
       <article className="prose relative mb-4 h-24 max-w-none lg:h-28">
         <div className="bg-achievers h-24 w-full rounded-md opacity-75 lg:h-28"></div>
         <h1 className="absolute top-6 left-6 hidden lg:block">
-          Welcome {mentorFullName}
+          Welcome {mentorFullName} - {currentTermLabel}
         </h1>
         <h2 className="absolute top-0 mt-0 p-4 lg:hidden">
           Welcome {mentorFullName}
         </h2>
       </article>
 
-      {student && nextStudentSessionDate && (
+      {nextStudentSessions.length > 0 && (
         <>
-          <SubTitle>Next session</SubTitle>
+          <SubTitle>Next sessions</SubTitle>
 
-          <div className="mb-8 flex items-center gap-4 rounded-sm bg-slate-100 p-4">
-            <InfoCircle className="blink text-primary h-12 w-12" />
-
-            <div className="flex flex-col gap-4 font-bold lg:flex-row lg:items-end">
-              <span className="text-4xl">{nextStudentSessionDate}</span>
-              <span>with</span>
-              <span className="text-3xl">{student.fullName}</span>
-            </div>
+          <div className="overflow-auto bg-white">
+            <table className="table-lg mb-4 table">
+              <thead>
+                <tr>
+                  <th className="hidden w-6 lg:table-cell">#</th>
+                  <th align="left">Session date</th>
+                  <th align="left">Student</th>
+                </tr>
+              </thead>
+              <tbody>
+                {nextStudentSessions.map(
+                  ({ id, attendedOn, studentFullName }) => (
+                    <tr key={id} className="text-info">
+                      <td className="hidden border-r lg:table-cell">1</td>
+                      <td align="left">{attendedOn}</td>
+                      <td align="left">{studentFullName}</td>
+                    </tr>
+                  ),
+                )}
+              </tbody>
+            </table>
           </div>
         </>
       )}
@@ -106,7 +119,7 @@ export default function Index() {
         </article>
       )}
 
-      {nextStudentSessionDate === null &&
+      {nextStudentSessions.length === 0 &&
         hasAnyStudentsAssigned &&
         studentSessions.length === 0 && (
           <article className="prose max-w-none">
@@ -155,7 +168,7 @@ export default function Index() {
                     index,
                   ) => (
                     <tr key={id}>
-                      <td className="hidden border-r border-gray-300 lg:table-cell">
+                      <td className="hidden border-r lg:table-cell">
                         {index + 1}
                       </td>
                       <td align="left">
@@ -187,7 +200,7 @@ export default function Index() {
                           <Link
                             to={
                               completedOn !== null
-                                ? `/mentor/student-sessions/${id}/report?back_url=/mentor/home`
+                                ? `/mentor/student-sessions/${id}?back_url=/mentor/home`
                                 : `/mentor/write-report?selectedStudentId=${student.id}&selectedTermDate=${dayjs(session.attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z&back_url=/mentor/home`
                             }
                             className="btn btn-success btn-xs h-9 gap-2"

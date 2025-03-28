@@ -22,7 +22,6 @@ import {
   CheckCircle,
   WarningTriangle,
   Calendar,
-  UserXmark,
   InfoCircle,
 } from "iconoir-react";
 
@@ -223,7 +222,7 @@ export default function Index() {
 
     const resportState = editorStateRef.current!;
 
-    if (isEditorEmpty(resportState) && type !== "cancel") {
+    if (isEditorEmpty(resportState)) {
       (
         document.getElementById("errorModalContent") as HTMLDivElement
       ).textContent = "Report cannot be blank.";
@@ -391,16 +390,6 @@ export default function Index() {
               <div className="flex flex-wrap gap-8">
                 {!completedOn && (
                   <>
-                    <button
-                      className="btn btn-error btn-block sm:mr-6 sm:w-44"
-                      type="button"
-                      onClick={saveReport("cancel")}
-                      disabled={isNotMyReport}
-                    >
-                      <UserXmark />
-                      Cancel session
-                    </button>
-
                     <button
                       className="btn btn-primary btn-block sm:w-36"
                       type="button"
