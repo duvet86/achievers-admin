@@ -1,6 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { Option } from "~/components";
-import type { SessionLookup, SessionLookupStudent } from "./services.server";
 
 import {
   redirect,
@@ -50,8 +49,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const currentTerm =
     termsForYear.find((t) => t.id.toString() === selectedTermId) ?? todayterm;
 
-  const { mySessionsLookup, myStudentsSessionsLookup } =
-    await getSessionsLookupAsync(user.chapterId, user.id, currentTerm);
+  const sessionsLookup = await getSessionsLookupAsync(
+    user.chapterId,
+    user.id,
+    currentTerm,
+  );
 
   const studentsForSession = attendedOn
     ? await getAvailableStudentsForSessionAsync(
@@ -78,13 +80,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }, {});
 
   return {
+    currentMentorId: user.id,
     termsList: termsForYear.map(({ id, start, end, name }) => ({
       value: id.toString(),
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${todayterm.name === name ? " (Current)" : ""}`,
     })),
     selectedTermId: selectedTermId ?? currentTerm.id.toString(),
-    mySessionsLookup,
-    myStudentsSessionsLookup,
+    sessionsLookup,
     datesInTerm,
     manageSessionState,
   };
@@ -146,17 +148,13 @@ export default function Index() {
   const [searchParams] = useSearchParams();
 
   const {
-    mySessionsLookup,
-    myStudentsSessionsLookup,
+    currentMentorId,
+    sessionsLookup,
     selectedTermId,
     termsList,
     datesInTerm,
     manageSessionState,
   } = data ?? initialData;
-
-  const mySessionsLookup2 = mySessionsLookup as SessionLookup;
-  const myStudentsSessionsLookup2 =
-    myStudentsSessionsLookup as SessionLookupStudent;
 
   const isLoading = state !== "idle";
 
@@ -225,8 +223,8 @@ export default function Index() {
 
       <div className="join join-vertical w-full">
         {datesInTerm.map((attendedOn) => {
-          const mySession = mySessionsLookup2[attendedOn];
-          const studentSessions = myStudentsSessionsLookup2[attendedOn];
+          const session = sessionsLookup[attendedOn];
+          const isMySession = session?.mentor.id === currentMentorId;
 
           return (
             <div key={attendedOn} className="border-b border-slate-400">
@@ -238,9 +236,9 @@ export default function Index() {
                 </div>
 
                 <div className="flex w-full flex-col gap-4 p-4 sm:basis-5/6">
-                  {mySession && mySession.studentSession.length === 0 && (
+                  {isMySession && session.studentSession.length === 0 && (
                     <div className="flex flex-col items-center justify-between gap-2 sm:flex-row">
-                      {mySession.status === "AVAILABLE" ? (
+                      {session.status === "AVAILABLE" ? (
                         <>
                           <div className="text-success flex items-center justify-center gap-2 sm:justify-start">
                             <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
@@ -249,7 +247,7 @@ export default function Index() {
                           <button
                             className="btn btn-error btn-sm w-full sm:w-36"
                             onClick={handleCancelSessionSubmit(
-                              mySession.id,
+                              session.id,
                               null,
                             )}
                           >
@@ -266,7 +264,7 @@ export default function Index() {
                           <button
                             className="btn btn-primary btn-sm w-full sm:w-36"
                             onClick={handleCancelSessionSubmit(
-                              mySession.id,
+                              session.id,
                               null,
                             )}
                           >
@@ -278,66 +276,71 @@ export default function Index() {
                     </div>
                   )}
 
-                  {mySession &&
-                    mySession.studentSession.length > 0 &&
-                    mySession.studentSession.map(
-                      ({ id, student, hasReport }) => (
-                        <div
-                          key={id}
-                          className="flex flex-col items-center justify-between gap-2 sm:flex-row"
-                        >
-                          <div className="text-success flex items-center justify-center gap-2 sm:justify-start">
-                            <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
-                            <span>Booked with</span>{" "}
-                            <span className="font-bold">
-                              {student.fullName}
-                            </span>
-                          </div>
-
-                          {!hasReport && (
-                            <button
-                              onClick={handleCancelSessionSubmit(
-                                mySession.id,
-                                id,
-                              )}
-                              className="btn btn-error btn-sm w-full sm:w-36"
-                            >
-                              <Xmark />
-                              Cancel
-                            </button>
-                          )}
-                        </div>
-                      ),
-                    )}
-
-                  {studentSessions?.map(
-                    ({ id, session, student, completedOn }) => (
+                  {isMySession &&
+                    session.studentSession.map(({ id, student, hasReport }) => (
                       <div
                         key={id}
-                        className="flex flex-col items-center justify-between gap-4 sm:flex-row"
+                        className="flex flex-col items-center justify-between gap-2 sm:flex-row"
                       >
-                        <div className="text-info flex items-center justify-center gap-2 sm:justify-start">
-                          <Group className="h-4 w-4 sm:h-6 sm:w-6" />
-                          <span className="font-bold">
-                            {session.mentor.fullName}
-                          </span>{" "}
-                          mentoring{" "}
+                        <div className="text-success flex items-center justify-center gap-2 sm:justify-start">
+                          <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
+                          <span>Booked with</span>{" "}
                           <span className="font-bold">{student.fullName}</span>
                         </div>
-                        {!completedOn && (
+
+                        {!hasReport && (
                           <button
-                            onClick={handleTakeSessionSubmit(id)}
-                            className="btn btn-secondary btn-sm w-full sm:w-36"
+                            onClick={handleCancelSessionSubmit(session.id, id)}
+                            className="btn btn-error btn-sm w-full sm:w-36"
                           >
-                            <BookmarkBook />
-                            Take
+                            <Xmark />
+                            Cancel
                           </button>
                         )}
                       </div>
-                    ),
-                  )}
+                    ))}
 
-                  {!mySession && (
+                  {!isMySession &&
+                    (session?.status === "UNAVAILABLE" ? (
+                      <div className="text-error flex items-center justify-center gap-2 sm:justify-start">
+                        <ThumbsDown className="h-4 w-4 sm:h-6 sm:w-6" />
+                        <span className="font-bold">
+                          {session.mentor.fullName}
+                        </span>{" "}
+                        is <span className="font-bold">unavailable</span>
+                      </div>
+                    ) : (
+                      session?.studentSession.map(
+                        ({ id, student, completedOn }) => (
+                          <div
+                            key={id}
+                            className="flex flex-col items-center justify-between gap-4 sm:flex-row"
+                          >
+                            <div className="text-info flex items-center justify-center gap-2 sm:justify-start">
+                              <Group className="h-4 w-4 sm:h-6 sm:w-6" />
+                              <span className="font-bold">
+                                {session.mentor.fullName}
+                              </span>{" "}
+                              mentoring{" "}
+                              <span className="font-bold">
+                                {student.fullName}
+                              </span>
+                            </div>
+                            {!completedOn && (
+                              <button
+                                onClick={handleTakeSessionSubmit(id)}
+                                className="btn btn-secondary btn-sm w-full sm:w-36"
+                              >
+                                <BookmarkBook />
+                                Take
+                              </button>
+                            )}
+                          </div>
+                        ),
+                      )
+                    ))}
+
+                  {!isMySession && (
                     <ManageSession
                       selectedTermId={selectedTermId}
                       attendedOn={attendedOn}

@@ -61,11 +61,6 @@ export interface StudentSessioViewModel {
 
 export type SessionLookup = Record<string, SessioViewModel | undefined>;
 
-export type SessionLookupStudent = Record<
-  string,
-  StudentSessioViewModel[] | undefined
->;
-
 export interface SessionCommandRequest {
   action: "create" | "update" | "remove";
   sessionId: string | undefined;
@@ -135,10 +130,19 @@ export async function getSessionsLookupAsync(
   mentorId: number,
   term: Term,
 ) {
-  const mySessions = await prisma.session.findMany({
+  const myPartners = await prisma.$queryRaw<{ userId: number }[]>`
+    SELECT
+      b.userId
+    FROM achievers.MentorToStudentAssignement a
+    INNER JOIN achievers.MentorToStudentAssignement b ON b.studentId = a.studentId
+    WHERE a.userId = ${mentorId}`;
+
+  const sessions = await prisma.session.findMany({
     where: {
       chapterId,
-      mentorId,
+      mentorId: {
+        in: myPartners.map(({ userId }) => userId),
+      },
       attendedOn: {
         gte: term.start.toDate(),
         lte: term.end.toDate(),
@@ -172,79 +176,13 @@ export async function getSessionsLookupAsync(
     },
   });
 
-  const myStudents = await prisma.mentorToStudentAssignement.findMany({
-    where: {
-      userId: mentorId,
-      student: {
-        endDate: null,
-      },
-    },
-    select: {
-      studentId: true,
-    },
-  });
-
-  const myStudentsSessions = await prisma.studentSession.findMany({
-    where: {
-      studentId: {
-        in: myStudents.map(({ studentId }) => studentId),
-      },
-      sessionId: {
-        notIn: mySessions.map(({ id }) => id),
-      },
-    },
-    select: {
-      id: true,
-      signedOffOn: true,
-      completedOn: true,
-      hasReport: true,
-      student: {
-        select: {
-          id: true,
-          fullName: true,
-        },
-      },
-      session: {
-        select: {
-          id: true,
-          chapterId: true,
-          attendedOn: true,
-          mentor: {
-            select: {
-              id: true,
-              fullName: true,
-            },
-          },
-        },
-      },
-    },
-  });
-
-  const mySessionsLookup = mySessions.reduce<SessionLookup>((res, session) => {
+  const sessionLookup = sessions.reduce<SessionLookup>((res, session) => {
     res[dayjs.utc(session.attendedOn).format("YYYY-MM-DD")] = session;
 
     return res;
   }, {});
 
-  const myStudentsSessionsLookup =
-    myStudentsSessions.reduce<SessionLookupStudent>((res, studentSession) => {
-      const key = dayjs
-        .utc(studentSession.session.attendedOn)
-        .format("YYYY-MM-DD");
-
-      if (res[key]) {
-        res[key].push(studentSession);
-      } else {
-        res[key] = [studentSession];
-      }
-
-      return res;
-    }, {});
-
-  return {
-    mySessionsLookup,
-    myStudentsSessionsLookup,
-  };
+  return sessionLookup;
 }
 
 export async function createSessionAsync({
