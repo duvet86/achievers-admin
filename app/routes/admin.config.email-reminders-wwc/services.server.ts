@@ -35,6 +35,7 @@ export async function getWWCCheckReminders(
     const isExpiring = dayjs(today)
       .add(3, "months")
       .isAfter(dayjs(wc.expiryDate));
+
     const hasExpired = dayjs(today).isAfter(dayjs(wc.expiryDate));
 
     return {

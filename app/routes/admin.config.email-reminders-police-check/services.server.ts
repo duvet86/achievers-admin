@@ -35,6 +35,7 @@ export async function getPoliceCheckReminders(
     const isExpiring = dayjs(today)
       .add(3, "months")
       .isAfter(dayjs(pc.expiryDate));
+
     const hasExpired = dayjs(today).isAfter(dayjs(pc.expiryDate));
 
     return {

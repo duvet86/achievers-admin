@@ -1,13 +1,6 @@
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-} from "chart.js";
-import { Line } from "react-chartjs-2";
+import type { ChartOptions } from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement);
+import { Line } from "react-chartjs-2";
 
 interface Props {
   mentorsPerMonth: {
@@ -16,7 +9,7 @@ interface Props {
   };
 }
 
-const options = {
+const options: ChartOptions<"line"> = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
@@ -25,6 +18,9 @@ const options = {
     },
     title: {
       display: false,
+    },
+    datalabels: {
+      align: "top",
     },
   },
 };

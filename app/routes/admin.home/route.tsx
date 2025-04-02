@@ -25,6 +25,8 @@ import {
   getPermissionsAbility,
 } from "~/services/.server";
 
+import "./services.client";
+
 export async function loader({ request }: LoaderFunctionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const ability = getPermissionsAbility(loggedUser.roles);

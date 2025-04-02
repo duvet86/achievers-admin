@@ -1,15 +1,5 @@
 import type { ChartData, ChartOptions } from "chart.js";
-
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
 import { Bar } from "react-chartjs-2";
-import ChartDataLabels from "chartjs-plugin-datalabels";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -18,15 +8,6 @@ import { useNavigate, useSearchParams } from "react-router";
 
 dayjs.extend(utc);
 dayjs.extend(customParseFormat);
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend,
-  ChartDataLabels,
-);
 
 const options: ChartOptions<"bar"> = {
   responsive: true,
