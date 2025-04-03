@@ -9,16 +9,18 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
 
+  const selectedTermDate = url.searchParams.get("selectedTermDate");
+
   const buf = await exportRosterToSpreadsheetAsync(
     Number(params.chapterId),
     url.searchParams.get("selectedTerm"),
-    url.searchParams.get("selectedTermDate"),
+    selectedTermDate,
   );
 
   return new Response(buf, {
     status: 200,
     headers: new Headers({
-      "Content-Disposition": 'attachment; filename="roster_students.xlsx"',
+      "Content-Disposition": `attachment; filename="roster_students_${selectedTermDate ?? ""}.xlsx"`,
       "Content-Type": "application/vnd.ms-excel",
     }),
   });

@@ -35,8 +35,10 @@ export async function exportRosterToSpreadsheetAsync(
   const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
   const students = await getStudentsAsync(chapterId);
 
-  const spreadsheet = students.map(({ fullName, sessionLookup }) => {
-    const result: Record<string, string> = { Students: fullName };
+  const spreadsheet = students.map(({ fullName, yearLevel, sessionLookup }) => {
+    const result: Record<string, string> = {
+      Students: `${fullName} (Year ${yearLevel ?? "-"})`,
+    };
 
     sessionDates
       .filter(
@@ -70,6 +72,7 @@ async function getStudentsAsync(chapterId: number) {
     select: {
       id: true,
       fullName: true,
+      yearLevel: true,
       studentSession: {
         select: {
           id: true,

@@ -18,7 +18,7 @@ type SessionLookup = Record<
         id: number;
         hasReport: boolean;
         completedOn: Date | null;
-        student: { id: number; fullName: string };
+        student: { id: number; fullName: string; yearLevel: number | null };
       }[];
     }
   | undefined
@@ -56,7 +56,8 @@ export async function exportRosterToSpreadsheetAsync(
           if (studentSessions.length === 0) {
             label = "Available";
           } else if (studentSessions.length === 1) {
-            label = session.studentSession[0].student.fullName;
+            const student = session.studentSession[0].student;
+            label = `${student.fullName} (Year ${student.yearLevel ?? "-"})`;
           } else {
             label = `${studentSessions.length} Students`;
           }
@@ -92,7 +93,9 @@ async function getMentorsAsync(chapterId: number) {
               id: true,
               hasReport: true,
               completedOn: true,
-              student: { select: { id: true, fullName: true } },
+              student: {
+                select: { id: true, fullName: true, yearLevel: true },
+              },
             },
           },
         },
