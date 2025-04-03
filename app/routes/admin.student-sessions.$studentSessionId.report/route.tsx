@@ -6,19 +6,24 @@ import type {
 import type { EditorState } from "lexical";
 import type { SessionCommandRequest } from "./services.server";
 
-import { useFetcher, useLoaderData, useSearchParams } from "react-router";
+import {
+  redirect,
+  useFetcher,
+  useLoaderData,
+  useSearchParams,
+} from "react-router";
 
 import dayjs from "dayjs";
 import { useRef } from "react";
 import invariant from "tiny-invariant";
-import { DesignNib, Xmark } from "iconoir-react";
+import { DesignNib, WarningTriangle, Xmark } from "iconoir-react";
 
+import editorStylesheetUrl from "~/styles/editor.css?url";
 import { getLoggedUserInfoAsync } from "~/services/.server";
+import { isEditorEmpty } from "~/services";
 import { Editor, SubTitle, Title } from "~/components";
 
 import { getStudentSessionByIdAsync, saveReportAsync } from "./services.server";
-
-import editorStylesheetUrl from "~/styles/editor.css?url";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
@@ -53,9 +58,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
     loggedUser.oid,
   );
 
-  return {
-    message: "Successfully saved",
-  };
+  const url = new URL(request.url);
+
+  return redirect(`/admin/student-sessions?${url.searchParams}`);
 }
 
 export default function Index() {
@@ -76,9 +81,16 @@ export default function Index() {
       }
     }
 
+    const resportState = editorStateRef.current!;
+
+    if (isEditorEmpty(resportState)) {
+      (document.getElementById("errorModal") as HTMLDialogElement).showModal();
+      return;
+    }
+
     void submit(
       {
-        reportFeedback: JSON.stringify(editorStateRef.current?.toJSON()),
+        reportFeedback: JSON.stringify(resportState.toJSON()),
         isSignedOff,
       },
       {
@@ -150,6 +162,20 @@ export default function Index() {
           </div>
         </div>
       </div>
+      <dialog id="errorModal" className="modal">
+        <div className="modal-box">
+          <h3 className="flex gap-2 text-lg font-bold">
+            <WarningTriangle className="text-error" />
+            Please write a feedback
+          </h3>
+          <p className="py-4">Admin Feedback cannot be blank.</p>
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Close</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </>
   );
 }

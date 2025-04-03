@@ -21,10 +21,11 @@ import { FloppyDiskArrowIn, DesignNib, WarningTriangle } from "iconoir-react";
 import { getLoggedUserInfoAsync } from "~/services/.server/session.server";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
+import { isEditorEmpty } from "~/services";
 import { Editor, EditorQuestions, SubTitle, Title } from "~/components";
 
 import { getStudentSessionIdAsync, saveReportAsync } from "./services.server";
-import { isEditorEmpty, isSessionDateInTheFuture } from "./services.client";
+import { isSessionDateInTheFuture } from "./services.client";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];

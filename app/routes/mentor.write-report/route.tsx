@@ -32,6 +32,7 @@ import {
   getClosestSessionToToday,
   getCurrentTermForDate,
   getDatesForTerm,
+  isEditorEmpty,
 } from "~/services";
 import {
   getSchoolTermsAsync,
@@ -46,7 +47,7 @@ import {
   getStudentsAsync,
   getSessionDatesFormatted,
 } from "./services.server";
-import { isEditorEmpty, isSessionDateInTheFuture } from "./services.client";
+import { isSessionDateInTheFuture } from "./services.client";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
