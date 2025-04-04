@@ -5,7 +5,7 @@ import path from "path";
 import dayjs from "dayjs";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-const LOGIC_APP_URL = process.env.LOGIC_APP_URL;
+const REMAINDER_LOGIC_APP_URL = process.env.REMAINDER_LOGIC_APP_URL;
 const IS_DEV = process.env.NODE_ENV !== "production";
 
 const filePath = path.join(process.cwd(), "public/VNPC Consent Form.pdf");
@@ -44,7 +44,7 @@ export async function sendPoliceCheckReminder2Months(prisma) {
 
   await Promise.all(
     remindersToSend.map(async ({ user: { fullName, email } }) =>
-      fetch(LOGIC_APP_URL, {
+      fetch(REMAINDER_LOGIC_APP_URL, {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -107,7 +107,7 @@ export async function sendPoliceCheckReminder1Months(prisma) {
 
   await Promise.all(
     remindersToSend.map(async ({ user: { email } }) =>
-      fetch(LOGIC_APP_URL, {
+      fetch(REMAINDER_LOGIC_APP_URL, {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -172,7 +172,7 @@ export async function sendPoliceCheckReminder3Weeks(prisma) {
 
   await Promise.all(
     remindersToSend.map(async ({ user: { email } }) =>
-      fetch(LOGIC_APP_URL, {
+      fetch(REMAINDER_LOGIC_APP_URL, {
         method: "post",
         headers: {
           "Content-Type": "application/json",

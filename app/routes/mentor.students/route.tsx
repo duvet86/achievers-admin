@@ -49,13 +49,13 @@ export default function Index() {
                 <td>{yearLevel ?? "-"}</td>
                 <td>
                   <div className="flex justify-end gap-4">
-                    <a
+                    <Link
                       className="btn btn-error w-48 gap-2"
-                      href="mailto:admin@achieversclubwa.org.au"
+                      to={`/mentor/students/${id}/report-to-admin`}
                     >
                       <WarningTriangle className="hidden h-4 w-4 lg:block" />
                       Report to Admin
-                    </a>
+                    </Link>
 
                     <Link
                       to={`/mentor/student-sessions?selectedStudentId=${id}&back_url=/mentor/students`}

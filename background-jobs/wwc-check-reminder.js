@@ -2,7 +2,7 @@
 import dayjs from "dayjs";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-const LOGIC_APP_URL = process.env.LOGIC_APP_URL;
+const REMAINDER_LOGIC_APP_URL = process.env.REMAINDER_LOGIC_APP_URL;
 const IS_DEV = process.env.NODE_ENV !== "production";
 
 export default async function sendWWCCheckReminder(prisma) {
@@ -45,7 +45,7 @@ export default async function sendWWCCheckReminder(prisma) {
 
   await Promise.all(
     remindersToSend.map(async ({ user: { email } }) =>
-      fetch(LOGIC_APP_URL, {
+      fetch(REMAINDER_LOGIC_APP_URL, {
         method: "post",
         headers: {
           "Content-Type": "application/json",

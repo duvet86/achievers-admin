@@ -423,6 +423,13 @@ export default [
             index: true,
           },
         ),
+        route(
+          ":studentId/report-to-admin",
+          "routes/mentor.students.$studentId.report-to-admin/route.tsx",
+          {
+            index: true,
+          },
+        ),
       ]),
       route("useful-resources", "routes/mentor.useful-resources/route.tsx", {
         index: true,
