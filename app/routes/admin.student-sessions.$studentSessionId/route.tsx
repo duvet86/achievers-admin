@@ -1,13 +1,7 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
 import { redirect } from "react-router";
-import {
-  Link,
-  useLoaderData,
-  useLocation,
-  useSearchParams,
-  useSubmit,
-} from "react-router";
+import { useLoaderData, useSubmit } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import classNames from "classnames";
@@ -19,7 +13,7 @@ import {
   Xmark,
 } from "iconoir-react";
 
-import { Textarea, Title } from "~/components";
+import { StateLink, Textarea, Title } from "~/components";
 
 import {
   getChapterByIdAsync,
@@ -27,7 +21,7 @@ import {
   removeSessionAsync,
 } from "./services.server";
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.studentSessionId, "studentSessionId not found");
 
   const studentSession = await getStudentSessionByIdAsync(
@@ -35,12 +29,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   );
 
   if (studentSession.completedOn) {
-    const url = new URL(request.url);
-    const backURL = url.searchParams.get("back_url");
-
-    throw redirect(
-      `/admin/student-sessions/${studentSession.id}/report?back_url=${backURL}`,
-    );
+    throw redirect(`/admin/student-sessions/${studentSession.id}/report`);
   }
 
   const chapter = await getChapterByIdAsync(
@@ -73,11 +62,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
 export default function Index() {
   const { attendedOnLabel, chapter, studentSession } =
     useLoaderData<typeof loader>();
-  const location = useLocation();
-  const [searchParams] = useSearchParams();
   const submit = useSubmit();
-
-  const backURL = searchParams.get("back_url");
 
   const handleRemoveMentorSubmit = () => {
     if (!confirm(`Are you sure?`)) {
@@ -98,18 +83,16 @@ export default function Index() {
           },
         )}
       >
-        <Title
-          to={backURL ?? `/admin/student-sessions?${searchParams.toString()}`}
-        >
+        <Title>
           Session of &quot;
           {attendedOnLabel}&quot;
         </Title>
 
         {!studentSession.cancelledAt ? (
-          <Link className="btn btn-error w-full sm:w-48" to="cancel">
+          <StateLink className="btn btn-error w-full sm:w-48" to="cancel">
             <Trash />
             Cancel session
-          </Link>
+          </StateLink>
         ) : (
           <div className="alert alert-error w-48">
             <WarningTriangle /> Session cancelled
@@ -159,12 +142,12 @@ export default function Index() {
                 <Xmark className="text-error" />
               </div>
 
-              <Link
-                to={`/admin/student-sessions/${studentSession.id}/mentors/${studentSession.session.mentor.id}/write-report?back_url=${location.pathname}`}
+              <StateLink
+                to={`/admin/student-sessions/${studentSession.id}/mentors/${studentSession.session.mentor.id}/write-report`}
                 className="btn btn-success w-full gap-2 sm:w-48"
               >
                 <EditPencil /> Report on behalf
-              </Link>
+              </StateLink>
             </div>
 
             <div className="flex items-center gap-4 border-b border-gray-300 p-2">

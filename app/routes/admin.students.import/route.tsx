@@ -1,12 +1,12 @@
 import type { ActionFunctionArgs } from "react-router";
 
 import { parseFormData } from "@mjackson/form-data-parser";
-import { Form, Link, useActionData, useNavigation } from "react-router";
+import { Form, useActionData, useNavigation } from "react-router";
 import { Import, PageEdit, Archive } from "iconoir-react";
 
 import { trackException } from "~/services/.server";
 import { isValidDate } from "~/services";
-import { Title, SubTitle, FileInput } from "~/components";
+import { Title, SubTitle, FileInput, StateLink } from "~/components";
 
 import {
   readExcelFileAsync,
@@ -103,7 +103,7 @@ export default function Index() {
 
   return (
     <>
-      <Title to="/admin/students">Import students from file</Title>
+      <Title>Import students from file</Title>
 
       <hr className="my-4" />
 
@@ -128,10 +128,13 @@ export default function Index() {
               Import
             </button>
 
-            <Link to="/admin/students/import-history" className="btn gap-2">
+            <StateLink
+              to="/admin/students/import-history"
+              className="btn gap-2"
+            >
               <Archive className="h-4 w-4" />
               View history
-            </Link>
+            </StateLink>
           </div>
 
           {actionData?.message && (
@@ -190,13 +193,13 @@ export default function Index() {
                       </td>
                       <td>{importedStudentHistory?.error}</td>
                       <td>
-                        <Link
+                        <StateLink
                           to={`/admin/students/${id.toString()}`}
                           className="btn btn-success btn-xs w-full gap-2"
                         >
                           <PageEdit className="h-4 w-4" />
                           Edit
-                        </Link>
+                        </StateLink>
                       </td>
                     </tr>
                   ),

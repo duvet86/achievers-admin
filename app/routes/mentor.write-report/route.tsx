@@ -6,13 +6,7 @@ import type {
 import type { EditorState } from "lexical";
 import type { ActionType, SessionCommandRequest } from "./services.server";
 
-import {
-  Form,
-  Link,
-  useLoaderData,
-  useSearchParams,
-  useSubmit,
-} from "react-router";
+import { Form, useLoaderData, useSubmit } from "react-router";
 
 import { useRef } from "react";
 import dayjs from "dayjs";
@@ -26,7 +20,14 @@ import {
 } from "iconoir-react";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
-import { Editor, EditorQuestions, Select, SubTitle, Title } from "~/components";
+import {
+  Editor,
+  EditorQuestions,
+  Select,
+  StateLink,
+  SubTitle,
+  Title,
+} from "~/components";
 
 import {
   getClosestSessionToToday,
@@ -193,7 +194,6 @@ export default function Index() {
     isReadOnlyEditor,
   } = useLoaderData<typeof loader>();
   const submit = useSubmit();
-  const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLFormElement | null>(null);
   const editorStateRef = useRef<EditorState>(null);
 
@@ -256,14 +256,7 @@ export default function Index() {
     <>
       <div className="flex flex-col gap-10 lg:flex-row">
         <div className="flex w-full items-center gap-8">
-          <Title
-            to={
-              searchParams.get("back_url")
-                ? searchParams.get("back_url")!
-                : undefined
-            }
-            className={classNames({ "text-error": isCancelled })}
-          >
+          <Title className={classNames({ "text-error": isCancelled })}>
             Report of &quot;
             {selectedTermDate && dayjs(selectedTermDate).format("DD/MM/YYYY")}
             &quot;
@@ -335,9 +328,9 @@ export default function Index() {
             ) : (
               <p className="text-warning">
                 No sessions booked for the selected term, go to{" "}
-                <Link className="btn gap-2" to="/mentor/roster">
+                <StateLink className="btn gap-2" to="/mentor/roster">
                   <Calendar /> Roster
-                </Link>{" "}
+                </StateLink>{" "}
                 or include all dates
               </p>
             )}

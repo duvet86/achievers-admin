@@ -1,20 +1,13 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import {
-  Form,
-  Link,
-  useLoaderData,
-  useNavigate,
-  useSearchParams,
-  useSubmit,
-} from "react-router";
+import { Form, useLoaderData, useSearchParams, useSubmit } from "react-router";
 import { Eye } from "iconoir-react";
 import dayjs from "dayjs";
 import classNames from "classnames";
 
 import { getPaginationRange } from "~/services";
 import { getLoggedUserInfoAsync } from "~/services/.server";
-import { Pagination, Title } from "~/components";
+import { Pagination, StateLink, Title } from "~/components";
 
 import {
   getCountAsync,
@@ -101,7 +94,6 @@ export default function Index() {
   } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
-  const navigate = useNavigate();
 
   const totalPageCount = Math.ceil(count / 10);
 
@@ -122,12 +114,6 @@ export default function Index() {
     searchParams.set("mentorId", mentorId);
 
     void submit(Object.fromEntries(searchParams));
-  };
-
-  const handleRowClick = (id: number) => () => {
-    const url = `/mentor/student-sessions/${id}?${searchParams.toString()}`;
-
-    void navigate(url);
   };
 
   return (
@@ -181,10 +167,9 @@ export default function Index() {
                 ({ id, completedOn, signedOffOn, student, session }) => (
                   <tr
                     key={id}
-                    className={classNames("hover:bg-base-200 cursor-pointer", {
+                    className={classNames("hover:bg-base-200", {
                       "bg-success/20": session.mentor.id === loggedUserId,
                     })}
-                    onClick={handleRowClick(id)}
                   >
                     <td className="p-2">
                       {session.mentor.fullName}{" "}
@@ -205,13 +190,13 @@ export default function Index() {
                         : "-"}
                     </td>
                     <td className="hidden p-2 sm:table-cell" align="right">
-                      <Link
+                      <StateLink
                         to={`/mentor/student-sessions/${id}?${searchParams.toString()}`}
                         className="btn btn-success btn-xs btn-block"
                       >
                         <Eye className="h-4 w-4" />
                         Report
-                      </Link>
+                      </StateLink>
                     </td>
                   </tr>
                 ),

@@ -1,5 +1,3 @@
-import { Link, useSearchParams } from "react-router";
-
 import {
   Key,
   NavArrowDown,
@@ -8,7 +6,7 @@ import {
   OnTag,
 } from "iconoir-react";
 
-import { Title } from "~/components";
+import { StateLink, Title } from "~/components";
 
 interface Props {
   endDate: Date | null;
@@ -16,15 +14,11 @@ interface Props {
 }
 
 export function Header(props: Props) {
-  const [searchParams] = useSearchParams();
-
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:gap-10">
-      <Title to={`/admin/users?${searchParams.toString()}`}>
-        Edit mentor info
-      </Title>
+      <Title>Edit mentor info</Title>
 
-      {getMessage(props, searchParams)}
+      {getMessage(props)}
 
       <div className="flex-1"></div>
 
@@ -48,14 +42,14 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
   if (endDate !== null) {
     return (
       <li>
-        <Link
+        <StateLink
           to="re-enable"
           relative="path"
           className="text-success gap-4 font-semibold"
         >
           <OnTag />
           Re enable mentor
-        </Link>
+        </StateLink>
       </li>
     );
   }
@@ -64,16 +58,19 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
     return (
       <>
         <li>
-          <Link to="remove-access" className="text-warning gap-4 font-semibold">
+          <StateLink
+            to="remove-access"
+            className="text-warning gap-4 font-semibold"
+          >
             <Key />
             Remove access
-          </Link>
+          </StateLink>
         </li>
         <li>
-          <Link to="archive" className="text-error gap-4 font-semibold">
+          <StateLink to="archive" className="text-error gap-4 font-semibold">
             <BinFull />
             Archive
-          </Link>
+          </StateLink>
         </li>
       </>
     );
@@ -82,25 +79,25 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
   return (
     <>
       <li>
-        <Link to="give-access" className="text-success gap-4 font-semibold">
+        <StateLink
+          to="give-access"
+          className="text-success gap-4 font-semibold"
+        >
           <Key />
           Give access
-        </Link>
+        </StateLink>
       </li>
       <li>
-        <Link to="archive" className="text-error gap-4 font-semibold">
+        <StateLink to="archive" className="text-error gap-4 font-semibold">
           <BinFull />
           Archive
-        </Link>
+        </StateLink>
       </li>
     </>
   );
 }
 
-function getMessage(
-  { endDate, mentorAppRoleAssignmentId }: Props,
-  searchParams: URLSearchParams,
-) {
+function getMessage({ endDate, mentorAppRoleAssignmentId }: Props) {
   if (endDate !== null) {
     return (
       <p
@@ -109,9 +106,9 @@ function getMessage(
       >
         <WarningTriangle />
         This mentor is archived!{" "}
-        <Link to={`end-reason?${searchParams}`} className="link">
+        <StateLink to="end-reason" className="link">
           View reason
-        </Link>
+        </StateLink>
       </p>
     );
   }

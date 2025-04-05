@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "react-router";
 
 import dayjs from "dayjs";
-import { Link, useLoaderData } from "react-router";
+import { useLoaderData } from "react-router";
 
 import { StatsReport, Check, Xmark, WarningTriangle } from "iconoir-react";
 
@@ -10,7 +10,7 @@ import {
   getSchoolTermsAsync,
 } from "~/services/.server";
 import { getCurrentTermForDate } from "~/services";
-import { SubTitle } from "~/components";
+import { StateLink, SubTitle } from "~/components";
 
 import {
   getNextStudentSessionsAsync,
@@ -128,8 +128,8 @@ export default function Index() {
               You haven&apos;t booked a session yet
             </h1>
             <h3>
-              Go to the <Link to="/mentor/roster">roster page</Link> to book you
-              first session
+              Go to the <StateLink to="/mentor/roster">roster page</StateLink>{" "}
+              to book you first session
             </h3>
           </article>
         )}
@@ -197,17 +197,17 @@ export default function Index() {
                       </td>
                       <td align="right">
                         {student && (
-                          <Link
+                          <StateLink
                             to={
                               completedOn !== null
-                                ? `/mentor/student-sessions/${id}?back_url=/mentor/home`
-                                : `/mentor/write-report?selectedStudentId=${student.id}&selectedTermDate=${dayjs(session.attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z&back_url=/mentor/home`
+                                ? `/mentor/student-sessions/${id}`
+                                : `/mentor/write-report?selectedStudentId=${student.id}&selectedTermDate=${dayjs(session.attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z`
                             }
                             className="btn btn-success btn-xs h-9 gap-2"
                           >
                             <StatsReport className="hidden h-4 w-4 lg:block" />
                             Report
-                          </Link>
+                          </StateLink>
                         )}
                       </td>
                     </tr>

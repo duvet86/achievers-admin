@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
-import { Link, useFetcher, useLoaderData, useSearchParams } from "react-router";
+import { useFetcher, useLoaderData } from "react-router";
 
 import invariant from "tiny-invariant";
 import {
@@ -10,7 +10,7 @@ import {
   WarningTriangle,
 } from "iconoir-react";
 
-import { Title, SelectSearch } from "~/components";
+import { Title, SelectSearch, StateLink } from "~/components";
 
 import {
   assignStudentToMentorAsync,
@@ -74,7 +74,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Index() {
   const {
-    chapterId,
     availableStudents,
     mentorWithStudents: { fullName, mentorToStudentAssignement },
   } = useLoaderData<typeof loader>();
@@ -82,7 +81,6 @@ export default function Index() {
     message: string | null;
     studentId: string;
   }>();
-  const [searchParams] = useSearchParams();
 
   const isLoading = state !== "idle";
 
@@ -99,15 +97,7 @@ export default function Index() {
 
   return (
     <>
-      <Title
-        to={
-          searchParams.get("back_url")
-            ? searchParams.get("back_url")!
-            : `/admin/chapters/${chapterId}/mentors`
-        }
-      >
-        Assign student to mentor
-      </Title>
+      <Title>Assign student to mentor</Title>
 
       <article className="prose w-full max-w-none">
         <div className="flex flex-col sm:flex-row sm:gap-12">
@@ -185,13 +175,13 @@ export default function Index() {
                       )}
                     </span>
                     <div className="flex gap-2 sm:gap-6">
-                      <Link
+                      <StateLink
                         to="/admin/student-sessions"
                         className="btn btn-info hidden w-40 sm:flex"
                       >
                         <Clock />
                         View sessions
-                      </Link>
+                      </StateLink>
 
                       <Form onSubmit={onMentorRemoved(fullName)}>
                         <input type="hidden" name="studentId" value={id} />

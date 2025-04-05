@@ -3,7 +3,7 @@ import type { Prisma } from "@prisma/client/index.js";
 
 import dayjs from "dayjs";
 import { $Enums } from "@prisma/client/index.js";
-import { Link, redirect, useLoaderData, useNavigation } from "react-router";
+import { redirect, useLoaderData, useNavigation } from "react-router";
 import invariant from "tiny-invariant";
 import { NavArrowRight } from "iconoir-react";
 
@@ -18,6 +18,7 @@ import {
   updateStudentByIdAsync,
 } from "./services.server";
 import { StudentForm, GuardianList, TeacherList, Header } from "./components";
+import { StateLink } from "~/components";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.studentId, "studentId not found");
@@ -205,12 +206,12 @@ export default function Index() {
 
         <div className="flex-1 overflow-y-auto pb-4 lg:pb-0">
           {student && (
-            <Link
+            <StateLink
               className="btn btn-block mb-4 sm:w-52"
               to={`/admin/students/${student.id}/school-reports`}
             >
               School reports <NavArrowRight />
-            </Link>
+            </StateLink>
           )}
 
           <GuardianList

@@ -1,8 +1,8 @@
-import { Link, useFetcher } from "react-router";
+import { useFetcher } from "react-router";
 import classnames from "classnames";
 
 import { PageEdit, GraduationCap, Xmark } from "iconoir-react";
-import { SubTitle } from "~/components";
+import { StateLink, SubTitle } from "~/components";
 
 interface Props {
   isNewStudent: boolean;
@@ -53,13 +53,13 @@ export function TeacherList({ studentTeacher, isNewStudent }: Props) {
                   <td>{schoolName}</td>
                   <td>
                     <div className="join w-full">
-                      <Link
+                      <StateLink
                         className="btn btn-success join-item btn-xs w-1/2 gap-2"
                         to={`teachers/${id}`}
                       >
                         <PageEdit className="h-4 w-4" />
                         <span className="hidden lg:block">Edit</span>
-                      </Link>
+                      </StateLink>
 
                       <Form
                         onSubmit={onTeacherRemoved(fullName)}
@@ -101,7 +101,7 @@ export function TeacherList({ studentTeacher, isNewStudent }: Props) {
       )}
 
       <div className="mt-6 flex justify-end">
-        <Link
+        <StateLink
           to="teachers/new"
           className={classnames("btn btn-primary btn-block gap-4 sm:w-48", {
             invisible: isNewStudent,
@@ -109,7 +109,7 @@ export function TeacherList({ studentTeacher, isNewStudent }: Props) {
         >
           <GraduationCap className="h-6 w-6" />
           Add a teacher
-        </Link>
+        </StateLink>
       </div>
     </>
   );

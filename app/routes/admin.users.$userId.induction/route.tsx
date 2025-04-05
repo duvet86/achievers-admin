@@ -64,7 +64,7 @@ export default function Index() {
 
   return (
     <>
-      <Title to={`/admin/users/${user.id}`}>
+      <Title>
         Induction acknowledgement for &quot;{user.fullName}
         &quot;
       </Title>

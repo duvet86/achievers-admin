@@ -27,9 +27,7 @@ export default function Index() {
 
   return (
     <>
-      <Title to="/mentor/students">
-        School reports for &quot;{student.fullName}&quot;
-      </Title>
+      <Title>School reports for &quot;{student.fullName}&quot;</Title>
 
       <div className="overflow-x-auto">
         <table className="table">

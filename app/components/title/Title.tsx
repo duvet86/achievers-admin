@@ -1,18 +1,27 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import classnames from "classnames";
 import { NavArrowLeft } from "iconoir-react";
 
 interface Props {
   className?: string;
-  to?: string;
   children?: React.ReactNode;
 }
 
-export function Title({ className, to, children }: Props) {
+export function Title({ className, children }: Props) {
+  const location = useLocation();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+  const history: string[] = location.state?.history ?? [];
+
   return (
     <div className={classnames("flex items-center gap-4", className)}>
-      {to && (
-        <Link to={to} className="btn btn-square w-14">
+      {history.length > 0 && (
+        <Link
+          to={history[history.length - 1]}
+          state={{
+            history: history.slice(0, -1),
+          }}
+          className="btn btn-square w-14"
+        >
           <NavArrowLeft className="h-8 w-8" />
         </Link>
       )}

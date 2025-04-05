@@ -6,12 +6,7 @@ import type {
 import type { EditorState } from "lexical";
 import type { SessionCommandRequest } from "./services.server";
 
-import {
-  redirect,
-  useFetcher,
-  useLoaderData,
-  useSearchParams,
-} from "react-router";
+import { redirect, useFetcher, useLoaderData } from "react-router";
 
 import dayjs from "dayjs";
 import { useRef } from "react";
@@ -67,7 +62,6 @@ export default function Index() {
   const {
     studentSession: { session, report, reportFeedback, signedOffOn, student },
   } = useLoaderData<typeof loader>();
-  const [searchParams] = useSearchParams();
 
   const editorStateRef = useRef<EditorState>(null);
   const { state, submit } = useFetcher();
@@ -102,10 +96,7 @@ export default function Index() {
 
   return (
     <>
-      <Title
-        className="mb-4"
-        to={`/admin/student-sessions?${searchParams.toString()}`}
-      >
+      <Title className="mb-4">
         {dayjs(session.attendedOn).format("MMMM D, YYYY")} - mentor: &quot;
         {session.mentor.fullName}&quot; student: &quot;
         {student.fullName}&quot;

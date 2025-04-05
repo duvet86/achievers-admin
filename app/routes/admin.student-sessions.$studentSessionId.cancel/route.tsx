@@ -45,7 +45,7 @@ export default function Index() {
 
   return (
     <>
-      <Title to={`/admin/student-sessions/${studentSession.id}`}>
+      <Title>
         Cancel session of &quot;
         {dayjs(studentSession.session.attendedOn).format("MMMM D, YYYY")}&quot;
       </Title>

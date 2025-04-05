@@ -1,10 +1,10 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { Link, useLoaderData } from "react-router";
+import { useLoaderData } from "react-router";
 import { GraduationCap, User } from "iconoir-react";
 import invariant from "tiny-invariant";
 
-import { Title } from "~/components";
+import { StateLink, Title } from "~/components";
 import { getChapterAsync } from "./services.server";
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -23,14 +23,14 @@ export default function Index() {
       <Title>Attendances for &quot;{chapter.name}&quot;</Title>
 
       <div className="mt-6 flex flex-col flex-wrap gap-8 sm:flex-row">
-        <Link to="mentors" className="btn btn-block h-24">
+        <StateLink to="mentors" className="btn btn-block h-24">
           <User />
           Mentors
-        </Link>
-        <Link to="students" className="btn btn-block h-24">
+        </StateLink>
+        <StateLink to="students" className="btn btn-block h-24">
           <GraduationCap />
           Students
-        </Link>
+        </StateLink>
       </div>
     </>
   );

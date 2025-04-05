@@ -1,10 +1,10 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { Link, useLoaderData } from "react-router";
+import { useLoaderData } from "react-router";
 import { Archery, StatsReport, WarningTriangle } from "iconoir-react";
 
 import { getLoggedUserInfoAsync } from "~/services/.server";
-import { Title } from "~/components";
+import { StateLink, Title } from "~/components";
 
 import { getMentorStudentsAsync } from "./services.server";
 
@@ -49,37 +49,38 @@ export default function Index() {
                 <td>{yearLevel ?? "-"}</td>
                 <td>
                   <div className="flex justify-end gap-4">
-                    <Link
+                    <StateLink
                       className="btn btn-error w-48 gap-2"
                       to={`/mentor/students/${id}/report-to-admin`}
                     >
                       <WarningTriangle className="hidden h-4 w-4 lg:block" />
                       Report to Admin
-                    </Link>
+                    </StateLink>
 
-                    <Link
-                      to={`/mentor/student-sessions?selectedStudentId=${id}&back_url=/mentor/students`}
+                    <StateLink
+                      to={`/mentor/student-sessions?selectedStudentId=${id}`}
+                      state={{ from: "/mentor/students" }}
                       className="btn btn-success w-48 gap-2"
                     >
                       <StatsReport className="hidden h-4 w-4 lg:block" />
                       Mentor reports
-                    </Link>
+                    </StateLink>
 
-                    <Link
+                    <StateLink
                       to={`/mentor/students/${id}/school-reports`}
                       className="btn w-48 gap-2"
                     >
                       <StatsReport className="hidden h-4 w-4 lg:block" />
                       School reports
-                    </Link>
+                    </StateLink>
 
-                    <Link
+                    <StateLink
                       to={`/mentor/students/${id}/goals`}
                       className="btn btn-primary w-48 gap-2"
                     >
                       <Archery className="hidden h-4 w-4 lg:block" />
                       Goals
-                    </Link>
+                    </StateLink>
                   </div>
                 </td>
               </tr>

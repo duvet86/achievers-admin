@@ -15,7 +15,7 @@ describe("Title", () => {
   it("should display component with back header", () => {
     const { baseElement } = render(
       <MemoryRouter>
-        <Title to="/">Test</Title>
+        <Title>Test</Title>
       </MemoryRouter>,
     );
 
@@ -25,9 +25,7 @@ describe("Title", () => {
   it("should display component with class names", () => {
     const { baseElement } = render(
       <MemoryRouter>
-        <Title className="mb-4" to="/">
-          Test
-        </Title>
+        <Title className="mb-4">Test</Title>
       </MemoryRouter>,
     );
 

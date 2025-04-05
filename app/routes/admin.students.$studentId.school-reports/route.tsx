@@ -6,7 +6,6 @@ import {
   useActionData,
   useLoaderData,
   useNavigation,
-  useSearchParams,
   useSubmit,
 } from "react-router";
 import invariant from "tiny-invariant";
@@ -90,7 +89,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 export default function Index() {
   const { student, termsList, selectedTermId } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
-  const [searchParams] = useSearchParams();
   const submit = useSubmit();
   const transition = useNavigation();
 
@@ -108,9 +106,7 @@ export default function Index() {
 
   return (
     <>
-      <Title to={`/admin/students/${student.id}?${searchParams.toString()}`}>
-        School reports for &quot;{student.fullName}&quot;
-      </Title>
+      <Title>School reports for &quot;{student.fullName}&quot;</Title>
 
       <hr className="my-4" />
 

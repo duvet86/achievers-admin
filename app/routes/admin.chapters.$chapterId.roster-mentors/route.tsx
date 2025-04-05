@@ -3,7 +3,6 @@ import type { Prisma } from "@prisma/client/index.js";
 
 import {
   Form,
-  Link,
   useLoaderData,
   useNavigate,
   useSearchParams,
@@ -27,7 +26,7 @@ import {
   getValueFromCircularArray,
 } from "~/services";
 import { getSchoolTermsAsync } from "~/services/.server";
-import { Input, Select, TableHeaderSort, Title } from "~/components";
+import { Input, Select, StateLink, TableHeaderSort, Title } from "~/components";
 
 import { getMentorsAsync } from "./services.server";
 
@@ -155,15 +154,7 @@ export default function Index() {
   return (
     <>
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <Title
-          to={
-            searchParams.get("back_url")
-              ? searchParams.get("back_url")!
-              : `/admin/chapters`
-          }
-        >
-          Roster planner MENTORS
-        </Title>
+        <Title>Roster planner MENTORS</Title>
 
         <div className="flex gap-4">
           <a
@@ -175,13 +166,13 @@ export default function Index() {
             Export roster
           </a>
 
-          <Link
+          <StateLink
             to={`/admin/chapters/${chapterId}/roster-students`}
             className="btn w-full sm:w-52"
           >
             <Calendar />
             Roster STUDENTS
-          </Link>
+          </StateLink>
         </div>
       </div>
 
@@ -315,11 +306,9 @@ export default function Index() {
                     }
                   }
 
-                  const queryString = `back_url=/admin/chapters/${chapterId}/roster-mentors?${encodeURIComponent(searchParams.toString())}`;
-
                   const to = sessionId
-                    ? `/admin/chapters/${chapterId}/roster-mentors/sessions/${sessionId}?${queryString}`
-                    : `/admin/chapters/${chapterId}/roster-mentors/${mentorId}/attended-on/${attendedOn}/new?${queryString}`;
+                    ? `/admin/chapters/${chapterId}/roster-mentors/sessions/${sessionId}`
+                    : `/admin/chapters/${chapterId}/roster-mentors/${mentorId}/attended-on/${attendedOn}/new`;
 
                   return (
                     <td key={attendedOn} className="border-r border-gray-300">
@@ -340,7 +329,7 @@ export default function Index() {
                           </div>
                         )}
 
-                        <Link
+                        <StateLink
                           to={to}
                           className={classNames(
                             "btn btn-ghost btn-block justify-between font-bold",
@@ -352,7 +341,7 @@ export default function Index() {
                         >
                           <span className="flex-1">{label}</span>
                           <NavArrowRight />
-                        </Link>
+                        </StateLink>
                       </div>
                     </td>
                   );

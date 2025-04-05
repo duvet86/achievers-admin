@@ -1,12 +1,12 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { Form, Link, useLoaderData } from "react-router";
+import { Form, useLoaderData } from "react-router";
 import dayjs from "dayjs";
 import classNames from "classnames";
 import { Eye } from "iconoir-react";
 
 import { getPaginationRange } from "~/services";
-import { Pagination, Title } from "~/components";
+import { Pagination, StateLink, Title } from "~/components";
 
 import { getWWCCheckReminders, getWWCRemindersCount } from "./services.server";
 
@@ -50,7 +50,7 @@ export default function Index() {
 
   return (
     <Form>
-      <Title to="/admin/config">WWC email reminders</Title>
+      <Title>WWC email reminders</Title>
 
       <div className="overflow-auto bg-white">
         <table className="table">
@@ -115,13 +115,13 @@ export default function Index() {
                       : "-"}
                   </td>
                   <td>
-                    <Link
+                    <StateLink
                       to={`/admin/users/${user.id}/wwc-check`}
                       className="btn btn-success btn-xs w-full gap-2"
                     >
                       <Eye className="hidden h-4 w-4 lg:block" />
                       View
-                    </Link>
+                    </StateLink>
                   </td>
                 </tr>
               ),

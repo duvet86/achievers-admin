@@ -1,13 +1,7 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
 import { redirect } from "react-router";
-import {
-  Form,
-  Link,
-  useLoaderData,
-  useSearchParams,
-  useSubmit,
-} from "react-router";
+import { Form, useLoaderData, useSearchParams, useSubmit } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import {
@@ -21,7 +15,7 @@ import {
   Xmark,
 } from "iconoir-react";
 
-import { SelectSearch, Title } from "~/components";
+import { SelectSearch, StateLink, Title } from "~/components";
 
 import {
   addStudentToSessionAsync,
@@ -116,8 +110,6 @@ export default function Index() {
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
 
-  const backURL = searchParams.get("back_url");
-
   const handleRemoveSession = () => {
     if (!confirm(`Are you sure?`)) {
       return;
@@ -160,9 +152,7 @@ export default function Index() {
 
   return (
     <>
-      <Title
-        to={backURL ?? `/admin/student-sessions?${searchParams.toString()}`}
-      >
+      <Title>
         Session of &quot;
         {attendedOnLabel}&quot;
       </Title>
@@ -279,12 +269,12 @@ export default function Index() {
                               </div>
                             </td>
                             <td align="right">
-                              <Link
+                              <StateLink
                                 to={`/admin/student-sessions/${id}?${searchParams.toString()}`}
                                 className="btn btn-sm"
                               >
                                 <StatsReport /> View reason
-                              </Link>
+                              </StateLink>
                             </td>
                           </>
                         ) : (
@@ -317,12 +307,12 @@ export default function Index() {
                             </td>
                             <td className="p-2" align="right">
                               {completedOn ? (
-                                <Link
+                                <StateLink
                                   to={`/admin/student-sessions/${id}/report?${searchParams.toString()}`}
                                   className="btn btn-success btn-sm"
                                 >
                                   <StatsReport /> Go to report
-                                </Link>
+                                </StateLink>
                               ) : (
                                 <div className="flex justify-end gap-4">
                                   <button
@@ -335,13 +325,13 @@ export default function Index() {
                                     <Xmark />
                                     Remove
                                   </button>
-                                  <Link
+                                  <StateLink
                                     className="btn btn-error btn-sm"
                                     to={`/admin/student-sessions/${id}/cancel`}
                                   >
                                     <Trash />
                                     Cancel
-                                  </Link>
+                                  </StateLink>
                                 </div>
                               )}
                             </td>

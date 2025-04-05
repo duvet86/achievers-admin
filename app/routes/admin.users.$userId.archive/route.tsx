@@ -44,9 +44,7 @@ export default function Chapter() {
 
   return (
     <>
-      <Title to={`/admin/users/${user.id}`}>
-        Archive &quot;{user.fullName}&quot;
-      </Title>
+      <Title>Archive &quot;{user.fullName}&quot;</Title>
 
       <Form method="post">
         <fieldset disabled={transition.state === "submitting"}>

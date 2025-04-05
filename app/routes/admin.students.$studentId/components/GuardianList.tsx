@@ -1,8 +1,8 @@
-import { Link, useFetcher } from "react-router";
+import { useFetcher } from "react-router";
 import classnames from "classnames";
 
 import { Xmark, HomeShield, PageEdit } from "iconoir-react";
-import { SubTitle } from "~/components";
+import { StateLink, SubTitle } from "~/components";
 
 interface Props {
   isNewStudent: boolean;
@@ -53,13 +53,13 @@ export function GuardianList({ guardian, isNewStudent }: Props) {
                   <td>{relationship}</td>
                   <td>
                     <div className="join w-full">
-                      <Link
+                      <StateLink
                         className="btn btn-success join-item btn-xs w-1/2 gap-2"
                         to={`guardians/${id}`}
                       >
                         <PageEdit className="h-4 w-4" />
                         <span className="hidden lg:block">Edit</span>
-                      </Link>
+                      </StateLink>
 
                       <Form
                         onSubmit={onGuardianRemoved(fullName)}
@@ -94,7 +94,7 @@ export function GuardianList({ guardian, isNewStudent }: Props) {
       )}
 
       <div className="mt-6 flex justify-end">
-        <Link
+        <StateLink
           to="guardians/new"
           className={classnames("btn btn-primary btn-block gap-4 sm:w-48", {
             invisible: isNewStudent,
@@ -102,7 +102,7 @@ export function GuardianList({ guardian, isNewStudent }: Props) {
         >
           <HomeShield className="h-6 w-6" />
           Add a guardian
-        </Link>
+        </StateLink>
       </div>
     </>
   );

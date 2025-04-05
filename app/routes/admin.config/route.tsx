@@ -1,9 +1,9 @@
-import { Form, Link, useActionData, useLoaderData } from "react-router";
+import { Form, useActionData, useLoaderData } from "react-router";
 
 import { Check, Xmark, CheckCircle } from "iconoir-react";
 
 import { version, isEmailRemindersCheckEnabled } from "~/services/.server";
-import { Title } from "~/components";
+import { StateLink, Title } from "~/components";
 
 import { sendEmailRemaniders } from "./services.server";
 
@@ -43,12 +43,12 @@ export default function Index() {
           ) : (
             <Xmark className="text-error" />
           )}
-          <Link to="email-reminders-police-check" className="btn w-48">
+          <StateLink to="email-reminders-police-check" className="btn w-48">
             View Police check
-          </Link>
-          <Link to="email-reminders-wwc" className="btn w-48">
+          </StateLink>
+          <StateLink to="email-reminders-wwc" className="btn w-48">
             View WWC
-          </Link>
+          </StateLink>
           <Form method="POST">
             <button className="btn btn-neutral w-48" type="submit">
               Send email

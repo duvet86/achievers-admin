@@ -3,7 +3,6 @@ import type { Prisma } from "@prisma/client/index.js";
 
 import {
   Form,
-  Link,
   useLoaderData,
   useNavigate,
   useSearchParams,
@@ -27,7 +26,7 @@ import {
   getValueFromCircularArray,
 } from "~/services";
 import { getSchoolTermsAsync } from "~/services/.server";
-import { Input, Select, TableHeaderSort, Title } from "~/components";
+import { Input, Select, StateLink, TableHeaderSort, Title } from "~/components";
 
 import { getStudentsAsync } from "./services.server";
 
@@ -155,15 +154,7 @@ export default function Index() {
   return (
     <>
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <Title
-          to={
-            searchParams.get("back_url")
-              ? searchParams.get("back_url")!
-              : `/admin/chapters`
-          }
-        >
-          Roster planner STUDENTS
-        </Title>
+        <Title>Roster planner STUDENTS</Title>
 
         <div className="flex gap-4">
           <a
@@ -175,13 +166,13 @@ export default function Index() {
             Export roster
           </a>
 
-          <Link
+          <StateLink
             to={`/admin/chapters/${chapterId}/roster-mentors`}
             className="btn w-full sm:w-52"
           >
             <Calendar />
             Roster MENTORS
-          </Link>
+          </StateLink>
         </div>
       </div>
 
@@ -292,13 +283,11 @@ export default function Index() {
                   const isCancelled = session?.isCancelled ?? false;
                   const completedOn = session?.completedOn;
 
-                  const queryString = `back_url=/admin/chapters/${chapterId}/roster-students?${encodeURIComponent(searchParams.toString())}`;
-
                   const to = sessionId
                     ? completedOn
-                      ? `/admin/student-sessions/${studentSessionId}/report?${queryString}`
-                      : `/admin/student-sessions/${studentSessionId}?${queryString}`
-                    : `/admin/chapters/${chapterId}/roster-students/${studentId}/attended-on/${attendedOn}/new?${queryString}`;
+                      ? `/admin/student-sessions/${studentSessionId}/report`
+                      : `/admin/student-sessions/${studentSessionId}`
+                    : `/admin/chapters/${chapterId}/roster-students/${studentId}/attended-on/${attendedOn}/new`;
 
                   return (
                     <td key={index} className="border-r border-gray-300">
@@ -318,12 +307,12 @@ export default function Index() {
                             Report <Check className="h-4 w-4" />
                           </div>
                         )}
-                        <Link to={to} className="btn btn-ghost btn-block">
+                        <StateLink to={to} className="btn btn-ghost btn-block">
                           <span className="flex-1">
                             {session?.mentorFullName}
                           </span>
                           <NavArrowRight />
-                        </Link>
+                        </StateLink>
                       </div>
                     </td>
                   );

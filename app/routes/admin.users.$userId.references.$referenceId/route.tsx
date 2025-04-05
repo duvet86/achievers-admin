@@ -132,7 +132,7 @@ export default function Index() {
 
   return (
     <>
-      <Title to={`/admin/users/${user.id}/references`}>
+      <Title>
         Reference &quot;{reference.firstName} {reference.lastName}&quot; for
         mentor &quot;
         {user.firstName} {user.lastName}&quot;

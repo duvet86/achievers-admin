@@ -1,13 +1,13 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { useLoaderData, Link } from "react-router";
+import { useLoaderData } from "react-router";
 import { UserPlus, Calendar, Community } from "iconoir-react";
 
 import {
   getLoggedUserInfoAsync,
   getPermissionsAbility,
 } from "~/services/.server";
-import { Title } from "~/components";
+import { StateLink, Title } from "~/components";
 
 import { getChaptersAsync } from "./services.server";
 
@@ -36,48 +36,48 @@ export default function Index() {
             <p className="mb-6">{address}</p>
             <div className="card-actions justify-center">
               <div className="join join-vertical sm:join-horizontal w-full sm:w-auto">
-                <Link
+                <StateLink
                   to={`${id}/roster-students`}
                   className="btn btn-primary join-item"
                 >
                   <Calendar />
                   Roster STUDENTS
-                </Link>
-                <Link
+                </StateLink>
+                <StateLink
                   to={`${id}/roster-mentors`}
                   className="btn btn-primary join-item"
                 >
                   <Calendar />
                   Roster MENTORS
-                </Link>
+                </StateLink>
               </div>
 
               <div className="join join-vertical sm:join-horizontal w-full sm:w-auto">
-                <Link to={`${id}/students`} className="btn join-item">
+                <StateLink to={`${id}/students`} className="btn join-item">
                   <UserPlus />
                   Assign: STUDENT LIST
-                </Link>
-                <Link to={`${id}/mentors`} className="btn join-item">
+                </StateLink>
+                <StateLink to={`${id}/mentors`} className="btn join-item">
                   <UserPlus />
                   Assign: MENTOR LIST
-                </Link>
+                </StateLink>
               </div>
 
               <div className="join join-vertical sm:join-horizontal w-full sm:w-auto">
-                <Link
+                <StateLink
                   to={`/admin/chapters/${id}/attendances/mentors`}
                   className="btn btn-secondary join-item"
                 >
                   <Community />
                   Attendances: MENTORS
-                </Link>
-                <Link
+                </StateLink>
+                <StateLink
                   to={`/admin/chapters/${id}/attendances/students`}
                   className="btn btn-secondary join-item"
                 >
                   <Community />
                   Attendances: STUDENTS
-                </Link>
+                </StateLink>
               </div>
             </div>
           </div>

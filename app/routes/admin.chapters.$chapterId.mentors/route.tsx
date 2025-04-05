@@ -8,7 +8,7 @@ import classNames from "classnames";
 import { CoinsSwap, PageEdit } from "iconoir-react";
 
 import { getPaginationRange } from "~/services";
-import { Title, Pagination, TableHeaderSort } from "~/components";
+import { Title, Pagination, TableHeaderSort, StateLink } from "~/components";
 
 import {
   getMentorsWithStudentsAsync,
@@ -104,15 +104,7 @@ export default function Index() {
   return (
     <>
       <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-        <Title
-          to={
-            searchParams.get("back_url")
-              ? searchParams.get("back_url")!
-              : "/admin/chapters"
-          }
-        >
-          Mentors with students
-        </Title>
+        <Title>Mentors with students</Title>
 
         <Link
           to={`/admin/chapters/${chapterId}/students`}
@@ -185,13 +177,13 @@ export default function Index() {
                       </ul>
                     </td>
                     <td className="p-2">
-                      <Link
+                      <StateLink
                         to={`${id}?${searchParams.toString()}`}
                         className="btn btn-success btn-xs w-full gap-2"
                       >
                         <PageEdit className="hidden h-4 w-4 sm:block" />
                         Edit
-                      </Link>
+                      </StateLink>
                     </td>
                   </tr>
                 ),

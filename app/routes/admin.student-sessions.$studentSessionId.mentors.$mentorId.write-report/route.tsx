@@ -6,12 +6,7 @@ import type {
 import type { EditorState } from "lexical";
 import type { ActionType, SessionCommandRequest } from "./services.server";
 
-import {
-  redirect,
-  useFetcher,
-  useLoaderData,
-  useSearchParams,
-} from "react-router";
+import { redirect, useFetcher, useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
 import { useRef } from "react";
@@ -81,7 +76,6 @@ export default function Index() {
 
   const editorReportStateRef = useRef<EditorState>(null);
   const editorFeedbackStateRef = useRef<EditorState>(null);
-  const [searchParams] = useSearchParams();
 
   const isLoading = state !== "idle";
 
@@ -136,14 +130,7 @@ export default function Index() {
 
   return (
     <>
-      <Title
-        to={
-          searchParams.get("back_url")
-            ? searchParams.get("back_url")!
-            : undefined
-        }
-        className="mb-4"
-      >
+      <Title className="mb-4">
         Report of &quot;{dayjs(session.attendedOn).format("DD/MM/YYYY")}&quot;
         on behalf of &quot;{session.mentor.fullName}&quot;
       </Title>

@@ -1,11 +1,11 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { Form, Link, useLoaderData } from "react-router";
+import { Form, useLoaderData } from "react-router";
 import dayjs from "dayjs";
 import { PageEdit } from "iconoir-react";
 
 import { getPaginationRange } from "~/services";
-import { Pagination, Title } from "~/components";
+import { Pagination, StateLink, Title } from "~/components";
 
 import {
   getImportHistoryAsync,
@@ -90,13 +90,13 @@ export default function Index() {
                     <td>{error}</td>
                     <td>{dayjs(createdAt).format("YYYY/MM/DD hh:mm")}</td>
                     <td>
-                      <Link
+                      <StateLink
                         to={`/admin/users/${id.toString()}`}
                         className="btn btn-success btn-xs w-full gap-2"
                       >
                         <PageEdit className="h-4 w-4" />
                         Edit
-                      </Link>
+                      </StateLink>
                     </td>
                   </tr>
                 ),

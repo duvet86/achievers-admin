@@ -88,7 +88,7 @@ export default function Chapter() {
 
   return (
     <>
-      <Title to={`/admin/users/${user.id}`}>
+      <Title>
         Invite &quot;{user.fullName}&quot; to the achievers&apos; web app
       </Title>
 

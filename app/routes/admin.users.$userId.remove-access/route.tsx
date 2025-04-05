@@ -49,7 +49,7 @@ export default function Chapter() {
 
   return (
     <>
-      <Title to={`/admin/users/${user.id}`}>
+      <Title>
         Remove access to the achievers&apos; web app for &quot;{user.fullName}
         &quot;
       </Title>

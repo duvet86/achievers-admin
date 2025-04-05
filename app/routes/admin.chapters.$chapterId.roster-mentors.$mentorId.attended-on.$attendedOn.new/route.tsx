@@ -1,7 +1,7 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
 import { redirect } from "react-router";
-import { Form, useLoaderData, useSearchParams } from "react-router";
+import { Form, useLoaderData } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import { FloppyDiskArrowIn, Xmark } from "iconoir-react";
@@ -85,15 +85,10 @@ export async function action({ params, request }: ActionFunctionArgs) {
 export default function Index() {
   const { attendedOnLabel, chapter, mentor, students } =
     useLoaderData<typeof loader>();
-  const [searchParams] = useSearchParams();
-
-  const backURL = searchParams.get("back_url");
 
   return (
     <>
-      <Title
-        to={backURL ?? `/admin/student-sessions?${searchParams.toString()}`}
-      >
+      <Title>
         Session of &quot;
         {attendedOnLabel}&quot;
       </Title>

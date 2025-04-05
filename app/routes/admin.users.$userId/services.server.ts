@@ -23,6 +23,7 @@ export async function getUserByIdAsync(id: number) {
       id,
     },
     select: {
+      id: true,
       azureADId: true,
       fullName: true,
       firstName: true,

@@ -1,6 +1,6 @@
-import { Link } from "react-router";
-
 import { DatabaseExport, DatabaseRestore, NavArrowDown } from "iconoir-react";
+
+import { StateLink } from "~/components";
 
 export default function ActionsDropdown() {
   return (
@@ -14,10 +14,10 @@ export default function ActionsDropdown() {
         className="menu dropdown-content rounded-box border-base-300 bg-base-100 w-52 border p-2 shadow-sm"
       >
         <li>
-          <Link className="gap-4" to="import">
+          <StateLink className="gap-4" to="import">
             <DatabaseRestore />
             Import mentors
-          </Link>
+          </StateLink>
         </li>
         <li>
           <a className="gap-4" href="/admin/users/export" download>

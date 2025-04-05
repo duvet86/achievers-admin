@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { useLoaderData, useSearchParams } from "react-router";
+import { useLoaderData } from "react-router";
 
 import invariant from "tiny-invariant";
 
@@ -20,12 +20,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export default function Index() {
-  const { id, fullName, endDate, endReason } = useLoaderData<typeof loader>();
-  const [searchParams] = useSearchParams();
+  const { fullName, endDate, endReason } = useLoaderData<typeof loader>();
 
   return (
     <>
-      <Title to={`/admin/users/${id}?${searchParams}`}>Archived Mentor</Title>
+      <Title>Archived Mentor</Title>
 
       <p className="mt-4">
         Mentor: <span className="font-bold">{fullName}</span>

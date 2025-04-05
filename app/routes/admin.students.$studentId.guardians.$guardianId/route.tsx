@@ -92,14 +92,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { studentId, guardian } = useLoaderData<typeof loader>();
+  const { guardian } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const transition = useNavigation();
   const { guardianId } = useParams();
 
   return (
     <>
-      <Title to={`/admin/students/${studentId}`}>
+      <Title>
         {guardianId === "new" ? "Add new guardian" : "Edit info for guardian"}
       </Title>
 

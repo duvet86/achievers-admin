@@ -64,9 +64,7 @@ export default function Index() {
 
   return (
     <>
-      <Title to={`/admin/users/${user.id}`}>
-        Approval by MRC for &quot;{user.fullName}&quot;
-      </Title>
+      <Title>Approval by MRC for &quot;{user.fullName}&quot;</Title>
 
       <hr className="my-4" />
 

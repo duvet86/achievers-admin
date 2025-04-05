@@ -1,5 +1,3 @@
-import { Link, useNavigate } from "react-router";
-
 import dayjs from "dayjs";
 import {
   Sparks,
@@ -14,6 +12,7 @@ import {
   ThumbsUp,
   WarningTriangle,
 } from "iconoir-react";
+import { StateLink } from "~/components";
 
 interface Props {
   isWwcCheckExpired: boolean;
@@ -67,12 +66,6 @@ export function CheckList({
   approvalbyMRCCompleted,
   volunteerAgreementSignedOn,
 }: Props) {
-  const navigate = useNavigate();
-
-  const handleRowClick = (to: string) => () => {
-    void navigate(to);
-  };
-
   const stopLinkPropagation = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.stopPropagation();
   };
@@ -89,10 +82,7 @@ export function CheckList({
         </thead>
 
         <tbody>
-          <tr
-            className="hover:bg-base-200 cursor-pointer"
-            onClick={handleRowClick("eoiProfile")}
-          >
+          <tr className="hover:bg-base-200 cursor-pointer">
             <td>
               <div className="flex items-center gap-4">
                 <Sparks className="h-6 w-6" />
@@ -105,19 +95,16 @@ export function CheckList({
               </div>
             </td>
             <td>
-              <Link
+              <StateLink
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="eoiProfile"
                 onClick={stopLinkPropagation}
               >
                 View
-              </Link>
+              </StateLink>
             </td>
           </tr>
-          <tr
-            className="hover:bg-base-200 cursor-pointer"
-            onClick={handleRowClick("welcomeCall")}
-          >
+          <tr className="hover:bg-base-200 cursor-pointer">
             <td>
               <div className="flex items-center gap-4">
                 <Phone className="h-6 w-6" />
@@ -128,19 +115,16 @@ export function CheckList({
               <CheckStatus isCompleted={welcomeCallCompleted} />
             </td>
             <td>
-              <Link
+              <StateLink
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="welcomeCall"
                 onClick={stopLinkPropagation}
               >
                 View
-              </Link>
+              </StateLink>
             </td>
           </tr>
-          <tr
-            className="hover:bg-base-200 cursor-pointer"
-            onClick={handleRowClick("references")}
-          >
+          <tr className="hover:bg-base-200 cursor-pointer">
             <td>
               <div className="flex items-center gap-4">
                 <MultiBubble className="h-6 w-6" />
@@ -151,19 +135,16 @@ export function CheckList({
               <CheckStatus isCompleted={referencesCompleted} />
             </td>
             <td>
-              <Link
+              <StateLink
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="references"
                 onClick={stopLinkPropagation}
               >
                 View
-              </Link>
+              </StateLink>
             </td>
           </tr>
-          <tr
-            className="hover:bg-base-200 cursor-pointer"
-            onClick={handleRowClick("induction")}
-          >
+          <tr className="hover:bg-base-200 cursor-pointer">
             <td>
               <div className="flex items-center gap-4">
                 <Journal className="h-6 w-6" />
@@ -174,19 +155,16 @@ export function CheckList({
               <CheckStatus isCompleted={inductionCompleted} />
             </td>
             <td>
-              <Link
+              <StateLink
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="induction"
                 onClick={stopLinkPropagation}
               >
                 View
-              </Link>
+              </StateLink>
             </td>
           </tr>
-          <tr
-            className="hover:bg-base-200 cursor-pointer"
-            onClick={handleRowClick("police-check")}
-          >
+          <tr className="hover:bg-base-200 cursor-pointer">
             <td>
               <div className="flex items-center gap-4">
                 <ShieldCheck className="h-6 w-6" />
@@ -200,19 +178,16 @@ export function CheckList({
               />
             </td>
             <td>
-              <Link
+              <StateLink
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="police-check"
                 onClick={stopLinkPropagation}
               >
                 View
-              </Link>
+              </StateLink>
             </td>
           </tr>
-          <tr
-            className="hover:bg-base-200 cursor-pointer"
-            onClick={handleRowClick("wwc-check")}
-          >
+          <tr className="hover:bg-base-200 cursor-pointer">
             <td>
               <div className="flex items-center gap-4">
                 <Group className="h-6 w-6" />
@@ -226,19 +201,16 @@ export function CheckList({
               />
             </td>
             <td>
-              <Link
+              <StateLink
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="wwc-check"
                 onClick={stopLinkPropagation}
               >
                 View
-              </Link>
+              </StateLink>
             </td>
           </tr>
-          <tr
-            className="hover:bg-base-200 cursor-pointer"
-            onClick={handleRowClick("approval-mrc")}
-          >
+          <tr className="hover:bg-base-200 cursor-pointer">
             <td>
               <div className="flex items-center gap-4">
                 <ThumbsUp className="h-6 w-6" />
@@ -249,13 +221,13 @@ export function CheckList({
               <CheckStatus isCompleted={approvalbyMRCCompleted} />
             </td>
             <td>
-              <Link
+              <StateLink
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="approval-mrc"
                 onClick={stopLinkPropagation}
               >
                 View
-              </Link>
+              </StateLink>
             </td>
           </tr>
         </tbody>

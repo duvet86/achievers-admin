@@ -3,8 +3,8 @@ import type { Prisma } from "@prisma/client/index.js";
 import type { AzureUserWebAppWithRole } from "~/services/.server";
 
 import { useActionData, useLoaderData } from "react-router";
-
 import invariant from "tiny-invariant";
+import { NavArrowRight } from "iconoir-react";
 
 import { getAzureUserWithRolesByIdAsync } from "~/services/.server";
 import { isDateExpired, isStringNullOrEmpty } from "~/services";
@@ -19,6 +19,7 @@ import {
 import { UserForm } from "./components/UserForm";
 import { CheckList } from "./components/CheckList";
 import { Header } from "./components/Header";
+import { StateLink } from "~/components";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.userId, "userId not found");
@@ -169,6 +170,17 @@ export default function Index() {
             welcomeCallCompleted={loaderData.welcomeCallCompleted}
             wwcCheckCompleted={loaderData.wwcCheckCompleted}
           />
+
+          <hr className="my-4" />
+
+          <div>
+            <StateLink
+              className="btn"
+              to={`/admin/chapters/${loaderData.user.chapterId}/mentors/${loaderData.user.id}`}
+            >
+              Assign students <NavArrowRight />
+            </StateLink>
+          </div>
         </div>
       </div>
     </div>

@@ -4,7 +4,6 @@ import type { Prisma } from "@prisma/client/index.js";
 
 import {
   Form,
-  Link,
   useLoaderData,
   useNavigate,
   useSearchParams,
@@ -18,7 +17,7 @@ import {
   getPermissionsAbility,
 } from "~/services/.server";
 import { getPaginationRange } from "~/services";
-import { Pagination, TableHeaderSort, Title } from "~/components";
+import { Pagination, StateLink, TableHeaderSort, Title } from "~/components";
 
 import {
   getChaptersAsync,
@@ -150,10 +149,6 @@ export default function Index() {
     void submit(Object.fromEntries(searchParams));
   };
 
-  const handleRowClick = (id: number) => () => {
-    void navigate(`${id}?${searchParams.toString()}`);
-  };
-
   return (
     <>
       <div className="flex items-center justify-between">
@@ -214,7 +209,7 @@ export default function Index() {
               )}
               {students.map(
                 ({ id, fullName, yearLevel, chapter, endDate }, index) => {
-                  let className = "cursor-pointer hover:bg-base-200 ";
+                  let className = "hover:bg-base-200 ";
                   let icon: JSX.Element | undefined;
                   if (endDate) {
                     className += "text-error";
@@ -222,11 +217,7 @@ export default function Index() {
                   }
 
                   return (
-                    <tr
-                      key={id}
-                      className={className}
-                      onClick={handleRowClick(id)}
-                    >
+                    <tr key={id} className={className}>
                       <td className="hidden sm:table-cell">
                         <div className="flex gap-2">
                           {index + 1 + 10 * currentPageNumber} {icon}
@@ -238,13 +229,13 @@ export default function Index() {
                       </td>
                       <td>{chapter.name}</td>
                       <td className="hidden sm:table-cell">
-                        <Link
+                        <StateLink
                           to={`${id}?${searchParams.toString()}`}
                           className="btn btn-success btn-xs w-full gap-2"
                         >
                           <PageEdit className="hidden h-4 w-4 lg:block" />
                           Edit
-                        </Link>
+                        </StateLink>
                       </td>
                     </tr>
                   );
@@ -263,13 +254,13 @@ export default function Index() {
             totalPageCount={totalPageCount}
           />
 
-          <Link
+          <StateLink
             className="btn btn-primary mt-4 w-56 gap-4 lg:mt-0"
             to="/admin/students/new"
           >
             <Plus className="h-6 w-6" />
             Add new student
-          </Link>
+          </StateLink>
         </div>
       </Form>
     </>

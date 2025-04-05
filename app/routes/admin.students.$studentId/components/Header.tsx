@@ -1,7 +1,6 @@
-import { Link, useSearchParams } from "react-router";
 import { BinFull, NavArrowDown, OnTag, WarningTriangle } from "iconoir-react";
 
-import { Title } from "~/components";
+import { StateLink, Title } from "~/components";
 
 interface Props {
   title: string;
@@ -9,11 +8,9 @@ interface Props {
 }
 
 export function Header({ title, endDate }: Props) {
-  const [searchParams] = useSearchParams();
-
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:gap-10">
-      <Title to={`/admin/students?${searchParams.toString()}`}>{title}</Title>
+      <Title>{title}</Title>
 
       {endDate && (
         <p
@@ -38,21 +35,24 @@ export function Header({ title, endDate }: Props) {
         >
           {endDate ? (
             <li>
-              <Link
+              <StateLink
                 to="re-enable"
                 relative="path"
                 className="text-success gap-4 font-semibold"
               >
                 <OnTag className="h-6 w-6" />
                 Re enable student
-              </Link>
+              </StateLink>
             </li>
           ) : (
             <li>
-              <Link to="archive" className="text-error gap-4 font-semibold">
+              <StateLink
+                to="archive"
+                className="text-error gap-4 font-semibold"
+              >
                 <BinFull className="h-6 w-6" />
                 Archive
-              </Link>
+              </StateLink>
             </li>
           )}
         </ul>

@@ -130,7 +130,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function Index() {
   const {
-    chapterId,
     mentors,
     attendacesLookup,
     selectedTermYear,
@@ -179,7 +178,7 @@ export default function Index() {
 
   return (
     <>
-      <Title to={`/chapters/${chapterId}/attendances`}>
+      <Title>
         Mentor attendances &quot;
         {dayjs(selectedTermDate).format("D MMMM YYYY")}
         &quot;

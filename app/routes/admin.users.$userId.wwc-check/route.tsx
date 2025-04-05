@@ -85,9 +85,7 @@ export default function Index() {
 
   return (
     <>
-      <Title to={`/admin/users/${user.id}`}>
-        WWC check for &quot;{user.fullName}&quot;
-      </Title>
+      <Title>WWC check for &quot;{user.fullName}&quot;</Title>
 
       <hr className="my-4" />
 

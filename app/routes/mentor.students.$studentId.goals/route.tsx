@@ -1,12 +1,12 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { Link, useLoaderData } from "react-router";
+import { useLoaderData } from "react-router";
 import { Archery, Check, EditPencil, Eye, Xmark } from "iconoir-react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
 import { getLoggedUserInfoAsync } from "~/services/.server";
-import { Title } from "~/components";
+import { StateLink, Title } from "~/components";
 
 import {
   getGoalsForStudent,
@@ -38,16 +38,14 @@ export default function Index() {
   return (
     <>
       <div className="flex items-center justify-between">
-        <Title to="/mentor/students">
-          Goals for &quot;{student.fullName}&quot;
-        </Title>
+        <Title>Goals for &quot;{student.fullName}&quot;</Title>
 
-        <Link
+        <StateLink
           to={`/mentor/students/${student.id}/goals/new`}
           className="btn btn-primary w-44"
         >
           <Archery /> Create new goal
-        </Link>
+        </StateLink>
       </div>
 
       <div className="overflow-auto bg-white">
@@ -65,12 +63,12 @@ export default function Index() {
             {goals.length === 0 && (
               <tr>
                 <td colSpan={4}>
-                  <Link
+                  <StateLink
                     to={`/mentor/students/${student.id}/goals/new`}
                     className="btn btn-primary w-44"
                   >
                     <Archery /> Create new goal
-                  </Link>
+                  </StateLink>
                 </td>
               </tr>
             )}
@@ -88,21 +86,21 @@ export default function Index() {
                 </td>
                 <td align="right">
                   {isAchieved ? (
-                    <Link
+                    <StateLink
                       to={`/mentor/students/${student.id}/goals/${id}`}
                       className="btn btn-neutral w-36 gap-2"
                     >
                       <Eye className="hidden h-4 w-4 lg:block" />
                       View
-                    </Link>
+                    </StateLink>
                   ) : (
-                    <Link
+                    <StateLink
                       to={`/mentor/students/${student.id}/goals/${id}`}
                       className="btn btn-success w-36 gap-2"
                     >
                       <EditPencil className="hidden h-4 w-4 lg:block" />
                       Edit
-                    </Link>
+                    </StateLink>
                   )}
                 </td>
               </tr>

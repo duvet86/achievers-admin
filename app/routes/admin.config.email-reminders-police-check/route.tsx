@@ -1,12 +1,12 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { Form, Link, useLoaderData } from "react-router";
+import { Form, useLoaderData } from "react-router";
 import dayjs from "dayjs";
 import classNames from "classnames";
 import { Eye } from "iconoir-react";
 
 import { getPaginationRange } from "~/services";
-import { Pagination, Title } from "~/components";
+import { Pagination, StateLink, Title } from "~/components";
 
 import {
   getPoliceCheckReminders,
@@ -59,7 +59,7 @@ export default function Index() {
 
   return (
     <Form>
-      <Title to="/admin/config">Police check email reminders</Title>
+      <Title>Police check email reminders</Title>
 
       <div className="overflow-auto bg-white">
         <table className="table">
@@ -124,13 +124,13 @@ export default function Index() {
                       : "-"}
                   </td>
                   <td>
-                    <Link
+                    <StateLink
                       to={`/admin/users/${user.id}/police-check`}
                       className="btn btn-success btn-xs w-full gap-2"
                     >
                       <Eye className="hidden h-4 w-4 lg:block" />
                       View
-                    </Link>
+                    </StateLink>
                   </td>
                 </tr>
               ),

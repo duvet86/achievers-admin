@@ -143,9 +143,7 @@ export default function Index() {
   return (
     <>
       <div className="flex items-center justify-between">
-        <Title to={`/mentor/students/${student.id}/goals`}>
-          Goal for &quot;{student.fullName}&quot;
-        </Title>
+        <Title>Goal for &quot;{student.fullName}&quot;</Title>
 
         {goal.isAchieved && (
           <div className="alert alert-success w-48">

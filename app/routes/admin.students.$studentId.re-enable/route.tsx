@@ -33,9 +33,7 @@ export default function Index() {
 
   return (
     <>
-      <Title to={`/admin/students/${student.id}`}>
-        Re enable &quot;{student.fullName}&quot;
-      </Title>
+      <Title>Re enable &quot;{student.fullName}&quot;</Title>
 
       <Form method="post">
         <fieldset disabled={transition.state !== "idle"}>

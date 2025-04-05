@@ -1,11 +1,11 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { Link, useLoaderData } from "react-router";
+import { useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
 import { ChatBubbleEmpty, Check, WarningTriangle, Xmark } from "iconoir-react";
 
-import { Title } from "~/components";
+import { StateLink, Title } from "~/components";
 
 import { getUserByIdAsync } from "./services.server";
 
@@ -37,9 +37,7 @@ export default function Index() {
 
   return (
     <>
-      <Title to={`/admin/users/${user.id}`}>
-        References for &quot;{user.fullName}&quot;
-      </Title>
+      <Title>References for &quot;{user.fullName}&quot;</Title>
 
       <div className="overflow-auto bg-white">
         <table className="table">
@@ -69,13 +67,13 @@ export default function Index() {
                   {renderMentorRecommendationStatus(isMentorRecommended)}
                 </td>
                 <td align="center">
-                  <Link
+                  <StateLink
                     to={`${id}`}
                     className="btn btn-success btn-xs w-full gap-2"
                   >
                     <ChatBubbleEmpty className="h-4 w-4" />
                     View
-                  </Link>
+                  </StateLink>
                 </td>
               </tr>
             ))}

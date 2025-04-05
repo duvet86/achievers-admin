@@ -3,7 +3,6 @@ import type { SchoolTerm } from "./services.server";
 
 import {
   Form,
-  Link,
   redirect,
   useActionData,
   useLoaderData,
@@ -18,6 +17,7 @@ import { isLoggedUserBlockedAsync, trackException } from "~/services/.server";
 import {
   DateInput,
   Select,
+  StateLink,
   SubTitle,
   SubmitFormButton,
   Title,
@@ -194,10 +194,10 @@ export default function Index() {
           />
         </div>
 
-        <Link to="/admin/school-terms/new" className="btn btn-primary">
+        <StateLink to="/admin/school-terms/new" className="btn btn-primary">
           <Plus className="h-6 w-6" />
           Add new term
-        </Link>
+        </StateLink>
       </div>
 
       <Form method="post" className="flex flex-col gap-6">

@@ -1,12 +1,6 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import {
-  Form,
-  Link,
-  useLoaderData,
-  useSearchParams,
-  useSubmit,
-} from "react-router";
+import { Form, useLoaderData, useSearchParams, useSubmit } from "react-router";
 
 import { useRef } from "react";
 import { Check, Eye, Xmark } from "iconoir-react";
@@ -17,7 +11,13 @@ import {
   getPermissionsAbility,
 } from "~/services/.server";
 import { getPaginationRange } from "~/services";
-import { Pagination, Select, SelectSearch, Title } from "~/components";
+import {
+  Pagination,
+  Select,
+  SelectSearch,
+  StateLink,
+  Title,
+} from "~/components";
 
 import {
   getCountAsync,
@@ -264,7 +264,7 @@ export default function Index() {
                   isAchieved,
                   endDate,
                 }) => (
-                  <tr key={id} className="hover:bg-base-200 cursor-pointer">
+                  <tr key={id} className="hover:bg-base-200">
                     <td className="p-2">{title}</td>
                     <td className="p-2">{chapter.name}</td>
                     <td className="p-2">{student.fullName}</td>
@@ -280,13 +280,13 @@ export default function Index() {
                       )}
                     </td>
                     <td className="hidden p-2 sm:table-cell" align="right">
-                      <Link
+                      <StateLink
                         to={`/admin/goals/${id}?${searchParams.toString()}`}
                         className="btn btn-success btn-xs btn-block"
                       >
                         <Eye className="h-4 w-4" />
                         View
-                      </Link>
+                      </StateLink>
                     </td>
                   </tr>
                 ),

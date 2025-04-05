@@ -62,7 +62,7 @@ export default function Index() {
 
   return (
     <>
-      <Title to="/mentor/students">Report to Admin</Title>
+      <Title>Report to Admin</Title>
 
       <Form method="post">
         <SubTitle>Student: {student.fullName}</SubTitle>

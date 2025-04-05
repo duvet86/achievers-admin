@@ -1,6 +1,6 @@
 import type { LinksFunction, LoaderFunctionArgs } from "react-router";
 
-import { useLoaderData, useSearchParams } from "react-router";
+import { useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 import { Check } from "iconoir-react";
 import dayjs from "dayjs";
@@ -26,14 +26,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 export default function Index() {
   const { goal } = useLoaderData<typeof loader>();
-  const [searchParams] = useSearchParams();
 
   return (
     <>
       <div className="flex items-center justify-between">
-        <Title to={`/admin/goals?${searchParams.toString()}`}>
-          Goal for &quot;{goal.student.fullName}&quot;
-        </Title>
+        <Title>Goal for &quot;{goal.student.fullName}&quot;</Title>
 
         {goal.isAchieved && (
           <div className="alert alert-success w-48">

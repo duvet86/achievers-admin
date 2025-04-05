@@ -2,13 +2,7 @@
 import type { LoaderFunctionArgs } from "react-router";
 import type { Term } from "~/models";
 
-import {
-  Form,
-  Link,
-  useLoaderData,
-  useNavigate,
-  useSearchParams,
-} from "react-router";
+import { Form, useLoaderData, useSearchParams } from "react-router";
 
 import { Eye } from "iconoir-react";
 import dayjs from "dayjs";
@@ -24,7 +18,7 @@ import {
   getDatesForTerm,
   getPaginationRange,
 } from "~/services";
-import { Pagination, Title } from "~/components";
+import { Pagination, StateLink, Title } from "~/components";
 
 import {
   getCountAsync,
@@ -212,17 +206,8 @@ export default function Index() {
     range,
   } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
 
   const totalPageCount = Math.ceil(count / 10);
-
-  const handleRowClick = (id: number, completedOn: Date | null) => () => {
-    const url = completedOn
-      ? `/admin/student-sessions/${id}/report?${searchParams.toString()}`
-      : `/admin/student-sessions/${id}?${searchParams.toString()}`;
-
-    void navigate(url);
-  };
 
   return (
     <>
@@ -279,11 +264,7 @@ export default function Index() {
               )}
               {studentSessions.map(
                 ({ id, student, completedOn, signedOffOn, session }) => (
-                  <tr
-                    key={id}
-                    className="hover:bg-base-200 cursor-pointer"
-                    onClick={handleRowClick(id, completedOn)}
-                  >
+                  <tr key={id} className="hover:bg-base-200">
                     <td className="p-2">{session.mentor.fullName}</td>
                     <td className="p-2">{student.fullName}</td>
                     <td className="p-2">
@@ -300,7 +281,7 @@ export default function Index() {
                         : "-"}
                     </td>
                     <td className="hidden p-2 sm:table-cell" align="right">
-                      <Link
+                      <StateLink
                         to={
                           completedOn
                             ? `/admin/student-sessions/${id}/report?${searchParams.toString()}`
@@ -310,7 +291,7 @@ export default function Index() {
                       >
                         <Eye className="h-4 w-4" />
                         Report
-                      </Link>
+                      </StateLink>
                     </td>
                   </tr>
                 ),

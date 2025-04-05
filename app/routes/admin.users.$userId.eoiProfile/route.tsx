@@ -90,9 +90,7 @@ export default function Index() {
 
   return (
     <>
-      <Title to={`/admin/users/${user.id}`}>
-        Expression of interest for &quot;{user.fullName}&quot;
-      </Title>
+      <Title>Expression of interest for &quot;{user.fullName}&quot;</Title>
 
       <hr className="my-4" />
 
