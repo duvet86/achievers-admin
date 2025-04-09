@@ -25,6 +25,7 @@ env:
   SLOT_NAME: "stg"
   RESOURCE_GROUP: "achievers-rg"
   AZURE_WEBAPP_PACKAGE_PATH: "."
+  HUSKY: 0
 
 jobs:
   e2etests:
