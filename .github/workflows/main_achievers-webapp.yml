@@ -136,7 +136,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci
+          npm install
           npx prisma generate
 
       - name: Release
