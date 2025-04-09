@@ -1,5 +1,5 @@
 import type { AppAbility } from "~/services/.server";
-import type { Prisma } from "@prisma/client/index.js";
+import type { Prisma } from "~/prisma/client";
 
 import { accessibleBy } from "@casl/prisma";
 

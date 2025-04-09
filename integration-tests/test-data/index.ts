@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client/index.js";
+import { PrismaClient } from "~/prisma/client";
 
 import { createUsersAsync } from "./users";
 import { createStudentsAsync } from "./students";

@@ -1,8 +1,9 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import type { Prisma } from "@prisma/client/index.js";
+import type { Prisma } from "~/prisma/client";
+import type { XOR } from "~/models";
 
 import dayjs from "dayjs";
-import { $Enums } from "@prisma/client/index.js";
+import { $Enums } from "~/prisma/client";
 import { redirect, useLoaderData, useNavigation } from "react-router";
 import invariant from "tiny-invariant";
 import { NavArrowRight } from "iconoir-react";
@@ -114,7 +115,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       throw new Error();
     }
 
-    const dataCreate: Prisma.XOR<
+    const dataCreate: XOR<
       Prisma.StudentCreateInput,
       Prisma.StudentUncheckedCreateInput
     > = {
@@ -144,7 +145,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
     studentId = await createNewStudentAsync(dataCreate);
   } else {
-    const dataCreate: Prisma.XOR<
+    const dataCreate: XOR<
       Prisma.StudentUpdateInput,
       Prisma.StudentUncheckedUpdateInput
     > = {

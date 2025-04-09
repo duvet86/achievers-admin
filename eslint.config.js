@@ -16,6 +16,7 @@ export default tseslint.config(
       "**/dev_sessions",
       "**/tailwind.config.*",
       ".react-router",
+      "**/prisma/client",
     ],
   },
   {

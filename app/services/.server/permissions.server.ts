@@ -1,5 +1,5 @@
 import type { RawRuleOf, PureAbility } from "@casl/ability";
-import type { Chapter } from "@prisma/client/index.js";
+import type { Chapter } from "~/prisma/client";
 import type { PrismaQuery, Subjects } from "@casl/prisma";
 
 import { createPrismaAbility } from "@casl/prisma";

@@ -1,4 +1,4 @@
-import type { Chapter, Prisma } from "@prisma/client/index.js";
+import type { Prisma } from "~/prisma/client";
 
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -29,7 +29,7 @@ export type SessionLookup = Record<
 >;
 
 export async function getMentorsAsync(
-  chapterId: Chapter["id"],
+  chapterId: number,
   sortFullName: Prisma.SortOrder | undefined,
   searchTerm: string | undefined,
 ) {

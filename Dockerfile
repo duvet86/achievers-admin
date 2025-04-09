@@ -54,6 +54,5 @@ COPY --from=build /achievers_app/public /achievers_app/public
 COPY --from=build /achievers_app/server.mjs /achievers_app/server.mjs
 COPY --from=build /achievers_app/package.json /achievers_app/package.json
 COPY --from=build /achievers_app/prisma /achievers_app/prisma
-COPY --from=build /achievers_app/background-jobs /achievers_app/background-jobs
 
 CMD ["npm", "start"]

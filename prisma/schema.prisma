@@ -4,8 +4,10 @@ datasource db {
 }
 
 generator client {
-  provider      = "prisma-client-js"
+  provider      = "prisma-client"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
+  output        = "client"
+  moduleFormat  = "esm"
 }
 
 enum Gender {

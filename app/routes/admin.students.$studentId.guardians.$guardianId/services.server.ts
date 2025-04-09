@@ -1,4 +1,5 @@
-import type { Prisma, StudentGuardian } from "@prisma/client/index.js";
+import type { Prisma } from "~/prisma/client";
+import type { XOR } from "~/models";
 
 import { prisma } from "~/db.server";
 
@@ -18,8 +19,8 @@ export async function getGuardianByIdAsync(id: number) {
 }
 
 export async function updateGuardianByIdAsync(
-  guardianId: StudentGuardian["id"],
-  dataUpdate: Prisma.XOR<
+  guardianId: number,
+  dataUpdate: XOR<
     Prisma.StudentGuardianUpdateInput,
     Prisma.StudentGuardianUncheckedUpdateInput
   >,
@@ -33,7 +34,7 @@ export async function updateGuardianByIdAsync(
 }
 
 export async function createGuardianAsync(
-  dataCreate: Prisma.XOR<
+  dataCreate: XOR<
     Prisma.StudentGuardianCreateInput,
     Prisma.StudentGuardianUncheckedCreateInput
   >,

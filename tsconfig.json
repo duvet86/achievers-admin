@@ -17,10 +17,12 @@
     "baseUrl": ".",
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
+      "~/prisma/client": ["./prisma/client"],
       "~/*": ["./app/*"]
     },
 
     // Vite takes care of building everything, not tsc.
-    "noEmit": true
+    "noEmit": true,
+    "verbatimModuleSyntax": true
   }
 }

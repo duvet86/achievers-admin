@@ -1,5 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import type { Prisma } from "@prisma/client/index.js";
+import type { Prisma } from "~/prisma/client";
+import type { XOR } from "~/models";
 import type { AzureUserWebAppWithRole } from "~/services/.server";
 
 import { useActionData, useLoaderData } from "react-router";
@@ -103,7 +104,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     throw new Error("Missing required fields.");
   }
 
-  const dataCreate: Prisma.XOR<
+  const dataCreate: XOR<
     Prisma.UserUpdateInput,
     Prisma.UserUncheckedUpdateInput
   > = {

@@ -5,10 +5,10 @@ export async function initAppInsightsLoggerAsync() {
     return;
   }
 
-  import("@azure/monitor-opentelemetry").then(({ useAzureMonitor }) => {
+  await import("@azure/monitor-opentelemetry").then(({ useAzureMonitor }) => {
     useAzureMonitor();
   });
-  import("@opentelemetry/api").then(({ trace }) => {
+  await import("@opentelemetry/api").then(({ trace }) => {
     global.__appinsightsTracer__ = trace.getTracer("appTracer");
   });
 }

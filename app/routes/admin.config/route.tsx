@@ -1,11 +1,9 @@
-import { Form, useActionData, useLoaderData } from "react-router";
+import { useLoaderData } from "react-router";
 
-import { Check, Xmark, CheckCircle } from "iconoir-react";
+import { Check, Xmark } from "iconoir-react";
 
 import { version, isEmailRemindersCheckEnabled } from "~/services/.server";
 import { StateLink, Title } from "~/components";
-
-import { sendEmailRemaniders } from "./services.server";
 
 export function loader() {
   return {
@@ -14,18 +12,9 @@ export function loader() {
   };
 }
 
-export async function action() {
-  const totRemindersSent = await sendEmailRemaniders();
-
-  return {
-    message: "Reminders sent: " + totRemindersSent,
-  };
-}
-
 export default function Index() {
   const { version, isEmailRemindersCheckEnabled } =
     useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
 
   return (
     <>
@@ -49,20 +38,8 @@ export default function Index() {
           <StateLink to="email-reminders-wwc" className="btn w-48">
             View WWC
           </StateLink>
-          <Form method="POST">
-            <button className="btn btn-neutral w-48" type="submit">
-              Send email
-            </button>
-          </Form>
         </div>
       </div>
-
-      {actionData && (
-        <div role="alert" className="alert alert-success">
-          <CheckCircle className="h-6 w-6 shrink-0 stroke-current" />
-          <span>{actionData.message}</span>
-        </div>
-      )}
     </>
   );
 }

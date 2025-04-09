@@ -1,9 +1,5 @@
 /*eslint-env node*/
-import {
-  initAppInsightsLoggerAsync,
-  trackEvent,
-  mockTime,
-} from "./server-utils/index.js";
+import { initAppInsightsLoggerAsync, mockTime } from "./server-utils/index.js";
 
 import express from "express";
 import compression from "compression";
@@ -18,14 +14,8 @@ if (process.env.CI) {
   mockTime();
 }
 
-if (process.env.ENABLE_EMAIL_REMINDERS === "true") {
-  import("./background-jobs/index.js").then(() => {
-    trackEvent("EMAIL_REMINDERS_ENABLED");
-  });
-}
-
 const DEVELOPMENT = process.env.NODE_ENV === "development";
-const PORT = Number.parseInt(process.env.PORT || "3000");
+const PORT = Number.parseInt(process.env.PORT ?? "3000");
 
 const app = express();
 
@@ -43,6 +33,7 @@ if (DEVELOPMENT) {
   app.use(async (req, res, next) => {
     try {
       const source = await viteDevServer.ssrLoadModule("./server-dev/app.ts");
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
       return await source.app(req, res, next);
     } catch (error) {
       if (typeof error === "object" && error instanceof Error) {
@@ -60,6 +51,7 @@ if (DEVELOPMENT) {
     express.static("build/client/assets", { immutable: true, maxAge: "1y" }),
   );
   app.use(express.static("build/client", { maxAge: "1h" }));
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
   app.use(await import(BUILD_PATH).then((mod) => mod.app));
 }
 

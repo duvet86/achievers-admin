@@ -1,6 +1,7 @@
-import { PrismaClient } from "@prisma/client/index.js";
 import { writeFileSync } from "fs";
 import invariant from "tiny-invariant";
+
+import { PrismaClient } from "~/prisma/client";
 
 let prisma: PrismaClient;
 

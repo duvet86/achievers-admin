@@ -1,4 +1,5 @@
-import type { Prisma, User } from "@prisma/client/index.js";
+import type { Prisma } from "~/prisma/client";
+import type { XOR } from "~/models";
 
 import { prisma } from "~/db.server";
 import {
@@ -88,11 +89,8 @@ export async function getUserByIdAsync(id: number) {
 }
 
 export async function updateUserByIdAsync(
-  userId: User["id"],
-  dataUpdate: Prisma.XOR<
-    Prisma.UserUpdateInput,
-    Prisma.UserUncheckedUpdateInput
-  >,
+  userId: number,
+  dataUpdate: XOR<Prisma.UserUpdateInput, Prisma.UserUncheckedUpdateInput>,
 ) {
   return await prisma.user.update({
     data: dataUpdate,

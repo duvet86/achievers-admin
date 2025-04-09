@@ -1,5 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import type { Prisma } from "@prisma/client/index.js";
+import type { Prisma } from "~/prisma/client";
+import type { XOR } from "~/models";
 
 import {
   Form,
@@ -59,7 +60,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       throw new Error();
     }
 
-    const dataCreate: Prisma.XOR<
+    const dataCreate: XOR<
       Prisma.StudentGuardianCreateInput,
       Prisma.StudentGuardianUncheckedCreateInput
     > = {
@@ -73,7 +74,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
     await createGuardianAsync(dataCreate);
   } else {
-    const dataUpdate: Prisma.XOR<
+    const dataUpdate: XOR<
       Prisma.StudentGuardianUpdateInput,
       Prisma.StudentGuardianUncheckedUpdateInput
     > = {

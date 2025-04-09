@@ -1,8 +1,6 @@
-import type { Chapter } from "@prisma/client/index.js";
-
 import { prisma } from "~/db.server";
 
-export async function getChapterByIdAsync(id: Chapter["id"]) {
+export async function getChapterByIdAsync(id: number) {
   return prisma.chapter.findUniqueOrThrow({
     where: {
       id,

@@ -1,4 +1,4 @@
-import type { $Enums } from "@prisma/client/index.js";
+import type { $Enums } from "~/prisma/client";
 
 import { Form } from "react-router";
 

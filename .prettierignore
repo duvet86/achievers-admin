@@ -17,3 +17,4 @@ package-lock.json
 storageState.json
 
 /dev_sessions
+/prisma/client

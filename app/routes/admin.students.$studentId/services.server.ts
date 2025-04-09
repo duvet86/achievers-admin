@@ -1,9 +1,5 @@
-import type {
-  Prisma,
-  Student,
-  StudentGuardian,
-  StudentTeacher,
-} from "@prisma/client/index.js";
+import type { Prisma } from "~/prisma/client";
+import type { XOR } from "~/models";
 
 import { prisma } from "~/db.server";
 
@@ -67,8 +63,8 @@ export async function getStudentByIdAsync(id: number) {
 }
 
 export async function updateStudentByIdAsync(
-  userId: Student["id"],
-  dataUpdate: Prisma.XOR<
+  userId: number,
+  dataUpdate: XOR<
     Prisma.StudentUpdateInput,
     Prisma.StudentUncheckedUpdateInput
   >,
@@ -84,7 +80,7 @@ export async function updateStudentByIdAsync(
 }
 
 export async function createNewStudentAsync(
-  dataCreate: Prisma.XOR<
+  dataCreate: XOR<
     Prisma.StudentCreateInput,
     Prisma.StudentUncheckedCreateInput
   >,
@@ -96,9 +92,7 @@ export async function createNewStudentAsync(
   return student.id;
 }
 
-export async function deleteGuardianByIdAsync(
-  guardianId: StudentGuardian["id"],
-) {
+export async function deleteGuardianByIdAsync(guardianId: number) {
   return await prisma.studentGuardian.delete({
     where: {
       id: guardianId,
@@ -106,7 +100,7 @@ export async function deleteGuardianByIdAsync(
   });
 }
 
-export async function deleteTeacherByIdAsync(teacherId: StudentTeacher["id"]) {
+export async function deleteTeacherByIdAsync(teacherId: number) {
   return await prisma.studentTeacher.delete({
     where: {
       id: teacherId,

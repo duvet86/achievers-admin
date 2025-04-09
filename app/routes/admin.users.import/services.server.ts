@@ -1,4 +1,4 @@
-import type { ImportedHistory, User } from "@prisma/client/index.js";
+import type { ImportedHistory, User } from "~/prisma/client";
 import type { SpeadsheetUser } from "~/models/speadsheet";
 import type { FileUpload } from "@mjackson/form-data-parser";
 
