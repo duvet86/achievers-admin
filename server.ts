@@ -1,5 +1,5 @@
 /*eslint-env node*/
-import { initAppInsightsLoggerAsync, mockTime } from "./server-utils/index.js";
+import { initAppInsightsLoggerAsync, mockTime } from "./server-utils";
 
 import express from "express";
 import compression from "compression";
