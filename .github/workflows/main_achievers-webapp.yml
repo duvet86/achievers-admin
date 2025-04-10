@@ -164,10 +164,10 @@ jobs:
           npm install
           npx prisma generate
           npm run build
-          npm prune --production
+          npm prune --omit=dev
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./node_modules ./build ./public ./server.ts ./prisma ./server-utils ./package.json -r
+        run: zip release.zip ./node_modules ./build ./public ./server.ts ./prisma ./server-utils ./package.json ./tsconfig.json -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
