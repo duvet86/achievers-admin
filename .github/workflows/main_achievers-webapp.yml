@@ -159,7 +159,7 @@ jobs:
           node-version: "lts/*"
           cache: "npm"
 
-      - name: npm install, build, and test
+      - name: npm install and build
         run: |
           npm install
           npx prisma generate
