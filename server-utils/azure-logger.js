@@ -1,5 +1,4 @@
 /*eslint-env node*/
-import type { Attributes, Exception } from "@opentelemetry/api";
 
 export async function initAppInsightsLoggerAsync() {
   if (process.env.NODE_ENV !== "production") {
@@ -14,7 +13,7 @@ export async function initAppInsightsLoggerAsync() {
   });
 }
 
-export function trackEvent(message: string, properties: Attributes) {
+export function trackEvent(message, properties) {
   const tracer = global.__appinsightsTracer__;
 
   if (tracer) {
@@ -29,7 +28,7 @@ export function trackEvent(message: string, properties: Attributes) {
   }
 }
 
-export function trackException(error: Exception) {
+export function trackException(error) {
   const tracer = global.__appinsightsTracer__;
 
   if (tracer) {
@@ -37,6 +36,6 @@ export function trackException(error: Exception) {
     span.recordException(error);
     span.end();
   } else {
-    console.error(error.toString());
+    console.error(error.message);
   }
 }
