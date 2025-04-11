@@ -5,12 +5,12 @@ export async function initAppInsightsLoggerAsync() {
     return;
   }
 
-  await import("@azure/monitor-opentelemetry").then(({ useAzureMonitor }) => {
-    useAzureMonitor();
-  });
-  await import("@opentelemetry/api").then(({ trace }) => {
-    global.__appinsightsTracer__ = trace.getTracer("appTracer");
-  });
+  const { useAzureMonitor } = await import("@azure/monitor-opentelemetry");
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useAzureMonitor();
+
+  const { trace } = await import("@opentelemetry/api");
+  global.__appinsightsTracer__ = trace.getTracer("appTracer");
 }
 
 export function trackEvent(message, properties) {

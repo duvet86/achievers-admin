@@ -1,9 +1,5 @@
 /*eslint-env node*/
-import {
-  initAppInsightsLoggerAsync,
-  trackEvent,
-  mockTime,
-} from "./server-utils/index.js";
+import { initAppInsightsLoggerAsync, mockTime } from "./server-utils/index.js";
 
 import express from "express";
 import compression from "compression";
@@ -16,12 +12,6 @@ sourceMapSupport.install();
 
 if (process.env.CI) {
   mockTime();
-}
-
-if (process.env.ENABLE_EMAIL_REMINDERS === "true") {
-  import("./background-jobs/index.js").then(() => {
-    trackEvent("EMAIL_REMINDERS_ENABLED");
-  });
 }
 
 const DEVELOPMENT = process.env.NODE_ENV === "development";
