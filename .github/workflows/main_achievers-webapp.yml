@@ -28,125 +28,125 @@ env:
   HUSKY: 0
 
 jobs:
-  # e2etests:
-  #   name: Tests
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     DB_DATABASE: achievers
-  #     DB_USER: root
-  #     DB_PASSWORD: my-secret-pw
+  e2etests:
+    name: Tests
+    runs-on: ubuntu-latest
+    env:
+      DB_DATABASE: achievers
+      DB_USER: root
+      DB_PASSWORD: my-secret-pw
 
-  #   services:
-  #     mysql:
-  #       image: mysql:8.0
-  #       env:
-  #         MYSQL_ROOT_PASSWORD: ${{ env.DB_PASSWORD }}
-  #         MYSQL_DATABASE: ${{ env.DB_DATABASE }}
-  #         MYSQL_EXTRA_FLAGS: "--lower-case-table-names=1"
-  #       ports:
-  #         - "3306:3306"
-  #       options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ env.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.DB_DATABASE }}
+          MYSQL_EXTRA_FLAGS: "--lower-case-table-names=1"
+        ports:
+          - "3306:3306"
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-  #   steps:
-  #     - name: Set up test DB
-  #       run: mysql -h 127.0.0.1 --port 3306 -u ${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+    steps:
+      - name: Set up test DB
+        run: mysql -h 127.0.0.1 --port 3306 -u ${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
 
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: "lts/*"
-  #         cache: "npm"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          cache: "npm"
 
-  #     - name: Install dependencies
-  #       run: npm install
+      - name: Install dependencies
+        run: npm install
 
-  #     - name: Run unit tests
-  #       env:
-  #         DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-  #       run: npm run test:ci
+      - name: Run unit tests
+        env:
+          DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
+        run: npm run test:ci
 
-  #     - name: Build
-  #       run: npm run build
+      - name: Build
+        run: npm run build
 
-  #     - name: Migrate test DB
-  #       env:
-  #         DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-  #       run: npm run setup
+      - name: Migrate test DB
+        env:
+          DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
+        run: npm run setup
 
-  #     - name: Install E2E
-  #       run: npx playwright install --with-deps chromium
+      - name: Install E2E
+        run: npx playwright install --with-deps chromium
 
-  #     - name: Run E2E tests
-  #       env:
-  #         DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-  #       run: npm run test:e2e
+      - name: Run E2E tests
+        env:
+          DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
+        run: npm run test:e2e
 
-  #     - uses: actions/upload-artifact@v4
-  #       if: ${{ !cancelled() }}
-  #       with:
-  #         name: report
-  #         path: |
-  #           playwright-report/
-  #           coverage/
-  #           test-results/
-  #         retention-days: 1
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: report
+          path: |
+            playwright-report/
+            coverage/
+            test-results/
+          retention-days: 1
 
-  # migrate:
-  #   name: Migrate and seed production DB
-  #   runs-on: ubuntu-latest
-  #   needs: e2etests
-  #   env:
-  #     DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  migrate:
+    name: Migrate and seed production DB
+    runs-on: ubuntu-latest
+    needs: e2etests
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: "lts/*"
-  #         cache: "npm"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          cache: "npm"
 
-  #     - name: Install dependencies
-  #       run: npm install
+      - name: Install dependencies
+        run: npm install
 
-  #     - name: Migrate DB
-  #       run: npm run setup
+      - name: Migrate DB
+        run: npm run setup
 
-  # release:
-  #   name: Release
-  #   runs-on: ubuntu-latest
-  #   needs: migrate
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: migrate
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #       with:
-  #         persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
-  #         fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+          fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
 
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: "lts/*"
-  #         cache: "npm"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          cache: "npm"
 
-  #     - name: Install dependencies
-  #       run: npm install
+      - name: Install dependencies
+        run: npm install
 
-  #     - name: Release
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-  #       run: npx semantic-release
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npx semantic-release
 
   build:
     name: Build App
     runs-on: ubuntu-latest
-    # needs: release
+    needs: release
 
     steps:
       - uses: actions/checkout@v4
