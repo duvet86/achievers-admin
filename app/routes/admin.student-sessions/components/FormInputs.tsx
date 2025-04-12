@@ -56,9 +56,6 @@ export default function FormInputs({
 
     searchParams.set("mentorId", "");
     searchParams.set("studentId", "");
-    searchParams.set("selectedTermYear", "");
-    searchParams.set("selectedTermId", "");
-    searchParams.set("selectedTermDate", "");
 
     void navigate(`?${searchParams.toString()}`);
   };
@@ -66,8 +63,6 @@ export default function FormInputs({
   const onTermYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     searchParams.set("selectedTermYear", e.target.value);
 
-    searchParams.set("mentorId", "");
-    searchParams.set("studentId", "");
     searchParams.set("selectedTermId", "");
     searchParams.set("selectedTermDate", "");
 
@@ -77,8 +72,6 @@ export default function FormInputs({
   const onTermIdChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     searchParams.set("selectedTermId", e.target.value);
 
-    searchParams.set("mentorId", "");
-    searchParams.set("studentId", "");
     searchParams.set("selectedTermDate", "");
 
     void navigate(`?${searchParams.toString()}`);
@@ -86,9 +79,6 @@ export default function FormInputs({
 
   const onTermDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     searchParams.set("selectedTermDate", e.target.value);
-
-    searchParams.set("mentorId", "");
-    searchParams.set("studentId", "");
 
     void navigate(`?${searchParams.toString()}`);
   };
