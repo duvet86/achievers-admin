@@ -27,6 +27,12 @@ export const useRouteData = <T>(routeId: string): T => {
 export function useLocalStorage<T>(
   key: string,
 ): [T | null, (newValue: T) => void] {
+  if (typeof document === "undefined") {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    return [null, () => {}];
+  }
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [localStorageValue, setLocalStorageValue] = useState<T | null>(() => {
     const value = window.localStorage.getItem(key);
     if (value === null) {
