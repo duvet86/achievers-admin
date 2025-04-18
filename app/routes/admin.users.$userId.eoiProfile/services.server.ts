@@ -11,7 +11,7 @@ export interface EoiUpdateCommand {
   preferredSubject: string;
   isOver18: boolean;
   comment: string;
-  aboutMe: string;
+  aboutMe: string | null;
 }
 
 export async function getUserByIdAsync(id: number) {

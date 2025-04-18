@@ -1,6 +1,9 @@
 import { Link, useLocation } from "react-router";
 import classnames from "classnames";
 import { NavArrowLeft } from "iconoir-react";
+import { useEffect } from "react";
+
+import { useLocalStorage } from "~/services";
 
 interface Props {
   className?: string;
@@ -9,8 +12,15 @@ interface Props {
 
 export function Title({ className, children }: Props) {
   const location = useLocation();
+  const [historyState, setHistoryState] =
+    useLocalStorage<string[]>("HISTORY_STATE");
+
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-  const history: string[] = location.state?.history ?? [];
+  const history: string[] = location.state?.history ?? historyState ?? [];
+
+  useEffect(() => {
+    setHistoryState(history);
+  }, [history]);
 
   return (
     <div className={classnames("flex items-center gap-4", className)}>

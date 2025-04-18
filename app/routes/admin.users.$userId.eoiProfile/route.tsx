@@ -38,7 +38,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const preferredSubject = formData.get("preferredSubject")?.toString();
   const isOver18 = formData.get("isOver18")?.toString();
   const comment = formData.get("comment")?.toString();
-  const aboutMe = formData.get("aboutMe")?.toString();
+  const aboutMe = formData.get("aboutMe")?.toString() ?? null;
 
   if (
     bestTimeToContact === undefined ||
@@ -50,8 +50,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     preferredFrequency === undefined ||
     preferredSubject === undefined ||
     isOver18 === undefined ||
-    comment === undefined ||
-    aboutMe === undefined
+    comment === undefined
   ) {
     return {
       successMessage: null,
@@ -183,7 +182,6 @@ export default function Index() {
             defaultValue={eoIProfile?.aboutMe ?? ""}
             label="About me"
             name="aboutMe"
-            required
           />
 
           <SubmitFormButton

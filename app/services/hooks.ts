@@ -23,3 +23,23 @@ export const useRouteData = <T>(routeId: string): T => {
 
   return data as T;
 };
+
+export function useLocalStorage<T>(
+  key: string,
+): [T | null, (newValue: T) => void] {
+  const [localStorageValue, setLocalStorageValue] = useState<T | null>(() => {
+    const value = window.localStorage.getItem(key);
+    if (value === null) {
+      return null;
+    }
+
+    return JSON.parse(value) as T;
+  });
+
+  function setLocalStorageStateValue(newValue: T): void {
+    window.localStorage.setItem(key, JSON.stringify(newValue));
+    setLocalStorageValue(newValue);
+  }
+
+  return [localStorageValue, setLocalStorageStateValue];
+}
