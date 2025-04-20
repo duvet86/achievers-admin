@@ -76,6 +76,9 @@ model User {
 
   mentorAttendance MentorAttendance[]
   goal             Goal[]
+
+  mentorSharing  MentorShareInfo[] @relation("mentorSharing")
+  mentorSharedTo MentorShareInfo[] @relation("mentorSharedTo")
 }
 
 model ImportedHistory {
@@ -461,4 +464,19 @@ model Goal {
   updatedAt DateTime @updatedAt
 
   @@index([studentId, mentorId])
+}
+
+model MentorShareInfo {
+  id Int @id @default(autoincrement())
+
+  mentorSharing   User @relation(name: "mentorSharing", fields: [mentorSharingId], references: [id])
+  mentorSharingId Int
+
+  mentorSharedTo   User @relation(name: "mentorSharedTo", fields: [mentorSharedToId], references: [id])
+  mentorSharedToId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([mentorSharingId, mentorSharedToId])
 }

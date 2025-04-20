@@ -3,7 +3,7 @@ import classnames from "classnames";
 import { NavArrowLeft } from "iconoir-react";
 import { useEffect } from "react";
 
-import { useLocalStorage } from "~/services";
+import { ClientOnly, useLocalStorage } from "~/services";
 
 interface Props {
   className?: string;
@@ -24,20 +24,24 @@ export function Title({ className, children }: Props) {
   }, [history]);
 
   return (
-    <div className={classnames("flex items-center gap-4", className)}>
-      {history.length > 0 && (
-        <Link
-          to={history[history.length - 1]}
-          state={{
-            history: history.slice(0, -1),
-          }}
-          className="btn btn-square w-14"
-        >
-          <NavArrowLeft className="h-8 w-8" />
-        </Link>
-      )}
+    <ClientOnly>
+      {() => (
+        <div className={classnames("flex items-center gap-4", className)}>
+          {history.length > 0 && (
+            <Link
+              to={history[history.length - 1]}
+              state={{
+                history: history.slice(0, -1),
+              }}
+              className="btn btn-square w-14"
+            >
+              <NavArrowLeft className="h-8 w-8" />
+            </Link>
+          )}
 
-      <h1 className="text-2xl font-bold text-wrap uppercase">{children}</h1>
-    </div>
+          <h1 className="text-2xl font-bold text-wrap uppercase">{children}</h1>
+        </div>
+      )}
+    </ClientOnly>
   );
 }
