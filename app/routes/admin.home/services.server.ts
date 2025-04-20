@@ -1,11 +1,11 @@
 import type { AppAbility } from "~/services/.server";
+import type { Term } from "~/models";
 
 import { accessibleBy } from "@casl/prisma";
 import dayjs from "dayjs";
 
 import { prisma } from "~/db.server";
-import { getSchoolTermsAsync } from "~/services/.server";
-import { getCurrentTermForDate, getDatesForTerm } from "~/services";
+import { getDatesForTerm } from "~/services";
 
 interface Report {
   attendedOn: Date;
@@ -151,10 +151,10 @@ export async function getMentorsPerMonth() {
   };
 }
 
-export async function getReportsPerSession(chapterId: number) {
-  const terms = await getSchoolTermsAsync(new Date().getFullYear());
-  const currentTerm = getCurrentTermForDate(terms, new Date());
-
+export async function getReportsPerSession(
+  chapterId: number,
+  selectedTerm: Term,
+) {
   const reports = await prisma.$queryRawUnsafe<Report[]>(
     `
     SELECT
@@ -168,12 +168,12 @@ export async function getReportsPerSession(chapterId: number) {
     WHERE s.attendedOn BETWEEN ? AND ? AND s.chapterId = ?
     GROUP BY s.attendedOn
     ORDER BY s.attendedOn ASC`,
-    currentTerm.start.format("YYYY-MM-DD"),
-    currentTerm.end.format("YYYY-MM-DD"),
+    selectedTerm.start.format("YYYY-MM-DD"),
+    selectedTerm.end.format("YYYY-MM-DD"),
     chapterId,
   );
 
-  const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
+  const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
 
   const reportsLookup = reports.reduce<Record<string, Report>>(
     (res, report) => {

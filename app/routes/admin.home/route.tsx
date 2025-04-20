@@ -4,6 +4,12 @@ import { useLoaderData, useNavigate, useSearchParams } from "react-router";
 import { UserCircle, GraduationCap, ShopFourTiles } from "iconoir-react";
 import dayjs from "dayjs";
 
+import {
+  getLoggedUserInfoAsync,
+  getPermissionsAbility,
+  getSchoolTermsAsync,
+} from "~/services/.server";
+import { getCurrentTermForDate } from "~/services";
 import { Select, SubTitle } from "~/components";
 
 import {
@@ -17,24 +23,46 @@ import {
   getTotalStudentsAsync,
 } from "./services.server";
 
-import { MentorsOverTimeChart } from "./components/MentorsOverTimeChart";
-import { StatCard } from "./components/StatCard";
-import { MissingReportsBarChart } from "./components/MissingReportsBarChart";
 import {
-  getLoggedUserInfoAsync,
-  getPermissionsAbility,
-} from "~/services/.server";
+  MentorsOverTimeChart,
+  StatCard,
+  MissingReportsBarChart,
+} from "./components";
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  const CURRENT_YEAR = dayjs().year();
+
   const loggedUser = await getLoggedUserInfoAsync(request);
   const ability = getPermissionsAbility(loggedUser.roles);
 
   const chapters = await getChaptersAsync(ability);
 
   const url = new URL(request.url);
-
+  const selectedTermYear =
+    url.searchParams.get("selectedTermYear") ?? CURRENT_YEAR.toString();
+  const selectedTermId = url.searchParams.get("selectedTermId");
   const selectedChapterId =
     url.searchParams.get("selectedChapterId") ?? chapters[0].id;
+
+  const terms = await getSchoolTermsAsync();
+  const currentTerm = getCurrentTermForDate(terms, new Date());
+
+  const distinctTermYears = Array.from(new Set(terms.map(({ year }) => year)));
+  const termsForYear = terms.filter(
+    ({ year }) => year.toString() === selectedTermYear,
+  );
+
+  let selectedTerm = termsForYear.find(
+    (t) => t.id.toString() === selectedTermId,
+  );
+
+  if (!selectedTerm) {
+    if (selectedTermYear === CURRENT_YEAR.toString()) {
+      selectedTerm = currentTerm;
+    } else {
+      selectedTerm = termsForYear[0];
+    }
+  }
 
   const [
     mentorsCount,
@@ -51,7 +79,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getStudentsWithoutMentorAsync(),
     getTotalChaptersAsync(),
     getMentorsPerMonth(),
-    getReportsPerSession(Number(selectedChapterId)),
+    getReportsPerSession(Number(selectedChapterId), selectedTerm),
   ]);
 
   const reportsData = {
@@ -89,6 +117,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 
   return {
+    selectedTermYear,
+    selectedTermId: selectedTerm.id.toString(),
     selectedChapterId: selectedChapterId.toString(),
     chapterOptions: chapters.map(({ id, name }) => ({
       label: name,
@@ -101,11 +131,21 @@ export async function loader({ request }: LoaderFunctionArgs) {
     chaptersCount,
     mentorsPerMonth,
     reportsData,
+    termYearsOptions: distinctTermYears.map((year) => ({
+      value: year.toString(),
+      label: year.toString(),
+    })),
+    termsOptions: termsForYear.map(({ id, start, end, name }) => ({
+      value: id.toString(),
+      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
+    })),
   };
 }
 
 export default function Index() {
   const {
+    selectedTermYear,
+    selectedTermId,
     selectedChapterId,
     chapterOptions,
     mentorsCount,
@@ -115,15 +155,18 @@ export default function Index() {
     chaptersCount,
     mentorsPerMonth,
     reportsData,
+    termYearsOptions,
+    termsOptions,
   } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const onChapterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    searchParams.set("selectedChapterId", event.target.value);
+  const onChange =
+    (key: string) => (event: React.ChangeEvent<HTMLSelectElement>) => {
+      searchParams.set(key, event.target.value);
 
-    void navigate(`?${searchParams.toString()}`);
-  };
+      void navigate(`?${searchParams.toString()}`);
+    };
 
   return (
     <>
@@ -168,13 +211,45 @@ export default function Index() {
       <div className="w-full">
         <SubTitle>Reports completed during last session</SubTitle>
 
-        <Select
-          label="Chapters"
-          name="selectedChapterId"
-          defaultValue={selectedChapterId}
-          options={chapterOptions}
-          onChange={onChapterChange}
-        />
+        <fieldset className="fieldset">
+          <Select
+            label="Chapters"
+            name="selectedChapterId"
+            defaultValue={selectedChapterId}
+            options={chapterOptions}
+            onChange={onChange("selectedChapterId")}
+          />
+
+          <div key={selectedTermId}>
+            <label className="fieldset-label">Term</label>
+            <div className="join w-full">
+              <select
+                className="select join-item basis-28"
+                name="selectedTermYear"
+                defaultValue={selectedTermYear}
+                onChange={onChange("selectedTermYear")}
+              >
+                {termYearsOptions.map(({ label, value }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="select join-item w-full"
+                name="selectedTermId"
+                defaultValue={selectedTermId}
+                onChange={onChange("selectedTermId")}
+              >
+                {termsOptions.map(({ label, value }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </fieldset>
 
         <div className="h-96">
           <MissingReportsBarChart

@@ -50,15 +50,20 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     selectedStudentId,
   );
 
-  const mentorsInSession = sessionsForDate.map(
-    ({ mentorId: userId }) => userId,
+  const mentorsInSession = sessionsForDate.reduce<Record<string, boolean>>(
+    (res, { mentorId, studentSession }) => {
+      res[mentorId.toString()] = studentSession.length > 0;
+
+      return res;
+    },
+    {},
   );
 
   return {
     chapter,
     student,
     mentors: mentors.map(({ id, fullName }) => {
-      const isUnavailable = mentorsInSession.includes(id);
+      const isUnavailable = mentorsInSession[id];
 
       return {
         label:
