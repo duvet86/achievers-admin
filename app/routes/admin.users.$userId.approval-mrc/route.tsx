@@ -40,6 +40,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   if (completedBy === undefined || submittedDate === undefined) {
     return {
+      successMessage: null,
       errorMessage: "Missing required fields",
     };
   }
@@ -53,14 +54,15 @@ export async function action({ request, params }: ActionFunctionArgs) {
   await updateApprovalByMRCAsync(Number(params.userId), data);
 
   return {
+    successMessage: "Success",
     errorMessage: null,
   };
 }
 
 export default function Index() {
-  const transition = useNavigation();
   const { user } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
+  const transition = useNavigation();
 
   return (
     <>
@@ -94,6 +96,7 @@ export default function Index() {
           />
 
           <SubmitFormButton
+            successMessage={actionData?.successMessage}
             errorMessage={actionData?.errorMessage}
             className="mt-6 justify-between"
           />

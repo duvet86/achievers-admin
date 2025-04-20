@@ -48,6 +48,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
     if (expiryDate === undefined) {
       return {
+        successMessage: null,
         errorMessage: "Missing required fields",
       };
     }
@@ -61,11 +62,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
     await updatePoliceCheckAsync(Number(params.userId), data);
   } catch (e: unknown) {
     return {
+      successMessage: null,
       errorMessage: (e as Error).message,
     };
   }
 
   return {
+    successMessage: "Success",
     errorMessage: null,
   };
 }
@@ -120,6 +123,7 @@ export default function Index() {
           )}
 
           <SubmitFormButton
+            successMessage={actionData?.successMessage}
             errorMessage={actionData?.errorMessage}
             className="mt-6 justify-between"
           />

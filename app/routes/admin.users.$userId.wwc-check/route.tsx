@@ -55,6 +55,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
     if (expiryDate === undefined || wwcNumber === undefined) {
       return {
+        successMessage: null,
         errorMessage: "Missing required fields",
       };
     }
@@ -69,11 +70,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
     await updateWWCCheckAsync(Number(params.userId), data);
   } catch (e: unknown) {
     return {
+      successMessage: null,
       errorMessage: (e as Error).message,
     };
   }
 
   return {
+    successMessage: "Success",
     errorMessage: null,
   };
 }
@@ -109,7 +112,7 @@ export default function Index() {
           />
 
           <FileInput
-            label="Police check file"
+            label="WWC check file"
             name="file"
             accept="application/pdf, image/png, image/jpeg"
           />
@@ -128,6 +131,7 @@ export default function Index() {
           )}
 
           <SubmitFormButton
+            successMessage={actionData?.successMessage}
             errorMessage={actionData?.errorMessage}
             className="mt-6 justify-between"
           />

@@ -82,7 +82,7 @@ export function CheckList({
         </thead>
 
         <tbody>
-          <tr className="hover:bg-base-200 cursor-pointer">
+          <tr className="hover:bg-base-200">
             <td>
               <div className="flex items-center gap-4">
                 <Sparks className="h-6 w-6" />
@@ -104,7 +104,7 @@ export function CheckList({
               </StateLink>
             </td>
           </tr>
-          <tr className="hover:bg-base-200 cursor-pointer">
+          <tr className="hover:bg-base-200">
             <td>
               <div className="flex items-center gap-4">
                 <Phone className="h-6 w-6" />
@@ -124,7 +124,7 @@ export function CheckList({
               </StateLink>
             </td>
           </tr>
-          <tr className="hover:bg-base-200 cursor-pointer">
+          <tr className="hover:bg-base-200">
             <td>
               <div className="flex items-center gap-4">
                 <MultiBubble className="h-6 w-6" />
@@ -144,7 +144,7 @@ export function CheckList({
               </StateLink>
             </td>
           </tr>
-          <tr className="hover:bg-base-200 cursor-pointer">
+          <tr className="hover:bg-base-200">
             <td>
               <div className="flex items-center gap-4">
                 <Journal className="h-6 w-6" />
@@ -164,7 +164,7 @@ export function CheckList({
               </StateLink>
             </td>
           </tr>
-          <tr className="hover:bg-base-200 cursor-pointer">
+          <tr className="hover:bg-base-200">
             <td>
               <div className="flex items-center gap-4">
                 <ShieldCheck className="h-6 w-6" />
@@ -187,7 +187,7 @@ export function CheckList({
               </StateLink>
             </td>
           </tr>
-          <tr className="hover:bg-base-200 cursor-pointer">
+          <tr className="hover:bg-base-200">
             <td>
               <div className="flex items-center gap-4">
                 <Group className="h-6 w-6" />
@@ -210,7 +210,7 @@ export function CheckList({
               </StateLink>
             </td>
           </tr>
-          <tr className="hover:bg-base-200 cursor-pointer">
+          <tr className="hover:bg-base-200">
             <td>
               <div className="flex items-center gap-4">
                 <ThumbsUp className="h-6 w-6" />

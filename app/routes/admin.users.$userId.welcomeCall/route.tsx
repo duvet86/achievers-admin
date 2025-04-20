@@ -40,6 +40,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   if (calledBy === undefined || calledOnDate === undefined) {
     return {
+      successMessage: null,
       errorMessage: "Missing required fields",
     };
   }
@@ -53,6 +54,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   await updateWelcomeCallAsync(Number(params.userId), data);
 
   return {
+    successMessage: "Success",
     errorMessage: null,
   };
 }
@@ -98,6 +100,7 @@ export default function Index() {
           />
 
           <SubmitFormButton
+            successMessage={actionData?.successMessage}
             errorMessage={actionData?.errorMessage}
             className="mt-6 justify-between"
           />

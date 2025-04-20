@@ -17,17 +17,17 @@ export function useClientRect<T extends HTMLElement>(): [
   return [rect, ref];
 }
 
-export const useRouteData = <T>(routeId: string): T => {
+export function useRouteData<T>(routeId: string): T {
   const matches = useMatches();
   const data = matches.find((match) => match.id === routeId)?.data;
 
   return data as T;
-};
+}
 
 export function useLocalStorage<T>(
   key: string,
 ): [T | null, (newValue: T) => void] {
-  if (typeof document === "undefined") {
+  if (typeof window === "undefined") {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     return [null, () => {}];
   }
