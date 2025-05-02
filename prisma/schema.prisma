@@ -15,6 +15,11 @@ enum Gender {
   FEMALE
 }
 
+enum TeachingSubject {
+  MATH
+  ENGLISH
+}
+
 enum SessionStatus {
   AVAILABLE
   UNAVAILABLE
@@ -279,22 +284,29 @@ model Student {
   goal                Goal[]
 
   importedStudentHistory ImportedStudentHistory?
+
+  eoiStudentProfile   EoiStudentProfile? @relation(fields: [eoiStudentProfileId], references: [id])
+  eoiStudentProfileId Int?               @unique
 }
 
 model StudentGuardian {
   id Int @id @default(autoincrement())
 
-  fullName     String
-  relationship String
-  phone        String
-  email        String
-  address      String
+  fullName      String
+  preferredName String?
+  relationship  String
+  phone         String
+  email         String
+  address       String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  student   Student @relation(fields: [studentId], references: [id])
-  studentId Int
+  student   Student? @relation(fields: [studentId], references: [id])
+  studentId Int?
+
+  eoiStudentProfile   EoiStudentProfile? @relation(fields: [eoiStudentProfileId], references: [id])
+  eoiStudentProfileId Int?
 }
 
 model StudentTeacher {
@@ -303,12 +315,16 @@ model StudentTeacher {
   fullName   String
   email      String
   schoolName String
+  subject    TeachingSubject?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  student   Student @relation(fields: [studentId], references: [id])
-  studentId Int
+  student   Student? @relation(fields: [studentId], references: [id])
+  studentId Int?
+
+  eoiStudentProfile   EoiStudentProfile? @relation(fields: [eoiStudentProfileId], references: [id])
+  eoiStudentProfileId Int?
 }
 
 model ImportedStudentHistory {
@@ -479,4 +495,39 @@ model MentorShareInfo {
   updatedAt DateTime @updatedAt
 
   @@unique([mentorSharingId, mentorSharedToId])
+}
+
+model EoiStudentProfile {
+  id Int @id @default(autoincrement())
+
+  firstName                       String
+  lastName                        String
+  preferredName                   String
+  dateOfBirth                     DateTime
+  gender                          String
+  mobile                          String?
+  email                           String?
+  address                         String
+  dietaryRequirements             String
+  isEnglishMainLanguage           Boolean
+  otherLanguagesSpoken            String
+  bestPersonToContact             String
+  bestPersonToContactForEmergency String
+  yearLevel                       String
+  favouriteSchoolSubject          String
+  leastFavouriteSchoolSubject     String
+  supportReason                   String
+  otherSupport                    String
+  alreadyInAchievers              String
+  heardAboutUs                    String
+  preferredChapter                String
+  weeklyCommitment                Boolean
+  hasApprovedToPublishPhotos      Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  studentGuardian StudentGuardian[]
+  studentTeacher  StudentTeacher[]
+  Student         Student?
 }
