@@ -1,4 +1,3 @@
-import { writeFileSync } from "fs";
 import invariant from "tiny-invariant";
 
 import { PrismaClient } from "~/prisma/client";
@@ -17,19 +16,13 @@ declare global {
 if (process.env.NODE_ENV === "production") {
   if (process.env.ENABLE_SSL) {
     invariant(process.env.DATABASE_URL, "DATABASE_URL must be set");
-    invariant(process.env.CERT, "CERT must be set");
 
     const dbUrl = process.env.DATABASE_URL.split("?");
-
-    writeFileSync(
-      "/tmp/DigiCertGlobalRootCA.crt.pem",
-      Buffer.from(process.env.CERT, "base64"),
-    );
 
     prisma = new PrismaClient({
       datasources: {
         db: {
-          url: dbUrl[0] + "?sslcert=/tmp/DigiCertGlobalRootCA.crt.pem",
+          url: dbUrl[0] + "?sslcert=DigiCertGlobalRootCA.crt.pem",
         },
       },
     });
