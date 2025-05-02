@@ -17,12 +17,11 @@ if (process.env.NODE_ENV === "production") {
   if (process.env.ENABLE_SSL) {
     invariant(process.env.DATABASE_URL, "DATABASE_URL must be set");
 
-    const dbUrl = process.env.DATABASE_URL.split("?");
-
     prisma = new PrismaClient({
       datasources: {
         db: {
-          url: dbUrl[0] + "?sslcert=DigiCertGlobalRootCA.crt.pem",
+          url:
+            process.env.DATABASE_URL + "?sslcert=DigiCertGlobalRootCA.crt.pem",
         },
       },
     });

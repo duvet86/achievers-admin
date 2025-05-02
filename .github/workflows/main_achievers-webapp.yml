@@ -100,6 +100,7 @@ jobs:
     needs: e2etests
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      ENABLE_SSL: "true"
 
     steps:
       - name: Checkout
