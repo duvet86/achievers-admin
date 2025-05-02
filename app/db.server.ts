@@ -1,5 +1,3 @@
-import invariant from "tiny-invariant";
-
 import { PrismaClient } from "~/prisma/client";
 
 let prisma: PrismaClient;
@@ -14,20 +12,7 @@ declare global {
 // create a new connection to the DB with every change either.
 // in production we'll have a single connection to the DB.
 if (process.env.NODE_ENV === "production") {
-  if (process.env.ENABLE_SSL) {
-    invariant(process.env.DATABASE_URL, "DATABASE_URL must be set");
-
-    prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url:
-            process.env.DATABASE_URL + "?sslcert=DigiCertGlobalRootCA.crt.pem",
-        },
-      },
-    });
-  } else {
-    prisma = new PrismaClient();
-  }
+  prisma = new PrismaClient();
 } else {
   if (!global.__db__) {
     global.__db__ = new PrismaClient();
