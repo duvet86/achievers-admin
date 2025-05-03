@@ -141,7 +141,7 @@ export async function getSessionsLookupAsync(
     where: {
       chapterId,
       mentorId: {
-        in: myPartners.map(({ userId }) => userId),
+        in: [mentorId].concat(myPartners.map(({ userId }) => userId)),
       },
       attendedOn: {
         gte: term.start.toDate(),

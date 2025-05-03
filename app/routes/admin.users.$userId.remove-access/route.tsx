@@ -1,12 +1,12 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
-import { redirect, useActionData } from "react-router";
+import { useActionData } from "react-router";
 import { Form, useLoaderData, useNavigation } from "react-router";
 import invariant from "tiny-invariant";
 import { BinFull, WarningCircle } from "iconoir-react";
 
 import { deleteAzureUserAsync } from "~/services/.server";
-import { Title } from "~/components";
+import { Message, Title } from "~/components";
 
 import { getUserByIdAsync, removeUserAccessAsync } from "./services.server";
 
@@ -36,23 +36,30 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
     await removeUserAccessAsync(user.id);
   } catch (error) {
-    return { error: error as Error };
+    return { successMessage: null, error: error as Error };
   }
 
-  return redirect(`/admin/users/${params.userId}`);
+  return {
+    successMessage: "User access removed successfully",
+    error: null,
+  };
 }
 
 export default function Chapter() {
-  const transition = useNavigation();
-  const actionData = useActionData<typeof action>();
   const { user } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+  const transition = useNavigation();
 
   return (
     <>
-      <Title>
-        Remove access to the achievers&apos; web app for &quot;{user.fullName}
-        &quot;
-      </Title>
+      <div className="flex flex-col gap-6 sm:flex-row">
+        <Title>
+          Remove access to the achievers&apos; web app for &quot;{user.fullName}
+          &quot;
+        </Title>
+
+        <Message key={Date.now()} successMessage={actionData?.successMessage} />
+      </div>
 
       <Form method="post" className="mt-4">
         <fieldset disabled={transition.state === "submitting"}>

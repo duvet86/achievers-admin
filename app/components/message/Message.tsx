@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 interface MessageProps {
   successMessage: string | undefined | null;
-  errorMessage: string | undefined | null;
+  errorMessage?: string | undefined | null;
 }
 
 export function Message({ successMessage, errorMessage }: MessageProps) {

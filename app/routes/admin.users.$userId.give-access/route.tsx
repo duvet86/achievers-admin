@@ -1,11 +1,11 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
-import { redirect, useActionData } from "react-router";
+import { useActionData } from "react-router";
 import { Form, useLoaderData, useNavigation } from "react-router";
 import invariant from "tiny-invariant";
 import { Key, WarningCircle } from "iconoir-react";
 
-import { Title } from "~/components";
+import { Message, Title } from "~/components";
 
 import { getUserByIdAsync, updateAzureIdAsync } from "./services.server";
 import {
@@ -75,9 +75,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
     await updateAzureIdAsync(Number(params.userId), azureUserId);
 
-    return redirect(`/admin/users/${params.userId}`);
+    return {
+      successMessage: "User invited successfully",
+      error: null,
+    };
   } catch (error) {
-    return { error: error as Error };
+    return { successMessage: null, error: error as Error };
   }
 }
 
@@ -88,9 +91,13 @@ export default function Chapter() {
 
   return (
     <>
-      <Title>
-        Invite &quot;{user.fullName}&quot; to the achievers&apos; web app
-      </Title>
+      <div className="flex flex-col gap-6 sm:flex-row">
+        <Title>
+          Invite &quot;{user.fullName}&quot; to the achievers&apos; web app
+        </Title>
+
+        <Message key={Date.now()} successMessage={actionData?.successMessage} />
+      </div>
 
       <Form method="post" className="mt-4">
         <fieldset disabled={transition.state === "submitting"}>
@@ -99,7 +106,7 @@ export default function Chapter() {
             achievers&apos; web app?
           </p>
 
-          {actionData && (
+          {actionData?.error && (
             <div role="alert" className="alert alert-error mt-4">
               <WarningCircle />
               <span>{actionData?.error?.message}</span>

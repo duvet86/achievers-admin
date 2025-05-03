@@ -1,11 +1,11 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
-import { redirect } from "react-router";
+import { useActionData } from "react-router";
 import { Form, useLoaderData, useNavigation } from "react-router";
 import invariant from "tiny-invariant";
 import { OnTag } from "iconoir-react";
 
-import { Title } from "~/components";
+import { Message, Title } from "~/components";
 
 import { getStudentByIdAsync, updateEndDateAsync } from "./services.server";
 
@@ -24,16 +24,23 @@ export async function action({ params }: ActionFunctionArgs) {
 
   await updateEndDateAsync(Number(params.studentId));
 
-  return redirect(`/admin/students/${params.studentId}`);
+  return {
+    successMessage: "Student re enabled successfully",
+  };
 }
 
 export default function Index() {
-  const transition = useNavigation();
   const { student } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+  const transition = useNavigation();
 
   return (
     <>
-      <Title>Re enable &quot;{student.fullName}&quot;</Title>
+      <div className="flex flex-col gap-6 sm:flex-row">
+        <Title>Re enable &quot;{student.fullName}&quot;</Title>
+
+        <Message key={Date.now()} successMessage={actionData?.successMessage} />
+      </div>
 
       <Form method="post">
         <fieldset disabled={transition.state !== "idle"}>

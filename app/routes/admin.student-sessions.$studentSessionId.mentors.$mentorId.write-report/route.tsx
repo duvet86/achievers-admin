@@ -6,7 +6,7 @@ import type {
 import type { EditorState } from "lexical";
 import type { ActionType, SessionCommandRequest } from "./services.server";
 
-import { redirect, useFetcher, useLoaderData } from "react-router";
+import { useFetcher, useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
 import { useRef } from "react";
@@ -17,7 +17,13 @@ import { getLoggedUserInfoAsync } from "~/services/.server/session.server";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
 import { isEditorEmpty } from "~/services";
-import { Editor, EditorQuestions, SubTitle, Title } from "~/components";
+import {
+  Editor,
+  EditorQuestions,
+  Message,
+  SubTitle,
+  Title,
+} from "~/components";
 
 import { getStudentSessionIdAsync, saveReportAsync } from "./services.server";
 import { isSessionDateInTheFuture } from "./services.client";
@@ -59,20 +65,16 @@ export async function action({ request, params }: ActionFunctionArgs) {
     userAzureId: loggedUser.oid,
   });
 
-  if (actionType === "signoff") {
-    return redirect(
-      `/admin/student-sessions/${params.studentSessionId}/report`,
-    );
-  }
-
-  return null;
+  return {
+    successMessage: "Report saved successfully",
+  };
 }
 
 export default function Index() {
   const {
     studentSession: { id, report, reportFeedback, session },
   } = useLoaderData<typeof loader>();
-  const { state, submit } = useFetcher<typeof loader>();
+  const { data, state, submit } = useFetcher<typeof action>();
 
   const editorReportStateRef = useRef<EditorState>(null);
   const editorFeedbackStateRef = useRef<EditorState>(null);
@@ -130,10 +132,14 @@ export default function Index() {
 
   return (
     <>
-      <Title className="mb-4">
-        Report of &quot;{dayjs(session.attendedOn).format("DD/MM/YYYY")}&quot;
-        on behalf of &quot;{session.mentor.fullName}&quot;
-      </Title>
+      <div className="mb-4 flex flex-col gap-6 sm:flex-row">
+        <Title>
+          Report of &quot;{dayjs(session.attendedOn).format("DD/MM/YYYY")}&quot;
+          on behalf of &quot;{session.mentor.fullName}&quot;
+        </Title>
+
+        <Message key={Date.now()} successMessage={data?.successMessage} />
+      </div>
 
       <div className="relative flex h-full flex-col">
         {isLoading && (

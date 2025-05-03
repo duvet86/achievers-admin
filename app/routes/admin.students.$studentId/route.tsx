@@ -4,7 +4,7 @@ import type { XOR } from "~/models";
 
 import dayjs from "dayjs";
 import { $Enums } from "~/prisma/client";
-import { redirect, useLoaderData, useNavigation } from "react-router";
+import { useActionData, useLoaderData, useNavigation } from "react-router";
 import invariant from "tiny-invariant";
 import { NavArrowRight } from "iconoir-react";
 
@@ -74,7 +74,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
       await deleteTeacherByIdAsync(Number(teacherId));
     }
 
-    return null;
+    return {
+      successMessage: "Deleted successfully",
+    };
   }
 
   const firstName = formData.get("firstName")?.toString();
@@ -107,8 +109,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
     ?.toString();
   const startDate = formData.get("startDate")?.toString();
   const chapterId = formData.get("chapterId")?.toString();
-
-  let studentId;
 
   if (areEqualIgnoreCase(params.studentId, "new")) {
     if (firstName === undefined || lastName === undefined) {
@@ -143,7 +143,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       chapterId: Number(chapterId),
     };
 
-    studentId = await createNewStudentAsync(dataCreate);
+    await createNewStudentAsync(dataCreate);
   } else {
     const dataCreate: XOR<
       Prisma.StudentUpdateInput,
@@ -173,25 +173,29 @@ export async function action({ request, params }: ActionFunctionArgs) {
       chapterId: Number(chapterId),
     };
 
-    studentId = await updateStudentByIdAsync(
-      Number(params.studentId),
-      dataCreate,
-    );
+    await updateStudentByIdAsync(Number(params.studentId), dataCreate);
   }
 
-  return redirect(`/admin/students/${studentId}`);
+  return {
+    successMessage: "Student updated successfully",
+  };
 }
 
 export default function Index() {
   const { chapters, isNewStudent, student, title, yearLevelCalculated } =
     useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
   const transition = useNavigation();
 
   const isLoading = transition.state !== "idle";
 
   return (
     <div className="flex h-full flex-col">
-      <Header title={title} endDate={student?.endDate} />
+      <Header
+        title={title}
+        endDate={student?.endDate}
+        successMessage={actionData?.successMessage}
+      />
 
       <hr className="my-4" />
 

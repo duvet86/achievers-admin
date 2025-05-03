@@ -6,17 +6,17 @@ import type {
 import type { EditorState } from "lexical";
 import type { SessionCommandRequest } from "./services.server";
 
-import { redirect, useFetcher, useLoaderData } from "react-router";
+import { Link, useFetcher, useLoaderData, useSearchParams } from "react-router";
 
 import dayjs from "dayjs";
 import { useRef } from "react";
 import invariant from "tiny-invariant";
-import { DesignNib, WarningTriangle, Xmark } from "iconoir-react";
+import { DesignNib, NavArrowLeft, WarningTriangle, Xmark } from "iconoir-react";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
 import { getLoggedUserInfoAsync } from "~/services/.server";
 import { isEditorEmpty } from "~/services";
-import { Editor, SubTitle, Title } from "~/components";
+import { Editor, Message, SubTitle, Title } from "~/components";
 
 import { getStudentSessionByIdAsync, saveReportAsync } from "./services.server";
 
@@ -53,9 +53,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
     loggedUser.oid,
   );
 
-  const url = new URL(request.url);
-
-  return redirect(`/admin/student-sessions?${url.searchParams}`);
+  return {
+    successMessage: "Report saved successfully",
+  };
 }
 
 export default function Index() {
@@ -64,7 +64,8 @@ export default function Index() {
   } = useLoaderData<typeof loader>();
 
   const editorStateRef = useRef<EditorState>(null);
-  const { state, submit } = useFetcher();
+  const { state, submit, data } = useFetcher<typeof action>();
+  const [searchParams] = useSearchParams();
 
   const isLoading = state !== "idle";
 
@@ -96,11 +97,15 @@ export default function Index() {
 
   return (
     <>
-      <Title className="mb-4">
-        {dayjs(session.attendedOn).format("MMMM D, YYYY")} - mentor: &quot;
-        {session.mentor.fullName}&quot; student: &quot;
-        {student.fullName}&quot;
-      </Title>
+      <div className="mb-4 flex flex-col gap-6 sm:flex-row">
+        <Title>
+          {dayjs(session.attendedOn).format("MMMM D, YYYY")} - mentor: &quot;
+          {session.mentor.fullName}&quot; student: &quot;
+          {student.fullName}&quot;
+        </Title>
+
+        <Message key={Date.now()} successMessage={data?.successMessage} />
+      </div>
 
       <div className="relative flex h-full flex-col">
         {isLoading && (
@@ -133,6 +138,13 @@ export default function Index() {
                   ? `Report has been signed off on ${dayjs(signedOffOn).format("MMMM D, YYYY")}`
                   : ""}
               </p>
+
+              <Link
+                to={`/admin/student-sessions?${searchParams.toString()}`}
+                className="btn w-44"
+              >
+                <NavArrowLeft /> Back
+              </Link>
 
               {signedOffOn ? (
                 <button

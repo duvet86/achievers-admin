@@ -5,11 +5,11 @@ import { Form, redirect, useActionData } from "react-router";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
+import { isLoggedUserBlockedAsync, trackException } from "~/services/.server";
 import { areDatesOverlapping } from "~/services";
 import { DateInput, SubTitle, SubmitFormButton, Title } from "~/components";
 
 import { addTermsAsync, getExisitingYearsAsync } from "./services.server";
-import { isLoggedUserBlockedAsync, trackException } from "~/services/.server";
 
 dayjs.extend(utc);
 
@@ -71,6 +71,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   if (datesWithDifferrentYears.length > 0) {
     return {
+      successMessage: null,
       errorMessage: "Dates have different years",
     };
   }
@@ -79,6 +80,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   if (existingYears.includes(commonYear)) {
     return {
+      successMessage: null,
       errorMessage: `Year ${commonYear} already exists`,
     };
   }
@@ -108,13 +110,17 @@ export async function action({ request }: ActionFunctionArgs) {
 
   if (areDatesOverlapping(newTerms)) {
     return {
+      successMessage: null,
       errorMessage: "End date before start date or overlapping terms",
     };
   }
 
   await addTermsAsync(newTerms);
 
-  throw redirect(`/admin/school-terms/${commonYear}`);
+  return {
+    successMessage: "Terms added successfully",
+    errorMessage: null,
+  };
 }
 
 export default function Index() {
@@ -142,6 +148,7 @@ export default function Index() {
         <SubmitFormButton
           sticky
           className="justify-between"
+          successMessage={actionData?.successMessage}
           errorMessage={actionData?.errorMessage}
         />
       </Form>

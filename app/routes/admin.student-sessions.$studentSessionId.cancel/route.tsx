@@ -1,11 +1,17 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
-import { Form, redirect, useLoaderData, useNavigation } from "react-router";
+import {
+  Form,
+  redirect,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "react-router";
 import { BinFull } from "iconoir-react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
-import { Textarea, Title } from "~/components";
+import { Message, Textarea, Title } from "~/components";
 
 import { cancelStudentSession, getStudentSession } from "./services.server";
 
@@ -36,19 +42,28 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   await cancelStudentSession(Number(params.studentSessionId), cancelReason);
 
-  return redirect(`/admin/student-sessions/${params.studentSessionId}`);
+  return {
+    successMessage: "Student session cancelled successfully",
+  };
 }
 
 export default function Index() {
   const { studentSession } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+
   const transition = useNavigation();
 
   return (
     <>
-      <Title>
-        Cancel session of &quot;
-        {dayjs(studentSession.session.attendedOn).format("MMMM D, YYYY")}&quot;
-      </Title>
+      <div className="flex flex-col gap-6 sm:flex-row">
+        <Title>
+          Cancel session of &quot;
+          {dayjs(studentSession.session.attendedOn).format("MMMM D, YYYY")}
+          &quot;
+        </Title>
+
+        <Message key={Date.now()} successMessage={actionData?.successMessage} />
+      </div>
 
       <Form method="post">
         <fieldset disabled={transition.state === "submitting"}>

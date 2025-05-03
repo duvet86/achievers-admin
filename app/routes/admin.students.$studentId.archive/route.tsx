@@ -1,12 +1,12 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
-import { redirect } from "react-router";
+import { useActionData } from "react-router";
 import { Form, useLoaderData, useNavigation } from "react-router";
 
 import invariant from "tiny-invariant";
 import { BinFull } from "iconoir-react";
 
-import { Title } from "~/components";
+import { Message, Title } from "~/components";
 
 import { archiveStudentAsync, getStudentByIdAsync } from "./services.server";
 
@@ -25,16 +25,23 @@ export async function action({ params }: ActionFunctionArgs) {
 
   await archiveStudentAsync(Number(params.studentId));
 
-  return redirect("/admin/students");
+  return {
+    successMessage: "Student archived successfully",
+  };
 }
 
 export default function Chapter() {
   const { student } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
   const transition = useNavigation();
 
   return (
     <>
-      <Title>Archive &quot;{student.fullName}&quot;</Title>
+      <div className="flex flex-col gap-6 sm:flex-row">
+        <Title>Archive &quot;{student.fullName}&quot;</Title>
+
+        <Message key={Date.now()} successMessage={actionData?.successMessage} />
+      </div>
 
       <Form method="post">
         <fieldset disabled={transition.state === "submitting"}>

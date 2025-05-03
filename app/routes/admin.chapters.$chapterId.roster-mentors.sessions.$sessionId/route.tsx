@@ -1,12 +1,18 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
-import { redirect } from "react-router";
-import { Form, useLoaderData, useSearchParams, useSubmit } from "react-router";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useSearchParams,
+  useSubmit,
+} from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import {
   BookmarkBook,
   Check,
+  Eye,
   FloppyDiskArrowIn,
   InfoCircle,
   StatsReport,
@@ -15,7 +21,7 @@ import {
   Xmark,
 } from "iconoir-react";
 
-import { SelectSearch, StateLink, Title } from "~/components";
+import { Message, SelectSearch, StateLink, Title } from "~/components";
 
 import {
   addStudentToSessionAsync,
@@ -63,8 +69,6 @@ export async function action({ params, request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const action = formData.get("action");
 
-  const url = new URL(request.url);
-
   switch (action) {
     case "addStudent": {
       const selectedStudentId = formData.get("studentId");
@@ -74,39 +78,39 @@ export async function action({ params, request }: ActionFunctionArgs) {
         Number(selectedStudentId),
       );
 
-      return null;
+      break;
     }
     case "restore":
     case "cancelAvailable": {
-      const session = await removeSessionAsync({
+      await removeSessionAsync({
         sessionId: Number(params.sessionId),
         studentId: null,
       });
-
-      return redirect(
-        `/admin/chapters/${session.chapterId}/roster-mentors/${session.mentorId}/attended-on/${dayjs(session.attendedOn).format("YYYY-MM-DD")}/new?${url.searchParams}`,
-      );
+      break;
     }
     case "cancelStudent": {
       const selectedStudentId = formData.get("studentId");
 
-      const session = await removeSessionAsync({
+      await removeSessionAsync({
         sessionId: Number(params.sessionId),
         studentId: Number(selectedStudentId),
       });
-
-      return redirect(
-        `/admin/chapters/${session.chapterId}/roster-mentors/${session.mentorId}/attended-on/${dayjs(session.attendedOn).format("YYYY-MM-DD")}/new?${url.searchParams}`,
-      );
+      break;
     }
     default:
       throw new Error();
   }
+
+  return {
+    successMessage: "Session updated successfully",
+  };
 }
 
 export default function Index() {
   const { attendedOnLabel, chapter, session, students } =
     useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
 
@@ -152,10 +156,14 @@ export default function Index() {
 
   return (
     <>
-      <Title>
-        Session of &quot;
-        {attendedOnLabel}&quot;
-      </Title>
+      <div className="flex flex-col gap-6 sm:flex-row">
+        <Title>
+          Session of &quot;
+          {attendedOnLabel}&quot;
+        </Title>
+
+        <Message key={Date.now()} successMessage={actionData?.successMessage} />
+      </div>
 
       <div className="my-8 flex flex-col gap-6">
         <div className="flex items-center justify-between gap-2 border-b border-gray-300 p-2">
@@ -315,8 +323,16 @@ export default function Index() {
                                 </StateLink>
                               ) : (
                                 <div className="flex justify-end gap-4">
+                                  <StateLink
+                                    className="btn btn-info btn-sm w-32"
+                                    to={`/admin/student-sessions/${id}`}
+                                  >
+                                    <Eye />
+                                    View session
+                                  </StateLink>
+
                                   <button
-                                    className="btn btn-warning btn-sm"
+                                    className="btn btn-error btn-sm w-32"
                                     type="button"
                                     onClick={handleStudentRemoveSession(
                                       student.id,
@@ -325,13 +341,6 @@ export default function Index() {
                                     <Xmark />
                                     Remove
                                   </button>
-                                  <StateLink
-                                    className="btn btn-error btn-sm"
-                                    to={`/admin/student-sessions/${id}/cancel`}
-                                  >
-                                    <Trash />
-                                    Cancel
-                                  </StateLink>
                                 </div>
                               )}
                             </td>
