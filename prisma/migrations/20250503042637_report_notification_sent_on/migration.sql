@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE `Studentsession` ADD COLUMN `notificationSentOn` DATETIME(3) NULL;
+ALTER TABLE `StudentSession` ADD COLUMN `notificationSentOn` DATETIME(3) NULL;
