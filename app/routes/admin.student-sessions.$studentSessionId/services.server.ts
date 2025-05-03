@@ -1,4 +1,9 @@
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
 import { prisma } from "~/db.server";
+
+dayjs.extend(relativeTime);
 
 export async function getChapterByIdAsync(id: number) {
   return await prisma.chapter.findUniqueOrThrow({
@@ -22,6 +27,7 @@ export async function getStudentSessionByIdAsync(studentSessionId: number) {
       completedOn: true,
       cancelledAt: true,
       cancelledReason: true,
+      notificationSentOn: true,
       student: {
         select: {
           id: true,
@@ -94,4 +100,12 @@ export async function removeSessionAsync(studentSessionId: number) {
 
     return studentSession;
   });
+}
+
+export function getNotificationSentOnFromNow(notificationSentOn: Date | null) {
+  if (!notificationSentOn) {
+    return null;
+  }
+
+  return dayjs(notificationSentOn).fromNow();
 }

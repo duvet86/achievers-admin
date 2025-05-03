@@ -434,6 +434,7 @@ model StudentSession {
   signedOffByAzureId String?
 
   writteOnBehalfByAzureId String?
+  notificationSentOn      DateTime?
 
   isCancelled     Boolean   @default(false)
   cancelledAt     DateTime?

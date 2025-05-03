@@ -31,13 +31,13 @@ export function Message({ successMessage, errorMessage }: MessageProps) {
   return (
     <div data-testid="message">
       {isActive && successMessage && (
-        <div className="bg-success flex gap-4 rounded-lg p-3 pr-12">
+        <div className="bg-success flex gap-4 rounded-lg p-2 pr-12">
           <Check />
           {successMessage}
         </div>
       )}
       {errorMessage && (
-        <div className="bg-error flex gap-4 rounded-lg p-3 pr-12">
+        <div className="bg-error flex gap-4 rounded-lg p-2 pr-12">
           <WarningCircle />
           {errorMessage}
         </div>

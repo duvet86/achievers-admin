@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
-import { redirect } from "react-router";
+import { redirect, useActionData } from "react-router";
 import { useLoaderData, useSubmit } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
@@ -11,12 +11,15 @@ import {
   UserXmark,
   WarningTriangle,
   Xmark,
+  SendMail,
 } from "iconoir-react";
 
-import { StateLink, Textarea, Title } from "~/components";
+import { getEnvironment } from "~/services";
+import { Message, StateLink, Textarea, Title } from "~/components";
 
 import {
   getChapterByIdAsync,
+  getNotificationSentOnFromNow,
   getStudentSessionByIdAsync,
   removeSessionAsync,
 } from "./services.server";
@@ -42,26 +45,72 @@ export async function loader({ params }: LoaderFunctionArgs) {
     attendedOnLabel: dayjs(studentSession.session.attendedOn).format(
       "MMMM D, YYYY",
     ),
+    notificationSentOnFromNow: getNotificationSentOnFromNow(
+      studentSession.notificationSentOn,
+    ),
   };
 }
 
 export async function action({ params, request }: ActionFunctionArgs) {
   invariant(params.studentSessionId, "studentSessionId not found");
 
-  const studentSession = await removeSessionAsync(
-    Number(params.studentSessionId),
-  );
+  if (request.method === "DELETE") {
+    await removeSessionAsync(Number(params.studentSessionId));
 
-  const url = new URL(request.url);
+    return {
+      successMessage: "Mentor removed",
+      errorMessage: null,
+    };
+  }
 
-  return redirect(
-    `/admin/chapters/${studentSession.session.chapterId}/roster-students/${studentSession.studentId}/attended-on/${dayjs(studentSession.session.attendedOn).format("YYYY-MM-DD")}/new?${url.searchParams}`,
-  );
+  if (request.method === "POST") {
+    const environment = getEnvironment(request);
+
+    if (environment !== "production") {
+      return {
+        successMessage: "TEST ENVIRONMENT: Notification email sent",
+        errorMessage: null,
+      };
+    }
+
+    const resp = await fetch(
+      "https://prod-19.australiaeast.logic.azure.com:443/workflows/1fee24b00c05499c9b10878837733e7f/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=4lAPyBTO_ROY312DS_mVaqdUf_SHXbpUd2AXAfONs0o",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          studentSessionId: Number(params.studentSessionId),
+        }),
+      },
+    );
+
+    if (!resp.ok) {
+      return {
+        successMessage: null,
+        errorMessage: "Failed to send notification email",
+      };
+    }
+
+    return {
+      successMessage: "Notification email sent",
+      errorMessage: null,
+    };
+  }
+
+  throw new Error("Method not allowed");
 }
 
 export default function Index() {
-  const { attendedOnLabel, chapter, studentSession } =
-    useLoaderData<typeof loader>();
+  const {
+    attendedOnLabel,
+    chapter,
+    studentSession,
+    notificationSentOnFromNow,
+  } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+
   const submit = useSubmit();
 
   const handleRemoveMentorSubmit = () => {
@@ -70,6 +119,16 @@ export default function Index() {
     }
     void submit(null, {
       method: "DELETE",
+    });
+  };
+
+  const sendNotification = () => {
+    if (!confirm("Are you sure you want to send a notification email?")) {
+      return;
+    }
+
+    void submit(null, {
+      method: "POST",
     });
   };
 
@@ -87,6 +146,12 @@ export default function Index() {
           Session of &quot;
           {attendedOnLabel}&quot;
         </Title>
+
+        <Message
+          key={Date.now()}
+          errorMessage={actionData?.errorMessage}
+          successMessage={actionData?.successMessage}
+        />
 
         {!studentSession.cancelledAt ? (
           <StateLink className="btn btn-error w-full sm:w-48" to="cancel">
@@ -141,6 +206,19 @@ export default function Index() {
               <div className="sm:flex-1">
                 <Xmark className="text-error" />
               </div>
+
+              {notificationSentOnFromNow && (
+                <p className="text-info">
+                  Last notification sent {notificationSentOnFromNow}
+                </p>
+              )}
+
+              <button
+                className="btn btn-warning w-full gap-2 sm:w-48"
+                onClick={sendNotification}
+              >
+                <SendMail /> Send notification
+              </button>
 
               <StateLink
                 to={`/admin/student-sessions/${studentSession.id}/mentors/${studentSession.session.mentor.id}/write-report`}

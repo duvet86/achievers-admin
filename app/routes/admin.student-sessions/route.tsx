@@ -53,7 +53,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const selectedTermDate =
     url.searchParams.get("selectedTermDate") || undefined;
 
-  const includeSignedOff = url.searchParams.get("includeSignedOff");
+  const filterReports = url.searchParams.get("filterReports");
 
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
 
@@ -96,9 +96,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const selectedChapterId = chapterId ? Number(chapterId) : chapters[0].id;
   const selectedMentorId = mentorId ? Number(mentorId) : undefined;
   const selectedStudentId = studentId ? Number(studentId) : undefined;
-  const selectedIncludeSignedOff = includeSignedOff
-    ? includeSignedOff === "on"
-    : false;
+  const selectedFilterReports = filterReports ?? "TO_SIGN_OFF";
 
   const count = await getCountAsync(
     selectedChapterId,
@@ -106,7 +104,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     selectedTermDate,
     selectedMentorId,
     selectedStudentId,
-    selectedIncludeSignedOff,
+    selectedFilterReports,
   );
 
   const totalPageCount = Math.ceil(count / 10);
@@ -126,7 +124,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     selectedTermDate,
     selectedMentorId,
     selectedStudentId,
-    selectedIncludeSignedOff,
+    selectedFilterReports,
     currentPageNumber,
   );
 
@@ -153,7 +151,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     selectedChapterId: selectedChapterId.toString(),
     selectedMentorId: selectedMentorId?.toString(),
     selectedStudentId: selectedStudentId?.toString(),
-    selectedIncludeSignedOff,
+    selectedFilterReports,
     selectedTermYear,
     selectedTermId: selectedTerm.id.toString(),
     selectedTermDate: selectedTermDate ?? undefined,
@@ -196,7 +194,7 @@ export default function Index() {
     selectedChapterId,
     selectedMentorId,
     selectedStudentId,
-    selectedIncludeSignedOff,
+    selectedFilterReports,
     selectedTermYear,
     selectedTermId,
     selectedTermDate,
@@ -223,7 +221,7 @@ export default function Index() {
           selectedTermDate={selectedTermDate}
           mentorId={selectedMentorId}
           studentId={selectedStudentId}
-          includeSignedOff={selectedIncludeSignedOff}
+          filterReports={selectedFilterReports}
           chaptersOptions={chaptersOptions}
           mentorsOptions={mentorsOptions}
           studentsOptions={studentsOptions}
@@ -281,17 +279,23 @@ export default function Index() {
                         : "-"}
                     </td>
                     <td className="hidden p-2 sm:table-cell" align="right">
-                      <StateLink
-                        to={
-                          completedOn
-                            ? `/admin/student-sessions/${id}/report?${searchParams.toString()}`
-                            : `/admin/student-sessions/${id}?${searchParams.toString()}`
-                        }
-                        className="btn btn-success btn-xs btn-block"
-                      >
-                        <Eye className="h-4 w-4" />
-                        Report
-                      </StateLink>
+                      {completedOn ? (
+                        <StateLink
+                          to={`/admin/student-sessions/${id}/report?${searchParams.toString()}`}
+                          className="btn btn-success btn-xs btn-block"
+                        >
+                          <Eye className="h-4 w-4" />
+                          Report
+                        </StateLink>
+                      ) : (
+                        <StateLink
+                          to={`/admin/student-sessions/${id}?${searchParams.toString()}`}
+                          className="btn btn-warning btn-xs btn-block"
+                        >
+                          <Eye className="h-4 w-4" />
+                          Session
+                        </StateLink>
+                      )}
                     </td>
                   </tr>
                 ),

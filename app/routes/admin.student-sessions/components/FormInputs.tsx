@@ -11,7 +11,7 @@ interface Props {
   selectedTermDate: string | undefined;
   mentorId: string | undefined;
   studentId: string | undefined;
-  includeSignedOff: boolean;
+  filterReports: string;
   chaptersOptions: Option[];
   mentorsOptions: Option[];
   studentsOptions: Option[];
@@ -27,7 +27,7 @@ export default function FormInputs({
   selectedTermDate,
   mentorId,
   studentId,
-  includeSignedOff,
+  filterReports,
   chaptersOptions,
   mentorsOptions,
   studentsOptions,
@@ -99,10 +99,10 @@ export default function FormInputs({
     void navigate(`?${searchParams.toString()}`);
   };
 
-  const onIncludeSignedOffChange = (
+  const onFilterReportsChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    searchParams.set("includeSignedOff", event.target.checked ? "on" : "");
+    searchParams.set("filterReports", event.target.value);
 
     void navigate(`?${searchParams.toString()}`);
   };
@@ -192,13 +192,38 @@ export default function FormInputs({
         <div className="mb-2 flex flex-1 gap-8">
           <label className="label cursor-pointer gap-2">
             <input
-              type="checkbox"
-              name="includeSignedOff"
-              className="checkbox bg-base-100"
-              defaultChecked={includeSignedOff}
-              onChange={onIncludeSignedOffChange}
+              type="radio"
+              name="filterReports"
+              className="radio radio-neutral"
+              defaultChecked={filterReports === "TO_SIGN_OFF"}
+              value="TO_SIGN_OFF"
+              onChange={onFilterReportsChange}
             />
-            <span className="label-text">Include signed off</span>
+            <span className="label-text">Require sign off</span>
+          </label>
+
+          <label className="label cursor-pointer gap-2">
+            <input
+              type="radio"
+              name="filterReports"
+              className="radio radio-neutral"
+              defaultChecked={filterReports === "OUTSTANDING"}
+              value="OUTSTANDING"
+              onChange={onFilterReportsChange}
+            />
+            <span className="label-text">Outstanding</span>
+          </label>
+
+          <label className="label cursor-pointer gap-2">
+            <input
+              type="radio"
+              name="filterReports"
+              className="radio radio-neutral"
+              defaultChecked={filterReports === "ALL"}
+              value="ALL"
+              onChange={onFilterReportsChange}
+            />
+            <span className="label-text">All</span>
           </label>
         </div>
 
