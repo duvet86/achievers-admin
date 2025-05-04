@@ -130,6 +130,43 @@ export async function getSessionsLookupAsync(
   mentorId: number,
   term: Term,
 ) {
+  const mySessions = await prisma.session.findMany({
+    where: {
+      chapterId,
+      mentorId,
+      attendedOn: {
+        gte: term.start.toDate(),
+        lte: term.end.toDate(),
+      },
+    },
+    select: {
+      id: true,
+      chapterId: true,
+      attendedOn: true,
+      status: true,
+      mentor: {
+        select: {
+          id: true,
+          fullName: true,
+        },
+      },
+      studentSession: {
+        select: {
+          id: true,
+          signedOffOn: true,
+          completedOn: true,
+          hasReport: true,
+          student: {
+            select: {
+              id: true,
+              fullName: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
   const myPartners = await prisma.$queryRaw<{ userId: number }[]>`
     SELECT
       b.userId
@@ -137,11 +174,13 @@ export async function getSessionsLookupAsync(
     INNER JOIN achievers.MentorToStudentAssignement b ON b.studentId = a.studentId
     WHERE a.userId = ${mentorId}`;
 
-  const sessions = await prisma.session.findMany({
+  const myPartnersSessions = await prisma.session.findMany({
     where: {
       chapterId,
       mentorId: {
-        in: [mentorId].concat(myPartners.map(({ userId }) => userId)),
+        in: myPartners
+          .filter(({ userId }) => userId !== mentorId)
+          .map(({ userId }) => userId),
       },
       attendedOn: {
         gte: term.start.toDate(),
@@ -176,13 +215,25 @@ export async function getSessionsLookupAsync(
     },
   });
 
-  const sessionLookup = sessions.reduce<SessionLookup>((res, session) => {
+  const mySessionsLookup = mySessions.reduce<SessionLookup>((res, session) => {
     res[dayjs.utc(session.attendedOn).format("YYYY-MM-DD")] = session;
 
     return res;
   }, {});
 
-  return sessionLookup;
+  const myPartnersSessionsLookup = myPartnersSessions.reduce<SessionLookup>(
+    (res, session) => {
+      res[dayjs.utc(session.attendedOn).format("YYYY-MM-DD")] = session;
+
+      return res;
+    },
+    {},
+  );
+
+  return {
+    mySessionsLookup,
+    myPartnersSessionsLookup,
+  };
 }
 
 export async function createSessionAsync({
