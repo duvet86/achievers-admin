@@ -1,6 +1,7 @@
 import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { Form, useLoaderData, useSearchParams, useSubmit } from "react-router";
+import { Form, useSearchParams, useSubmit } from "react-router";
 import { Eye } from "iconoir-react";
 import dayjs from "dayjs";
 import classNames from "classnames";
@@ -80,8 +81,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     loggedUserId,
     students,
     mentors,
@@ -91,7 +92,8 @@ export default function Index() {
     count,
     currentPageNumber,
     range,
-  } = useLoaderData<typeof loader>();
+  },
+}: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
 
@@ -124,6 +126,7 @@ export default function Index() {
 
       <Form>
         <FormInputs
+          key={`${selectedStudentId}-${selectedMentorId}`}
           selectedStudentId={selectedStudentId}
           selectedMentorId={selectedMentorId}
           students={students}

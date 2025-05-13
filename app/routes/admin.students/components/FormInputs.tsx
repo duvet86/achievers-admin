@@ -27,7 +27,6 @@ export default function FormInputs({
       <div className="flex flex-col items-center gap-6 sm:flex-row">
         <div className="w-full sm:w-96">
           <Input
-            key={searchTerm}
             label="Press enter to submit"
             name="searchTerm"
             placeholder="Search by name"
@@ -38,7 +37,6 @@ export default function FormInputs({
         {chapters.length > 1 && (
           <div className="w-full sm:w-44">
             <Select
-              key={chapterId}
               label="Chapters"
               name="chapterId"
               defaultValue={chapterId ?? ""}
@@ -55,7 +53,6 @@ export default function FormInputs({
 
         <label className="label cursor-pointer gap-2">
           <input
-            key={includeArchived.toString()}
             type="checkbox"
             name="includeArchived"
             className="checkbox bg-base-100"

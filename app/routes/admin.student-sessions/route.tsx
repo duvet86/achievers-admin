@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import type { LoaderFunctionArgs } from "react-router";
 import type { Term } from "~/models";
+import type { Route } from "./+types/route";
 
-import { Form, useLoaderData, useSearchParams } from "react-router";
+import { Form, useSearchParams } from "react-router";
 
 import { Eye } from "iconoir-react";
 import dayjs from "dayjs";
@@ -183,8 +184,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     chaptersOptions,
     mentorsOptions,
     studentsOptions,
@@ -202,7 +203,8 @@ export default function Index() {
     count,
     currentPageNumber,
     range,
-  } = useLoaderData<typeof loader>();
+  },
+}: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
 
   const totalPageCount = Math.ceil(count / 10);
@@ -215,7 +217,8 @@ export default function Index() {
 
       <Form method="GET">
         <FormInputs
-          chapterId={selectedChapterId}
+          key={`${selectedChapterId}-${selectedTermId}-${selectedTermDate}-${selectedMentorId}-${selectedStudentId}`}
+          selectedChapterId={selectedChapterId}
           selectedTermId={selectedTermId}
           selectedTermYear={selectedTermYear}
           selectedTermDate={selectedTermDate}

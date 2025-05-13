@@ -1,9 +1,8 @@
 import type { Prisma } from "~/prisma/client";
 import type { AppAbility } from "~/services/.server";
 
-import { accessibleBy } from "@casl/prisma";
-
 import { prisma } from "~/db.server";
+import { accessibleBy } from "~/casl-prisma";
 
 export interface UserQuery {
   id: number;

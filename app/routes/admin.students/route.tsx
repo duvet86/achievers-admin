@@ -1,14 +1,9 @@
 import type { JSX } from "react";
 import type { LoaderFunctionArgs } from "react-router";
 import type { Prisma } from "~/prisma/client";
+import type { Route } from "./+types/route";
 
-import {
-  Form,
-  useLoaderData,
-  useNavigate,
-  useSearchParams,
-  useSubmit,
-} from "react-router";
+import { Form, useNavigate, useSearchParams, useSubmit } from "react-router";
 
 import { BinFull, PageEdit, Plus } from "iconoir-react";
 
@@ -106,8 +101,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     chapters,
     students,
     count,
@@ -118,8 +113,8 @@ export default function Index() {
     searchTerm,
     chapterId,
     includeArchived,
-  } = useLoaderData<typeof loader>();
-
+  },
+}: Route.ComponentProps) {
   const submit = useSubmit();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -161,6 +156,7 @@ export default function Index() {
 
       <Form>
         <FormInputs
+          key={`${searchTerm}-${chapterId}-${includeArchived}`}
           searchTerm={searchTerm}
           chapterId={chapterId}
           includeArchived={includeArchived}

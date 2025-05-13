@@ -1,8 +1,9 @@
 import type { RawRuleOf, PureAbility } from "@casl/ability";
+import type { Subjects } from "@casl/prisma";
 import type { Chapter } from "~/prisma/client";
-import type { PrismaQuery, Subjects } from "@casl/prisma";
+import type { PrismaQuery } from "~/casl-prisma";
 
-import { createPrismaAbility } from "@casl/prisma";
+import { createPrismaAbility } from "~/casl-prisma";
 
 export const ROLES = ["Admin", "ChapterCoordinator"] as const;
 export const ACTIONS = ["manage"] as const;

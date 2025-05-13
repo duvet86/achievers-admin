@@ -1,9 +1,8 @@
 import type { AppAbility } from "~/services/.server";
 import type { Term } from "~/models";
 
-import { accessibleBy } from "@casl/prisma";
-
 import { prisma } from "~/db.server";
+import { accessibleBy } from "~/casl-prisma";
 
 export async function getChaptersAsync(ability: AppAbility) {
   return await prisma.chapter.findMany({

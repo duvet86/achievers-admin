@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from "react-router";
 import { Select, SelectSearch } from "~/components";
 
 interface Props {
-  chapterId: string;
+  selectedChapterId: string;
   selectedTermId: string;
   selectedTermYear: string;
   selectedTermDate: string | undefined;
@@ -21,7 +21,7 @@ interface Props {
 }
 
 export default function FormInputs({
-  chapterId,
+  selectedChapterId,
   selectedTermId,
   selectedTermYear,
   selectedTermDate,
@@ -114,14 +114,14 @@ export default function FormInputs({
           <Select
             label="Select a Chapter"
             name="chapterId"
-            defaultValue={chapterId}
+            defaultValue={selectedChapterId}
             options={chaptersOptions}
             onChange={onChapterChange}
           />
         </div>
       )}
 
-      <div key={chapterId} className="w-full">
+      <div className="w-full">
         <label className="fieldset-label">Term</label>
         <div className="join w-full">
           <select
@@ -153,7 +153,7 @@ export default function FormInputs({
         </div>
       </div>
 
-      <div key={`${chapterId}-${selectedTermId}`} className="w-full">
+      <div className="w-full">
         <Select
           label="Session date"
           name="selectedTermDate"
@@ -163,10 +163,7 @@ export default function FormInputs({
         />
       </div>
 
-      <div
-        key={`${chapterId}-${selectedTermId}-${selectedTermDate}`}
-        className="flex flex-1 flex-col gap-4 sm:flex-row"
-      >
+      <div className="flex flex-1 flex-col gap-4 sm:flex-row">
         <div className="w-full">
           <SelectSearch
             label="Mentor"

@@ -30,7 +30,6 @@ export default function FormInputs({
       <div className="flex flex-1 flex-col gap-4 sm:flex-row">
         <div className="flex-1">
           <SelectSearch
-            key={selectedStudentId}
             label="Student"
             name="studentId"
             defaultValue={selectedStudentId}
@@ -44,7 +43,6 @@ export default function FormInputs({
 
         <div className="flex-1">
           <SelectSearch
-            key={selectedMentorId}
             label="Mentor"
             name="mentorId"
             defaultValue={selectedMentorId}

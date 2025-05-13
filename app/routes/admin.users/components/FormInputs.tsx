@@ -38,7 +38,6 @@ export default function FormInputs({
     <fieldset className="mb-9 flex flex-wrap items-center gap-4">
       <div className="w-full sm:w-96">
         <Input
-          key={searchTerm}
           label="Press enter to submit"
           name="searchTerm"
           placeholder="Search by name or email"
@@ -49,7 +48,6 @@ export default function FormInputs({
       {chapters.length > 1 && (
         <div className="w-full sm:w-96">
           <Select
-            key={chapterId}
             label="Chapters"
             name="chapterId"
             defaultValue={chapterId ?? ""}
@@ -67,7 +65,6 @@ export default function FormInputs({
       <div className="flex w-96 flex-col gap-4">
         <label className="fieldset-label">
           <input
-            key={onlyExpiredChecks.toString()}
             type="checkbox"
             name="onlyExpiredChecks"
             className="checkbox"
@@ -81,7 +78,6 @@ export default function FormInputs({
 
         <label className="fieldset-label">
           <input
-            key={includeCompleteChecks.toString()}
             type="checkbox"
             name="includeCompleteChecks"
             className="checkbox"
@@ -93,7 +89,6 @@ export default function FormInputs({
 
         <label className="fieldset-label">
           <input
-            key={includeArchived.toString()}
             type="checkbox"
             name="includeArchived"
             className="checkbox"

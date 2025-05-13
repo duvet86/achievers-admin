@@ -1,11 +1,11 @@
 import type { AppAbility } from "~/services/.server";
 import type { Term } from "~/models";
 
-import { accessibleBy } from "@casl/prisma";
 import dayjs from "dayjs";
 
 import { prisma } from "~/db.server";
 import { getDatesForTerm } from "~/services";
+import { accessibleBy } from "~/casl-prisma";
 
 interface Report {
   attendedOn: Date;

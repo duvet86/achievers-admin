@@ -1,14 +1,9 @@
 import type { JSX } from "react";
 import type { LoaderFunctionArgs } from "react-router";
 import type { Prisma } from "~/prisma/client";
+import type { Route } from "./+types/route";
 
-import {
-  useLoaderData,
-  Form,
-  useSearchParams,
-  useNavigate,
-  useSubmit,
-} from "react-router";
+import { Form, useSearchParams, useNavigate, useSubmit } from "react-router";
 import dayjs from "dayjs";
 import { PageEdit, BinFull, CheckCircle, WarningTriangle } from "iconoir-react";
 
@@ -143,8 +138,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     chapters,
     users,
     count,
@@ -159,8 +154,8 @@ export default function Index() {
     onlyExpiredChecks,
     includeCompleteChecks,
     includeArchived,
-  } = useLoaderData<typeof loader>();
-
+  },
+}: Route.ComponentProps) {
   const submit = useSubmit();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -224,6 +219,7 @@ export default function Index() {
 
       <Form method="get">
         <FormInputs
+          key={`${searchTerm}-${chapterId}-${onlyExpiredChecks}-${includeCompleteChecks}-${includeArchived}`}
           chapters={chapters}
           searchTerm={searchTerm}
           chapterId={chapterId}
