@@ -239,6 +239,7 @@ model Chapter {
 
   mentorAttendance  MentorAttendance[]
   studentAttendance StudentAttendance[]
+  EoiStudentProfile EoiStudentProfile[]
 }
 
 model Student {
@@ -503,7 +504,8 @@ model EoiStudentProfile {
 
   firstName                       String
   lastName                        String
-  preferredName                   String
+  fullName                        String   @default(dbgenerated()) // Calculated column firstName + lastName.
+  preferredName                   String?
   dateOfBirth                     DateTime
   gender                          String
   mobile                          String?
@@ -521,12 +523,15 @@ model EoiStudentProfile {
   otherSupport                    String
   alreadyInAchievers              String
   heardAboutUs                    String
-  preferredChapter                String
+  schoolName                      String
   weeklyCommitment                Boolean
   hasApprovedToPublishPhotos      Boolean
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  chapterId Int
+  chapter   Chapter @relation(fields: [chapterId], references: [id])
 
   studentGuardian StudentGuardian[]
   studentTeacher  StudentTeacher[]

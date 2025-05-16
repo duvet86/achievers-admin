@@ -256,6 +256,33 @@ export default [
               index: true,
             },
           ),
+          route("eois", "routes/admin.students.eois/route.tsx", {
+            index: true,
+          }),
+          route("eois/:eoiId", "routes/admin.students.eois.$eoiId/route.tsx", {
+            index: true,
+          }),
+          route(
+            "eois/:eoiId/teachers/:teacherId",
+            "routes/admin.students.eois.$eoiId.teachers.$teacherId/route.tsx",
+            {
+              index: true,
+            },
+          ),
+          route(
+            "eois/:eoiId/guardians/:guardianId",
+            "routes/admin.students.eois.$eoiId.guardians.$guardianId/route.tsx",
+            {
+              index: true,
+            },
+          ),
+          route(
+            "eois/:eoiId/promote",
+            "routes/admin.students.eois.$eoiId.promote/route.tsx",
+            {
+              index: true,
+            },
+          ),
         ]),
       ]),
       ...prefix("users", [

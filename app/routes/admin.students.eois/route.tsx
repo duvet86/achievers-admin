@@ -1,10 +1,8 @@
-import type { JSX } from "react";
 import type { Prisma } from "~/prisma/client";
 import type { Route } from "./+types/route";
 
 import { Form, useNavigate, useSearchParams, useSubmit } from "react-router";
-
-import { BinFull, PageEdit, Plus } from "iconoir-react";
+import { Eye } from "iconoir-react";
 
 import {
   getLoggedUserInfoAsync,
@@ -15,11 +13,10 @@ import { Pagination, StateLink, TableHeaderSort, Title } from "~/components";
 
 import {
   getChaptersAsync,
-  getStudentsCountAsync,
-  getStudentsAsync,
+  getStudentEoisCountAsync,
+  getStudentEoisAsync,
 } from "./services.server";
 import FormInputs from "./components/FormInputs";
-import ActionsDropdown from "./components/ActionsDropdown";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
@@ -28,6 +25,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
 
   const chapterId = url.searchParams.get("chapterId");
+  const includeApprovedStudents =
+    url.searchParams.get("includeApprovedStudents") === "on";
 
   const previousPageSubmit = url.searchParams.get("previousBtn");
   const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
@@ -41,7 +40,6 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   let searchTerm = url.searchParams.get("searchTerm");
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
-  const includeArchived = url.searchParams.get("includeArchived") === "on";
 
   if (searchTerm?.trim() === "") {
     searchTerm = null;
@@ -50,11 +48,11 @@ export async function loader({ request }: Route.LoaderArgs) {
   const chapterIdValue =
     chapterId !== null && chapterId !== "" ? Number(chapterId) : null;
 
-  const count = await getStudentsCountAsync(
+  const count = await getStudentEoisCountAsync(
     ability,
     searchTerm,
     chapterIdValue,
-    includeArchived,
+    includeApprovedStudents,
   );
 
   const numberItems = 10;
@@ -72,14 +70,14 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const [chapters, students] = await Promise.all([
     getChaptersAsync(ability),
-    getStudentsAsync(
+    getStudentEoisAsync(
       ability,
       currentPageNumber,
       searchTerm,
       chapterIdValue,
+      includeApprovedStudents,
       sortFullNameSubmit,
       sortChapterSubmit,
-      includeArchived,
       numberItems,
     ),
   ]);
@@ -96,7 +94,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     sortChapterSubmit,
     searchTerm,
     chapterId,
-    includeArchived,
+    includeApprovedStudents,
   };
 }
 
@@ -111,7 +109,7 @@ export default function Index({
     sortChapterSubmit,
     searchTerm,
     chapterId,
-    includeArchived,
+    includeApprovedStudents,
   },
 }: Route.ComponentProps) {
   const submit = useSubmit();
@@ -124,7 +122,7 @@ export default function Index({
     searchParams.set("searchTerm", "");
     searchParams.set("chapterId", "");
     searchParams.set("pageNumber", "");
-    searchParams.set("includeArchived", "");
+    searchParams.set("includeApprovedStudents", "");
 
     void navigate(`?${searchParams.toString()}`);
   };
@@ -135,34 +133,33 @@ export default function Index({
     void submit(Object.fromEntries(searchParams));
   };
 
-  const onIncludeArchivedChange = (
+  const onIncludeApprovedStudentsChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    searchParams.set("includeArchived", event.target.checked ? "on" : "");
+    searchParams.set(
+      "includeApprovedStudents",
+      event.target.checked ? "on" : "",
+    );
 
     void submit(Object.fromEntries(searchParams));
   };
 
   return (
     <>
-      <div className="flex items-center justify-between">
-        <Title>Students</Title>
-
-        <ActionsDropdown />
-      </div>
+      <Title>Student Expression of Interests</Title>
 
       <hr className="my-4" />
 
       <Form>
         <FormInputs
-          key={`${searchTerm}-${chapterId}-${includeArchived}`}
+          key={`${searchTerm}-${chapterId}${includeApprovedStudents}`}
           searchTerm={searchTerm}
           chapterId={chapterId}
-          includeArchived={includeArchived}
+          includeApprovedStudents={includeApprovedStudents}
           chapters={chapters}
           onFormClear={onFormReset}
           onChapterChange={onChapterChange}
-          onIncludeArchivedChange={onIncludeArchivedChange}
+          onIncludeApprovedStudentsChange={onIncludeApprovedStudentsChange}
         />
 
         <div className="overflow-auto bg-white">
@@ -186,7 +183,7 @@ export default function Index({
                   <TableHeaderSort
                     sortPropName="sortChapter"
                     sortPropValue={sortChapterSubmit}
-                    label="Assigned chapter"
+                    label="Preferred chapter"
                   />
                 </th>
                 <th align="right" className="hidden sm:table-cell">
@@ -202,61 +199,40 @@ export default function Index({
                   </td>
                 </tr>
               )}
-              {students.map(
-                ({ id, fullName, yearLevel, chapter, endDate }, index) => {
-                  let className = "hover:bg-base-200 ";
-                  let icon: JSX.Element | undefined;
-                  if (endDate) {
-                    className += "text-error";
-                    icon = <BinFull data-testid="archived" />;
-                  }
-
-                  return (
-                    <tr key={id} className={className}>
-                      <td className="hidden sm:table-cell">
-                        <div className="flex gap-2">
-                          {index + 1 + 10 * currentPageNumber} {icon}
-                        </div>
-                      </td>
-                      <td>{fullName}</td>
-                      <td className="hidden sm:table-cell">
-                        {yearLevel ?? "-"}
-                      </td>
-                      <td>{chapter.name}</td>
-                      <td className="hidden sm:table-cell">
-                        <StateLink
-                          to={`${id}?${searchParams.toString()}`}
-                          className="btn btn-success btn-xs w-full gap-2"
-                        >
-                          <PageEdit className="hidden h-4 w-4 lg:block" />
-                          Edit
-                        </StateLink>
-                      </td>
-                    </tr>
-                  );
-                },
-              )}
+              {students.map(({ id, fullName, yearLevel, chapter }, index) => {
+                return (
+                  <tr key={id} className="hover:bg-base-200">
+                    <td className="hidden sm:table-cell">
+                      <div className="flex gap-2">
+                        {index + 1 + 10 * currentPageNumber}
+                      </div>
+                    </td>
+                    <td>{fullName}</td>
+                    <td className="hidden sm:table-cell">{yearLevel ?? "-"}</td>
+                    <td>{chapter.name}</td>
+                    <td className="hidden sm:table-cell">
+                      <StateLink
+                        to={`${id}?${searchParams.toString()}`}
+                        className="btn btn-primary btn-xs w-full gap-2"
+                      >
+                        <Eye className="hidden h-4 w-4 lg:block" />
+                        View
+                      </StateLink>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
 
         <input type="hidden" name="pageNumber" value={currentPageNumber} />
 
-        <div className="mt-4 flex flex-col items-center justify-between lg:flex-row">
-          <Pagination
-            range={range}
-            currentPageNumber={currentPageNumber}
-            totalPageCount={totalPageCount}
-          />
-
-          <StateLink
-            className="btn btn-primary mt-4 w-56 gap-4 lg:mt-0"
-            to="/admin/students/new"
-          >
-            <Plus className="h-6 w-6" />
-            Add new student
-          </StateLink>
-        </div>
+        <Pagination
+          range={range}
+          currentPageNumber={currentPageNumber}
+          totalPageCount={totalPageCount}
+        />
       </Form>
     </>
   );

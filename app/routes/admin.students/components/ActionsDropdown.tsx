@@ -1,4 +1,9 @@
-import { DatabaseExport, DatabaseRestore, NavArrowDown } from "iconoir-react";
+import {
+  DatabaseExport,
+  DatabaseRestore,
+  NavArrowDown,
+  PasteClipboard,
+} from "iconoir-react";
 
 import { StateLink } from "~/components";
 
@@ -13,6 +18,12 @@ export default function ActionsDropdown() {
         tabIndex={0}
         className="menu dropdown-content rounded-box border-base-300 bg-base-100 w-52 border p-2 shadow-sm"
       >
+        <li>
+          <StateLink className="gap-4" to="eois">
+            <PasteClipboard />
+            EOIs
+          </StateLink>
+        </li>
         <li>
           <StateLink className="gap-4" to="import">
             <DatabaseRestore />
