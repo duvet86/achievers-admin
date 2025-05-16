@@ -1,14 +1,8 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { Prisma } from "~/prisma/client";
 import type { XOR } from "~/models";
+import type { Route } from "./+types/route";
 
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-  useParams,
-} from "react-router";
+import { Form } from "react-router";
 import invariant from "tiny-invariant";
 
 import { Input, SubmitFormButton, Title } from "~/components";
@@ -19,7 +13,7 @@ import {
   updateTeacherByIdAsync,
 } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.studentId, "studentId not found");
   invariant(params.teacherId, "teacherId not found");
 
@@ -43,7 +37,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   }
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.studentId, "studentId not found");
   invariant(params.teacherId, "teacherId not found");
 
@@ -86,22 +80,23 @@ export async function action({ request, params }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { teacher } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
-  const transition = useNavigation();
-  const { teacherId } = useParams();
-
+export default function Index({
+  loaderData: { teacher },
+  actionData,
+  params,
+}: Route.ComponentProps) {
   return (
     <>
       <Title>
-        {teacherId === "new" ? "Add new teacher" : "Edit info for teacher"}
+        {params.teacherId === "new"
+          ? "Add new teacher"
+          : "Edit info for teacher"}
       </Title>
 
       <hr className="my-4" />
 
       <Form method="post">
-        <fieldset className="fieldset" disabled={transition.state !== "idle"}>
+        <fieldset className="fieldset">
           <Input
             defaultValue={teacher?.fullName}
             label="Full name"

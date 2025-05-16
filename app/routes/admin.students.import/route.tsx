@@ -1,7 +1,7 @@
-import type { ActionFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
 import { parseFormData } from "@mjackson/form-data-parser";
-import { Form, useActionData, useNavigation } from "react-router";
+import { Form } from "react-router";
 import { Import, PageEdit, Archive } from "iconoir-react";
 
 import { trackException } from "~/services/.server";
@@ -15,7 +15,7 @@ import {
   uploadHandler,
 } from "./services.server";
 
-export const action = async ({ request }: ActionFunctionArgs) => {
+export async function action({ request }: Route.ActionArgs) {
   const formData = await parseFormData(request, uploadHandler);
 
   const file = formData.get("studentsSheet");
@@ -95,12 +95,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       message,
     };
   }
-};
+}
 
-export default function Index() {
-  const actionData = useActionData<typeof action>();
-  const transition = useNavigation();
-
+export default function Index({ actionData }: Route.ComponentProps) {
   return (
     <>
       <Title>Import students from file</Title>
@@ -112,10 +109,7 @@ export default function Index() {
         encType="multipart/form-data"
         className="relative flex h-full flex-col gap-4"
       >
-        <fieldset
-          className="fieldset"
-          disabled={transition.state === "submitting"}
-        >
+        <fieldset className="fieldset">
           <FileInput
             label="Upload a spreadsheet with new students"
             name="studentsSheet"

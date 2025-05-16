@@ -1,12 +1,6 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useSearchParams,
-  useSubmit,
-} from "react-router";
+import { Form, redirect, useSearchParams, useSubmit } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import {
@@ -31,7 +25,7 @@ import {
   removeSessionAsync,
 } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.sessionId, "sessionId not found");
 
@@ -62,7 +56,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ params, request }: ActionFunctionArgs) {
+export async function action({ params, request }: Route.ActionArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.sessionId, "sessionId not found");
 
@@ -82,20 +76,29 @@ export async function action({ params, request }: ActionFunctionArgs) {
     }
     case "restore":
     case "cancelAvailable": {
-      await removeSessionAsync({
+      const session = await removeSessionAsync({
         sessionId: Number(params.sessionId),
         studentId: null,
       });
-      break;
+
+      const parsedUrl = new URL(request.url);
+
+      return redirect(
+        `/admin/chapters/${params.chapterId}/roster-mentors/${session.mentorId}/attended-on/${dayjs(session.attendedOn).format("YYYY-MM-DD")}/new?${parsedUrl.searchParams}`,
+      );
     }
     case "cancelStudent": {
       const selectedStudentId = formData.get("studentId");
 
-      await removeSessionAsync({
+      const session = await removeSessionAsync({
         sessionId: Number(params.sessionId),
         studentId: Number(selectedStudentId),
       });
-      break;
+      const parsedUrl = new URL(request.url);
+
+      return redirect(
+        `/admin/chapters/${params.chapterId}/roster-mentors/${session.mentorId}/attended-on/${dayjs(session.attendedOn).format("YYYY-MM-DD")}/new?${parsedUrl.searchParams}`,
+      );
     }
     default:
       throw new Error();
@@ -106,11 +109,10 @@ export async function action({ params, request }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { attendedOnLabel, chapter, session, students } =
-    useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
-
+export default function Index({
+  loaderData: { attendedOnLabel, chapter, session, students },
+  actionData,
+}: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
 

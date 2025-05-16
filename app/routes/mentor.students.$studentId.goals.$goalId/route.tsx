@@ -1,18 +1,8 @@
-import type {
-  ActionFunctionArgs,
-  LinksFunction,
-  LoaderFunctionArgs,
-} from "react-router";
 import type { EditorState } from "lexical";
+import type { Route } from "./+types/route";
 
 import { useRef } from "react";
-import {
-  Form,
-  redirect,
-  useLoaderData,
-  useNavigation,
-  useSubmit,
-} from "react-router";
+import { Form, redirect, useSubmit } from "react-router";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 import { Check, FloppyDiskArrowIn } from "iconoir-react";
@@ -29,11 +19,11 @@ import {
 } from "./services.server";
 import { getLoggedUserInfoAsync } from "~/services/.server";
 
-export const links: LinksFunction = () => {
+export const links: Route.LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
 };
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.studentId, "studentId not found");
   invariant(params.goalId, "goalId not found");
 
@@ -65,7 +55,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.studentId, "studentId not found");
   invariant(params.goalId, "goalId not found");
 
@@ -113,9 +103,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   return redirect(`/mentor/students/${params.studentId}/goals/${id}`);
 }
 
-export default function Index() {
-  const { student, goal, minEndDate } = useLoaderData<typeof loader>();
-  const transition = useNavigation();
+export default function Index({
+  loaderData: { student, goal, minEndDate },
+}: Route.ComponentProps) {
   const submit = useSubmit();
 
   const editorStateRef = useRef<EditorState>(null);
@@ -155,10 +145,7 @@ export default function Index() {
       <hr className="my-4" />
 
       <Form method="post" onSubmit={onSubmit}>
-        <fieldset
-          className="fieldset"
-          disabled={transition.state === "submitting"}
-        >
+        <fieldset className="fieldset">
           <Input
             label="Goal title"
             name="title"

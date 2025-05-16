@@ -1,7 +1,6 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { useActionData } from "react-router";
-import { Form, useLoaderData, useNavigation } from "react-router";
+import { Form } from "react-router";
 import invariant from "tiny-invariant";
 import { OnTag } from "iconoir-react";
 
@@ -9,7 +8,7 @@ import { Message, Title } from "~/components";
 
 import { getUserByIdAsync, updateEndDateAsync } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.userId, "userId not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
@@ -19,7 +18,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ params }: ActionFunctionArgs) {
+export async function action({ params }: Route.ActionArgs) {
   invariant(params.userId, "userId not found");
 
   await updateEndDateAsync(Number(params.userId));
@@ -29,11 +28,10 @@ export async function action({ params }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { user } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
-  const transition = useNavigation();
-
+export default function Index({
+  loaderData: { user },
+  actionData,
+}: Route.ComponentProps) {
   return (
     <>
       <div className="flex flex-col gap-6 sm:flex-row">
@@ -43,7 +41,7 @@ export default function Index() {
       </div>
 
       <Form method="post">
-        <fieldset disabled={transition.state !== "idle"}>
+        <fieldset>
           <p>
             Are you sure you want to re enable &quot;{user.fullName}
             &quot;?

@@ -1,13 +1,7 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 import type { SchoolTerm } from "./services.server";
 
-import {
-  Form,
-  redirect,
-  useActionData,
-  useLoaderData,
-  useNavigate,
-} from "react-router";
+import { Form, redirect, useNavigate } from "react-router";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { Plus } from "iconoir-react";
@@ -31,7 +25,7 @@ import {
 
 dayjs.extend(utc);
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
   const isUserBlocked = await isLoggedUserBlockedAsync(
     request,
     "SchoolTermArea",
@@ -64,7 +58,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   const formData = await request.formData();
 
   const termId1 = formData.get("termId0") as string;
@@ -163,11 +157,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { currentYear, selectedYear, availableYears, terms } =
-    useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
-
+export default function Index({
+  loaderData: { currentYear, selectedYear, availableYears, terms },
+  actionData,
+}: Route.ComponentProps) {
   const navigate = useNavigate();
 
   function goToSelectedYear(event: React.ChangeEvent<HTMLSelectElement>) {

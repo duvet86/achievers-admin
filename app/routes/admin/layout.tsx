@@ -1,7 +1,7 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/layout";
 
 import { redirect } from "react-router";
-import { Outlet, useLoaderData } from "react-router";
+import { Outlet } from "react-router";
 
 import {
   getLoggedUserInfoAsync,
@@ -13,7 +13,7 @@ import { getEnvironment } from "~/services";
 
 import { Body } from "~/components";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
 
   if (!loggedUser.isAdmin) {
@@ -48,9 +48,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export default function AppLayout() {
-  const loaderData = useLoaderData<typeof loader>();
-
+export default function AppLayout({ loaderData }: Route.ComponentProps) {
   return (
     <Body {...loaderData}>
       <Outlet />

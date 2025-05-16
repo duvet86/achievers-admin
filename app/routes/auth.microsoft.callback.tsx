@@ -1,4 +1,6 @@
-import { redirect, type LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/auth.microsoft.callback";
+
+import { redirect } from "react-router";
 
 import { trackException } from "server-utils/azure-logger";
 
@@ -7,7 +9,7 @@ import {
   sessionStorage_dev,
 } from "~/services/.server/session-dev.server";
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const loader = async ({ request }: Route.LoaderArgs) => {
   try {
     const user = await authenticator_dev.authenticate("microsoft", request);
 

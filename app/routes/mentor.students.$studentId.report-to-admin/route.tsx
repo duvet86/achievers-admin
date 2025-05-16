@@ -1,6 +1,6 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { Form, useActionData, useLoaderData } from "react-router";
+import { Form } from "react-router";
 import invariant from "tiny-invariant";
 
 import { SubmitFormButton, SubTitle, Textarea, Title } from "~/components";
@@ -8,7 +8,7 @@ import { SubmitFormButton, SubTitle, Textarea, Title } from "~/components";
 import { getStudentAsync, getUserByAzureADIdAsync } from "./services.server";
 import { getLoggedUserInfoAsync } from "~/services/.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.studentId, "studentId not found");
 
   const student = await getStudentAsync(Number(params.studentId));
@@ -18,7 +18,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.studentId, "studentId not found");
 
   const REPORT_TO_ADMIN_LOGIC_APP_URL =
@@ -56,10 +56,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { student } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
-
+export default function Index({
+  loaderData: { student },
+  actionData,
+}: Route.ComponentProps) {
   return (
     <>
       <Title>Report to Admin</Title>

@@ -1,12 +1,6 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import {
-  Form,
-  redirect,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-} from "react-router";
+import { Form, redirect, useNavigation } from "react-router";
 import { BinFull } from "iconoir-react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
@@ -15,7 +9,7 @@ import { Message, Textarea, Title } from "~/components";
 
 import { cancelStudentSession, getStudentSession } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.studentSessionId, "studentSessionId not found");
 
   const studentSession = await getStudentSession(
@@ -29,7 +23,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return { studentSession };
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.studentSessionId, "studentSessionId not found");
 
   const formData = await request.formData();
@@ -47,10 +41,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { studentSession } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
-
+export default function Index({
+  loaderData: { studentSession },
+  actionData,
+}: Route.ComponentProps) {
   const transition = useNavigation();
 
   return (

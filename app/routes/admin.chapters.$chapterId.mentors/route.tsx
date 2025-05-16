@@ -1,7 +1,7 @@
-import type { LoaderFunctionArgs } from "react-router";
 import type { Prisma } from "~/prisma/client";
+import type { Route } from "./+types/route";
 
-import { Form, Link, useLoaderData, useSearchParams } from "react-router";
+import { Form, Link, useSearchParams } from "react-router";
 import invariant from "tiny-invariant";
 import { useRef } from "react";
 import classNames from "classnames";
@@ -16,7 +16,7 @@ import {
 } from "./services.server";
 import FormInputs from "./components/FormInputs";
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const url = new URL(request.url);
@@ -83,8 +83,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     chapterId,
     mentorsWithStudents,
     count,
@@ -92,8 +92,8 @@ export default function Index() {
     range,
     sortFullNameSubmit,
     sortCountStudentsSubmit,
-  } = useLoaderData<typeof loader>();
-
+  },
+}: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLFormElement | null>(null);
 

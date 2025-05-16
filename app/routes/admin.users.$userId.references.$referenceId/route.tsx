@@ -1,12 +1,7 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 import type { ReferenceUpdateCommand } from "./services.server";
 
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-} from "react-router";
+import { Form } from "react-router";
 import invariant from "tiny-invariant";
 
 import {
@@ -24,7 +19,7 @@ import {
   updateReferenceByIdAsync,
 } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.userId, "userId not found");
   invariant(params.referenceId, "referenceId not found");
 
@@ -38,7 +33,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.userId, "userId not found");
   invariant(params.referenceId, "referenceId not found");
 
@@ -123,11 +118,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const transition = useNavigation();
-  const { user } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
-
+export default function Index({
+  loaderData: { user },
+  actionData,
+}: Route.ComponentProps) {
   const reference = user.references[0];
 
   return (
@@ -139,10 +133,7 @@ export default function Index() {
       </Title>
 
       <Form className="relative" method="post">
-        <fieldset
-          className="fieldset"
-          disabled={transition.state === "submitting"}
-        >
+        <fieldset className="fieldset">
           <SubTitle>Details</SubTitle>
 
           <Input

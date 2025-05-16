@@ -1,6 +1,5 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
 import { ChatBubbleEmpty, Check, WarningTriangle, Xmark } from "iconoir-react";
@@ -9,7 +8,7 @@ import { StateLink, Title } from "~/components";
 
 import { getUserByIdAsync } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.userId, "userId not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
@@ -32,9 +31,7 @@ const renderMentorRecommendationStatus = (
   }
 };
 
-export default function Index() {
-  const { user } = useLoaderData<typeof loader>();
-
+export default function Index({ loaderData: { user } }: Route.ComponentProps) {
   return (
     <>
       <Title>References for &quot;{user.fullName}&quot;</Title>

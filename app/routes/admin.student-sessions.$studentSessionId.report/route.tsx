@@ -1,13 +1,8 @@
-import type {
-  ActionFunctionArgs,
-  LinksFunction,
-  LoaderFunctionArgs,
-} from "react-router";
 import type { EditorState } from "lexical";
+import type { Route } from "./+types/route";
 import type { SessionCommandRequest } from "./services.server";
 
-import { Link, useFetcher, useLoaderData, useSearchParams } from "react-router";
-
+import { Link, useFetcher, useSearchParams } from "react-router";
 import dayjs from "dayjs";
 import { useRef } from "react";
 import invariant from "tiny-invariant";
@@ -20,11 +15,11 @@ import { Editor, Message, SubTitle, Title } from "~/components";
 
 import { getStudentSessionByIdAsync, saveReportAsync } from "./services.server";
 
-export const links: LinksFunction = () => {
+export const links: Route.LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
 };
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.studentSessionId, "studentSessionId not found");
 
   const studentSession = await getStudentSessionByIdAsync(
@@ -36,7 +31,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.studentSessionId, "studentSessionId not found");
 
   const loggedUser = await getLoggedUserInfoAsync(request);
@@ -58,11 +53,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     studentSession: { session, report, reportFeedback, signedOffOn, student },
-  } = useLoaderData<typeof loader>();
-
+  },
+}: Route.ComponentProps) {
   const editorStateRef = useRef<EditorState>(null);
   const { state, submit, data } = useFetcher<typeof action>();
   const [searchParams] = useSearchParams();

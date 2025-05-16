@@ -1,13 +1,12 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { useLoaderData } from "react-router";
 import { GraduationCap, User } from "iconoir-react";
 import invariant from "tiny-invariant";
 
 import { StateLink, Title } from "~/components";
 import { getChapterAsync } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const chapter = await getChapterAsync(Number(params.chapterId));
@@ -15,9 +14,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return { chapter };
 }
 
-export default function Index() {
-  const { chapter } = useLoaderData<typeof loader>();
-
+export default function Index({
+  loaderData: { chapter },
+}: Route.ComponentProps) {
   return (
     <>
       <Title>Attendances for &quot;{chapter.name}&quot;</Title>

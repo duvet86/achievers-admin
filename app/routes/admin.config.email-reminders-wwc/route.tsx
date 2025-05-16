@@ -1,6 +1,6 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { Form, useLoaderData } from "react-router";
+import { Form } from "react-router";
 import dayjs from "dayjs";
 import classNames from "classnames";
 import { Eye } from "iconoir-react";
@@ -10,7 +10,7 @@ import { Pagination, StateLink, Title } from "~/components";
 
 import { getWWCCheckReminders, getWWCRemindersCount } from "./services.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
 
   const previousPageSubmit = url.searchParams.get("previousBtn");
@@ -44,10 +44,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { wwcEmailRemindersSent, range, currentPageNumber, totalPageCount } =
-    useLoaderData<typeof loader>();
-
+export default function Index({
+  loaderData: {
+    wwcEmailRemindersSent,
+    range,
+    currentPageNumber,
+    totalPageCount,
+  },
+}: Route.ComponentProps) {
   return (
     <Form>
       <Title>WWC email reminders</Title>

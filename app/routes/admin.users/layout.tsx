@@ -1,11 +1,10 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { redirect } from "react-router";
-import { Outlet } from "react-router";
+import { Outlet, redirect } from "react-router";
 
 import { isLoggedUserBlockedAsync, trackException } from "~/services/.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const isUserBlocked = await isLoggedUserBlockedAsync(request, "UserArea");
 
   if (isUserBlocked) {

@@ -1,6 +1,5 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { useLoaderData } from "react-router";
 import { Archery, StatsReport, WarningTriangle } from "iconoir-react";
 
 import { getLoggedUserInfoAsync } from "~/services/.server";
@@ -8,7 +7,7 @@ import { StateLink, Title } from "~/components";
 
 import { getMentorStudentsAsync } from "./services.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const students = await getMentorStudentsAsync(loggedUser.oid);
 
@@ -17,9 +16,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { students } = useLoaderData<typeof loader>();
-
+export default function Index({
+  loaderData: { students },
+}: Route.ComponentProps) {
   return (
     <>
       <Title>My students</Title>

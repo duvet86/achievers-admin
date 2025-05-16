@@ -1,13 +1,8 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 import type { PoliceCheckUpdateCommand } from "./services.server";
 
 import { parseFormData } from "@mjackson/form-data-parser";
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-} from "react-router";
+import { Form } from "react-router";
 import invariant from "tiny-invariant";
 
 import { DateInput, Title, FileInput, SubmitFormButton } from "~/components";
@@ -20,7 +15,7 @@ import {
   uploadHandler,
 } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.userId, "userId not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
@@ -37,7 +32,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.userId, "userId not found");
 
   try {
@@ -73,11 +68,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const transition = useNavigation();
-  const { user } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
-
+export default function Index({
+  loaderData: { user },
+  actionData,
+}: Route.ComponentProps) {
   return (
     <>
       <Title>Police check for &quot;{user.fullName}&quot;</Title>
@@ -92,10 +86,7 @@ export default function Index() {
       </a>
 
       <Form method="post" encType="multipart/form-data">
-        <fieldset
-          className="fieldset"
-          disabled={transition.state === "submitting"}
-        >
+        <fieldset className="fieldset">
           <DateInput
             defaultValue={user.policeCheck?.expiryDate ?? ""}
             label="Expiry Date (3 years from issue)"

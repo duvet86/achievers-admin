@@ -1,13 +1,8 @@
-import type {
-  ActionFunctionArgs,
-  LinksFunction,
-  LoaderFunctionArgs,
-} from "react-router";
 import type { EditorState } from "lexical";
+import type { Route } from "./+types/route";
 import type { ActionType, SessionCommandRequest } from "./services.server";
 
-import { Form, useLoaderData, useSubmit } from "react-router";
-
+import { Form, useSubmit } from "react-router";
 import { useRef } from "react";
 import dayjs from "dayjs";
 import classNames from "classnames";
@@ -50,11 +45,11 @@ import {
 } from "./services.server";
 import { isSessionDateInTheFuture } from "./services.client";
 
-export const links: LinksFunction = () => {
+export const links: Route.LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
 };
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const CURRENT_YEAR = dayjs().year();
 
   const url = new URL(request.url);
@@ -154,7 +149,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
@@ -179,8 +174,8 @@ export async function action({ request }: ActionFunctionArgs) {
   return null;
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     session,
     selectedTermYear,
     selectedTermId,
@@ -192,7 +187,8 @@ export default function Index() {
     students,
     isNotMyReport,
     isReadOnlyEditor,
-  } = useLoaderData<typeof loader>();
+  },
+}: Route.ComponentProps) {
   const submit = useSubmit();
   const formRef = useRef<HTMLFormElement | null>(null);
   const editorStateRef = useRef<EditorState>(null);

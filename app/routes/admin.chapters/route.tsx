@@ -1,6 +1,5 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { useLoaderData } from "react-router";
 import { UserPlus, Calendar, Community } from "iconoir-react";
 
 import {
@@ -11,7 +10,7 @@ import { StateLink, Title } from "~/components";
 
 import { getChaptersAsync } from "./services.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const ability = getPermissionsAbility(loggedUser.roles);
 
@@ -22,9 +21,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { chapters } = useLoaderData<typeof loader>();
-
+export default function Index({
+  loaderData: { chapters },
+}: Route.ComponentProps) {
   return (
     <>
       <Title>Chapters</Title>

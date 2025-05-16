@@ -1,6 +1,6 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { Form, useLoaderData } from "react-router";
+import { Form } from "react-router";
 import dayjs from "dayjs";
 import { PageEdit } from "iconoir-react";
 
@@ -12,7 +12,7 @@ import {
   getImportHistoryCountAsync,
 } from "./services.server";
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const loader = async ({ request }: Route.LoaderArgs) => {
   const url = new URL(request.url);
 
   const previousPageSubmit = url.searchParams.get("previousBtn");
@@ -45,10 +45,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   };
 };
 
-export default function Index() {
-  const { history, count, currentPageNumber, range } =
-    useLoaderData<typeof loader>();
-
+export default function Index({
+  loaderData: { history, count, currentPageNumber, range },
+}: Route.ComponentProps) {
   const totalPageCount = Math.ceil(count / 10);
 
   return (

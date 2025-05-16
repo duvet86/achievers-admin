@@ -1,7 +1,6 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { useActionData } from "react-router";
-import { Form, useLoaderData, useNavigation } from "react-router";
+import { Form } from "react-router";
 
 import invariant from "tiny-invariant";
 import { BinFull } from "iconoir-react";
@@ -11,7 +10,7 @@ import { Message, Textarea, Title } from "~/components";
 
 import { archiveUserAsync, getUserByIdAsync } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.userId, "userId not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
@@ -21,7 +20,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.userId, "userId not found");
 
   const formData = await request.formData();
@@ -40,11 +39,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
   };
 }
 
-export default function Chapter() {
-  const { user } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
-  const transition = useNavigation();
-
+export default function Index({
+  loaderData: { user },
+  actionData,
+}: Route.ComponentProps) {
   return (
     <>
       <div className="flex flex-col gap-6 sm:flex-row">
@@ -54,7 +52,7 @@ export default function Chapter() {
       </div>
 
       <Form method="post">
-        <fieldset disabled={transition.state === "submitting"}>
+        <fieldset>
           <p className="my-4">
             Are you sure you want to archive &quot;{user.fullName}&quot;?
           </p>

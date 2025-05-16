@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
 import { redirect } from "react-router";
 
@@ -10,7 +10,7 @@ import {
 
 import { getUserByAzureADIdAsync } from "./services.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
 
   if (loggedUser.isAttendances) {

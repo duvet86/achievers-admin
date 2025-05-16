@@ -1,6 +1,5 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { useLoaderData } from "react-router";
 import { Archery, Check, EditPencil, Eye, Xmark } from "iconoir-react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
@@ -14,7 +13,7 @@ import {
   getUserByAzureADIdAsync,
 } from "./services.server";
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.studentId, "studentId not found");
 
   const loggedUser = await getLoggedUserInfoAsync(request);
@@ -32,9 +31,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { student, goals } = useLoaderData<typeof loader>();
-
+export default function Index({
+  loaderData: { student, goals },
+}: Route.ComponentProps) {
   return (
     <>
       <div className="flex items-center justify-between">

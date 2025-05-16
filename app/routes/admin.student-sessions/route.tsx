@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-import type { LoaderFunctionArgs } from "react-router";
 import type { Term } from "~/models";
 import type { Route } from "./+types/route";
 
@@ -32,7 +31,7 @@ import FormInputs from "./components/FormInputs";
 
 dayjs.extend(isBetween);
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const CURRENT_YEAR = dayjs().year();
 
   const loggedUser = await getLoggedUserInfoAsync(request);

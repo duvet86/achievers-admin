@@ -1,4 +1,3 @@
-import type { LoaderFunctionArgs } from "react-router";
 import type { Route } from "./+types/route";
 
 import { Form, useSearchParams, useSubmit } from "react-router";
@@ -19,7 +18,7 @@ import {
 } from "./services.server";
 import FormInputs from "./components/FormInputs";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const { id: loggedUserId, chapterId } = await getUserAsync(loggedUser.oid);
 

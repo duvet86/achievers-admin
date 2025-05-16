@@ -1,7 +1,6 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/layout";
 
-import { redirect } from "react-router";
-import { Outlet, useLoaderData } from "react-router";
+import { Outlet, redirect } from "react-router";
 
 import { getEnvironment } from "~/services";
 import {
@@ -13,7 +12,7 @@ import { Body } from "~/components";
 
 import { getUserByAzureADIdAsync } from "./services.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
 
   if (!loggedUser.isMentor) {
@@ -40,9 +39,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const loaderData = useLoaderData<typeof loader>();
-
+export default function Index({ loaderData }: Route.ComponentProps) {
   return (
     <Body {...loaderData}>
       <Outlet />

@@ -1,13 +1,11 @@
-import type { LoaderFunctionArgs } from "react-router";
-
-import { useLoaderData } from "react-router";
+import type { Route } from "./+types/route";
 
 import { getAzureUsersWithRolesAsync } from "~/services/.server";
 import { Title } from "~/components";
 
 import { getChaptersLookupAsync, getRoleMappings } from "./services.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const chaptersLookup = await getChaptersLookupAsync();
   const users = await getAzureUsersWithRolesAsync(request);
 
@@ -46,9 +44,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { users } = useLoaderData<typeof loader>();
-
+export default function Index({ loaderData: { users } }: Route.ComponentProps) {
   return (
     <>
       <Title>User permissions</Title>

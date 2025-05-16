@@ -1,8 +1,6 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
 import dayjs from "dayjs";
-import { useLoaderData } from "react-router";
-
 import { StatsReport, Check, Xmark, WarningTriangle } from "iconoir-react";
 
 import {
@@ -19,7 +17,7 @@ import {
   hasAnyStudentsAssignedAsync,
 } from "./services.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
@@ -57,15 +55,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     currentTermLabel,
     mentorFullName,
     nextStudentSessions,
     studentSessions,
     hasAnyStudentsAssigned,
-  } = useLoaderData<typeof loader>();
-
+  },
+}: Route.ComponentProps) {
   return (
     <div className="-m-4 h-full p-4">
       <article className="prose relative mb-4 h-24 max-w-none lg:h-28">

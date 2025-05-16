@@ -1,6 +1,6 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { useFetcher, useLoaderData } from "react-router";
+import { useFetcher } from "react-router";
 import invariant from "tiny-invariant";
 import {
   Clock,
@@ -18,7 +18,7 @@ import {
   removeMentorStudentAssignement,
 } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.studentId, "studentId not found");
 
@@ -37,7 +37,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.studentId, "studentId not found");
 
@@ -70,11 +70,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     availableMentors,
     studentWithMentors: { fullName, mentorToStudentAssignement },
-  } = useLoaderData<typeof loader>();
+  },
+}: Route.ComponentProps) {
   const { state, Form, data, submit } = useFetcher<{
     message: string | null;
     mentorId: string;

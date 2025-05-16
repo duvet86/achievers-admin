@@ -1,6 +1,4 @@
-import type { LoaderFunctionArgs } from "react-router";
-
-import { useLoaderData } from "react-router";
+import type { Route } from "./+types/route";
 
 import invariant from "tiny-invariant";
 
@@ -8,7 +6,7 @@ import { getUserByIdAsync } from "./services.server";
 import { Textarea, Title } from "~/components";
 import dayjs from "dayjs";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.userId, "userId not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
@@ -19,9 +17,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { fullName, endDate, endReason } = useLoaderData<typeof loader>();
-
+export default function Index({
+  loaderData: { fullName, endDate, endReason },
+}: Route.ComponentProps) {
   return (
     <>
       <Title>Archived Mentor</Title>

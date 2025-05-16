@@ -23,7 +23,7 @@ export async function getChapterByIdAsync(id: number) {
 }
 
 export async function getSessionByIdAsync(sessionId: number) {
-  return await prisma.session.findFirstOrThrow({
+  return await prisma.session.findUniqueOrThrow({
     where: {
       id: sessionId,
     },
@@ -67,6 +67,7 @@ export async function removeSessionAsync({
         id: sessionId,
       },
       select: {
+        id: true,
         chapterId: true,
         mentorId: true,
         attendedOn: true,
@@ -77,7 +78,7 @@ export async function removeSessionAsync({
       await tx.studentSession.delete({
         where: {
           sessionId_studentId: {
-            sessionId,
+            sessionId: session.id,
             studentId,
           },
         },
@@ -86,14 +87,14 @@ export async function removeSessionAsync({
 
     const studentSessionCount = await tx.studentSession.count({
       where: {
-        sessionId,
+        sessionId: session.id,
       },
     });
 
     if (studentSessionCount === 0) {
       await tx.session.delete({
         where: {
-          id: sessionId,
+          id: session.id,
         },
       });
     }

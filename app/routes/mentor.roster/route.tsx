@@ -1,10 +1,9 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { Option } from "~/components";
+import type { Route } from "./+types/route";
 
 import {
   redirect,
   useFetcher,
-  useLoaderData,
   useNavigate,
   useSearchParams,
 } from "react-router";
@@ -34,7 +33,7 @@ import {
 } from "./services.server";
 import { ManageSession } from "./components/ManageSession";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
   const selectedTermId = url.searchParams.get("selectedTermId");
   const attendedOn = url.searchParams.get("attendedOn");
@@ -89,7 +88,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
@@ -138,15 +137,16 @@ export async function action({ request }: ActionFunctionArgs) {
   );
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     mySessionsLookup,
     myPartnersSessionsLookup,
     selectedTermId,
     termsList,
     datesInTerm,
     manageSessionState,
-  } = useLoaderData<typeof loader>();
+  },
+}: Route.ComponentProps) {
   const { submit, state } = useFetcher<typeof loader>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();

@@ -1,7 +1,6 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/layout";
 
-import { redirect } from "react-router";
-import { Outlet, useLoaderData } from "react-router";
+import { Outlet, redirect } from "react-router";
 import invariant from "tiny-invariant";
 
 import { getEnvironment } from "~/services";
@@ -14,7 +13,7 @@ import {
 } from "~/services/.server";
 import { Navbar } from "~/components";
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const isUserBlocked = await isLoggedUserBlockedAsync(
@@ -44,9 +43,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { userName, environment, version } = useLoaderData<typeof loader>();
-
+export default function Index({
+  loaderData: { userName, environment, version },
+}: Route.ComponentProps) {
   return (
     <div className="flex flex-col">
       <Navbar userName={userName} environment={environment} version={version} />

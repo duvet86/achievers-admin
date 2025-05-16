@@ -1,6 +1,7 @@
-import { type ActionFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
 import { parseFormData } from "@mjackson/form-data-parser";
+
 import { getLoggedUserInfoAsync, trackException } from "~/services/.server";
 
 import {
@@ -9,7 +10,7 @@ import {
   uploadHandler,
 } from "./services.server";
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   try {
     const loggedUser = await getLoggedUserInfoAsync(request);
     const user = await getUserByAzureADIdAsync(loggedUser.oid);

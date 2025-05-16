@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
 import { Form, useLoaderData } from "react-router";
 import dayjs from "dayjs";
@@ -12,7 +12,7 @@ import {
   getImportHistoryCountAsync,
 } from "./services.server";
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
 
   const previousPageSubmit = url.searchParams.get("previousBtn");
@@ -43,7 +43,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     history,
     range,
   };
-};
+}
 
 export default function Index() {
   const { history, count, currentPageNumber, range } =

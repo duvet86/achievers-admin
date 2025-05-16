@@ -1,6 +1,5 @@
-import type { LinksFunction, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 import { Check } from "iconoir-react";
 import dayjs from "dayjs";
@@ -10,11 +9,11 @@ import { Editor, Textarea, Title } from "~/components";
 
 import { getGoalById } from "./services.server";
 
-export const links: LinksFunction = () => {
+export const links: Route.LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
 };
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.goalId, "goalId not found");
 
   const goal = await getGoalById(Number(params.goalId));
@@ -24,9 +23,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { goal } = useLoaderData<typeof loader>();
-
+export default function Index({ loaderData: { goal } }: Route.ComponentProps) {
   return (
     <>
       <div className="flex items-center justify-between">

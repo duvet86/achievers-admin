@@ -1,10 +1,10 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { Prisma } from "~/prisma/client";
 import type { XOR } from "~/models";
+import type { Route } from "./+types/route";
 
 import dayjs from "dayjs";
 import { $Enums } from "~/prisma/client";
-import { useActionData, useLoaderData, useNavigation } from "react-router";
+import { useNavigation } from "react-router";
 import invariant from "tiny-invariant";
 import { NavArrowRight } from "iconoir-react";
 
@@ -21,7 +21,7 @@ import {
 import { StudentForm, GuardianList, TeacherList, Header } from "./components";
 import { StateLink } from "~/components";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.studentId, "studentId not found");
 
   const isNewStudent = areEqualIgnoreCase(params.studentId, "new");
@@ -59,7 +59,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.studentId, "studentId not found");
 
   const formData = await request.formData();
@@ -181,10 +181,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { chapters, isNewStudent, student, title, yearLevelCalculated } =
-    useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
+export default function Index({
+  loaderData: { chapters, isNewStudent, student, title, yearLevelCalculated },
+  actionData,
+}: Route.ComponentProps) {
   const transition = useNavigation();
 
   const isLoading = transition.state !== "idle";

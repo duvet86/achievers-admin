@@ -1,6 +1,5 @@
-import type { LinksFunction, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { useLoaderData } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import classNames from "classnames";
@@ -11,11 +10,11 @@ import { Editor, SubTitle, Title } from "~/components";
 
 import { getStudentSessionAsync } from "./services.server";
 
-export const links: LinksFunction = () => {
+export const links: Route.LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
 };
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.studentSessionId, "studentSessionId not found");
 
   const studentSession = await getStudentSessionAsync(
@@ -27,9 +26,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { studentSession } = useLoaderData<typeof loader>();
-
+export default function Index({
+  loaderData: { studentSession },
+}: Route.ComponentProps) {
   return (
     <>
       <div className="flex w-full items-center gap-8">

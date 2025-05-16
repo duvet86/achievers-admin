@@ -1,19 +1,14 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 import type { EoiUpdateCommand } from "./services.server";
 
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-} from "react-router";
+import { Form } from "react-router";
 import invariant from "tiny-invariant";
 
 import { Input, Radio, SubmitFormButton, Textarea, Title } from "~/components";
 
 import { getUserByIdAsync, updateEoiByUserIdAsync } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.userId, "userId not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
@@ -23,7 +18,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.userId, "userId not found");
 
   const formData = await request.formData();
@@ -80,11 +75,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { user } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
-  const transition = useNavigation();
-
+export default function Index({
+  loaderData: { user },
+  actionData,
+}: Route.ComponentProps) {
   const eoIProfile = user.eoIProfile;
 
   return (
@@ -94,10 +88,7 @@ export default function Index() {
       <hr className="my-4" />
 
       <Form method="post">
-        <fieldset
-          className="fieldset"
-          disabled={transition.state === "submitting"}
-        >
+        <fieldset className="fieldset">
           <Textarea
             defaultValue={eoIProfile?.bestTimeToContact ?? ""}
             label="Best time to contact"

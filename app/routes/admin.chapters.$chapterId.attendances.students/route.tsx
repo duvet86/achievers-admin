@@ -1,7 +1,7 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
 import invariant from "tiny-invariant";
-import { Form, useLoaderData, useSubmit } from "react-router";
+import { Form, useSubmit } from "react-router";
 import dayjs from "dayjs";
 import { useRef } from "react";
 
@@ -15,7 +15,7 @@ import { Input, Select, Title } from "~/components";
 
 import { getAttendancesAsync } from "./services.server";
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const CURRENT_YEAR = dayjs().year();
@@ -89,8 +89,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     attendances,
     selectedTermDate,
     selectedTermDateLabel,
@@ -100,7 +100,8 @@ export default function Index() {
     termYearsOptions,
     termsOptions,
     searchTerm,
-  } = useLoaderData<typeof loader>();
+  },
+}: Route.ComponentProps) {
   const submit = useSubmit();
   const formRef = useRef<HTMLFormElement | null>(null);
 

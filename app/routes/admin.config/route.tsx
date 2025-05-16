@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router";
+import type { Route } from "./+types/route";
 
 import { Check, Xmark } from "iconoir-react";
 
@@ -12,10 +12,9 @@ export function loader() {
   };
 }
 
-export default function Index() {
-  const { version, isEmailRemindersCheckEnabled } =
-    useLoaderData<typeof loader>();
-
+export default function Index({
+  loaderData: { version, isEmailRemindersCheckEnabled },
+}: Route.ComponentProps) {
   return (
     <>
       <Title>Configuration settings</Title>

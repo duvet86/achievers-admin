@@ -1,7 +1,7 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 import type { NewSchoolTerm } from "./services.server";
 
-import { Form, redirect, useActionData } from "react-router";
+import { Form, redirect } from "react-router";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
@@ -13,7 +13,7 @@ import { addTermsAsync, getExisitingYearsAsync } from "./services.server";
 
 dayjs.extend(utc);
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const isUserBlocked = await isLoggedUserBlockedAsync(
     request,
     "SchoolTermArea",
@@ -31,7 +31,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return null;
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
 
   const startDate1 = dayjs.utc(
@@ -123,9 +123,7 @@ export async function action({ request }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const actionData = useActionData<typeof action>();
-
+export default function Index({ actionData }: Route.ComponentProps) {
   return (
     <>
       <Title className="mb-4">Add new school term</Title>

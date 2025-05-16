@@ -1,7 +1,7 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
 import { redirect } from "react-router";
-import { Form, useLoaderData } from "react-router";
+import { Form } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 
@@ -17,7 +17,7 @@ import {
 } from "./services.server";
 import { Xmark } from "iconoir-react";
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
+export async function loader({ params, request }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.studentId, "studentId not found");
   invariant(params.attendedOn, "attendedOn not found");
@@ -79,7 +79,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ params, request }: ActionFunctionArgs) {
+export async function action({ params, request }: Route.ActionArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.attendedOn, "attendedOn not found");
   invariant(params.studentId, "studentId not found");
@@ -99,10 +99,9 @@ export async function action({ params, request }: ActionFunctionArgs) {
   throw redirect(`/admin/chapters/${params.chapterId}/roster-students`);
 }
 
-export default function Index() {
-  const { attendedOnLabel, chapter, student, mentors } =
-    useLoaderData<typeof loader>();
-
+export default function Index({
+  loaderData: { attendedOnLabel, chapter, student, mentors },
+}: Route.ComponentProps) {
   return (
     <>
       <Title>

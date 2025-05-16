@@ -1,9 +1,8 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import type { Prisma } from "~/prisma/client";
 import type { XOR } from "~/models";
 import type { AzureUserWebAppWithRole } from "~/services/.server";
+import type { Route } from "./+types/route";
 
-import { useActionData, useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 import { NavArrowRight } from "iconoir-react";
 
@@ -22,7 +21,7 @@ import { CheckList } from "./components/CheckList";
 import { Header } from "./components/Header";
 import { StateLink } from "~/components";
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.userId, "userId not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
@@ -62,7 +61,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.userId, "userId not found");
 
   const formData = await request.formData();
@@ -137,10 +136,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const loaderData = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
-
+export default function Index({
+  loaderData,
+  actionData,
+}: Route.ComponentProps) {
   return (
     <div className="flex h-full flex-col">
       <Header

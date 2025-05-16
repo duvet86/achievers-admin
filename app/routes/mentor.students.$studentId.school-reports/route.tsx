@@ -1,6 +1,5 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 
 import { Title } from "~/components";
@@ -10,7 +9,7 @@ import {
   getStudentByIdAsync,
 } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.studentId, "studentId not found");
 
   const student = await getStudentByIdAsync(Number(params.studentId));
@@ -22,9 +21,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { student, report } = useLoaderData<typeof loader>();
-
+export default function Index({
+  loaderData: { student, report },
+}: Route.ComponentProps) {
   return (
     <>
       <Title>School reports for &quot;{student.fullName}&quot;</Title>

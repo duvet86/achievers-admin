@@ -1,12 +1,8 @@
-import type {
-  ActionFunctionArgs,
-  LinksFunction,
-  LoaderFunctionArgs,
-} from "react-router";
 import type { EditorState } from "lexical";
+import type { Route } from "./+types/route";
 import type { ActionType, SessionCommandRequest } from "./services.server";
 
-import { useFetcher, useLoaderData } from "react-router";
+import { useFetcher } from "react-router";
 import invariant from "tiny-invariant";
 
 import { useRef } from "react";
@@ -28,11 +24,11 @@ import {
 import { getStudentSessionIdAsync, saveReportAsync } from "./services.server";
 import { isSessionDateInTheFuture } from "./services.client";
 
-export const links: LinksFunction = () => {
+export const links: Route.LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
 };
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.studentSessionId, "studentSessionId not found");
 
   const studentSession = await getStudentSessionIdAsync(
@@ -44,7 +40,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.studentSessionId, "studentSessionId not found");
   invariant(params.mentorId, "mentorId not found");
 
@@ -70,10 +66,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     studentSession: { id, report, reportFeedback, session },
-  } = useLoaderData<typeof loader>();
+  },
+}: Route.ComponentProps) {
   const { data, state, submit } = useFetcher<typeof action>();
 
   const editorReportStateRef = useRef<EditorState>(null);

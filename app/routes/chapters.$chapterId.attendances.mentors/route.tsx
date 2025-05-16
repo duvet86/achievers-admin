@@ -1,7 +1,7 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 import type { Attendance } from "./services.server";
 
-import { Form, useLoaderData, useSubmit } from "react-router";
+import { Form, useSubmit } from "react-router";
 import { useRef } from "react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
@@ -23,7 +23,7 @@ import {
   removeAttendace,
 } from "./services.server";
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const CURRENT_YEAR = dayjs().year();
@@ -102,7 +102,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const bodyData = (await request.json()) as {
@@ -128,8 +128,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
   return null;
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     mentors,
     attendacesLookup,
     selectedTermYear,
@@ -139,7 +139,8 @@ export default function Index() {
     termYearsOptions,
     termsOptions,
     sessionDates,
-  } = useLoaderData<typeof loader>();
+  },
+}: Route.ComponentProps) {
   const submit = useSubmit();
   const formRef = useRef<HTMLFormElement | null>(null);
 

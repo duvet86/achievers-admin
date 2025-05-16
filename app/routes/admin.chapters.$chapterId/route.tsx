@@ -1,6 +1,6 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { Form, useLoaderData } from "react-router";
+import { Form } from "react-router";
 import invariant from "tiny-invariant";
 
 import { Title, Input, SubmitFormButton, StateLink } from "~/components";
@@ -8,7 +8,7 @@ import { Title, Input, SubmitFormButton, StateLink } from "~/components";
 import { getChapterByIdAsync } from "./services.server";
 import { Calendar, Group } from "iconoir-react";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const chapter = await getChapterByIdAsync(Number(params.chapterId));
@@ -18,9 +18,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { chapter } = useLoaderData<typeof loader>();
-
+export default function Index({
+  loaderData: { chapter },
+}: Route.ComponentProps) {
   return (
     <>
       <Title>Edit chapter</Title>

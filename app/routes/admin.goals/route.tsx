@@ -1,6 +1,6 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { Form, useLoaderData, useSearchParams, useSubmit } from "react-router";
+import { Form, useSearchParams, useSubmit } from "react-router";
 
 import { useRef } from "react";
 import { Check, Eye, Xmark } from "iconoir-react";
@@ -27,7 +27,7 @@ import {
   getAvailabelStudentsAsync,
 } from "./services.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const ability = getPermissionsAbility(loggedUser.roles);
 
@@ -114,8 +114,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     mentors,
     students,
     selectedChapterId,
@@ -126,7 +126,8 @@ export default function Index() {
     count,
     currentPageNumber,
     range,
-  } = useLoaderData<typeof loader>();
+  },
+}: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
   const formRef = useRef<HTMLFormElement | null>(null);

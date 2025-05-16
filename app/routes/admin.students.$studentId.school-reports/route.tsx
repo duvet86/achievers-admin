@@ -1,13 +1,7 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 import type { SchoolReportCommand } from "./services.server";
 
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-  useSubmit,
-} from "react-router";
+import { Form, useSubmit } from "react-router";
 import invariant from "tiny-invariant";
 import { parseFormData } from "@mjackson/form-data-parser";
 import { Xmark } from "iconoir-react";
@@ -25,7 +19,7 @@ import {
   uploadHandler,
 } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.studentId, "studentId not found");
 
   const student = await getStudentByIdAsync(Number(params.studentId));
@@ -43,7 +37,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.studentId, "studentId not found");
 
   try {
@@ -89,11 +83,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const { student, termsList, selectedTermId } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
+export default function Index({
+  loaderData: { student, termsList, selectedTermId },
+  actionData,
+}: Route.ComponentProps) {
   const submit = useSubmit();
-  const transition = useNavigation();
 
   const deleteReport = (reportId: number, fileName: string) => () => {
     void submit(
@@ -114,10 +108,7 @@ export default function Index() {
       <hr className="my-4" />
 
       <Form method="post" encType="multipart/form-data">
-        <fieldset
-          className="fieldset"
-          disabled={transition.state === "submitting"}
-        >
+        <fieldset className="fieldset">
           <Select
             label="Term"
             name="selectedTermId"

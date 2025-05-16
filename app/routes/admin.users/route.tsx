@@ -1,5 +1,4 @@
 import type { JSX } from "react";
-import type { LoaderFunctionArgs } from "react-router";
 import type { Prisma } from "~/prisma/client";
 import type { Route } from "./+types/route";
 
@@ -22,7 +21,7 @@ import {
 import ActionsDropdown from "./components/ActionsDropdown";
 import FormInputs from "./components/FormInputs";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const ability = getPermissionsAbility(loggedUser.roles);
 

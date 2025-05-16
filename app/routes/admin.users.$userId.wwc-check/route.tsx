@@ -1,13 +1,8 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 import type { UpdateWWCCheckCommand } from "./services.server";
 
 import { parseFormData } from "@mjackson/form-data-parser";
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-} from "react-router";
+import { Form } from "react-router";
 import invariant from "tiny-invariant";
 
 import {
@@ -26,7 +21,7 @@ import {
   uploadHandler,
 } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.userId, "userId not found");
 
   const user = await getUserByIdAsync(Number(params.userId));
@@ -43,7 +38,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.userId, "userId not found");
 
   try {
@@ -81,11 +76,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const transition = useNavigation();
-  const { user } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
-
+export default function Index({
+  loaderData: { user },
+  actionData,
+}: Route.ComponentProps) {
   return (
     <>
       <Title>WWC check for &quot;{user.fullName}&quot;</Title>
@@ -93,10 +87,7 @@ export default function Index() {
       <hr className="my-4" />
 
       <Form method="post" encType="multipart/form-data">
-        <fieldset
-          className="fieldset"
-          disabled={transition.state === "submitting"}
-        >
+        <fieldset className="fieldset">
           <Input
             defaultValue={user?.wwcCheck?.wwcNumber ?? ""}
             label="WWC number"

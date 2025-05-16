@@ -1,6 +1,6 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { useLoaderData, useFetcher } from "react-router";
+import { useFetcher } from "react-router";
 import { ShareAndroid, Xmark } from "iconoir-react";
 
 import { getLoggedUserInfoAsync } from "~/services/.server";
@@ -12,7 +12,7 @@ import {
   shareInfoWithPartner,
 } from "./services.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const partners = await getPartnersAync(loggedUser.oid);
 
@@ -21,7 +21,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
 
   const formData = await request.formData();
@@ -38,11 +38,10 @@ export async function action({ request }: ActionFunctionArgs) {
   return null;
 }
 
-export default function Index() {
-  const initialData = useLoaderData<typeof loader>();
+export default function Index({ loaderData }: Route.ComponentProps) {
   const { data, submit } = useFetcher<typeof loader>();
 
-  const { partners } = data ?? initialData;
+  const { partners } = data ?? loaderData;
 
   const onSubmit =
     (

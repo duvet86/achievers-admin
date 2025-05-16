@@ -1,6 +1,6 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { Form, useLoaderData } from "react-router";
+import { Form } from "react-router";
 import dayjs from "dayjs";
 import classNames from "classnames";
 import { Eye } from "iconoir-react";
@@ -13,7 +13,7 @@ import {
   getPoliceCheckRemindersCount,
 } from "./services.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
 
   const previousPageSubmit = url.searchParams.get("previousBtn");
@@ -49,14 +49,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     policeCheckEmailRemindersSent,
     range,
     currentPageNumber,
     totalPageCount,
-  } = useLoaderData<typeof loader>();
-
+  },
+}: Route.ComponentProps) {
   return (
     <Form>
       <Title>Police check email reminders</Title>

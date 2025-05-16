@@ -1,6 +1,6 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { useLoaderData, useNavigate, useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { UserCircle, GraduationCap, ShopFourTiles } from "iconoir-react";
 import dayjs from "dayjs";
 
@@ -29,7 +29,7 @@ import {
   MissingReportsBarChart,
 } from "./components";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const CURRENT_YEAR = dayjs().year();
 
   const loggedUser = await getLoggedUserInfoAsync(request);
@@ -142,8 +142,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     selectedTermYear,
     selectedTermId,
     selectedChapterId,
@@ -157,7 +157,8 @@ export default function Index() {
     reportsData,
     termYearsOptions,
     termsOptions,
-  } = useLoaderData<typeof loader>();
+  },
+}: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 

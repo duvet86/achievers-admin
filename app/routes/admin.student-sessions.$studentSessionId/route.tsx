@@ -1,7 +1,6 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { redirect, useActionData } from "react-router";
-import { useLoaderData, useSubmit } from "react-router";
+import { redirect, useSubmit } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import classNames from "classnames";
@@ -24,7 +23,7 @@ import {
   removeSessionAsync,
 } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.studentSessionId, "studentSessionId not found");
 
   const studentSession = await getStudentSessionByIdAsync(
@@ -51,16 +50,19 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ params, request }: ActionFunctionArgs) {
+export async function action({ params, request }: Route.ActionArgs) {
   invariant(params.studentSessionId, "studentSessionId not found");
 
   if (request.method === "DELETE") {
-    await removeSessionAsync(Number(params.studentSessionId));
+    const studentSession = await removeSessionAsync(
+      Number(params.studentSessionId),
+    );
 
-    return {
-      successMessage: "Mentor removed",
-      errorMessage: null,
-    };
+    const url = new URL(request.url);
+
+    return redirect(
+      `/admin/chapters/${studentSession.session.chapterId}/roster-students/${studentSession.studentId}/attended-on/${dayjs(studentSession.session.attendedOn).format("YYYY-MM-DD")}/new?${url.searchParams}`,
+    );
   }
 
   if (request.method === "POST") {
@@ -73,18 +75,15 @@ export async function action({ params, request }: ActionFunctionArgs) {
       };
     }
 
-    const resp = await fetch(
-      "https://prod-19.australiaeast.logic.azure.com:443/workflows/1fee24b00c05499c9b10878837733e7f/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=4lAPyBTO_ROY312DS_mVaqdUf_SHXbpUd2AXAfONs0o",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          studentSessionId: Number(params.studentSessionId),
-        }),
+    const resp = await fetch(process.env.SEND_MENTOR_REPORT_REMINDER_URL!, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify({
+        studentSessionId: Number(params.studentSessionId),
+      }),
+    });
 
     if (!resp.ok) {
       return {
@@ -102,15 +101,15 @@ export async function action({ params, request }: ActionFunctionArgs) {
   throw new Error("Method not allowed");
 }
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     attendedOnLabel,
     chapter,
     studentSession,
     notificationSentOnFromNow,
-  } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
-
+  },
+  actionData,
+}: Route.ComponentProps) {
   const submit = useSubmit();
 
   const handleRemoveMentorSubmit = () => {
@@ -143,7 +142,7 @@ export default function Index() {
         )}
       >
         <Title>
-          Session of &quot;
+          Session for &quot;{studentSession.student.fullName}&quot; on &quot;
           {attendedOnLabel}&quot;
         </Title>
 
@@ -189,7 +188,7 @@ export default function Index() {
               onClick={handleRemoveMentorSubmit}
             >
               <UserXmark />
-              Remove
+              Remove Mentor
             </button>
           )}
         </div>

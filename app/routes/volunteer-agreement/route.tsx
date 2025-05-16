@@ -1,12 +1,11 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { redirect } from "react-router";
-import { Form, Link, useLoaderData } from "react-router";
+import { Form, Link, redirect } from "react-router";
 import dayjs from "dayjs";
 import { CheckSquareSolid, NavArrowLeft } from "iconoir-react";
 
-import { getEnvironment } from "~/services";
 import { getLoggedUserInfoAsync, version } from "~/services/.server";
+import { getEnvironment } from "~/services";
 import {
   Checkbox,
   DateInput,
@@ -22,7 +21,7 @@ import {
   getUserByAzureADIdAsync,
 } from "./services.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
@@ -36,7 +35,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
 
   const userId = formData.get("userId")?.toString();
@@ -92,10 +91,16 @@ export async function action({ request }: ActionFunctionArgs) {
   return redirect("/mentor/home");
 }
 
-export default function Index() {
-  const { user, maxDateOfBirth, userName, environment, version, hasAgreed } =
-    useLoaderData<typeof loader>();
-
+export default function Index({
+  loaderData: {
+    user,
+    maxDateOfBirth,
+    userName,
+    environment,
+    version,
+    hasAgreed,
+  },
+}: Route.ComponentProps) {
   return (
     <div className="drawer-content flex flex-col">
       <Navbar userName={userName} environment={environment} version={version} />

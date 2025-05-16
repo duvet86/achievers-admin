@@ -1,5 +1,5 @@
-import type { LoaderFunctionArgs } from "react-router";
 import type { TokenInfo } from "~/services";
+import type { Route } from "./+types/logout";
 
 import { redirect } from "react-router";
 
@@ -9,7 +9,7 @@ import {
   strategy_dev,
 } from "~/services/.server/session-dev.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   if (isProduction()) {
     return redirect(
       getCurrentHost(request) + "/.auth/logout?post_logout_redirect_uri=/",

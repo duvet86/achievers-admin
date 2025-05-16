@@ -1,10 +1,10 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
 import invariant from "tiny-invariant";
 
 import { exportRosterToSpreadsheetAsync } from "./services.server";
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
+export async function loader({ params, request }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const url = new URL(request.url);

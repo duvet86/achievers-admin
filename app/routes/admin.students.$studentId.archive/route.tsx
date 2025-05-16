@@ -1,8 +1,6 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/route";
 
-import { useActionData } from "react-router";
-import { Form, useLoaderData, useNavigation } from "react-router";
-
+import { Form, useNavigation } from "react-router";
 import invariant from "tiny-invariant";
 import { BinFull } from "iconoir-react";
 
@@ -10,7 +8,7 @@ import { Message, Title } from "~/components";
 
 import { archiveStudentAsync, getStudentByIdAsync } from "./services.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.studentId, "studentId not found");
 
   const student = await getStudentByIdAsync(Number(params.studentId));
@@ -20,7 +18,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ params }: ActionFunctionArgs) {
+export async function action({ params }: Route.ActionArgs) {
   invariant(params.studentId, "studentId not found");
 
   await archiveStudentAsync(Number(params.studentId));
@@ -30,9 +28,10 @@ export async function action({ params }: ActionFunctionArgs) {
   };
 }
 
-export default function Chapter() {
-  const { student } = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
+export default function Chapter({
+  loaderData: { student },
+  actionData,
+}: Route.ComponentProps) {
   const transition = useNavigation();
 
   return (

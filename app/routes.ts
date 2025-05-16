@@ -475,4 +475,7 @@ export default [
   route("logout", "routes/logout.tsx", {
     index: true,
   }),
+  route("report-error", "routes/report-error/route.tsx", {
+    index: true,
+  }),
 ] satisfies RouteConfig;

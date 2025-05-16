@@ -1,13 +1,7 @@
-import type { LoaderFunctionArgs } from "react-router";
 import type { Prisma } from "~/prisma/client";
+import type { Route } from "./+types/route";
 
-import {
-  Form,
-  useLoaderData,
-  useNavigate,
-  useSearchParams,
-  useSubmit,
-} from "react-router";
+import { Form, useNavigate, useSearchParams, useSubmit } from "react-router";
 import { useRef } from "react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
@@ -30,7 +24,7 @@ import { Input, Select, StateLink, TableHeaderSort, Title } from "~/components";
 
 import { getMentorsAsync } from "./services.server";
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
+export async function loader({ params, request }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const CURRENT_YEAR = dayjs().year();
@@ -116,8 +110,8 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
 const colours = ["#FAD7A0", "#A9DFBF", "#FADBD8", "#AED6F1"];
 
-export default function Index() {
-  const {
+export default function Index({
+  loaderData: {
     mentors,
     selectedTermYear,
     selectedTermId,
@@ -129,7 +123,8 @@ export default function Index() {
     sessionDateOptions,
     chapterId,
     sortFullNameSubmit,
-  } = useLoaderData<typeof loader>();
+  },
+}: Route.ComponentProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
