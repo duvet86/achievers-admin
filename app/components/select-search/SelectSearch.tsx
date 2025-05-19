@@ -20,6 +20,7 @@ interface Props {
   required?: boolean;
   disabled?: boolean;
   options: Option[];
+  className?: string;
   onChange?: (value: string) => void;
 }
 
@@ -29,6 +30,7 @@ const EMPTY_OPTION: Option = {
 };
 
 export function SelectSearch({
+  className,
   options,
   name,
   label,
@@ -98,7 +100,7 @@ export function SelectSearch({
   };
 
   return (
-    <>
+    <div className={classNames(className ?? "w-full")}>
       <label className="fieldset-label">{label}</label>
 
       <div className="indicator w-full">
@@ -193,6 +195,6 @@ export function SelectSearch({
           </ul>
         </div>
       </div>
-    </>
+    </div>
   );
 }

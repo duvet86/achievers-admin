@@ -48,31 +48,13 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   const mentors = await getMentorsForStudentAsync(
     Number(params.chapterId),
     selectedStudentId,
-  );
-
-  const mentorsInSession = sessionsForDate.reduce<Record<string, boolean>>(
-    (res, { mentorId, studentSession }) => {
-      res[mentorId.toString()] = studentSession.length > 0;
-
-      return res;
-    },
-    {},
+    sessionsForDate,
   );
 
   return {
     chapter,
     student,
-    mentors: mentors.map(({ id, fullName }) => {
-      const isUnavailable = mentorsInSession[id];
-
-      return {
-        label:
-          fullName +
-          (isUnavailable ? " (Unavailable - in another session)" : ""),
-        value: id.toString(),
-        isDisabled: isUnavailable,
-      };
-    }),
+    mentors,
     attendedOnLabel: dayjs(params.attendedOn, "YYYY-MM-DD").format(
       "MMMM D, YYYY",
     ),

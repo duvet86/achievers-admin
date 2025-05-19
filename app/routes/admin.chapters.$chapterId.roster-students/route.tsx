@@ -302,7 +302,10 @@ export default function Index({
                             Report <Check className="h-4 w-4" />
                           </div>
                         )}
-                        <StateLink to={to} className="btn btn-ghost btn-block">
+                        <StateLink
+                          to={to}
+                          className="btn btn-ghost btn-block justify-between truncate font-bold"
+                        >
                           <span className="flex-1">
                             {session?.mentorFullName}
                           </span>

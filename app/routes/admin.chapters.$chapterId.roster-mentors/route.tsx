@@ -327,7 +327,7 @@ export default function Index({
                         <StateLink
                           to={to}
                           className={classNames(
-                            "btn btn-ghost btn-block justify-between font-bold",
+                            "btn btn-ghost btn-block justify-between truncate font-bold",
                             {
                               "text-info": textHighlight,
                               "text-error": textHighlightError,
