@@ -10,9 +10,9 @@ import sourceMapSupport from "source-map-support";
 await initAppInsightsLoggerAsync();
 sourceMapSupport.install();
 
-// if (process.env.CI) {
-mockTime();
-// }
+if (process.env.CI) {
+  mockTime();
+}
 
 const DEVELOPMENT = process.env.NODE_ENV === "development";
 const PORT = Number.parseInt(process.env.PORT || "3000");
