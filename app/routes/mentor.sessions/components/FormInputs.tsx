@@ -1,7 +1,7 @@
 import { SelectSearch } from "~/components";
 
 interface Props {
-  selectedStudentId: string;
+  selectedStudentId: string | undefined;
   selectedMentorId: string | undefined;
   students: {
     id: number;
@@ -30,19 +30,6 @@ export default function FormInputs({
       <div className="flex flex-1 flex-col gap-4 sm:flex-row">
         <div className="flex-1">
           <SelectSearch
-            label="Student"
-            name="studentId"
-            defaultValue={selectedStudentId}
-            options={students.map(({ id, fullName }) => ({
-              label: fullName,
-              value: id.toString(),
-            }))}
-            onChange={onStudentChange}
-          />
-        </div>
-
-        <div className="flex-1">
-          <SelectSearch
             label="Mentor"
             name="mentorId"
             defaultValue={selectedMentorId}
@@ -51,6 +38,21 @@ export default function FormInputs({
               value: id.toString(),
             }))}
             onChange={onMentorIdChange}
+            showClearButton
+          />
+        </div>
+
+        <div className="flex-1">
+          <SelectSearch
+            label="Student"
+            name="studentId"
+            defaultValue={selectedStudentId}
+            options={students.map(({ id, fullName }) => ({
+              label: fullName,
+              value: id.toString(),
+            }))}
+            onChange={onStudentChange}
+            showClearButton
           />
         </div>
       </div>

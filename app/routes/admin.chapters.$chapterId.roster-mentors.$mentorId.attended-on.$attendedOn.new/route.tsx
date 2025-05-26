@@ -13,7 +13,7 @@ import {
   getChapterByIdAsync,
   getStudentsForMentorAsync,
   getMentorByIdAsync,
-  getSessionForDateAsync,
+  getMentorSessionForDateAsync,
 } from "./services.server";
 
 export async function loader({ params, request }: Route.LoaderArgs) {
@@ -23,17 +23,17 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 
   const selectedMentorId = Number(params.mentorId);
 
-  const session = await getSessionForDateAsync(
+  const mentorSession = await getMentorSessionForDateAsync(
     Number(params.chapterId),
     Number(params.mentorId),
     params.attendedOn,
   );
 
-  if (session !== null) {
+  if (mentorSession !== null) {
     const url = new URL(request.url);
 
-    throw redirect(
-      `/admin/chapters/${params.chapterId}/roster-mentors/sessions/${session.id}?${url.searchParams}`,
+    return redirect(
+      `/admin/chapters/${params.chapterId}/roster-mentors/mentor-sessions/${mentorSession.id}?${url.searchParams}`,
     );
   }
 
@@ -77,8 +77,8 @@ export async function action({ params, request }: Route.ActionArgs) {
 
   const url = new URL(request.url);
 
-  throw redirect(
-    `/admin/chapters/${params.chapterId}/roster-mentors/sessions/${id}?${url.searchParams}`,
+  return redirect(
+    `/admin/chapters/${params.chapterId}/roster-mentors/mentor-sessions/${id}?${url.searchParams}`,
   );
 }
 

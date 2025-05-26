@@ -22,24 +22,14 @@ export async function getAvailabelMentorsAsync(
   chapterId: number,
   studentId: number | undefined,
 ) {
-  return await prisma.user.findMany({
-    where: {
-      chapter: accessibleBy(ability).Chapter,
-      chapterId,
-      mentorToStudentAssignement: {
-        some: {
-          studentId,
-        },
-      },
-    },
-    select: {
-      id: true,
-      fullName: true,
-    },
-    orderBy: {
-      fullName: "asc",
-    },
-  });
+  const chapterIdFilter = accessibleBy(ability).Chapter.id ?? chapterId;
+
+  return await prisma.$queryRaw<{ id: number; fullName: string }[]>`
+    SELECT u.id, u.fullName
+    FROM User u
+    INNER JOIN MentorToStudentAssignement msa ON msa.userId = u.id
+    WHERE msa.studentId = ${studentId} AND u.chapterId = ${chapterIdFilter}
+    ORDER BY u.fullName ASC`;
 }
 
 export async function getAvailabelStudentsAsync(
@@ -47,24 +37,14 @@ export async function getAvailabelStudentsAsync(
   chapterId: number,
   mentorId: number | undefined,
 ) {
-  return await prisma.student.findMany({
-    where: {
-      chapter: accessibleBy(ability).Chapter,
-      chapterId,
-      mentorToStudentAssignement: {
-        some: {
-          userId: mentorId,
-        },
-      },
-    },
-    select: {
-      id: true,
-      fullName: true,
-    },
-    orderBy: {
-      fullName: "asc",
-    },
-  });
+  const chapterIdFilter = accessibleBy(ability).Chapter.id ?? chapterId;
+
+  return await prisma.$queryRaw<{ id: number; fullName: string }[]>`
+    SELECT s.id, s.fullName
+    FROM Student s
+    INNER JOIN MentorToStudentAssignement msa ON msa.studentId = s.id
+    WHERE msa.studentId = ${mentorId} AND s.chapterId = ${chapterIdFilter}
+    ORDER BY s.fullName ASC`;
 }
 
 export async function getCountAsync(
@@ -75,7 +55,7 @@ export async function getCountAsync(
   studentId: number | undefined,
   filterReports: string,
 ) {
-  return await prisma.studentSession.count({
+  return await prisma.sessionAttendance.count({
     where: whereClause(
       chapterId,
       term,
@@ -87,7 +67,7 @@ export async function getCountAsync(
   });
 }
 
-export async function getStudentSessionsAsync(
+export async function getSessionsAsync(
   chapterId: number,
   term: Term,
   termDate: string | undefined,
@@ -97,7 +77,7 @@ export async function getStudentSessionsAsync(
   pageNumber: number,
   numberItems = 10,
 ) {
-  return await prisma.studentSession.findMany({
+  return await prisma.sessionAttendance.findMany({
     where: whereClause(
       chapterId,
       term,
@@ -108,17 +88,21 @@ export async function getStudentSessionsAsync(
     ),
     select: {
       id: true,
+      attendedOn: true,
       completedOn: true,
       signedOffOn: true,
-      student: {
+      studentSession: {
         select: {
-          id: true,
-          fullName: true,
+          student: {
+            select: {
+              id: true,
+              fullName: true,
+            },
+          },
         },
       },
-      session: {
+      mentorSession: {
         select: {
-          attendedOn: true,
           mentor: {
             select: {
               id: true,
@@ -129,9 +113,7 @@ export async function getStudentSessionsAsync(
       },
     },
     orderBy: {
-      session: {
-        attendedOn: "desc",
-      },
+      attendedOn: "desc",
     },
     skip: numberItems * pageNumber,
     take: numberItems,
@@ -147,7 +129,13 @@ function whereClause(
   filterReports: string,
 ) {
   return {
-    studentId,
+    chapterId,
+    studentSession: {
+      studentId,
+    },
+    mentorSession: {
+      mentorId,
+    },
     completedOn:
       filterReports === "TO_SIGN_OFF"
         ? {
@@ -160,27 +148,9 @@ function whereClause(
       filterReports === "TO_SIGN_OFF" || filterReports === "OUTSTANDING"
         ? null
         : undefined,
-    session: {
-      mentorId,
-      chapterId,
-      AND: termDate
-        ? [
-            {
-              attendedOn: termDate,
-            },
-          ]
-        : [
-            {
-              attendedOn: {
-                lte: term.end.toDate(),
-              },
-            },
-            {
-              attendedOn: {
-                gte: term.start.toDate(),
-              },
-            },
-          ],
+    attendedOn: termDate ?? {
+      lte: term.end.toDate(),
+      gte: term.start.toDate(),
     },
   };
 }

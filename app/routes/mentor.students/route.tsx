@@ -57,7 +57,7 @@ export default function Index({
                     </StateLink>
 
                     <StateLink
-                      to={`/mentor/student-sessions?selectedStudentId=${id}`}
+                      to={`/mentor/sessions?studentId=${id}`}
                       state={{ from: "/mentor/students" }}
                       className="btn btn-success w-48 gap-2"
                     >

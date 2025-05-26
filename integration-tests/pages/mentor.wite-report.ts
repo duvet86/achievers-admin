@@ -51,7 +51,7 @@ export class MentorWriteReportPage {
       name: "Save",
     });
     this.completeButton = page.getByRole("button", {
-      name: "Completed",
+      name: "Submit for review",
     });
 
     this.reportText = page

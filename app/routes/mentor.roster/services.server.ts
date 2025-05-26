@@ -10,33 +10,33 @@ import { prisma } from "~/db.server";
 dayjs.extend(utc);
 dayjs.extend(isBetween);
 
-export interface SessionCommand {
+interface MentorSessionCommand {
   chapterId: number;
-  studentId: number | null;
+  status: string;
   mentorId: number;
   attendedOn: string;
-  status: string;
+}
+
+interface SessionCommand {
+  chapterId: number;
+  studentId: number;
+  mentorId: number;
+  attendedOn: string;
 }
 
 export interface SessioViewModel {
   id: number;
   chapterId: number;
   attendedOn: Date;
-  status: string;
-  mentor: {
+  status: SessionStatus;
+  sessionAttendance: {
     id: number;
-    fullName: string;
-  };
-  studentSession: {
-    id: number;
+    studentSession: { student: { id: number; fullName: string } };
     hasReport: boolean;
     completedOn: Date | null;
     signedOffOn: Date | null;
-    student: {
-      id: number;
-      fullName: string;
-    };
   }[];
+  mentor: { id: number; fullName: string };
 }
 
 export interface StudentSessioViewModel {
@@ -75,15 +75,29 @@ export async function getAvailableStudentsForSessionAsync(
   mentorId: number,
   attendedOn: string,
 ) {
-  const studentsInSession = await prisma.session.findMany({
+  const attendedOnConverted = dayjs.utc(attendedOn, "YYYY-MM-DD");
+
+  const studentsInSession = await prisma.$queryRaw<{ id: number }[]>`
+    SELECT
+      s.id
+    FROM achievers.StudentSession ss
+    INNER JOIN achievers.SessionAttendance sa ON sa.StudentSessionId = ss.id
+    INNER JOIN achievers.Student s ON s.id = ss.studentId
+    WHERE ss.chapterId = ${chapterId}
+      AND ss.attendedOn = ${attendedOnConverted}
+      AND s.endDate IS NULL
+    GROUP BY s.id`;
+
+  const unavailableStudents = await prisma.studentSession.findMany({
     where: {
       chapterId,
-      attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      attendedOn: attendedOnConverted.toDate(),
+      status: "UNAVAILABLE",
     },
     select: {
-      studentSession: {
+      student: {
         select: {
-          studentId: true,
+          id: true,
         },
       },
     },
@@ -95,8 +109,8 @@ export async function getAvailableStudentsForSessionAsync(
         userId: mentorId,
         studentId: {
           notIn: studentsInSession
-            .flatMap((session) => session.studentSession)
-            .map(({ studentId }) => studentId),
+            .map(({ id }) => id)
+            .concat(unavailableStudents.map(({ student }) => student.id)),
         },
         student: {
           endDate: null,
@@ -125,12 +139,12 @@ export async function getAvailableStudentsForSessionAsync(
   );
 }
 
-export async function getSessionsLookupAsync(
+export async function getMentorSessionsLookupAsync(
   chapterId: number,
   mentorId: number,
   term: Term,
 ) {
-  const mySessions = await prisma.session.findMany({
+  const myMentorSessions = await prisma.mentorSession.findMany({
     where: {
       chapterId,
       mentorId,
@@ -150,16 +164,20 @@ export async function getSessionsLookupAsync(
           fullName: true,
         },
       },
-      studentSession: {
+      sessionAttendance: {
         select: {
           id: true,
           signedOffOn: true,
           completedOn: true,
           hasReport: true,
-          student: {
+          studentSession: {
             select: {
-              id: true,
-              fullName: true,
+              student: {
+                select: {
+                  id: true,
+                  fullName: true,
+                },
+              },
             },
           },
         },
@@ -174,7 +192,7 @@ export async function getSessionsLookupAsync(
     INNER JOIN achievers.MentorToStudentAssignement b ON b.studentId = a.studentId
     WHERE a.userId = ${mentorId}`;
 
-  const myPartnersSessions = await prisma.session.findMany({
+  const myPartnersMentorSessions = await prisma.mentorSession.findMany({
     where: {
       chapterId,
       mentorId: {
@@ -198,16 +216,20 @@ export async function getSessionsLookupAsync(
           fullName: true,
         },
       },
-      studentSession: {
+      sessionAttendance: {
         select: {
           id: true,
           signedOffOn: true,
           completedOn: true,
           hasReport: true,
-          student: {
+          studentSession: {
             select: {
-              id: true,
-              fullName: true,
+              student: {
+                select: {
+                  id: true,
+                  fullName: true,
+                },
+              },
             },
           },
         },
@@ -215,185 +237,268 @@ export async function getSessionsLookupAsync(
     },
   });
 
-  const mySessionsLookup = mySessions.reduce<SessionLookup>((res, session) => {
-    res[dayjs.utc(session.attendedOn).format("YYYY-MM-DD")] = session;
-
-    return res;
-  }, {});
-
-  const myPartnersSessionsLookup = myPartnersSessions.reduce<SessionLookup>(
-    (res, session) => {
-      res[dayjs.utc(session.attendedOn).format("YYYY-MM-DD")] = session;
+  const myMentorSessionsLookup = myMentorSessions.reduce<SessionLookup>(
+    (res, mentorSession) => {
+      res[dayjs.utc(mentorSession.attendedOn).format("YYYY-MM-DD")] =
+        mentorSession;
 
       return res;
     },
     {},
   );
 
+  const myPartnersSessionsLookup =
+    myPartnersMentorSessions.reduce<SessionLookup>((res, mentorSession) => {
+      res[dayjs.utc(mentorSession.attendedOn).format("YYYY-MM-DD")] =
+        mentorSession;
+
+      return res;
+    }, {});
+
   return {
-    mySessionsLookup,
+    myMentorSessionsLookup,
     myPartnersSessionsLookup,
   };
 }
 
-export async function createSessionAsync({
+export async function createMentorSession({
   chapterId,
   mentorId,
-  studentId,
-  attendedOn,
   status,
-}: SessionCommand) {
-  if (studentId === null) {
-    return await prisma.session.create({
-      data: {
+  attendedOn,
+}: MentorSessionCommand) {
+  const mentorSession = await prisma.mentorSession.findUnique({
+    where: {
+      chapterId_mentorId_attendedOn: {
         chapterId,
         mentorId,
         attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
-        status: status as SessionStatus,
       },
-      select: {
-        id: true,
-      },
-    });
+    },
+    select: {
+      id: true,
+      status: true,
+    },
+  });
+
+  if (mentorSession !== null) {
+    throw new Error();
   }
 
-  return await prisma.session.create({
+  return await prisma.mentorSession.create({
     data: {
       chapterId,
       mentorId,
       attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
       status: status as SessionStatus,
-      studentSession: {
-        create: {
-          studentId,
-        },
-      },
-    },
-    select: {
-      id: true,
     },
   });
 }
 
-export async function takeSessionFromParterAsync(
-  studentSessionId: number,
-  mentorId: number,
-) {
-  await prisma.$transaction(async (tx) => {
-    const partnerStudentSession = await tx.studentSession.findUniqueOrThrow({
-      where: {
-        id: studentSessionId,
+export async function createSessionWithStudentAsync({
+  chapterId,
+  mentorId,
+  studentId,
+  attendedOn,
+}: SessionCommand) {
+  let mentorSession = await prisma.mentorSession.findUnique({
+    where: {
+      chapterId_mentorId_attendedOn: {
+        chapterId,
+        mentorId,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      },
+    },
+    select: {
+      id: true,
+      status: true,
+    },
+  });
+
+  if (mentorSession !== null && mentorSession.status !== "AVAILABLE") {
+    throw new Error();
+  }
+
+  let studentSession = await prisma.studentSession.findUnique({
+    where: {
+      chapterId_studentId_attendedOn: {
+        chapterId,
+        studentId,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      },
+    },
+    select: {
+      id: true,
+      status: true,
+    },
+  });
+
+  if (studentSession !== null && studentSession.status !== "AVAILABLE") {
+    throw new Error();
+  }
+
+  return await prisma.$transaction(async (tx) => {
+    mentorSession ??= await tx.mentorSession.create({
+      data: {
+        chapterId,
+        mentorId,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
       },
       select: {
-        sessionId: true,
+        id: true,
+        status: true,
+      },
+    });
+
+    studentSession ??= await tx.studentSession.create({
+      data: {
+        chapterId,
+        studentId,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      },
+      select: {
+        id: true,
+        status: true,
+      },
+    });
+
+    return await tx.sessionAttendance.create({
+      data: {
+        chapterId,
+        mentorSessionId: mentorSession.id,
+        studentSessionId: studentSession.id,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      },
+    });
+  });
+}
+
+export async function takeSessionFromParterAsync(
+  sessionId: number,
+  mentorId: number,
+) {
+  const partnerStudentSession =
+    await prisma.sessionAttendance.findUniqueOrThrow({
+      where: {
+        id: sessionId,
+      },
+      select: {
+        id: true,
+        chapterId: true,
+        attendedOn: true,
         completedOn: true,
-        studentId: true,
-        session: {
+        studentSession: {
           select: {
-            chapterId: true,
-            attendedOn: true,
+            id: true,
           },
         },
       },
     });
 
-    if (partnerStudentSession.completedOn) {
-      throw new Error("Reposrt already completed.");
-    }
+  if (partnerStudentSession.completedOn !== null) {
+    throw new Error("Report is already completed.");
+  }
 
-    await tx.studentSession.delete({
+  return await prisma.$transaction(async (tx) => {
+    await tx.sessionAttendance.delete({
       where: {
-        id: studentSessionId,
+        id: sessionId,
       },
     });
 
-    const studentSessionCount = await tx.studentSession.count({
+    let mentorSession = await tx.mentorSession.findUnique({
       where: {
-        sessionId: partnerStudentSession.sessionId,
+        chapterId_mentorId_attendedOn: {
+          chapterId: partnerStudentSession.chapterId,
+          mentorId,
+          attendedOn: partnerStudentSession.attendedOn,
+        },
       },
     });
 
-    if (studentSessionCount === 0) {
-      await tx.session.delete({
-        where: {
-          id: partnerStudentSession.sessionId,
+    if (mentorSession !== null) {
+      return await tx.sessionAttendance.create({
+        data: {
+          chapterId: partnerStudentSession.chapterId,
+          attendedOn: partnerStudentSession.attendedOn,
+          mentorSessionId: mentorSession.id,
+          studentSessionId: partnerStudentSession.studentSession.id,
+        },
+        select: {
+          id: true,
         },
       });
     }
 
-    const newSession = await tx.session.findUnique({
-      where: {
-        mentorId_chapterId_attendedOn: {
-          mentorId,
-          attendedOn: partnerStudentSession.session.attendedOn,
-          chapterId: partnerStudentSession.session.chapterId,
-        },
+    mentorSession = await tx.mentorSession.create({
+      data: {
+        chapterId: partnerStudentSession.chapterId,
+        mentorId,
+        attendedOn: partnerStudentSession.attendedOn,
+      },
+    });
+
+    return await tx.sessionAttendance.create({
+      data: {
+        chapterId: partnerStudentSession.chapterId,
+        attendedOn: partnerStudentSession.attendedOn,
+        mentorSessionId: mentorSession.id,
+        studentSessionId: partnerStudentSession.studentSession.id,
       },
       select: {
         id: true,
       },
     });
-
-    if (newSession !== null) {
-      await tx.studentSession.create({
-        data: {
-          sessionId: newSession.id,
-          studentId: partnerStudentSession.studentId,
-        },
-      });
-    } else {
-      await tx.session.create({
-        data: {
-          attendedOn: partnerStudentSession.session.attendedOn,
-          chapterId: partnerStudentSession.session.chapterId,
-          mentorId,
-          studentSession: {
-            create: {
-              studentId: partnerStudentSession.studentId,
-            },
-          },
-        },
-      });
-    }
   });
 }
 
-export async function removeSessionAsync(
-  sessionId: number,
-  studentSessionId: number | null,
-) {
-  await prisma.$transaction(async (tx) => {
-    if (studentSessionId !== null) {
-      const partnerStudentSession = await tx.studentSession.findUniqueOrThrow({
-        where: {
-          id: studentSessionId,
-        },
-        select: {
-          completedOn: true,
-        },
-      });
+export async function deleteMentorSessionByIdAsync(mentorSessionId: number) {
+  return await prisma.mentorSession.delete({
+    where: {
+      id: mentorSessionId,
+    },
+  });
+}
 
-      if (partnerStudentSession.completedOn) {
-        throw new Error("Reposrt already completed.");
-      }
-
-      await tx.studentSession.delete({
-        where: {
-          id: studentSessionId,
-        },
-      });
-    }
-
-    const studentSessionCount = await tx.studentSession.count({
+export async function deleteSessionByIdAsync(sessionId: number) {
+  return await prisma.$transaction(async (tx) => {
+    const session = await tx.sessionAttendance.findUniqueOrThrow({
       where: {
-        sessionId,
+        id: sessionId,
+      },
+      select: {
+        id: true,
+        chapterId: true,
+        attendedOn: true,
+        mentorSessionId: true,
+        studentSessionId: true,
       },
     });
 
-    if (studentSessionCount === 0) {
-      await tx.session.delete({
+    await tx.sessionAttendance.delete({
+      where: {
+        id: session.id,
+      },
+    });
+
+    await tx.mentorSession.delete({
+      where: {
+        id: session.mentorSessionId,
+      },
+    });
+
+    const sessionsForStudentCount = await tx.sessionAttendance.count({
+      where: {
+        chapterId: session.chapterId,
+        attendedOn: session.attendedOn,
+        studentSessionId: session.studentSessionId,
+      },
+    });
+
+    if (sessionsForStudentCount === 1) {
+      await tx.studentSession.delete({
         where: {
-          id: sessionId,
+          id: session.studentSessionId,
         },
       });
     }

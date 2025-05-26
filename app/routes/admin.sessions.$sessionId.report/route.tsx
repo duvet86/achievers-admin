@@ -13,26 +13,24 @@ import { getLoggedUserInfoAsync } from "~/services/.server";
 import { isEditorEmpty } from "~/services";
 import { Editor, Message, SubTitle, Title } from "~/components";
 
-import { getStudentSessionByIdAsync, saveReportAsync } from "./services.server";
+import { getSessionByIdAsync, saveReportAsync } from "./services.server";
 
 export const links: Route.LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
 };
 
 export async function loader({ params }: Route.LoaderArgs) {
-  invariant(params.studentSessionId, "studentSessionId not found");
+  invariant(params.sessionId, "sessionId not found");
 
-  const studentSession = await getStudentSessionByIdAsync(
-    Number(params.studentSessionId),
-  );
+  const session = await getSessionByIdAsync(Number(params.sessionId));
 
   return {
-    studentSession,
+    session,
   };
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
-  invariant(params.studentSessionId, "studentSessionId not found");
+  invariant(params.sessionId, "sessionId not found");
 
   const loggedUser = await getLoggedUserInfoAsync(request);
 
@@ -42,7 +40,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   const isSignedOff = bodyData.isSignedOff;
 
   await saveReportAsync(
-    Number(params.studentSessionId),
+    Number(params.sessionId),
     reportFeedback,
     isSignedOff,
     loggedUser.oid,
@@ -55,7 +53,14 @@ export async function action({ request, params }: Route.ActionArgs) {
 
 export default function Index({
   loaderData: {
-    studentSession: { session, report, reportFeedback, signedOffOn, student },
+    session: {
+      attendedOn,
+      report,
+      reportFeedback,
+      signedOffOn,
+      mentorSession,
+      studentSession,
+    },
   },
 }: Route.ComponentProps) {
   const editorStateRef = useRef<EditorState>(null);
@@ -94,9 +99,9 @@ export default function Index({
     <>
       <div className="mb-4 flex flex-col gap-6 sm:flex-row">
         <Title>
-          {dayjs(session.attendedOn).format("MMMM D, YYYY")} - mentor: &quot;
-          {session.mentor.fullName}&quot; student: &quot;
-          {student.fullName}&quot;
+          {dayjs(attendedOn).format("MMMM D, YYYY")} - mentor: &quot;
+          {mentorSession.mentor.fullName}&quot; student: &quot;
+          {studentSession.student.fullName}&quot;
         </Title>
 
         <Message key={Date.now()} successMessage={data?.successMessage} />
@@ -135,7 +140,7 @@ export default function Index({
               </p>
 
               <Link
-                to={`/admin/student-sessions?${searchParams.toString()}`}
+                to={`/admin/sessions?${searchParams.toString()}`}
                 className="btn w-44"
               >
                 <NavArrowLeft /> Back

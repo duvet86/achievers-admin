@@ -11,7 +11,6 @@ import {
   createSessionAsync,
   getChapterByIdAsync,
   getMentorsForStudentAsync,
-  getSessionsByDateAsync,
   getStudentByIdAsync,
   getStudentSessionByDateAsync,
 } from "./services.server";
@@ -30,25 +29,22 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     params.attendedOn,
   );
 
-  if (studentSession !== null) {
+  if (studentSession !== null && studentSession.sessionAttendance.length > 0) {
     const url = new URL(request.url);
 
-    throw redirect(
-      `/admin/student-sessions/${studentSession.id}?${url.searchParams}`,
+    return redirect(
+      `/admin/sessions/${studentSession.sessionAttendance[0].id}?${url.searchParams}`,
     );
   }
 
-  const [chapter, sessionsForDate] = await Promise.all([
-    getChapterByIdAsync(Number(params.chapterId)),
-    getSessionsByDateAsync(Number(params.chapterId), params.attendedOn),
-  ]);
+  const chapter = await getChapterByIdAsync(Number(params.chapterId));
 
   const student = await getStudentByIdAsync(selectedStudentId);
 
   const mentors = await getMentorsForStudentAsync(
     Number(params.chapterId),
     selectedStudentId,
-    sessionsForDate,
+    params.attendedOn,
   );
 
   return {
@@ -71,14 +67,14 @@ export async function action({ params, request }: Route.ActionArgs) {
 
   invariant(mentorId, "mentorId not found");
 
-  await createSessionAsync({
+  const session = await createSessionAsync({
     attendedOn: params.attendedOn,
     chapterId: Number(params.chapterId),
     mentorId: Number(mentorId),
     studentId: Number(params.studentId),
   });
 
-  throw redirect(`/admin/chapters/${params.chapterId}/roster-students`);
+  return redirect(`/admin/sessions/${session.id}`);
 }
 
 export default function Index({

@@ -69,8 +69,8 @@ export default [
           },
         ),
         route(
-          ":chapterId/roster-mentors/sessions/:sessionId",
-          "routes/admin.chapters.$chapterId.roster-mentors.sessions.$sessionId/route.tsx",
+          ":chapterId/roster-mentors/mentor-sessions/:mentorSessionId",
+          "routes/admin.chapters.$chapterId.roster-mentors.mentor-sessions.$mentorSessionId/route.tsx",
           {
             index: true,
           },
@@ -161,33 +161,29 @@ export default [
       route("school-terms/new", "routes/admin.school-terms.new/route.tsx", {
         index: true,
       }),
-      ...prefix("student-sessions", [
-        layout("routes/admin.student-sessions/layout.tsx", [
-          index("routes/admin.student-sessions/route.tsx"),
+      ...prefix("sessions", [
+        layout("routes/admin.sessions/layout.tsx", [
+          index("routes/admin.sessions/route.tsx"),
+          route(":sessionId", "routes/admin.sessions.$sessionId/route.tsx", {
+            index: true,
+          }),
           route(
-            ":studentSessionId",
-            "routes/admin.student-sessions.$studentSessionId/route.tsx",
+            ":sessionId/write-report",
+            "routes/admin.sessions.$sessionId.write-report/route.tsx",
             {
               index: true,
             },
           ),
           route(
-            ":studentSessionId/mentors/:mentorId/write-report",
-            "routes/admin.student-sessions.$studentSessionId.mentors.$mentorId.write-report/route.tsx",
+            ":sessionId/report",
+            "routes/admin.sessions.$sessionId.report/route.tsx",
             {
               index: true,
             },
           ),
           route(
-            ":studentSessionId/report",
-            "routes/admin.student-sessions.$studentSessionId.report/route.tsx",
-            {
-              index: true,
-            },
-          ),
-          route(
-            ":studentSessionId/cancel",
-            "routes/admin.student-sessions.$studentSessionId.cancel/route.tsx",
+            ":sessionId/cancel",
+            "routes/admin.sessions.$sessionId.cancel/route.tsx",
             {
               index: true,
             },
@@ -411,12 +407,12 @@ export default [
       route("partners", "routes/mentor.partners/route.tsx", {
         index: true,
       }),
-      route("student-sessions", "routes/mentor.student-sessions/route.tsx", {
+      route("sessions", "routes/mentor.sessions/route.tsx", {
         index: true,
       }),
       route(
-        "student-sessions/:studentSessionId",
-        "routes/mentor.student-sessions.$studentSessionId/route.tsx",
+        "sessions/:sessionId",
+        "routes/mentor.sessions.$sessionId/route.tsx",
         {
           index: true,
         },

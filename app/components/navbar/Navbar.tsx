@@ -1,6 +1,7 @@
 import type { Environment } from "~/services";
 
 import { Link } from "react-router";
+import classNames from "classnames";
 import { ProfileCircle, Menu, LogOut, ClipboardCheck } from "iconoir-react";
 
 import { Environments } from "~/services";
@@ -14,11 +15,19 @@ interface Props {
 
 export function Navbar({ userName, environment, version, currentView }: Props) {
   const isCurrentViewMentor = currentView === "mentor";
-  const showEnvBadge =
+  const isDev =
     environment === Environments.Local || environment === Environments.Staging;
 
   return (
-    <nav className="navbar bg-primary text-primary-content absolute top-0 left-0 z-30 h-16 justify-between shadow-md">
+    <nav
+      className={classNames(
+        "navbar text-primary-content absolute top-0 left-0 z-30 h-16 justify-between shadow-md",
+        {
+          "bg-primary text-primary-content": !isDev,
+          "bg-neutral text-white": isDev,
+        },
+      )}
+    >
       <div className="flex">
         <div className="flex-none lg:hidden">
           <label htmlFor="drawer" className="btn btn-square btn-ghost">
@@ -26,7 +35,7 @@ export function Navbar({ userName, environment, version, currentView }: Props) {
           </label>
         </div>
         <Link to="/" className="btn btn-ghost text-xl normal-case">
-          {showEnvBadge ? (
+          {isDev ? (
             <span className="badge badge-lg ml-2">{environment}</span>
           ) : (
             <img

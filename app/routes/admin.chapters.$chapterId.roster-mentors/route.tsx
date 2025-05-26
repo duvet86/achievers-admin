@@ -67,6 +67,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 
   const mentors = await getMentorsAsync(
     Number(params.chapterId),
+    selectedTerm,
     sortFullNameSubmit,
     searchTerm,
   );
@@ -271,9 +272,7 @@ export default function Index({
                   </button>
                 </th>
                 {datesInTerm.map((attendedOn) => {
-                  const session = sessionLookup[attendedOn];
-
-                  const sessionId = session?.id;
+                  const mentorSession = sessionLookup?.[attendedOn];
 
                   let hasReport = false;
                   let isCancelled = false;
@@ -281,28 +280,30 @@ export default function Index({
                   let textHighlight = false;
                   let textHighlightError = false;
 
-                  if (session) {
-                    if (session.status === "UNAVAILABLE") {
+                  if (mentorSession) {
+                    if (mentorSession.status === "UNAVAILABLE") {
                       textHighlightError = true;
                       label = "Unavailable";
                     } else {
-                      if (session.studentSession.length === 0) {
+                      if (mentorSession.sessions.length === 0) {
                         textHighlight = true;
                         label = "Available";
-                      } else if (session.studentSession.length === 1) {
-                        const studentSession = session.studentSession[0];
-                        hasReport = studentSession.hasReport;
-                        isCancelled = studentSession.isCancelled;
+                      } else if (mentorSession.sessions.length === 1) {
+                        const session = mentorSession.sessions[0];
+                        hasReport = session.hasReport;
+                        isCancelled = session.isCancelled;
 
-                        label = studentSession.student.fullName;
+                        label = session.studentFullName!;
                       } else {
-                        label = `${session.studentSession.length} Students`;
+                        label = `${mentorSession.sessions.length} Students`;
                       }
                     }
                   }
 
-                  const to = sessionId
-                    ? `/admin/chapters/${chapterId}/roster-mentors/sessions/${sessionId}`
+                  const mentorSessionId = mentorSession?.mentorSessionId;
+
+                  const to = mentorSessionId
+                    ? `/admin/chapters/${chapterId}/roster-mentors/mentor-sessions/${mentorSessionId}`
                     : `/admin/chapters/${chapterId}/roster-mentors/${mentorId}/attended-on/${attendedOn}/new`;
 
                   return (

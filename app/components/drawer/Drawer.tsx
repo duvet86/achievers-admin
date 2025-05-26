@@ -58,7 +58,7 @@ function getLinks(
         },
         {
           icon: <StatsReport />,
-          path: "/admin/student-sessions",
+          path: "/admin/sessions",
           label: "Reports",
           isVisible: linkMappings.Session,
         },
@@ -114,7 +114,7 @@ function getLinks(
         },
         {
           icon: <StatsReport />,
-          path: "/mentor/student-sessions",
+          path: "/mentor/sessions",
           label: "View Reports",
           isVisible: true,
         },

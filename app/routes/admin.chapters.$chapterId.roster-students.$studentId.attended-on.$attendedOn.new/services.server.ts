@@ -1,4 +1,4 @@
-import type { SessionStatus } from "@prisma/client";
+import type { SessionStatus } from "~/prisma/client";
 
 import { prisma } from "~/db.server";
 
@@ -27,35 +27,20 @@ export async function getStudentSessionByDateAsync(
   studentId: number,
   attendedOn: string,
 ) {
-  return await prisma.studentSession.findFirst({
+  return await prisma.studentSession.findUnique({
     where: {
-      studentId,
-      session: {
+      chapterId_studentId_attendedOn: {
         chapterId,
+        studentId,
         attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
       },
     },
     select: {
       id: true,
-    },
-  });
-}
-
-export async function getSessionsByDateAsync(
-  chapterId: number,
-  attendedOn: string,
-): Promise<SessionForDate[]> {
-  return await prisma.session.findMany({
-    where: {
-      chapterId,
-      attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
-    },
-    select: {
-      mentorId: true,
       status: true,
-      studentSession: {
+      sessionAttendance: {
         select: {
-          sessionId: true,
+          id: true,
         },
       },
     },
@@ -89,28 +74,16 @@ export async function getStudentByIdAsync(studentId: number) {
 export async function getMentorsForStudentAsync(
   chapterId: number,
   studentId: number,
-  sessionForDates: SessionForDate[],
+  attendedOn: string,
 ) {
-  const allMentors = await prisma.user.findMany({
-    where: {
-      chapterId,
-      endDate: null,
-    },
-    select: {
-      id: true,
-      fullName: true,
-      mentorToStudentAssignement: {
-        where: {
-          studentId: {
-            not: studentId,
-          },
-        },
-      },
-    },
-    orderBy: {
-      fullName: "asc",
-    },
-  });
+  const allMentors = await prisma.$queryRaw<{ id: number; fullName: string }[]>`
+    SELECT id, fullName
+    FROM User
+    WHERE id NOT IN (
+      SELECT userId FROM MentorToStudentAssignement
+      WHERE studentId = ${studentId}
+    ) AND chapterId = ${chapterId} AND endDate IS NULL
+    ORDER BY fullName ASC`;
 
   const assignedMentors = await prisma.mentorToStudentAssignement.findMany({
     where: {
@@ -131,11 +104,21 @@ export async function getMentorsForStudentAsync(
     },
   });
 
-  const unavailableMentorsLookup = sessionForDates.reduce<
+  const unavailableMentors = await prisma.mentorSession.findMany({
+    where: {
+      chapterId,
+      attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      status: "UNAVAILABLE",
+    },
+    select: {
+      mentorId: true,
+    },
+  });
+
+  const unavailableMentorsLookup = unavailableMentors.reduce<
     Record<string, boolean>
-  >((res, { mentorId, status, studentSession }) => {
-    res[mentorId.toString()] =
-      studentSession.length > 0 || status === "UNAVAILABLE";
+  >((res, { mentorId }) => {
+    res[mentorId.toString()] = true;
 
     return res;
   }, {});
@@ -163,19 +146,77 @@ export async function createSessionAsync({
   studentId,
   attendedOn,
 }: SessionCommand) {
-  return await prisma.session.create({
-    data: {
-      chapterId,
-      mentorId,
-      attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
-      studentSession: {
-        create: {
-          studentId,
-        },
+  let mentorSession = await prisma.mentorSession.findUnique({
+    where: {
+      chapterId_mentorId_attendedOn: {
+        chapterId,
+        mentorId,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
       },
     },
     select: {
       id: true,
+      status: true,
     },
+  });
+
+  if (mentorSession !== null && mentorSession.status !== "AVAILABLE") {
+    throw new Error();
+  }
+
+  let studentSession = await prisma.studentSession.findUnique({
+    where: {
+      chapterId_studentId_attendedOn: {
+        chapterId,
+        studentId,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      },
+    },
+    select: {
+      id: true,
+      status: true,
+    },
+  });
+
+  if (studentSession !== null && studentSession.status !== "AVAILABLE") {
+    throw new Error();
+  }
+
+  return await prisma.$transaction(async (tx) => {
+    mentorSession ??= await tx.mentorSession.create({
+      data: {
+        chapterId,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+        mentorId,
+      },
+      select: {
+        id: true,
+        status: true,
+      },
+    });
+
+    studentSession ??= await tx.studentSession.create({
+      data: {
+        chapterId,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+        studentId,
+      },
+      select: {
+        id: true,
+        status: true,
+      },
+    });
+
+    return await tx.sessionAttendance.create({
+      data: {
+        chapterId,
+        mentorSessionId: mentorSession.id,
+        studentSessionId: studentSession.id,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      },
+      select: {
+        id: true,
+      },
+    });
   });
 }

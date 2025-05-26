@@ -11,8 +11,8 @@ import { getCurrentTermForDate } from "~/services";
 import { StateLink, SubTitle } from "~/components";
 
 import {
-  getNextStudentSessionsAsync,
-  getStudentSessionsAsync,
+  getNextMentorSessionsAsync,
+  getSessionsAsync,
   getUserByAzureADIdAsync,
   hasAnyStudentsAssignedAsync,
 } from "./services.server";
@@ -30,28 +30,24 @@ export async function loader({ request }: Route.LoaderArgs) {
       currentTermLabel: `${currentTerm.name} (${currentTerm.start.format("D MMMM")} - ${currentTerm.end.format("D MMMM")})`,
       hasAnyStudentsAssigned,
       mentorFullName: user.fullName,
-      nextStudentSessions: [],
-      studentSessions: [],
+      nextMentorSessions: [],
+      sessions: [],
     };
   }
 
-  const nextStudentSessions = await getNextStudentSessionsAsync(
+  const nextMentorSessions = await getNextMentorSessionsAsync(
     user.id,
     user.chapterId,
     currentTerm,
   );
-  const studentSessions = await getStudentSessionsAsync(
-    user.id,
-    user.chapterId,
-    currentTerm,
-  );
+  const sessions = await getSessionsAsync(user.id, user.chapterId, currentTerm);
 
   return {
     currentTermLabel: `${currentTerm.name} (${currentTerm.start.format("D MMMM")} - ${currentTerm.end.format("D MMMM")})`,
     hasAnyStudentsAssigned: true,
     mentorFullName: user.fullName,
-    nextStudentSessions,
-    studentSessions,
+    nextMentorSessions,
+    sessions,
   };
 }
 
@@ -59,8 +55,8 @@ export default function Index({
   loaderData: {
     currentTermLabel,
     mentorFullName,
-    nextStudentSessions,
-    studentSessions,
+    nextMentorSessions,
+    sessions,
     hasAnyStudentsAssigned,
   },
 }: Route.ComponentProps) {
@@ -76,7 +72,7 @@ export default function Index({
         </h2>
       </article>
 
-      {nextStudentSessions.length > 0 && (
+      {nextMentorSessions.length > 0 && (
         <>
           <SubTitle>Next sessions</SubTitle>
 
@@ -90,7 +86,7 @@ export default function Index({
                 </tr>
               </thead>
               <tbody>
-                {nextStudentSessions.map(
+                {nextMentorSessions.map(
                   ({ id, attendedOn, studentFullName }) => (
                     <tr key={id} className="text-info">
                       <td className="hidden border-r lg:table-cell">1</td>
@@ -117,9 +113,9 @@ export default function Index({
         </article>
       )}
 
-      {nextStudentSessions.length === 0 &&
+      {nextMentorSessions.length === 0 &&
         hasAnyStudentsAssigned &&
-        studentSessions.length === 0 && (
+        sessions.length === 0 && (
           <article className="prose max-w-none">
             <h1 className="text-warning flex items-center gap-4">
               <WarningTriangle />
@@ -132,7 +128,7 @@ export default function Index({
           </article>
         )}
 
-      {hasAnyStudentsAssigned && studentSessions.length > 0 && (
+      {hasAnyStudentsAssigned && sessions.length > 0 && (
         <>
           <SubTitle>Recent sessions</SubTitle>
 
@@ -153,26 +149,33 @@ export default function Index({
                 </tr>
               </thead>
               <tbody>
-                {studentSessions.length === 0 && (
+                {sessions.length === 0 && (
                   <tr>
                     <td colSpan={6}>
                       <i>No sessions</i>
                     </td>
                   </tr>
                 )}
-                {studentSessions.map(
+                {sessions.map(
                   (
-                    { id, completedOn, signedOffOn, student, session },
+                    {
+                      sessionId,
+                      attendedOn,
+                      completedOn,
+                      signedOffOn,
+                      studentId,
+                      studentFullName,
+                    },
                     index,
                   ) => (
-                    <tr key={id}>
+                    <tr key={sessionId}>
                       <td className="hidden border-r lg:table-cell">
                         {index + 1}
                       </td>
                       <td align="left">
-                        {dayjs(session.attendedOn).format("MMMM D, YYYY")}
+                        {dayjs(attendedOn).format("MMMM D, YYYY")}
                       </td>
-                      <td align="left">{student.fullName}</td>
+                      <td align="left">{studentFullName}</td>
                       <td align="left" className="hidden lg:table-cell">
                         {completedOn ? (
                           <div className="flex items-center gap-2">
@@ -194,19 +197,17 @@ export default function Index({
                         )}
                       </td>
                       <td align="right">
-                        {student && (
-                          <StateLink
-                            to={
-                              completedOn !== null
-                                ? `/mentor/student-sessions/${id}`
-                                : `/mentor/write-report?selectedStudentId=${student.id}&selectedTermDate=${dayjs(session.attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z`
-                            }
-                            className="btn btn-success btn-xs h-9 gap-2"
-                          >
-                            <StatsReport className="hidden h-4 w-4 lg:block" />
-                            Report
-                          </StateLink>
-                        )}
+                        <StateLink
+                          to={
+                            completedOn !== null
+                              ? `/mentor/sessions/${sessionId}` // FIX ME.
+                              : `/mentor/write-report?selectedStudentId=${studentId}&selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z`
+                          }
+                          className="btn btn-success btn-xs h-9 gap-2"
+                        >
+                          <StatsReport className="hidden h-4 w-4 lg:block" />
+                          Report
+                        </StateLink>
                       </td>
                     </tr>
                   ),

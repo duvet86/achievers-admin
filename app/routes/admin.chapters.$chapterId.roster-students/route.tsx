@@ -67,6 +67,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 
   const students = await getStudentsAsync(
     Number(params.chapterId),
+    selectedTerm,
     sortFullNameSubmit,
     searchTerm,
   );
@@ -270,18 +271,17 @@ export default function Index({
                   </button>
                 </th>
                 {datesInTerm.map((attendedOn, index) => {
-                  const session = sessionLookup[attendedOn];
+                  const session = sessionLookup?.[attendedOn];
 
                   const sessionId = session?.sessionId;
-                  const studentSessionId = session?.studentSessionId;
-                  const hasReport = session?.hasReport ?? false;
-                  const isCancelled = session?.isCancelled ?? false;
+                  const hasReport = session?.hasReport === 1;
+                  const isCancelled = session?.isCancelled === 1;
                   const completedOn = session?.completedOn;
 
                   const to = sessionId
                     ? completedOn
-                      ? `/admin/student-sessions/${studentSessionId}/report`
-                      : `/admin/student-sessions/${studentSessionId}`
+                      ? `/admin/sessions/${sessionId}/report`
+                      : `/admin/sessions/${sessionId}`
                     : `/admin/chapters/${chapterId}/roster-students/${studentId}/attended-on/${attendedOn}/new`;
 
                   return (

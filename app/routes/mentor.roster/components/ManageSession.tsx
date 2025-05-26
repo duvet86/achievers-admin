@@ -45,8 +45,7 @@ export function ManageSession({
                   required
                   options={studentsForSession}
                 />
-                <input type="hidden" name="action" value="book" />
-                <input type="hidden" name="status" value="AVAILABLE" />
+                <input type="hidden" name="action" value="createSession" />
                 <input type="hidden" name="attendedOn" value={attendedOn} />
                 <input
                   type="hidden"
@@ -75,7 +74,7 @@ export function ManageSession({
               },
             )}
           >
-            <input type="hidden" name="action" value="book" />
+            <input type="hidden" name="action" value="createMentorSession" />
             <input type="hidden" name="status" value="AVAILABLE" />
             <input type="hidden" name="attendedOn" value={attendedOn} />
             <input type="hidden" name="selectedTermId" value={selectedTermId} />
@@ -98,7 +97,7 @@ export function ManageSession({
             method="POST"
             className="flex w-full flex-wrap items-center justify-center gap-4"
           >
-            <input type="hidden" name="action" value="book" />
+            <input type="hidden" name="action" value="createMentorSession" />
             <input type="hidden" name="status" value="UNAVAILABLE" />
             <input type="hidden" name="attendedOn" value={attendedOn} />
             <input type="hidden" name="selectedTermId" value={selectedTermId} />

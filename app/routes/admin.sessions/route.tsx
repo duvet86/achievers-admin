@@ -22,7 +22,7 @@ import { Pagination, StateLink, Title } from "~/components";
 
 import {
   getCountAsync,
-  getStudentSessionsAsync,
+  getSessionsAsync,
   getChaptersAsync,
   getAvailabelMentorsAsync,
   getAvailabelStudentsAsync,
@@ -118,7 +118,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     currentPageNumber = Number(pageNumberSubmit);
   }
 
-  const studentSessions = await getStudentSessionsAsync(
+  const sessions = await getSessionsAsync(
     selectedChapterId,
     selectedTerm,
     selectedTermDate,
@@ -179,7 +179,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     range,
     currentPageNumber,
     count,
-    studentSessions,
+    sessions,
   };
 }
 
@@ -198,7 +198,7 @@ export default function Index({
     selectedTermYear,
     selectedTermId,
     selectedTermDate,
-    studentSessions,
+    sessions,
     count,
     currentPageNumber,
     range,
@@ -257,18 +257,25 @@ export default function Index({
               </tr>
             </thead>
             <tbody>
-              {studentSessions.length === 0 && (
+              {sessions.length === 0 && (
                 <tr>
                   <td colSpan={6}>No reports available</td>
                 </tr>
               )}
-              {studentSessions.map(
-                ({ id, student, completedOn, signedOffOn, session }) => (
+              {sessions.map(
+                ({
+                  id,
+                  attendedOn,
+                  completedOn,
+                  signedOffOn,
+                  studentSession,
+                  mentorSession,
+                }) => (
                   <tr key={id} className="hover:bg-base-200">
-                    <td className="p-2">{session.mentor.fullName}</td>
-                    <td className="p-2">{student.fullName}</td>
+                    <td className="p-2">{mentorSession.mentor.fullName}</td>
+                    <td className="p-2">{studentSession.student.fullName}</td>
                     <td className="p-2">
-                      {dayjs(session.attendedOn).format("MMMM D, YYYY")}
+                      {dayjs(attendedOn).format("MMMM D, YYYY")}
                     </td>
                     <td className="hidden p-2 sm:table-cell">
                       {completedOn
@@ -283,7 +290,7 @@ export default function Index({
                     <td className="hidden p-2 sm:table-cell" align="right">
                       {completedOn ? (
                         <StateLink
-                          to={`/admin/student-sessions/${id}/report?${searchParams.toString()}`}
+                          to={`/admin/sessions/${id}/report?${searchParams.toString()}`}
                           className="btn btn-success btn-xs btn-block"
                         >
                           <Eye className="h-4 w-4" />
@@ -291,7 +298,7 @@ export default function Index({
                         </StateLink>
                       ) : (
                         <StateLink
-                          to={`/admin/student-sessions/${id}?${searchParams.toString()}`}
+                          to={`/admin/sessions/${id}?${searchParams.toString()}`}
                           className="btn btn-warning btn-xs btn-block"
                         >
                           <Eye className="h-4 w-4" />

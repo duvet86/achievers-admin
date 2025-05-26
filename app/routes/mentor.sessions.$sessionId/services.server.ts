@@ -1,26 +1,30 @@
 import { prisma } from "~/db.server";
 
-export async function getStudentSessionAsync(studentSessionId: number) {
-  return await prisma.studentSession.findUniqueOrThrow({
+export async function getSessionAsync(sessionAttendanceId: number) {
+  return await prisma.sessionAttendance.findUniqueOrThrow({
     where: {
-      id: studentSessionId,
+      id: sessionAttendanceId,
       hasReport: true,
     },
     select: {
+      attendedOn: true,
       completedOn: true,
       report: true,
       reportFeedback: true,
       signedOffOn: true,
       isCancelled: true,
-      student: {
+      studentSession: {
         select: {
-          id: true,
-          fullName: true,
+          student: {
+            select: {
+              id: true,
+              fullName: true,
+            },
+          },
         },
       },
-      session: {
+      mentorSession: {
         select: {
-          attendedOn: true,
           mentor: {
             select: {
               id: true,

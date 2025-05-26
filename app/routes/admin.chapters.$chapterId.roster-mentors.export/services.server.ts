@@ -1,3 +1,6 @@
+import type { SessionStatus } from "~/prisma/client";
+import type { Term } from "~/models";
+
 import { write, utils } from "xlsx";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -12,17 +15,46 @@ type SessionLookup = Record<
   string,
   | {
       id: number;
-      status: string;
+      mentorId: number;
       attendedOn: Date;
-      studentSession: {
+      status: SessionStatus;
+      sessionAttendance: {
         id: number;
         hasReport: boolean;
         completedOn: Date | null;
-        student: { id: number; fullName: string; yearLevel: number | null };
+        isCancelled: boolean;
+        studentSession: {
+          id: number;
+          student: { id: number; fullName: string; yearLevel: number | null };
+        };
       }[];
     }
   | undefined
 >;
+
+export interface SessionViewModel {
+  sessionLookup?: Record<
+    string,
+    {
+      id: number;
+      mentorId: number;
+      attendedOn: Date;
+      status: SessionStatus;
+      sessionAttendance: {
+        id: number;
+        hasReport: boolean;
+        completedOn: Date | null;
+        isCancelled: boolean;
+        studentSession: {
+          id: number;
+          student: { id: number; fullName: string; yearLevel: number | null };
+        };
+      }[];
+    }
+  >;
+  id: number;
+  fullName: string;
+}
 
 export async function exportRosterToSpreadsheetAsync(
   chapterId: number,
@@ -35,7 +67,7 @@ export async function exportRosterToSpreadsheetAsync(
   const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayterm;
 
   const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
-  const mentors = await getMentorsAsync(chapterId);
+  const mentors = await getMentorsAsync(chapterId, currentTerm);
 
   const spreadsheet = mentors.map(({ fullName, sessionLookup }) => {
     const result: Record<string, string> = { Mentors: fullName };
@@ -47,19 +79,19 @@ export async function exportRosterToSpreadsheetAsync(
       )
       .forEach((attendedOn) => {
         const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
-        const session = sessionLookup[attendedOnFormatted];
+        const session = sessionLookup?.[attendedOnFormatted];
 
-        const studentSessions = session?.studentSession;
+        const sessionAttendance = session?.sessionAttendance;
 
         let label = "";
-        if (studentSessions) {
-          if (studentSessions.length === 0) {
+        if (sessionAttendance) {
+          if (sessionAttendance.length === 0) {
             label = "Available";
-          } else if (studentSessions.length === 1) {
-            const student = session.studentSession[0].student;
+          } else if (sessionAttendance.length === 1) {
+            const student = sessionAttendance[0].studentSession.student;
             label = `${student.fullName} (Year ${student.yearLevel ?? "-"})`;
           } else {
-            label = `${studentSessions.length} Students`;
+            label = `${sessionAttendance.length} Students`;
           }
         }
 
@@ -77,46 +109,80 @@ export async function exportRosterToSpreadsheetAsync(
   return buf;
 }
 
-async function getMentorsAsync(chapterId: number) {
+export async function getMentorsAsync(
+  chapterId: number,
+  term: Term,
+): Promise<SessionViewModel[]> {
   const mentors = await prisma.user.findMany({
-    where: { endDate: null, chapterId },
+    where: {
+      endDate: null,
+      chapterId,
+    },
     select: {
       id: true,
       fullName: true,
-      session: {
+    },
+    orderBy: {
+      fullName: "asc",
+    },
+  });
+
+  const mentorSessions = await prisma.mentorSession.findMany({
+    where: {
+      chapterId,
+      attendedOn: {
+        gte: term.end.utc().format("YYYY-MM-DD"),
+        lte: term.start.utc().format("YYYY-MM-DD"),
+      },
+    },
+    select: {
+      id: true,
+      status: true,
+      attendedOn: true,
+      mentorId: true,
+      sessionAttendance: {
         select: {
           id: true,
-          status: true,
-          attendedOn: true,
+          hasReport: true,
+          completedOn: true,
+          isCancelled: true,
           studentSession: {
             select: {
               id: true,
-              hasReport: true,
-              completedOn: true,
               student: {
-                select: { id: true, fullName: true, yearLevel: true },
+                select: {
+                  id: true,
+                  fullName: true,
+                  yearLevel: true,
+                },
               },
             },
           },
         },
       },
     },
-    orderBy: { fullName: "asc" },
   });
 
+  const mentorSessionsLookup = mentorSessions.reduce<SessionLookup>(
+    (res, value) => {
+      res[value.mentorId.toString()] = value;
+
+      return res;
+    },
+    {},
+  );
+
   return mentors.map((mentor) => {
-    const sessionLookup = mentor.session.reduce<SessionLookup>(
-      (res, session) => {
-        res[dayjs.utc(session.attendedOn).format("YYYY-MM-DD")] = session;
+    const session = mentorSessionsLookup[mentor.id.toString()];
+    if (session === undefined) {
+      return mentor;
+    }
 
-        return res;
+    return {
+      ...mentor,
+      sessionLookup: {
+        [dayjs.utc(session.attendedOn).format("YYYY-MM-DD")]: session,
       },
-      {},
-    );
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { session, ...rest } = mentor;
-
-    return { ...rest, sessionLookup };
+    };
   });
 }

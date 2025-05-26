@@ -159,12 +159,11 @@ export async function getReportsPerSession(
     `
     SELECT
       s.attendedOn,
-      SUM(IF(st.report IS NOT NULL AND st.signedOffOn IS NOT NULL AND st.completedOn IS NOT NULL, 1, 0)) reportWithFeedbackCounter,
-      SUM(IF(st.report IS NOT NULL AND st.signedOffOn IS NULL AND st.completedOn IS NOT NULL, 1, 0)) reportNoFeedbackCounter,
-      SUM(IF(st.report IS NOT NULL AND st.completedOn IS NULL, 1, 0)) incompleteReportCounter,
-      SUM(IF(st.report IS NULL, 1, 0)) noReportCounter
-    FROM achievers.Session s
-    INNER JOIN achievers.StudentSession st ON st.sessionId = s.id
+      SUM(IF(s.report IS NOT NULL AND s.signedOffOn IS NOT NULL AND s.completedOn IS NOT NULL, 1, 0)) reportWithFeedbackCounter,
+      SUM(IF(s.report IS NOT NULL AND s.signedOffOn IS NULL AND s.completedOn IS NOT NULL, 1, 0)) reportNoFeedbackCounter,
+      SUM(IF(s.report IS NOT NULL AND s.completedOn IS NULL, 1, 0)) incompleteReportCounter,
+      SUM(IF(s.report IS NULL, 1, 0)) noReportCounter
+    FROM SessionAttendance s
     WHERE s.attendedOn BETWEEN ? AND ? AND s.chapterId = ?
     GROUP BY s.attendedOn
     ORDER BY s.attendedOn ASC`,

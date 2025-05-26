@@ -39,8 +39,9 @@ export async function seedBookSessionAsync() {
     await prisma.$connect();
 
     await prisma.$transaction(async (tx) => {
+      await tx.sessionAttendance.deleteMany();
+      await tx.mentorSession.deleteMany();
       await tx.studentSession.deleteMany();
-      await tx.session.deleteMany();
 
       const testMentor = await tx.user.findUniqueOrThrow({
         where: {
@@ -62,16 +63,28 @@ export async function seedBookSessionAsync() {
           },
         });
 
-      await tx.session.create({
+      const studentSession = await tx.studentSession.create({
+        data: {
+          chapterId: testMentor.chapterId,
+          studentId: studentAssignment.studentId,
+          attendedOn: new Date("2024-11-23T00:00:00.000Z"),
+        },
+      });
+
+      const mentorSession = await tx.mentorSession.create({
+        data: {
+          chapterId: testMentor.chapterId,
+          mentorId: testMentor.id,
+          attendedOn: new Date("2024-11-23T00:00:00.000Z"),
+        },
+      });
+
+      await tx.sessionAttendance.create({
         data: {
           attendedOn: new Date("2024-11-23T00:00:00.000Z"),
           chapterId: 1,
-          mentorId: testMentor.id,
-          studentSession: {
-            create: {
-              studentId: studentAssignment.studentId,
-            },
-          },
+          studentSessionId: studentSession.id,
+          mentorSessionId: mentorSession.id,
         },
       });
     });

@@ -4,34 +4,35 @@ export type ActionType = "signoff" | "draft";
 
 export interface SessionCommandRequest {
   actionType: ActionType;
-  studentSessionId: number;
+  sessionId: number;
   report: string;
   reportFeedback: string;
 }
 
 export interface SessionCommand {
   actionType: ActionType;
-  studentSessionId: number;
+  sessionId: number;
   report: string;
   reportFeedback: string;
   userAzureId: string;
 }
 
-export async function getStudentSessionIdAsync(studentSessionId: number) {
-  return await prisma.studentSession.findUniqueOrThrow({
+export async function getSessionIdAsync(sessionId: number) {
+  return await prisma.sessionAttendance.findUniqueOrThrow({
     where: {
-      id: studentSessionId,
+      id: sessionId,
     },
     select: {
       id: true,
+      attendedOn: true,
       report: true,
       reportFeedback: true,
-      session: {
+      signedOffOn: true,
+      mentorSession: {
         select: {
-          id: true,
-          attendedOn: true,
           mentor: {
             select: {
+              id: true,
               fullName: true,
             },
           },
@@ -43,7 +44,7 @@ export async function getStudentSessionIdAsync(studentSessionId: number) {
 
 export async function saveReportAsync({
   actionType,
-  studentSessionId,
+  sessionId,
   report,
   reportFeedback,
   userAzureId,
@@ -62,9 +63,9 @@ export async function saveReportAsync({
       break;
   }
 
-  return await prisma.studentSession.update({
+  return await prisma.sessionAttendance.update({
     where: {
-      id: studentSessionId,
+      id: sessionId,
     },
     data: {
       report,

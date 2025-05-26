@@ -75,7 +75,7 @@ model User {
   chapter   Chapter @relation(fields: [chapterId], references: [id])
 
   mentorToStudentAssignement MentorToStudentAssignement[]
-  session                    Session[]
+  mentorSession              MentorSession[]
 
   importedHistory ImportedHistory?
 
@@ -232,14 +232,16 @@ model Chapter {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user    User[]
-  student Student[]
-  session Session[]
-  goal    Goal[]
+  user              User[]
+  student           Student[]
+  sessionAttendance SessionAttendance[]
+  goal              Goal[]
 
   mentorAttendance  MentorAttendance[]
   studentAttendance StudentAttendance[]
-  EoiStudentProfile EoiStudentProfile[]
+  eoiStudentProfile EoiStudentProfile[]
+  mentorSession     MentorSession[]
+  studentSession    StudentSession[]
 }
 
 model Student {
@@ -399,52 +401,78 @@ model StudentAttendance {
   @@unique([chapterId, studentId, attendedOn])
 }
 
-model Session {
+model SessionAttendance {
   id Int @id @default(autoincrement())
+
+  mentorSession   MentorSession @relation(fields: [mentorSessionId], references: [id])
+  mentorSessionId Int
+
+  studentSession   StudentSession @relation(fields: [studentSessionId], references: [id])
+  studentSessionId Int
 
   chapter   Chapter @relation(fields: [chapterId], references: [id])
   chapterId Int
-  mentor    User    @relation(fields: [mentorId], references: [id])
-  mentorId  Int
 
-  attendedOn DateTime      @db.Date
-  status     SessionStatus @default(AVAILABLE)
-
-  studentSession StudentSession[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([mentorId, chapterId, attendedOn])
-}
-
-model StudentSession {
-  id Int @id @default(autoincrement())
-
-  session   Session @relation(fields: [sessionId], references: [id])
-  sessionId Int
-  student   Student @relation(fields: [studentId], references: [id])
-  studentId Int
-
-  report      String?   @db.Text
-  hasReport   Boolean   @default(dbgenerated()) // Calculated column based on report != null.
-  completedOn DateTime?
+  attendedOn         DateTime  @db.Date
+  report             String?   @db.Text
+  hasReport          Boolean   @default(dbgenerated()) // Calculated column based on report != null.
+  completedOn        DateTime?
+  notificationSentOn DateTime?
 
   reportFeedback     String?   @db.Text
   signedOffOn        DateTime?
   signedOffByAzureId String?
 
   writteOnBehalfByAzureId String?
-  notificationSentOn      DateTime?
 
-  isCancelled     Boolean   @default(false)
+  isCancelled     Boolean   @default(dbgenerated())
   cancelledAt     DateTime?
   cancelledReason String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([sessionId, studentId])
+  @@unique([chapterId, mentorSessionId, studentSessionId])
+}
+
+model MentorSession {
+  id Int @id @default(autoincrement())
+
+  chapter   Chapter @relation(fields: [chapterId], references: [id])
+  chapterId Int
+
+  mentor   User @relation(fields: [mentorId], references: [id])
+  mentorId Int
+
+  attendedOn DateTime      @db.Date
+  status     SessionStatus @default(AVAILABLE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessionAttendance SessionAttendance[]
+
+  @@unique([chapterId, mentorId, attendedOn])
+}
+
+model StudentSession {
+  id Int @id @default(autoincrement())
+
+  chapter   Chapter @relation(fields: [chapterId], references: [id])
+  chapterId Int
+
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId Int
+
+  attendedOn DateTime      @db.Date
+  status     SessionStatus @default(AVAILABLE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessionAttendance SessionAttendance[]
+
+  @@unique([chapterId, studentId, attendedOn])
 }
 
 model StudentSchoolReport {

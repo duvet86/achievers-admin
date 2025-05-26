@@ -13,12 +13,18 @@ dayjs.extend(customParseFormat);
 
 export type ActionType = "completed" | "remove-complete" | "draft";
 
-export interface SessionCommandRequest {
-  type: ActionType;
-  sessionId: number | null;
-  studentSessionId: number | null;
+interface CreateSessionCommand {
+  actionType: ActionType;
+  chapterId: number;
+  mentorId: number;
   studentId: number;
   attendedOn: string;
+  report: string;
+}
+
+interface UpdateSessionCommand {
+  actionType: ActionType;
+  sessionId: number;
   report: string;
 }
 
@@ -40,35 +46,46 @@ export async function geSessionAsync(
   chapterId: number,
   attendedOn: string,
 ) {
-  const session = await prisma.session.findUnique({
+  const studentSession = await prisma.studentSession.findUnique({
     where: {
-      mentorId_chapterId_attendedOn: {
-        mentorId,
+      chapterId_studentId_attendedOn: {
         chapterId,
+        studentId,
         attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
       },
     },
     select: {
       id: true,
-      mentorId: true,
-      attendedOn: true,
-      mentor: {
-        select: {
-          fullName: true,
-        },
-      },
     },
   });
 
-  if (session === null) {
+  if (studentSession === null) {
     return null;
   }
 
-  const studentSession = await prisma.studentSession.findUnique({
+  const mentorSession = await prisma.mentorSession.findUnique({
     where: {
-      sessionId_studentId: {
-        sessionId: session.id,
-        studentId,
+      chapterId_mentorId_attendedOn: {
+        chapterId,
+        mentorId,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      },
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (mentorSession === null) {
+    return null;
+  }
+
+  return await prisma.sessionAttendance.findUnique({
+    where: {
+      chapterId_mentorSessionId_studentSessionId: {
+        chapterId,
+        mentorSessionId: mentorSession.id,
+        studentSessionId: studentSession.id,
       },
     },
     select: {
@@ -78,55 +95,37 @@ export async function geSessionAsync(
       signedOffOn: true,
       reportFeedback: true,
       isCancelled: true,
-      student: {
+      mentorSession: {
+        select: {
+          mentorId: true,
+          mentor: {
+            select: {
+              fullName: true,
+            },
+          },
+        },
+      },
+      studentSession: {
         select: {
           id: true,
-          fullName: true,
         },
       },
     },
   });
-
-  return { ...session, studentSession };
 }
 
-export async function getMentorSessionDatesAsync(
-  mentorId: number,
+export async function getSessionDatesFormatted(
   chapterId: number,
-  currentTerm: Term,
-) {
-  const sessions = await prisma.session.findMany({
-    distinct: "attendedOn",
-    where: {
-      mentorId,
-      chapterId,
-      AND: [
-        {
-          attendedOn: {
-            gte: currentTerm.start.toDate(),
-          },
-        },
-        {
-          attendedOn: {
-            lte: currentTerm.end.toDate(),
-          },
-        },
-      ],
-    },
-    select: {
-      attendedOn: true,
-    },
-  });
-
-  return sessions.map(({ attendedOn }) =>
-    dayjs(attendedOn).format("YYYY-MM-DD"),
-  );
-}
-
-export function getSessionDatesFormatted(
+  mentorId: number,
+  term: Term,
   sessionDates: string[],
-  bookedSessions: string[],
 ) {
+  const bookedSessions = await getMentorSessionDatesAsync(
+    chapterId,
+    mentorId,
+    term,
+  );
+
   return sessionDates
     .map((attendedOn) => dayjs(attendedOn))
     .map((attendedOn) => {
@@ -140,64 +139,6 @@ export function getSessionDatesFormatted(
         isBooked,
       };
     });
-}
-
-export async function saveReportAsync(
-  actionType: ActionType,
-  sessionId: number | null,
-  mentorId: number,
-  chapterId: number,
-  studentId: number,
-  attendedOn: string,
-  report: string,
-) {
-  let completedOn: Date | null;
-  switch (actionType) {
-    case "completed":
-      completedOn = new Date();
-      break;
-    case "draft":
-    case "remove-complete":
-    default:
-      completedOn = null;
-      break;
-  }
-
-  if (sessionId === null) {
-    return await prisma.session.create({
-      data: {
-        chapterId,
-        mentorId,
-        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
-        studentSession: {
-          create: {
-            studentId,
-            report,
-            completedOn,
-          },
-        },
-      },
-    });
-  }
-
-  return await prisma.studentSession.upsert({
-    where: {
-      sessionId_studentId: {
-        sessionId: sessionId,
-        studentId,
-      },
-    },
-    create: {
-      report,
-      completedOn,
-      sessionId,
-      studentId,
-    },
-    update: {
-      report,
-      completedOn,
-    },
-  });
 }
 
 export async function getStudentsAsync(userId: number, chapterId: number) {
@@ -240,4 +181,151 @@ export async function getStudentsAsync(userId: number, chapterId: number) {
       fullName: `** ${fullName} (Assigned) **`,
     }))
     .concat(allStudents);
+}
+
+export async function createSessionAsync({
+  actionType,
+  chapterId,
+  mentorId,
+  studentId,
+  attendedOn,
+  report,
+}: CreateSessionCommand) {
+  let completedOn: Date | null;
+  switch (actionType) {
+    case "completed":
+      completedOn = new Date();
+      break;
+    case "draft":
+    case "remove-complete":
+    default:
+      completedOn = null;
+      break;
+  }
+
+  let mentorSession = await prisma.mentorSession.findUnique({
+    where: {
+      chapterId_mentorId_attendedOn: {
+        chapterId,
+        mentorId,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      },
+    },
+    select: {
+      id: true,
+      status: true,
+    },
+  });
+
+  if (mentorSession !== null && mentorSession.status !== "AVAILABLE") {
+    throw new Error("Mentor is not available.");
+  }
+
+  let studentSession = await prisma.studentSession.findUnique({
+    where: {
+      chapterId_studentId_attendedOn: {
+        chapterId,
+        studentId,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      },
+    },
+    select: {
+      id: true,
+      status: true,
+    },
+  });
+
+  if (studentSession !== null && studentSession.status !== "AVAILABLE") {
+    throw new Error("Student is not available.");
+  }
+
+  return await prisma.$transaction(async (tx) => {
+    mentorSession ??= await tx.mentorSession.create({
+      data: {
+        chapterId,
+        mentorId,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      },
+      select: {
+        id: true,
+        status: true,
+      },
+    });
+
+    studentSession ??= await tx.studentSession.create({
+      data: {
+        chapterId,
+        studentId,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      },
+      select: {
+        id: true,
+        status: true,
+      },
+    });
+
+    return await tx.sessionAttendance.create({
+      data: {
+        chapterId,
+        studentSessionId: studentSession.id,
+        mentorSessionId: mentorSession.id,
+        attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+        report,
+        completedOn,
+      },
+    });
+  });
+}
+
+export async function updateSessionAsync({
+  actionType,
+  sessionId,
+  report,
+}: UpdateSessionCommand) {
+  let completedOn: Date | null;
+  switch (actionType) {
+    case "completed":
+      completedOn = new Date();
+      break;
+    case "draft":
+    case "remove-complete":
+    default:
+      completedOn = null;
+      break;
+  }
+
+  return await prisma.sessionAttendance.update({
+    where: {
+      id: sessionId,
+    },
+    data: {
+      report,
+      completedOn,
+    },
+  });
+}
+
+async function getMentorSessionDatesAsync(
+  chapterId: number,
+  mentorId: number,
+  currentTerm: Term,
+) {
+  const sessions = await prisma.mentorSession.findMany({
+    distinct: "attendedOn",
+    where: {
+      mentorId,
+      chapterId,
+      attendedOn: {
+        gte: currentTerm.start.toDate(),
+        lte: currentTerm.end.toDate(),
+      },
+    },
+    select: {
+      attendedOn: true,
+    },
+  });
+
+  return sessions.map(({ attendedOn }) =>
+    dayjs(attendedOn).format("YYYY-MM-DD"),
+  );
 }

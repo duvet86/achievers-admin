@@ -20,18 +20,19 @@ import { Message, SelectSearch, StateLink, Title } from "~/components";
 import {
   addStudentToSessionAsync,
   getChapterByIdAsync,
-  getSessionByIdAsync,
+  getMentorSessionByIdAsync,
   getStudentsForMentorAsync,
+  removeMentorSessionAsync,
   removeSessionAsync,
 } from "./services.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
-  invariant(params.sessionId, "sessionId not found");
+  invariant(params.mentorSessionId, "mentorSessionId not found");
 
   const [chapter, session] = await Promise.all([
     getChapterByIdAsync(Number(params.chapterId)),
-    getSessionByIdAsync(Number(params.sessionId)),
+    getMentorSessionByIdAsync(Number(params.mentorSessionId)),
   ]);
 
   const students = await getStudentsForMentorAsync(
@@ -39,8 +40,12 @@ export async function loader({ params }: Route.LoaderArgs) {
     session.mentor.id,
   );
 
-  const studentIdsInSession = session.studentSession.map(
-    ({ student: { id } }) => id,
+  const studentIdsInSession = session.sessionAttendance.map(
+    ({
+      studentSession: {
+        student: { id },
+      },
+    }) => id,
   );
 
   return {
@@ -58,46 +63,42 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 export async function action({ params, request }: Route.ActionArgs) {
   invariant(params.chapterId, "chapterId not found");
-  invariant(params.sessionId, "sessionId not found");
+  invariant(params.mentorSessionId, "mentorSessionId not found");
 
   const formData = await request.formData();
   const action = formData.get("action");
 
   switch (action) {
     case "addStudent": {
-      const selectedStudentId = formData.get("studentId");
+      const selectedStudentId = formData.get("studentId")!.toString();
 
-      await addStudentToSessionAsync(
-        Number(params.sessionId),
-        Number(selectedStudentId),
-      );
+      await addStudentToSessionAsync({
+        mentorSessionId: Number(params.mentorSessionId),
+        studentId: Number(selectedStudentId),
+      });
 
       break;
     }
     case "restore":
     case "cancelAvailable": {
-      const session = await removeSessionAsync({
-        sessionId: Number(params.sessionId),
-        studentId: null,
-      });
+      const mentorSession = await removeMentorSessionAsync(
+        Number(params.mentorSessionId),
+      );
 
       const parsedUrl = new URL(request.url);
 
       return redirect(
-        `/admin/chapters/${params.chapterId}/roster-mentors/${session.mentorId}/attended-on/${dayjs(session.attendedOn).format("YYYY-MM-DD")}/new?${parsedUrl.searchParams}`,
+        `/admin/chapters/${params.chapterId}/roster-mentors/${mentorSession.mentorId}/attended-on/${dayjs(mentorSession.attendedOn).format("YYYY-MM-DD")}/new?${parsedUrl.searchParams}`,
       );
     }
-    case "cancelStudent": {
-      const selectedStudentId = formData.get("studentId");
+    case "removeSession": {
+      const sessionId = formData.get("sessionId")!.toString();
 
-      const session = await removeSessionAsync({
-        sessionId: Number(params.sessionId),
-        studentId: Number(selectedStudentId),
-      });
+      const session = await removeSessionAsync(Number(sessionId));
       const parsedUrl = new URL(request.url);
 
       return redirect(
-        `/admin/chapters/${params.chapterId}/roster-mentors/${session.mentorId}/attended-on/${dayjs(session.attendedOn).format("YYYY-MM-DD")}/new?${parsedUrl.searchParams}`,
+        `/admin/chapters/${params.chapterId}/roster-mentors/${session.mentorSession.mentorId}/attended-on/${dayjs(session.attendedOn).format("YYYY-MM-DD")}/new?${parsedUrl.searchParams}`,
       );
     }
     default:
@@ -129,14 +130,14 @@ export default function Index({
     });
   };
 
-  const handleStudentRemoveSession = (studentId: number) => () => {
+  const handleDeleteSession = (sessionId: number) => () => {
     if (!confirm(`Are you sure?`)) {
       return;
     }
 
     const formData = new FormData();
-    formData.append("action", "cancelStudent");
-    formData.append("studentId", studentId.toString());
+    formData.append("action", "removeSession");
+    formData.append("sessionId", sessionId.toString());
 
     void submit(formData, {
       method: "POST",
@@ -200,7 +201,7 @@ export default function Index({
             </button>
           </div>
         ) : (
-          session.studentSession.length === 0 && (
+          session.sessionAttendance.length === 0 && (
             <div className="flex items-center gap-4">
               <p className="alert alert-info w-full">
                 <InfoCircle />
@@ -223,7 +224,7 @@ export default function Index({
           <>
             <Form method="POST" className="flex w-full items-end gap-4">
               <SelectSearch
-                key={session.studentSession.length}
+                key={session.sessionAttendance.length}
                 name="studentId"
                 placeholder="Select a student"
                 options={students}
@@ -261,13 +262,13 @@ export default function Index({
                   </tr>
                 </thead>
                 <tbody>
-                  {session.studentSession.map(
+                  {session.sessionAttendance.map(
                     ({
                       id,
-                      student,
                       completedOn,
                       signedOffOn,
                       isCancelled,
+                      studentSession: { student },
                     }) => (
                       <tr key={id}>
                         <td className="p-2">{student.fullName}</td>
@@ -280,7 +281,7 @@ export default function Index({
                             </td>
                             <td align="right">
                               <StateLink
-                                to={`/admin/student-sessions/${id}?${searchParams.toString()}`}
+                                to={`/admin/sessions/${id}?${searchParams.toString()}`}
                                 className="btn btn-sm"
                               >
                                 <StatsReport /> View reason
@@ -318,7 +319,7 @@ export default function Index({
                             <td className="p-2" align="right">
                               {completedOn ? (
                                 <StateLink
-                                  to={`/admin/student-sessions/${id}/report?${searchParams.toString()}`}
+                                  to={`/admin/sessions/${id}/report?${searchParams.toString()}`}
                                   className="btn btn-success btn-sm"
                                 >
                                   <StatsReport /> Go to report
@@ -327,7 +328,7 @@ export default function Index({
                                 <div className="flex justify-end gap-4">
                                   <StateLink
                                     className="btn btn-info btn-sm w-32"
-                                    to={`/admin/student-sessions/${id}`}
+                                    to={`/admin/sessions/${id}`}
                                   >
                                     <Eye />
                                     View session
@@ -336,9 +337,7 @@ export default function Index({
                                   <button
                                     className="btn btn-error btn-sm w-32"
                                     type="button"
-                                    onClick={handleStudentRemoveSession(
-                                      student.id,
-                                    )}
+                                    onClick={handleDeleteSession(id)}
                                   >
                                     <Xmark />
                                     Remove

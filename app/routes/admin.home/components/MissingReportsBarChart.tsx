@@ -73,7 +73,7 @@ export function MissingReportsBarChart({ chapterId, data }: Props) {
       searchParams.set("selectedTermDate", selectedTermDate.toISOString());
       searchParams.set("filterReports", "OUTSTANDING");
 
-      void navigate(`/admin/student-sessions?${searchParams.toString()}`);
+      void navigate(`/admin/sessions?${searchParams.toString()}`);
     }
   };
 

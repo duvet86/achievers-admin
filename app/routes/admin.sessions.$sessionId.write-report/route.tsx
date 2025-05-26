@@ -2,7 +2,7 @@ import type { EditorState } from "lexical";
 import type { Route } from "./+types/route";
 import type { ActionType, SessionCommandRequest } from "./services.server";
 
-import { useFetcher } from "react-router";
+import { redirect, useFetcher } from "react-router";
 import invariant from "tiny-invariant";
 
 import { useRef } from "react";
@@ -21,7 +21,7 @@ import {
   Title,
 } from "~/components";
 
-import { getStudentSessionIdAsync, saveReportAsync } from "./services.server";
+import { getSessionIdAsync, saveReportAsync } from "./services.server";
 import { isSessionDateInTheFuture } from "./services.client";
 
 export const links: Route.LinksFunction = () => {
@@ -29,33 +29,33 @@ export const links: Route.LinksFunction = () => {
 };
 
 export async function loader({ params }: Route.LoaderArgs) {
-  invariant(params.studentSessionId, "studentSessionId not found");
+  invariant(params.sessionId, "sessionId not found");
 
-  const studentSession = await getStudentSessionIdAsync(
-    Number(params.studentSessionId),
-  );
+  const session = await getSessionIdAsync(Number(params.sessionId));
+  if (session.signedOffOn) {
+    return redirect(`/admin/sessions/${session.id}/report`);
+  }
 
   return {
-    studentSession,
+    session,
   };
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
-  invariant(params.studentSessionId, "studentSessionId not found");
-  invariant(params.mentorId, "mentorId not found");
+  invariant(params.sessionId, "sessionId not found");
 
   const loggedUser = await getLoggedUserInfoAsync(request);
 
   const bodyData = (await request.json()) as SessionCommandRequest;
 
   const actionType = bodyData.actionType;
-  const studentSessionId = bodyData.studentSessionId;
+  const sessionId = bodyData.sessionId;
   const report = bodyData.report;
   const reportFeedback = bodyData.reportFeedback;
 
   await saveReportAsync({
     actionType,
-    studentSessionId,
+    sessionId,
     report,
     reportFeedback,
     userAzureId: loggedUser.oid,
@@ -68,7 +68,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
 export default function Index({
   loaderData: {
-    studentSession: { id, report, reportFeedback, session },
+    session: { id, report, reportFeedback, attendedOn, mentorSession },
   },
 }: Route.ComponentProps) {
   const { data, state, submit } = useFetcher<typeof action>();
@@ -89,7 +89,7 @@ export default function Index({
       return;
     }
 
-    if (isSessionDateInTheFuture(session.attendedOn)) {
+    if (isSessionDateInTheFuture(attendedOn)) {
       (
         document.getElementById("errorModalContent") as HTMLDivElement
       ).textContent = "Session date is in the future.";
@@ -114,7 +114,7 @@ export default function Index({
     void submit(
       {
         actionType: type,
-        studentSessionId: id,
+        sessionId: id,
         report: JSON.stringify(reportState.toJSON()),
         reportFeedback: isEditorEmpty(reportFeedbackState)
           ? null
@@ -131,8 +131,8 @@ export default function Index({
     <>
       <div className="mb-4 flex flex-col gap-6 sm:flex-row">
         <Title>
-          Report of &quot;{dayjs(session.attendedOn).format("DD/MM/YYYY")}&quot;
-          on behalf of &quot;{session.mentor.fullName}&quot;
+          Report of &quot;{dayjs(attendedOn).format("DD/MM/YYYY")}&quot; on
+          behalf of &quot;{mentorSession.mentor.fullName}&quot;
         </Title>
 
         <Message key={Date.now()} successMessage={data?.successMessage} />

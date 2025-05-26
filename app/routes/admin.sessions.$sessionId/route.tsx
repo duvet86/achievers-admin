@@ -19,49 +19,41 @@ import { Message, StateLink, Textarea, Title } from "~/components";
 import {
   getChapterByIdAsync,
   getNotificationSentOnFromNow,
-  getStudentSessionByIdAsync,
+  getSessionByIdAsync,
   removeSessionAsync,
 } from "./services.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
-  invariant(params.studentSessionId, "studentSessionId not found");
+  invariant(params.sessionId, "sessionId not found");
 
-  const studentSession = await getStudentSessionByIdAsync(
-    Number(params.studentSessionId),
-  );
+  const session = await getSessionByIdAsync(Number(params.sessionId));
 
-  if (studentSession.completedOn) {
-    throw redirect(`/admin/student-sessions/${studentSession.id}/report`);
+  if (session.completedOn) {
+    throw redirect(`/admin/sessions/${session.id}/report`);
   }
 
-  const chapter = await getChapterByIdAsync(
-    Number(studentSession.session.chapterId),
-  );
+  const chapter = await getChapterByIdAsync(Number(session.chapterId));
 
   return {
     chapter,
-    studentSession,
-    attendedOnLabel: dayjs(studentSession.session.attendedOn).format(
-      "MMMM D, YYYY",
-    ),
+    session,
+    attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
     notificationSentOnFromNow: getNotificationSentOnFromNow(
-      studentSession.notificationSentOn,
+      session.notificationSentOn,
     ),
   };
 }
 
 export async function action({ params, request }: Route.ActionArgs) {
-  invariant(params.studentSessionId, "studentSessionId not found");
+  invariant(params.sessionId, "sessionId not found");
 
   if (request.method === "DELETE") {
-    const studentSession = await removeSessionAsync(
-      Number(params.studentSessionId),
-    );
+    const session = await removeSessionAsync(Number(params.sessionId));
 
     const url = new URL(request.url);
 
     return redirect(
-      `/admin/chapters/${studentSession.session.chapterId}/roster-students/${studentSession.studentId}/attended-on/${dayjs(studentSession.session.attendedOn).format("YYYY-MM-DD")}/new?${url.searchParams}`,
+      `/admin/chapters/${session.chapterId}/roster-students/${session.studentSession.studentId}/attended-on/${dayjs(session.attendedOn).format("YYYY-MM-DD")}/new?${url.searchParams}`,
     );
   }
 
@@ -81,7 +73,7 @@ export async function action({ params, request }: Route.ActionArgs) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        studentSessionId: Number(params.studentSessionId),
+        sessionId: Number(params.sessionId),
       }),
     });
 
@@ -102,12 +94,7 @@ export async function action({ params, request }: Route.ActionArgs) {
 }
 
 export default function Index({
-  loaderData: {
-    attendedOnLabel,
-    chapter,
-    studentSession,
-    notificationSentOnFromNow,
-  },
+  loaderData: { attendedOnLabel, chapter, session, notificationSentOnFromNow },
   actionData,
 }: Route.ComponentProps) {
   const submit = useSubmit();
@@ -137,12 +124,12 @@ export default function Index({
         className={classNames(
           "flex flex-col justify-between gap-2 sm:flex-row",
           {
-            "text-error": studentSession.cancelledAt !== null,
+            "text-error": session.cancelledAt !== null,
           },
         )}
       >
         <Title>
-          Session for &quot;{studentSession.student.fullName}&quot; on &quot;
+          Session of &quot;
           {attendedOnLabel}&quot;
         </Title>
 
@@ -152,7 +139,7 @@ export default function Index({
           successMessage={actionData?.successMessage}
         />
 
-        {!studentSession.cancelledAt ? (
+        {!session.cancelledAt ? (
           <StateLink className="btn btn-error w-full sm:w-48" to="cancel">
             <Trash />
             Cancel session
@@ -178,10 +165,10 @@ export default function Index({
         <div className="flex flex-col gap-2 border-b border-gray-300 p-2 sm:flex-row sm:items-center">
           <div className="w-72 font-bold">Mentor</div>
           <div className="sm:flex-1">
-            {studentSession.session.mentor.fullName}
+            {session.mentorSession.mentor.fullName}
           </div>
 
-          {!studentSession.cancelledAt && (
+          {!session.cancelledAt && (
             <button
               className="btn btn-error w-full sm:w-48"
               type="button"
@@ -195,10 +182,12 @@ export default function Index({
 
         <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="font-bold sm:w-72">Student</div>
-          <div className="sm:flex-1">{studentSession.student.fullName}</div>
+          <div className="sm:flex-1">
+            {session.studentSession.student.fullName}
+          </div>
         </div>
 
-        {!studentSession.cancelledAt ? (
+        {!session.cancelledAt ? (
           <>
             <div className="flex flex-wrap items-center gap-4 border-b border-gray-300 p-2">
               <div className="font-bold sm:w-72">Has report?</div>
@@ -220,7 +209,7 @@ export default function Index({
               </button>
 
               <StateLink
-                to={`/admin/student-sessions/${studentSession.id}/mentors/${studentSession.session.mentor.id}/write-report`}
+                to={`/admin/sessions/${session.id}/write-report`}
                 className="btn btn-success w-full gap-2 sm:w-48"
               >
                 <EditPencil /> Report on behalf
@@ -245,10 +234,7 @@ export default function Index({
           <div className="items-centerd flex gap-4 p-2">
             <div className="text-error font-bold sm:w-72">Cancel reason</div>
             <div className="sm:flex-1">
-              <Textarea
-                readOnly
-                defaultValue={studentSession.cancelledReason!}
-              />
+              <Textarea readOnly defaultValue={session.cancelledReason!} />
             </div>
           </div>
         )}

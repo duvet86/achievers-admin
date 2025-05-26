@@ -5,27 +5,32 @@ export interface SessionCommandRequest {
   isSignedOff: boolean;
 }
 
-export async function getStudentSessionByIdAsync(studentSessionId: number) {
-  return await prisma.studentSession.findUniqueOrThrow({
+export async function getSessionByIdAsync(sessionId: number) {
+  return await prisma.sessionAttendance.findUniqueOrThrow({
     where: {
-      id: studentSessionId,
+      id: sessionId,
     },
     select: {
       id: true,
+      attendedOn: true,
       report: true,
       signedOffOn: true,
       reportFeedback: true,
-      student: {
+      mentorSession: {
         select: {
-          id: true,
-          fullName: true,
-        },
-      },
-      session: {
-        select: {
-          attendedOn: true,
           mentor: {
             select: {
+              id: true,
+              fullName: true,
+            },
+          },
+        },
+      },
+      studentSession: {
+        select: {
+          student: {
+            select: {
+              id: true,
               fullName: true,
             },
           },
@@ -36,14 +41,14 @@ export async function getStudentSessionByIdAsync(studentSessionId: number) {
 }
 
 export async function saveReportAsync(
-  studentSessionId: number,
+  sessionId: number,
   reportFeedback: string,
   isSignedOff: boolean,
   userAzureId: string,
 ) {
-  return await prisma.studentSession.update({
+  return await prisma.sessionAttendance.update({
     where: {
-      id: studentSessionId,
+      id: sessionId,
     },
     data: {
       reportFeedback,

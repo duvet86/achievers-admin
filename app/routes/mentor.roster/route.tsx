@@ -24,12 +24,14 @@ import { getCurrentTermForDate, getDatesForTerm } from "~/services";
 import { Select, Title } from "~/components";
 
 import {
-  getSessionsLookupAsync,
+  getMentorSessionsLookupAsync,
   getUserByAzureADIdAsync,
   getAvailableStudentsForSessionAsync,
-  createSessionAsync,
+  createSessionWithStudentAsync,
   takeSessionFromParterAsync,
-  removeSessionAsync,
+  deleteMentorSessionByIdAsync,
+  createMentorSession,
+  deleteSessionByIdAsync,
 } from "./services.server";
 import { ManageSession } from "./components/ManageSession";
 
@@ -48,8 +50,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   const currentTerm =
     termsForYear.find((t) => t.id.toString() === selectedTermId) ?? todayterm;
 
-  const { mySessionsLookup, myPartnersSessionsLookup } =
-    await getSessionsLookupAsync(user.chapterId, user.id, currentTerm);
+  const { myMentorSessionsLookup, myPartnersSessionsLookup } =
+    await getMentorSessionsLookupAsync(user.chapterId, user.id, currentTerm);
 
   const studentsForSession = attendedOn
     ? await getAvailableStudentsForSessionAsync(
@@ -81,7 +83,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${todayterm.name === name ? " (Current)" : ""}`,
     })),
     selectedTermId: selectedTermId ?? currentTerm.id.toString(),
-    mySessionsLookup,
+    myMentorSessionsLookup,
     myPartnersSessionsLookup,
     datesInTerm,
     manageSessionState,
@@ -96,37 +98,57 @@ export async function action({ request }: Route.ActionArgs) {
 
   const action = bodyData.get("action");
   const selectedTermId = bodyData.get("selectedTermId");
-  const attendedOn = bodyData.get("attendedOn");
-  const studentId = bodyData.get("studentId");
-  const status = bodyData.get("status");
-  const sessionId = bodyData.get("sessionId");
-  const studentSessionId = bodyData.get("studentSessionId");
 
   switch (action) {
-    case "book":
-      if (attendedOn === null || status === null) {
+    case "createSession": {
+      const attendedOn = bodyData.get("attendedOn");
+      const studentId = bodyData.get("studentId");
+      if (attendedOn === null || studentId === null) {
+        throw new Error();
+      }
+      await createSessionWithStudentAsync({
+        attendedOn: attendedOn.toString(),
+        chapterId: user.chapterId,
+        studentId: Number(studentId),
+        mentorId: user.id,
+      });
+      break;
+    }
+
+    case "createMentorSession": {
+      const attendedOn = bodyData.get("attendedOn")?.toString();
+      const status = bodyData.get("status")?.toString();
+      if (attendedOn === undefined || status === undefined) {
         throw new Error();
       }
 
-      await createSessionAsync({
-        attendedOn: attendedOn.toString(),
+      await createMentorSession({
         chapterId: user.chapterId,
-        studentId: studentId ? Number(studentId) : null,
         mentorId: user.id,
-        status: status.toString(),
+        attendedOn,
+        status,
       });
       break;
+    }
 
-    case "take":
+    case "take": {
+      const studentSessionId = bodyData.get("studentSessionId");
+
       await takeSessionFromParterAsync(Number(studentSessionId), user.id);
       break;
+    }
 
-    case "cancel":
-      await removeSessionAsync(
-        Number(sessionId),
-        studentSessionId ? Number(studentSessionId) : null,
-      );
+    case "deleteMentorSession": {
+      const mentorSessionId = bodyData.get("mentorSessionId");
+      await deleteMentorSessionByIdAsync(Number(mentorSessionId));
       break;
+    }
+
+    case "deleteSession": {
+      const sessionId = bodyData.get("sessionId");
+      await deleteSessionByIdAsync(Number(sessionId));
+      break;
+    }
 
     default:
       throw new Error("Invalid action type");
@@ -139,7 +161,7 @@ export async function action({ request }: Route.ActionArgs) {
 
 export default function Index({
   loaderData: {
-    mySessionsLookup,
+    myMentorSessionsLookup,
     myPartnersSessionsLookup,
     selectedTermId,
     termsList,
@@ -153,23 +175,31 @@ export default function Index({
 
   const isLoading = state !== "idle";
 
-  const handleCancelSessionSubmit =
-    (sessionId: number, studentSessionId: number | null) => () => {
-      if (!confirm(`Are you sure?`)) {
-        return;
-      }
+  const handleDeleteMentorSession = (mentorSessionId: number) => () => {
+    if (!confirm(`Are you sure?`)) {
+      return;
+    }
 
-      const formData = new FormData();
-      formData.append("action", "cancel");
-      formData.append("sessionId", sessionId.toString());
-      formData.append("selectedTermId", selectedTermId);
+    const formData = new FormData();
+    formData.append("action", "deleteMentorSession");
+    formData.append("mentorSessionId", mentorSessionId.toString());
+    formData.append("selectedTermId", selectedTermId);
 
-      if (studentSessionId !== null) {
-        formData.append("studentSessionId", studentSessionId.toString());
-      }
+    void submit(formData, { method: "POST" });
+  };
 
-      void submit(formData, { method: "POST" });
-    };
+  const handleCancelSessionSubmit = (sessionId: number) => () => {
+    if (!confirm(`Are you sure?`)) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("action", "deleteSession");
+    formData.append("sessionId", sessionId.toString());
+    formData.append("selectedTermId", selectedTermId);
+
+    void submit(formData, { method: "POST" });
+  };
 
   const handleTakeSessionSubmit = (studentSessionId: number) => () => {
     if (!confirm(`Are you sure?`)) {
@@ -218,8 +248,8 @@ export default function Index({
 
       <div className="join join-vertical w-full">
         {datesInTerm.map((attendedOn) => {
-          const mySession = mySessionsLookup[attendedOn];
-          const myPartnersSession = myPartnersSessionsLookup[attendedOn];
+          const myMentorSession = myMentorSessionsLookup[attendedOn];
+          const myPartnersMentorSession = myPartnersSessionsLookup[attendedOn];
 
           return (
             <div key={attendedOn} className="border-b border-slate-400">
@@ -231,7 +261,7 @@ export default function Index({
                 </div>
 
                 <div className="flex w-full flex-col gap-4 p-4 sm:basis-5/6">
-                  {!mySession && (
+                  {!myMentorSession && (
                     <ManageSession
                       selectedTermId={selectedTermId}
                       attendedOn={attendedOn}
@@ -241,48 +271,47 @@ export default function Index({
                     />
                   )}
 
-                  {mySession && mySession.studentSession.length === 0 && (
-                    <div className="flex flex-col items-center justify-between gap-2 border-b pb-2 sm:flex-row">
-                      {mySession.status === "AVAILABLE" ? (
-                        <>
-                          <div className="text-success flex items-center justify-center gap-2 sm:justify-start">
-                            <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
-                            <span>You are available</span>
-                          </div>
-                          <button
-                            className="btn btn-error btn-sm w-full sm:w-36"
-                            onClick={handleCancelSessionSubmit(
-                              mySession.id,
-                              null,
-                            )}
-                          >
-                            <Xmark />
-                            Cancel
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <div className="text-error flex items-center justify-center gap-2 sm:justify-start">
-                            <ThumbsDown className="h-4 w-4 sm:h-6 sm:w-6" />
-                            <span>You are unavailable</span>
-                          </div>
-                          <button
-                            className="btn btn-primary btn-sm w-full sm:w-36"
-                            onClick={handleCancelSessionSubmit(
-                              mySession.id,
-                              null,
-                            )}
-                          >
-                            <BookmarkBook />
-                            Restore
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  )}
+                  {myMentorSession &&
+                    myMentorSession.sessionAttendance.length === 0 && (
+                      <div className="flex flex-col items-center justify-between gap-2 border-b pb-2 sm:flex-row">
+                        {myMentorSession.status === "AVAILABLE" ? (
+                          <>
+                            <div className="text-success flex items-center justify-center gap-2 sm:justify-start">
+                              <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
+                              <span>You are available</span>
+                            </div>
+                            <button
+                              className="btn btn-error btn-sm w-full sm:w-36"
+                              onClick={handleDeleteMentorSession(
+                                myMentorSession.id,
+                              )}
+                            >
+                              <Xmark />
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <div className="text-error flex items-center justify-center gap-2 sm:justify-start">
+                              <ThumbsDown className="h-4 w-4 sm:h-6 sm:w-6" />
+                              <span>You are unavailable</span>
+                            </div>
+                            <button
+                              className="btn btn-primary btn-sm w-full sm:w-36"
+                              onClick={handleDeleteMentorSession(
+                                myMentorSession.id,
+                              )}
+                            >
+                              <BookmarkBook />
+                              Restore
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    )}
 
-                  {mySession?.studentSession.map(
-                    ({ id, student, hasReport }) => (
+                  {myMentorSession?.sessionAttendance.map(
+                    ({ id, hasReport, studentSession }) => (
                       <div
                         key={id}
                         className="flex flex-col items-center justify-between gap-2 border-b pb-2 sm:flex-row"
@@ -290,15 +319,14 @@ export default function Index({
                         <div className="text-success flex items-center justify-center gap-2 sm:justify-start">
                           <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
                           <span>You are booked with</span>{" "}
-                          <span className="font-bold">{student.fullName}</span>
+                          <span className="font-bold">
+                            {studentSession.student.fullName}
+                          </span>
                         </div>
 
                         {!hasReport && (
                           <button
-                            onClick={handleCancelSessionSubmit(
-                              mySession.id,
-                              id,
-                            )}
+                            onClick={handleCancelSessionSubmit(id)}
                             className="btn btn-error btn-sm w-full sm:w-36"
                           >
                             <Xmark />
@@ -309,18 +337,18 @@ export default function Index({
                     ),
                   )}
 
-                  {myPartnersSession &&
-                    (myPartnersSession?.status === "UNAVAILABLE" ? (
+                  {myPartnersMentorSession &&
+                    (myPartnersMentorSession?.status === "UNAVAILABLE" ? (
                       <div className="text-error flex items-center justify-center gap-2 border-b pb-2 sm:justify-start">
                         <ThumbsDown className="h-4 w-4 sm:h-6 sm:w-6" />
                         <span className="font-bold">
-                          {myPartnersSession.mentor.fullName}
+                          {myPartnersMentorSession.mentor.fullName}
                         </span>{" "}
                         is <span className="font-bold">unavailable</span>
                       </div>
                     ) : (
-                      myPartnersSession?.studentSession.map(
-                        ({ id, student, completedOn }) => (
+                      myPartnersMentorSession?.sessionAttendance.map(
+                        ({ id, completedOn, studentSession }) => (
                           <div
                             key={id}
                             className="flex flex-col items-center justify-between gap-4 border-b pb-2 sm:flex-row"
@@ -328,11 +356,11 @@ export default function Index({
                             <div className="text-info flex items-center justify-center gap-2 sm:justify-start">
                               <Group className="h-4 w-4 sm:h-6 sm:w-6" />
                               <span className="font-bold">
-                                {myPartnersSession.mentor.fullName}
+                                {myPartnersMentorSession.mentor.fullName}
                               </span>{" "}
                               is mentoring{" "}
                               <span className="font-bold">
-                                {student.fullName}
+                                {studentSession.student.fullName}
                               </span>
                             </div>
                             {!completedOn && (

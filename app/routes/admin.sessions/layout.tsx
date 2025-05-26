@@ -14,7 +14,7 @@ export async function loader({ request }: Route.LoaderArgs) {
         `Request url: ${request.url}. loggedUser has no SessionArea permissions.`,
       ),
     );
-    throw redirect("/403");
+    return redirect("/403");
   }
 
   return null;

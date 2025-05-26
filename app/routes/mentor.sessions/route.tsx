@@ -3,7 +3,6 @@ import type { Route } from "./+types/route";
 import { Form, useSearchParams, useSubmit } from "react-router";
 import { Eye } from "iconoir-react";
 import dayjs from "dayjs";
-import classNames from "classnames";
 
 import { getPaginationRange } from "~/services";
 import { getLoggedUserInfoAsync } from "~/services/.server";
@@ -12,7 +11,7 @@ import { Pagination, StateLink, Title } from "~/components";
 import {
   getCountAsync,
   getMentorsAsync,
-  getStudentSessionsAsync,
+  getSessionsAsync,
   getStudentsAsync,
   getUserAsync,
 } from "./services.server";
@@ -28,24 +27,33 @@ export async function loader({ request }: Route.LoaderArgs) {
   const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
   const nextPageSubmit = url.searchParams.get("nextBtn");
 
-  const studentIdUrl = url.searchParams.get("studentId");
-  const mentorIdUrl = url.searchParams.get("mentorId");
+  const studentId = url.searchParams.get("studentId");
+  const mentorId = url.searchParams.get("mentorId");
+
+  const selectedMentorId = mentorId ? Number(mentorId) : undefined;
+  const selectedStudentId = studentId ? Number(studentId) : undefined;
 
   const pageNumber = url.searchParams.get("pageNumber")
     ? Number(url.searchParams.get("pageNumber"))
     : 0;
 
-  const students = await getStudentsAsync(chapterId, loggedUserId);
+  const students = await getStudentsAsync(
+    chapterId,
+    loggedUserId,
+    selectedMentorId,
+  );
 
-  const studentId = studentIdUrl
-    ? Number(studentIdUrl)
-    : (students?.[0]?.id ?? undefined);
+  const mentors = await getMentorsAsync(
+    chapterId,
+    loggedUserId,
+    selectedStudentId,
+  );
 
-  const mentors = await getMentorsAsync(chapterId, studentId);
-
-  const mentorId = mentorIdUrl ? Number(mentorIdUrl) : undefined;
-
-  const count = await getCountAsync(chapterId, studentId, mentorId);
+  const count = await getCountAsync(
+    chapterId,
+    selectedStudentId,
+    selectedMentorId,
+  );
 
   const totalPageCount = Math.ceil(count / 10);
 
@@ -58,10 +66,10 @@ export async function loader({ request }: Route.LoaderArgs) {
     currentPageNumber = Number(pageNumberSubmit);
   }
 
-  const studentSessions = await getStudentSessionsAsync(
+  const sessions = await getSessionsAsync(
     chapterId,
-    studentId,
-    mentorId,
+    selectedStudentId,
+    selectedMentorId,
     currentPageNumber,
   );
 
@@ -71,12 +79,12 @@ export async function loader({ request }: Route.LoaderArgs) {
     loggedUserId,
     students,
     mentors,
-    selectedStudentId: studentId?.toString(),
-    selectedMentorId: mentorId?.toString(),
+    selectedStudentId: selectedStudentId?.toString(),
+    selectedMentorId: selectedMentorId?.toString(),
     range,
     currentPageNumber,
     count,
-    studentSessions,
+    sessions,
   };
 }
 
@@ -87,7 +95,7 @@ export default function Index({
     mentors,
     selectedStudentId,
     selectedMentorId,
-    studentSessions,
+    sessions,
     count,
     currentPageNumber,
     range,
@@ -160,26 +168,28 @@ export default function Index({
               </tr>
             </thead>
             <tbody>
-              {studentSessions.length === 0 && (
+              {sessions.length === 0 && (
                 <tr>
                   <td colSpan={6}>No sessions available</td>
                 </tr>
               )}
-              {studentSessions.map(
-                ({ id, completedOn, signedOffOn, student, session }) => (
-                  <tr
-                    key={id}
-                    className={classNames("hover:bg-base-200", {
-                      "bg-success/20": session.mentor.id === loggedUserId,
-                    })}
-                  >
+              {sessions.map(
+                ({
+                  id,
+                  completedOn,
+                  signedOffOn,
+                  attendedOn,
+                  mentorSession,
+                  studentSession,
+                }) => (
+                  <tr key={id} className="hover:bg-base-200">
                     <td className="p-2">
-                      {session.mentor.fullName}{" "}
-                      {session.mentor.id === loggedUserId ? "(Me)" : ""}
+                      {mentorSession.mentor.fullName}{" "}
+                      {mentorSession.mentor.id === loggedUserId ? "(Me)" : ""}
                     </td>
-                    <td className="p-2">{student.fullName}</td>
+                    <td className="p-2">{studentSession.student.fullName}</td>
                     <td className="p-2">
-                      {dayjs(session.attendedOn).format("MMMM D, YYYY")}
+                      {dayjs(attendedOn).format("MMMM D, YYYY")}
                     </td>
                     <td className="hidden p-2 sm:table-cell">
                       {completedOn
@@ -193,7 +203,11 @@ export default function Index({
                     </td>
                     <td className="hidden p-2 sm:table-cell" align="right">
                       <StateLink
-                        to={`/mentor/student-sessions/${id}?${searchParams.toString()}`}
+                        to={
+                          completedOn !== null
+                            ? `/mentor/sessions/${id}`
+                            : `/mentor/write-report/?studentId=${studentSession.student.id}&mentorId=${mentorSession.mentor.id}`
+                        }
                         className="btn btn-success btn-xs btn-block"
                       >
                         <Eye className="h-4 w-4" />

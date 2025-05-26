@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { EditorState } from "lexical";
 import type { Route } from "./+types/route";
-import type { ActionType, SessionCommandRequest } from "./services.server";
+import type { ActionType } from "./services.server";
 
 import { Form, useSubmit } from "react-router";
 import { useRef } from "react";
@@ -37,11 +39,11 @@ import {
 
 import {
   geSessionAsync,
-  getMentorSessionDatesAsync,
   getUserByAzureADIdAsync,
-  saveReportAsync,
   getStudentsAsync,
   getSessionDatesFormatted,
+  createSessionAsync,
+  updateSessionAsync,
 } from "./services.server";
 import { isSessionDateInTheFuture } from "./services.client";
 
@@ -87,17 +89,13 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   selectedStudentId = selectedStudentId ?? students[0].id.toString();
 
-  const mentorBookedDates = await getMentorSessionDatesAsync(
-    user.id,
-    user.chapterId,
-    selectedTerm,
-  );
-
   const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
 
-  const sessionDatesFormatted = getSessionDatesFormatted(
+  const sessionDatesFormatted = await getSessionDatesFormatted(
+    user.chapterId,
+    user.id,
+    selectedTerm,
     sessionDates,
-    mentorBookedDates,
   );
 
   if (!selectedTermDate || !sessionDates.includes(selectedTermDate)) {
@@ -120,7 +118,8 @@ export async function loader({ request }: Route.LoaderArgs) {
     selectedTermDate,
   );
 
-  const isNotMyReport = session !== null && session.mentorId !== user.id;
+  const isNotMyReport =
+    session !== null && session.mentorSession.mentorId !== user.id;
 
   const distinctTermYears = Array.from(new Set(terms.map(({ year }) => year)));
 
@@ -142,9 +141,9 @@ export async function loader({ request }: Route.LoaderArgs) {
     session,
     isNotMyReport,
     isReadOnlyEditor:
-      session?.studentSession != null &&
-      (session.studentSession.completedOn !== null ||
-        session.studentSession.signedOffOn !== null ||
+      session != null &&
+      (session.completedOn !== null ||
+        session.signedOffOn !== null ||
         isNotMyReport),
   };
 }
@@ -153,23 +152,30 @@ export async function action({ request }: Route.ActionArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
-  const bodyData = (await request.json()) as SessionCommandRequest;
+  const bodyData = await request.json();
 
-  const actionType = bodyData.type;
+  const actionType = bodyData.actionType;
   const sessionId = bodyData.sessionId;
   const studentId = bodyData.studentId;
   const attendedOn = bodyData.attendedOn;
   const report = bodyData.report;
 
-  await saveReportAsync(
-    actionType,
-    sessionId,
-    user.id,
-    user.chapterId,
-    studentId,
-    attendedOn,
-    report,
-  );
+  if (sessionId !== null) {
+    await updateSessionAsync({
+      actionType,
+      sessionId,
+      report,
+    });
+  } else {
+    await createSessionAsync({
+      actionType,
+      chapterId: user.chapterId,
+      mentorId: user.id,
+      studentId,
+      attendedOn,
+      report,
+    });
+  }
 
   return null;
 }
@@ -193,12 +199,10 @@ export default function Index({
   const formRef = useRef<HTMLFormElement | null>(null);
   const editorStateRef = useRef<EditorState>(null);
 
-  const studentSession = session?.studentSession;
-
-  const signedOffOn = studentSession?.signedOffOn;
-  const completedOn = studentSession?.completedOn;
-  const reportFeedback = studentSession?.reportFeedback;
-  const isCancelled = studentSession?.isCancelled;
+  const signedOffOn = session?.signedOffOn;
+  const completedOn = session?.completedOn;
+  const reportFeedback = session?.reportFeedback;
+  const isCancelled = session?.isCancelled;
 
   const isMyReport = !isNotMyReport;
   const canUnmarkReport = isMyReport && completedOn && !signedOffOn;
@@ -211,7 +215,7 @@ export default function Index({
       void submit(formData);
     };
 
-  const saveReport = (type: ActionType) => () => {
+  const saveReport = (actionType: ActionType) => () => {
     const formData = new FormData(formRef.current!);
 
     const studentId = formData.get("selectedStudentId")!.toString();
@@ -237,9 +241,8 @@ export default function Index({
 
     void submit(
       {
-        type,
+        actionType,
         sessionId: session?.id ?? null,
-        studentSessionId: studentSession?.id ?? null,
         studentId: Number(studentId),
         attendedOn,
         report: JSON.stringify(resportState.toJSON()),
@@ -266,11 +269,13 @@ export default function Index({
           )}
         </div>
 
-        {isNotMyReport && studentSession && (
+        {isNotMyReport && session && (
           <p className="bg-info flex items-center gap-2 rounded-sm px-6 py-2">
             <WarningTriangle className="h-6 w-6" />
             Written By{" "}
-            <span className="font-bold">{session?.mentor.fullName}</span>
+            <span className="font-bold">
+              {session.mentorSession.mentor.fullName}
+            </span>
           </p>
         )}
       </div>
@@ -366,7 +371,7 @@ export default function Index({
               >
                 <Editor
                   isReadonly={isReadOnlyEditor}
-                  initialEditorStateType={studentSession?.report ?? null}
+                  initialEditorStateType={session?.report ?? null}
                   onChange={(editorState) =>
                     (editorStateRef.current = editorState)
                   }
@@ -391,13 +396,13 @@ export default function Index({
                     </button>
 
                     <button
-                      className="btn btn-success btn-block sm:w-36"
+                      className="btn btn-success btn-block sm:w-56"
                       type="button"
                       onClick={saveReport("completed")}
                       disabled={isNotMyReport}
                     >
                       <CheckCircle />
-                      Completed
+                      Submit for review
                     </button>
                   </>
                 )}

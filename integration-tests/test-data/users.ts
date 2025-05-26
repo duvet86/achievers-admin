@@ -8,8 +8,9 @@ export async function createUsersAsync(
   await prisma.$transaction(async (tx) => {
     await tx.importedHistory.deleteMany();
     await tx.mentorToStudentAssignement.deleteMany();
+    await tx.sessionAttendance.deleteMany();
     await tx.studentSession.deleteMany();
-    await tx.session.deleteMany();
+    await tx.mentorSession.deleteMany();
     await tx.approvalbyMRC.deleteMany();
     await tx.eoIProfile.deleteMany();
     await tx.induction.deleteMany();

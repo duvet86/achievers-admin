@@ -162,7 +162,7 @@ export default function Index({
                   {fullName}
                   <div className="flex gap-2 sm:gap-6">
                     <StateLink
-                      to="/admin/student-sessions"
+                      to="/admin/sessions"
                       className="btn btn-info hidden w-40 sm:flex"
                     >
                       <Clock />
