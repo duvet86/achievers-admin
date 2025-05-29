@@ -1,10 +1,9 @@
-import type { JSX } from "react";
 import type { Prisma } from "~/prisma/client";
 import type { Route } from "./+types/route";
 
 import { Form, useSearchParams, useNavigate, useSubmit } from "react-router";
-import dayjs from "dayjs";
-import { PageEdit, BinFull, CheckCircle, WarningTriangle } from "iconoir-react";
+import { PageEdit, CheckCircle, WarningTriangle } from "iconoir-react";
+import classNames from "classnames";
 
 import {
   getLoggedUserInfoAsync,
@@ -18,8 +17,7 @@ import {
   getUsersAsync,
   getUsersCountAsync,
 } from "./services.server";
-import ActionsDropdown from "./components/ActionsDropdown";
-import FormInputs from "./components/FormInputs";
+import { ActionsDropdown, FormInputs } from "./components";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
@@ -39,9 +37,6 @@ export async function loader({ request }: Route.LoaderArgs) {
   const sortChapterSubmit: Prisma.SortOrder | undefined =
     (url.searchParams.get("sortChapter") as Prisma.SortOrder) ?? undefined;
 
-  const sortCreatedAtSubmit: Prisma.SortOrder | undefined =
-    (url.searchParams.get("sortCreatedAt") as Prisma.SortOrder) ?? undefined;
-
   const sortChecksCompletedSubmit: Prisma.SortOrder | undefined =
     (url.searchParams.get("sortChecksCompleted") as Prisma.SortOrder) ??
     undefined;
@@ -51,8 +46,6 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const onlyExpiredChecks = url.searchParams.get("onlyExpiredChecks") === "on";
   const includeArchived = url.searchParams.get("includeArchived") === "on";
-  const includeCompleteChecks =
-    url.searchParams.get("includeCompleteChecks") === "on";
 
   if (searchTerm?.trim() === "") {
     searchTerm = null;
@@ -69,7 +62,6 @@ export async function loader({ request }: Route.LoaderArgs) {
     chapterIdValue,
     onlyExpiredChecks,
     includeArchived,
-    includeCompleteChecks,
   );
   const totalPageCount = Math.ceil(count / numberItems);
 
@@ -91,11 +83,9 @@ export async function loader({ request }: Route.LoaderArgs) {
       chapterIdValue,
       sortFullNameSubmit,
       sortChapterSubmit,
-      sortCreatedAtSubmit,
       sortChecksCompletedSubmit,
       onlyExpiredChecks,
       includeArchived,
-      includeCompleteChecks,
       numberItems,
     ),
   ]);
@@ -128,11 +118,9 @@ export async function loader({ request }: Route.LoaderArgs) {
     searchTerm,
     chapterId,
     onlyExpiredChecks,
-    includeCompleteChecks,
     includeArchived,
     sortFullNameSubmit,
     sortChapterSubmit,
-    sortCreatedAtSubmit,
     sortChecksCompletedSubmit,
   };
 }
@@ -146,12 +134,10 @@ export default function Index({
     range,
     sortFullNameSubmit,
     sortChapterSubmit,
-    sortCreatedAtSubmit,
     sortChecksCompletedSubmit,
     searchTerm,
     chapterId,
     onlyExpiredChecks,
-    includeCompleteChecks,
     includeArchived,
   },
 }: Route.ComponentProps) {
@@ -166,7 +152,6 @@ export default function Index({
     searchParams.set("chapterId", "");
     searchParams.set("pageNumber", "");
     searchParams.set("onlyExpiredChecks", "");
-    searchParams.set("includeCompleteChecks", "");
     searchParams.set("includeArchived", "");
 
     void navigate(`?${searchParams.toString()}`);
@@ -182,14 +167,6 @@ export default function Index({
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     searchParams.set("onlyExpiredChecks", event.target.checked ? "on" : "");
-
-    void submit(Object.fromEntries(searchParams));
-  };
-
-  const onIncludeCompleteChecksChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    searchParams.set("includeCompleteChecks", event.target.checked ? "on" : "");
 
     void submit(Object.fromEntries(searchParams));
   };
@@ -218,17 +195,15 @@ export default function Index({
 
       <Form method="get">
         <FormInputs
-          key={`${searchTerm}-${chapterId}-${onlyExpiredChecks}-${includeCompleteChecks}-${includeArchived}`}
+          key={`${searchTerm}-${chapterId}-${onlyExpiredChecks}-${includeArchived}`}
           chapters={chapters}
           searchTerm={searchTerm}
           chapterId={chapterId}
           onlyExpiredChecks={onlyExpiredChecks}
           includeArchived={includeArchived}
-          includeCompleteChecks={includeCompleteChecks}
           onFormReset={onFormReset}
           onChapterChange={onChapterChange}
           onOnlyExpiredChecksChange={onOnlyExpiredChecksChange}
-          onIncludeCompleteChecksChange={onIncludeCompleteChecksChange}
           onIncludeArchivedChange={onIncludeArchivedChange}
         />
 
@@ -253,13 +228,7 @@ export default function Index({
                     label="Assigned chapter"
                   />
                 </th>
-                <th align="left">
-                  <TableHeaderSort
-                    sortPropName="sortCreatedAt"
-                    sortPropValue={sortCreatedAtSubmit}
-                    label="Created At"
-                  />
-                </th>
+                <th align="left">Mobile</th>
                 <th align="left">
                   <TableHeaderSort
                     sortPropName="sortChecksCompleted"
@@ -287,65 +256,55 @@ export default function Index({
                     fullName,
                     chapterName,
                     checksCompleted,
-                    endDate,
-                    createdAt,
+                    mobile,
                     isAnyChecksExpired,
                     isReminderSent,
                   },
                   index,
-                ) => {
-                  let className = "hover:bg-base-200 ";
-                  let icon: JSX.Element | undefined;
-                  if (endDate) {
-                    className += "text-error";
-                    icon = <BinFull data-testid="archived" />;
-                  } else if (checksCompleted === 8) {
-                    className += "text-success";
-                    icon = <CheckCircle data-testid="completed" />;
-                  }
-
-                  return (
-                    <tr key={id} className={className}>
-                      <td className="hidden sm:table-cell">
-                        <div className="flex gap-2">
-                          {index + 1 + 10 * currentPageNumber} {icon}
+                ) => (
+                  <tr key={id} className="hover:bg-base-200">
+                    <td className="hidden sm:table-cell">
+                      <div className="flex gap-2">
+                        {index + 1 + 10 * currentPageNumber}
+                      </div>
+                    </td>
+                    <td>{fullName}</td>
+                    <td>{chapterName}</td>
+                    <td>{mobile}</td>
+                    <td>
+                      <div
+                        className={classNames("flex items-center gap-4", {
+                          "text-success": checksCompleted === 8,
+                        })}
+                      >
+                        <span>{checksCompleted}/8</span>
+                        <div>
+                          {isAnyChecksExpired && (
+                            <span className="text-warning flex items-center gap-1">
+                              <WarningTriangle className="h-4 w-4" /> Expired
+                              checks
+                            </span>
+                          )}
+                          {isAnyChecksExpired && isReminderSent && (
+                            <span className="text-success flex items-center gap-1">
+                              <CheckCircle className="h-4 w-4" /> Reminder sent
+                            </span>
+                          )}
                         </div>
-                      </td>
-                      <td>{fullName}</td>
-                      <td>{chapterName}</td>
-                      <td>{dayjs(createdAt).format("DD/MM/YYYY")}</td>
-                      <td>
-                        <div className="flex items-center gap-4">
-                          <span>{checksCompleted}/8</span>
-                          <div className="flex flex-col gap-1">
-                            {isAnyChecksExpired && (
-                              <span className="text-warning flex items-center gap-1">
-                                <WarningTriangle className="h-4 w-4" /> Expired
-                                checks
-                              </span>
-                            )}
-                            {isAnyChecksExpired && isReminderSent && (
-                              <span className="text-success flex items-center gap-1">
-                                <CheckCircle className="h-4 w-4" /> Reminder
-                                sent
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="hidden sm:table-cell">
-                        <StateLink
-                          to={`/admin/users/${id}`}
-                          onClick={stopLinkPropagation}
-                          className="btn btn-success btn-xs w-full gap-2"
-                        >
-                          <PageEdit className="hidden h-4 w-4 sm:block" />
-                          Edit
-                        </StateLink>
-                      </td>
-                    </tr>
-                  );
-                },
+                      </div>
+                    </td>
+                    <td className="hidden sm:table-cell">
+                      <StateLink
+                        to={`/admin/users/${id}`}
+                        onClick={stopLinkPropagation}
+                        className="btn btn-success btn-xs w-full gap-2"
+                      >
+                        <PageEdit className="hidden h-4 w-4 sm:block" />
+                        Edit
+                      </StateLink>
+                    </td>
+                  </tr>
+                ),
               )}
             </tbody>
           </table>

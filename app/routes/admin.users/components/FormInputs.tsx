@@ -4,7 +4,6 @@ interface Props {
   searchTerm: string | null;
   chapterId: string | null;
   onlyExpiredChecks: boolean;
-  includeCompleteChecks: boolean;
   includeArchived: boolean;
   chapters: {
     id: number;
@@ -15,23 +14,18 @@ interface Props {
   onOnlyExpiredChecksChange: (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => void;
-  onIncludeCompleteChecksChange: (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => void;
   onIncludeArchivedChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function FormInputs({
+export function FormInputs({
   searchTerm,
   chapterId,
   onlyExpiredChecks,
-  includeCompleteChecks,
   includeArchived,
   chapters,
   onFormReset,
   onChapterChange,
   onOnlyExpiredChecksChange,
-  onIncludeCompleteChecksChange,
   onIncludeArchivedChange,
 }: Props) {
   return (
@@ -74,17 +68,6 @@ export default function FormInputs({
           <span className="label-text">
             Only expired or soon to expire checks
           </span>
-        </label>
-
-        <label className="fieldset-label">
-          <input
-            type="checkbox"
-            name="includeCompleteChecks"
-            className="checkbox"
-            defaultChecked={includeCompleteChecks}
-            onChange={onIncludeCompleteChecksChange}
-          />
-          <span className="label-text">Include complete checks</span>
         </label>
 
         <label className="fieldset-label">

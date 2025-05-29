@@ -24,11 +24,25 @@ export async function getAvailabelMentorsAsync(
 ) {
   const chapterIdFilter = accessibleBy(ability).Chapter.id ?? chapterId;
 
+  if (studentId) {
+    return await prisma.$queryRaw<{ id: number; fullName: string }[]>`
+      SELECT 
+        u.id, u.fullName
+      FROM SessionAttendance sa
+      INNER JOIN MentorSession ms ON ms.id = sa.mentorSessionId
+      INNER JOIN StudentSession ss ON ss.id = sa.studentSessionId
+      INNER JOIN User u ON u.id = ms.mentorId
+      WHERE sa.chapterId = ${chapterId} AND ss.studentId = ${studentId}
+      GROUP BY u.id, u.fullName
+      ORDER BY u.fullName ASC`;
+  }
+
   return await prisma.$queryRaw<{ id: number; fullName: string }[]>`
-    SELECT u.id, u.fullName
+    SELECT DISTINCT
+      u.id, u.fullName
     FROM User u
     INNER JOIN MentorToStudentAssignement msa ON msa.userId = u.id
-    WHERE msa.studentId = ${studentId} AND u.chapterId = ${chapterIdFilter}
+    WHERE u.chapterId = ${chapterIdFilter}
     ORDER BY u.fullName ASC`;
 }
 
@@ -39,11 +53,25 @@ export async function getAvailabelStudentsAsync(
 ) {
   const chapterIdFilter = accessibleBy(ability).Chapter.id ?? chapterId;
 
+  if (mentorId) {
+    return await prisma.$queryRaw<{ id: number; fullName: string }[]>`
+      SELECT 
+        s.id, s.fullName
+      FROM SessionAttendance sa
+      INNER JOIN MentorSession ms ON ms.id = sa.mentorSessionId
+      INNER JOIN StudentSession ss ON ss.id = sa.studentSessionId
+      INNER JOIN Student s ON s.id = ss.studentId
+      WHERE sa.chapterId = ${chapterId} AND ms.mentorId = ${mentorId}
+      GROUP BY s.id, s.fullName
+      ORDER BY s.fullName ASC`;
+  }
+
   return await prisma.$queryRaw<{ id: number; fullName: string }[]>`
-    SELECT s.id, s.fullName
+    SELECT DISTINCT
+      s.id, s.fullName
     FROM Student s
     INNER JOIN MentorToStudentAssignement msa ON msa.studentId = s.id
-    WHERE msa.studentId = ${mentorId} AND s.chapterId = ${chapterIdFilter}
+    WHERE s.chapterId = ${chapterIdFilter}
     ORDER BY s.fullName ASC`;
 }
 
