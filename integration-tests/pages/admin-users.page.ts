@@ -73,10 +73,6 @@ export class AdminUsersPage {
     await this.page.getByRole("button", { name: "Reset" }).click();
   }
 
-  async includeCompleteChecksUsers(): Promise<void> {
-    await this.page.getByLabel("Include complete checks").check();
-  }
-
   async includeArchivedUsers(): Promise<void> {
     await this.page.getByLabel("Include archived").check();
   }

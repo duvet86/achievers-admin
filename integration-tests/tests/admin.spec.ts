@@ -64,7 +64,6 @@ test.describe("Admin", () => {
     await usersListPage.expect.toHaveTableRows(11);
     await usersListPage.expect.toHavePreviousPageButtonDisabled();
 
-    await usersListPage.includeCompleteChecksUsers();
     await usersListPage.expect.toHaveCompletedMentor();
 
     await usersListPage.goToNextPage();
