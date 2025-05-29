@@ -29,12 +29,13 @@ model User {
   id        Int     @id @default(autoincrement())
   azureADId String? @unique // Defined by Azure Active Directory.
 
-  email           String @unique
+  email           String  @unique
   firstName       String
   lastName        String
-  fullName        String @default(dbgenerated()) // Calculated column firstName + lastName.
+  preferredName   String?
+  fullName        String  @default(dbgenerated()) // Calculated column firstName + lastName.
   mobile          String
-  addressStreet   String @db.VarChar(2000)
+  addressStreet   String  @db.VarChar(2000)
   addressSuburb   String
   addressState    String
   addressPostcode String
@@ -110,6 +111,8 @@ model EoIProfile {
   preferredSubject    String  @default("N/A")
   isOver18            Boolean
   comment             String  @db.Text
+  wasMentor           String
+  linkedInProfile     String?
 
   aboutMe String? @db.Text
 

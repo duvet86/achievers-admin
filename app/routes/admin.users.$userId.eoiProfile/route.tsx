@@ -34,6 +34,8 @@ export async function action({ request, params }: Route.ActionArgs) {
   const isOver18 = formData.get("isOver18")?.toString();
   const comment = formData.get("comment")?.toString();
   const aboutMe = formData.get("aboutMe")?.toString() ?? null;
+  const linkedInProfile = formData.get("linkedInProfile")?.toString() ?? null;
+  const wasMentor = formData.get("wasMentor")?.toString();
 
   if (
     bestTimeToContact === undefined ||
@@ -45,7 +47,8 @@ export async function action({ request, params }: Route.ActionArgs) {
     preferredFrequency === undefined ||
     preferredSubject === undefined ||
     isOver18 === undefined ||
-    comment === undefined
+    comment === undefined ||
+    wasMentor === undefined
   ) {
     return {
       successMessage: null,
@@ -65,6 +68,8 @@ export async function action({ request, params }: Route.ActionArgs) {
     isOver18: isOver18 === "true",
     comment,
     aboutMe,
+    linkedInProfile,
+    wasMentor,
   };
 
   await updateEoiByUserIdAsync(Number(params.userId), data);
@@ -143,6 +148,19 @@ export default function Index({
             label="Preferred subject"
             name="preferredSubject"
             required
+          />
+
+          <Input
+            defaultValue={eoIProfile?.wasMentor ?? ""}
+            label="Was previously a mentor?"
+            name="wasMentor"
+            required
+          />
+
+          <Input
+            defaultValue={eoIProfile?.linkedInProfile ?? ""}
+            label="LinkedIn profile"
+            name="linkedInProfile"
           />
 
           <Radio

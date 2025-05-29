@@ -144,6 +144,7 @@ export async function importSpreadsheetMentorsAsync(
                 : "Not specified",
               volunteerExperience: "Not specified",
               role: uniqueUser["Role(s)"] ? uniqueUser["Role(s)"] : "",
+              wasMentor: "",
             },
           },
           approvalbyMRC:

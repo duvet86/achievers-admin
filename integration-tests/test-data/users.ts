@@ -67,6 +67,8 @@ export async function createUsersAsync(
               comment: "I am ready to rock",
               aboutMe:
                 "I have a lot of energy and I want to share it with everyone",
+              wasMentor: "no",
+              linkedInProfile: "linkedInProfile",
               preferredSubject: "Math",
               createdAt: new Date(),
               updatedAt: new Date(),
@@ -199,6 +201,7 @@ export async function createUsersAsync(
             comment: "I am ready to rock",
             aboutMe:
               "I have a lot of energy and I want to share it with everyone",
+            wasMentor: "Yes",
             createdAt: new Date(),
             updatedAt: new Date(),
           },

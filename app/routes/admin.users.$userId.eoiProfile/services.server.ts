@@ -12,6 +12,8 @@ export interface EoiUpdateCommand {
   isOver18: boolean;
   comment: string;
   aboutMe: string | null;
+  linkedInProfile: string | null;
+  wasMentor: string;
 }
 
 export async function getUserByIdAsync(id: number) {
