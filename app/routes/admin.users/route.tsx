@@ -259,6 +259,7 @@ export default function Index({
                     mobile,
                     isAnyChecksExpired,
                     isReminderSent,
+                    endDate,
                   },
                   index,
                 ) => (
@@ -271,7 +272,15 @@ export default function Index({
                     <td>{fullName}</td>
                     <td>{chapterName}</td>
                     <td>{mobile}</td>
-                    <td>
+                    <td
+                      data-testid={
+                        endDate !== null
+                          ? "archived"
+                          : checksCompleted === 8
+                            ? "completed"
+                            : ""
+                      }
+                    >
                       <div
                         className={classNames("flex items-center gap-4", {
                           "text-success": checksCompleted === 8,

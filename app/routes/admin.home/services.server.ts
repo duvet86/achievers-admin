@@ -68,7 +68,7 @@ export async function getIncompleteMentorsAsync() {
           pc.reminderSentAt policeCheckReminderSentAt,
           wcc.expiryDate wwccheckExpiryDate,
           wcc.reminderSentAt wwccheckReminderSent,
-          (SELECT COUNT(r.userId) FROM achievers.Reference r WHERE r.userId = u.id GROUP BY r.userId) as count,
+          (SELECT COUNT(r.userId) FROM Reference r WHERE r.userId = u.id GROUP BY r.userId) as count,
           ap.id approvalbymrcId,
           p.id eoiprofileId,
           pc.id policecheckId,
@@ -76,14 +76,14 @@ export async function getIncompleteMentorsAsync() {
           wc.id welcomecallId,
           i.id inductionId,
           c.id chapterId
-        FROM achievers.User u
-        INNER JOIN achievers.Chapter c ON c.id = u.chapterId
-        LEFT JOIN achievers.ApprovalbyMRC ap ON ap.userId = u.id
-        LEFT JOIN achievers.EoIProfile p ON p.userId = u.id
-        LEFT JOIN achievers.PoliceCheck pc ON pc.userId = u.id
-        LEFT JOIN achievers.WWCCheck wcc ON wcc.userId = u.id
-        LEFT JOIN achievers.WelcomeCall wc ON wc.userId = u.id
-        LEFT JOIN achievers.Induction i ON i.userId = u.id
+        FROM User u
+        INNER JOIN Chapter c ON c.id = u.chapterId
+        LEFT JOIN ApprovalbyMRC ap ON ap.userId = u.id
+        LEFT JOIN EoIProfile p ON p.userId = u.id
+        LEFT JOIN PoliceCheck pc ON pc.userId = u.id
+        LEFT JOIN WWCCheck wcc ON wcc.userId = u.id
+        LEFT JOIN WelcomeCall wc ON wc.userId = u.id
+        LEFT JOIN Induction i ON i.userId = u.id
     ) as s
     WHERE endDate IS NULL
       AND (approvalbymrcId IS NULL 

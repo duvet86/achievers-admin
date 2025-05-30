@@ -88,7 +88,7 @@ test.describe("Admin", () => {
 
     await usersListPage.goToNextPage();
 
-    await usersListPage.expect.toHaveTableRows(9);
+    await usersListPage.expect.toHaveTableRows(10);
   });
 
   test("should import mentors from file", async () => {

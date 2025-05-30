@@ -135,8 +135,8 @@ export async function getStudentsAsync(
     where: {
       chapterId,
       attendedOn: {
-        gte: term.end.utc().format("YYYY-MM-DD"),
-        lte: term.start.utc().format("YYYY-MM-DD"),
+        gte: term.start.utc().toDate(),
+        lte: term.end.utc().toDate(),
       },
     },
     select: {

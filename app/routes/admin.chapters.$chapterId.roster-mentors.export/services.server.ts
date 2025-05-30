@@ -131,8 +131,8 @@ export async function getMentorsAsync(
     where: {
       chapterId,
       attendedOn: {
-        gte: term.end.utc().format("YYYY-MM-DD"),
-        lte: term.start.utc().format("YYYY-MM-DD"),
+        gte: term.end.utc().toDate(),
+        lte: term.start.utc().toDate(),
       },
     },
     select: {

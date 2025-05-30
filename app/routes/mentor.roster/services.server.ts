@@ -80,9 +80,9 @@ export async function getAvailableStudentsForSessionAsync(
   const studentsInSession = await prisma.$queryRaw<{ id: number }[]>`
     SELECT
       s.id
-    FROM achievers.StudentSession ss
-    INNER JOIN achievers.SessionAttendance sa ON sa.StudentSessionId = ss.id
-    INNER JOIN achievers.Student s ON s.id = ss.studentId
+    FROM StudentSession ss
+    INNER JOIN SessionAttendance sa ON sa.StudentSessionId = ss.id
+    INNER JOIN Student s ON s.id = ss.studentId
     WHERE ss.chapterId = ${chapterId}
       AND ss.attendedOn = ${attendedOnConverted}
       AND s.endDate IS NULL
@@ -188,8 +188,8 @@ export async function getMentorSessionsLookupAsync(
   const myPartners = await prisma.$queryRaw<{ userId: number }[]>`
     SELECT
       b.userId
-    FROM achievers.MentorToStudentAssignement a
-    INNER JOIN achievers.MentorToStudentAssignement b ON b.studentId = a.studentId
+    FROM MentorToStudentAssignement a
+    INNER JOIN MentorToStudentAssignement b ON b.studentId = a.studentId
     WHERE a.userId = ${mentorId}`;
 
   const myPartnersMentorSessions = await prisma.mentorSession.findMany({
