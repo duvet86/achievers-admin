@@ -278,12 +278,16 @@ export default function Index({
                   const isCancelled = session?.isCancelled === 1;
                   const completedOn = session?.completedOn;
 
+                  const isUnavailable =
+                    !isCancelled && session?.status === "UNAVAILABLE";
+
                   const to = sessionId
                     ? completedOn
                       ? `/admin/sessions/${sessionId}/report`
                       : `/admin/sessions/${sessionId}`
-                    : `/admin/chapters/${chapterId}/roster-students/${studentId}/attended-on/${attendedOn}/new`;
-
+                    : session?.studentSessionId
+                      ? `/admin/chapters/${chapterId}/roster-students/student-sessions/${session.studentSessionId}`
+                      : `/admin/chapters/${chapterId}/roster-students/${studentId}/attended-on/${attendedOn}/new`;
                   return (
                     <td key={index} className="border-r border-gray-300">
                       <div
@@ -304,10 +308,17 @@ export default function Index({
                         )}
                         <StateLink
                           to={to}
-                          className="btn btn-ghost btn-block justify-between truncate font-bold"
+                          className={classNames(
+                            "btn btn-ghost btn-block justify-between truncate font-bold",
+                            {
+                              "text-error": isUnavailable,
+                            },
+                          )}
                         >
                           <span className="flex-1">
-                            {session?.mentorFullName}
+                            {isUnavailable
+                              ? "Unavailable"
+                              : session?.mentorFullName}
                           </span>
                           <NavArrowRight />
                         </StateLink>

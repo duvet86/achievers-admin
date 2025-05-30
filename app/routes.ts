@@ -97,8 +97,22 @@ export default [
           },
         ),
         route(
+          ":chapterId/roster-students/:studentId/attended-on/:attendedOn/unavailable",
+          "routes/admin.chapters.$chapterId.roster-students.$studentId.attended-on.$attendedOn.unavailable/route.tsx",
+          {
+            index: true,
+          },
+        ),
+        route(
           ":chapterId/roster-students/export",
           "routes/admin.chapters.$chapterId.roster-students.export/route.tsx",
+          {
+            index: true,
+          },
+        ),
+        route(
+          ":chapterId/roster-students/student-sessions/:studentSessionId",
+          "routes/admin.chapters.$chapterId.roster-students.student-sessions.$studentSessionId/route.tsx",
           {
             index: true,
           },

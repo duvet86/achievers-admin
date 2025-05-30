@@ -324,7 +324,6 @@ export default function Index({
                             Report <Check className="h-4 w-4" />
                           </div>
                         )}
-
                         <StateLink
                           to={to}
                           className={classNames(

@@ -1,11 +1,12 @@
 import type { Route } from "./+types/route";
 
-import { redirect } from "react-router";
+import { Link, redirect } from "react-router";
 import { Form } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
+import { FloppyDiskArrowIn, UserXmark, Xmark } from "iconoir-react";
 
-import { Title, SubmitFormButton, SelectSearch } from "~/components";
+import { Title, SelectSearch } from "~/components";
 
 import {
   createSessionAsync,
@@ -14,7 +15,6 @@ import {
   getStudentByIdAsync,
   getStudentSessionByDateAsync,
 } from "./services.server";
-import { Xmark } from "iconoir-react";
 
 export async function loader({ params, request }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -78,6 +78,7 @@ export async function action({ params, request }: Route.ActionArgs) {
 }
 
 export default function Index({
+  params,
   loaderData: { attendedOnLabel, chapter, student, mentors },
 }: Route.ComponentProps) {
   return (
@@ -109,13 +110,24 @@ export default function Index({
               showClearButton
             />
 
-            <SubmitFormButton />
+            <button className="btn btn-primary w-48 gap-2" type="submit">
+              <FloppyDiskArrowIn />
+              Save
+            </button>
           </div>
         </div>
 
         <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="w-72 font-bold">Student</div>
           <div className="flex-1">{student.fullName}</div>
+
+          <Link
+            className="btn btn-error w-full sm:w-48"
+            to={`/admin/chapters/${params.chapterId}/roster-students/${params.studentId}/attended-on/${params.attendedOn}/unavailable`}
+          >
+            <UserXmark />
+            Mark as unavailable
+          </Link>
         </div>
 
         <div className="flex items-center gap-2 border-b border-gray-300 p-2">
