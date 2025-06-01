@@ -5,7 +5,7 @@ import { Check } from "iconoir-react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
-import { Message, Textarea, Title } from "~/components";
+import { Textarea, Title } from "~/components";
 
 import {
   getStudentByIdAsync,
@@ -55,35 +55,30 @@ export async function action({ request, params }: Route.ActionArgs) {
     throw new Error();
   }
 
-  await createStudentSessionAsync({
+  const studentSession = await createStudentSessionAsync({
     chapterId: Number(params.chapterId),
     studentId: Number(params.studentId),
     attendedOn: params.attendedOn,
     reason,
   });
 
-  return {
-    successMessage: "Success",
-  };
+  return redirect(
+    `/admin/chapters/${params.chapterId}/roster-students/student-sessions/${studentSession.id}`,
+  );
 }
 
 export default function Index({
   params,
   loaderData: { student, studentSession },
-  actionData,
 }: Route.ComponentProps) {
   return (
     <>
-      <div className="flex flex-col gap-6 sm:flex-row">
-        <Title>
-          Mark student &quot;{student.fullName} &quot; as unavailable for
-          session of &quot;
-          {dayjs(params.attendedOn).format("MMMM D, YYYY")}
-          &quot;
-        </Title>
-
-        <Message key={Date.now()} successMessage={actionData?.successMessage} />
-      </div>
+      <Title>
+        Mark student &quot;{student.fullName} &quot; as unavailable for session
+        of &quot;
+        {dayjs(params.attendedOn).format("MMMM D, YYYY")}
+        &quot;
+      </Title>
 
       <Form method="post">
         <fieldset>

@@ -1,13 +1,14 @@
 import type { Route } from "./+types/route";
 
-import { useSubmit } from "react-router";
+import { Form, redirect } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import { BookmarkBook, InfoCircle } from "iconoir-react";
 
-import { Message, Textarea, Title } from "~/components";
+import { Textarea, Title } from "~/components";
 
 import {
+  deleteStudentSessionAsync,
   getChapterByIdAsync,
   getStudentSessionByIdAsync,
 } from "./services.server";
@@ -28,48 +29,41 @@ export async function loader({ params }: Route.LoaderArgs) {
   };
 }
 
-export function action({ params }: Route.ActionArgs) {
+export async function action({ params }: Route.ActionArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.studentSessionId, "studentSessionId not found");
 
-  // const formData = await request.formData();
+  const studentSession = await deleteStudentSessionAsync(
+    Number(params.studentSessionId),
+  );
 
-  return {
-    successMessage: "Session updated successfully",
-  };
+  return redirect(
+    `/admin/chapters/${studentSession.chapterId}/roster-students/${studentSession.studentId}/attended-on/${dayjs(studentSession.attendedOn).format("YYYY-MM-DD")}/new`,
+  );
 }
 
 export default function Index({
   loaderData: { attendedOnLabel, chapter, session },
-  actionData,
 }: Route.ComponentProps) {
-  const submit = useSubmit();
-
-  const handleRestoreUnavailableSession = () => {
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     if (!confirm(`Are you sure?`)) {
+      event.preventDefault();
       return;
     }
-
-    const formData = new FormData();
-    formData.append("action", "restore");
-
-    void submit(formData, {
-      method: "POST",
-    });
   };
 
   return (
     <>
-      <div className="flex flex-col gap-6 sm:flex-row">
-        <Title>
-          Session of &quot;
-          {attendedOnLabel}&quot;
-        </Title>
+      <Title>
+        Session of &quot;
+        {attendedOnLabel}&quot;
+      </Title>
 
-        <Message key={Date.now()} successMessage={actionData?.successMessage} />
-      </div>
-
-      <div className="my-8 flex flex-col gap-6">
+      <Form
+        method="POST"
+        className="my-8 flex flex-col gap-6"
+        onSubmit={handleFormSubmit}
+      >
         <div className="flex items-center justify-between gap-2 border-b border-gray-300 p-2">
           <div className="w-72 font-bold">Chapter</div>
           <div className="flex-1">{chapter.name}</div>
@@ -95,8 +89,7 @@ export default function Index({
 
               <button
                 className="btn btn-secondary w-full sm:w-48"
-                type="button"
-                onClick={handleRestoreUnavailableSession}
+                type="submit"
               >
                 <BookmarkBook />
                 Restore
@@ -112,25 +105,7 @@ export default function Index({
             />
           </>
         )}
-
-        {session.status === "AVAILABLE" && (
-          <div className="flex items-center justify-between gap-4">
-            <p className="alert alert-error w-full">
-              <InfoCircle />
-              Student is marked as available for this session
-            </p>
-
-            <button
-              className="btn btn-secondary w-full sm:w-48"
-              type="button"
-              onClick={handleRestoreUnavailableSession}
-            >
-              <BookmarkBook />
-              Mark unavailable
-            </button>
-          </div>
-        )}
-      </div>
+      </Form>
     </>
   );
 }

@@ -37,3 +37,17 @@ export async function getStudentSessionByIdAsync(studentSessionId: number) {
     },
   });
 }
+
+export async function deleteStudentSessionAsync(studentSessionId: number) {
+  return await prisma.studentSession.delete({
+    where: {
+      id: studentSessionId,
+    },
+    select: {
+      id: true,
+      chapterId: true,
+      studentId: true,
+      attendedOn: true,
+    },
+  });
+}
