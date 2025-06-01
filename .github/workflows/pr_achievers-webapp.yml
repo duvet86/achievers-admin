@@ -11,6 +11,7 @@ on:
 env:
   TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
   TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+  TEST_MENTOR_AZURE_ID: ${{ secrets.TEST_MENTOR_AZURE_ID }}
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
   CLIENT_ID: ${{ secrets.CLIENT_ID }}
   CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
@@ -21,6 +22,7 @@ env:
   SLOT_NAME: "stg"
   RESOURCE_GROUP: "achievers-rg"
   AZURE_WEBAPP_PACKAGE_PATH: "."
+  HUSKY: 0
 
 jobs:
   e2etests:
@@ -86,6 +88,7 @@ jobs:
           path: |
             playwright-report/
             coverage/
+            test-results/
           retention-days: 1
 
   migrate:
@@ -94,6 +97,7 @@ jobs:
     needs: e2etests
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL_STG }}
+      ENABLE_SSL: "true"
 
     steps:
       - name: Checkout
@@ -125,15 +129,15 @@ jobs:
           node-version: "lts/*"
           cache: "npm"
 
-      - name: npm install, build, and test
+      - name: npm install and build
         run: |
           npm install
           npx prisma generate
           npm run build
-          npm prune --production
+          npm prune --omit=dev
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./node_modules ./build ./public ./server.mjs ./prisma ./server-utils ./package.json -r
+        run: zip release.zip ./DigiCertGlobalRootCA.crt.pem ./node_modules ./build ./public ./server.mjs ./prisma ./server-utils ./package.json -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
