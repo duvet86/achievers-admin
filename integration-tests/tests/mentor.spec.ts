@@ -18,7 +18,7 @@ test.describe("Mentor Home Page", () => {
   test.beforeEach(async ({ page }) => {
     await page.clock.setFixedTime(new Date("2024-11-24T00:00:00.000Z"));
 
-    await seedDataAsync();
+    await seedDataAsync(true);
 
     adminLayoutPage = new AdminLayoutPage(page);
     mentorLayoutPage = new MentorLayoutPage(page);
@@ -37,12 +37,6 @@ test.describe("Mentor Home Page", () => {
   test("should have home page", async () => {
     await mentorHomePage.expect.toHaveHeadings();
 
-    await mentorHomePage.goToRosterPage();
-
-    await mentorRosterPage.expect.toHaveHeading();
-  });
-
-  test("should have roster page", async () => {
     await mentorHomePage.goToRosterPage();
 
     await mentorRosterPage.expect.toHaveHeading();

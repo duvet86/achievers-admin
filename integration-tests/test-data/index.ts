@@ -11,7 +11,7 @@ export const CHAPTER_DATA: Record<string, string> = {
   Butler: "3",
 };
 
-export async function seedDataAsync() {
+export async function seedDataAsync(isMentor = false) {
   const prisma = new PrismaClient();
 
   try {
@@ -22,7 +22,9 @@ export async function seedDataAsync() {
 
     await assignMentorsToStudentsAsync(prisma);
 
-    await mentorAsync(prisma);
+    if (isMentor) {
+      await mentorAsync(prisma);
+    }
   } catch (e) {
     console.log(e);
   } finally {
