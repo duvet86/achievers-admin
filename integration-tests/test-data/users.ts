@@ -20,6 +20,7 @@ export async function createUsersAsync(
     await tx.wWCCheck.deleteMany();
     await tx.mentorAttendance.deleteMany();
     await tx.goal.deleteMany();
+    await tx.mentorShareInfo.deleteMany();
 
     await tx.user.deleteMany();
     await tx.$queryRaw`ALTER TABLE User AUTO_INCREMENT = 1;`;

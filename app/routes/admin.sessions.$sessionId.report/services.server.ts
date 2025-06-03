@@ -55,5 +55,42 @@ export async function saveReportAsync(
       signedOffOn: isSignedOff ? new Date() : null,
       signedOffByAzureId: isSignedOff ? userAzureId : null,
     },
+    select: {
+      id: true,
+      attendedOn: true,
+      mentorSession: {
+        select: {
+          mentor: {
+            select: {
+              id: true,
+              fullName: true,
+              email: true,
+            },
+          },
+        },
+      },
+      studentSession: {
+        select: {
+          student: {
+            select: {
+              id: true,
+              fullName: true,
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+export async function getSignOffUserInfoAsync(azureId: string) {
+  return await prisma.user.findUniqueOrThrow({
+    where: {
+      azureADId: azureId,
+    },
+    select: {
+      id: true,
+      fullName: true,
+    },
   });
 }

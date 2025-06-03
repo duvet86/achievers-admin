@@ -9,6 +9,7 @@ import invariant from "tiny-invariant";
 import { DesignNib, NavArrowLeft, WarningTriangle, Xmark } from "iconoir-react";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
+
 import { getLoggedUserInfoAsync } from "~/services/.server";
 import { isEditorEmpty } from "~/services";
 import { Editor, Message, SubTitle, Title } from "~/components";
@@ -39,12 +40,36 @@ export async function action({ request, params }: Route.ActionArgs) {
   const reportFeedback = bodyData.reportFeedback;
   const isSignedOff = bodyData.isSignedOff;
 
-  await saveReportAsync(
+  const session = await saveReportAsync(
     Number(params.sessionId),
     reportFeedback,
     isSignedOff,
     loggedUser.oid,
   );
+
+  if (isSignedOff) {
+    const SIGN_OFF_NOTIFICATION_LOGIC_APP_URL =
+      process.env.SIGN_OFF_NOTIFICATION_LOGIC_APP_URL!;
+
+    const reponse = await fetch(SIGN_OFF_NOTIFICATION_LOGIC_APP_URL, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: session.mentorSession.mentor.email,
+        mentorId: session.mentorSession.mentor.id,
+        mentorName: session.mentorSession.mentor.fullName,
+        studentId: session.studentSession.student.id,
+        studentName: session.studentSession.student.fullName,
+        attendedOn: dayjs(session.attendedOn).format("DD-MM-YYYY"),
+      }),
+    });
+
+    if (!reponse.ok) {
+      throw new Error("Failed to send signoff notification.");
+    }
+  }
 
   return {
     successMessage: "Report saved successfully",

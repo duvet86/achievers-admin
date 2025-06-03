@@ -3,6 +3,7 @@ import type { Route } from "./+types/auth.microsoft.callback";
 import { redirect } from "react-router";
 
 import { trackException } from "server-utils/azure-logger";
+import { returnToCookie } from "~/services/.server";
 
 import {
   authenticator_dev,
@@ -18,7 +19,12 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     );
     session.set("user", user);
 
-    throw redirect("/", {
+    const returnTo =
+      ((await returnToCookie.parse(request.headers.get("Cookie"))) as
+        | string
+        | null) ?? "/";
+
+    return redirect(returnTo, {
       headers: {
         "Set-Cookie": await sessionStorage_dev.commitSession(session),
       },

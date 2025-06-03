@@ -18,8 +18,12 @@ export async function loader({ request }: Route.LoaderArgs) {
     return redirect(`/chapters/${chapterId}/attendances`);
   }
 
+  const url = new URL(request.url);
+
   if (loggedUser.isAdmin) {
-    return redirect("/admin/home");
+    const returnTo = url.searchParams.get("post_login_redirect_uri");
+
+    return redirect(returnTo ?? "/admin/home");
   }
 
   const { volunteerAgreementSignedOn } = await getUserByAzureADIdAsync(
@@ -31,7 +35,9 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 
   if (loggedUser.isMentor) {
-    return redirect("/mentor/home");
+    const returnTo = url.searchParams.get("post_login_redirect_uri");
+
+    return redirect(returnTo ?? "/mentor/home");
   }
 
   trackException(

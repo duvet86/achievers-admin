@@ -2,7 +2,7 @@ import type { RawRuleOf } from "@casl/ability";
 import type { TokenInfo } from "../models";
 import type { Subject, AppAbility } from "./permissions.server";
 
-import { redirect } from "react-router";
+import { createCookie, redirect } from "react-router";
 
 import { getCurrentHost, parseJwt } from "../utils";
 
@@ -44,7 +44,24 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
     if (user === undefined) {
       await sessionStorage_dev.destroySession(session);
 
-      return await authenticator_dev.authenticate("microsoft", request);
+      try {
+        return await authenticator_dev.authenticate("microsoft", request);
+      } catch (error) {
+        const returnTo = new URL(request.url).searchParams.get("returnTo");
+
+        if (!returnTo) {
+          throw error;
+        }
+
+        if (error instanceof Response && isRedirect(error)) {
+          error.headers.append(
+            "Set-Cookie",
+            await returnToCookie.serialize(returnTo),
+          );
+        }
+
+        throw error;
+      }
     }
 
     return user;
@@ -208,4 +225,17 @@ export async function isLoggedUserBlockedAsync(
   const ability = getPermissionsAbility(loggedUser.roles);
 
   return ability.cannot("manage", subject);
+}
+
+export const returnToCookie = createCookie("return-to", {
+  path: "/",
+  httpOnly: true,
+  sameSite: "lax",
+  maxAge: 60, // 1 minute because it makes no sense to keep it for a long time
+  secure: process.env.NODE_ENV === "production",
+});
+
+function isRedirect(response: Response) {
+  if (response.status < 300 || response.status >= 400) return false;
+  return response.headers.has("Location");
 }
