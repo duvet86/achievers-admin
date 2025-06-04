@@ -57,6 +57,7 @@ export async function action({ request, params }: Route.ActionArgs) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        sessionId: session.id,
         email: session.mentorSession.mentor.email,
         mentorId: session.mentorSession.mentor.id,
         mentorName: session.mentorSession.mentor.fullName,
