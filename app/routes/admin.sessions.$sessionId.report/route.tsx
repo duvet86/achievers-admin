@@ -10,7 +10,7 @@ import { DesignNib, NavArrowLeft, WarningTriangle, Xmark } from "iconoir-react";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
 
-import { getLoggedUserInfoAsync } from "~/services/.server";
+import { getLoggedUserInfoAsync, trackException } from "~/services/.server";
 import { isEditorEmpty } from "~/services";
 import { Editor, Message, SubTitle, Title } from "~/components";
 
@@ -68,7 +68,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     });
 
     if (!reponse.ok) {
-      throw new Error("Failed to send signoff notification.");
+      trackException(new Error("Failed to send signoff notification."));
     }
   }
 

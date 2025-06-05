@@ -82,15 +82,3 @@ export async function saveReportAsync(
     },
   });
 }
-
-export async function getSignOffUserInfoAsync(azureId: string) {
-  return await prisma.user.findUniqueOrThrow({
-    where: {
-      azureADId: azureId,
-    },
-    select: {
-      id: true,
-      fullName: true,
-    },
-  });
-}
