@@ -1,5 +1,5 @@
 /*eslint-env node*/
-import { initAppInsightsLoggerAsync, mockTime } from "./server-utils/index.js";
+import { initAppInsightsLogger, mockTime } from "./server-utils/index.js";
 
 import express from "express";
 import compression from "compression";
@@ -7,7 +7,7 @@ import morgan from "morgan";
 
 import sourceMapSupport from "source-map-support";
 
-await initAppInsightsLoggerAsync();
+initAppInsightsLogger();
 sourceMapSupport.install();
 
 if (process.env.CI) {

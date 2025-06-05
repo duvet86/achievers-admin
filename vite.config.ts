@@ -1,3 +1,5 @@
+import path from "node:path";
+
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -27,6 +29,14 @@ export default defineConfig(({ isSsrBuild }) => ({
         minThreads: process.env.CI ? 1 : undefined,
         maxThreads: process.env.CI ? 1 : undefined,
       },
+    },
+  },
+  resolve: {
+    alias: {
+      "@opentelemetry/api": path.resolve(
+        __dirname,
+        "./node_modules/@opentelemetry/api/build/esnext/index.js",
+      ),
     },
   },
 }));
