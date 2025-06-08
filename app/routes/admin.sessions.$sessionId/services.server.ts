@@ -1,3 +1,4 @@
+import { SessionRepository } from "@infrastructure/SessionRepository";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -57,37 +58,43 @@ export async function getSessionByIdAsync(sessionId: number) {
 }
 
 export async function removeSessionAsync(sessionId: number) {
-  const session = await prisma.sessionAttendance.findUniqueOrThrow({
-    where: {
-      id: sessionId,
-    },
-    select: {
-      id: true,
-      completedOn: true,
-    },
-  });
+  // const session = await prisma.sessionAttendance.findUniqueOrThrow({
+  //   where: {
+  //     id: sessionId,
+  //   },
+  //   select: {
+  //     id: true,
+  //     completedOn: true,
+  //   },
+  // });
 
-  if (session.completedOn !== null) {
+  const sessionRepo = new SessionRepository();
+
+  const sessionEntity = await sessionRepo.findByIdAsync(sessionId);
+
+  if (sessionEntity.isSessionFinalised()) {
     throw new Error(
       "Cannot remove session that has a report and it is completed.",
     );
   }
 
-  return await prisma.sessionAttendance.delete({
-    where: {
-      id: sessionId,
-    },
-    select: {
-      id: true,
-      chapterId: true,
-      attendedOn: true,
-      studentSession: {
-        select: {
-          studentId: true,
-        },
-      },
-    },
-  });
+  await sessionRepo.deleteAsync(sessionId);
+
+  // return await prisma.sessionAttendance.delete({
+  //   where: {
+  //     id: sessionId,
+  //   },
+  //   select: {
+  //     id: true,
+  //     chapterId: true,
+  //     attendedOn: true,
+  //     studentSession: {
+  //       select: {
+  //         studentId: true,
+  //       },
+  //     },
+  //   },
+  // });
 }
 
 export function getNotificationSentOnFromNow(notificationSentOn: Date | null) {

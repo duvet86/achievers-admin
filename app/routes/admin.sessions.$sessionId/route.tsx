@@ -20,7 +20,7 @@ import {
   getChapterByIdAsync,
   getNotificationSentOnFromNow,
   getSessionByIdAsync,
-  removeSessionAsync,
+  // removeSessionAsync,
 } from "./services.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -47,15 +47,15 @@ export async function loader({ params }: Route.LoaderArgs) {
 export async function action({ params, request }: Route.ActionArgs) {
   invariant(params.sessionId, "sessionId not found");
 
-  if (request.method === "DELETE") {
-    const session = await removeSessionAsync(Number(params.sessionId));
+  // if (request.method === "DELETE") {
+  //   const session = await removeSessionAsync(Number(params.sessionId));
 
-    const url = new URL(request.url);
+  //   const url = new URL(request.url);
 
-    return redirect(
-      `/admin/chapters/${session.chapterId}/roster-students/${session.studentSession.studentId}/attended-on/${dayjs(session.attendedOn).format("YYYY-MM-DD")}/new?${url.searchParams}`,
-    );
-  }
+  //   // return redirect(
+  //   //   `/admin/chapters/${session.chapterId}/roster-students/${session.studentSession.studentId}/attended-on/${dayjs(session.attendedOn).format("YYYY-MM-DD")}/new?${url.searchParams}`,
+  //   // );
+  // }
 
   if (request.method === "POST") {
     const environment = getEnvironment(request);

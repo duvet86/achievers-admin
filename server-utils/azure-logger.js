@@ -1,6 +1,6 @@
 /*eslint-env node*/
-import { useAzureMonitor } from "@azure/monitor-opentelemetry";
 import { trace } from "@opentelemetry/api";
+import { useAzureMonitor } from "@azure/monitor-opentelemetry";
 import { registerInstrumentations } from "@opentelemetry/instrumentation";
 import { ExpressInstrumentation } from "@opentelemetry/instrumentation-express";
 

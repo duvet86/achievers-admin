@@ -51,7 +51,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     const SIGN_OFF_NOTIFICATION_LOGIC_APP_URL =
       process.env.SIGN_OFF_NOTIFICATION_LOGIC_APP_URL!;
 
-    const reponse = await fetch(SIGN_OFF_NOTIFICATION_LOGIC_APP_URL, {
+    const response = await fetch(SIGN_OFF_NOTIFICATION_LOGIC_APP_URL, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -67,13 +67,13 @@ export async function action({ request, params }: Route.ActionArgs) {
       }),
     });
 
-    if (!reponse.ok) {
+    if (!response.ok) {
       trackException(new Error("Failed to send signoff notification."));
     }
   }
 
   return {
-    successMessage: "Report saved successfully",
+    successMessage: "Changes applied successfully",
   };
 }
 
@@ -135,7 +135,7 @@ export default function Index({
 
       <div className="relative flex h-full flex-col">
         {isLoading && (
-          <div className="bg-opacity-50 absolute z-30 flex h-full w-full justify-center bg-slate-300">
+          <div className="absolute z-30 flex h-full w-full justify-center bg-slate-300 bg-opacity-50">
             <span className="loading loading-spinner loading-lg text-primary"></span>
           </div>
         )}
