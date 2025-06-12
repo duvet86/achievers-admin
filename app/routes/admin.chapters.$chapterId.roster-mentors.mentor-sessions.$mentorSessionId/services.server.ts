@@ -58,9 +58,12 @@ export async function getMentorSessionByIdAsync(mentorSessionId: number) {
 }
 
 export async function removeMentorSessionAsync(mentorSessionId: number) {
-  return await prisma.mentorSession.delete({
+  return await prisma.mentorSession.update({
     where: {
       id: mentorSessionId,
+    },
+    data: {
+      status: "AVAILABLE",
     },
     select: {
       id: true,

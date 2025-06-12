@@ -37,6 +37,7 @@ export interface SpeadsheetUser {
 export interface SpeadsheetStudent {
   "First Name": string;
   "Last Name": string;
+  Chapter: string;
   Gender: Gender;
   "Approval to publish photographs?": BooleanAnswer | undefined;
   "Start Date": Date | undefined;

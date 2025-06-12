@@ -1,7 +1,7 @@
 import { prisma } from "~/db.server";
 
 export async function getSessionAsync(sessionAttendanceId: number) {
-  return await prisma.sessionAttendance.findUniqueOrThrow({
+  return await prisma.sessionAttendance.findUnique({
     where: {
       id: sessionAttendanceId,
       hasReport: true,

@@ -18,6 +18,11 @@ export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.sessionId, "sessionId not found");
 
   const session = await getSessionAsync(Number(params.sessionId));
+  if (session === null) {
+    throw new Response("Not Found", {
+      status: 404,
+    });
+  }
 
   return {
     session,

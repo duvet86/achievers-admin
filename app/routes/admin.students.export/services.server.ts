@@ -10,12 +10,14 @@ export async function exportStudentsToSpreadsheetAsync() {
     include: {
       guardian: true,
       studentTeacher: true,
+      chapter: true,
     },
   });
 
   const speadsheetMentors = students.map<SpeadsheetStudent>((s) => ({
     "First Name": s.firstName,
     "Last Name": s.lastName,
+    Chapter: s.chapter.name,
     "Approval to publish photographs?":
       s.hasApprovedToPublishPhotos === true ? "Yes" : "No",
     "Start Date": s.startDate ?? undefined,
