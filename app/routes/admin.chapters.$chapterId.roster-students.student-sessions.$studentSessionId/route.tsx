@@ -15,7 +15,13 @@ import {
   Xmark,
 } from "iconoir-react";
 
-import { Message, SelectSearch, StateLink, Title } from "~/components";
+import {
+  Message,
+  SelectSearch,
+  StateLink,
+  Textarea,
+  Title,
+} from "~/components";
 
 import {
   addMentorToSessionAsync,
@@ -30,17 +36,17 @@ export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.studentSessionId, "studentSessionId not found");
 
-  const [chapter, session] = await Promise.all([
+  const [chapter, studentSession] = await Promise.all([
     getChapterByIdAsync(Number(params.chapterId)),
     getStudentSessionByIdAsync(Number(params.studentSessionId)),
   ]);
 
   const mentors = await getMentorsForStudentAsync(
-    session.chapterId,
-    session.student.id,
+    studentSession.chapterId,
+    studentSession.student.id,
   );
 
-  const mentorIdsInSession = session.sessionAttendance.map(
+  const mentorIdsInSession = studentSession.sessionAttendance.map(
     ({
       mentorSession: {
         mentor: { id },
@@ -50,8 +56,8 @@ export async function loader({ params }: Route.LoaderArgs) {
 
   return {
     chapter,
-    session,
-    attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
+    studentSession,
+    attendedOnLabel: dayjs(studentSession.attendedOn).format("MMMM D, YYYY"),
     mentors: mentors
       .filter(({ id }) => !mentorIdsInSession.includes(id))
       .map(({ id, fullName }) => ({
@@ -115,7 +121,7 @@ export async function action({ params, request }: Route.ActionArgs) {
 }
 
 export default function Index({
-  loaderData: { attendedOnLabel, chapter, session, mentors },
+  loaderData: { attendedOnLabel, chapter, studentSession, mentors },
   actionData,
 }: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
@@ -151,34 +157,43 @@ export default function Index({
 
         <div className="flex items-center justify-between gap-2 border-b border-gray-300 p-2">
           <div className="font-bold sm:w-72">Student</div>
-          <div className="sm:flex-1">{session.student.fullName}</div>
+          <div className="sm:flex-1">{studentSession.student.fullName}</div>
         </div>
 
-        {session.status === "UNAVAILABLE" ? (
-          <Form
-            method="POST"
-            onSubmit={handleFormSubmit}
-            className="flex items-center justify-between gap-4"
-          >
-            <p className="alert alert-error w-full">
-              <InfoCircle />
-              Student is marked as unavailable for this session
-            </p>
-
-            <input type="hidden" name="status" value="AVAILABLE" />
-
-            <button
-              className="btn btn-secondary w-full sm:w-48"
-              type="submit"
-              name="action"
-              value="restoreAvailability"
+        {studentSession.status === "UNAVAILABLE" ? (
+          <div>
+            <Form
+              method="POST"
+              onSubmit={handleFormSubmit}
+              className="flex items-center justify-between gap-4"
             >
-              <BookmarkBook />
-              Restore
-            </button>
-          </Form>
+              <p className="alert alert-error w-full">
+                <InfoCircle />
+                Student is marked as unavailable for this session
+              </p>
+
+              <input type="hidden" name="status" value="AVAILABLE" />
+
+              <button
+                className="btn btn-secondary w-full sm:w-48"
+                type="submit"
+                name="action"
+                value="restoreAvailability"
+              >
+                <BookmarkBook />
+                Restore
+              </button>
+            </Form>
+
+            <div className="items-centerd mt-4 flex gap-4 p-2">
+              <div className="text-error font-bold sm:w-72">Reason</div>
+              <div className="sm:flex-1">
+                <Textarea defaultValue={studentSession.reason!} readOnly />
+              </div>
+            </div>
+          </div>
         ) : (
-          session.sessionAttendance.length === 0 && (
+          studentSession.sessionAttendance.length === 0 && (
             <Form
               method="POST"
               onSubmit={handleFormSubmit}
@@ -204,11 +219,11 @@ export default function Index({
           )
         )}
 
-        {session.status !== "UNAVAILABLE" && (
+        {studentSession.status !== "UNAVAILABLE" && (
           <>
             <Form method="POST" className="flex w-full items-end gap-4">
               <SelectSearch
-                key={session.sessionAttendance.length}
+                key={studentSession.sessionAttendance.length}
                 name="mentorId"
                 placeholder="Select a mentor"
                 options={mentors}
@@ -246,7 +261,7 @@ export default function Index({
                   </tr>
                 </thead>
                 <tbody>
-                  {session.sessionAttendance.map(
+                  {studentSession.sessionAttendance.map(
                     ({
                       id,
                       completedOn,
