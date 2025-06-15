@@ -10,7 +10,6 @@ import {
   FloppyDiskArrowIn,
   InfoCircle,
   StatsReport,
-  Trash,
   WarningTriangle,
   Xmark,
 } from "iconoir-react";
@@ -160,7 +159,7 @@ export default function Index({
           <div className="sm:flex-1">{studentSession.student.fullName}</div>
         </div>
 
-        {studentSession.status === "UNAVAILABLE" ? (
+        {studentSession.status === "UNAVAILABLE" && (
           <div>
             <Form
               method="POST"
@@ -192,31 +191,6 @@ export default function Index({
               </div>
             </div>
           </div>
-        ) : (
-          studentSession.sessionAttendance.length === 0 && (
-            <Form
-              method="POST"
-              onSubmit={handleFormSubmit}
-              className="flex items-center gap-4"
-            >
-              <p className="alert alert-info w-full">
-                <InfoCircle />
-                Student is marked as available for this session
-              </p>
-
-              <input type="hidden" name="status" value="UNAVAILABLE" />
-
-              <button
-                className="btn btn-error w-full sm:w-48"
-                type="submit"
-                name="action"
-                value="restoreAvailability"
-              >
-                <Trash />
-                Remove
-              </button>
-            </Form>
-          )
         )}
 
         {studentSession.status !== "UNAVAILABLE" && (

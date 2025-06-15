@@ -276,7 +276,6 @@ export default function Index({
                   let hasReport = false;
                   let isCancelled = false;
                   let label = "";
-                  let textHighlight = false;
                   let textHighlightError = false;
 
                   let to = studentSession?.studentSessionId
@@ -287,25 +286,20 @@ export default function Index({
                     if (studentSession.status === "UNAVAILABLE") {
                       textHighlightError = true;
                       label = "Unavailable";
-                    } else {
-                      if (studentSession.sessions.length === 0) {
-                        textHighlight = true;
-                        label = "Available";
-                      } else if (studentSession.sessions.length === 1) {
-                        const session = studentSession.sessions[0];
-                        hasReport = session.hasReport;
-                        isCancelled = session.isCancelled;
+                    } else if (studentSession.sessions.length === 1) {
+                      const session = studentSession.sessions[0];
+                      hasReport = session.hasReport;
+                      isCancelled = session.isCancelled;
 
-                        label = session.mentorFullName!;
+                      label = session.mentorFullName!;
 
-                        if (isCancelled) {
-                          to = `/admin/sessions/${session.sessionId}`;
-                        } else if (session.completedOn) {
-                          to = `/admin/sessions/${session.sessionId}/report`;
-                        }
-                      } else {
-                        label = `${studentSession.sessions.length} Mentors`;
+                      if (isCancelled) {
+                        to = `/admin/sessions/${session.sessionId}`;
+                      } else if (session.completedOn) {
+                        to = `/admin/sessions/${session.sessionId}/report`;
                       }
+                    } else if (studentSession.sessions.length > 1) {
+                      label = `${studentSession.sessions.length} Mentors`;
                     }
                   }
 
@@ -332,7 +326,6 @@ export default function Index({
                           className={classNames(
                             "btn btn-ghost btn-block justify-between truncate font-bold",
                             {
-                              "text-info": textHighlight,
                               "text-error": textHighlightError,
                             },
                           )}
