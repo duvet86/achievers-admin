@@ -254,7 +254,7 @@ export default function Index({
   return (
     <>
       <div className="flex flex-col gap-10 lg:flex-row">
-        <div className="flex w-full items-center gap-8">
+        <div className="flex w-full items-center justify-between gap-8">
           <Title className={classNames({ "text-error": isCancelled })}>
             Report of &quot;
             {selectedTermDate && dayjs(selectedTermDate).format("DD/MM/YYYY")}
@@ -267,6 +267,14 @@ export default function Index({
               Session has been cancelled
             </p>
           )}
+
+          <StateLink
+            className="btn btn-error w-48 gap-2"
+            to={`/mentor/students/${selectedStudentId}/report-to-admin`}
+          >
+            <WarningTriangle className="hidden h-4 w-4 lg:block" />
+            Report to Admin
+          </StateLink>
         </div>
 
         {isNotMyReport && session && (

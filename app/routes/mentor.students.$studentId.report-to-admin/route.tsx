@@ -3,10 +3,11 @@ import type { Route } from "./+types/route";
 import { Form } from "react-router";
 import invariant from "tiny-invariant";
 
+import { getLoggedUserInfoAsync } from "~/services/.server";
+import { getEnvironment } from "~/services";
 import { SubmitFormButton, SubTitle, Textarea, Title } from "~/components";
 
 import { getStudentAsync, getUserByAzureADIdAsync } from "./services.server";
-import { getLoggedUserInfoAsync } from "~/services/.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.studentId, "studentId not found");
@@ -33,7 +34,15 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const student = await getStudentAsync(Number(params.studentId));
 
-  const reponse = await fetch(REPORT_TO_ADMIN_LOGIC_APP_URL, {
+  const environment = getEnvironment(request);
+
+  if (environment !== "production") {
+    return {
+      message: "Successfully sent message. Thank you.",
+    };
+  }
+
+  const response = await fetch(REPORT_TO_ADMIN_LOGIC_APP_URL, {
     method: "post",
     headers: {
       "Content-Type": "application/json",
@@ -47,7 +56,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     }),
   });
 
-  if (!reponse.ok) {
+  if (!response.ok) {
     throw new Error("Failed to send report to admin.");
   }
 
@@ -67,7 +76,12 @@ export default function Index({
       <Form method="post">
         <SubTitle>Student: {student.fullName}</SubTitle>
 
-        <Textarea name="message" placeholder="Message" required />
+        <p className="mt-4 mb-1 text-sm text-gray-500">
+          If you have any concerns about this student, please report it to the
+          admin.
+        </p>
+
+        <Textarea name="message" required />
 
         <SubmitFormButton
           className="mt-4 justify-between"
