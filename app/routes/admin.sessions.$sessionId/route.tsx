@@ -234,7 +234,7 @@ export default function Index({
           <div className="items-centerd flex gap-4 p-2">
             <div className="text-error font-bold sm:w-72">Cancel reason</div>
             <div className="sm:flex-1">
-              <Textarea readOnly defaultValue={session.cancelledReason!} />
+              <Textarea defaultValue={session.cancelledReason!} readOnly />
             </div>
           </div>
         )}

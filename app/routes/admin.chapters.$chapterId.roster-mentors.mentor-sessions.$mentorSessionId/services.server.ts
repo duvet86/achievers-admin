@@ -1,3 +1,5 @@
+import type { $Enums } from "~/prisma/client";
+
 import { prisma } from "~/db.server";
 
 export interface SessionCommandCreate {
@@ -57,13 +59,35 @@ export async function getMentorSessionByIdAsync(mentorSessionId: number) {
   });
 }
 
-export async function removeMentorSessionAsync(mentorSessionId: number) {
-  return await prisma.mentorSession.update({
+export async function restoreAvailabilityAsync(
+  mentorSessionId: number,
+  status: string,
+) {
+  const sessionCount = await prisma.sessionAttendance.count({
+    where: {
+      mentorSessionId,
+    },
+  });
+
+  if (sessionCount > 0) {
+    return await prisma.mentorSession.update({
+      where: {
+        id: mentorSessionId,
+      },
+      data: {
+        status: status as $Enums.SessionStatus,
+      },
+      select: {
+        id: true,
+        mentorId: true,
+        attendedOn: true,
+      },
+    });
+  }
+
+  return await prisma.mentorSession.delete({
     where: {
       id: mentorSessionId,
-    },
-    data: {
-      status: "AVAILABLE",
     },
     select: {
       id: true,

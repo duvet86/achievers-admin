@@ -280,6 +280,10 @@ export default function Index({
                   let textHighlight = false;
                   let textHighlightError = false;
 
+                  let to = mentorSession?.mentorSessionId
+                    ? `/admin/chapters/${chapterId}/roster-mentors/mentor-sessions/${mentorSession.mentorSessionId}`
+                    : `/admin/chapters/${chapterId}/roster-mentors/${mentorId}/attended-on/${attendedOn}/new`;
+
                   if (mentorSession) {
                     if (mentorSession.status === "UNAVAILABLE") {
                       textHighlightError = true;
@@ -294,17 +298,17 @@ export default function Index({
                         isCancelled = session.isCancelled;
 
                         label = session.studentFullName!;
+
+                        if (isCancelled) {
+                          to = `/admin/sessions/${session.sessionId}`;
+                        } else if (session.completedOn) {
+                          to = `/admin/sessions/${session.sessionId}/report`;
+                        }
                       } else {
                         label = `${mentorSession.sessions.length} Students`;
                       }
                     }
                   }
-
-                  const mentorSessionId = mentorSession?.mentorSessionId;
-
-                  const to = mentorSessionId
-                    ? `/admin/chapters/${chapterId}/roster-mentors/mentor-sessions/${mentorSessionId}`
-                    : `/admin/chapters/${chapterId}/roster-mentors/${mentorId}/attended-on/${attendedOn}/new`;
 
                   return (
                     <td key={attendedOn} className="border-r border-gray-300">

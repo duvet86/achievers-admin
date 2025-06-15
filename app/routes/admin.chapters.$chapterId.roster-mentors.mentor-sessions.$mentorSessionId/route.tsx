@@ -1,6 +1,6 @@
 import type { Route } from "./+types/route";
 
-import { Form, redirect, useSearchParams, useSubmit } from "react-router";
+import { Form, redirect, useSearchParams } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import {
@@ -22,8 +22,8 @@ import {
   getChapterByIdAsync,
   getMentorSessionByIdAsync,
   getStudentsForMentorAsync,
-  removeMentorSessionAsync,
   removeSessionAsync,
+  restoreAvailabilityAsync,
 } from "./services.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -79,10 +79,12 @@ export async function action({ params, request }: Route.ActionArgs) {
 
       break;
     }
-    case "restore":
-    case "cancelAvailable": {
-      const mentorSession = await removeMentorSessionAsync(
+    case "restoreAvailability": {
+      const status = formData.get("status")!.toString();
+
+      const mentorSession = await restoreAvailabilityAsync(
         Number(params.mentorSessionId),
+        status,
       );
 
       const parsedUrl = new URL(request.url);
@@ -115,53 +117,19 @@ export default function Index({
   actionData,
 }: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
-  const submit = useSubmit();
 
-  const handleRemoveSession = () => {
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     if (!confirm(`Are you sure?`)) {
+      e.preventDefault();
       return;
     }
-
-    const formData = new FormData();
-    formData.append("action", "cancelAvailable");
-
-    void submit(formData, {
-      method: "POST",
-    });
-  };
-
-  const handleDeleteSession = (sessionId: number) => () => {
-    if (!confirm(`Are you sure?`)) {
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("action", "removeSession");
-    formData.append("sessionId", sessionId.toString());
-
-    void submit(formData, {
-      method: "POST",
-    });
-  };
-
-  const handleRestoreUnavailableSession = () => {
-    if (!confirm(`Are you sure?`)) {
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("action", "restore");
-
-    void submit(formData, {
-      method: "POST",
-    });
   };
 
   return (
     <>
       <div className="flex flex-col gap-6 sm:flex-row">
         <Title>
-          Session of &quot;
+          Mentor session of &quot;
           {attendedOnLabel}&quot;
         </Title>
 
@@ -185,38 +153,52 @@ export default function Index({
         </div>
 
         {session.status === "UNAVAILABLE" ? (
-          <div className="flex items-center justify-between gap-4">
+          <Form
+            method="POST"
+            onSubmit={handleFormSubmit}
+            className="flex items-center justify-between gap-4"
+          >
             <p className="alert alert-error w-full">
               <InfoCircle />
               Mentor is marked as unavailable for this session
             </p>
 
+            <input type="hidden" name="status" value="AVAILABLE" />
+
             <button
               className="btn btn-secondary w-full sm:w-48"
-              type="button"
-              onClick={handleRestoreUnavailableSession}
+              type="submit"
+              name="action"
+              value="restoreAvailability"
             >
               <BookmarkBook />
               Restore
             </button>
-          </div>
+          </Form>
         ) : (
           session.sessionAttendance.length === 0 && (
-            <div className="flex items-center gap-4">
+            <Form
+              method="POST"
+              onSubmit={handleFormSubmit}
+              className="flex items-center gap-4"
+            >
               <p className="alert alert-info w-full">
                 <InfoCircle />
                 Mentor is marked as available for this session
               </p>
 
+              <input type="hidden" name="status" value="UNAVAILABLE" />
+
               <button
                 className="btn btn-error w-full sm:w-48"
-                type="button"
-                onClick={handleRemoveSession}
+                type="submit"
+                name="action"
+                value="restoreAvailability"
               >
                 <Trash />
                 Remove
               </button>
-            </div>
+            </Form>
           )
         )}
 
@@ -325,7 +307,11 @@ export default function Index({
                                   <StatsReport /> Go to report
                                 </StateLink>
                               ) : (
-                                <div className="flex justify-end gap-4">
+                                <Form
+                                  method="POST"
+                                  onSubmit={handleFormSubmit}
+                                  className="flex justify-end gap-4"
+                                >
                                   <StateLink
                                     className="btn btn-info btn-sm w-32"
                                     to={`/admin/sessions/${id}`}
@@ -334,15 +320,22 @@ export default function Index({
                                     View session
                                   </StateLink>
 
+                                  <input
+                                    type="hidden"
+                                    name="sessionId"
+                                    value={id}
+                                  />
+
                                   <button
                                     className="btn btn-error btn-sm w-32"
-                                    type="button"
-                                    onClick={handleDeleteSession(id)}
+                                    type="submit"
+                                    name="action"
+                                    value="removeSession"
                                   >
                                     <Xmark />
                                     Remove
                                   </button>
-                                </div>
+                                </Form>
                               )}
                             </td>
                           </>

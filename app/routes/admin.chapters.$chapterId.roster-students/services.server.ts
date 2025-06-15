@@ -23,8 +23,30 @@ interface StudentSession {
   mentorFullName: string | null;
 }
 
-export interface SessionViewModelLookup {
-  sessionLookup?: Record<string, StudentSession>;
+type SessionLookup = Record<
+  string,
+  {
+    studentSessionId: number;
+    status: SessionStatus;
+    attendedOn: string;
+    studentId: number;
+    sessions: {
+      studentSessionId: number;
+      status: SessionStatus;
+      attendedOn: string;
+      studentId: number;
+      sessionId: number;
+      hasReport: boolean;
+      completedOn: string | null;
+      isCancelled: boolean;
+      mentorId: number;
+      mentorFullName: string;
+    }[];
+  }
+>;
+
+export interface SessionViewModel {
+  sessionLookup?: SessionLookup;
   id: number;
   fullName: string;
 }
@@ -34,7 +56,7 @@ export async function getStudentsAsync(
   term: Term,
   sortFullName: Prisma.SortOrder | undefined,
   searchTerm: string | undefined,
-): Promise<SessionViewModelLookup[]> {
+): Promise<SessionViewModel[]> {
   const students = await prisma.student.findMany({
     where: {
       endDate: null,
@@ -74,34 +96,47 @@ export async function getStudentsAsync(
       AND ss.attendedOn BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`;
 
   const studentSessionLookup = studentSessions.reduce<
-    Record<string, Record<string, StudentSession>>
-  >((res, value) => {
-    if (res[value.studentId]) {
-      res[value.studentId][dayjs.utc(value.attendedOn).format("YYYY-MM-DD")] = {
-        studentSessionId: value.studentSessionId,
-        attendedOn: value.attendedOn,
-        status: value.status,
-        studentId: value.studentId,
-        sessionId: value.sessionId,
-        hasReport: value.hasReport,
-        completedOn: value.completedOn,
-        isCancelled: value.isCancelled,
-        mentorId: value.mentorId,
-        mentorFullName: value.mentorFullName,
-      };
+    Record<string, SessionLookup>
+  >((res, studentSession) => {
+    const attendedOn = dayjs
+      .utc(studentSession.attendedOn)
+      .format("YYYY-MM-DD");
+
+    const session = {
+      studentSessionId: studentSession.studentSessionId,
+      status: studentSession.status,
+      attendedOn: studentSession.attendedOn,
+      studentId: studentSession.studentId,
+      mentorId: studentSession.mentorId!,
+      sessionId: studentSession.sessionId!,
+      hasReport: studentSession.hasReport === 1,
+      completedOn: studentSession.completedOn,
+      isCancelled: studentSession.isCancelled === 1,
+      mentorFullName: studentSession.mentorFullName!,
+    };
+
+    if (res[studentSession.studentId]) {
+      if (res[studentSession.studentId][attendedOn]) {
+        if (session.sessionId !== null) {
+          res[studentSession.studentId][attendedOn].sessions.push(session);
+        }
+      } else {
+        res[studentSession.studentId][attendedOn] = {
+          studentSessionId: studentSession.studentSessionId,
+          attendedOn: studentSession.attendedOn,
+          status: studentSession.status,
+          studentId: studentSession.studentId,
+          sessions: session.sessionId !== null ? [session] : [],
+        };
+      }
     } else {
-      res[value.studentId] = {
-        [dayjs.utc(value.attendedOn).format("YYYY-MM-DD")]: {
-          studentSessionId: value.studentSessionId,
-          attendedOn: value.attendedOn,
-          status: value.status,
-          studentId: value.studentId,
-          sessionId: value.sessionId,
-          hasReport: value.hasReport,
-          completedOn: value.completedOn,
-          isCancelled: value.isCancelled,
-          mentorId: value.mentorId,
-          mentorFullName: value.mentorFullName,
+      res[studentSession.studentId] = {
+        [attendedOn]: {
+          studentSessionId: studentSession.studentSessionId,
+          attendedOn: studentSession.attendedOn,
+          status: studentSession.status,
+          studentId: studentSession.studentId,
+          sessions: session.sessionId !== null ? [session] : [],
         },
       };
     }

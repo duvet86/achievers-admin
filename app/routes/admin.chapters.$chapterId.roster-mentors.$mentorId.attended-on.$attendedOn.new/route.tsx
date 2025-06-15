@@ -1,10 +1,9 @@
 import type { Route } from "./+types/route";
 
-import { redirect } from "react-router";
-import { Form } from "react-router";
+import { Form, redirect } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
-import { FloppyDiskArrowIn, Xmark } from "iconoir-react";
+import { Check, FloppyDiskArrowIn, Xmark } from "iconoir-react";
 
 import { Title, SelectSearch } from "~/components";
 
@@ -43,15 +42,13 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   const students = await getStudentsForMentorAsync(
     Number(params.chapterId),
     selectedMentorId,
+    params.attendedOn,
   );
 
   return {
     chapter,
     mentor,
-    students: students.map(({ id, fullName }) => ({
-      label: fullName,
-      value: id.toString(),
-    })),
+    students,
     attendedOnLabel: dayjs(params.attendedOn, "YYYY-MM-DD").format(
       "MMMM D, YYYY",
     ),
@@ -88,7 +85,7 @@ export default function Index({
   return (
     <>
       <Title>
-        Session of &quot;
+        Mentor session of &quot;
         {attendedOnLabel}&quot;
       </Title>
 
@@ -106,10 +103,6 @@ export default function Index({
         <div className="flex items-center gap-2 border-b border-gray-300 p-2">
           <div className="w-72 font-bold">Mentor</div>
           <div className="flex-1">{mentor.fullName}</div>
-        </div>
-
-        <div className="flex items-center gap-2 p-2">
-          <div className="w-72 font-bold">Student</div>
 
           <div className="border-opacity-50 flex flex-1 flex-col items-center">
             <Form method="POST" className="w-full">
@@ -119,7 +112,7 @@ export default function Index({
                 name="status"
                 value="AVAILABLE"
               >
-                <FloppyDiskArrowIn />
+                <Check />
                 Available
               </button>
             </Form>
@@ -137,29 +130,31 @@ export default function Index({
                 Unavailable
               </button>
             </Form>
-
-            <div className="divider">OR</div>
-
-            <Form method="POST" className="flex w-full items-end gap-4">
-              <SelectSearch
-                name="studentId"
-                placeholder="Select a student"
-                options={students}
-                required
-                showClearButton
-              />
-
-              <button
-                className="btn btn-primary w-48 gap-2"
-                type="submit"
-                name="status"
-                value="AVAILABLE"
-              >
-                <FloppyDiskArrowIn />
-                Book
-              </button>
-            </Form>
           </div>
+        </div>
+
+        <div className="flex items-center gap-2 p-2">
+          <div className="w-72 font-bold">Student</div>
+
+          <Form method="POST" className="flex w-full items-end gap-4">
+            <SelectSearch
+              name="studentId"
+              placeholder="Select a student"
+              options={students}
+              required
+              showClearButton
+            />
+
+            <button
+              className="btn btn-primary w-48 gap-2"
+              type="submit"
+              name="status"
+              value="AVAILABLE"
+            >
+              <FloppyDiskArrowIn />
+              Book
+            </button>
+          </Form>
         </div>
       </div>
     </>

@@ -271,23 +271,44 @@ export default function Index({
                   </button>
                 </th>
                 {datesInTerm.map((attendedOn, index) => {
-                  const session = sessionLookup?.[attendedOn];
+                  const studentSession = sessionLookup?.[attendedOn];
 
-                  const sessionId = session?.sessionId;
-                  const hasReport = session?.hasReport === 1;
-                  const isCancelled = session?.isCancelled === 1;
-                  const completedOn = session?.completedOn;
+                  let hasReport = false;
+                  let isCancelled = false;
+                  let label = "";
+                  let textHighlight = false;
+                  let textHighlightError = false;
 
-                  const isUnavailable =
-                    !isCancelled && session?.status === "UNAVAILABLE";
+                  let to = studentSession?.studentSessionId
+                    ? `/admin/chapters/${chapterId}/roster-students/student-sessions/${studentSession.studentSessionId}`
+                    : `/admin/chapters/${chapterId}/roster-students/${studentId}/attended-on/${attendedOn}/new`;
 
-                  const to = sessionId
-                    ? completedOn
-                      ? `/admin/sessions/${sessionId}/report`
-                      : `/admin/sessions/${sessionId}`
-                    : session?.studentSessionId
-                      ? `/admin/chapters/${chapterId}/roster-students/student-sessions/${session.studentSessionId}`
-                      : `/admin/chapters/${chapterId}/roster-students/${studentId}/attended-on/${attendedOn}/new`;
+                  if (studentSession) {
+                    if (studentSession.status === "UNAVAILABLE") {
+                      textHighlightError = true;
+                      label = "Unavailable";
+                    } else {
+                      if (studentSession.sessions.length === 0) {
+                        textHighlight = true;
+                        label = "Available";
+                      } else if (studentSession.sessions.length === 1) {
+                        const session = studentSession.sessions[0];
+                        hasReport = session.hasReport;
+                        isCancelled = session.isCancelled;
+
+                        label = session.mentorFullName!;
+
+                        if (isCancelled) {
+                          to = `/admin/sessions/${session.sessionId}`;
+                        } else if (session.completedOn) {
+                          to = `/admin/sessions/${session.sessionId}/report`;
+                        }
+                      } else {
+                        label = `${studentSession.sessions.length} Mentors`;
+                      }
+                    }
+                  }
+
                   return (
                     <td key={index} className="border-r border-gray-300">
                       <div
@@ -298,7 +319,7 @@ export default function Index({
                       >
                         {isCancelled && (
                           <div className="badge indicator-item badge-error indicator-center gap-1">
-                            Cancelled <WarningTriangle className="h-4 w-4" />
+                            Canceled <WarningTriangle className="h-4 w-4" />
                           </div>
                         )}
                         {!isCancelled && hasReport && (
@@ -311,15 +332,12 @@ export default function Index({
                           className={classNames(
                             "btn btn-ghost btn-block justify-between truncate font-bold",
                             {
-                              "text-error": isUnavailable,
+                              "text-info": textHighlight,
+                              "text-error": textHighlightError,
                             },
                           )}
                         >
-                          <span className="flex-1">
-                            {isUnavailable
-                              ? "Unavailable"
-                              : session?.mentorFullName}
-                          </span>
+                          <span className="flex-1">{label}</span>
                           <NavArrowRight />
                         </StateLink>
                       </div>
