@@ -30,34 +30,22 @@ export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
   invariant(params.mentorSessionId, "mentorSessionId not found");
 
-  const [chapter, session] = await Promise.all([
+  const [chapter, mentorSession] = await Promise.all([
     getChapterByIdAsync(Number(params.chapterId)),
     getMentorSessionByIdAsync(Number(params.mentorSessionId)),
   ]);
 
   const students = await getStudentsForMentorAsync(
-    session.chapterId,
-    session.mentor.id,
-  );
-
-  const studentIdsInSession = session.sessionAttendance.map(
-    ({
-      studentSession: {
-        student: { id },
-      },
-    }) => id,
+    mentorSession.chapterId,
+    mentorSession.mentor.id,
+    mentorSession.attendedOn,
   );
 
   return {
     chapter,
-    session,
-    attendedOnLabel: dayjs(session.attendedOn).format("MMMM D, YYYY"),
-    students: students
-      .filter(({ id }) => !studentIdsInSession.includes(id))
-      .map(({ id, fullName }) => ({
-        label: fullName,
-        value: id.toString(),
-      })),
+    mentorSession,
+    attendedOnLabel: dayjs(mentorSession.attendedOn).format("MMMM D, YYYY"),
+    students,
   };
 }
 
@@ -113,7 +101,7 @@ export async function action({ params, request }: Route.ActionArgs) {
 }
 
 export default function Index({
-  loaderData: { attendedOnLabel, chapter, session, students },
+  loaderData: { attendedOnLabel, chapter, mentorSession, students },
   actionData,
 }: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
@@ -149,10 +137,10 @@ export default function Index({
 
         <div className="flex items-center justify-between gap-2 border-b border-gray-300 p-2">
           <div className="font-bold sm:w-72">Mentor</div>
-          <div className="sm:flex-1">{session.mentor.fullName}</div>
+          <div className="sm:flex-1">{mentorSession.mentor.fullName}</div>
         </div>
 
-        {session.status === "UNAVAILABLE" ? (
+        {mentorSession.status === "UNAVAILABLE" ? (
           <Form
             method="POST"
             onSubmit={handleFormSubmit}
@@ -176,7 +164,7 @@ export default function Index({
             </button>
           </Form>
         ) : (
-          session.sessionAttendance.length === 0 && (
+          mentorSession.sessionAttendance.length === 0 && (
             <Form
               method="POST"
               onSubmit={handleFormSubmit}
@@ -202,11 +190,11 @@ export default function Index({
           )
         )}
 
-        {session.status !== "UNAVAILABLE" && (
+        {mentorSession.status !== "UNAVAILABLE" && (
           <>
             <Form method="POST" className="flex w-full items-end gap-4">
               <SelectSearch
-                key={session.sessionAttendance.length}
+                key={mentorSession.sessionAttendance.length}
                 name="studentId"
                 placeholder="Select a student"
                 options={students}
@@ -244,7 +232,7 @@ export default function Index({
                   </tr>
                 </thead>
                 <tbody>
-                  {session.sessionAttendance.map(
+                  {mentorSession.sessionAttendance.map(
                     ({
                       id,
                       completedOn,

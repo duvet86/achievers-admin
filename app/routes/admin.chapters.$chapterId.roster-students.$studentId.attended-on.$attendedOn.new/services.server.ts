@@ -80,10 +80,8 @@ export async function getMentorsForStudentAsync(
   const allMentors = await prisma.$queryRaw<{ id: number; fullName: string }[]>`
     SELECT id, fullName
     FROM User
-    WHERE id NOT IN (
-      SELECT userId FROM MentorToStudentAssignement
-      WHERE studentId = ${studentId}
-    ) AND chapterId = ${chapterId} AND endDate IS NULL
+    WHERE chapterId = ${chapterId} AND endDate IS NULL
+      AND id NOT IN (SELECT userId FROM MentorToStudentAssignement WHERE studentId = ${studentId})
     ORDER BY fullName ASC`;
 
   const assignedMentors = await prisma.mentorToStudentAssignement.findMany({

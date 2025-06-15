@@ -43,26 +43,14 @@ export async function loader({ params }: Route.LoaderArgs) {
   const mentors = await getMentorsForStudentAsync(
     studentSession.chapterId,
     studentSession.student.id,
-  );
-
-  const mentorIdsInSession = studentSession.sessionAttendance.map(
-    ({
-      mentorSession: {
-        mentor: { id },
-      },
-    }) => id,
+    studentSession.attendedOn,
   );
 
   return {
     chapter,
     studentSession,
     attendedOnLabel: dayjs(studentSession.attendedOn).format("MMMM D, YYYY"),
-    mentors: mentors
-      .filter(({ id }) => !mentorIdsInSession.includes(id))
-      .map(({ id, fullName }) => ({
-        label: fullName,
-        value: id.toString(),
-      })),
+    mentors,
   };
 }
 

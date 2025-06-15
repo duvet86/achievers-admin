@@ -63,14 +63,14 @@ export async function getStudentSessionByIdAsync(studentSessionId: number) {
 export async function getMentorsForStudentAsync(
   chapterId: number,
   studentId: number,
+  attendedOn: Date,
 ) {
   const allMentors = await prisma.$queryRaw<{ id: number; fullName: string }[]>`
     SELECT id, fullName
     FROM User
     WHERE chapterId = ${chapterId} AND endDate IS NULL
       AND id NOT IN (SELECT userId FROM MentorToStudentAssignement WHERE studentId = ${studentId})
-    ORDER BY fullName ASC
-  `;
+    ORDER BY fullName ASC`;
 
   const assignedMentors = await prisma.mentorToStudentAssignement.findMany({
     where: {
@@ -85,18 +85,46 @@ export async function getMentorsForStudentAsync(
       },
     },
     orderBy: {
-      student: {
+      user: {
         fullName: "asc",
       },
     },
   });
+
+  const unavailableMentors = await prisma.mentorSession.findMany({
+    where: {
+      chapterId,
+      attendedOn,
+      status: "UNAVAILABLE",
+    },
+    select: {
+      mentorId: true,
+    },
+  });
+
+  const unavailableMentorsLookup = unavailableMentors.reduce<
+    Record<string, boolean>
+  >((res, { mentorId }) => {
+    res[mentorId.toString()] = true;
+
+    return res;
+  }, {});
 
   return assignedMentors
     .map(({ user: { id, fullName } }) => ({
       id,
       fullName: `** ${fullName} (Assigned) **`,
     }))
-    .concat(allMentors);
+    .concat(allMentors)
+    .map(({ id, fullName }) => {
+      const isUnavailable = unavailableMentorsLookup[id] ?? false;
+
+      return {
+        label: fullName + (isUnavailable ? " (Unavailable)" : ""),
+        value: id.toString(),
+        isDisabled: isUnavailable,
+      };
+    });
 }
 
 export async function restoreAvailabilityAsync(

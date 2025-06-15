@@ -163,6 +163,7 @@ export async function removeSessionAsync(sessionId: number) {
 export async function getStudentsForMentorAsync(
   chapterId: number,
   mentorId: number,
+  attendedOn: Date,
 ) {
   const allStudents = await prisma.$queryRaw<
     { id: number; fullName: string }[]
@@ -171,8 +172,7 @@ export async function getStudentsForMentorAsync(
     FROM Student
     WHERE chapterId = ${chapterId} AND endDate IS NULL
       AND id NOT IN (SELECT studentId FROM MentorToStudentAssignement WHERE userId = ${mentorId})
-    ORDER BY fullName ASC
-  `;
+    ORDER BY fullName ASC`;
 
   const assignedStudents = await prisma.mentorToStudentAssignement.findMany({
     where: {
@@ -187,18 +187,46 @@ export async function getStudentsForMentorAsync(
       },
     },
     orderBy: {
-      user: {
+      student: {
         fullName: "asc",
       },
     },
   });
+
+  const unavailableStudents = await prisma.studentSession.findMany({
+    where: {
+      chapterId,
+      attendedOn,
+      status: "UNAVAILABLE",
+    },
+    select: {
+      studentId: true,
+    },
+  });
+
+  const unavailableStudentsLookup = unavailableStudents.reduce<
+    Record<string, boolean>
+  >((res, { studentId }) => {
+    res[studentId.toString()] = true;
+
+    return res;
+  }, {});
 
   return assignedStudents
     .map(({ student: { id, fullName } }) => ({
       id,
       fullName: `** ${fullName} (Assigned) **`,
     }))
-    .concat(allStudents);
+    .concat(allStudents)
+    .map(({ id, fullName }) => {
+      const isUnavailable = unavailableStudentsLookup[id] ?? false;
+
+      return {
+        label: fullName + (isUnavailable ? " (Unavailable)" : ""),
+        value: id.toString(),
+        isDisabled: isUnavailable,
+      };
+    });
 }
 
 export async function addStudentToSessionAsync({
