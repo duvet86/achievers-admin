@@ -34,7 +34,7 @@ export function SubmitFormButton({
       />
 
       <button
-        className="btn btn-primary w-48 gap-2"
+        className="btn btn-primary w-48"
         type="submit"
         disabled={disabled}
       >
