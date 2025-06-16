@@ -1,16 +1,16 @@
 import type { Route } from "./+types/route";
 
-import { redirect, useSubmit } from "react-router";
+import { Form, redirect } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import classNames from "classnames";
 import {
   EditPencil,
   Trash,
-  UserXmark,
   WarningTriangle,
   Xmark,
   SendMail,
+  NavArrowRight,
 } from "iconoir-react";
 
 import { getEnvironment } from "~/services";
@@ -20,7 +20,6 @@ import {
   getChapterByIdAsync,
   getNotificationSentOnFromNow,
   getSessionByIdAsync,
-  removeSessionAsync,
 } from "./services.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -29,7 +28,7 @@ export async function loader({ params }: Route.LoaderArgs) {
   const session = await getSessionByIdAsync(Number(params.sessionId));
 
   if (session.completedOn) {
-    throw redirect(`/admin/sessions/${session.id}/report`);
+    return redirect(`/admin/sessions/${session.id}/report`);
   }
 
   const chapter = await getChapterByIdAsync(Number(session.chapterId));
@@ -47,75 +46,47 @@ export async function loader({ params }: Route.LoaderArgs) {
 export async function action({ params, request }: Route.ActionArgs) {
   invariant(params.sessionId, "sessionId not found");
 
-  if (request.method === "DELETE") {
-    const session = await removeSessionAsync(Number(params.sessionId));
+  const environment = getEnvironment(request);
 
-    const url = new URL(request.url);
-
-    return redirect(
-      `/admin/chapters/${session.chapterId}/roster-students/${session.studentSession.studentId}/attended-on/${dayjs(session.attendedOn).format("YYYY-MM-DD")}/new?${url.searchParams}`,
-    );
-  }
-
-  if (request.method === "POST") {
-    const environment = getEnvironment(request);
-
-    if (environment !== "production") {
-      return {
-        successMessage: "TEST ENVIRONMENT: Notification email sent",
-        errorMessage: null,
-      };
-    }
-
-    const resp = await fetch(process.env.SEND_MENTOR_REPORT_REMINDER_URL!, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        sessionId: Number(params.sessionId),
-      }),
-    });
-
-    if (!resp.ok) {
-      return {
-        successMessage: null,
-        errorMessage: "Failed to send notification email",
-      };
-    }
-
+  if (environment !== "production") {
     return {
-      successMessage: "Notification email sent",
+      successMessage: "TEST ENVIRONMENT: Notification email sent",
       errorMessage: null,
     };
   }
 
-  throw new Error("Method not allowed");
+  const resp = await fetch(process.env.SEND_MENTOR_REPORT_REMINDER_URL!, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sessionId: Number(params.sessionId),
+    }),
+  });
+
+  if (!resp.ok) {
+    return {
+      successMessage: null,
+      errorMessage: "Failed to send notification email",
+    };
+  }
+
+  return {
+    successMessage: "Notification email sent",
+    errorMessage: null,
+  };
 }
 
 export default function Index({
   loaderData: { attendedOnLabel, chapter, session, notificationSentOnFromNow },
   actionData,
 }: Route.ComponentProps) {
-  const submit = useSubmit();
-
-  const handleRemoveMentorSubmit = () => {
-    if (!confirm(`Are you sure?`)) {
-      return;
-    }
-    void submit(null, {
-      method: "DELETE",
-    });
-  };
-
-  const sendNotification = () => {
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     if (!confirm("Are you sure you want to send a notification email?")) {
+      e.preventDefault();
       return;
     }
-
-    void submit(null, {
-      method: "POST",
-    });
   };
 
   return (
@@ -168,16 +139,13 @@ export default function Index({
             {session.mentorSession.mentor.fullName}
           </div>
 
-          {!session.cancelledAt && (
-            <button
-              className="btn btn-error w-full sm:w-48"
-              type="button"
-              onClick={handleRemoveMentorSubmit}
-            >
-              <UserXmark />
-              Remove Mentor
-            </button>
-          )}
+          <StateLink
+            to={`/admin/chapters/${chapter.id}/roster-mentors/mentor-sessions/${session.mentorSession.id}`}
+            className="btn w-full sm:w-48"
+          >
+            Menage mentor
+            <NavArrowRight />
+          </StateLink>
         </div>
 
         <div className="flex items-center gap-2 border-b border-gray-300 p-2">
@@ -185,11 +153,23 @@ export default function Index({
           <div className="sm:flex-1">
             {session.studentSession.student.fullName}
           </div>
+
+          <StateLink
+            to={`/admin/chapters/${chapter.id}/roster-students/student-sessions/${session.studentSession.id}`}
+            className="btn w-full sm:w-48"
+          >
+            Menage student
+            <NavArrowRight />
+          </StateLink>
         </div>
 
         {!session.cancelledAt ? (
           <>
-            <div className="flex flex-wrap items-center gap-4 border-b border-gray-300 p-2">
+            <Form
+              method="POST"
+              onSubmit={handleFormSubmit}
+              className="flex flex-wrap items-center gap-4 border-b border-gray-300 p-2"
+            >
               <div className="font-bold sm:w-72">Has report?</div>
               <div className="sm:flex-1">
                 <Xmark className="text-error" />
@@ -203,7 +183,7 @@ export default function Index({
 
               <button
                 className="btn btn-warning w-full gap-2 sm:w-48"
-                onClick={sendNotification}
+                type="submit"
               >
                 <SendMail /> Send notification
               </button>
@@ -214,7 +194,7 @@ export default function Index({
               >
                 <EditPencil /> Report on behalf
               </StateLink>
-            </div>
+            </Form>
 
             <div className="flex items-center gap-4 border-b border-gray-300 p-2">
               <div className="font-bold sm:w-72">Is report completed?</div>

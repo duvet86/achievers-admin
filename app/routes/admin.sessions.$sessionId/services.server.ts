@@ -56,40 +56,6 @@ export async function getSessionByIdAsync(sessionId: number) {
   });
 }
 
-export async function removeSessionAsync(sessionId: number) {
-  const session = await prisma.sessionAttendance.findUniqueOrThrow({
-    where: {
-      id: sessionId,
-    },
-    select: {
-      id: true,
-      completedOn: true,
-    },
-  });
-
-  if (session.completedOn !== null) {
-    throw new Error(
-      "Cannot remove session that has a report and it is completed.",
-    );
-  }
-
-  return await prisma.sessionAttendance.delete({
-    where: {
-      id: sessionId,
-    },
-    select: {
-      id: true,
-      chapterId: true,
-      attendedOn: true,
-      studentSession: {
-        select: {
-          studentId: true,
-        },
-      },
-    },
-  });
-}
-
 export function getNotificationSentOnFromNow(notificationSentOn: Date | null) {
   if (!notificationSentOn) {
     return null;
