@@ -263,7 +263,12 @@ export default function Index({
                   },
                   index,
                 ) => (
-                  <tr key={id} className="hover:bg-base-200">
+                  <tr
+                    key={id}
+                    className={classNames("hover:bg-base-200", {
+                      "text-error": endDate !== null,
+                    })}
+                  >
                     <td className="hidden sm:table-cell">
                       <div className="flex gap-2">
                         {index + 1 + 10 * currentPageNumber}
