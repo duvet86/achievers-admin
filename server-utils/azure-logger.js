@@ -1,8 +1,6 @@
 /*eslint-env node*/
 import { useAzureMonitor } from "@azure/monitor-opentelemetry";
 import { trace } from "@opentelemetry/api";
-import { registerInstrumentations } from "@opentelemetry/instrumentation";
-import { ExpressInstrumentation } from "@opentelemetry/instrumentation-express";
 
 export function initAppInsightsLogger() {
   if (process.env.NODE_ENV !== "production") {
@@ -11,9 +9,6 @@ export function initAppInsightsLogger() {
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useAzureMonitor();
-  registerInstrumentations({
-    instrumentations: [new ExpressInstrumentation()],
-  });
 
   global.__appinsightsTracer__ = trace.getTracer("appTracer");
 }

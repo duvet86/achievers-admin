@@ -29,7 +29,6 @@
     "@lexical/react": "^0.32.1",
     "@mjackson/file-storage": "^0.7.0",
     "@mjackson/form-data-parser": "^0.9.1",
-    "@opentelemetry/instrumentation-express": "^0.51.0",
     "@prisma/client": "^6.10.1",
     "@react-router/express": "^7.6.2",
     "@react-router/node": "^7.6.2",

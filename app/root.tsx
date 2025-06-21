@@ -13,7 +13,6 @@ import {
 
 import tailwindStylesheetUrl from "~/styles/tailwind.css?url";
 
-import { trackException } from "~/services/.server";
 import {
   Forbidden,
   LoadingSpinner,
@@ -60,8 +59,6 @@ export default function App() {
 
 export function ErrorBoundary() {
   const error = useRouteError();
-
-  trackException(error as Error);
 
   // when true, this is what used to go to `CatchBoundary`
   if (isRouteErrorResponse(error)) {
