@@ -61,7 +61,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run unit tests
         env:
@@ -113,7 +113,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Migrate DB
         run: npm run setup
@@ -137,7 +137,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Release
         env:
@@ -160,7 +160,7 @@ jobs:
 
       - name: npm install and build
         run: |
-          npm install
+          npm ci
           npx prisma generate
           npm run build
           npm prune --omit=dev
