@@ -17,7 +17,7 @@
     "baseUrl": ".",
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
-      "~/prisma/client": ["./prisma/client"],
+      "~/prisma/client": ["./prisma/client/client.ts"],
       "~/*": ["./app/*"]
     },
 

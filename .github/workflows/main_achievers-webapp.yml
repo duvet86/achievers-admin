@@ -69,9 +69,7 @@ jobs:
         run: npm run test:ci
 
       - name: Build
-        run: |
-          npx prisma generate
-          npm run build
+        run: npm run build
 
       - name: Migrate test DB
         env:
