@@ -10,6 +10,8 @@ import {
 import dayjs from "dayjs";
 import {
   BookmarkBook,
+  EditPencil,
+  Eye,
   Group,
   ThumbsDown,
   ThumbsUp,
@@ -21,7 +23,7 @@ import {
   getSchoolTermsAsync,
 } from "~/services/.server";
 import { getCurrentTermForDate, getDatesForTerm } from "~/services";
-import { Select, Title } from "~/components";
+import { Select, StateLink, Title } from "~/components";
 
 import {
   getMentorSessionsLookupAsync,
@@ -278,7 +280,7 @@ export default function Index({
                           <>
                             <div className="text-success flex items-center justify-center gap-2 sm:justify-start">
                               <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
-                              <span>You are available</span>
+                              <span>Available</span>
                             </div>
                             <button
                               className="btn btn-error btn-sm w-full sm:w-36"
@@ -294,7 +296,7 @@ export default function Index({
                           <>
                             <div className="text-error flex items-center justify-center gap-2 sm:justify-start">
                               <ThumbsDown className="h-4 w-4 sm:h-6 sm:w-6" />
-                              <span>You are unavailable</span>
+                              <span>Unavailable</span>
                             </div>
                             <button
                               className="btn btn-primary btn-sm w-full sm:w-36"
@@ -318,21 +320,41 @@ export default function Index({
                       >
                         <div className="text-success flex items-center justify-center gap-2 sm:justify-start">
                           <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
-                          <span>You are booked with</span>{" "}
+                          <span>Booked with</span>{" "}
                           <span className="font-bold">
                             {studentSession.student.fullName}
                           </span>
                         </div>
 
-                        {!hasReport && (
-                          <button
-                            onClick={handleCancelSessionSubmit(id)}
-                            className="btn btn-error btn-sm w-full sm:w-36"
-                          >
-                            <Xmark />
-                            Cancel
-                          </button>
-                        )}
+                        <div className="flex gap-2">
+                          {!hasReport && (
+                            <>
+                              <StateLink
+                                to={`/mentor/write-report?selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z&selectedStudentId=${studentSession.student.id}`}
+                                className="btn btn-sm w-full sm:w-36"
+                              >
+                                <EditPencil />
+                                Write report
+                              </StateLink>
+                              <button
+                                onClick={handleCancelSessionSubmit(id)}
+                                className="btn btn-error btn-sm w-full sm:w-36"
+                              >
+                                <Xmark />
+                                Cancel
+                              </button>
+                            </>
+                          )}
+                          {hasReport && (
+                            <StateLink
+                              to={`/mentor/sessions/${id}`}
+                              className="btn btn-success btn-sm w-full sm:w-36"
+                            >
+                              <Eye />
+                              View report
+                            </StateLink>
+                          )}
+                        </div>
                       </div>
                     ),
                   )}
