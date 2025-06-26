@@ -21,19 +21,16 @@ if (process.env.NODE_ENV === "production") {
   const dbUrl = process.env.DATABASE_URL;
 
   const cert = readFileSync(
-    resolve(process.cwd(), "prisma/DigiCertGlobalRootMerge.crt.pem"),
+    resolve(process.cwd(), "prisma/DigiCertGlobalRootCA.crt.pem"),
     "utf8",
   );
 
-  writeFileSync(
-    "/tmp/DigiCertGlobalRootMerge.crt.pem",
-    Buffer.from(cert, "utf8"),
-  );
+  writeFileSync("/tmp/DigiCertGlobalRootCA.crt.pem", Buffer.from(cert, "utf8"));
 
   prisma = new PrismaClient({
     datasources: {
       db: {
-        url: dbUrl + "?sslcert=/tmp/DigiCertGlobalRootMerge.crt.pem",
+        url: dbUrl + "?sslcert=/tmp/DigiCertGlobalRootCA.crt.pem",
       },
     },
   });
