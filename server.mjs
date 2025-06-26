@@ -10,7 +10,7 @@ import sourceMapSupport from "source-map-support";
 
 sourceMapSupport.install();
 
-if (process.env.CI) {
+if (process.env.CI || process.env.LOCAL_TEST) {
   mockTime();
 }
 

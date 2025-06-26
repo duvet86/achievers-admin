@@ -1,6 +1,10 @@
 import { test, expect } from "@playwright/test";
 
-import { seedBookSessionAsync, seedDataAsync } from "../test-data";
+import {
+  seedForWriteReportAsync,
+  seedDataAsync,
+  seedSessionsFroHomePageAsync,
+} from "../test-data";
 
 import { AdminLayoutPage } from "integration-tests/pages/admin-layout.page";
 import { MentorLayoutPage } from "integration-tests/pages/mentor-layout.page";
@@ -36,6 +40,7 @@ test.describe("Mentor Home Page", () => {
 
   test("should have home page", async () => {
     await mentorHomePage.expect.toHaveHeadings();
+    await mentorHomePage.expect.toHaveRosterPageLink();
 
     await mentorHomePage.goToRosterPage();
 
@@ -43,7 +48,7 @@ test.describe("Mentor Home Page", () => {
   });
 
   test("should write report", async () => {
-    await seedBookSessionAsync();
+    await seedForWriteReportAsync();
 
     await mentorLayoutPage.goToWriteReportPage();
 
@@ -59,5 +64,39 @@ test.describe("Mentor Home Page", () => {
     await mentorWriteReportPage.completeReport();
 
     await mentorWriteReportPage.expect.toHaveReadonlyReport();
+  });
+
+  test.only("should show next and recent sessions in home page", async () => {
+    await seedSessionsFroHomePageAsync();
+
+    await adminLayoutPage.goToHome();
+
+    await mentorHomePage.expect.toHaveNextSessions([
+      {
+        number: "1",
+        studentName: "student_0 student_lastname_0",
+        sessionDate: "November 30, 2024",
+      },
+    ]);
+
+    await mentorHomePage.expect.toHaveRecentSessions([
+      {
+        number: "1",
+        studentName: "student_1 student_lastname_1",
+        sessionDate: "November 23, 2024",
+        reportCompletedOn: null,
+        signOffOn: null,
+      },
+      {
+        number: "2",
+        studentName: "student_0 student_lastname_0",
+        sessionDate: "November 16, 2024",
+        reportCompletedOn: "November 16, 2024",
+        signOffOn: "November 18, 2024",
+      },
+    ]);
+
+    await mentorHomePage.goToViewReportPage(0);
+    await mentorWriteReportPage.expect.toHaveHeading();
   });
 });

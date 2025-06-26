@@ -1,7 +1,7 @@
 import type { Route } from "./+types/route";
 
 import dayjs from "dayjs";
-import { StatsReport, Check, Xmark, WarningTriangle } from "iconoir-react";
+import { StatsReport, Check, Xmark, NavArrowRight } from "iconoir-react";
 
 import {
   getLoggedUserInfoAsync,
@@ -14,7 +14,6 @@ import {
   getNextMentorSessionsAsync,
   getSessionsAsync,
   getUserByAzureADIdAsync,
-  hasAnyStudentsAssignedAsync,
 } from "./services.server";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -23,17 +22,6 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const terms = await getSchoolTermsAsync();
   const currentTerm = getCurrentTermForDate(terms, new Date());
-
-  const hasAnyStudentsAssigned = await hasAnyStudentsAssignedAsync(user.id);
-  if (!hasAnyStudentsAssigned) {
-    return {
-      currentTermLabel: `${currentTerm.name} (${currentTerm.start.format("D MMMM")} - ${currentTerm.end.format("D MMMM")})`,
-      hasAnyStudentsAssigned,
-      mentorFullName: user.fullName,
-      nextMentorSessions: [],
-      sessions: [],
-    };
-  }
 
   const nextMentorSessions = await getNextMentorSessionsAsync(
     user.id,
@@ -44,7 +32,6 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   return {
     currentTermLabel: `${currentTerm.name} (${currentTerm.start.format("D MMMM")} - ${currentTerm.end.format("D MMMM")})`,
-    hasAnyStudentsAssigned: true,
     mentorFullName: user.fullName,
     nextMentorSessions,
     sessions,
@@ -57,7 +44,6 @@ export default function Index({
     mentorFullName,
     nextMentorSessions,
     sessions,
-    hasAnyStudentsAssigned,
   },
 }: Route.ComponentProps) {
   return (
@@ -72,11 +58,26 @@ export default function Index({
         </h2>
       </article>
 
+      {nextMentorSessions.length === 0 && sessions.length === 0 && (
+        <article className="prose max-w-none">
+          <h1 className="text-warning flex items-center gap-4">
+            You haven&apos;t booked a session yet!
+          </h1>
+          <h3>
+            Go to the{" "}
+            <StateLink className="btn" to="/mentor/roster">
+              Roster page <NavArrowRight />
+            </StateLink>{" "}
+            to book you first session.
+          </h3>
+        </article>
+      )}
+
       {nextMentorSessions.length > 0 && (
         <>
           <SubTitle>Next sessions</SubTitle>
 
-          <div className="overflow-auto bg-white">
+          <div data-testid="next-sessions" className="overflow-auto bg-white">
             <table className="table-lg mb-4 table">
               <thead>
                 <tr>
@@ -101,38 +102,11 @@ export default function Index({
         </>
       )}
 
-      {!hasAnyStudentsAssigned && (
-        <article className="prose max-w-none">
-          <h1 className="text-warning flex items-center gap-4">
-            <WarningTriangle />
-            You have no students assigned
-          </h1>
-          <h3>
-            Please contact your chapter coordinator to get a student assigned
-          </h3>
-        </article>
-      )}
-
-      {nextMentorSessions.length === 0 &&
-        hasAnyStudentsAssigned &&
-        sessions.length === 0 && (
-          <article className="prose max-w-none">
-            <h1 className="text-warning flex items-center gap-4">
-              <WarningTriangle />
-              You haven&apos;t booked a session yet
-            </h1>
-            <h3>
-              Go to the <StateLink to="/mentor/roster">roster page</StateLink>{" "}
-              to book you first session
-            </h3>
-          </article>
-        )}
-
-      {hasAnyStudentsAssigned && sessions.length > 0 && (
+      {sessions.length > 0 && (
         <>
           <SubTitle>Recent sessions</SubTitle>
 
-          <div className="overflow-auto bg-white">
+          <div data-testid="recent-sessions" className="overflow-auto bg-white">
             <table className="table-lg table">
               <thead>
                 <tr>
@@ -178,29 +152,41 @@ export default function Index({
                       <td align="left">{studentFullName}</td>
                       <td align="left" className="hidden lg:table-cell">
                         {completedOn ? (
-                          <div className="flex items-center gap-2">
+                          <div
+                            data-testid="completedOn"
+                            className="flex items-center gap-2"
+                          >
                             <Check className="text-success h-4 w-4" />
                             {dayjs(completedOn).format("MMMM D, YYYY")}
                           </div>
                         ) : (
-                          <Xmark className="text-error h-4 w-4" />
+                          <Xmark
+                            data-testid="not-completedOn"
+                            className="text-error h-4 w-4"
+                          />
                         )}
                       </td>
                       <td align="left" className="hidden lg:table-cell">
                         {signedOffOn ? (
-                          <div className="flex items-center gap-2">
+                          <div
+                            data-testid="signedOffOn"
+                            className="flex items-center gap-2"
+                          >
                             <Check className="text-success h-4 w-4" />
                             {dayjs(signedOffOn).format("MMMM D, YYYY")}
                           </div>
                         ) : (
-                          <Xmark className="text-error h-4 w-4" />
+                          <Xmark
+                            data-testid="not-signedOffOn"
+                            className="text-error h-4 w-4"
+                          />
                         )}
                       </td>
                       <td align="right">
                         <StateLink
                           to={
                             completedOn !== null
-                              ? `/mentor/sessions/${sessionId}` // FIX ME.
+                              ? `/mentor/sessions/${sessionId}`
                               : `/mentor/write-report?selectedStudentId=${studentId}&selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z`
                           }
                           className="btn btn-success btn-xs h-9 gap-2"
