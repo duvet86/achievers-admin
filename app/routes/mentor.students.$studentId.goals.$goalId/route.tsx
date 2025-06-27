@@ -5,9 +5,12 @@ import { useRef } from "react";
 import { Form, redirect, useSubmit } from "react-router";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
-import { Check, FloppyDiskArrowIn } from "iconoir-react";
+import { Check, FloppyDiskArrowIn, WarningTriangle } from "iconoir-react";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
+
+import { getLoggedUserInfoAsync } from "~/services/.server";
+import { isEditorEmpty } from "~/services";
 import { DateInput, Editor, Input, Textarea, Title } from "~/components";
 
 import {
@@ -17,7 +20,6 @@ import {
   getUserByAzureADIdAsync,
   updateGoalByIdAsync,
 } from "./services.server";
-import { getLoggedUserInfoAsync } from "~/services/.server";
 
 export const links: Route.LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
@@ -112,20 +114,24 @@ export default function Index({
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const goal = JSON.stringify(editorStateRef.current?.toJSON());
 
-    if (!goal) {
-      return alert("You must set a goal.");
+    const resportState = editorStateRef.current!;
+
+    if (isEditorEmpty(resportState)) {
+      (document.getElementById("errorModal") as HTMLDialogElement).showModal();
+      return;
     }
 
     const formData = new FormData(e.currentTarget);
-    formData.append("goal", goal);
+    formData.append("goal", JSON.stringify(editorStateRef.current?.toJSON()));
 
     // Hack to get the value of the button since, if the form is submitted programatically,
     // the value won't get fetched.
     if ((document.activeElement as HTMLButtonElement).value === "complete") {
       formData.append("complete", "true");
     }
+
+    console.log(JSON.stringify(editorStateRef.current?.toJSON()));
 
     void submit(formData, { method: "post" });
   };
@@ -253,12 +259,7 @@ export default function Index({
                 </button>
               )}
 
-              <button
-                className="btn btn-primary w-48"
-                type="submit"
-                name="save"
-                value="test"
-              >
+              <button className="btn btn-primary w-48" type="submit">
                 <FloppyDiskArrowIn />
                 Save
               </button>
@@ -266,6 +267,21 @@ export default function Index({
           )}
         </fieldset>
       </Form>
+
+      <dialog id="errorModal" className="modal">
+        <div className="modal-box">
+          <h3 className="flex gap-2 text-lg font-bold">
+            <WarningTriangle className="text-error" />
+            Error
+          </h3>
+          <p className="py-4">Goal cannot be blank.</p>
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Close</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </>
   );
 }

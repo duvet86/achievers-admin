@@ -455,6 +455,7 @@ export default function Index({
           )}
         </div>
       </Form>
+
       <dialog id="errorModal" className="modal">
         <div className="modal-box">
           <h3 className="flex gap-2 text-lg font-bold">
