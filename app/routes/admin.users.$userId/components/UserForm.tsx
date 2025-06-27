@@ -8,7 +8,7 @@ import {
   SubmitFormButton,
 } from "~/components";
 
-import ProfilePicture from "./ProfilePicture";
+import { ProfileInput } from "~/components";
 
 interface Props {
   user: {
@@ -19,6 +19,7 @@ interface Props {
     chapterId: number;
     firstName: string;
     lastName: string;
+    preferredName: string | null;
     mobile: string;
     addressStreet: string;
     addressSuburb: string;
@@ -45,14 +46,15 @@ export function UserForm({ user, chapters, successMessage }: Props) {
   return (
     <Form
       method="post"
+      encType="multipart/form-data"
       className="border-primary relative mb-8 flex-1 overflow-y-auto md:mr-8 md:mb-0 md:border-r md:pr-4"
     >
       <fieldset
         className="fieldset"
         disabled={transition.state === "submitting"}
       >
-        <ProfilePicture
-          profilePicturePath={user.profilePicturePath}
+        <ProfileInput
+          defaultValue={user.profilePicturePath}
           fullName={`${user.fullName}`}
         />
 
@@ -82,6 +84,12 @@ export function UserForm({ user, chapters, successMessage }: Props) {
           label="First name"
           name="firstName"
           required
+        />
+
+        <Input
+          defaultValue={user.preferredName ?? ""}
+          label="Preferred name"
+          name="preferredName"
         />
 
         <Input

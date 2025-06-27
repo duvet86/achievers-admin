@@ -5,21 +5,22 @@ import type { Route } from "./+types/route";
 
 import invariant from "tiny-invariant";
 import { NavArrowRight } from "iconoir-react";
+import { parseFormData } from "@mjackson/form-data-parser";
 
 import { getAzureUserWithRolesByIdAsync } from "~/services/.server";
 import { isDateExpired, isStringNullOrEmpty } from "~/services";
+import { StateLink } from "~/components";
 
 import {
   getUserByIdAsync,
   getProfilePictureUrl,
   updateUserByIdAsync,
   getChaptersAsync,
+  uploadHandler,
+  saveProfilePicture,
+  deleteProfilePicture,
 } from "./services.server";
-
-import { UserForm } from "./components/UserForm";
-import { CheckList } from "./components/CheckList";
-import { Header } from "./components/Header";
-import { StateLink } from "~/components";
+import { UserForm, CheckList, Header } from "./components";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.userId, "userId not found");
@@ -41,10 +42,12 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const chapters = await getChaptersAsync();
 
   return {
-    user,
+    user: {
+      ...user,
+      profilePicturePath,
+    },
     isWwcCheckExpired: isDateExpired(user.wwcCheck?.expiryDate),
     isPoliceCheckExpired: isDateExpired(user.policeCheck?.expiryDate),
-    profilePicturePath,
     welcomeCallCompleted: user.welcomeCall !== null,
     referencesCompleted:
       user.references.filter((ref) => ref.calledOndate !== null).length >= 2,
@@ -64,11 +67,29 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.userId, "userId not found");
 
-  const formData = await request.formData();
+  const formData = await parseFormData(request, uploadHandler);
+
+  const profilePicure = formData.get("profilePicure");
+  if (profilePicure === "DELETE") {
+    await deleteProfilePicture(Number(params.userId));
+
+    return {
+      successMessage: "Prodile picture deleted successfully!",
+      errorMessage: null,
+    };
+  } else if (profilePicure instanceof File) {
+    await saveProfilePicture(Number(params.userId), profilePicure);
+
+    return {
+      successMessage: "Prodile picture updated successfully!",
+      errorMessage: null,
+    };
+  }
 
   const chapterId = formData.get("chapterId")?.toString();
   const firstName = formData.get("firstName")?.toString();
   const lastName = formData.get("lastName")?.toString();
+  const preferredName = formData.get("preferredName")?.toString();
   const email = formData.get("email")?.toString();
   const mobile = formData.get("mobile")?.toString();
 
@@ -126,6 +147,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     emergencyContactAddress,
     emergencyContactRelationship,
     chapterId: Number(chapterId),
+    preferredName,
   };
 
   await updateUserByIdAsync(Number(params.userId), dataCreate);

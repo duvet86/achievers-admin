@@ -1,13 +1,19 @@
+import type { FileUpload } from "@mjackson/form-data-parser";
 import type { Prisma } from "~/prisma/client";
 import type { XOR } from "~/models";
 
+import { MemoryFileStorage } from "@mjackson/file-storage/memory";
+
 import { prisma } from "~/db.server";
 import {
+  deleteBlobAsync,
   getContainerClient,
   getSASQueryString,
   uploadBlobAsync,
   USER_DATA_BLOB_CONTAINER_NAME,
 } from "~/services/.server";
+
+const memoryFileStorage = new MemoryFileStorage();
 
 export async function getChaptersAsync() {
   return await prisma.chapter.findMany({
@@ -29,6 +35,7 @@ export async function getUserByIdAsync(id: number) {
       fullName: true,
       firstName: true,
       lastName: true,
+      preferredName: true,
       email: true,
       mobile: true,
       addressStreet: true,
@@ -101,11 +108,11 @@ export async function updateUserByIdAsync(
 }
 
 export async function saveProfilePicture(
-  userId: string,
+  userId: number,
   file: File,
 ): Promise<string> {
   if (file.size === 0) {
-    throw new Error();
+    throw new Error("File has 0 length.");
   }
 
   const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
@@ -113,9 +120,44 @@ export async function saveProfilePicture(
 
   const path = `${userId}/profile-picture`;
 
-  await uploadBlobAsync(containerClient, file, path);
+  const resp = await uploadBlobAsync(containerClient, file, path);
+
+  if (resp.errorCode !== undefined) {
+    throw new Error(resp.errorCode);
+  }
+
+  await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      profilePicturePath: path,
+    },
+  });
 
   return path;
+}
+
+export async function deleteProfilePicture(userId: number): Promise<void> {
+  const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
+  await containerClient.createIfNotExists();
+
+  const path = `${userId}/profile-picture`;
+
+  const resp = await deleteBlobAsync(containerClient, path);
+
+  if (resp.errorCode !== undefined) {
+    throw new Error(resp.errorCode);
+  }
+
+  await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      profilePicturePath: null,
+    },
+  });
 }
 
 export function getProfilePictureUrl(profilePicturePath: string): string {
@@ -130,4 +172,17 @@ export function getProfilePictureUrl(profilePicturePath: string): string {
   );
 
   return `${blob.url}?${sasQueryString}`;
+}
+
+export async function uploadHandler(fileUpload: FileUpload) {
+  const storageKey = fileUpload.fieldName ?? "file";
+
+  await memoryFileStorage.set(
+    storageKey,
+    new File([await fileUpload.bytes()], fileUpload.name, {
+      type: fileUpload.type,
+    }),
+  );
+
+  return memoryFileStorage.get(storageKey);
 }
