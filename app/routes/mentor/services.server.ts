@@ -7,6 +7,7 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
     },
     select: {
       volunteerAgreementSignedOn: true,
+      profilePicturePath: true,
     },
   });
 }

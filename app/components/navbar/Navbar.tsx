@@ -11,9 +11,16 @@ interface Props {
   userName: string;
   environment: Environment;
   version: string;
+  profilePicturePath?: string | null;
 }
 
-export function Navbar({ userName, environment, version, currentView }: Props) {
+export function Navbar({
+  userName,
+  environment,
+  version,
+  currentView,
+  profilePicturePath,
+}: Props) {
   const isCurrentViewMentor = currentView === "mentor";
   const isDev =
     environment === Environments.Local || environment === Environments.Staging;
@@ -55,7 +62,15 @@ export function Navbar({ userName, environment, version, currentView }: Props) {
           <div className="hidden font-semibold lg:block">{userName}</div>
           <label className="btn btn-circle btn-ghost">
             <div className="flex w-10 content-center justify-center rounded-full">
-              <ProfileCircle />
+              {!profilePicturePath ? (
+                <ProfileCircle />
+              ) : (
+                <img
+                  src={profilePicturePath}
+                  alt="profile"
+                  className="h-6 w-6"
+                />
+              )}
             </div>
           </label>
         </div>

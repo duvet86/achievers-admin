@@ -30,5 +30,3 @@ export * from "./table-header-sort/TableHeaderSort";
 export * from "./message/Message";
 
 export * from "./feeback-modal/FeedbackModal";
-
-export * from "./profile-input/ProfileInput";

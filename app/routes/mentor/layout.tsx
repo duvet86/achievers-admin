@@ -5,6 +5,7 @@ import { Outlet, redirect } from "react-router";
 import { getEnvironment } from "~/services";
 import {
   getLoggedUserInfoAsync,
+  getProfilePictureUrl,
   trackException,
   version,
 } from "~/services/.server";
@@ -29,6 +30,12 @@ export async function loader({ request }: Route.LoaderArgs) {
     throw redirect("/volunteer-agreement");
   }
 
+  const profilePicturePath = user?.profilePicturePath
+    ? getProfilePictureUrl(user.profilePicturePath)
+    : null;
+
+  console.log("profilePicturePath", profilePicturePath);
+
   return {
     currentView: "mentor",
     isMentorAndAdmin: loggedUser.isAdmin && loggedUser.isMentor,
@@ -36,6 +43,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     version,
     linkMappings: {},
     environment: getEnvironment(request),
+    profilePicturePath,
   };
 }
 

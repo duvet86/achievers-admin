@@ -13,6 +13,7 @@ interface Props {
   userName: string;
   environment: Environment;
   linkMappings: Record<string, boolean>;
+  profilePicturePath?: string | null;
   children: React.ReactNode;
 }
 
@@ -23,6 +24,7 @@ export function Body({
   version,
   environment,
   linkMappings,
+  profilePicturePath,
   children,
 }: Props) {
   return (
@@ -35,6 +37,7 @@ export function Body({
           userName={userName}
           environment={environment}
           version={version}
+          profilePicturePath={profilePicturePath}
         />
         <main className="content-main mt-16 flex flex-col overflow-y-auto p-4">
           {children}

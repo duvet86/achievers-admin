@@ -7,18 +7,20 @@ import invariant from "tiny-invariant";
 import { NavArrowRight } from "iconoir-react";
 import { parseFormData } from "@mjackson/form-data-parser";
 
-import { getAzureUserWithRolesByIdAsync } from "~/services/.server";
+import {
+  deleteProfilePicture,
+  getAzureUserWithRolesByIdAsync,
+  getProfilePictureUrl,
+  saveProfilePicture,
+} from "~/services/.server";
 import { isDateExpired, isStringNullOrEmpty } from "~/services";
 import { StateLink } from "~/components";
 
 import {
   getUserByIdAsync,
-  getProfilePictureUrl,
   updateUserByIdAsync,
   getChaptersAsync,
   uploadHandler,
-  saveProfilePicture,
-  deleteProfilePicture,
 } from "./services.server";
 import { UserForm, CheckList, Header } from "./components";
 
@@ -74,14 +76,14 @@ export async function action({ request, params }: Route.ActionArgs) {
     await deleteProfilePicture(Number(params.userId));
 
     return {
-      successMessage: "Prodile picture deleted successfully!",
+      successMessage: "Profile picture deleted successfully!",
       errorMessage: null,
     };
   } else if (profilePicure instanceof File) {
     await saveProfilePicture(Number(params.userId), profilePicure);
 
     return {
-      successMessage: "Prodile picture updated successfully!",
+      successMessage: "Profile picture updated successfully!",
       errorMessage: null,
     };
   }

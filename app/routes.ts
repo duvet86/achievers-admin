@@ -471,6 +471,9 @@ export default [
       route("useful-resources", "routes/mentor.useful-resources/route.tsx", {
         index: true,
       }),
+      route("profile", "routes/mentor.profile/route.tsx", {
+        index: true,
+      }),
     ]),
   ),
   route("volunteer-agreement", "routes/volunteer-agreement/route.tsx", {

@@ -1,6 +1,7 @@
 import type { Term } from "~/models";
 
 import dayjs from "dayjs";
+
 import { prisma } from "~/db.server";
 
 export async function getNextMentorSessionsAsync(
@@ -101,6 +102,7 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
       id: true,
       fullName: true,
       chapterId: true,
+      profilePicturePath: true,
     },
   });
 }

@@ -1,60 +1,47 @@
 import { Form, useNavigation } from "react-router";
 
-import {
-  DateInput,
-  Input,
-  Radio,
-  Select,
-  SubmitFormButton,
-} from "~/components";
+import { DateInput, Input, Radio } from "~/components";
 
 import { ProfileInput } from "./ProfileInput";
 
 interface Props {
   user: {
-    profilePicturePath: string | null;
-    fullName: string;
+    id: number;
     email: string;
-    azureADId: string | null;
-    chapterId: number;
     firstName: string;
     lastName: string;
     preferredName: string | null;
+    fullName: string;
     mobile: string;
     addressStreet: string;
     addressSuburb: string;
     addressState: string;
     addressPostcode: string;
+    additionalEmail: string | null;
     dateOfBirth: Date | null;
     emergencyContactName: string | null;
     emergencyContactNumber: string | null;
     emergencyContactAddress: string | null;
     emergencyContactRelationship: string | null;
-    additionalEmail: string | null;
+    profilePicturePath: string | null;
     hasApprovedToPublishPhotos: boolean | null;
+    volunteerAgreementSignedOn: Date | null;
+    chapter: { id: number; name: string };
   };
-  chapters: {
-    id: number;
-    name: string;
-  }[];
-  successMessage: string | undefined;
 }
 
-export function UserForm({ user, chapters, successMessage }: Props) {
+export function UserForm({ user }: Props) {
   const transition = useNavigation();
 
   return (
-    <Form
-      method="post"
-      encType="multipart/form-data"
-      className="border-primary relative mb-8 flex-1 overflow-y-auto md:mr-8 md:mb-0 md:border-r md:pr-4"
-    >
+    <Form method="post" encType="multipart/form-data">
       <fieldset
         className="fieldset"
         disabled={transition.state === "submitting"}
       >
         <ProfileInput
-          defaultValue={user.profilePicturePath}
+          defaultProfilePicturePath={user.profilePicturePath}
+          userId={user.id}
           fullName={user.fullName}
         />
 
@@ -63,112 +50,129 @@ export function UserForm({ user, chapters, successMessage }: Props) {
           defaultValue={user.email}
           label="Email"
           name="email"
-          disabled={user.azureADId !== null}
+          disabled
+          readOnly
         />
 
-        <Select
-          name="chapterId"
+        <Input
+          defaultValue={user.chapter.name}
           label="Chapter"
-          defaultValue={user.chapterId.toString()}
-          required
-          options={[{ value: "", label: "Select a chapter" }].concat(
-            chapters.map(({ id, name }) => ({
-              label: name,
-              value: id.toString(),
-            })),
-          )}
+          name="chapter"
+          disabled
+          readOnly
         />
 
         <Input
           defaultValue={user.firstName}
           label="First name"
           name="firstName"
-          required
+          disabled
+          readOnly
         />
 
         <Input
-          defaultValue={user.preferredName ?? ""}
+          defaultValue={user.preferredName ?? "-"}
           label="Preferred name"
           name="preferredName"
+          disabled
+          readOnly
         />
 
         <Input
           defaultValue={user.lastName}
           label="Last name"
           name="lastName"
-          required
+          disabled
+          readOnly
         />
 
         <Input
           defaultValue={user.mobile}
           label="Mobile"
           name="mobile"
-          required
+          disabled
+          readOnly
         />
 
         <Input
           defaultValue={user.addressStreet}
           label="Address street"
           name="addressStreet"
-          required
+          disabled
+          readOnly
         />
 
         <Input
           defaultValue={user.addressSuburb}
           label="Address suburb"
           name="addressSuburb"
-          required
+          disabled
+          readOnly
         />
 
         <Input
           defaultValue={user.addressState}
           label="Address state"
           name="addressState"
-          required
+          disabled
+          readOnly
         />
 
         <Input
           defaultValue={user.addressPostcode}
           label="Address postcode"
           name="addressPostcode"
-          required
+          disabled
+          readOnly
         />
 
         <DateInput
-          defaultValue={user.dateOfBirth ?? ""}
+          defaultValue={user.dateOfBirth ?? "-"}
           label="Date of birth"
           name="dateOfBirth"
+          disabled
+          readOnly
         />
 
         <Input
-          defaultValue={user.emergencyContactName ?? ""}
+          defaultValue={user.emergencyContactName ?? "-"}
           label="Emergency contact name"
           name="emergencyContactName"
+          disabled
+          readOnly
         />
 
         <Input
-          defaultValue={user.emergencyContactNumber ?? ""}
+          defaultValue={user.emergencyContactNumber ?? "-"}
           label="Emergency contact number"
           name="emergencyContactNumber"
+          disabled
+          readOnly
         />
 
         <Input
-          defaultValue={user.emergencyContactAddress ?? ""}
+          defaultValue={user.emergencyContactAddress ?? "-"}
           label="Emergency contact address"
           name="emergencyContactAddress"
+          disabled
+          readOnly
         />
 
         <Input
-          defaultValue={user.emergencyContactRelationship ?? ""}
+          defaultValue={user.emergencyContactRelationship ?? "-"}
           label="Emergency contact relationship"
           name="emergencyContactRelationship"
+          disabled
+          readOnly
         />
 
         <Input
           type="email"
-          defaultValue={user.additionalEmail ?? ""}
+          defaultValue={user.additionalEmail ?? "-"}
           label="Additional email"
           name="additionalEmail"
+          disabled
+          readOnly
         />
 
         <Radio
@@ -185,12 +189,8 @@ export function UserForm({ user, chapters, successMessage }: Props) {
               value: "false",
             },
           ]}
-        />
-
-        <SubmitFormButton
-          sticky
-          successMessage={successMessage}
-          className="justify-between"
+          disabled
+          readOnly
         />
       </fieldset>
     </Form>

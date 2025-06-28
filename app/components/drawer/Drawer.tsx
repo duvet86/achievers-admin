@@ -17,6 +17,7 @@ import {
   EditPencil,
   BubbleWarning,
   Archery,
+  UserCircle,
 } from "iconoir-react";
 
 interface Props {
@@ -134,6 +135,12 @@ function getLinks(
           icon: <Page />,
           path: "/mentor/useful-resources",
           label: "Useful Resources",
+          isVisible: true,
+        },
+        {
+          icon: <UserCircle />,
+          path: "/mentor/profile",
+          label: "Profile",
           isVisible: true,
         },
       ];

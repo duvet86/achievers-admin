@@ -32,31 +32,38 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   return {
     currentTermLabel: `${currentTerm.name} (${currentTerm.start.format("D MMMM")} - ${currentTerm.end.format("D MMMM")})`,
-    mentorFullName: user.fullName,
+    user,
     nextMentorSessions,
     sessions,
   };
 }
 
 export default function Index({
-  loaderData: {
-    currentTermLabel,
-    mentorFullName,
-    nextMentorSessions,
-    sessions,
-  },
+  loaderData: { currentTermLabel, user, nextMentorSessions, sessions },
 }: Route.ComponentProps) {
   return (
     <div className="-m-4 h-full p-4">
       <article className="prose relative mb-4 h-24 max-w-none lg:h-28">
         <div className="bg-achievers h-24 w-full rounded-md opacity-75 lg:h-28"></div>
         <h1 className="absolute top-6 left-6 hidden lg:block">
-          Welcome {mentorFullName} - {currentTermLabel}
+          Welcome {user.fullName} - {currentTermLabel}
         </h1>
         <h2 className="absolute top-0 mt-0 p-4 lg:hidden">
-          Welcome {mentorFullName}
+          Welcome {user.fullName}
         </h2>
       </article>
+
+      {user.profilePicturePath === null && (
+        <article className="prose max-w-none">
+          <h3 className="text-info">
+            You haven&apos;t uploaded a profile picture yet. Go to the{" "}
+            <StateLink className="btn" to="/mentor/profile">
+              Profile page <NavArrowRight />
+            </StateLink>{" "}
+            to upload a profile picture.
+          </h3>
+        </article>
+      )}
 
       {nextMentorSessions.length === 0 && sessions.length === 0 && (
         <article className="prose max-w-none">
