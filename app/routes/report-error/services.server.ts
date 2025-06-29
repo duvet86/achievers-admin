@@ -1,10 +1,4 @@
-import { type FileUpload } from "@mjackson/form-data-parser";
-
-import { MemoryFileStorage } from "@mjackson/file-storage/memory";
-
 import { prisma } from "~/db.server";
-
-const memoryFileStorage = new MemoryFileStorage();
 
 interface SupportRequestCommand {
   azureId: string;
@@ -45,17 +39,4 @@ export async function submitSupportRequestAsync(
   if (resp.status !== 202) {
     throw new Error(`Logic app status: ${resp.status}`);
   }
-}
-
-export async function uploadHandler(fileUpload: FileUpload) {
-  const storageKey = fileUpload.fieldName ?? "file";
-
-  await memoryFileStorage.set(
-    storageKey,
-    new File([await fileUpload.bytes()], fileUpload.name, {
-      type: fileUpload.type,
-    }),
-  );
-
-  return memoryFileStorage.get(storageKey);
 }

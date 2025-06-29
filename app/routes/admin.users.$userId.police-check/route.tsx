@@ -5,6 +5,7 @@ import { parseFormData } from "@mjackson/form-data-parser";
 import { Form } from "react-router";
 import invariant from "tiny-invariant";
 
+import { memoryHandlerDispose, uploadHandler } from "~/services/.server";
 import { DateInput, Title, FileInput, SubmitFormButton } from "~/components";
 
 import {
@@ -12,7 +13,6 @@ import {
   getUserByIdAsync,
   updatePoliceCheckAsync,
   saveFileAsync,
-  uploadHandler,
 } from "./services.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -53,6 +53,8 @@ export async function action({ request, params }: Route.ActionArgs) {
       filePath:
         file.size > 0 ? await saveFileAsync(params.userId, file) : undefined,
     };
+
+    memoryHandlerDispose("file");
 
     await updatePoliceCheckAsync(Number(params.userId), data);
   } catch (e: unknown) {

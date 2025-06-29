@@ -3,12 +3,20 @@ import type { XOR } from "~/models";
 import type { Route } from "./+types/route";
 
 import dayjs from "dayjs";
-import { $Enums } from "~/prisma/client";
-import { useNavigation } from "react-router";
 import invariant from "tiny-invariant";
 import { NavArrowRight } from "iconoir-react";
+import { parseFormData } from "@mjackson/form-data-parser";
 
+import { $Enums } from "~/prisma/client";
+import {
+  deleteStudentProfilePicture,
+  getStudentProfilePictureUrl,
+  memoryHandlerDispose,
+  saveStudentProfilePicture,
+  uploadHandler,
+} from "~/services/.server";
 import { areEqualIgnoreCase, calculateYearLevel } from "~/services";
+import { StateLink } from "~/components";
 
 import {
   createNewStudentAsync,
@@ -19,7 +27,6 @@ import {
   updateStudentByIdAsync,
 } from "./services.server";
 import { StudentForm, GuardianList, TeacherList, Header } from "./components";
-import { StateLink } from "~/components";
 
 export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.studentId, "studentId not found");
@@ -39,17 +46,18 @@ export async function loader({ params }: Route.LoaderArgs) {
   }
 
   const student = await getStudentByIdAsync(Number(params.studentId));
-  if (student === null) {
-    throw new Response("Not Found", {
-      status: 404,
-    });
-  }
-
   const chapters = await getChaptersAsync();
+
+  const profilePicturePath = student?.profilePicturePath
+    ? getStudentProfilePictureUrl(student.profilePicturePath)
+    : null;
 
   return {
     title: "Edit student info",
-    student,
+    student: {
+      ...student,
+      profilePicturePath,
+    },
     yearLevelCalculated:
       student.yearLevel === null
         ? calculateYearLevel(student.dateOfBirth)
@@ -62,7 +70,26 @@ export async function loader({ params }: Route.LoaderArgs) {
 export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.studentId, "studentId not found");
 
-  const formData = await request.formData();
+  const formData = await parseFormData(request, uploadHandler);
+
+  const profilePicure = formData.get("profilePicure");
+  if (profilePicure === "DELETE") {
+    await deleteStudentProfilePicture(Number(params.studentId));
+
+    return {
+      successMessage: "Profile picture deleted successfully!",
+      errorMessage: null,
+    };
+  } else if (profilePicure instanceof File) {
+    await saveStudentProfilePicture(Number(params.studentId), profilePicure);
+
+    memoryHandlerDispose("profilePicure");
+
+    return {
+      successMessage: "Profile picture updated successfully!",
+      errorMessage: null,
+    };
+  }
 
   if (request.method === "DELETE") {
     const guardianId = formData.get("guardianId")?.toString();
@@ -185,10 +212,6 @@ export default function Index({
   loaderData: { chapters, isNewStudent, student, title, yearLevelCalculated },
   actionData,
 }: Route.ComponentProps) {
-  const transition = useNavigation();
-
-  const isLoading = transition.state !== "idle";
-
   return (
     <div className="flex h-full flex-col">
       <Header
@@ -201,7 +224,6 @@ export default function Index({
 
       <div className="content-area md:flex">
         <StudentForm
-          isLoading={isLoading}
           student={student}
           chapters={chapters}
           yearLevelCalculated={yearLevelCalculated}

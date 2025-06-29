@@ -1,4 +1,4 @@
-import { Form, useNavigation } from "react-router";
+import { Form } from "react-router";
 
 import {
   DateInput,
@@ -41,18 +41,13 @@ interface Props {
 }
 
 export function UserForm({ user, chapters, successMessage }: Props) {
-  const transition = useNavigation();
-
   return (
     <Form
       method="post"
       encType="multipart/form-data"
       className="border-primary relative mb-8 flex-1 overflow-y-auto md:mr-8 md:mb-0 md:border-r md:pr-4"
     >
-      <fieldset
-        className="fieldset"
-        disabled={transition.state === "submitting"}
-      >
+      <fieldset className="fieldset">
         <ProfileInput
           defaultValue={user.profilePicturePath}
           fullName={user.fullName}

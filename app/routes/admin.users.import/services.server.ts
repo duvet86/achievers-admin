@@ -1,15 +1,11 @@
 import type { ImportedHistory, User } from "~/prisma/client";
 import type { SpeadsheetUser } from "~/models/speadsheet";
-import type { FileUpload } from "@mjackson/form-data-parser";
 
 import { Readable } from "node:stream";
-import { MemoryFileStorage } from "@mjackson/file-storage/memory";
 import { stream, read, utils } from "xlsx";
 
 import { prisma } from "~/db.server";
 import { areEqualIgnoreCase, isValidDate } from "~/services";
-
-const memoryFileStorage = new MemoryFileStorage();
 
 export async function readExcelFileAsync(file: File) {
   stream.set_readable(Readable);
@@ -233,17 +229,4 @@ export async function importSpreadsheetMentorsAsync(
   });
 
   return users;
-}
-
-export async function uploadHandler(fileUpload: FileUpload) {
-  const storageKey = fileUpload.fieldName ?? "file";
-
-  await memoryFileStorage.set(
-    storageKey,
-    new File([await fileUpload.bytes()], fileUpload.name, {
-      type: fileUpload.type,
-    }),
-  );
-
-  return memoryFileStorage.get(storageKey);
 }

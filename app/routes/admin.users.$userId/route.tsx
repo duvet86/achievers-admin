@@ -8,10 +8,12 @@ import { NavArrowRight } from "iconoir-react";
 import { parseFormData } from "@mjackson/form-data-parser";
 
 import {
-  deleteProfilePicture,
+  deleteUserProfilePicture,
   getAzureUserWithRolesByIdAsync,
-  getProfilePictureUrl,
-  saveProfilePicture,
+  getUserProfilePictureUrl,
+  memoryHandlerDispose,
+  saveUserProfilePicture,
+  uploadHandler,
 } from "~/services/.server";
 import { isDateExpired, isStringNullOrEmpty } from "~/services";
 import { StateLink } from "~/components";
@@ -20,7 +22,6 @@ import {
   getUserByIdAsync,
   updateUserByIdAsync,
   getChaptersAsync,
-  uploadHandler,
 } from "./services.server";
 import { UserForm, CheckList, Header } from "./components";
 
@@ -38,7 +39,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   }
 
   const profilePicturePath = user?.profilePicturePath
-    ? getProfilePictureUrl(user.profilePicturePath)
+    ? getUserProfilePictureUrl(user.profilePicturePath)
     : null;
 
   const chapters = await getChaptersAsync();
@@ -73,14 +74,16 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const profilePicure = formData.get("profilePicure");
   if (profilePicure === "DELETE") {
-    await deleteProfilePicture(Number(params.userId));
+    await deleteUserProfilePicture(Number(params.userId));
 
     return {
       successMessage: "Profile picture deleted successfully!",
       errorMessage: null,
     };
   } else if (profilePicure instanceof File) {
-    await saveProfilePicture(Number(params.userId), profilePicure);
+    await saveUserProfilePicture(Number(params.userId), profilePicure);
+
+    memoryHandlerDispose("profilePicure");
 
     return {
       successMessage: "Profile picture updated successfully!",

@@ -1,18 +1,16 @@
 import type { $Enums } from "~/prisma/client";
 
 import { Form } from "react-router";
+import { FloppyDiskArrowIn } from "iconoir-react";
 
-import {
-  DateInput,
-  Input,
-  Radio,
-  Select,
-  SubmitFormButton,
-} from "~/components";
+import { DateInput, Input, Radio, Select } from "~/components";
+
+import { ProfileInput } from "./ProfileInput";
 
 interface Props {
-  isLoading: boolean;
   student: {
+    profilePicturePath: string | null;
+    fullName: string;
     chapterId: number;
     firstName: string;
     lastName: string;
@@ -39,18 +37,19 @@ interface Props {
   yearLevelCalculated: number | null;
 }
 
-export function StudentForm({
-  isLoading,
-  student,
-  chapters,
-  yearLevelCalculated,
-}: Props) {
+export function StudentForm({ student, chapters, yearLevelCalculated }: Props) {
   return (
     <Form
       method="post"
+      encType="multipart/form-data"
       className="border-primary relative flex-1 overflow-y-auto md:mr-8 md:mb-0 md:border-r md:pr-4"
     >
-      <fieldset className="fieldset" disabled={isLoading}>
+      <fieldset className="fieldset">
+        <ProfileInput
+          defaultValue={student?.profilePicturePath ?? null}
+          fullName={student?.fullName ?? "New student"}
+        />
+
         <Select
           name="chapterId"
           label="Chapter"
@@ -202,7 +201,12 @@ export function StudentForm({
           name="startDate"
         />
 
-        <SubmitFormButton sticky className="mt-4 justify-between" />
+        <div className="sticky bottom-0 z-10 mt-4 flex justify-end">
+          <button className="btn btn-primary w-48" type="submit">
+            <FloppyDiskArrowIn />
+            Save
+          </button>
+        </div>
       </fieldset>
     </Form>
   );

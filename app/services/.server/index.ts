@@ -6,3 +6,5 @@ export * from "./session.server";
 export * from "./db-utils.server";
 export * from "./permissions.server";
 export * from "./user.server";
+export * from "./student.server";
+export * from "./memory-uploader.server";

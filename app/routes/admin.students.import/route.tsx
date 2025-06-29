@@ -4,7 +4,11 @@ import { parseFormData } from "@mjackson/form-data-parser";
 import { Form } from "react-router";
 import { Import, PageEdit, Archive } from "iconoir-react";
 
-import { trackException } from "~/services/.server";
+import {
+  memoryHandlerDispose,
+  trackException,
+  uploadHandler,
+} from "~/services/.server";
 import { isValidDate } from "~/services";
 import { Title, SubTitle, FileInput, StateLink } from "~/components";
 
@@ -12,7 +16,6 @@ import {
   readExcelFileAsync,
   getCurrentStudentsAsync,
   importSpreadsheetStudentsAsync,
-  uploadHandler,
 } from "./services.server";
 
 export async function action({ request }: Route.ActionArgs) {
@@ -27,6 +30,8 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   const fileStudents = await readExcelFileAsync(file);
+
+  memoryHandlerDispose("studentsSheet");
 
   if (fileStudents.length === 0) {
     return {

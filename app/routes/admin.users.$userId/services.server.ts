@@ -1,12 +1,7 @@
-import type { FileUpload } from "@mjackson/form-data-parser";
 import type { Prisma } from "~/prisma/client";
 import type { XOR } from "~/models";
 
-import { MemoryFileStorage } from "@mjackson/file-storage/memory";
-
 import { prisma } from "~/db.server";
-
-const memoryFileStorage = new MemoryFileStorage();
 
 export async function getChaptersAsync() {
   return await prisma.chapter.findMany({
@@ -98,17 +93,4 @@ export async function updateUserByIdAsync(
       id: userId,
     },
   });
-}
-
-export async function uploadHandler(fileUpload: FileUpload) {
-  const storageKey = fileUpload.fieldName ?? "file";
-
-  await memoryFileStorage.set(
-    storageKey,
-    new File([await fileUpload.bytes()], fileUpload.name, {
-      type: fileUpload.type,
-    }),
-  );
-
-  return memoryFileStorage.get(storageKey);
 }

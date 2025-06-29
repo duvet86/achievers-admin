@@ -2,12 +2,16 @@ import type { Route } from "./+types/route";
 
 import { parseFormData } from "@mjackson/form-data-parser";
 
-import { getLoggedUserInfoAsync, trackException } from "~/services/.server";
+import {
+  getLoggedUserInfoAsync,
+  memoryHandlerDispose,
+  trackException,
+  uploadHandler,
+} from "~/services/.server";
 
 import {
   getUserByAzureADIdAsync,
   submitSupportRequestAsync,
-  uploadHandler,
 } from "./services.server";
 
 export async function action({ request }: Route.ActionArgs) {
@@ -44,6 +48,8 @@ export async function action({ request }: Route.ActionArgs) {
       description: formData.get("description")!.toString(),
       attachments,
     });
+
+    memoryHandlerDispose("file");
 
     return {
       errorMessage: null,

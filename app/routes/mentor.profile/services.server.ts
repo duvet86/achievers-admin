@@ -1,10 +1,4 @@
-import type { FileUpload } from "@mjackson/form-data-parser";
-
-import { MemoryFileStorage } from "@mjackson/file-storage/memory";
-
 import { prisma } from "~/db.server";
-
-const memoryFileStorage = new MemoryFileStorage();
 
 export async function getUserByAzureADIdAsync(azureADId: string) {
   return await prisma.user.findUniqueOrThrow({
@@ -40,17 +34,4 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
       },
     },
   });
-}
-
-export async function uploadHandler(fileUpload: FileUpload) {
-  const storageKey = fileUpload.fieldName ?? "file";
-
-  await memoryFileStorage.set(
-    storageKey,
-    new File([await fileUpload.bytes()], fileUpload.name, {
-      type: fileUpload.type,
-    }),
-  );
-
-  return memoryFileStorage.get(storageKey);
 }

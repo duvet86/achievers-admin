@@ -4,12 +4,14 @@ import {
   deleteBlobAsync,
   getContainerClient,
   getSASQueryString,
+  STUDENT_DATA_BLOB_CONTAINER_NAME,
   uploadBlobAsync,
-  USER_DATA_BLOB_CONTAINER_NAME,
 } from "./blob-storage.server";
 
-export function getUserProfilePictureUrl(profilePicturePath: string): string {
-  const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
+export function getStudentProfilePictureUrl(
+  profilePicturePath: string,
+): string {
+  const containerClient = getContainerClient(STUDENT_DATA_BLOB_CONTAINER_NAME);
 
   const blob = containerClient.getBlobClient(profilePicturePath);
 
@@ -22,18 +24,18 @@ export function getUserProfilePictureUrl(profilePicturePath: string): string {
   return `${blob.url}?${sasQueryString}`;
 }
 
-export async function saveUserProfilePicture(
-  userId: number,
+export async function saveStudentProfilePicture(
+  studentId: number,
   file: File,
 ): Promise<string> {
   if (file.size === 0) {
     throw new Error("File has 0 length.");
   }
 
-  const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
+  const containerClient = getContainerClient(STUDENT_DATA_BLOB_CONTAINER_NAME);
   await containerClient.createIfNotExists();
 
-  const path = `${userId}/profile-picture`;
+  const path = `${studentId}/profile-picture`;
 
   const resp = await uploadBlobAsync(containerClient, file, path);
 
@@ -41,9 +43,9 @@ export async function saveUserProfilePicture(
     throw new Error(resp.errorCode);
   }
 
-  await prisma.user.update({
+  await prisma.student.update({
     where: {
-      id: userId,
+      id: studentId,
     },
     data: {
       profilePicturePath: path,
@@ -53,11 +55,13 @@ export async function saveUserProfilePicture(
   return path;
 }
 
-export async function deleteUserProfilePicture(userId: number): Promise<void> {
-  const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
+export async function deleteStudentProfilePicture(
+  studentId: number,
+): Promise<void> {
+  const containerClient = getContainerClient(STUDENT_DATA_BLOB_CONTAINER_NAME);
   await containerClient.createIfNotExists();
 
-  const path = `${userId}/profile-picture`;
+  const path = `${studentId}/profile-picture`;
 
   const resp = await deleteBlobAsync(containerClient, path);
 
@@ -65,9 +69,9 @@ export async function deleteUserProfilePicture(userId: number): Promise<void> {
     throw new Error(resp.errorCode);
   }
 
-  await prisma.user.update({
+  await prisma.student.update({
     where: {
-      id: userId,
+      id: studentId,
     },
     data: {
       profilePicturePath: null,

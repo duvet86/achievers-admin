@@ -3,7 +3,11 @@ import type { Route } from "./+types/route";
 import { parseFormData } from "@mjackson/form-data-parser";
 import { Form } from "react-router";
 
-import { trackException } from "~/services/.server";
+import {
+  memoryHandlerDispose,
+  trackException,
+  uploadHandler,
+} from "~/services/.server";
 import { isEmail, isStringNullOrEmpty } from "~/services";
 
 import { Import, PageEdit, Archive } from "iconoir-react";
@@ -14,7 +18,6 @@ import {
   readExcelFileAsync,
   getCurrentMentorsAsync,
   importSpreadsheetMentorsAsync,
-  uploadHandler,
 } from "./services.server";
 
 export const action = async ({ request }: Route.ActionArgs) => {
@@ -29,6 +32,8 @@ export const action = async ({ request }: Route.ActionArgs) => {
   }
 
   const fileUsers = await readExcelFileAsync(file);
+
+  memoryHandlerDispose("usersSheet");
 
   if (fileUsers.length === 0) {
     return {

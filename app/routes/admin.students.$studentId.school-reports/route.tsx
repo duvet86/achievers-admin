@@ -7,7 +7,11 @@ import { parseFormData } from "@mjackson/form-data-parser";
 import { Xmark } from "iconoir-react";
 
 import { getCurrentTermForDate } from "~/services";
-import { getSchoolTermsAsync } from "~/services/.server";
+import {
+  getSchoolTermsAsync,
+  memoryHandlerDispose,
+  uploadHandler,
+} from "~/services/.server";
 import { FileInput, Select, SubmitFormButton, Title } from "~/components";
 
 import {
@@ -16,7 +20,6 @@ import {
   getStudentByIdAsync,
   saveFileAsync,
   saveSchoolReportAsync,
-  uploadHandler,
 } from "./services.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -69,6 +72,8 @@ export async function action({ request, params }: Route.ActionArgs) {
       };
 
       await saveSchoolReportAsync(Number(params.studentId), data);
+
+      memoryHandlerDispose("file");
     }
   } catch (e: unknown) {
     return {

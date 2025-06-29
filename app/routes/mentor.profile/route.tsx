@@ -4,14 +4,16 @@ import { parseFormData } from "@mjackson/form-data-parser";
 import { WarningCircle } from "iconoir-react";
 
 import {
-  deleteProfilePicture,
+  deleteUserProfilePicture,
   getLoggedUserInfoAsync,
-  getProfilePictureUrl,
-  saveProfilePicture,
+  getUserProfilePictureUrl,
+  memoryHandlerDispose,
+  saveUserProfilePicture,
+  uploadHandler,
 } from "~/services/.server";
 import { Title } from "~/components";
 
-import { getUserByAzureADIdAsync, uploadHandler } from "./services.server";
+import { getUserByAzureADIdAsync } from "./services.server";
 import { UserForm } from "./components";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -19,7 +21,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
   const profilePicturePath = user?.profilePicturePath
-    ? getProfilePictureUrl(user.profilePicturePath)
+    ? getUserProfilePictureUrl(user.profilePicturePath)
     : null;
 
   return {
@@ -37,9 +39,11 @@ export async function action({ request }: Route.ActionArgs) {
 
   const profilePicure = formData.get("profilePicure");
   if (profilePicure === "DELETE") {
-    await deleteProfilePicture(Number(userId));
+    await deleteUserProfilePicture(Number(userId));
   } else if (profilePicure instanceof File) {
-    await saveProfilePicture(Number(userId), profilePicure);
+    await saveUserProfilePicture(Number(userId), profilePicure);
+
+    memoryHandlerDispose("profilePicure");
   } else {
     throw new Error();
   }

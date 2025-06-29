@@ -5,7 +5,7 @@ import { Outlet, redirect } from "react-router";
 import { getEnvironment } from "~/services";
 import {
   getLoggedUserInfoAsync,
-  getProfilePictureUrl,
+  getUserProfilePictureUrl,
   trackException,
   version,
 } from "~/services/.server";
@@ -31,7 +31,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 
   const profilePicturePath = user?.profilePicturePath
-    ? getProfilePictureUrl(user.profilePicturePath)
+    ? getUserProfilePictureUrl(user.profilePicturePath)
     : null;
 
   console.log("profilePicturePath", profilePicturePath);

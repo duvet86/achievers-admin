@@ -1,6 +1,4 @@
-import type { FileUpload } from "@mjackson/form-data-parser";
-
-import { MemoryFileStorage } from "@mjackson/file-storage/memory";
+import dayjs from "dayjs";
 
 import { prisma } from "~/db.server";
 import {
@@ -10,9 +8,6 @@ import {
   STUDENT_DATA_BLOB_CONTAINER_NAME,
   uploadBlobAsync,
 } from "~/services/.server";
-import dayjs from "dayjs";
-
-const memoryFileStorage = new MemoryFileStorage();
 
 export interface SchoolReportCommand {
   schoolTermId: number;
@@ -53,19 +48,6 @@ export async function getStudentByIdAsync(studentId: number) {
       schoolTermLabel: `${report.schoolTerm.year} (${dayjs(report.schoolTerm.startDate).format("D MMMM")} - ${dayjs(report.schoolTerm.endDate).format("D MMMM")})`,
     })),
   };
-}
-
-export async function uploadHandler(fileUpload: FileUpload) {
-  const storageKey = fileUpload.fieldName ?? "file";
-
-  await memoryFileStorage.set(
-    storageKey,
-    new File([await fileUpload.bytes()], fileUpload.name, {
-      type: fileUpload.type,
-    }),
-  );
-
-  return memoryFileStorage.get(storageKey);
 }
 
 export async function saveFileAsync(

@@ -13,12 +13,13 @@ export async function getChaptersAsync() {
 }
 
 export async function getStudentByIdAsync(id: number) {
-  return await prisma.student.findUnique({
+  return await prisma.student.findUniqueOrThrow({
     where: {
       id,
     },
     select: {
       id: true,
+      fullName: true,
       firstName: true,
       lastName: true,
       dateOfBirth: true,
@@ -37,6 +38,7 @@ export async function getStudentByIdAsync(id: number) {
       emergencyContactAddress: true,
       startDate: true,
       endDate: true,
+      profilePicturePath: true,
       guardian: {
         select: {
           id: true,
