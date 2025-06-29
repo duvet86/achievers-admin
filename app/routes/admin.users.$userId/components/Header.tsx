@@ -4,11 +4,14 @@ import {
   WarningTriangle,
   BinFull,
   OnTag,
+  Group,
 } from "iconoir-react";
 
 import { StateLink, Title } from "~/components";
 
 interface Props {
+  chapterId: number;
+  mentorId: number;
   endDate: Date | null;
   mentorAppRoleAssignmentId: string | null;
 }
@@ -31,6 +34,16 @@ export function Header(props: Props) {
           tabIndex={0}
           className="menu dropdown-content rounded-box border-base-300 bg-base-100 z-1 w-56 border p-2 shadow-sm"
         >
+          <li>
+            <StateLink
+              to={`/admin/chapters/${props.chapterId}/mentors/${props.mentorId}`}
+              relative="path"
+              className="text-success gap-4 font-semibold"
+            >
+              <Group />
+              Assign students
+            </StateLink>
+          </li>
           {getLinks(props)}
         </ul>
       </div>

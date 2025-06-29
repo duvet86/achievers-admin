@@ -41,6 +41,7 @@ export async function getUserByIdAsync(id: number) {
       hasApprovedToPublishPhotos: true,
       endDate: true,
       chapterId: true,
+      frequencyInDays: true,
       chapter: {
         select: {
           id: true,

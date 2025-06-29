@@ -3,6 +3,12 @@ import type { Term } from "~/models";
 
 import { prisma } from "~/db.server";
 import { accessibleBy } from "~/casl-prisma";
+import { Prisma } from "~/prisma/client";
+
+interface DBOption {
+  id: number;
+  fullName: string;
+}
 
 export async function getChaptersAsync(ability: AppAbility) {
   return await prisma.chapter.findMany({
@@ -24,8 +30,10 @@ export async function getAvailabelMentorsAsync(
 ) {
   const chapterIdFilter = accessibleBy(ability).Chapter.id ?? chapterId;
 
+  let sessions: DBOption[] = [];
+
   if (studentId) {
-    return await prisma.$queryRaw<{ id: number; fullName: string }[]>`
+    sessions = await prisma.$queryRaw<DBOption[]>`
       SELECT 
         u.id, u.fullName
       FROM SessionAttendance sa
@@ -37,13 +45,15 @@ export async function getAvailabelMentorsAsync(
       ORDER BY u.fullName ASC`;
   }
 
-  return await prisma.$queryRaw<{ id: number; fullName: string }[]>`
+  const dbOptions = await prisma.$queryRaw<DBOption[]>`
     SELECT DISTINCT
       u.id, u.fullName
     FROM User u
     INNER JOIN MentorToStudentAssignement msa ON msa.userId = u.id
-    WHERE u.chapterId = ${chapterIdFilter}
+    WHERE u.chapterId = ${chapterIdFilter} AND ${sessions.length > 0 ? Prisma.sql`u.id NOT IN (${Prisma.join(sessions.map((s) => s.id))})` : "1=1"}
     ORDER BY u.fullName ASC`;
+
+  return sessions.concat(dbOptions);
 }
 
 export async function getAvailabelStudentsAsync(
@@ -53,8 +63,10 @@ export async function getAvailabelStudentsAsync(
 ) {
   const chapterIdFilter = accessibleBy(ability).Chapter.id ?? chapterId;
 
+  let sessions: DBOption[] = [];
+
   if (mentorId) {
-    return await prisma.$queryRaw<{ id: number; fullName: string }[]>`
+    sessions = await prisma.$queryRaw<DBOption[]>`
       SELECT 
         s.id, s.fullName
       FROM SessionAttendance sa
@@ -66,13 +78,15 @@ export async function getAvailabelStudentsAsync(
       ORDER BY s.fullName ASC`;
   }
 
-  return await prisma.$queryRaw<{ id: number; fullName: string }[]>`
+  const dbOptions = await prisma.$queryRaw<DBOption[]>`
     SELECT DISTINCT
       s.id, s.fullName
     FROM Student s
     INNER JOIN MentorToStudentAssignement msa ON msa.studentId = s.id
-    WHERE s.chapterId = ${chapterIdFilter}
+    WHERE s.chapterId = ${chapterIdFilter} AND ${sessions.length > 0 ? Prisma.sql`s.id NOT IN (${Prisma.join(sessions.map((s) => s.id))})` : "1=1"}
     ORDER BY s.fullName ASC`;
+
+  return sessions.concat(dbOptions);
 }
 
 export async function getCountAsync(

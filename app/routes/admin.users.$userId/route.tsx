@@ -48,6 +48,12 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     user: {
       ...user,
       profilePicturePath,
+      frequency:
+        user.frequencyInDays === 14
+          ? "FORTNIGHTLY"
+          : user.frequencyInDays === 7
+            ? "WEEKLY"
+            : "",
     },
     isWwcCheckExpired: isDateExpired(user.wwcCheck?.expiryDate),
     isPoliceCheckExpired: isDateExpired(user.policeCheck?.expiryDate),
@@ -106,6 +112,8 @@ export async function action({ request, params }: Route.ActionArgs) {
   const dateOfBirth = formData.get("dateOfBirth")?.toString();
   const additionalEmail = formData.get("additionalEmail")?.toString();
 
+  const frequency = formData.get("frequency")!.toString();
+
   const emergencyContactName = formData.get("emergencyContactName")?.toString();
   const emergencyContactNumber = formData
     .get("emergencyContactNumber")
@@ -153,6 +161,8 @@ export async function action({ request, params }: Route.ActionArgs) {
     emergencyContactRelationship,
     chapterId: Number(chapterId),
     preferredName,
+    frequencyInDays:
+      frequency === "FORTNIGHTLY" ? 14 : frequency === "WEEKLY" ? 7 : null,
   };
 
   await updateUserByIdAsync(Number(params.userId), dataCreate);
@@ -170,6 +180,8 @@ export default function Index({
   return (
     <div className="flex h-full flex-col">
       <Header
+        chapterId={loaderData.user.chapterId}
+        mentorId={loaderData.user.id}
         endDate={loaderData.user.endDate}
         mentorAppRoleAssignmentId={loaderData.mentorAppRoleAssignmentId}
       />

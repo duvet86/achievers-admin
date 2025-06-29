@@ -32,6 +32,7 @@ export async function getMentorWithStudentsAsync(mentorId: number) {
       id: true,
       fullName: true,
       frequencyInDays: true,
+      chapterId: true,
       mentorToStudentAssignement: {
         select: {
           student: {

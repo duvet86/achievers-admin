@@ -27,7 +27,7 @@ import {
   getAvailabelMentorsAsync,
   getAvailabelStudentsAsync,
 } from "./services.server";
-import FormInputs from "./components/FormInputs";
+import { FormInputs } from "./components";
 
 dayjs.extend(isBetween);
 

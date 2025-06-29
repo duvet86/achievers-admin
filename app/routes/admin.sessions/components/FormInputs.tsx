@@ -20,7 +20,7 @@ interface Props {
   sessionDatesOptions: Option[];
 }
 
-export default function FormInputs({
+export function FormInputs({
   selectedChapterId,
   selectedTermId,
   selectedTermYear,
@@ -45,7 +45,6 @@ export default function FormInputs({
     searchParams.set("selectedTermYear", "");
     searchParams.set("selectedTermId", "");
     searchParams.set("selectedTermDate", "");
-    searchParams.set("includeSignedOff", "");
     searchParams.set("pageNumber", "");
 
     void navigate(`?${searchParams.toString()}`);
@@ -86,15 +85,11 @@ export default function FormInputs({
   const onMentorIdChange = (value: string) => {
     searchParams.set("mentorId", value);
 
-    searchParams.set("studentId", "");
-
     void navigate(`?${searchParams.toString()}`);
   };
 
   const onStudentIdChange = (value: string) => {
     searchParams.set("studentId", value);
-
-    searchParams.set("mentorId", "");
 
     void navigate(`?${searchParams.toString()}`);
   };

@@ -75,7 +75,13 @@ export async function action({ request, params }: Route.ActionArgs) {
 export default function Index({
   loaderData: {
     availableStudents,
-    mentorWithStudents: { fullName, mentorToStudentAssignement },
+    mentorWithStudents: {
+      id: mentorId,
+      chapterId,
+      fullName,
+      frequencyInDays,
+      mentorToStudentAssignement,
+    },
   },
 }: Route.ComponentProps) {
   const { state, Form, data, submit } = useFetcher<{
@@ -102,10 +108,26 @@ export default function Index({
 
       <article className="prose w-full max-w-none">
         <div className="flex flex-col sm:flex-row sm:gap-12">
-          <div className="sm:w-1/2">
-            <h4>Mentor</h4>
-            <div className="mt-4 text-xl">{fullName}</div>
-          </div>
+          <table className="table">
+            <thead>
+              <tr>
+                <th className="p-2">Mentor</th>
+                <th className="p-2">Frequency</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="p-2">{fullName}</td>
+                <td className="p-2">
+                  {frequencyInDays === 14
+                    ? "Fortnightly"
+                    : frequencyInDays === 7
+                      ? "Weekly"
+                      : "-"}
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
           <div>
             <h4>Assign a new student</h4>
@@ -162,8 +184,8 @@ export default function Index({
           )}
           <ol>
             {mentorToStudentAssignement.map(
-              ({ student: { id, fullName, endDate } }) => (
-                <li key={id} className="border-b border-gray-300 pb-2">
+              ({ student: { id: studentId, fullName, endDate } }) => (
+                <li key={studentId} className="border-b border-gray-300 pb-2">
                   <div
                     className={classNames("flex items-center justify-between", {
                       "text-error": endDate !== null,
@@ -177,15 +199,19 @@ export default function Index({
                     </span>
                     <div className="flex gap-2 sm:gap-6">
                       <StateLink
-                        to="/admin/sessions"
+                        to={`/admin/sessions?chapterId=${chapterId}&mentorId=${mentorId}&studentId=${studentId}&filterReports=ALL`}
                         className="btn btn-info hidden w-40 sm:flex"
                       >
                         <Clock />
-                        View sessions
+                        Latest sessions
                       </StateLink>
 
                       <Form onSubmit={onMentorRemoved(fullName)}>
-                        <input type="hidden" name="studentId" value={id} />
+                        <input
+                          type="hidden"
+                          name="studentId"
+                          value={studentId}
+                        />
                         <button
                           disabled={isLoading}
                           className="btn btn-error w-40"

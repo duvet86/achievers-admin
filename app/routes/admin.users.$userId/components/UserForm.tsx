@@ -32,6 +32,7 @@ interface Props {
     emergencyContactRelationship: string | null;
     additionalEmail: string | null;
     hasApprovedToPublishPhotos: boolean | null;
+    frequency: string;
   };
   chapters: {
     id: number;
@@ -72,6 +73,17 @@ export function UserForm({ user, chapters, successMessage }: Props) {
               value: id.toString(),
             })),
           )}
+        />
+
+        <Select
+          name="frequency"
+          label="Preferred frequency"
+          defaultValue={user.frequency}
+          options={[
+            { value: "", label: "Not specified" },
+            { value: "FORTNIGHTLY", label: "Fortnightly" },
+            { value: "WEEKLY", label: "Weekly" },
+          ]}
         />
 
         <Input

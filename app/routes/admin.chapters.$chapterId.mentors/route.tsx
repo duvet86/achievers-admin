@@ -157,7 +157,11 @@ export default function Index({
                   <tr key={id}>
                     <td className="p-2">{fullName}</td>
                     <td className="hidden p-2 sm:table-cell">
-                      {frequencyInDays === 14 ? "Fortnightly" : "Weekly"}
+                      {frequencyInDays === 14
+                        ? "Fortnightly"
+                        : frequencyInDays === 7
+                          ? "Weekly"
+                          : "-"}
                     </td>
                     <td>
                       <ul className="list-disc pl-2">
