@@ -1,7 +1,6 @@
 import type { Route } from "./+types/route";
 
 import { useFetcher } from "react-router";
-
 import invariant from "tiny-invariant";
 import {
   Xmark,
@@ -9,6 +8,7 @@ import {
   FloppyDiskArrowIn,
   WarningTriangle,
 } from "iconoir-react";
+import classNames from "classnames";
 
 import { Title, SelectSearch, StateLink } from "~/components";
 
@@ -18,7 +18,6 @@ import {
   getStudentsInChapterAsync,
   removeMentorStudentAssignement,
 } from "./services.server";
-import classNames from "classnames";
 
 export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
@@ -33,7 +32,6 @@ export async function loader({ params }: Route.LoaderArgs) {
   ]);
 
   return {
-    chapterId: params.chapterId,
     availableStudents,
     mentorWithStudents,
   };
@@ -214,7 +212,7 @@ export default function Index({
                         />
                         <button
                           disabled={isLoading}
-                          className="btn btn-error w-40"
+                          className="btn btn-error btn-xs sm:btn-md sm:w-40"
                           type="submit"
                         >
                           {isLoading ? (

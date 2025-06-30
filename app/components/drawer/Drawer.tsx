@@ -150,29 +150,27 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
   const isCurrentViewAdmin = currentView === "admin";
   const links = getLinks(linkMappings, isCurrentViewAdmin);
 
-  const stopProp = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    e.stopPropagation();
+  const closeDrawer = () => {
+    document.getElementById("drawer-label")!.click();
   };
 
   return (
     <div className="drawer-side z-20 pt-16">
       <label
+        id="drawer-label"
         htmlFor="drawer"
         aria-label="close sidebar"
         className="drawer-overlay"
       ></label>
+
       <div className="flex h-full flex-col">
         <ul className="menu border-primary bg-base-200 text-base-content w-64 flex-1 border-r p-4">
           {links
             .filter(({ isVisible }) => isVisible)
             .map(({ icon, label, path: value }, index) => (
-              <li
-                key={index}
-                onClick={() => document.getElementById("drawer")!.click()}
-              >
+              <li key={index} onClick={closeDrawer}>
                 <NavLink
                   to={value}
-                  onClick={stopProp}
                   className={({ isActive }) =>
                     isActive
                       ? "mb-2 justify-between rounded-sm bg-black/20 font-semibold"
@@ -188,6 +186,7 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
               </li>
             ))}
         </ul>
+
         <ul className="menu border-primary bg-base-200 text-base-content w-64 border-t border-r p-4">
           <li>
             <button

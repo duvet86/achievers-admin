@@ -31,7 +31,6 @@ export async function loader({ params }: Route.LoaderArgs) {
   ]);
 
   return {
-    chapterId: params.chapterId,
     availableMentors,
     studentWithMentors,
   };
@@ -156,43 +155,55 @@ export default function Index({
         <div>
           <h4>Assigned mentors</h4>
           <ol>
-            {mentorToStudentAssignement.map(({ user: { fullName, id } }) => (
-              <li key={id} className="border-b border-gray-300 pb-2">
-                <div className="flex flex-wrap items-center justify-between">
-                  {fullName}
-                  <div className="flex gap-2 sm:gap-6">
-                    <StateLink
-                      to="/admin/sessions"
-                      className="btn btn-info hidden w-40 sm:flex"
-                    >
-                      <Clock />
-                      View sessions
-                    </StateLink>
+            {mentorToStudentAssignement.map(
+              ({ user: { id, fullName, frequencyInDays } }) => (
+                <li key={id} className="border-b border-gray-300 pb-2">
+                  <div className="flex flex-wrap items-center justify-between">
+                    <div className="flex gap-2">
+                      <span>{fullName}</span>
+                      <span className="italic">
+                        {frequencyInDays === 14
+                          ? "(Fortnightly)"
+                          : frequencyInDays === 7
+                            ? "(Weekly)"
+                            : "(Frequency not specified)"}
+                      </span>
+                    </div>
 
-                    <Form onSubmit={onMentorRemoved(fullName)}>
-                      <input type="hidden" name="mentorId" value={id} />
-                      <button
-                        disabled={isLoading}
-                        className="btn btn-error w-40"
-                        type="submit"
+                    <div className="flex gap-2 sm:gap-6">
+                      <StateLink
+                        to="/admin/sessions"
+                        className="btn btn-info hidden w-40 sm:flex"
                       >
-                        {isLoading ? (
-                          <>
-                            <span className="loading loading-spinner"></span>{" "}
-                            Loading...
-                          </>
-                        ) : (
-                          <>
-                            <Xmark />
-                            Remove
-                          </>
-                        )}
-                      </button>
-                    </Form>
+                        <Clock />
+                        View sessions
+                      </StateLink>
+
+                      <Form onSubmit={onMentorRemoved(fullName)}>
+                        <input type="hidden" name="mentorId" value={id} />
+                        <button
+                          disabled={isLoading}
+                          className="btn btn-error btn-xs sm:btn-md sm:w-40"
+                          type="submit"
+                        >
+                          {isLoading ? (
+                            <>
+                              <span className="loading loading-spinner"></span>{" "}
+                              Loading...
+                            </>
+                          ) : (
+                            <>
+                              <Xmark />
+                              Remove
+                            </>
+                          )}
+                        </button>
+                      </Form>
+                    </div>
                   </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              ),
+            )}
           </ol>
         </div>
       </article>

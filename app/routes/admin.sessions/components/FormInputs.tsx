@@ -45,7 +45,7 @@ export function FormInputs({
     searchParams.set("selectedTermYear", "");
     searchParams.set("selectedTermId", "");
     searchParams.set("selectedTermDate", "");
-    searchParams.set("pageNumber", "");
+    searchParams.set("pageNumber", "0");
 
     void navigate(`?${searchParams.toString()}`);
   };

@@ -1,7 +1,7 @@
 import type { Prisma } from "~/prisma/client";
 import type { Route } from "./+types/route";
 
-import { Form, useSearchParams, useNavigate, useSubmit } from "react-router";
+import { Form, useSearchParams, useSubmit } from "react-router";
 import { PageEdit, CheckCircle, WarningTriangle } from "iconoir-react";
 import classNames from "classnames";
 
@@ -142,7 +142,6 @@ export default function Index({
   },
 }: Route.ComponentProps) {
   const submit = useSubmit();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const totalPageCount = Math.ceil(count / 10);
@@ -150,11 +149,11 @@ export default function Index({
   const onFormReset = () => {
     searchParams.set("searchTerm", "");
     searchParams.set("chapterId", "");
-    searchParams.set("pageNumber", "");
+    searchParams.set("pageNumber", "0");
     searchParams.set("onlyExpiredChecks", "");
     searchParams.set("includeArchived", "");
 
-    void navigate(`?${searchParams.toString()}`);
+    void submit(Object.fromEntries(searchParams));
   };
 
   const onChapterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {

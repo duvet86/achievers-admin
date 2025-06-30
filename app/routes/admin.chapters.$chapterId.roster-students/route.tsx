@@ -127,23 +127,26 @@ export default function Index({
   },
 }: Route.ComponentProps) {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const submit = useSubmit();
+  const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLFormElement | null>(null);
 
   const handleFormSubmit = () => {
     const formData = new FormData(formRef.current!);
+
     void submit(formData);
   };
 
   const handleButtonClick = () => {
     const formData = new FormData(formRef.current!);
     formData.set("search", "");
+
     void submit(formData);
   };
 
   const onStudentClick = (fullName: string) => () => {
     searchParams.set("search", fullName);
+
     void navigate({ search: searchParams.toString() });
   };
 

@@ -2,18 +2,6 @@ import type { Prisma } from "~/prisma/client";
 
 import { prisma } from "~/db.server";
 
-function getOR(searchTerm: string | null) {
-  return searchTerm
-    ? [
-        {
-          fullName: {
-            contains: searchTerm,
-          },
-        },
-      ]
-    : undefined;
-}
-
 export async function getMentorsWithStudentsCountAsync(
   chapterId: number,
   searchTerm: string | null,
@@ -67,4 +55,16 @@ export async function getMentorsWithStudentsAsync(
     skip: numberItems * pageNumber,
     take: numberItems,
   });
+}
+
+function getOR(searchTerm: string | null) {
+  return searchTerm
+    ? [
+        {
+          fullName: {
+            contains: searchTerm,
+          },
+        },
+      ]
+    : undefined;
 }

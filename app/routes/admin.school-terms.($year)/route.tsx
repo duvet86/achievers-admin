@@ -163,9 +163,9 @@ export default function Index({
 }: Route.ComponentProps) {
   const navigate = useNavigate();
 
-  function goToSelectedYear(event: React.ChangeEvent<HTMLSelectElement>) {
+  const goToSelectedYear = (event: React.ChangeEvent<HTMLSelectElement>) => {
     void navigate(`/admin/school-terms/${event.target.value}`);
-  }
+  };
 
   return (
     <>

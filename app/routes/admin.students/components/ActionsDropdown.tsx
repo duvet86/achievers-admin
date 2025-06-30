@@ -7,7 +7,7 @@ import {
 
 import { StateLink } from "~/components";
 
-export default function ActionsDropdown() {
+export function ActionsDropdown() {
   return (
     <div className="dropdown dropdown-end">
       <div title="actions" tabIndex={0} className="btn w-40 gap-2">

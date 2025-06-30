@@ -37,6 +37,7 @@ export async function getStudentWithMentorsAsync(studentId: number) {
             select: {
               id: true,
               fullName: true,
+              frequencyInDays: true,
             },
           },
         },

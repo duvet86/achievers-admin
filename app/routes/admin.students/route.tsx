@@ -2,8 +2,7 @@ import type { JSX } from "react";
 import type { Prisma } from "~/prisma/client";
 import type { Route } from "./+types/route";
 
-import { Form, useNavigate, useSearchParams, useSubmit } from "react-router";
-
+import { Form, useSearchParams, useSubmit } from "react-router";
 import { BinFull, PageEdit, Plus } from "iconoir-react";
 
 import {
@@ -18,8 +17,7 @@ import {
   getStudentsCountAsync,
   getStudentsAsync,
 } from "./services.server";
-import FormInputs from "./components/FormInputs";
-import ActionsDropdown from "./components/ActionsDropdown";
+import { FormInputs, ActionsDropdown } from "./components";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
@@ -115,7 +113,6 @@ export default function Index({
   },
 }: Route.ComponentProps) {
   const submit = useSubmit();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const totalPageCount = Math.ceil(count / 10);
@@ -123,10 +120,10 @@ export default function Index({
   const onFormReset = () => {
     searchParams.set("searchTerm", "");
     searchParams.set("chapterId", "");
-    searchParams.set("pageNumber", "");
+    searchParams.set("pageNumber", "0");
     searchParams.set("includeArchived", "");
 
-    void navigate(`?${searchParams.toString()}`);
+    void submit(Object.fromEntries(searchParams));
   };
 
   const onChapterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {

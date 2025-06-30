@@ -1,28 +1,29 @@
 import type { Prisma } from "~/prisma/client";
 import type { Route } from "./+types/route";
 
-import { Form, Link, useSearchParams } from "react-router";
+import { Form, useSearchParams, useSubmit } from "react-router";
 import invariant from "tiny-invariant";
-import { useRef } from "react";
-import classNames from "classnames";
 import { CoinsSwap, PageEdit } from "iconoir-react";
 
 import { getPaginationRange } from "~/services";
-import { Title, Pagination, TableHeaderSort, StateLink } from "~/components";
+import {
+  Title,
+  Pagination,
+  TableHeaderSort,
+  StateLink,
+  Input,
+} from "~/components";
 
 import {
   getMentorsWithStudentsAsync,
   getStudentsCountAsync,
 } from "./services.server";
-import FormInputs from "./components/FormInputs";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
 
   const url = new URL(request.url);
 
-  const searchTermSubmit = url.searchParams.get("searchBtn");
-  const clearSearchSubmit = url.searchParams.get("clearSearchBtn");
   const previousPageSubmit = url.searchParams.get("previousBtn");
   const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
   const nextPageSubmit = url.searchParams.get("nextBtn");
@@ -37,10 +38,9 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   let searchTerm = url.searchParams.get("searchTerm");
   const pageNumber = Number(url.searchParams.get("pageNumber")!);
 
-  if (searchTerm?.trim() === "" || clearSearchSubmit !== null) {
+  if (searchTerm?.trim() === "") {
     searchTerm = null;
   }
-
   const count = await getStudentsCountAsync(
     Number(params.chapterId),
     searchTerm,
@@ -49,12 +49,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const totalPageCount = Math.ceil(count / 10);
 
   let currentPageNumber = 0;
-  if (searchTermSubmit !== null) {
-    currentPageNumber = 0;
-  } else if (clearSearchSubmit !== null) {
-    currentPageNumber = 0;
-    searchTerm = null;
-  } else if (previousPageSubmit !== null && pageNumber > 0) {
+  if (previousPageSubmit !== null && pageNumber > 0) {
     currentPageNumber = pageNumber - 1;
   } else if (nextPageSubmit !== null && pageNumber < totalPageCount) {
     currentPageNumber = pageNumber + 1;
@@ -73,7 +68,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
 
   return {
-    chapterId: params.chapterId,
+    searchTerm: searchTerm ?? "",
     range,
     currentPageNumber,
     count,
@@ -84,8 +79,9 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 }
 
 export default function Index({
+  params,
   loaderData: {
-    chapterId,
+    searchTerm,
     mentorsWithStudents,
     count,
     currentPageNumber,
@@ -94,31 +90,45 @@ export default function Index({
     sortCountStudentsSubmit,
   },
 }: Route.ComponentProps) {
+  const submit = useSubmit();
   const [searchParams] = useSearchParams();
-  const formRef = useRef<HTMLFormElement | null>(null);
 
   const totalPageCount = Math.ceil(count / 10);
 
-  const onFormClear = () => formRef.current!.reset();
+  const onFormClear = () => {
+    searchParams.set("searchTerm", "");
+    searchParams.set("pageNumber", "0");
+
+    void submit(Object.fromEntries(searchParams));
+  };
 
   return (
     <>
       <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
         <Title>Mentors with students</Title>
 
-        <Link
-          to={`/admin/chapters/${chapterId}/students`}
+        <StateLink
+          to={`/admin/chapters/${params.chapterId}/students`}
           className="btn w-full sm:w-56"
         >
           <CoinsSwap />
           Swap to students view
-        </Link>
+        </StateLink>
       </div>
 
       <hr className="my-4" />
 
-      <Form ref={formRef}>
-        <FormInputs searchParams={searchParams} onFormClear={onFormClear} />
+      <Form>
+        <div className="mb-4 w-full sm:w-96">
+          <Input
+            key={searchTerm}
+            name="searchTerm"
+            placeholder="Search by name"
+            defaultValue={searchTerm}
+            hasButton
+            onButtonClick={onFormClear}
+          />
+        </div>
 
         <div className="overflow-auto bg-white">
           <table className="table-zebra table">
@@ -130,9 +140,6 @@ export default function Index({
                     sortPropValue={sortFullNameSubmit}
                     label="Mentors"
                   />
-                </th>
-                <th align="left" className="hidden p-2 sm:table-cell">
-                  Frequency
                 </th>
                 <th align="left" className="p-2">
                   <TableHeaderSort
@@ -155,28 +162,20 @@ export default function Index({
                   mentorToStudentAssignement,
                 }) => (
                   <tr key={id}>
-                    <td className="p-2">{fullName}</td>
-                    <td className="hidden p-2 sm:table-cell">
-                      {frequencyInDays === 14
-                        ? "Fortnightly"
-                        : frequencyInDays === 7
-                          ? "Weekly"
-                          : "-"}
+                    <td className="p-2">
+                      <span>{fullName}</span>{" "}
+                      <span className="italic">
+                        {frequencyInDays === 14
+                          ? "(Fortnightly)"
+                          : frequencyInDays === 7
+                            ? "(Weekly)"
+                            : "(Frequency not specified)"}
+                      </span>
                     </td>
                     <td>
                       <ul className="list-disc pl-2">
                         {mentorToStudentAssignement.map(({ student }) => (
-                          <li
-                            key={student.id}
-                            className={classNames("flex gap-2", {
-                              "text-error": student.endDate !== null,
-                            })}
-                          >
-                            {student.fullName}
-                            {student.endDate !== null && (
-                              <p className="font-bold">(Archived)</p>
-                            )}
-                          </li>
+                          <li key={student.id}>{student.fullName}</li>
                         ))}
                       </ul>
                     </td>

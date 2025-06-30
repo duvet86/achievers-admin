@@ -13,7 +13,7 @@ interface Props {
   onIncludeArchivedChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function FormInputs({
+export function FormInputs({
   searchTerm,
   chapterId,
   includeArchived,
