@@ -4,22 +4,33 @@ import type {
   EntryContext,
   HandleErrorFunction,
 } from "react-router";
+import type { CurentUserInfo } from "~/services/.server";
 
 import { PassThrough } from "node:stream";
 
 import { renderToPipeableStream } from "react-dom/server";
 import { createReadableStreamFromReadable } from "@react-router/node";
-import { ServerRouter } from "react-router";
+import { isRouteErrorResponse, ServerRouter } from "react-router";
 import { isbot } from "isbot";
 
-import { trackException } from "~/services/.server";
+import { getTokenInfoAsync, trackException } from "~/services/.server";
+
+import { parseJwt } from "./services";
 
 export const streamTimeout = 5_000;
 
 export const handleError: HandleErrorFunction = (error, { request }) => {
   // React Router may abort some interrupted requests, don't log those
   if (!request.signal.aborted) {
-    trackException(error as Error);
+    getTokenInfoAsync(request)
+      .then((tokenInfo) => {
+        const loggedUser = parseJwt<CurentUserInfo>(tokenInfo.idToken);
+
+        logError(error, loggedUser);
+      })
+      .catch((e) => {
+        trackException(e as Error);
+      });
 
     // make sure to still log the error so you can see it
     console.error(error);
@@ -86,4 +97,29 @@ export default function handleRequest(
     // flush down the rejected boundaries
     setTimeout(abort, streamTimeout + 1000);
   });
+}
+
+function logError(error: unknown, loggedUser: CurentUserInfo) {
+  if (isRouteErrorResponse(error)) {
+    trackException(
+      new Error(
+        `Route error: status: ${error.status}, statusText: ${error.statusText}`,
+      ),
+      {
+        userName: loggedUser.name,
+        azureId: loggedUser.oid,
+        routeData: JSON.stringify(error.data),
+      },
+    );
+  } else if (error instanceof Error) {
+    trackException(error, {
+      userName: loggedUser.name,
+      azureId: loggedUser.oid,
+    });
+  } else {
+    trackException(new Error(JSON.stringify(error)), {
+      userName: loggedUser.name,
+      azureId: loggedUser.oid,
+    });
+  }
 }

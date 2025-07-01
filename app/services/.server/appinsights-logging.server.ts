@@ -19,12 +19,15 @@ export function trackEvent(message: string, properties?: Attributes) {
   }
 }
 
-export function trackException(error: Error) {
+export function trackException(error: Error, properties?: Attributes) {
   const tracer = global.__appinsightsTracer__;
 
   if (tracer) {
     const span = tracer.startSpan("exception");
     span.recordException(error);
+    if (properties) {
+      span.setAttributes(properties);
+    }
     span.end();
   } else {
     console.error(error.message);

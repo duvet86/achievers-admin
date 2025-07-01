@@ -2,6 +2,7 @@ import { redirect } from "react-router";
 import invariant from "tiny-invariant";
 
 import { trackEvent, trackException } from "~/services/.server";
+
 import { getTokenInfoAsync } from "./session.server";
 
 const IS_DEV = process.env.NODE_ENV === "development";
@@ -129,6 +130,10 @@ export async function getAzureRolesAsync(request: Request): Promise<AppRole[]> {
 
   const tokenInfo = await getTokenInfoAsync(request);
 
+  if (IS_DEV && new Date(tokenInfo.expiresOn) < new Date()) {
+    throw redirect("/logout");
+  }
+
   const response = await fetch(
     `${MICROSOFT_GRAPH_V1_BASEURL}/applications/${process.env.OBJECT_ID}?$select=appRoles`,
     {
@@ -240,12 +245,15 @@ async function getAzureUserByIdAsync(
     (azureUser as AzureError).error &&
     (azureUser as AzureError).error.code === "Authorization_RequestDenied"
   ) {
-    trackException(
-      new Error(
-        `getAzureUserByIdAsync: user has no permissions: ${JSON.stringify(azureUser)}`,
-      ),
-    );
+    trackException(new Error((azureUser as AzureError).error.message));
     throw redirect("/403");
+  }
+  if (
+    (azureUser as AzureError).error &&
+    (azureUser as AzureError).error.code === "Request_ResourceNotFound"
+  ) {
+    trackException(new Error((azureUser as AzureError).error.message));
+    throw redirect("/404");
   }
 
   return azureUser as AzureUserWithRole;
