@@ -101,16 +101,11 @@ export default function handleRequest(
 
 function logError(error: unknown, loggedUser: CurentUserInfo) {
   if (isRouteErrorResponse(error)) {
-    trackException(
-      new Error(
-        `Route error: status: ${error.status}, statusText: ${error.statusText}`,
-      ),
-      {
-        userName: loggedUser.name,
-        azureId: loggedUser.oid,
-        routeData: JSON.stringify(error.data),
-      },
-    );
+    trackException(new Error(`HTTP ${error.status}: ${error.statusText}`), {
+      userName: loggedUser.name,
+      azureId: loggedUser.oid,
+      data: JSON.stringify(error.data),
+    });
   } else if (error instanceof Error) {
     trackException(error, {
       userName: loggedUser.name,
