@@ -15,7 +15,7 @@ const adapter = new PrismaMariaDb({
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
   ssl:
-    process.env.NODE_ENV === "production" || process.env.CI
+    process.env.NODE_ENV === "production" || process.env.ENABLE_SSL
       ? {
           rejectUnauthorized: true,
           ca: readFileSync(

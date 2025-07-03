@@ -90,23 +90,25 @@ export default function Index({
         {attendedOnLabel}&quot;
       </Title>
 
-      <div className="my-8 flex flex-col gap-12">
-        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
-          <div className="w-72 font-bold">Chapter</div>
-          <div className="flex-1">{chapter.name}</div>
+      <div className="my-8 flex flex-col gap-6">
+        <div className="flex items-center border-b border-gray-300 p-2">
+          <div className="w-full font-bold sm:w-72">Chapter</div>
+          <div className="shrink-0">{chapter.name}</div>
         </div>
 
-        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
-          <div className="w-72 font-bold">Session</div>
-          <div className="flex-1">{attendedOnLabel}</div>
+        <div className="flex items-center border-b border-gray-300 p-2">
+          <div className="w-full font-bold sm:w-72">Session</div>
+          <div className="shrink-0">{attendedOnLabel}</div>
         </div>
 
-        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
-          <div className="w-72 font-bold">Student</div>
-          <div className="flex-1">{student.fullName}</div>
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-300 p-2">
+          <div className="flex grow">
+            <div className="w-full font-bold sm:w-72">Student</div>
+            <div className="shrink-0">{student.fullName}</div>
+          </div>
 
           <Link
-            className="btn btn-error w-full sm:w-48"
+            className="btn btn-error btn-block sm:w-48"
             to={`/admin/chapters/${params.chapterId}/roster-students/${params.studentId}/attended-on/${params.attendedOn}/unavailable`}
           >
             <UserXmark />
@@ -114,11 +116,12 @@ export default function Index({
           </Link>
         </div>
 
-        <div className="flex items-center gap-2 p-2">
-          <div className="w-72 font-bold">Mentor</div>
+        <div className="flex flex-col gap-4 p-2 sm:flex-row sm:items-center">
+          <div className="font-bold sm:w-72">Mentor</div>
 
-          <Form method="POST" className="flex flex-1 items-end gap-4">
+          <Form method="POST" className="flex w-full flex-wrap gap-4">
             <SelectSearch
+              className="flex-1"
               name="mentorId"
               placeholder="Select a mentor"
               options={mentors}
@@ -127,7 +130,7 @@ export default function Index({
             />
 
             <button
-              className="btn btn-primary w-48 gap-2"
+              className="btn btn-primary btn-block sm:w-48"
               type="submit"
               name="status"
               value="AVAILABLE"

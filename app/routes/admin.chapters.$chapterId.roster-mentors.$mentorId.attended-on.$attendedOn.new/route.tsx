@@ -90,54 +90,56 @@ export default function Index({
       </Title>
 
       <div className="my-8 flex flex-col gap-6">
-        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
-          <div className="w-72 font-bold">Chapter</div>
-          <div className="flex-1">{chapter.name}</div>
+        <div className="flex items-center border-b border-gray-300 p-2">
+          <div className="w-full font-bold sm:w-72">Chapter</div>
+          <div className="shrink-0">{chapter.name}</div>
         </div>
 
-        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
-          <div className="w-72 font-bold">Session</div>
-          <div className="flex-1">{attendedOnLabel}</div>
+        <div className="flex items-center border-b border-gray-300 p-2">
+          <div className="w-full font-bold sm:w-72">Session</div>
+          <div className="shrink-0">{attendedOnLabel}</div>
         </div>
 
-        <div className="flex items-center gap-2 border-b border-gray-300 p-2">
-          <div className="w-72 font-bold">Mentor</div>
-          <div className="flex-1">{mentor.fullName}</div>
-
-          <div className="border-opacity-50 flex flex-1 flex-col items-center">
-            <Form method="POST" className="w-full">
-              <button
-                className="btn btn-info btn-block gap-2"
-                type="submit"
-                name="status"
-                value="AVAILABLE"
-              >
-                <Check />
-                Available
-              </button>
-            </Form>
-
-            <div className="divider">OR</div>
-
-            <Form method="POST" className="w-full">
-              <button
-                className="btn btn-error btn-block gap-2"
-                type="submit"
-                name="status"
-                value="UNAVAILABLE"
-              >
-                <Xmark />
-                Unavailable
-              </button>
-            </Form>
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-300 p-2">
+          <div className="flex grow">
+            <div className="w-full font-bold sm:w-72">Mentor</div>
+            <div className="shrink-0">{mentor.fullName}</div>
           </div>
+
+          <Form
+            method="POST"
+            className="flex grow flex-col items-center justify-end sm:flex-row"
+          >
+            <button
+              className="btn btn-info btn-block sm:w-48"
+              type="submit"
+              name="status"
+              value="AVAILABLE"
+            >
+              <Check />
+              Mark as available
+            </button>
+
+            <div className="divider sm:divider-horizontal">OR</div>
+
+            <button
+              className="btn btn-error btn-block sm:w-48"
+              type="submit"
+              name="status"
+              value="UNAVAILABLE"
+            >
+              <Xmark />
+              Mark as unavailable
+            </button>
+          </Form>
         </div>
 
-        <div className="flex items-center gap-2 p-2">
-          <div className="w-72 font-bold">Student</div>
+        <div className="flex flex-col gap-4 p-2 sm:flex-row sm:items-center">
+          <div className="font-bold sm:w-72">Student</div>
 
-          <Form method="POST" className="flex w-full items-end gap-4">
+          <Form method="POST" className="flex w-full flex-wrap gap-4">
             <SelectSearch
+              className="flex-1"
               name="studentId"
               placeholder="Select a student"
               options={students}
@@ -146,7 +148,7 @@ export default function Index({
             />
 
             <button
-              className="btn btn-primary w-48 gap-2"
+              className="btn btn-primary btn-block sm:w-48"
               type="submit"
               name="status"
               value="AVAILABLE"
