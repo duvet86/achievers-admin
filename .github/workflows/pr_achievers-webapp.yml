@@ -19,7 +19,7 @@ env:
   REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
   OBJECT_ID: ${{ secrets.OBJECT_ID }}
   DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-  DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+  DATABASE_NAME: "achievers-stg"
   DATABASE_USER: ${{ secrets.DATABASE_USER }}
   DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
   WEBAPP_NAME: "achievers-webapp"
@@ -67,6 +67,10 @@ jobs:
       - name: Run unit tests
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
+          DATABASE_HOST: "localhost"
+          DATABASE_NAME: ${{ env.DB_USER }}
+          DATABASE_USER: ${{ env.DB_DATABASE }}
+          DATABASE_PASSWORD: ${{ env.DB_PASSWORD }}
         run: npm run test:ci
 
       - name: Build
@@ -75,6 +79,10 @@ jobs:
       - name: Migrate test DB
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
+          DATABASE_HOST: "localhost"
+          DATABASE_NAME: ${{ env.DB_USER }}
+          DATABASE_USER: ${{ env.DB_DATABASE }}
+          DATABASE_PASSWORD: ${{ env.DB_PASSWORD }}
         run: npm run setup
 
       - name: Install E2E
@@ -83,6 +91,10 @@ jobs:
       - name: Run E2E tests
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
+          DATABASE_HOST: "localhost"
+          DATABASE_NAME: ${{ env.DB_USER }}
+          DATABASE_USER: ${{ env.DB_DATABASE }}
+          DATABASE_PASSWORD: ${{ env.DB_PASSWORD }}
         run: npm run test:e2e
 
       - uses: actions/upload-artifact@v4
