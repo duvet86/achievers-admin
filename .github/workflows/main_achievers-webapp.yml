@@ -21,6 +21,10 @@ env:
   TENANT_ID: ${{ secrets.TENANT_ID }}
   REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
   OBJECT_ID: ${{ secrets.OBJECT_ID }}
+  DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+  DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+  DATABASE_USER: ${{ secrets.DATABASE_USER }}
+  DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
   WEBAPP_NAME: "achievers-webapp"
   SLOT_NAME: "stg"
   RESOURCE_GROUP: "achievers-rg"
