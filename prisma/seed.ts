@@ -15,15 +15,13 @@ const adapter = new PrismaMariaDb({
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
   ssl:
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV === "production" || process.env.CI
       ? {
           rejectUnauthorized: true,
-          ca: [
-            readFileSync(
-              resolve(process.cwd(), "prisma/DigiCertGlobalRootCA.crt.pem"),
-              "utf8",
-            ),
-          ],
+          ca: readFileSync(
+            resolve(process.cwd(), "prisma/DigiCertGlobalRootCA.crt.pem"),
+            "utf8",
+          ),
         }
       : undefined,
 });
