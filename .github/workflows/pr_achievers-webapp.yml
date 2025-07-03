@@ -18,10 +18,6 @@ env:
   TENANT_ID: ${{ secrets.TENANT_ID }}
   REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
   OBJECT_ID: ${{ secrets.OBJECT_ID }}
-  DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-  DATABASE_NAME: "achievers-stg"
-  DATABASE_USER: ${{ secrets.DATABASE_USER }}
-  DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
   WEBAPP_NAME: "achievers-webapp"
   SLOT_NAME: "stg"
   RESOURCE_GROUP: "achievers-rg"
@@ -68,8 +64,8 @@ jobs:
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
           DATABASE_HOST: "localhost"
-          DATABASE_NAME: ${{ env.DB_USER }}
-          DATABASE_USER: ${{ env.DB_DATABASE }}
+          DATABASE_NAME: ${{ env.DB_DATABASE }}
+          DATABASE_USER: ${{ env.DB_USER }}
           DATABASE_PASSWORD: ${{ env.DB_PASSWORD }}
         run: npm run test:ci
 
@@ -80,8 +76,8 @@ jobs:
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
           DATABASE_HOST: "localhost"
-          DATABASE_NAME: ${{ env.DB_USER }}
-          DATABASE_USER: ${{ env.DB_DATABASE }}
+          DATABASE_NAME: ${{ env.DB_DATABASE }}
+          DATABASE_USER: ${{ env.DB_USER }}
           DATABASE_PASSWORD: ${{ env.DB_PASSWORD }}
         run: npm run setup
 
@@ -92,8 +88,8 @@ jobs:
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
           DATABASE_HOST: "localhost"
-          DATABASE_NAME: ${{ env.DB_USER }}
-          DATABASE_USER: ${{ env.DB_DATABASE }}
+          DATABASE_NAME: ${{ env.DB_DATABASE }}
+          DATABASE_USER: ${{ env.DB_USER }}
           DATABASE_PASSWORD: ${{ env.DB_PASSWORD }}
         run: npm run test:e2e
 
@@ -113,6 +109,10 @@ jobs:
     needs: e2etests
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL_STG }}
+      DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+      DATABASE_NAME: "achievers-stg"
+      DATABASE_USER: ${{ secrets.DATABASE_USER }}
+      DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
       ENABLE_SSL: "true"
 
     steps:
