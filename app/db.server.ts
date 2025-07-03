@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
@@ -24,6 +24,8 @@ if (process.env.NODE_ENV === "production") {
     "utf8",
   );
 
+  writeFileSync("/tmp/DigiCertGlobalRootCA.crt.pem", Buffer.from(cert, "utf8"));
+
   const adapter = new PrismaMariaDb({
     host: process.env.DATABASE_HOST,
     port: 3306,
@@ -33,7 +35,7 @@ if (process.env.NODE_ENV === "production") {
     password: process.env.DATABASE_PASSWORD,
     ssl: {
       rejectUnauthorized: true,
-      ca: [cert],
+      ca: readFileSync(resolve("/tmp/DigiCertGlobalRootCA.crt.pem"), "utf8"),
     },
   });
 

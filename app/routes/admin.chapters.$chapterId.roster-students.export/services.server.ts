@@ -6,8 +6,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
 import { prisma } from "~/db.server";
-import { getCurrentTermForDate, getDatesForTerm } from "~/services";
-import { getSchoolTermsAsync } from "~/services/.server";
+import { getDatesForTerm } from "~/services";
 
 dayjs.extend(utc);
 
@@ -28,44 +27,33 @@ interface SessionViewModelLookup {
 
 export async function exportRosterToSpreadsheetAsync(
   chapterId: number,
-  selectedTerm: string | null,
-  selectedTermDate: string | null,
+  selectedTerm: Term,
 ) {
-  const terms = await getSchoolTermsAsync();
-
-  const todayterm = getCurrentTermForDate(terms, new Date());
-  const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayterm;
-
-  const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
-  const students = await getStudentsAsync(chapterId, currentTerm);
+  const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
+  const students = await getStudentsAsync(chapterId, selectedTerm);
 
   const spreadsheet = students.map(({ fullName, yearLevel, sessionLookup }) => {
     const result: Record<string, string> = {
       Students: `${fullName} (Year ${yearLevel ?? "-"})`,
     };
 
-    sessionDates
-      .filter(
-        (attendedOn) =>
-          attendedOn === selectedTermDate || selectedTermDate === null,
-      )
-      .forEach((attendedOn) => {
-        const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
-        const session = sessionLookup?.[attendedOnFormatted];
+    sessionDates.forEach((attendedOn) => {
+      const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
+      const session = sessionLookup?.[attendedOnFormatted];
 
-        let label = "";
-        if (session) {
-          if (session.mentorFullName !== null) {
-            label =
-              session.mentorFullName +
-              (session.isCancelled ? " (Cancelled)" : "");
-          } else if (session.status === "UNAVAILABLE") {
-            label = "Unavailable";
-          }
+      let label = "";
+      if (session) {
+        if (session.mentorFullName !== null) {
+          label =
+            session.mentorFullName +
+            (session.isCancelled ? " (Cancelled)" : "");
+        } else if (session.status === "UNAVAILABLE") {
+          label = "Unavailable";
         }
+      }
 
-        result[attendedOnFormatted] = label;
-      });
+      result[attendedOnFormatted] = label;
+    });
 
     return result;
   });

@@ -6,8 +6,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
 import { prisma } from "~/db.server";
-import { getCurrentTermForDate, getDatesForTerm } from "~/services";
-import { getSchoolTermsAsync } from "~/services/.server";
+import { getDatesForTerm } from "~/services";
 
 dayjs.extend(utc);
 
@@ -56,47 +55,36 @@ interface SessionViewModel {
 
 export async function exportRosterToSpreadsheetAsync(
   chapterId: number,
-  selectedTerm: string | null,
-  selectedTermDate: string | null,
+  selectedTerm: Term,
 ) {
-  const terms = await getSchoolTermsAsync();
-
-  const todayterm = getCurrentTermForDate(terms, new Date());
-  const currentTerm = terms.find((t) => t.name === selectedTerm) ?? todayterm;
-
-  const sessionDates = getDatesForTerm(currentTerm.start, currentTerm.end);
-  const mentors = await getMentorsAsync(chapterId, currentTerm);
+  const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
+  const mentors = await getMentorsAsync(chapterId, selectedTerm);
 
   const spreadsheet = mentors.map(({ fullName, sessionLookup }) => {
     const result: Record<string, string> = { Mentors: fullName };
 
-    sessionDates
-      .filter(
-        (attendedOn) =>
-          attendedOn === selectedTermDate || selectedTermDate === null,
-      )
-      .forEach((attendedOn) => {
-        const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
-        const mentorSession = sessionLookup?.[attendedOnFormatted];
+    sessionDates.forEach((attendedOn) => {
+      const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
+      const mentorSession = sessionLookup?.[attendedOnFormatted];
 
-        let label = "";
-        if (mentorSession) {
-          if (mentorSession.sessions.length === 0) {
-            if (mentorSession.status === "UNAVAILABLE") {
-              label = "Unavailable";
-            } else {
-              label = "Available";
-            }
-          } else if (mentorSession.sessions.length === 1) {
-            const session = mentorSession.sessions[0];
-            label = `${session.studentFullName} (Year ${session.yearLevel ?? "-"})${session.isCancelled ? " (Cancelled)" : ""}`;
+      let label = "";
+      if (mentorSession) {
+        if (mentorSession.sessions.length === 0) {
+          if (mentorSession.status === "UNAVAILABLE") {
+            label = "Unavailable";
           } else {
-            label = `${mentorSession.sessions.length} Students`;
+            label = "Available";
           }
+        } else if (mentorSession.sessions.length === 1) {
+          const session = mentorSession.sessions[0];
+          label = `${session.studentFullName} (Year ${session.yearLevel ?? "-"})${session.isCancelled ? " (Cancelled)" : ""}`;
+        } else {
+          label = `${mentorSession.sessions.length} Students`;
         }
+      }
 
-        result[attendedOnFormatted] = label;
-      });
+      result[attendedOnFormatted] = label;
+    });
 
     return result;
   });
