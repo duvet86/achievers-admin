@@ -1,8 +1,34 @@
 /*eslint-env node*/
-import { PrismaClient } from "./client/client";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import dayjs from "dayjs";
 
-const prisma = new PrismaClient();
+import { PrismaClient } from "./client/client";
+
+const adapter = new PrismaMariaDb({
+  host: process.env.DATABASE_HOST,
+  port: 3306,
+  connectionLimit: 5,
+  database: process.env.DATABASE_NAME,
+  user: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? {
+          rejectUnauthorized: true,
+          ca: [
+            readFileSync(
+              resolve(process.cwd(), "prisma/DigiCertGlobalRootCA.crt.pem"),
+              "utf8",
+            ),
+          ],
+        }
+      : undefined,
+});
+
+const prisma = new PrismaClient({ adapter });
 
 async function seed() {
   await prisma.chapter.upsert({

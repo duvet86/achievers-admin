@@ -1,9 +1,35 @@
+import { resolve } from "node:path";
+import { readFileSync } from "node:fs";
+
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+
 import { PrismaClient } from "~/prisma/client";
 
 import { createUsersAsync } from "./users";
 import { createStudentsAsync } from "./students";
 import { assignMentorsToStudentsAsync } from "./mentor-to-sudent-assignement";
 import { mentorAsync } from "./mentor";
+
+const adapter = new PrismaMariaDb({
+  host: process.env.DATABASE_HOST,
+  port: 3306,
+  connectionLimit: 5,
+  database: process.env.DATABASE_NAME,
+  user: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? {
+          rejectUnauthorized: true,
+          ca: [
+            readFileSync(
+              resolve(process.cwd(), "prisma/DigiCertGlobalRootCA.crt.pem"),
+              "utf8",
+            ),
+          ],
+        }
+      : undefined,
+});
 
 export const CHAPTER_DATA: Record<string, string> = {
   Girrawheen: "1",
@@ -12,7 +38,7 @@ export const CHAPTER_DATA: Record<string, string> = {
 };
 
 export async function seedDataAsync(isMentor = false) {
-  const prisma = new PrismaClient();
+  const prisma = new PrismaClient({ adapter });
 
   try {
     await prisma.$connect();
@@ -35,7 +61,7 @@ export async function seedDataAsync(isMentor = false) {
 }
 
 export async function seedForWriteReportAsync() {
-  const prisma = new PrismaClient();
+  const prisma = new PrismaClient({ adapter });
 
   try {
     await prisma.$connect();
@@ -98,7 +124,7 @@ export async function seedForWriteReportAsync() {
 }
 
 export async function seedSessionsFroHomePageAsync() {
-  const prisma = new PrismaClient();
+  const prisma = new PrismaClient({ adapter });
 
   try {
     await prisma.$connect();
