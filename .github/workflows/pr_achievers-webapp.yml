@@ -63,7 +63,7 @@ jobs:
       - name: Run unit tests
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-          DATABASE_HOST: "localhost"
+          DATABASE_HOST: "127.0.0.1"
           DATABASE_NAME: ${{ env.DB_DATABASE }}
           DATABASE_USER: ${{ env.DB_USER }}
           DATABASE_PASSWORD: ${{ env.DB_PASSWORD }}
@@ -75,7 +75,7 @@ jobs:
       - name: Migrate test DB
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-          DATABASE_HOST: "localhost"
+          DATABASE_HOST: "127.0.0.1"
           DATABASE_NAME: ${{ env.DB_DATABASE }}
           DATABASE_USER: ${{ env.DB_USER }}
           DATABASE_PASSWORD: ${{ env.DB_PASSWORD }}
@@ -87,7 +87,7 @@ jobs:
       - name: Run E2E tests
         env:
           DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-          DATABASE_HOST: "localhost"
+          DATABASE_HOST: "127.0.0.1"
           DATABASE_NAME: ${{ env.DB_DATABASE }}
           DATABASE_USER: ${{ env.DB_USER }}
           DATABASE_PASSWORD: ${{ env.DB_PASSWORD }}
