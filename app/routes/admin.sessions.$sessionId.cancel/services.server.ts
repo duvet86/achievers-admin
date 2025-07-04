@@ -1,7 +1,7 @@
 import { prisma } from "~/db.server";
 
 export async function getSession(sessionId: number) {
-  return await prisma.sessionAttendance.findUniqueOrThrow({
+  return await prisma.session.findUniqueOrThrow({
     where: {
       id: sessionId,
     },
@@ -37,7 +37,7 @@ export async function getSession(sessionId: number) {
 }
 
 export async function cancelSession(sessionId: number, cancelReason: string) {
-  return await prisma.sessionAttendance.update({
+  return await prisma.session.update({
     where: {
       id: sessionId,
     },

@@ -164,7 +164,7 @@ export default function Index({
             </button>
           </Form>
         ) : (
-          mentorSession.sessionAttendance.length === 0 && (
+          mentorSession.session.length === 0 && (
             <Form
               method="POST"
               onSubmit={handleFormSubmit}
@@ -194,7 +194,7 @@ export default function Index({
           <>
             <Form method="POST" className="flex w-full items-end gap-4">
               <SelectSearch
-                key={mentorSession.sessionAttendance.length}
+                key={mentorSession.session.length}
                 name="studentId"
                 placeholder="Select a student"
                 options={students}
@@ -232,7 +232,7 @@ export default function Index({
                   </tr>
                 </thead>
                 <tbody>
-                  {mentorSession.sessionAttendance.map(
+                  {mentorSession.session.map(
                     ({
                       id,
                       completedOn,

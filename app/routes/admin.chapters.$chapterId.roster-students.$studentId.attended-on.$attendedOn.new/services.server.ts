@@ -39,7 +39,7 @@ export async function getStudentSessionByDateAsync(
     select: {
       id: true,
       status: true,
-      sessionAttendance: {
+      session: {
         select: {
           id: true,
         },
@@ -187,7 +187,7 @@ export async function createSessionAsync({
         studentId,
         attendedOn: attendedOnConverted,
         status: status as $Enums.SessionStatus,
-        sessionAttendance: {
+        session: {
           create: {
             chapterId,
             attendedOn: attendedOnConverted,
@@ -216,7 +216,7 @@ export async function createSessionAsync({
         studentId,
         attendedOn: attendedOnConverted,
         status: status as $Enums.SessionStatus,
-        sessionAttendance: {
+        session: {
           create: {
             chapterId,
             attendedOn: attendedOnConverted,

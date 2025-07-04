@@ -21,7 +21,7 @@ export async function getNextMentorSessionsAsync(
     select: {
       id: true,
       attendedOn: true,
-      sessionAttendance: {
+      session: {
         select: {
           id: true,
           studentSession: {
@@ -44,7 +44,7 @@ export async function getNextMentorSessionsAsync(
     },
   });
 
-  return mentorSessions.flatMap(({ attendedOn, sessionAttendance }) => {
+  return mentorSessions.flatMap(({ attendedOn, session }) => {
     const date = dayjs(attendedOn);
     const daysDiff = date.diff(new Date(), "days");
     const attendedOnlabel =
@@ -52,7 +52,7 @@ export async function getNextMentorSessionsAsync(
         ? `${date.format("MMMM D, YYYY")} (in ${daysDiff} days)`
         : `Tomorrow (${date.format("MMMM D, YYYY")})`;
 
-    return sessionAttendance.map((session) => ({
+    return session.map((session) => ({
       id: session.id,
       attendedOn: attendedOnlabel,
       studentFullName: session.studentSession.student.fullName,
@@ -82,7 +82,7 @@ export async function getSessionsAsync(
       sa.signedOffOn,
       s.id AS studentId,
       s.fullName AS studentFullName
-    FROM SessionAttendance sa
+    FROM Session sa
     INNER JOIN StudentSession ss ON ss.id = sa.studentSessionId
     INNER JOIN Student s ON s.id = ss.studentId
     INNER JOIN MentorSession ms ON ms.id = sa.mentorSessionId

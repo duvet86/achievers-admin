@@ -51,7 +51,7 @@ export async function getStudentsAsync(
     const students = await prisma.$queryRaw<{ id: number; fullName: string }[]>`
       SELECT 
         s.id, s.fullName
-      FROM SessionAttendance sa
+      FROM Session sa
       INNER JOIN MentorSession ms ON ms.id = sa.mentorSessionId
       INNER JOIN StudentSession ss ON ss.id = sa.studentSessionId
       INNER JOIN Student s ON s.id = ss.studentId
@@ -147,7 +147,7 @@ export async function getMentorsAsync(
     const mentors = await prisma.$queryRaw<{ id: number; fullName: string }[]>`
       SELECT 
         u.id, u.fullName
-      FROM SessionAttendance sa
+      FROM Session sa
       INNER JOIN MentorSession ms ON ms.id = sa.mentorSessionId
       INNER JOIN StudentSession ss ON ss.id = sa.studentSessionId
       INNER JOIN User u ON u.id = ms.mentorId
@@ -199,7 +199,7 @@ export async function getCountAsync(
   studentId: number | undefined,
   mentorId: number | undefined,
 ) {
-  return await prisma.sessionAttendance.count({
+  return await prisma.session.count({
     where: whereClause(chapterId, studentId, mentorId),
   });
 }
@@ -211,7 +211,7 @@ export async function getSessionsAsync(
   pageNumber: number,
   numberItems = 10,
 ) {
-  const sessions = await prisma.sessionAttendance.findMany({
+  const sessions = await prisma.session.findMany({
     where: whereClause(chapterId, studentId, mentorId),
     select: {
       id: true,

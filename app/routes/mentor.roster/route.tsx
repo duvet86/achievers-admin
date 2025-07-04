@@ -273,46 +273,45 @@ export default function Index({
                     />
                   )}
 
-                  {myMentorSession &&
-                    myMentorSession.sessionAttendance.length === 0 && (
-                      <div className="flex flex-col items-center justify-between gap-2 border-b pb-2 sm:flex-row">
-                        {myMentorSession.status === "AVAILABLE" ? (
-                          <>
-                            <div className="text-success flex items-center justify-center gap-2 sm:justify-start">
-                              <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
-                              <span>Available</span>
-                            </div>
-                            <button
-                              className="btn btn-error btn-sm w-full sm:w-36"
-                              onClick={handleDeleteMentorSession(
-                                myMentorSession.id,
-                              )}
-                            >
-                              <Xmark />
-                              Cancel
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <div className="text-error flex items-center justify-center gap-2 sm:justify-start">
-                              <ThumbsDown className="h-4 w-4 sm:h-6 sm:w-6" />
-                              <span>Unavailable</span>
-                            </div>
-                            <button
-                              className="btn btn-primary btn-sm w-full sm:w-36"
-                              onClick={handleDeleteMentorSession(
-                                myMentorSession.id,
-                              )}
-                            >
-                              <BookmarkBook />
-                              Restore
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    )}
+                  {myMentorSession && myMentorSession.session.length === 0 && (
+                    <div className="flex flex-col items-center justify-between gap-2 border-b pb-2 sm:flex-row">
+                      {myMentorSession.status === "AVAILABLE" ? (
+                        <>
+                          <div className="text-success flex items-center justify-center gap-2 sm:justify-start">
+                            <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
+                            <span>Available</span>
+                          </div>
+                          <button
+                            className="btn btn-error btn-sm w-full sm:w-36"
+                            onClick={handleDeleteMentorSession(
+                              myMentorSession.id,
+                            )}
+                          >
+                            <Xmark />
+                            Cancel
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <div className="text-error flex items-center justify-center gap-2 sm:justify-start">
+                            <ThumbsDown className="h-4 w-4 sm:h-6 sm:w-6" />
+                            <span>Unavailable</span>
+                          </div>
+                          <button
+                            className="btn btn-primary btn-sm w-full sm:w-36"
+                            onClick={handleDeleteMentorSession(
+                              myMentorSession.id,
+                            )}
+                          >
+                            <BookmarkBook />
+                            Restore
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
 
-                  {myMentorSession?.sessionAttendance.map(
+                  {myMentorSession?.session.map(
                     ({ id, hasReport, studentSession }) => (
                       <div
                         key={id}
@@ -369,7 +368,7 @@ export default function Index({
                         is <span className="font-bold">unavailable</span>
                       </div>
                     ) : (
-                      myPartnersMentorSession?.sessionAttendance.map(
+                      myPartnersMentorSession?.session.map(
                         ({ id, completedOn, studentSession }) => (
                           <div
                             key={id}

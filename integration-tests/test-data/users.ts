@@ -10,7 +10,7 @@ export async function createUsersAsync(
 ) {
   await tx.importedHistory.deleteMany();
   await tx.mentorToStudentAssignement.deleteMany();
-  await tx.sessionAttendance.deleteMany();
+  await tx.session.deleteMany();
   await tx.studentSession.deleteMany();
   await tx.mentorSession.deleteMany();
   await tx.approvalbyMRC.deleteMany();

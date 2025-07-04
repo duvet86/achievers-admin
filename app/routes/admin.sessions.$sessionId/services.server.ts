@@ -18,7 +18,7 @@ export async function getChapterByIdAsync(id: number) {
 }
 
 export async function getSessionByIdAsync(sessionId: number) {
-  return await prisma.sessionAttendance.findUniqueOrThrow({
+  return await prisma.session.findUniqueOrThrow({
     where: {
       id: sessionId,
     },

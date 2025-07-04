@@ -6,7 +6,7 @@ export interface SessionCommandRequest {
 }
 
 export async function getSessionByIdAsync(sessionId: number) {
-  return await prisma.sessionAttendance.findUniqueOrThrow({
+  return await prisma.session.findUniqueOrThrow({
     where: {
       id: sessionId,
     },
@@ -46,7 +46,7 @@ export async function saveReportAsync(
   isSignedOff: boolean,
   userAzureId: string,
 ) {
-  return await prisma.sessionAttendance.update({
+  return await prisma.session.update({
     where: {
       id: sessionId,
     },

@@ -67,7 +67,7 @@ export async function seedForWriteReportAsync() {
     await prisma.$connect();
 
     await prisma.$transaction(async (tx) => {
-      await tx.sessionAttendance.deleteMany();
+      await tx.session.deleteMany();
       await tx.mentorSession.deleteMany();
       await tx.studentSession.deleteMany();
 
@@ -107,7 +107,7 @@ export async function seedForWriteReportAsync() {
         },
       });
 
-      await tx.sessionAttendance.create({
+      await tx.session.create({
         data: {
           attendedOn: new Date("2024-11-23T00:00:00.000Z"),
           chapterId: 1,
@@ -130,7 +130,7 @@ export async function seedSessionsFroHomePageAsync() {
     await prisma.$connect();
 
     await prisma.$transaction(async (tx) => {
-      await tx.sessionAttendance.deleteMany();
+      await tx.session.deleteMany();
       await tx.mentorSession.deleteMany();
       await tx.studentSession.deleteMany();
 
@@ -172,7 +172,7 @@ export async function seedSessionsFroHomePageAsync() {
         },
       });
 
-      await tx.sessionAttendance.create({
+      await tx.session.create({
         data: {
           attendedOn: nextSessionDate,
           chapterId: 1,
@@ -201,7 +201,7 @@ export async function seedSessionsFroHomePageAsync() {
         },
       });
 
-      await tx.sessionAttendance.create({
+      await tx.session.create({
         data: {
           attendedOn: sessionDate1,
           chapterId: 1,
@@ -232,7 +232,7 @@ export async function seedSessionsFroHomePageAsync() {
         },
       });
 
-      await tx.sessionAttendance.create({
+      await tx.session.create({
         data: {
           attendedOn: sessionDate,
           chapterId: 1,

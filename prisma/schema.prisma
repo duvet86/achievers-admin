@@ -235,10 +235,10 @@ model Chapter {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user              User[]
-  student           Student[]
-  sessionAttendance SessionAttendance[]
-  goal              Goal[]
+  user    User[]
+  student Student[]
+  session Session[]
+  goal    Goal[]
 
   mentorAttendance  MentorAttendance[]
   studentAttendance StudentAttendance[]
@@ -406,7 +406,7 @@ model StudentAttendance {
   @@unique([chapterId, studentId, attendedOn])
 }
 
-model SessionAttendance {
+model Session {
   id Int @id @default(autoincrement())
 
   mentorSession   MentorSession @relation(fields: [mentorSessionId], references: [id])
@@ -455,7 +455,7 @@ model MentorSession {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  sessionAttendance SessionAttendance[]
+  session Session[]
 
   @@unique([chapterId, mentorId, attendedOn])
 }
@@ -476,7 +476,7 @@ model StudentSession {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  sessionAttendance SessionAttendance[]
+  session Session[]
 
   @@unique([chapterId, studentId, attendedOn])
 }

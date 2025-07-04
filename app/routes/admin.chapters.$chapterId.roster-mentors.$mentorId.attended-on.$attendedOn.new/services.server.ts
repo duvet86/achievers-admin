@@ -175,7 +175,7 @@ export async function createSessionAsync({
         mentorId,
         attendedOn: attendedOnConverted,
         status: status as $Enums.SessionStatus,
-        sessionAttendance: {
+        session: {
           create: {
             chapterId,
             attendedOn: attendedOnConverted,
@@ -204,7 +204,7 @@ export async function createSessionAsync({
         mentorId,
         attendedOn: attendedOnConverted,
         status: status as $Enums.SessionStatus,
-        sessionAttendance: {
+        session: {
           create: {
             chapterId,
             attendedOn: attendedOnConverted,

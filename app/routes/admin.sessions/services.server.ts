@@ -36,7 +36,7 @@ export async function getAvailabelMentorsAsync(
     sessions = await prisma.$queryRaw<DBOption[]>`
       SELECT 
         u.id, u.fullName
-      FROM SessionAttendance sa
+      FROM Session sa
       INNER JOIN MentorSession ms ON ms.id = sa.mentorSessionId
       INNER JOIN StudentSession ss ON ss.id = sa.studentSessionId
       INNER JOIN User u ON u.id = ms.mentorId
@@ -69,7 +69,7 @@ export async function getAvailabelStudentsAsync(
     sessions = await prisma.$queryRaw<DBOption[]>`
       SELECT 
         s.id, s.fullName
-      FROM SessionAttendance sa
+      FROM Session sa
       INNER JOIN MentorSession ms ON ms.id = sa.mentorSessionId
       INNER JOIN StudentSession ss ON ss.id = sa.studentSessionId
       INNER JOIN Student s ON s.id = ss.studentId
@@ -97,7 +97,7 @@ export async function getCountAsync(
   studentId: number | undefined,
   filterReports: string,
 ) {
-  return await prisma.sessionAttendance.count({
+  return await prisma.session.count({
     where: whereClause(
       chapterId,
       term,
@@ -119,7 +119,7 @@ export async function getSessionsAsync(
   pageNumber: number,
   numberItems = 10,
 ) {
-  return await prisma.sessionAttendance.findMany({
+  return await prisma.session.findMany({
     where: whereClause(
       chapterId,
       term,

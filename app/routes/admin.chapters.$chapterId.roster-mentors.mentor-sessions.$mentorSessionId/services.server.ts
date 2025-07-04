@@ -35,7 +35,7 @@ export async function getMentorSessionByIdAsync(mentorSessionId: number) {
           fullName: true,
         },
       },
-      sessionAttendance: {
+      session: {
         select: {
           id: true,
           hasReport: true,
@@ -63,7 +63,7 @@ export async function restoreAvailabilityAsync(
   mentorSessionId: number,
   status: string,
 ) {
-  const sessionCount = await prisma.sessionAttendance.count({
+  const sessionCount = await prisma.session.count({
     where: {
       mentorSessionId,
     },
@@ -98,7 +98,7 @@ export async function restoreAvailabilityAsync(
 }
 
 export async function removeSessionAsync(sessionId: number) {
-  const session = await prisma.sessionAttendance.findUniqueOrThrow({
+  const session = await prisma.session.findUniqueOrThrow({
     where: {
       id: sessionId,
     },
@@ -122,13 +122,13 @@ export async function removeSessionAsync(sessionId: number) {
   }
 
   await prisma.$transaction(async (tx) => {
-    await tx.sessionAttendance.delete({
+    await tx.session.delete({
       where: {
         id: session.id,
       },
     });
 
-    const sessionsForMentorCount = await tx.sessionAttendance.count({
+    const sessionsForMentorCount = await tx.session.count({
       where: {
         mentorSessionId: session.mentorSessionId,
       },
@@ -142,7 +142,7 @@ export async function removeSessionAsync(sessionId: number) {
       });
     }
 
-    const sessionsForStudentCount = await tx.sessionAttendance.count({
+    const sessionsForStudentCount = await tx.session.count({
       where: {
         studentSessionId: session.studentSessionId,
       },
@@ -269,7 +269,7 @@ export async function addStudentToSessionAsync({
       },
     });
 
-    return await tx.sessionAttendance.create({
+    return await tx.session.create({
       data: {
         chapterId: mentorSession.chapterId,
         attendedOn: mentorSession.attendedOn,

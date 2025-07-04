@@ -29,7 +29,7 @@ export interface SessioViewModel {
   chapterId: number;
   attendedOn: Date;
   status: SessionStatus;
-  sessionAttendance: {
+  session: {
     id: number;
     studentSession: { student: { id: number; fullName: string } };
     hasReport: boolean;
@@ -81,7 +81,7 @@ export async function getAvailableStudentsForSessionAsync(
     SELECT
       s.id
     FROM StudentSession ss
-    INNER JOIN SessionAttendance sa ON sa.StudentSessionId = ss.id
+    INNER JOIN Session sa ON sa.StudentSessionId = ss.id
     INNER JOIN Student s ON s.id = ss.studentId
     WHERE ss.chapterId = ${chapterId}
       AND ss.attendedOn = ${attendedOnConverted}
@@ -164,7 +164,7 @@ export async function getMentorSessionsLookupAsync(
           fullName: true,
         },
       },
-      sessionAttendance: {
+      session: {
         select: {
           id: true,
           signedOffOn: true,
@@ -216,7 +216,7 @@ export async function getMentorSessionsLookupAsync(
           fullName: true,
         },
       },
-      sessionAttendance: {
+      session: {
         select: {
           id: true,
           signedOffOn: true,
@@ -362,7 +362,7 @@ export async function createSessionWithStudentAsync({
       },
     });
 
-    return await tx.sessionAttendance.create({
+    return await tx.session.create({
       data: {
         chapterId,
         mentorSessionId: mentorSession.id,
@@ -377,30 +377,29 @@ export async function takeSessionFromParterAsync(
   sessionId: number,
   mentorId: number,
 ) {
-  const partnerStudentSession =
-    await prisma.sessionAttendance.findUniqueOrThrow({
-      where: {
-        id: sessionId,
-      },
-      select: {
-        id: true,
-        chapterId: true,
-        attendedOn: true,
-        completedOn: true,
-        studentSession: {
-          select: {
-            id: true,
-          },
+  const partnerStudentSession = await prisma.session.findUniqueOrThrow({
+    where: {
+      id: sessionId,
+    },
+    select: {
+      id: true,
+      chapterId: true,
+      attendedOn: true,
+      completedOn: true,
+      studentSession: {
+        select: {
+          id: true,
         },
       },
-    });
+    },
+  });
 
   if (partnerStudentSession.completedOn !== null) {
     throw new Error("Report is already completed.");
   }
 
   return await prisma.$transaction(async (tx) => {
-    await tx.sessionAttendance.delete({
+    await tx.session.delete({
       where: {
         id: sessionId,
       },
@@ -417,7 +416,7 @@ export async function takeSessionFromParterAsync(
     });
 
     if (mentorSession !== null) {
-      return await tx.sessionAttendance.create({
+      return await tx.session.create({
         data: {
           chapterId: partnerStudentSession.chapterId,
           attendedOn: partnerStudentSession.attendedOn,
@@ -438,7 +437,7 @@ export async function takeSessionFromParterAsync(
       },
     });
 
-    return await tx.sessionAttendance.create({
+    return await tx.session.create({
       data: {
         chapterId: partnerStudentSession.chapterId,
         attendedOn: partnerStudentSession.attendedOn,
@@ -462,7 +461,7 @@ export async function deleteMentorSessionByIdAsync(mentorSessionId: number) {
 
 export async function deleteSessionByIdAsync(sessionId: number) {
   return await prisma.$transaction(async (tx) => {
-    const session = await tx.sessionAttendance.findUniqueOrThrow({
+    const session = await tx.session.findUniqueOrThrow({
       where: {
         id: sessionId,
       },
@@ -475,7 +474,7 @@ export async function deleteSessionByIdAsync(sessionId: number) {
       },
     });
 
-    await tx.sessionAttendance.delete({
+    await tx.session.delete({
       where: {
         id: session.id,
       },
@@ -487,7 +486,7 @@ export async function deleteSessionByIdAsync(sessionId: number) {
       },
     });
 
-    const sessionsForStudentCount = await tx.sessionAttendance.count({
+    const sessionsForStudentCount = await tx.session.count({
       where: {
         chapterId: session.chapterId,
         attendedOn: session.attendedOn,

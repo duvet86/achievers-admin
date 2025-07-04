@@ -1,9 +1,9 @@
 import { prisma } from "~/db.server";
 
-export async function getSessionAsync(sessionAttendanceId: number) {
-  return await prisma.sessionAttendance.findUnique({
+export async function getSessionAsync(sessionId: number) {
+  return await prisma.session.findUnique({
     where: {
-      id: sessionAttendanceId,
+      id: sessionId,
       hasReport: true,
     },
     select: {

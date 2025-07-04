@@ -80,7 +80,7 @@ export async function geSessionAsync(
     return null;
   }
 
-  return await prisma.sessionAttendance.findUnique({
+  return await prisma.session.findUnique({
     where: {
       chapterId_mentorSessionId_studentSessionId: {
         chapterId,
@@ -264,7 +264,7 @@ export async function createSessionAsync({
       },
     });
 
-    return await tx.sessionAttendance.create({
+    return await tx.session.create({
       data: {
         chapterId,
         studentSessionId: studentSession.id,
@@ -294,7 +294,7 @@ export async function updateSessionAsync({
       break;
   }
 
-  return await prisma.sessionAttendance.update({
+  return await prisma.session.update({
     where: {
       id: sessionId,
     },

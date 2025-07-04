@@ -4,8 +4,14 @@ import { resolve } from "node:path";
 
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import dayjs from "dayjs";
+import invariant from "tiny-invariant";
 
 import { PrismaClient } from "./client/client";
+
+invariant(process.env.DATABASE_HOST, "DATABASE_HOST must be set");
+invariant(process.env.DATABASE_NAME, "DATABASE_NAME must be set");
+invariant(process.env.DATABASE_USER, "DATABASE_USER must be set");
+invariant(process.env.DATABASE_PASSWORD, "DATABASE_PASSWORD must be set");
 
 const adapter = new PrismaMariaDb({
   host: process.env.DATABASE_HOST,

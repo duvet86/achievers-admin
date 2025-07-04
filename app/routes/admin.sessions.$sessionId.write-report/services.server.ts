@@ -18,7 +18,7 @@ export interface SessionCommand {
 }
 
 export async function getSessionIdAsync(sessionId: number) {
-  return await prisma.sessionAttendance.findUniqueOrThrow({
+  return await prisma.session.findUniqueOrThrow({
     where: {
       id: sessionId,
     },
@@ -63,7 +63,7 @@ export async function saveReportAsync({
       break;
   }
 
-  return await prisma.sessionAttendance.update({
+  return await prisma.session.update({
     where: {
       id: sessionId,
     },

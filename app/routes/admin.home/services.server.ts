@@ -163,7 +163,7 @@ export async function getReportsPerSession(
       SUM(IF(s.report IS NOT NULL AND s.signedOffOn IS NULL AND s.completedOn IS NOT NULL, 1, 0)) reportNoFeedbackCounter,
       SUM(IF(s.report IS NOT NULL AND s.completedOn IS NULL, 1, 0)) incompleteReportCounter,
       SUM(IF(s.report IS NULL, 1, 0)) noReportCounter
-    FROM SessionAttendance s
+    FROM Session s
     WHERE s.attendedOn BETWEEN ? AND ? AND s.chapterId = ?
     GROUP BY s.attendedOn
     ORDER BY s.attendedOn ASC`,

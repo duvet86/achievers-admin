@@ -89,7 +89,7 @@ export async function getStudentsAsync(
       ms.mentorId,
       u.fullName AS mentorFullName
     FROM StudentSession ss
-    LEFT JOIN SessionAttendance sa ON sa.studentSessionId = ss.id
+    LEFT JOIN Session sa ON sa.studentSessionId = ss.id
     LEFT JOIN MentorSession ms ON ms.id = sa.mentorSessionId
     LEFT JOIN User u ON u.id = ms.mentorId
     WHERE ss.chapterId = ${chapterId}
