@@ -9,7 +9,7 @@ interface SupportRequestCommand {
 }
 
 export async function getUserByAzureADIdAsync(azureADId: string) {
-  return await prisma.user.findUnique({
+  return await prisma.mentor.findUnique({
     where: {
       azureADId,
     },

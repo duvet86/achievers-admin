@@ -57,7 +57,7 @@ export async function getMentorsAsync(
   sortFullName: Prisma.SortOrder | undefined,
   searchTerm: string | undefined,
 ): Promise<SessionViewModel[]> {
-  const mentors = await prisma.user.findMany({
+  const mentors = await prisma.mentor.findMany({
     where: {
       endDate: null,
       chapterId,

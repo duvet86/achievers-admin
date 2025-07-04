@@ -44,7 +44,7 @@ export async function getChaptersAsync(ability: AppAbility) {
 }
 
 export async function getTotalMentorsAsync() {
-  return await prisma.user.count({
+  return await prisma.mentor.count({
     where: {
       endDate: null,
     },
@@ -68,7 +68,7 @@ export async function getIncompleteMentorsAsync() {
           pc.reminderSentAt policeCheckReminderSentAt,
           wcc.expiryDate wwccheckExpiryDate,
           wcc.reminderSentAt wwccheckReminderSent,
-          (SELECT COUNT(r.userId) FROM Reference r WHERE r.userId = u.id GROUP BY r.userId) as count,
+          (SELECT COUNT(r.mentorId) FROM Reference r WHERE r.mentorId = u.id GROUP BY r.mentorId) as count,
           ap.id approvalbymrcId,
           p.id eoiprofileId,
           pc.id policecheckId,
@@ -76,14 +76,14 @@ export async function getIncompleteMentorsAsync() {
           wc.id welcomecallId,
           i.id inductionId,
           c.id chapterId
-        FROM User u
+        FROM Mentor u
         INNER JOIN Chapter c ON c.id = u.chapterId
-        LEFT JOIN ApprovalbyMRC ap ON ap.userId = u.id
-        LEFT JOIN EoIProfile p ON p.userId = u.id
-        LEFT JOIN PoliceCheck pc ON pc.userId = u.id
-        LEFT JOIN WWCCheck wcc ON wcc.userId = u.id
-        LEFT JOIN WelcomeCall wc ON wc.userId = u.id
-        LEFT JOIN Induction i ON i.userId = u.id
+        LEFT JOIN ApprovalbyMRC ap ON ap.mentorId = u.id
+        LEFT JOIN EoIProfile p ON p.mentorId = u.id
+        LEFT JOIN PoliceCheck pc ON pc.mentorId = u.id
+        LEFT JOIN WWCCheck wcc ON wcc.mentorId = u.id
+        LEFT JOIN WelcomeCall wc ON wc.mentorId = u.id
+        LEFT JOIN Induction i ON i.mentorId = u.id
     ) as s
     WHERE endDate IS NULL
       AND (approvalbymrcId IS NULL 
@@ -121,7 +121,7 @@ export async function getTotalChaptersAsync() {
 }
 
 export async function getMentorsPerMonth() {
-  const mentors = await prisma.user.findMany({
+  const mentors = await prisma.mentor.findMany({
     select: {
       createdAt: true,
     },

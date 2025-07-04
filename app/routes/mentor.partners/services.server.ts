@@ -1,7 +1,7 @@
 import { prisma } from "~/db.server";
 
 export async function getPartnersAync(azureADId: string) {
-  const mentor = await prisma.user.findUniqueOrThrow({
+  const mentor = await prisma.mentor.findUniqueOrThrow({
     where: {
       azureADId,
     },
@@ -38,7 +38,7 @@ export async function getPartnersAync(azureADId: string) {
 
   const studentAssignements = await prisma.mentorToStudentAssignement.findMany({
     where: {
-      userId: mentor.id,
+      mentorId: mentor.id,
     },
     select: {
       studentId: true,
@@ -46,14 +46,14 @@ export async function getPartnersAync(azureADId: string) {
   });
 
   const partners = await prisma.mentorToStudentAssignement.findMany({
-    distinct: "userId",
+    distinct: "mentorId",
     where: {
       studentId: {
         in: studentAssignements.map(({ studentId }) => studentId),
       },
     },
     select: {
-      user: {
+      mentor: {
         select: {
           id: true,
           fullName: true,
@@ -65,18 +65,18 @@ export async function getPartnersAync(azureADId: string) {
   });
 
   return partners
-    .filter(({ user: { id } }) => mentor.id !== id)
+    .filter(({ mentor: { id } }) => mentor.id !== id)
     .map((partner) => {
       const isSharingWithMentor =
-        mentorShareToLookup[partner.user.id.toString()];
+        mentorShareToLookup[partner.mentor.id.toString()];
       const isInfoShared =
-        sharingMentorInfoWithLookup[partner.user.id.toString()];
+        sharingMentorInfoWithLookup[partner.mentor.id.toString()];
 
       return {
-        ...partner.user,
+        ...partner.mentor,
         isInfoShared,
-        email: isSharingWithMentor ? partner.user.email : null,
-        mobile: isSharingWithMentor ? partner.user.mobile : null,
+        email: isSharingWithMentor ? partner.mentor.email : null,
+        mobile: isSharingWithMentor ? partner.mentor.mobile : null,
       };
     });
 }
@@ -85,7 +85,7 @@ export async function shareInfoWithPartner(
   mentorAzureId: string,
   mentorSharedToId: number,
 ) {
-  const mentor = await prisma.user.findUniqueOrThrow({
+  const mentor = await prisma.mentor.findUniqueOrThrow({
     where: {
       azureADId: mentorAzureId,
     },
@@ -106,7 +106,7 @@ export async function removeShareInfo(
   mentorAzureId: string,
   mentorSharedToId: number,
 ) {
-  const mentor = await prisma.user.findUniqueOrThrow({
+  const mentor = await prisma.mentor.findUniqueOrThrow({
     where: {
       azureADId: mentorAzureId,
     },

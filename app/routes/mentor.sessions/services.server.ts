@@ -1,7 +1,7 @@
 import { prisma } from "~/db.server";
 
 export async function getUserAsync(azureADId: string) {
-  return await prisma.user.findUniqueOrThrow({
+  return await prisma.mentor.findUniqueOrThrow({
     where: {
       azureADId,
     },
@@ -19,7 +19,7 @@ export async function getStudentsAsync(
 ) {
   const assignedStudents = await prisma.mentorToStudentAssignement.findMany({
     where: {
-      userId: loggedUserId,
+      mentorId: loggedUserId,
       student: {
         endDate: null,
       },
@@ -33,7 +33,7 @@ export async function getStudentsAsync(
       },
     },
     orderBy: {
-      user: {
+      mentor: {
         fullName: "asc",
       },
     },
@@ -99,7 +99,7 @@ export async function getMentorsAsync(
 ) {
   const myStudents = await prisma.mentorToStudentAssignement.findMany({
     where: {
-      userId: loggedUserId,
+      mentorId: loggedUserId,
       student: {
         endDate: null,
       },
@@ -110,9 +110,9 @@ export async function getMentorsAsync(
   });
 
   const myPartners = await prisma.mentorToStudentAssignement.findMany({
-    distinct: "userId",
+    distinct: "mentorId",
     where: {
-      user: {
+      mentor: {
         endDate: null,
       },
       studentId: {
@@ -120,7 +120,7 @@ export async function getMentorsAsync(
       },
     },
     select: {
-      user: {
+      mentor: {
         select: {
           id: true,
           fullName: true,
@@ -128,7 +128,7 @@ export async function getMentorsAsync(
       },
     },
     orderBy: {
-      user: {
+      mentor: {
         fullName: "asc",
       },
     },
@@ -137,7 +137,7 @@ export async function getMentorsAsync(
   if (selectedStudentId !== undefined) {
     const myPartnersLookup = myPartners.reduce<Record<string, boolean>>(
       (res, value) => {
-        res[value.user.id] = true;
+        res[value.mentor.id] = true;
 
         return res;
       },
@@ -150,7 +150,7 @@ export async function getMentorsAsync(
       FROM Session sa
       INNER JOIN MentorSession ms ON ms.id = sa.mentorSessionId
       INNER JOIN StudentSession ss ON ss.id = sa.studentSessionId
-      INNER JOIN User u ON u.id = ms.mentorId
+      INNER JOIN Mentor u ON u.id = ms.mentorId
       WHERE sa.chapterId = ${chapterId} AND ss.studentId = ${selectedStudentId}
       GROUP BY u.id, u.fullName
       ORDER BY u.fullName ASC`;
@@ -166,12 +166,12 @@ export async function getMentorsAsync(
     }));
   }
 
-  const allMentors = await prisma.user.findMany({
+  const allMentors = await prisma.mentor.findMany({
     where: {
       chapterId,
       endDate: null,
       id: {
-        notIn: myPartners.map(({ user: { id } }) => id),
+        notIn: myPartners.map(({ mentor: { id } }) => id),
       },
     },
     select: {
@@ -184,7 +184,7 @@ export async function getMentorsAsync(
   });
 
   return myPartners
-    .map(({ user: { id, fullName } }) => ({
+    .map(({ mentor: { id, fullName } }) => ({
       id,
       fullName:
         id === loggedUserId

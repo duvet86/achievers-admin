@@ -66,7 +66,7 @@ export interface SessionCommandRequest {
   sessionId: string | undefined;
   chapterId: number;
   studentId: number;
-  userId: number;
+  mentorId: number;
   attendedOn: string;
 }
 
@@ -106,7 +106,7 @@ export async function getAvailableStudentsForSessionAsync(
   const availableStudentsForSession =
     await prisma.mentorToStudentAssignement.findMany({
       where: {
-        userId: mentorId,
+        mentorId,
         studentId: {
           notIn: studentsInSession
             .map(({ id }) => id)
@@ -185,20 +185,20 @@ export async function getMentorSessionsLookupAsync(
     },
   });
 
-  const myPartners = await prisma.$queryRaw<{ userId: number }[]>`
+  const myPartners = await prisma.$queryRaw<{ mentorId: number }[]>`
     SELECT
-      b.userId
+      b.mentorId
     FROM MentorToStudentAssignement a
     INNER JOIN MentorToStudentAssignement b ON b.studentId = a.studentId
-    WHERE a.userId = ${mentorId}`;
+    WHERE a.mentorId = ${mentorId}`;
 
   const myPartnersMentorSessions = await prisma.mentorSession.findMany({
     where: {
       chapterId,
       mentorId: {
         in: myPartners
-          .filter(({ userId }) => userId !== mentorId)
-          .map(({ userId }) => userId),
+          .filter((partner) => partner.mentorId !== mentorId)
+          .map(({ mentorId }) => mentorId),
       },
       attendedOn: {
         gte: term.start.toDate(),
@@ -505,7 +505,7 @@ export async function deleteSessionByIdAsync(sessionId: number) {
 }
 
 export async function getUserByAzureADIdAsync(azureADId: string) {
-  return await prisma.user.findUniqueOrThrow({
+  return await prisma.mentor.findUniqueOrThrow({
     where: {
       azureADId,
     },

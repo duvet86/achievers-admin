@@ -9,7 +9,7 @@ export async function getPoliceCheckReminders(
 
   const policeChecks = await prisma.policeCheck.findMany({
     where: {
-      user: {
+      mentor: {
         endDate: null,
       },
     },
@@ -17,7 +17,7 @@ export async function getPoliceCheckReminders(
       id: true,
       reminderSentAt: true,
       expiryDate: true,
-      user: {
+      mentor: {
         select: {
           id: true,
           fullName: true,
@@ -49,7 +49,7 @@ export async function getPoliceCheckReminders(
 export async function getPoliceCheckRemindersCount() {
   return await prisma.policeCheck.count({
     where: {
-      user: {
+      mentor: {
         endDate: null,
       },
     },

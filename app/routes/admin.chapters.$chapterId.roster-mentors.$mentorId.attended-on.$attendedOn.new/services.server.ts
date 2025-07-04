@@ -47,7 +47,7 @@ export async function getChapterByIdAsync(id: number) {
 }
 
 export async function getMentorByIdAsync(mentorId: number) {
-  return await prisma.user.findFirstOrThrow({
+  return await prisma.mentor.findFirstOrThrow({
     where: {
       id: mentorId,
     },
@@ -69,12 +69,12 @@ export async function getStudentsForMentorAsync(
     SELECT id, fullName
     FROM Student
     WHERE chapterId = ${chapterId} AND endDate IS NULL
-      AND id NOT IN (SELECT studentId FROM MentorToStudentAssignement WHERE userId = ${mentorId})
+      AND id NOT IN (SELECT studentId FROM MentorToStudentAssignement WHERE mentorId = ${mentorId})
     ORDER BY fullName ASC`;
 
   const assignedStudents = await prisma.mentorToStudentAssignement.findMany({
     where: {
-      userId: mentorId,
+      mentorId,
     },
     select: {
       student: {

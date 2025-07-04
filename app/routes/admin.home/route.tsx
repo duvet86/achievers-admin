@@ -188,7 +188,7 @@ export default function Index({
             label="Mentors with incomplete checks"
             count={incompleteMentors}
             subLabel={`of ${mentorsCount} total mentors`}
-            to="/admin/users"
+            to="/admin/mentors"
           />
 
           <StatCard

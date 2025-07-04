@@ -71,7 +71,7 @@ export async function seedForWriteReportAsync() {
       await tx.mentorSession.deleteMany();
       await tx.studentSession.deleteMany();
 
-      const testMentor = await tx.user.findUniqueOrThrow({
+      const testMentor = await tx.mentor.findUniqueOrThrow({
         where: {
           email: "test_0@test.com",
         },
@@ -84,7 +84,7 @@ export async function seedForWriteReportAsync() {
       const studentAssignment =
         await tx.mentorToStudentAssignement.findFirstOrThrow({
           where: {
-            userId: testMentor.id,
+            mentorId: testMentor.id,
           },
           select: {
             studentId: true,
@@ -134,7 +134,7 @@ export async function seedSessionsFroHomePageAsync() {
       await tx.mentorSession.deleteMany();
       await tx.studentSession.deleteMany();
 
-      const testMentor = await tx.user.findUniqueOrThrow({
+      const testMentor = await tx.mentor.findUniqueOrThrow({
         where: {
           email: "test_0@test.com",
         },
@@ -146,7 +146,7 @@ export async function seedSessionsFroHomePageAsync() {
 
       const studentAssignments = await tx.mentorToStudentAssignement.findMany({
         where: {
-          userId: testMentor.id,
+          mentorId: testMentor.id,
         },
         select: {
           studentId: true,

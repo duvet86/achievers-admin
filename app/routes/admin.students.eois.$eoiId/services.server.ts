@@ -72,7 +72,7 @@ export async function getStudentEOIByIdAsync(id: number) {
 }
 
 export async function updateStudentEOIByIdAsync(
-  userId: number,
+  studentId: number,
   dataUpdate: XOR<
     Prisma.EoiStudentProfileUpdateInput,
     Prisma.EoiStudentProfileUncheckedUpdateInput
@@ -81,7 +81,7 @@ export async function updateStudentEOIByIdAsync(
   const student = await prisma.eoiStudentProfile.update({
     data: dataUpdate,
     where: {
-      id: userId,
+      id: studentId,
     },
   });
 

@@ -5,7 +5,7 @@ export async function getMentorsInChapterAsync(
   chapterId: number,
   studentId: number,
 ) {
-  return prisma.user.findMany({
+  return prisma.mentor.findMany({
     where: {
       endDate: null,
       chapterId,
@@ -33,7 +33,7 @@ export async function getStudentWithMentorsAsync(studentId: number) {
       fullName: true,
       mentorToStudentAssignement: {
         select: {
-          user: {
+          mentor: {
             select: {
               id: true,
               fullName: true,
@@ -56,21 +56,21 @@ export async function assignStudentToMentorAsync(
   return await prisma.mentorToStudentAssignement.create({
     data: {
       studentId,
-      userId: mentorId,
+      mentorId,
       assignedBy: loggedUser.oid,
     },
   });
 }
 
 export async function removeMentorStudentAssignement(
-  userId: number,
+  mentorId: number,
   studentId: number,
 ) {
   return await prisma.mentorToStudentAssignement.delete({
     where: {
-      userId_studentId: {
+      mentorId_studentId: {
         studentId,
-        userId,
+        mentorId,
       },
     },
   });

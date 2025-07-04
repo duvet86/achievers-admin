@@ -93,7 +93,7 @@ export class AdminHomePageAssertions {
 
     await expect(this.adminHomePage.links.nth(0)).toHaveAttribute(
       "href",
-      "/admin/users",
+      "/admin/mentors",
     );
 
     await expect(this.adminHomePage.links.nth(1)).toHaveAttribute(

@@ -154,7 +154,7 @@ export default function Index({
   const removeAttendance = (attendace: Attendance) => () => {
     if (
       !confirm(
-        `Are you sure you want to remove the attendace for "${attendace.user.fullName}"?`,
+        `Are you sure you want to remove the attendace for "${attendace.mentor.fullName}"?`,
       )
     ) {
       return;

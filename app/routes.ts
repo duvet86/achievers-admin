@@ -295,112 +295,112 @@ export default [
           ),
         ]),
       ]),
-      ...prefix("users", [
-        layout("routes/admin.users/layout.tsx", [
-          index("routes/admin.users/route.tsx"),
-          route(":userId", "routes/admin.users.$userId/route.tsx", {
+      ...prefix("mentors", [
+        layout("routes/admin.mentors/layout.tsx", [
+          index("routes/admin.mentors/route.tsx"),
+          route(":mentorId", "routes/admin.mentors.$mentorId/route.tsx", {
             index: true,
           }),
           route(
-            ":userId/approval-mrc",
-            "routes/admin.users.$userId.approval-mrc/route.tsx",
+            ":mentorId/approval-mrc",
+            "routes/admin.mentors.$mentorId.approval-mrc/route.tsx",
             {
               index: true,
             },
           ),
           route(
-            ":userId/archive",
-            "routes/admin.users.$userId.archive/route.tsx",
+            ":mentorId/archive",
+            "routes/admin.mentors.$mentorId.archive/route.tsx",
             {
               index: true,
             },
           ),
           route(
-            ":userId/eoiProfile",
-            "routes/admin.users.$userId.eoiProfile/route.tsx",
+            ":mentorId/eoiProfile",
+            "routes/admin.mentors.$mentorId.eoiProfile/route.tsx",
             {
               index: true,
             },
           ),
           route(
-            ":userId/give-access",
-            "routes/admin.users.$userId.give-access/route.tsx",
+            ":mentorId/give-access",
+            "routes/admin.mentors.$mentorId.give-access/route.tsx",
             {
               index: true,
             },
           ),
           route(
-            ":userId/remove-access",
-            "routes/admin.users.$userId.remove-access/route.tsx",
+            ":mentorId/remove-access",
+            "routes/admin.mentors.$mentorId.remove-access/route.tsx",
             {
               index: true,
             },
           ),
           route(
-            ":userId/induction",
-            "routes/admin.users.$userId.induction/route.tsx",
+            ":mentorId/induction",
+            "routes/admin.mentors.$mentorId.induction/route.tsx",
             {
               index: true,
             },
           ),
           route(
-            ":userId/police-check",
-            "routes/admin.users.$userId.police-check/route.tsx",
+            ":mentorId/police-check",
+            "routes/admin.mentors.$mentorId.police-check/route.tsx",
             {
               index: true,
             },
           ),
           route(
-            ":userId/re-enable",
-            "routes/admin.users.$userId.re-enable/route.tsx",
+            ":mentorId/re-enable",
+            "routes/admin.mentors.$mentorId.re-enable/route.tsx",
             {
               index: true,
             },
           ),
           route(
-            ":userId/references",
-            "routes/admin.users.$userId.references/route.tsx",
+            ":mentorId/references",
+            "routes/admin.mentors.$mentorId.references/route.tsx",
             {
               index: true,
             },
           ),
           route(
-            ":userId/references/:referenceId",
-            "routes/admin.users.$userId.references.$referenceId/route.tsx",
+            ":mentorId/references/:referenceId",
+            "routes/admin.mentors.$mentorId.references.$referenceId/route.tsx",
             {
               index: true,
             },
           ),
           route(
-            ":userId/welcomeCall",
-            "routes/admin.users.$userId.welcomeCall/route.tsx",
+            ":mentorId/welcomeCall",
+            "routes/admin.mentors.$mentorId.welcomeCall/route.tsx",
             {
               index: true,
             },
           ),
           route(
-            ":userId/wwc-check",
-            "routes/admin.users.$userId.wwc-check/route.tsx",
+            ":mentorId/wwc-check",
+            "routes/admin.mentors.$mentorId.wwc-check/route.tsx",
             {
               index: true,
             },
           ),
           route(
-            ":userId/end-reason",
-            "routes/admin.users.$userId.end-reason/route.tsx",
+            ":mentorId/end-reason",
+            "routes/admin.mentors.$mentorId.end-reason/route.tsx",
             {
               index: true,
             },
           ),
-          route("export", "routes/admin.users.export/route.tsx", {
+          route("export", "routes/admin.mentors.export/route.tsx", {
             index: true,
           }),
-          route("import", "routes/admin.users.import/route.tsx", {
+          route("import", "routes/admin.mentors.import/route.tsx", {
             index: true,
           }),
           route(
             "import-history",
-            "routes/admin.users.import-history/route.tsx",
+            "routes/admin.mentors.import-history/route.tsx",
             {
               index: true,
             },

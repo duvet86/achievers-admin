@@ -18,10 +18,10 @@ export async function loader({ request }: Route.LoaderArgs) {
           appRoleAssignments.map(({ roleName }) => roleName).includes("Mentor")
         ),
     )
-    .map((user) => ({
-      ...user,
-      appRoleAssignments: undefined,
-      roles: user.appRoleAssignments.map(({ roleName }) =>
+    .map((mentor) => ({
+      ...mentor,
+      mentor: undefined,
+      roles: mentor.appRoleAssignments.map(({ roleName }) =>
         getRoleMappings(chaptersLookup, roleName),
       ),
     }))

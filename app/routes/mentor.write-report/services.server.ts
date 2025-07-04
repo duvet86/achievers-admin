@@ -29,7 +29,7 @@ interface UpdateSessionCommand {
 }
 
 export async function getUserByAzureADIdAsync(azureADId: string) {
-  return await prisma.user.findUniqueOrThrow({
+  return await prisma.mentor.findUniqueOrThrow({
     where: {
       azureADId,
     },
@@ -141,10 +141,10 @@ export async function getSessionDatesFormatted(
     });
 }
 
-export async function getStudentsAsync(userId: number, chapterId: number) {
+export async function getStudentsAsync(mentorId: number, chapterId: number) {
   const assignedStudents = await prisma.mentorToStudentAssignement.findMany({
     where: {
-      userId,
+      mentorId,
       student: {
         endDate: null,
       },
@@ -165,7 +165,7 @@ export async function getStudentsAsync(userId: number, chapterId: number) {
       endDate: null,
       mentorToStudentAssignement: {
         none: {
-          userId,
+          mentorId,
         },
       },
     },

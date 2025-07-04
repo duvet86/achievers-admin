@@ -25,7 +25,7 @@ enum SessionStatus {
   UNAVAILABLE
 }
 
-model User {
+model Mentor {
   id        Int     @id @default(autoincrement())
   azureADId String? @unique // Defined by Azure Active Directory.
 
@@ -91,8 +91,8 @@ model ImportedHistory {
   id    Int     @id @default(autoincrement())
   error String? @db.Text
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique
+  mentor   Mentor @relation(fields: [mentorId], references: [id])
+  mentorId Int    @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -119,8 +119,8 @@ model EoIProfile {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique
+  mentor   Mentor @relation(fields: [mentorId], references: [id])
+  mentorId Int    @unique
 }
 
 model WelcomeCall {
@@ -133,8 +133,8 @@ model WelcomeCall {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique
+  mentor   Mentor @relation(fields: [mentorId], references: [id])
+  mentorId Int    @unique
 }
 
 model Reference {
@@ -166,8 +166,8 @@ model Reference {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int
+  mentor   Mentor @relation(fields: [mentorId], references: [id])
+  mentorId Int
 }
 
 model Induction {
@@ -180,8 +180,8 @@ model Induction {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique
+  mentor   Mentor @relation(fields: [mentorId], references: [id])
+  mentorId Int    @unique
 }
 
 model PoliceCheck {
@@ -194,8 +194,8 @@ model PoliceCheck {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique
+  mentor   Mentor @relation(fields: [mentorId], references: [id])
+  mentorId Int    @unique
 }
 
 model WWCCheck {
@@ -209,8 +209,8 @@ model WWCCheck {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique
+  mentor   Mentor @relation(fields: [mentorId], references: [id])
+  mentorId Int    @unique
 }
 
 model ApprovalbyMRC {
@@ -223,8 +223,8 @@ model ApprovalbyMRC {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique
+  mentor   Mentor @relation(fields: [mentorId], references: [id])
+  mentorId Int    @unique
 }
 
 model Chapter {
@@ -235,7 +235,7 @@ model Chapter {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user    User[]
+  mentor  Mentor[]
   student Student[]
   session Session[]
   goal    Goal[]
@@ -349,8 +349,8 @@ model ImportedStudentHistory {
 model MentorToStudentAssignement {
   id Int @id @default(autoincrement())
 
-  user      User    @relation(fields: [userId], references: [id])
-  userId    Int
+  mentor    Mentor  @relation(fields: [mentorId], references: [id])
+  mentorId  Int
   student   Student @relation(fields: [studentId], references: [id])
   studentId Int
 
@@ -360,7 +360,7 @@ model MentorToStudentAssignement {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId, studentId])
+  @@unique([mentorId, studentId])
 }
 
 model SchoolTerm {
@@ -382,14 +382,14 @@ model MentorAttendance {
   id         Int      @id @default(autoincrement())
   chapter    Chapter  @relation(fields: [chapterId], references: [id])
   chapterId  Int
-  user       User     @relation(fields: [userId], references: [id])
-  userId     Int
+  mentor     Mentor   @relation(fields: [mentorId], references: [id])
+  mentorId   Int
   attendedOn DateTime
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([chapterId, userId, attendedOn])
+  @@unique([chapterId, mentorId, attendedOn])
 }
 
 model StudentAttendance {
@@ -446,7 +446,7 @@ model MentorSession {
   chapter   Chapter @relation(fields: [chapterId], references: [id])
   chapterId Int
 
-  mentor   User @relation(fields: [mentorId], references: [id])
+  mentor   Mentor @relation(fields: [mentorId], references: [id])
   mentorId Int
 
   attendedOn DateTime      @db.Date
@@ -503,7 +503,7 @@ model Goal {
   chapterId Int
   student   Student @relation(fields: [studentId], references: [id])
   studentId Int
-  mentor    User    @relation(fields: [mentorId], references: [id])
+  mentor    Mentor  @relation(fields: [mentorId], references: [id])
   mentorId  Int
 
   title      String
@@ -521,10 +521,10 @@ model Goal {
 model MentorShareInfo {
   id Int @id @default(autoincrement())
 
-  mentorSharing   User @relation(name: "mentorSharing", fields: [mentorSharingId], references: [id])
+  mentorSharing   Mentor @relation(name: "mentorSharing", fields: [mentorSharingId], references: [id])
   mentorSharingId Int
 
-  mentorSharedTo   User @relation(name: "mentorSharedTo", fields: [mentorSharedToId], references: [id])
+  mentorSharedTo   Mentor @relation(name: "mentorSharedTo", fields: [mentorSharedToId], references: [id])
   mentorSharedToId Int
 
   createdAt DateTime @default(now())

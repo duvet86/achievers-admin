@@ -15,7 +15,7 @@ export async function getAttendancesAsync(
     where: {
       chapterId,
       attendedOn: dayjs.utc(sessionDate, "YYYY-MM-DD").toDate(),
-      user: isStringNullOrEmpty(searchTerm)
+      mentor: isStringNullOrEmpty(searchTerm)
         ? undefined
         : {
             fullName: {
@@ -26,7 +26,7 @@ export async function getAttendancesAsync(
     select: {
       id: true,
       attendedOn: true,
-      user: {
+      mentor: {
         select: {
           fullName: true,
         },

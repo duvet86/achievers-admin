@@ -94,7 +94,7 @@ export async function getSessionsAsync(
 }
 
 export async function getUserByAzureADIdAsync(azureADId: string) {
-  return await prisma.user.findUniqueOrThrow({
+  return await prisma.mentor.findUniqueOrThrow({
     where: {
       azureADId,
     },

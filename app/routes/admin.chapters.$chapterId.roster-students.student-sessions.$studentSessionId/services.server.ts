@@ -67,9 +67,9 @@ export async function getMentorsForStudentAsync(
 ) {
   const allMentors = await prisma.$queryRaw<{ id: number; fullName: string }[]>`
     SELECT id, fullName
-    FROM User
+    FROM Mentor
     WHERE chapterId = ${chapterId} AND endDate IS NULL
-      AND id NOT IN (SELECT userId FROM MentorToStudentAssignement WHERE studentId = ${studentId})
+      AND id NOT IN (SELECT mentorId FROM MentorToStudentAssignement WHERE studentId = ${studentId})
     ORDER BY fullName ASC`;
 
   const assignedMentors = await prisma.mentorToStudentAssignement.findMany({
@@ -77,7 +77,7 @@ export async function getMentorsForStudentAsync(
       studentId,
     },
     select: {
-      user: {
+      mentor: {
         select: {
           id: true,
           fullName: true,
@@ -85,7 +85,7 @@ export async function getMentorsForStudentAsync(
       },
     },
     orderBy: {
-      user: {
+      mentor: {
         fullName: "asc",
       },
     },
@@ -111,7 +111,7 @@ export async function getMentorsForStudentAsync(
   }, {});
 
   return assignedMentors
-    .map(({ user: { id, fullName } }) => ({
+    .map(({ mentor: { id, fullName } }) => ({
       id,
       fullName: `** ${fullName} (Assigned) **`,
     }))

@@ -39,7 +39,7 @@ export async function getAvailabelMentorsAsync(
       FROM Session sa
       INNER JOIN MentorSession ms ON ms.id = sa.mentorSessionId
       INNER JOIN StudentSession ss ON ss.id = sa.studentSessionId
-      INNER JOIN User u ON u.id = ms.mentorId
+      INNER JOIN Mentor u ON u.id = ms.mentorId
       WHERE sa.chapterId = ${chapterId} AND ss.studentId = ${studentId}
       GROUP BY u.id, u.fullName
       ORDER BY u.fullName ASC`;
@@ -48,8 +48,8 @@ export async function getAvailabelMentorsAsync(
   const dbOptions = await prisma.$queryRaw<DBOption[]>`
     SELECT DISTINCT
       u.id, u.fullName
-    FROM User u
-    INNER JOIN MentorToStudentAssignement msa ON msa.userId = u.id
+    FROM Mentor u
+    INNER JOIN MentorToStudentAssignement msa ON msa.mentorId = u.id
     WHERE u.chapterId = ${chapterIdFilter} AND ${sessions.length > 0 ? Prisma.sql`u.id NOT IN (${Prisma.join(sessions.map((s) => s.id))})` : "1=1"}
     ORDER BY u.fullName ASC`;
 

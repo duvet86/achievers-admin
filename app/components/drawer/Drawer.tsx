@@ -47,7 +47,7 @@ function getLinks(
         },
         {
           icon: <User />,
-          path: "/admin/users",
+          path: "/admin/mentors",
           label: "Mentors",
           isVisible: linkMappings.User,
         },

@@ -88,7 +88,7 @@ export default function Index({
               (
                 {
                   id,
-                  user,
+                  mentor,
                   expiryDate,
                   reminderSentAt,
                   isExpiring,
@@ -108,7 +108,7 @@ export default function Index({
                       {index + 1 + 10 * currentPageNumber}
                     </div>
                   </td>
-                  <td>{user.fullName}</td>
+                  <td>{mentor.fullName}</td>
                   <td>
                     <div className="flex items-center gap-4">
                       {dayjs(expiryDate).format("MMMM D, YYYY")}
@@ -125,7 +125,7 @@ export default function Index({
                   </td>
                   <td>
                     <StateLink
-                      to={`/admin/users/${user.id}/police-check`}
+                      to={`/admin/mentors/${mentor.id}/police-check`}
                       className="btn btn-success btn-xs w-full gap-2"
                     >
                       <Eye className="hidden h-4 w-4 lg:block" />

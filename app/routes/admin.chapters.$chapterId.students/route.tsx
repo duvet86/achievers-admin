@@ -160,13 +160,13 @@ export default function Index({
                     <td className="p-2">{fullName}</td>
                     <td>
                       <ul className="list-disc pl-2">
-                        {mentorToStudentAssignement.map(({ user }) => (
-                          <li key={user.id}>
-                            <span>{user.fullName}</span>{" "}
+                        {mentorToStudentAssignement.map(({ mentor }) => (
+                          <li key={mentor.id}>
+                            <span>{mentor.fullName}</span>{" "}
                             <span className="italic">
-                              {user.frequencyInDays === 14
+                              {mentor.frequencyInDays === 14
                                 ? "(Fortnightly)"
-                                : user.frequencyInDays === 7
+                                : mentor.frequencyInDays === 7
                                   ? "(Weekly)"
                                   : "(Frequency not specified)"}
                             </span>

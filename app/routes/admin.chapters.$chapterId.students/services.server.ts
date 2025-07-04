@@ -34,7 +34,7 @@ export async function getMentorsWithStudentsAsync(
       fullName: true,
       mentorToStudentAssignement: {
         select: {
-          user: {
+          mentor: {
             select: {
               id: true,
               fullName: true,

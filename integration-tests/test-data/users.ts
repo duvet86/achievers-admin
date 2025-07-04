@@ -24,13 +24,13 @@ export async function createUsersAsync(
   await tx.goal.deleteMany();
   await tx.mentorShareInfo.deleteMany();
 
-  await tx.user.deleteMany();
-  await tx.$queryRaw`ALTER TABLE User AUTO_INCREMENT = 1;`;
+  await tx.mentor.deleteMany();
+  await tx.$queryRaw`ALTER TABLE Mentor AUTO_INCREMENT = 1;`;
 
   let i: number;
 
   for (i = 0; i < 18; i++) {
-    await tx.user.create({
+    await tx.mentor.create({
       data: {
         azureADId: i === 0 ? azureId : null,
         email: `test_${i}@test.com`,
@@ -164,7 +164,7 @@ export async function createUsersAsync(
     });
   }
 
-  await tx.user.create({
+  await tx.mentor.create({
     data: {
       azureADId: null,
       email: `test_${i}@test.com`,

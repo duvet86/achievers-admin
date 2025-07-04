@@ -8,7 +8,7 @@ dayjs.extend(utc);
 
 export interface Attendance {
   id: number;
-  user: {
+  mentor: {
     id: number;
     fullName: string;
   };
@@ -18,7 +18,7 @@ export async function getMentorsForSession(
   chapterId: number,
   searchTerm: string | null,
 ) {
-  return await prisma.user.findMany({
+  return await prisma.mentor.findMany({
     where: {
       endDate: null,
       chapterId,
@@ -49,7 +49,7 @@ export async function getMentorAttendancesLookup(
     },
     select: {
       id: true,
-      user: {
+      mentor: {
         select: {
           id: true,
           fullName: true,
@@ -59,7 +59,7 @@ export async function getMentorAttendancesLookup(
   });
 
   return attendaces.reduce<Record<number, Attendance>>((result, attendace) => {
-    result[attendace.user.id] = attendace;
+    result[attendace.mentor.id] = attendace;
 
     return result;
   }, {});
@@ -73,7 +73,7 @@ export async function attendSession(
   return await prisma.mentorAttendance.create({
     data: {
       chapterId,
-      userId: mentorId,
+      mentorId,
       attendedOn,
     },
   });

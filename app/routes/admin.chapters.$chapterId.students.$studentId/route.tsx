@@ -156,7 +156,7 @@ export default function Index({
           <h4>Assigned mentors</h4>
           <ol>
             {mentorToStudentAssignement.map(
-              ({ user: { id, fullName, frequencyInDays } }) => (
+              ({ mentor: { id, fullName, frequencyInDays } }) => (
                 <li key={id} className="border-b border-gray-300 pb-2">
                   <div className="flex flex-wrap items-center justify-between">
                     <div className="flex gap-2">

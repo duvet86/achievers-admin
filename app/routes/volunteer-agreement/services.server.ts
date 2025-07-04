@@ -18,7 +18,7 @@ export interface UserData {
 }
 
 export async function getUserByAzureADIdAsync(azureADId: string) {
-  return await prisma.user.findUniqueOrThrow({
+  return await prisma.mentor.findUniqueOrThrow({
     where: {
       azureADId,
     },
@@ -42,11 +42,14 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
   });
 }
 
-export async function confirmUserDetailsAsync(userId: number, data: UserData) {
-  return await prisma.user.update({
+export async function confirmUserDetailsAsync(
+  mentorId: number,
+  data: UserData,
+) {
+  return await prisma.mentor.update({
     data,
     where: {
-      id: userId,
+      id: mentorId,
     },
   });
 }

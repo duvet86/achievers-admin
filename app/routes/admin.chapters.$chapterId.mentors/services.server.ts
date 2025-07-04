@@ -6,7 +6,7 @@ export async function getStudentsCountAsync(
   chapterId: number,
   searchTerm: string | null,
 ) {
-  return prisma.user.count({
+  return prisma.mentor.count({
     where: {
       endDate: null,
       chapterId,
@@ -23,7 +23,7 @@ export async function getMentorsWithStudentsAsync(
   sortCountStudents: Prisma.SortOrder | undefined,
   numberItems = 10,
 ) {
-  return prisma.user.findMany({
+  return prisma.mentor.findMany({
     where: {
       endDate: null,
       chapterId,

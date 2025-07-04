@@ -65,7 +65,7 @@ export async function getStudentByIdAsync(id: number) {
 }
 
 export async function updateStudentByIdAsync(
-  userId: number,
+  studentId: number,
   dataUpdate: XOR<
     Prisma.StudentUpdateInput,
     Prisma.StudentUncheckedUpdateInput
@@ -74,7 +74,7 @@ export async function updateStudentByIdAsync(
   const student = await prisma.student.update({
     data: dataUpdate,
     where: {
-      id: userId,
+      id: studentId,
     },
   });
 

@@ -23,7 +23,7 @@ export function getUserProfilePictureUrl(profilePicturePath: string): string {
 }
 
 export async function saveUserProfilePicture(
-  userId: number,
+  mentorId: number,
   file: File,
 ): Promise<string> {
   if (file.size === 0) {
@@ -33,7 +33,7 @@ export async function saveUserProfilePicture(
   const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
   await containerClient.createIfNotExists();
 
-  const path = `${userId}/profile-picture`;
+  const path = `${mentorId}/profile-picture`;
 
   const resp = await uploadBlobAsync(containerClient, file, path);
 
@@ -41,9 +41,9 @@ export async function saveUserProfilePicture(
     throw new Error(resp.errorCode);
   }
 
-  await prisma.user.update({
+  await prisma.mentor.update({
     where: {
-      id: userId,
+      id: mentorId,
     },
     data: {
       profilePicturePath: path,
@@ -65,7 +65,7 @@ export async function deleteUserProfilePicture(userId: number): Promise<void> {
     throw new Error(resp.errorCode);
   }
 
-  await prisma.user.update({
+  await prisma.mentor.update({
     where: {
       id: userId,
     },
