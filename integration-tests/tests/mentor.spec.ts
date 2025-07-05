@@ -54,7 +54,7 @@ test.describe("Mentor Home Page", () => {
     await mentorWriteReportPage.expect.toHaveReadonlyReport();
   });
 
-  test.only("should show home page sessions", async () => {
+  test("should show home page sessions", async () => {
     await seedSessionsFroHomePageAsync();
 
     await adminLayoutPage.goToHome();
