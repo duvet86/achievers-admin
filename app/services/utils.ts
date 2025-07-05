@@ -314,3 +314,62 @@ export function isEditorEmpty(reportState: EditorState) {
     return isEmpty;
   });
 }
+
+export function getSelectedTerm(
+  terms: Term[],
+  selectedTermYear: string,
+  selectedTermId: string | null,
+  selectedTermDate: string | null,
+) {
+  if (selectedTermDate !== null) {
+    const termYear = dayjs(selectedTermDate).year();
+
+    const termsForYear = terms.filter(({ year }) => year === termYear);
+
+    const selectedTerm = termsForYear.find(({ start, end }) =>
+      dayjs(selectedTermDate).isBetween(start, end),
+    )!;
+
+    return {
+      selectedTerm,
+      termsForYear,
+    };
+  }
+
+  const CURRENT_YEAR = dayjs().year().toString();
+
+  if (selectedTermId !== null) {
+    const selectedTerm = terms.find((t) => t.id.toString() === selectedTermId);
+    if (selectedTerm !== undefined) {
+      const termsForYear = terms.filter(
+        ({ year }) => year === selectedTerm.year,
+      );
+
+      return {
+        selectedTerm,
+        termsForYear,
+      };
+    }
+
+    const termsForYear = terms.filter(
+      ({ year }) => year.toString() === selectedTermYear,
+    );
+
+    return {
+      selectedTerm:
+        selectedTermYear === CURRENT_YEAR
+          ? getCurrentTermForDate(terms, new Date())
+          : termsForYear[0],
+      termsForYear,
+    };
+  }
+
+  return {
+    selectedTerm: getCurrentTermForDate(terms, new Date()),
+    termsForYear: terms.filter(({ year }) => year.toString() === CURRENT_YEAR),
+  };
+}
+
+export function getDistinctTermYears(terms: Term[]) {
+  return Array.from(new Set(terms.map(({ year }) => year)));
+}

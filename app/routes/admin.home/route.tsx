@@ -9,7 +9,7 @@ import {
   getPermissionsAbility,
   getSchoolTermsAsync,
 } from "~/services/.server";
-import { getCurrentTermForDate } from "~/services";
+import { getCurrentTermForDate, getDistinctTermYears } from "~/services";
 import { Select, SubTitle } from "~/components";
 
 import {
@@ -47,7 +47,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const terms = await getSchoolTermsAsync();
   const currentTerm = getCurrentTermForDate(terms, new Date());
 
-  const distinctTermYears = Array.from(new Set(terms.map(({ year }) => year)));
+  const distinctTermYears = getDistinctTermYears(terms);
   const termsForYear = terms.filter(
     ({ year }) => year.toString() === selectedTermYear,
   );

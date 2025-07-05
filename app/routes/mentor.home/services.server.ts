@@ -4,17 +4,36 @@ import dayjs from "dayjs";
 
 import { prisma } from "~/db.server";
 
-export async function getNextMentorSessionsAsync(
+export async function getSessionsCountAsync(
   mentorId: number,
   chapterId: number,
   term: Term,
+) {
+  return await prisma.mentorSession.count({
+    where: {
+      chapterId,
+      mentorId,
+      attendedOn: {
+        gte: term.start.toDate(),
+        lte: term.end.toDate(),
+      },
+    },
+  });
+}
+
+export async function getSessionsAsync(
+  pageNumber: number,
+  mentorId: number,
+  chapterId: number,
+  term: Term,
+  numberItems = 10,
 ) {
   const mentorSessions = await prisma.mentorSession.findMany({
     where: {
       chapterId,
       mentorId,
       attendedOn: {
-        gt: new Date(),
+        gte: term.start.toDate(),
         lte: term.end.toDate(),
       },
     },
@@ -24,6 +43,8 @@ export async function getNextMentorSessionsAsync(
       session: {
         select: {
           id: true,
+          completedOn: true,
+          signedOffOn: true,
           studentSession: {
             select: {
               id: true,
@@ -38,59 +59,23 @@ export async function getNextMentorSessionsAsync(
         },
       },
     },
-    take: 3,
     orderBy: {
-      attendedOn: "asc",
+      attendedOn: "desc",
     },
+    skip: numberItems * pageNumber,
+    take: numberItems,
   });
 
   return mentorSessions.flatMap(({ attendedOn, session }) => {
     const date = dayjs(attendedOn);
     const daysDiff = date.diff(new Date(), "days");
-    const attendedOnlabel =
-      daysDiff > 0
-        ? `${date.format("MMMM D, YYYY")} (in ${daysDiff} days)`
-        : `Tomorrow (${date.format("MMMM D, YYYY")})`;
 
     return session.map((session) => ({
-      id: session.id,
-      attendedOn: attendedOnlabel,
-      studentFullName: session.studentSession.student.fullName,
+      ...session,
+      attendedOn,
+      daysDiff,
     }));
   });
-}
-
-export async function getSessionsAsync(
-  mentorId: number,
-  chapterId: number,
-  term: Term,
-) {
-  return await prisma.$queryRaw<
-    {
-      sessionId: number;
-      attendedOn: string;
-      completedOn: string | null;
-      signedOffOn: string | null;
-      studentId: number;
-      studentFullName: string;
-    }[]
-  >`
-    SELECT
-      sa.id AS sessionId,
-      sa.attendedOn,
-      sa.completedOn,
-      sa.signedOffOn,
-      s.id AS studentId,
-      s.fullName AS studentFullName
-    FROM Session sa
-    INNER JOIN StudentSession ss ON ss.id = sa.studentSessionId
-    INNER JOIN Student s ON s.id = ss.studentId
-    INNER JOIN MentorSession ms ON ms.id = sa.mentorSessionId
-    WHERE sa.chapterId = ${chapterId}
-      AND ms.mentorId = ${mentorId}
-      AND sa.attendedOn BETWEEN ${term.start.format("YYYY-MM-DD")} AND ${dayjs().format("YYYY-MM-DD")}
-    ORDER BY sa.attendedOn DESC
-    LIMIT 5;`;
 }
 
 export async function getUserByAzureADIdAsync(azureADId: string) {

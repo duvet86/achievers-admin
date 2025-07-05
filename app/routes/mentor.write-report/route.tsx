@@ -16,7 +16,18 @@ import {
   InfoCircle,
 } from "iconoir-react";
 
-import editorStylesheetUrl from "~/styles/editor.css?url";
+import {
+  getClosestSessionToToday,
+  getCurrentTermForDate,
+  getDatesForTerm,
+  getDistinctTermYears,
+  getSelectedTerm,
+  isEditorEmpty,
+} from "~/services";
+import {
+  getSchoolTermsAsync,
+  getLoggedUserInfoAsync,
+} from "~/services/.server";
 import {
   Editor,
   EditorQuestions,
@@ -25,17 +36,7 @@ import {
   SubTitle,
   Title,
 } from "~/components";
-
-import {
-  getClosestSessionToToday,
-  getCurrentTermForDate,
-  getDatesForTerm,
-  isEditorEmpty,
-} from "~/services";
-import {
-  getSchoolTermsAsync,
-  getLoggedUserInfoAsync,
-} from "~/services/.server";
+import editorStylesheetUrl from "~/styles/editor.css?url";
 
 import {
   geSessionAsync,
@@ -64,23 +65,12 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const terms = await getSchoolTermsAsync();
 
-  const termsForYear = terms.filter(
-    ({ year }) => year.toString() === selectedTermYear,
+  const { selectedTerm, termsForYear } = getSelectedTerm(
+    terms,
+    selectedTermYear,
+    selectedTermId,
+    selectedTermDate,
   );
-
-  let selectedTerm = termsForYear.find(
-    (t) => t.id.toString() === selectedTermId,
-  );
-
-  const currentTerm = getCurrentTermForDate(terms, new Date());
-
-  if (selectedTerm === undefined) {
-    if (selectedTermYear === CURRENT_YEAR.toString()) {
-      selectedTerm = currentTerm;
-    } else {
-      selectedTerm = termsForYear[0];
-    }
-  }
 
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
@@ -98,7 +88,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     sessionDates,
   );
 
-  if (!selectedTermDate || !sessionDates.includes(selectedTermDate)) {
+  if (selectedTermDate === null || !sessionDates.includes(selectedTermDate)) {
     selectedTermDate =
       getClosestSessionToToday(
         sessionDatesFormatted
@@ -121,7 +111,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   const isNotMyReport =
     session !== null && session.mentorSession.mentorId !== user.id;
 
-  const distinctTermYears = Array.from(new Set(terms.map(({ year }) => year)));
+  const currentTerm = getCurrentTermForDate(terms, new Date());
+  const distinctTermYears = getDistinctTermYears(terms);
 
   return {
     students,

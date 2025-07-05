@@ -24,6 +24,11 @@ export async function assignMentorsToStudentsAsync(
         studentId: studentsAtChapter[1].id,
         assignedBy: "test",
       },
+      {
+        mentorId: mentorsAtChapter[0].id,
+        studentId: studentsAtChapter[2].id,
+        assignedBy: "test",
+      },
 
       {
         mentorId: mentorsAtChapter[1].id,

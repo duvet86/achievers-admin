@@ -183,12 +183,12 @@ export async function seedSessionsFroHomePageAsync() {
 
       // Recent sessions
 
-      const sessionDate1 = new Date("2024-11-16T00:00:00.000Z");
+      const sessionDate1 = new Date("2024-11-23T00:00:00.000Z");
 
       const studentSession1 = await tx.studentSession.create({
         data: {
           chapterId: testMentor.chapterId,
-          studentId: studentAssignments[0].studentId,
+          studentId: studentAssignments[1].studentId,
           attendedOn: sessionDate1,
         },
       });
@@ -211,35 +211,6 @@ export async function seedSessionsFroHomePageAsync() {
             '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"Hello this is my first report!","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}',
           completedOn: new Date("2024-11-16T00:00:00.000Z"),
           signedOffOn: new Date("2024-11-18T00:00:00.000Z"),
-        },
-      });
-
-      const sessionDate = new Date("2024-11-23T00:00:00.000Z");
-
-      const studentSession = await tx.studentSession.create({
-        data: {
-          chapterId: testMentor.chapterId,
-          studentId: studentAssignments[1].studentId,
-          attendedOn: sessionDate,
-        },
-      });
-
-      const mentorSession = await tx.mentorSession.create({
-        data: {
-          chapterId: testMentor.chapterId,
-          mentorId: testMentor.id,
-          attendedOn: sessionDate,
-        },
-      });
-
-      await tx.session.create({
-        data: {
-          attendedOn: sessionDate,
-          chapterId: 1,
-          studentSessionId: studentSession.id,
-          mentorSessionId: mentorSession.id,
-          report:
-            '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"Hello this is my first report!","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}',
         },
       });
     });

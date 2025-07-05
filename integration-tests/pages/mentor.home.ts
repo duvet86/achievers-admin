@@ -22,8 +22,7 @@ export class MentorHomePage {
   firstSessionHeading: Locator;
   rosterLink: Locator;
 
-  nextSessionsTable: Locator;
-  recentSessionsTable: Locator;
+  sessionsTable: Locator;
 
   expect: MentorHomePageAssertions;
 
@@ -41,8 +40,7 @@ export class MentorHomePage {
       name: "roster page",
     });
 
-    this.nextSessionsTable = page.getByTestId("next-sessions");
-    this.recentSessionsTable = page.getByTestId("recent-sessions");
+    this.sessionsTable = page.getByTestId("sessions");
 
     this.expect = new MentorHomePageAssertions(this);
   }
@@ -71,102 +69,70 @@ export class MentorHomePageAssertions {
     await expect(this.page.rosterLink).toBeVisible();
   }
 
-  async toHaveNextSessions(nextSessions: NextSession[]): Promise<void> {
-    await expect(this.page.nextSessionsTable).toBeVisible();
+  async toHaveSessions(sessions: RecentSession[]): Promise<void> {
+    await expect(this.page.sessionsTable).toBeVisible();
 
     await expect(
-      this.page.nextSessionsTable.locator("th").getByText("#"),
+      this.page.sessionsTable.locator("th").getByText("#"),
     ).toBeVisible();
     await expect(
-      this.page.nextSessionsTable.locator("th").getByText("Session date"),
+      this.page.sessionsTable.locator("th").getByText("Session date"),
     ).toBeVisible();
     await expect(
-      this.page.nextSessionsTable.locator("th").getByText("Student"),
+      this.page.sessionsTable.locator("th").getByText("Student"),
+    ).toBeVisible();
+    await expect(
+      this.page.sessionsTable.locator("th").getByText("Report completed"),
+    ).toBeVisible();
+    await expect(
+      this.page.sessionsTable.locator("th").getByText("Signed off"),
+    ).toBeVisible();
+    await expect(
+      this.page.sessionsTable.locator("th").getByText("Action"),
     ).toBeVisible();
 
-    for (const nextSession of nextSessions) {
+    for (const session of sessions) {
       await expect(
-        this.page.nextSessionsTable
+        this.page.sessionsTable
           .getByRole("cell")
-          .getByText(nextSession.number, { exact: true }),
+          .getByText(session.number, { exact: true }),
       ).toBeVisible();
       await expect(
-        this.page.nextSessionsTable
-          .getByRole("cell", { name: nextSession.sessionDate })
+        this.page.sessionsTable
+          .getByRole("cell", { name: session.sessionDate })
           .first(),
       ).toBeVisible();
       await expect(
-        this.page.nextSessionsTable.getByRole("cell", {
-          name: nextSession.studentName,
-        }),
-      ).toBeVisible();
-    }
-  }
-
-  async toHaveRecentSessions(recentSessions: RecentSession[]): Promise<void> {
-    await expect(this.page.recentSessionsTable).toBeVisible();
-
-    await expect(
-      this.page.recentSessionsTable.locator("th").getByText("#"),
-    ).toBeVisible();
-    await expect(
-      this.page.recentSessionsTable.locator("th").getByText("Session date"),
-    ).toBeVisible();
-    await expect(
-      this.page.recentSessionsTable.locator("th").getByText("Student"),
-    ).toBeVisible();
-    await expect(
-      this.page.recentSessionsTable.locator("th").getByText("Report completed"),
-    ).toBeVisible();
-    await expect(
-      this.page.recentSessionsTable.locator("th").getByText("Signed off"),
-    ).toBeVisible();
-    await expect(
-      this.page.recentSessionsTable.locator("th").getByText("Action"),
-    ).toBeVisible();
-
-    for (const recentSession of recentSessions) {
-      await expect(
-        this.page.recentSessionsTable
-          .getByRole("cell")
-          .getByText(recentSession.number, { exact: true }),
-      ).toBeVisible();
-      await expect(
-        this.page.recentSessionsTable
-          .getByRole("cell", { name: recentSession.sessionDate })
-          .first(),
-      ).toBeVisible();
-      await expect(
-        this.page.recentSessionsTable.getByRole("cell", {
-          name: recentSession.studentName,
+        this.page.sessionsTable.getByRole("cell", {
+          name: session.studentName,
         }),
       ).toBeVisible();
 
-      if (recentSession.reportCompletedOn !== null) {
+      if (session.reportCompletedOn !== null) {
         await expect(
-          this.page.recentSessionsTable.getByTestId("completedOn"),
-        ).toHaveText(recentSession.reportCompletedOn);
+          this.page.sessionsTable.getByTestId("completedOn"),
+        ).toHaveText(session.reportCompletedOn);
       } else {
         await expect(
-          this.page.recentSessionsTable.getByTestId("not-completedOn"),
+          this.page.sessionsTable.getByTestId("not-completedOn"),
         ).toBeVisible();
       }
 
-      if (recentSession.signOffOn !== null) {
+      if (session.signOffOn !== null) {
         await expect(
-          this.page.recentSessionsTable.getByTestId("signedOffOn"),
-        ).toHaveText(recentSession.signOffOn);
+          this.page.sessionsTable.getByTestId("signedOffOn"),
+        ).toHaveText(session.signOffOn);
       } else {
         await expect(
-          this.page.recentSessionsTable.getByTestId("not-signedOffOn"),
+          this.page.sessionsTable.getByTestId("not-signedOffOn"),
         ).toBeVisible();
       }
 
       expect(
-        await this.page.recentSessionsTable
+        await this.page.sessionsTable
           .getByRole("link", { name: "Report" })
           .count(),
-      ).toBe(recentSessions.length);
+      ).toBe(sessions.length);
     }
   }
 }

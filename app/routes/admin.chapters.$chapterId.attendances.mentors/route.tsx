@@ -10,6 +10,8 @@ import {
   getClosestSessionToToday,
   getCurrentTermForDate,
   getDatesForTerm,
+  getDistinctTermYears,
+  getSelectedTerm,
 } from "~/services";
 import { Input, Select, Title } from "~/components";
 
@@ -28,24 +30,16 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   let selectedTermDate = url.searchParams.get("selectedTermDate");
 
   const terms = await getSchoolTermsAsync();
+
+  const { selectedTerm, termsForYear } = getSelectedTerm(
+    terms,
+    selectedTermYear,
+    selectedTermId,
+    selectedTermDate,
+  );
+
   const currentTerm = getCurrentTermForDate(terms, new Date());
-
-  const distinctTermYears = Array.from(new Set(terms.map(({ year }) => year)));
-  const termsForYear = terms.filter(
-    ({ year }) => year.toString() === selectedTermYear,
-  );
-
-  let selectedTerm = termsForYear.find(
-    (t) => t.id.toString() === selectedTermId,
-  );
-
-  if (!selectedTerm) {
-    if (selectedTermYear === CURRENT_YEAR.toString()) {
-      selectedTerm = currentTerm;
-    } else {
-      selectedTerm = termsForYear[0];
-    }
-  }
+  const distinctTermYears = getDistinctTermYears(terms);
 
   const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
 

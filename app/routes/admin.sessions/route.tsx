@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-import type { Term } from "~/models";
 import type { Route } from "./+types/route";
 
 import { Form, useSearchParams } from "react-router";
-
 import { Eye } from "iconoir-react";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -14,9 +12,9 @@ import {
   getSchoolTermsAsync,
 } from "~/services/.server";
 import {
-  getCurrentTermForDate,
   getDatesForTerm,
   getPaginationRange,
+  getSelectedTerm,
 } from "~/services";
 import { Pagination, StateLink, Title } from "~/components";
 
@@ -50,8 +48,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const selectedTermYear =
     url.searchParams.get("selectedTermYear") || CURRENT_YEAR.toString();
   const selectedTermId = url.searchParams.get("selectedTermId");
-  const selectedTermDate =
-    url.searchParams.get("selectedTermDate") || undefined;
+  const selectedTermDate = url.searchParams.get("selectedTermDate");
 
   const filterReports = url.searchParams.get("filterReports");
 
@@ -62,34 +59,12 @@ export async function loader({ request }: Route.LoaderArgs) {
     getSchoolTermsAsync(),
   ]);
 
-  let selectedTerm: Term;
-  let termsForYear: Term[];
-
-  if (!selectedTermId && selectedTermDate) {
-    const termYear = dayjs(selectedTermDate).year();
-
-    termsForYear = terms.filter(({ year }) => year === termYear);
-
-    selectedTerm = termsForYear.find(({ start, end }) =>
-      dayjs(selectedTermDate).isBetween(start, end),
-    )!;
-  } else {
-    termsForYear = terms.filter(
-      ({ year }) => year.toString() === selectedTermYear,
-    );
-
-    selectedTerm = termsForYear.find(
-      (t) => t.id.toString() === selectedTermId,
-    )!;
-
-    if (selectedTerm === undefined) {
-      if (selectedTermYear === CURRENT_YEAR.toString()) {
-        selectedTerm = getCurrentTermForDate(terms, new Date());
-      } else {
-        selectedTerm = termsForYear[0];
-      }
-    }
-  }
+  const { selectedTerm, termsForYear } = getSelectedTerm(
+    terms,
+    selectedTermYear,
+    selectedTermId,
+    selectedTermDate,
+  );
 
   const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
 
@@ -101,7 +76,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const count = await getCountAsync(
     selectedChapterId,
     selectedTerm,
-    selectedTermDate,
+    selectedTermDate ?? undefined,
     selectedMentorId,
     selectedStudentId,
     selectedFilterReports,
@@ -121,7 +96,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const sessions = await getSessionsAsync(
     selectedChapterId,
     selectedTerm,
-    selectedTermDate,
+    selectedTermDate ?? undefined,
     selectedMentorId,
     selectedStudentId,
     selectedFilterReports,

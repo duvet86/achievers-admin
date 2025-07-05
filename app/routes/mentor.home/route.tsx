@@ -7,40 +7,122 @@ import {
   getLoggedUserInfoAsync,
   getSchoolTermsAsync,
 } from "~/services/.server";
-import { getCurrentTermForDate } from "~/services";
-import { StateLink, SubTitle } from "~/components";
+import {
+  getCurrentTermForDate,
+  getDistinctTermYears,
+  getPaginationRange,
+  getSelectedTerm,
+} from "~/services";
+import { Pagination, StateLink, SubTitle } from "~/components";
 
 import {
-  getNextMentorSessionsAsync,
   getSessionsAsync,
+  getSessionsCountAsync,
   getUserByAzureADIdAsync,
 } from "./services.server";
+import { Form, useSubmit } from "react-router";
+import classNames from "classnames";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
-  const terms = await getSchoolTermsAsync();
-  const currentTerm = getCurrentTermForDate(terms, new Date());
+  const CURRENT_YEAR = dayjs().year();
 
-  const nextMentorSessions = await getNextMentorSessionsAsync(
+  const url = new URL(request.url);
+
+  const pageNumber = Number(url.searchParams.get("pageNumber")!);
+  const previousPageSubmit = url.searchParams.get("previousBtn");
+  const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
+  const nextPageSubmit = url.searchParams.get("nextBtn");
+
+  const selectedTermYear =
+    url.searchParams.get("selectedTermYear") ?? CURRENT_YEAR.toString();
+  const selectedTermId = url.searchParams.get("selectedTermId");
+
+  const terms = await getSchoolTermsAsync();
+
+  const distinctTermYears = getDistinctTermYears(terms);
+
+  const { selectedTerm, termsForYear } = getSelectedTerm(
+    terms,
+    selectedTermYear,
+    selectedTermId,
+    null,
+  );
+
+  const count = await getSessionsCountAsync(
     user.id,
     user.chapterId,
-    currentTerm,
+    selectedTerm,
   );
-  const sessions = await getSessionsAsync(user.id, user.chapterId, currentTerm);
+
+  const numberItems = 10;
+  const totalPageCount = Math.ceil(count / numberItems);
+
+  let currentPageNumber = 0;
+  if (previousPageSubmit !== null && pageNumber > 0) {
+    currentPageNumber = pageNumber - 1;
+  } else if (nextPageSubmit !== null && pageNumber < totalPageCount) {
+    currentPageNumber = pageNumber + 1;
+  } else if (pageNumberSubmit !== null) {
+    currentPageNumber = Number(pageNumberSubmit);
+  }
+
+  const sessions = await getSessionsAsync(
+    currentPageNumber,
+    user.id,
+    user.chapterId,
+    selectedTerm,
+  );
+
+  const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
+
+  const currentTerm = getCurrentTermForDate(terms, new Date());
 
   return {
+    selectedTermYear,
+    selectedTermId: selectedTerm.id.toString(),
+    range,
+    currentPageNumber,
+    count,
     currentTermLabel: `${currentTerm.name} (${currentTerm.start.format("D MMMM")} - ${currentTerm.end.format("D MMMM")})`,
     user,
-    nextMentorSessions,
     sessions,
+    termYearsOptions: distinctTermYears.map((year) => ({
+      value: year.toString(),
+      label: year.toString(),
+    })),
+    termsOptions: termsForYear.map(({ id, start, end, name }) => ({
+      value: id.toString(),
+      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
+    })),
   };
 }
 
 export default function Index({
-  loaderData: { currentTermLabel, user, nextMentorSessions, sessions },
+  loaderData: {
+    selectedTermYear,
+    selectedTermId,
+    range,
+    currentPageNumber,
+    count,
+    currentTermLabel,
+    user,
+    sessions,
+    termYearsOptions,
+    termsOptions,
+  },
 }: Route.ComponentProps) {
+  const submit = useSubmit();
+
+  const totalPageCount = Math.ceil(count / 10);
+
+  const submitForm = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const formData = new FormData(event.target.form!);
+    void submit(formData);
+  };
+
   return (
     <div className="-m-4 h-full p-4">
       <article className="prose relative mb-4 h-24 max-w-none lg:h-28">
@@ -65,151 +147,150 @@ export default function Index({
         </article>
       )}
 
-      {nextMentorSessions.length === 0 && sessions.length === 0 && (
-        <article className="prose max-w-none">
-          <h1 className="text-warning flex items-center gap-4">
-            You haven&apos;t booked a session yet!
-          </h1>
-          <h3>
-            Go to the{" "}
-            <StateLink className="btn" to="/mentor/roster">
-              Roster page <NavArrowRight />
-            </StateLink>{" "}
-            to book you first session.
-          </h3>
-        </article>
-      )}
+      <Form>
+        <SubTitle>Sessions</SubTitle>
 
-      {nextMentorSessions.length > 0 && (
-        <>
-          <SubTitle>Next sessions</SubTitle>
-
-          <div data-testid="next-sessions" className="overflow-auto bg-white">
-            <table className="table-lg mb-4 table">
-              <thead>
-                <tr>
-                  <th className="hidden w-6 lg:table-cell">#</th>
-                  <th align="left">Session date</th>
-                  <th align="left">Student</th>
-                </tr>
-              </thead>
-              <tbody>
-                {nextMentorSessions.map(
-                  ({ id, attendedOn, studentFullName }) => (
-                    <tr key={id} className="text-info">
-                      <td className="hidden border-r lg:table-cell">1</td>
-                      <td align="left">{attendedOn}</td>
-                      <td align="left">{studentFullName}</td>
-                    </tr>
-                  ),
-                )}
-              </tbody>
-            </table>
+        <div key={selectedTermId}>
+          <label className="fieldset-label">Term</label>
+          <div className="join">
+            <select
+              className="select join-item basis-28"
+              name="selectedTermYear"
+              defaultValue={selectedTermYear}
+              onChange={submitForm}
+            >
+              {termYearsOptions.map(({ label, value }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            <select
+              className="select join-item"
+              name="selectedTermId"
+              defaultValue={selectedTermId}
+              onChange={submitForm}
+            >
+              {termsOptions.map(({ label, value }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
           </div>
-        </>
-      )}
+        </div>
 
-      {sessions.length > 0 && (
-        <>
-          <SubTitle>Recent sessions</SubTitle>
-
-          <div data-testid="recent-sessions" className="overflow-auto bg-white">
-            <table className="table-lg table">
-              <thead>
+        <div data-testid="sessions" className="overflow-auto bg-white">
+          <table className="table-lg table">
+            <thead>
+              <tr>
+                <th className="hidden w-6 lg:table-cell">#</th>
+                <th align="left">Session date</th>
+                <th align="left">Student</th>
+                <th align="left" className="hidden lg:table-cell">
+                  Report completed
+                </th>
+                <th align="left" className="hidden lg:table-cell">
+                  Signed off
+                </th>
+                <th align="right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sessions.length === 0 && (
                 <tr>
-                  <th className="hidden w-6 lg:table-cell">#</th>
-                  <th align="left">Session date</th>
-                  <th align="left">Student</th>
-                  <th align="left" className="hidden lg:table-cell">
-                    Report completed
-                  </th>
-                  <th align="left" className="hidden lg:table-cell">
-                    Signed off
-                  </th>
-                  <th align="right">Action</th>
+                  <td colSpan={6}>
+                    <i>No sessions</i>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {sessions.length === 0 && (
-                  <tr>
-                    <td colSpan={6}>
-                      <i>No sessions</i>
+              )}
+              {sessions.map(
+                (
+                  {
+                    id,
+                    attendedOn,
+                    daysDiff,
+                    studentSession,
+                    completedOn,
+                    signedOffOn,
+                  },
+                  index,
+                ) => (
+                  <tr
+                    key={id}
+                    className={classNames({
+                      "text-info": daysDiff > 0,
+                    })}
+                  >
+                    <td className="hidden border-r lg:table-cell">
+                      {index + 1}
+                    </td>
+                    <td align="left">
+                      {daysDiff > 0
+                        ? `${dayjs(attendedOn).format("MMMM D, YYYY")} (in ${daysDiff} days)`
+                        : `${dayjs(attendedOn).format("MMMM D, YYYY")}`}
+                    </td>
+                    <td align="left">{studentSession.student.fullName}</td>
+                    <td align="left" className="hidden lg:table-cell">
+                      {completedOn ? (
+                        <div
+                          data-testid="completedOn"
+                          className="flex items-center gap-2"
+                        >
+                          <Check className="text-success h-4 w-4" />
+                          {dayjs(completedOn).format("MMMM D, YYYY")}
+                        </div>
+                      ) : (
+                        <Xmark
+                          data-testid="not-completedOn"
+                          className="text-error h-4 w-4"
+                        />
+                      )}
+                    </td>
+                    <td align="left" className="hidden lg:table-cell">
+                      {signedOffOn ? (
+                        <div
+                          data-testid="signedOffOn"
+                          className="flex items-center gap-2"
+                        >
+                          <Check className="text-success h-4 w-4" />
+                          {dayjs(signedOffOn).format("MMMM D, YYYY")}
+                        </div>
+                      ) : (
+                        <Xmark
+                          data-testid="not-signedOffOn"
+                          className="text-error h-4 w-4"
+                        />
+                      )}
+                    </td>
+                    <td align="right">
+                      <StateLink
+                        to={
+                          completedOn !== null
+                            ? `/mentor/sessions/${id}`
+                            : `/mentor/write-report?selectedStudentId=${studentSession.student.id}&selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z`
+                        }
+                        className="btn btn-success btn-xs h-9 gap-2"
+                      >
+                        <StatsReport className="hidden h-4 w-4 lg:block" />
+                        Report
+                      </StateLink>
                     </td>
                   </tr>
-                )}
-                {sessions.map(
-                  (
-                    {
-                      sessionId,
-                      attendedOn,
-                      completedOn,
-                      signedOffOn,
-                      studentId,
-                      studentFullName,
-                    },
-                    index,
-                  ) => (
-                    <tr key={sessionId}>
-                      <td className="hidden border-r lg:table-cell">
-                        {index + 1}
-                      </td>
-                      <td align="left">
-                        {dayjs(attendedOn).format("MMMM D, YYYY")}
-                      </td>
-                      <td align="left">{studentFullName}</td>
-                      <td align="left" className="hidden lg:table-cell">
-                        {completedOn ? (
-                          <div
-                            data-testid="completedOn"
-                            className="flex items-center gap-2"
-                          >
-                            <Check className="text-success h-4 w-4" />
-                            {dayjs(completedOn).format("MMMM D, YYYY")}
-                          </div>
-                        ) : (
-                          <Xmark
-                            data-testid="not-completedOn"
-                            className="text-error h-4 w-4"
-                          />
-                        )}
-                      </td>
-                      <td align="left" className="hidden lg:table-cell">
-                        {signedOffOn ? (
-                          <div
-                            data-testid="signedOffOn"
-                            className="flex items-center gap-2"
-                          >
-                            <Check className="text-success h-4 w-4" />
-                            {dayjs(signedOffOn).format("MMMM D, YYYY")}
-                          </div>
-                        ) : (
-                          <Xmark
-                            data-testid="not-signedOffOn"
-                            className="text-error h-4 w-4"
-                          />
-                        )}
-                      </td>
-                      <td align="right">
-                        <StateLink
-                          to={
-                            completedOn !== null
-                              ? `/mentor/sessions/${sessionId}`
-                              : `/mentor/write-report?selectedStudentId=${studentId}&selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z`
-                          }
-                          className="btn btn-success btn-xs h-9 gap-2"
-                        >
-                          <StatsReport className="hidden h-4 w-4 lg:block" />
-                          Report
-                        </StateLink>
-                      </td>
-                    </tr>
-                  ),
-                )}
-              </tbody>
-            </table>
-          </div>
-        </>
-      )}
+                ),
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <input type="hidden" name="pageNumber" value={currentPageNumber} />
+
+        <Pagination
+          range={range}
+          currentPageNumber={currentPageNumber}
+          totalPageCount={totalPageCount}
+        />
+      </Form>
     </div>
   );
 }

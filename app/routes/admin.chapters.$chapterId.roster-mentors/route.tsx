@@ -17,6 +17,8 @@ import {
 import {
   getCurrentTermForDate,
   getDatesForTerm,
+  getDistinctTermYears,
+  getSelectedTerm,
   getValueFromCircularArray,
 } from "~/services";
 import { getSchoolTermsAsync } from "~/services/.server";
@@ -40,25 +42,16 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? undefined;
 
   const terms = await getSchoolTermsAsync();
+
+  const { selectedTerm, termsForYear } = getSelectedTerm(
+    terms,
+    selectedTermYear,
+    selectedTermId,
+    selectedTermDate,
+  );
+
   const currentTerm = getCurrentTermForDate(terms, new Date());
-
-  const distinctTermYears = Array.from(new Set(terms.map(({ year }) => year)));
-  const termsForYear = terms.filter(
-    ({ year }) => year.toString() === selectedTermYear,
-  );
-
-  let selectedTerm = termsForYear.find(
-    (t) => t.id.toString() === selectedTermId,
-  );
-
-  if (!selectedTerm) {
-    if (selectedTermYear === CURRENT_YEAR.toString()) {
-      selectedTerm = currentTerm;
-    } else {
-      selectedTerm = termsForYear[0];
-    }
-  }
-
+  const distinctTermYears = getDistinctTermYears(terms);
   const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
 
   if (selectedTermDate && !sessionDates.includes(selectedTermDate)) {
