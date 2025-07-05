@@ -1,5 +1,3 @@
-import type { ChangeEventHandler } from "react";
-
 import classNames from "classnames";
 
 interface SelectOption {
@@ -7,15 +5,13 @@ interface SelectOption {
   value: string;
 }
 
-interface Props {
+interface Props
+  extends React.DetailedHTMLProps<
+    React.SelectHTMLAttributes<HTMLSelectElement>,
+    HTMLSelectElement
+  > {
   label?: string;
-  disabled?: boolean;
-  defaultValue?: string;
-  value?: string;
-  required?: boolean;
-  name: string;
   options: SelectOption[];
-  onChange?: ChangeEventHandler<HTMLSelectElement>;
 }
 
 export function Select({ label, name, options, required, ...props }: Props) {

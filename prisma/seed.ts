@@ -69,6 +69,27 @@ async function seed() {
     update: {},
   });
 
+  // ------------ Session cancel reasons
+  await prisma.sessionCancelledReason.upsert({
+    where: {
+      reason: "Absent WITH notice",
+    },
+    create: {
+      reason: "Absent WITH notice",
+    },
+    update: {},
+  });
+
+  await prisma.sessionCancelledReason.upsert({
+    where: {
+      reason: "Absent WITHOUT notice",
+    },
+    create: {
+      reason: "Absent WITHOUT notice",
+    },
+    update: {},
+  });
+
   await prisma.schoolTerm.upsert({
     where: {
       startDate_endDate: {

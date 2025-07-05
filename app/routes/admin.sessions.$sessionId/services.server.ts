@@ -28,7 +28,9 @@ export async function getSessionByIdAsync(sessionId: number) {
       attendedOn: true,
       completedOn: true,
       cancelledAt: true,
+      cancelledBecauseOf: true,
       cancelledReason: true,
+      cancelledExtendedReason: true,
       notificationSentOn: true,
       studentSession: {
         select: {

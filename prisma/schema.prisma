@@ -25,6 +25,11 @@ enum SessionStatus {
   UNAVAILABLE
 }
 
+enum CancelledEntity {
+  MENTOR
+  STUDENT
+}
+
 model Mentor {
   id        Int     @id @default(autoincrement())
   azureADId String? @unique // Defined by Azure Active Directory.
@@ -430,14 +435,24 @@ model Session {
 
   writteOnBehalfByAzureId String?
 
-  isCancelled     Boolean   @default(dbgenerated())
-  cancelledAt     DateTime?
-  cancelledReason String?
+  isCancelled             Boolean                 @default(dbgenerated())
+  cancelledBecauseOf      CancelledEntity?
+  cancelledAt             DateTime?
+  cancelledExtendedReason String?
+  cancelledReason         SessionCancelledReason? @relation(fields: [cancelledReasonId], references: [id])
+  cancelledReasonId       Int?                    @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([chapterId, mentorSessionId, studentSessionId])
+}
+
+model SessionCancelledReason {
+  id     Int    @id @default(autoincrement())
+  reason String @unique
+
+  session Session?
 }
 
 model MentorSession {

@@ -196,8 +196,8 @@ export default [
             },
           ),
           route(
-            ":sessionId/cancel",
-            "routes/admin.sessions.$sessionId.cancel/route.tsx",
+            ":sessionId/cancel/:userType",
+            "routes/admin.sessions.$sessionId.cancel.$userType/route.tsx",
             {
               index: true,
             },

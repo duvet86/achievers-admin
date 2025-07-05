@@ -1,4 +1,15 @@
+import type { $Enums } from "~/prisma/client";
+
 import { prisma } from "~/db.server";
+
+export async function getCancelReasons() {
+  return await prisma.sessionCancelledReason.findMany({
+    select: {
+      id: true,
+      reason: true,
+    },
+  });
+}
 
 export async function getSession(sessionId: number) {
   return await prisma.session.findUniqueOrThrow({
@@ -9,9 +20,9 @@ export async function getSession(sessionId: number) {
       id: true,
       attendedOn: true,
       completedOn: true,
-      hasReport: true,
       isCancelled: true,
-      cancelledReason: true,
+      cancelledReasonId: true,
+      cancelledExtendedReason: true,
       mentorSession: {
         select: {
           mentor: {
@@ -36,14 +47,21 @@ export async function getSession(sessionId: number) {
   });
 }
 
-export async function cancelSession(sessionId: number, cancelReason: string) {
+export async function cancelSession(
+  sessionId: number,
+  entityType: $Enums.CancelledEntity,
+  cancelledReasonId: number,
+  cancelledExtendedReason: string,
+) {
   return await prisma.session.update({
     where: {
       id: sessionId,
     },
     data: {
       cancelledAt: new Date(),
-      cancelledReason: cancelReason,
+      cancelledBecauseOf: entityType,
+      cancelledReasonId,
+      cancelledExtendedReason,
     },
   });
 }

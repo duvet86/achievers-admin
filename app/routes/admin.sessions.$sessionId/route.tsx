@@ -6,15 +6,15 @@ import invariant from "tiny-invariant";
 import classNames from "classnames";
 import {
   EditPencil,
-  Trash,
   WarningTriangle,
   Xmark,
   SendMail,
-  NavArrowRight,
+  UserXmark,
+  UserPlus,
 } from "iconoir-react";
 
 import { getEnvironment } from "~/services";
-import { Message, StateLink, Textarea, Title } from "~/components";
+import { Input, Message, StateLink, Textarea, Title } from "~/components";
 
 import {
   getChapterByIdAsync,
@@ -110,12 +110,7 @@ export default function Index({
           successMessage={actionData?.successMessage}
         />
 
-        {!session.cancelledAt ? (
-          <StateLink className="btn btn-error w-full sm:w-48" to="cancel">
-            <Trash />
-            Cancel session
-          </StateLink>
-        ) : (
+        {session.cancelledAt && (
           <div className="alert alert-error w-48">
             <WarningTriangle /> Session cancelled
           </div>
@@ -139,12 +134,22 @@ export default function Index({
             {session.mentorSession.mentor.fullName}
           </div>
 
+          {!session.completedOn && !session.cancelledAt && (
+            <StateLink
+              className="btn btn-error w-full sm:w-48"
+              to="cancel/mentor"
+            >
+              <UserXmark />
+              Mark absent
+            </StateLink>
+          )}
+
           <StateLink
             to={`/admin/chapters/${chapter.id}/roster-mentors/mentor-sessions/${session.mentorSession.id}`}
             className="btn w-full sm:w-48"
           >
+            <UserPlus />
             Menage mentor
-            <NavArrowRight />
           </StateLink>
         </div>
 
@@ -154,12 +159,22 @@ export default function Index({
             {session.studentSession.student.fullName}
           </div>
 
+          {!session.completedOn && !session.cancelledAt && (
+            <StateLink
+              className="btn btn-error w-full sm:w-48"
+              to="cancel/student"
+            >
+              <UserXmark />
+              Mark absent
+            </StateLink>
+          )}
+
           <StateLink
             to={`/admin/chapters/${chapter.id}/roster-students/student-sessions/${session.studentSession.id}`}
             className="btn w-full sm:w-48"
           >
+            <UserPlus />
             Menage student
-            <NavArrowRight />
           </StateLink>
         </div>
 
@@ -213,8 +228,19 @@ export default function Index({
         ) : (
           <div className="items-centerd flex gap-4 p-2">
             <div className="text-error font-bold sm:w-72">Cancel reason</div>
-            <div className="sm:flex-1">
-              <Textarea defaultValue={session.cancelledReason!} readOnly />
+            <div className="flex flex-col gap-2 sm:flex-1">
+              <p>
+                {session.cancelledBecauseOf === "STUDENT"
+                  ? "Student was"
+                  : session.cancelledBecauseOf === "MENTOR"
+                    ? "Mentor was"
+                    : ""}
+              </p>
+              <Input defaultValue={session.cancelledReason?.reason} readOnly />
+              <Textarea
+                defaultValue={session.cancelledExtendedReason ?? ""}
+                readOnly
+              />
             </div>
           </div>
         )}
