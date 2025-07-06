@@ -1,5 +1,3 @@
-import type { Term } from "~/models";
-
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import isBetween from "dayjs/plugin/isBetween";
@@ -112,33 +110,6 @@ export async function geSessionAsync(
       },
     },
   });
-}
-
-export async function getSessionDatesFormatted(
-  chapterId: number,
-  mentorId: number,
-  term: Term,
-  sessionDates: string[],
-) {
-  const bookedSessions = await getMentorSessionDatesAsync(
-    chapterId,
-    mentorId,
-    term,
-  );
-
-  return sessionDates
-    .map((attendedOn) => dayjs(attendedOn))
-    .map((attendedOn) => {
-      const isBooked = bookedSessions.includes(attendedOn.format("YYYY-MM-DD"));
-
-      return {
-        value: attendedOn.toISOString(),
-        label: isBooked
-          ? `** ${attendedOn.format("DD/MM/YYYY")} (Booked) **`
-          : attendedOn.format("DD/MM/YYYY"),
-        isBooked,
-      };
-    });
 }
 
 export async function getStudentsAsync(mentorId: number, chapterId: number) {
@@ -303,29 +274,4 @@ export async function updateSessionAsync({
       completedOn,
     },
   });
-}
-
-async function getMentorSessionDatesAsync(
-  chapterId: number,
-  mentorId: number,
-  currentTerm: Term,
-) {
-  const sessions = await prisma.mentorSession.findMany({
-    distinct: "attendedOn",
-    where: {
-      mentorId,
-      chapterId,
-      attendedOn: {
-        gte: currentTerm.start.toDate(),
-        lte: currentTerm.end.toDate(),
-      },
-    },
-    select: {
-      attendedOn: true,
-    },
-  });
-
-  return sessions.map(({ attendedOn }) =>
-    dayjs(attendedOn).format("YYYY-MM-DD"),
-  );
 }

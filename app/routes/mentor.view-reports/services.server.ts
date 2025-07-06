@@ -55,7 +55,7 @@ export async function getStudentsAsync(
       INNER JOIN MentorSession ms ON ms.id = sa.mentorSessionId
       INNER JOIN StudentSession ss ON ss.id = sa.studentSessionId
       INNER JOIN Student s ON s.id = ss.studentId
-      WHERE sa.chapterId = ${chapterId} AND ms.mentorId = ${selectedMentorId}
+      WHERE sa.chapterId = ${chapterId} AND ms.mentorId = ${selectedMentorId} AND completedOn IS NOT NULL
       GROUP BY s.id, s.fullName
       ORDER BY s.fullName ASC`;
 
@@ -151,7 +151,7 @@ export async function getMentorsAsync(
       INNER JOIN MentorSession ms ON ms.id = sa.mentorSessionId
       INNER JOIN StudentSession ss ON ss.id = sa.studentSessionId
       INNER JOIN Mentor u ON u.id = ms.mentorId
-      WHERE sa.chapterId = ${chapterId} AND ss.studentId = ${selectedStudentId}
+      WHERE sa.chapterId = ${chapterId} AND ss.studentId = ${selectedStudentId} AND completedOn IS NOT NULL
       GROUP BY u.id, u.fullName
       ORDER BY u.fullName ASC`;
 
@@ -218,6 +218,7 @@ export async function getSessionsAsync(
       attendedOn: true,
       completedOn: true,
       signedOffOn: true,
+      isCancelled: true,
       studentSession: {
         select: {
           student: {
@@ -256,7 +257,9 @@ function whereClause(
 ) {
   return {
     chapterId,
-    hasReport: true,
+    completedOn: {
+      not: null,
+    },
     mentorSession: {
       mentorId,
     },

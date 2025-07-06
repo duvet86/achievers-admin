@@ -312,48 +312,71 @@ export default function Index({
                   )}
 
                   {myMentorSession?.session.map(
-                    ({ id, hasReport, studentSession }) => (
+                    ({ id, hasReport, studentSession, isCancelled }) => (
                       <div
                         key={id}
                         className="flex flex-col items-center justify-between gap-2 border-b pb-2 sm:flex-row"
                       >
-                        <div className="text-success flex items-center justify-center gap-2 sm:justify-start">
-                          <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
-                          <span>Booked with</span>{" "}
-                          <span className="font-bold">
-                            {studentSession.student.fullName}
-                          </span>
-                        </div>
+                        {isCancelled ? (
+                          <>
+                            <div className="text-error flex items-center justify-center gap-2 sm:justify-start">
+                              <ThumbsDown className="h-4 w-4 sm:h-6 sm:w-6" />
+                              Session with{" "}
+                              <span className="font-bold">
+                                {studentSession.student.fullName}
+                              </span>{" "}
+                              has been cancelled
+                            </div>
 
-                        <div className="flex gap-2">
-                          {!hasReport && (
-                            <>
-                              <StateLink
-                                to={`/mentor/write-report?selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z&selectedStudentId=${studentSession.student.id}`}
-                                className="btn btn-sm w-full sm:w-36"
-                              >
-                                <EditPencil />
-                                Write report
-                              </StateLink>
-                              <button
-                                onClick={handleCancelSessionSubmit(id)}
-                                className="btn btn-error btn-sm w-full sm:w-36"
-                              >
-                                <Xmark />
-                                Cancel
-                              </button>
-                            </>
-                          )}
-                          {hasReport && (
                             <StateLink
-                              to={`/mentor/sessions/${id}`}
-                              className="btn btn-success btn-sm w-full sm:w-36"
+                              to={`/mentor/sessions/${id}/student-absent`}
+                              className="btn btn-error btn-sm w-full sm:w-36"
                             >
                               <Eye />
-                              View report
+                              View reason
                             </StateLink>
-                          )}
-                        </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="text-success flex items-center justify-center gap-2 sm:justify-start">
+                              <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
+                              <span>Booked with</span>{" "}
+                              <span className="font-bold">
+                                {studentSession.student.fullName}
+                              </span>
+                            </div>
+
+                            <div className="flex gap-2">
+                              {!hasReport && (
+                                <>
+                                  <StateLink
+                                    to={`/mentor/write-report?selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z&selectedStudentId=${studentSession.student.id}`}
+                                    className="btn btn-sm w-full sm:w-36"
+                                  >
+                                    <EditPencil />
+                                    Write report
+                                  </StateLink>
+                                  <button
+                                    onClick={handleCancelSessionSubmit(id)}
+                                    className="btn btn-error btn-sm w-full sm:w-36"
+                                  >
+                                    <Xmark />
+                                    Cancel
+                                  </button>
+                                </>
+                              )}
+                              {hasReport && (
+                                <StateLink
+                                  to={`/mentor/view-reports/${id}`}
+                                  className="btn btn-success btn-sm w-full sm:w-36"
+                                >
+                                  <Eye />
+                                  View report
+                                </StateLink>
+                              )}
+                            </div>
+                          </>
+                        )}
                       </div>
                     ),
                   )}
@@ -369,29 +392,53 @@ export default function Index({
                       </div>
                     ) : (
                       myPartnersMentorSession?.session.map(
-                        ({ id, completedOn, studentSession }) => (
+                        ({ id, completedOn, studentSession, isCancelled }) => (
                           <div
                             key={id}
                             className="flex flex-col items-center justify-between gap-4 border-b pb-2 sm:flex-row"
                           >
-                            <div className="text-info flex items-center justify-center gap-2 sm:justify-start">
-                              <Group className="h-4 w-4 sm:h-6 sm:w-6" />
-                              <span className="font-bold">
-                                {myPartnersMentorSession.mentor.fullName}
-                              </span>{" "}
-                              is mentoring{" "}
-                              <span className="font-bold">
-                                {studentSession.student.fullName}
-                              </span>
-                            </div>
-                            {!completedOn && (
-                              <button
-                                onClick={handleTakeSessionSubmit(id)}
-                                className="btn btn-secondary btn-sm w-full sm:w-36"
-                              >
-                                <BookmarkBook />
-                                Take
-                              </button>
+                            {isCancelled ? (
+                              <>
+                                <div className="text-error flex items-center justify-center gap-2 sm:justify-start">
+                                  <ThumbsDown className="h-4 w-4 sm:h-6 sm:w-6" />
+                                  Session with{" "}
+                                  <span className="font-bold">
+                                    {studentSession.student.fullName}
+                                  </span>{" "}
+                                  has been cancelled
+                                </div>
+
+                                <StateLink
+                                  to={`/mentor/sessions/${id}/student-absent`}
+                                  className="btn btn-error btn-sm w-full sm:w-36"
+                                >
+                                  <Eye />
+                                  View reason
+                                </StateLink>
+                              </>
+                            ) : (
+                              <>
+                                <div className="text-info flex items-center justify-center gap-2 sm:justify-start">
+                                  <Group className="h-4 w-4 sm:h-6 sm:w-6" />
+                                  <span className="font-bold">
+                                    {myPartnersMentorSession.mentor.fullName}
+                                  </span>{" "}
+                                  is mentoring{" "}
+                                  <span className="font-bold">
+                                    {studentSession.student.fullName}
+                                  </span>
+                                </div>
+
+                                {!completedOn && (
+                                  <button
+                                    onClick={handleTakeSessionSubmit(id)}
+                                    className="btn btn-secondary btn-sm w-full sm:w-36"
+                                  >
+                                    <BookmarkBook />
+                                    Take
+                                  </button>
+                                )}
+                              </>
                             )}
                           </div>
                         ),

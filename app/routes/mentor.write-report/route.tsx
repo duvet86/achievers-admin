@@ -4,7 +4,7 @@ import type { EditorState } from "lexical";
 import type { Route } from "./+types/route";
 import type { ActionType } from "./services.server";
 
-import { Form, useSubmit } from "react-router";
+import { Form, redirect, useSubmit } from "react-router";
 import { useRef } from "react";
 import dayjs from "dayjs";
 import classNames from "classnames";
@@ -14,6 +14,7 @@ import {
   WarningTriangle,
   Calendar,
   InfoCircle,
+  UserXmark,
 } from "iconoir-react";
 
 import {
@@ -23,6 +24,7 @@ import {
   getDistinctTermYears,
   getSelectedTerm,
   isEditorEmpty,
+  isStringNullOrEmpty,
 } from "~/services";
 import {
   getSchoolTermsAsync,
@@ -42,7 +44,6 @@ import {
   geSessionAsync,
   getUserByAzureADIdAsync,
   getStudentsAsync,
-  getSessionDatesFormatted,
   createSessionAsync,
   updateSessionAsync,
 } from "./services.server";
@@ -56,12 +57,26 @@ export async function loader({ request }: Route.LoaderArgs) {
   const CURRENT_YEAR = dayjs().year();
 
   const url = new URL(request.url);
-  const selectedTermYear =
-    url.searchParams.get("selectedTermYear") ?? CURRENT_YEAR.toString();
-  const selectedTermId = url.searchParams.get("selectedTermId");
-  let selectedTermDate = url.searchParams.get("selectedTermDate");
-
-  let selectedStudentId = url.searchParams.get("selectedStudentId");
+  const selectedTermYear = isStringNullOrEmpty(
+    url.searchParams.get("selectedTermYear"),
+  )
+    ? CURRENT_YEAR.toString()
+    : url.searchParams.get("selectedTermYear")!;
+  const selectedTermId = isStringNullOrEmpty(
+    url.searchParams.get("selectedTermId"),
+  )
+    ? null
+    : url.searchParams.get("selectedTermId");
+  let selectedTermDate = isStringNullOrEmpty(
+    url.searchParams.get("selectedTermDate"),
+  )
+    ? null
+    : url.searchParams.get("selectedTermDate");
+  let selectedStudentId = isStringNullOrEmpty(
+    url.searchParams.get("selectedStudentId"),
+  )
+    ? null
+    : url.searchParams.get("selectedStudentId");
 
   const terms = await getSchoolTermsAsync();
 
@@ -81,24 +96,11 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
 
-  const sessionDatesFormatted = await getSessionDatesFormatted(
-    user.chapterId,
-    user.id,
-    selectedTerm,
-    sessionDates,
-  );
-
   if (selectedTermDate === null || !sessionDates.includes(selectedTermDate)) {
     selectedTermDate =
       getClosestSessionToToday(
-        sessionDatesFormatted
-          .filter(({ isBooked }) => isBooked)
-          .map(({ value }) => new Date(value)),
+        sessionDates.map((date) => dayjs(date).toDate()),
       ) ?? sessionDates[0];
-  }
-
-  if (selectedTermDate === null) {
-    throw new Error();
   }
 
   const session = await geSessionAsync(
@@ -107,6 +109,10 @@ export async function loader({ request }: Route.LoaderArgs) {
     user.chapterId,
     selectedTermDate,
   );
+
+  if (session?.isCancelled) {
+    return redirect(`/mentor/sessions/${session.id}/student-absent`);
+  }
 
   const isNotMyReport =
     session !== null && session.mentorSession.mentorId !== user.id;
@@ -128,7 +134,12 @@ export async function loader({ request }: Route.LoaderArgs) {
       value: id.toString(),
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
     })),
-    sessionDates: sessionDatesFormatted,
+    sessionDates: sessionDates
+      .map((attendedOn) => dayjs(attendedOn))
+      .map((attendedOn) => ({
+        value: attendedOn.toISOString(),
+        label: attendedOn.format("DD/MM/YYYY"),
+      })),
     session,
     isNotMyReport,
     isReadOnlyEditor:
@@ -198,13 +209,28 @@ export default function Index({
   const isMyReport = !isNotMyReport;
   const canUnmarkReport = isMyReport && completedOn && !signedOffOn;
 
-  const handleSelectChange =
-    (value: string) => (event: React.ChangeEvent<HTMLSelectElement>) => {
-      const formData = new FormData(formRef.current!);
-      formData.set(value, event.target.value);
+  const handleSelectedTermYearChange = () => {
+    const formData = new FormData(formRef.current!);
+    formData.set("selectedTermId", "");
+    formData.set("selectedTermDate", "");
+    formData.set("selectedStudentId", "");
 
-      void submit(formData);
-    };
+    void submit(formData);
+  };
+
+  const handleSelectedTermChange = () => {
+    const formData = new FormData(formRef.current!);
+    formData.set("selectedTermDate", "");
+    formData.set("selectedStudentId", "");
+
+    void submit(formData);
+  };
+
+  const handleChange = () => {
+    const formData = new FormData(formRef.current!);
+
+    void submit(formData);
+  };
 
   const saveReport = (actionType: ActionType) => () => {
     const formData = new FormData(formRef.current!);
@@ -279,7 +305,11 @@ export default function Index({
         )}
       </div>
 
-      <Form ref={formRef} className="relative flex h-full flex-col">
+      <Form
+        ref={formRef}
+        key={`${selectedTermYear}-${selectedTermId}-${selectedTermDate}-${selectedStudentId}`}
+        className="relative flex h-full flex-col"
+      >
         <div className="mb-6 flex flex-col gap-2">
           <div key={selectedTermId} className="w-full">
             <label className="fieldset-label">Term</label>
@@ -289,7 +319,7 @@ export default function Index({
                 className="select join-item basis-28"
                 name="selectedTermYear"
                 defaultValue={selectedTermYear}
-                onChange={handleSelectChange("selectedTermYear")}
+                onChange={handleSelectedTermYearChange}
               >
                 {termYearsOptions.map(({ label, value }) => (
                   <option key={value} value={value}>
@@ -302,7 +332,7 @@ export default function Index({
                 className="select join-item w-full"
                 name="selectedTermId"
                 defaultValue={selectedTermId}
-                onChange={handleSelectChange("selectedTermId")}
+                onChange={handleSelectedTermChange}
               >
                 {termsOptions.map(({ label, value }) => (
                   <option key={value} value={value}>
@@ -322,7 +352,7 @@ export default function Index({
                   name="selectedTermDate"
                   defaultValue={selectedTermDate ?? ""}
                   options={sessionDates}
-                  onChange={handleSelectChange("selectedTermDate")}
+                  onChange={handleChange}
                 />
               </div>
             ) : (
@@ -346,20 +376,12 @@ export default function Index({
                 label: fullName,
                 value: id.toString(),
               }))}
-              onChange={handleSelectChange("selectedStudentId")}
+              onChange={handleChange}
             />
           </div>
         </div>
 
-        <div
-          key={
-            selectedTermYear +
-            selectedTermId +
-            selectedTermDate +
-            selectedStudentId
-          }
-          className="flex h-full flex-col gap-4"
-        >
+        <div className="flex h-full flex-col gap-4">
           <div className="flex flex-1 flex-col gap-2">
             <div className="flex h-full flex-row">
               <div
@@ -381,6 +403,16 @@ export default function Index({
             </div>
 
             <div className="flex justify-around gap-4 pb-2 sm:justify-end">
+              {!completedOn && session !== null && !session.isCancelled && (
+                <StateLink
+                  to={`/mentor/sessions/${session.id}/student-absent`}
+                  className="btn btn-error hidden h-9 gap-2 sm:flex sm:w-56"
+                >
+                  <UserXmark className="hidden h-4 w-4 lg:block" />
+                  {isCancelled ? "View reason" : "Mark student absent"}
+                </StateLink>
+              )}
+
               <div className="flex flex-wrap gap-8">
                 {!completedOn && (
                   <>

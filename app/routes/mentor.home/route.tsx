@@ -1,7 +1,16 @@
 import type { Route } from "./+types/route";
 
 import dayjs from "dayjs";
-import { StatsReport, Check, Xmark, NavArrowRight } from "iconoir-react";
+import {
+  StatsReport,
+  Check,
+  Xmark,
+  NavArrowRight,
+  Eye,
+  UserXmark,
+} from "iconoir-react";
+import { Form, useSubmit } from "react-router";
+import classNames from "classnames";
 
 import {
   getLoggedUserInfoAsync,
@@ -20,8 +29,6 @@ import {
   getSessionsCountAsync,
   getUserByAzureADIdAsync,
 } from "./services.server";
-import { Form, useSubmit } from "react-router";
-import classNames from "classnames";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
@@ -213,6 +220,7 @@ export default function Index({
                     studentSession,
                     completedOn,
                     signedOffOn,
+                    isCancelled,
                   },
                   index,
                 ) => (
@@ -220,6 +228,7 @@ export default function Index({
                     key={id}
                     className={classNames({
                       "text-info": daysDiff > 0,
+                      "text-error": isCancelled,
                     })}
                   >
                     <td className="hidden border-r lg:table-cell">
@@ -230,7 +239,10 @@ export default function Index({
                         ? `${dayjs(attendedOn).format("MMMM D, YYYY")} (in ${daysDiff} days)`
                         : `${dayjs(attendedOn).format("MMMM D, YYYY")}`}
                     </td>
-                    <td align="left">{studentSession.student.fullName}</td>
+                    <td align="left">
+                      {studentSession.student.fullName}{" "}
+                      {isCancelled ? "(ABSENT)" : ""}
+                    </td>
                     <td align="left" className="hidden lg:table-cell">
                       {completedOn ? (
                         <div
@@ -264,17 +276,40 @@ export default function Index({
                       )}
                     </td>
                     <td align="right">
-                      <StateLink
-                        to={
-                          completedOn !== null
-                            ? `/mentor/sessions/${id}`
-                            : `/mentor/write-report?selectedStudentId=${studentSession.student.id}&selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z`
-                        }
-                        className="btn btn-success btn-xs h-9 gap-2"
-                      >
-                        <StatsReport className="hidden h-4 w-4 lg:block" />
-                        Report
-                      </StateLink>
+                      {daysDiff <= 0 && (
+                        <div className="flex justify-end gap-2">
+                          {!isCancelled &&
+                            (completedOn !== null ? (
+                              <StateLink
+                                to={`/mentor/view-reports/${id}`}
+                                className="btn-xs sm:btn-md btn btn-success h-9 gap-2 sm:w-36"
+                              >
+                                <Eye className="hidden h-4 w-4 lg:block" />
+                                View report
+                              </StateLink>
+                            ) : (
+                              <StateLink
+                                to={`/mentor/write-report?selectedStudentId=${studentSession.student.id}&selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z`}
+                                className="btn-xs sm:btn-md btn h-9 gap-2 sm:w-36"
+                              >
+                                <StatsReport className="hidden h-4 w-4 lg:block" />
+                                Write report
+                              </StateLink>
+                            ))}
+
+                          {completedOn === null && (
+                            <StateLink
+                              to={`/mentor/sessions/${id}/student-absent`}
+                              className="btn btn-error hidden h-9 gap-2 sm:flex sm:w-56"
+                            >
+                              <UserXmark className="hidden h-4 w-4 lg:block" />
+                              {isCancelled
+                                ? "View reason"
+                                : "Mark student absent"}
+                            </StateLink>
+                          )}
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ),

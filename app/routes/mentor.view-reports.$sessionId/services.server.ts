@@ -1,12 +1,13 @@
 import { prisma } from "~/db.server";
 
 export async function getSessionAsync(sessionId: number) {
-  return await prisma.session.findUnique({
+  return await prisma.session.findUniqueOrThrow({
     where: {
       id: sessionId,
       hasReport: true,
     },
     select: {
+      id: true,
       attendedOn: true,
       completedOn: true,
       report: true,

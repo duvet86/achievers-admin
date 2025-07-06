@@ -115,7 +115,7 @@ function getLinks(
         },
         {
           icon: <StatsReport />,
-          path: "/mentor/sessions",
+          path: "/mentor/view-reports",
           label: "View Reports",
           isVisible: true,
         },

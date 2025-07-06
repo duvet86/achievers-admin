@@ -1,26 +1,28 @@
 import type { Route } from "./+types/route";
 
 import { Form, redirect } from "react-router";
-import { UserXmark } from "iconoir-react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
+import { UserXmark } from "iconoir-react";
 
 import { Message, Select, Textarea, Title } from "~/components";
 
-import { cancelSession, getSession, getCancelReasons } from "./services.server";
+import {
+  cancelSession,
+  getCancelReasons,
+  getSessionAsync,
+} from "./services.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.sessionId, "sessionId not found");
-  invariant(params.userType, "userType not found");
 
-  const [cancelReasons, session] = await Promise.all([
-    getCancelReasons(),
-    getSession(Number(params.sessionId)),
-  ]);
+  const session = await getSessionAsync(Number(params.sessionId));
 
   if (session.completedOn !== null) {
-    return redirect(`/admin/sessions/${params.sessionId}`);
+    return redirect(`/mentor/view-reports/${params.sessionId}`);
   }
+
+  const cancelReasons = await getCancelReasons();
 
   return {
     cancelReasonsOptions: [
@@ -40,7 +42,6 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.sessionId, "sessionId not found");
-  invariant(params.userType, "userType not found");
 
   const formData = await request.formData();
 
@@ -58,18 +59,17 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   await cancelSession(
     Number(params.sessionId),
-    params.userType === "student" ? "STUDENT" : "MENTOR",
+    "STUDENT",
     Number(cancelledReasonId),
     cancelledExtendedReason,
   );
 
   return {
-    successMessage: "Session cancelled successfully",
+    successMessage: "Student mark as absent successfully",
   };
 }
 
 export default function Index({
-  params,
   loaderData: { cancelReasonsOptions, session },
   actionData,
 }: Route.ComponentProps) {
@@ -77,14 +77,9 @@ export default function Index({
     <>
       <div className="flex flex-col gap-6 sm:flex-row">
         <Title>
-          Mark absent {params.userType === "student" ? "student" : "mentor"}{" "}
-          &quot;
-          {params.userType === "student"
-            ? session.studentSession.student.fullName
-            : session.mentorSession.mentor.fullName}
-          &quot; for session of &quot;
-          {dayjs(session.attendedOn).format("MMMM D, YYYY")}
-          &quot;
+          {session.isCancelled
+            ? `Student "${session.studentSession.student.fullName}" was absent for the "${dayjs(session.attendedOn).format("MMMM D, YYYY")}"`
+            : `Mark "${session.studentSession.student.fullName}" as absent for the "${dayjs(session.attendedOn).format("MMMM D, YYYY")}"`}
         </Title>
 
         <Message key={Date.now()} successMessage={actionData?.successMessage} />
@@ -92,18 +87,14 @@ export default function Index({
 
       <Form method="post">
         <fieldset className="fieldset p-4">
-          <p>
-            Yuo are about to mark ABSENT &quot;
-            {params.userType === "student"
-              ? session.studentSession.student.fullName
-              : session.mentorSession.mentor.fullName}
-            &quot; for the session of{" "}
-            {dayjs(session.attendedOn).format("MMMM D, YYYY")} with &quot;
-            {params.userType === "student"
-              ? session.studentSession.student.fullName
-              : session.studentSession.student.fullName}
-            &quot;
-          </p>
+          {!session.isCancelled && (
+            <p>
+              You are about to mark ABSENT &quot;
+              {session.studentSession.student.fullName}
+              &quot; for the session of{" "}
+              {dayjs(session.attendedOn).format("MMMM D, YYYY")}
+            </p>
+          )}
 
           <Select
             name="cancelledReasonId"

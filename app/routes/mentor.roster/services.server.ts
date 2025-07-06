@@ -35,6 +35,7 @@ export interface SessioViewModel {
     hasReport: boolean;
     completedOn: Date | null;
     signedOffOn: Date | null;
+    isCancelled: boolean;
   }[];
   mentor: { id: number; fullName: string };
 }
@@ -170,6 +171,7 @@ export async function getMentorSessionsLookupAsync(
           signedOffOn: true,
           completedOn: true,
           hasReport: true,
+          isCancelled: true,
           studentSession: {
             select: {
               student: {
@@ -222,6 +224,7 @@ export async function getMentorSessionsLookupAsync(
           signedOffOn: true,
           completedOn: true,
           hasReport: true,
+          isCancelled: true,
           studentSession: {
             select: {
               student: {

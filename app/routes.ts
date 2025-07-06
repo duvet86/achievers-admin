@@ -421,12 +421,19 @@ export default [
       route("partners", "routes/mentor.partners/route.tsx", {
         index: true,
       }),
-      route("sessions", "routes/mentor.sessions/route.tsx", {
+      route("view-reports", "routes/mentor.view-reports/route.tsx", {
         index: true,
       }),
       route(
-        "sessions/:sessionId",
-        "routes/mentor.sessions.$sessionId/route.tsx",
+        "view-reports/:sessionId",
+        "routes/mentor.view-reports.$sessionId/route.tsx",
+        {
+          index: true,
+        },
+      ),
+      route(
+        "sessions/:sessionId/student-absent",
+        "routes/mentor.sessions.$sessionId.student-absent/route.tsx",
         {
           index: true,
         },

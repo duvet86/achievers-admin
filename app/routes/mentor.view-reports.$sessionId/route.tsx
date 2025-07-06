@@ -2,13 +2,12 @@ import type { Route } from "./+types/route";
 
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
-import classNames from "classnames";
-import { InfoCircle } from "iconoir-react";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
 import { Editor, SubTitle, Title } from "~/components";
 
 import { getSessionAsync } from "./services.server";
+import { redirect } from "react-router";
 
 export const links: Route.LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
@@ -18,10 +17,9 @@ export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.sessionId, "sessionId not found");
 
   const session = await getSessionAsync(Number(params.sessionId));
-  if (session === null) {
-    throw new Response("Not Found", {
-      status: 404,
-    });
+
+  if (session.isCancelled) {
+    return redirect(`/mentor/sessions/${session.id}/student-absent`);
   }
 
   return {
@@ -34,24 +32,11 @@ export default function Index({
 }: Route.ComponentProps) {
   return (
     <>
-      <div className="flex w-full items-center gap-8">
-        <Title
-          className={classNames({
-            "text-error": session.isCancelled,
-          })}
-        >
-          Report of &quot;
-          {dayjs(session.attendedOn).format("DD/MM/YYYY")}
-          &quot;
-        </Title>
-
-        {session.isCancelled && (
-          <p className="text-error flex gap-4 font-medium">
-            <InfoCircle />
-            Session has been cancelled
-          </p>
-        )}
-      </div>
+      <Title>
+        Report of &quot;
+        {dayjs(session.attendedOn).format("DD/MM/YYYY")}
+        &quot;
+      </Title>
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6">
         <h3 className="my-4 font-bold">Mentor:</h3>

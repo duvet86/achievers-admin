@@ -321,7 +321,7 @@ export function getSelectedTerm(
   selectedTermId: string | null,
   selectedTermDate: string | null,
 ) {
-  if (selectedTermDate !== null) {
+  if (selectedTermDate !== null && selectedTermDate.trim() !== "") {
     const termYear = dayjs(selectedTermDate).year();
 
     const termsForYear = terms.filter(({ year }) => year === termYear);
@@ -338,7 +338,7 @@ export function getSelectedTerm(
 
   const CURRENT_YEAR = dayjs().year().toString();
 
-  if (selectedTermId !== null) {
+  if (selectedTermId !== null && selectedTermId.trim() !== "") {
     const selectedTerm = terms.find((t) => t.id.toString() === selectedTermId);
     if (selectedTerm !== undefined) {
       const termsForYear = terms.filter(

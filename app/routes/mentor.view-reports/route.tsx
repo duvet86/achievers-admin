@@ -16,6 +16,7 @@ import {
   getUserAsync,
 } from "./services.server";
 import FormInputs from "./components/FormInputs";
+import classNames from "classnames";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
@@ -179,15 +180,24 @@ export default function Index({
                   completedOn,
                   signedOffOn,
                   attendedOn,
+                  isCancelled,
                   mentorSession,
                   studentSession,
                 }) => (
-                  <tr key={id} className="hover:bg-base-200">
+                  <tr
+                    key={id}
+                    className={classNames("hover:bg-base-200", {
+                      "text-error": isCancelled,
+                    })}
+                  >
                     <td className="p-2">
                       {mentorSession.mentor.fullName}{" "}
                       {mentorSession.mentor.id === loggedUserId ? "(Me)" : ""}
                     </td>
-                    <td className="p-2">{studentSession.student.fullName}</td>
+                    <td className="p-2">
+                      {studentSession.student.fullName}{" "}
+                      {isCancelled ? "(ABSENT)" : ""}
+                    </td>
                     <td className="p-2">
                       {dayjs(attendedOn).format("MMMM D, YYYY")}
                     </td>
@@ -203,15 +213,11 @@ export default function Index({
                     </td>
                     <td className="hidden p-2 sm:table-cell" align="right">
                       <StateLink
-                        to={
-                          completedOn !== null
-                            ? `/mentor/sessions/${id}`
-                            : `/mentor/write-report/?studentId=${studentSession.student.id}&mentorId=${mentorSession.mentor.id}`
-                        }
-                        className="btn btn-success btn-xs btn-block"
+                        to={`/mentor/view-reports/${id}`}
+                        className="btn-xs sm:btn-md btn btn-success h-9 gap-2 sm:w-36"
                       >
-                        <Eye className="h-4 w-4" />
-                        Report
+                        <Eye className="hidden h-4 w-4 lg:block" />
+                        View report
                       </StateLink>
                     </td>
                   </tr>
