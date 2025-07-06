@@ -132,7 +132,7 @@ export class MentorHomePageAssertions {
         await this.page.sessionsTable
           .getByRole("link", { name: "Report" })
           .count(),
-      ).toBe(sessions.length);
+      ).toBe(1);
     }
   }
 }

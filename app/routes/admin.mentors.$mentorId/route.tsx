@@ -160,7 +160,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     emergencyContactAddress,
     emergencyContactRelationship,
     chapterId: Number(chapterId),
-    preferredName,
+    preferredName: isStringNullOrEmpty(preferredName) ? null : preferredName,
     frequencyInDays:
       frequency === "FORTNIGHTLY" ? 14 : frequency === "WEEKLY" ? 7 : null,
   };
