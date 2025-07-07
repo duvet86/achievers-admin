@@ -151,7 +151,9 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
   const links = getLinks(linkMappings, isCurrentViewAdmin);
 
   const closeDrawer = () => {
-    document.getElementById("drawer-label")!.click();
+    if (window.innerWidth <= 640) {
+      document.getElementById("drawer-label")!.click();
+    }
   };
 
   return (

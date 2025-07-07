@@ -8,6 +8,10 @@ import {
   NavArrowRight,
   Eye,
   UserXmark,
+  WarningTriangle,
+  InfoCircle,
+  EditPencil,
+  GraduationCap,
 } from "iconoir-react";
 import { Form, useSubmit } from "react-router";
 import classNames from "classnames";
@@ -28,6 +32,8 @@ import {
   getSessionsAsync,
   getSessionsCountAsync,
   getUserByAzureADIdAsync,
+  sessionsStatsAsync,
+  studentsMentoredAsync,
 } from "./services.server";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -76,18 +82,19 @@ export async function loader({ request }: Route.LoaderArgs) {
     currentPageNumber = Number(pageNumberSubmit);
   }
 
-  const sessions = await getSessionsAsync(
-    currentPageNumber,
-    user.id,
-    user.chapterId,
-    selectedTerm,
-  );
+  const [sessionStats, studentsMentored, sessions] = await Promise.all([
+    sessionsStatsAsync(user.id),
+    studentsMentoredAsync(user.id),
+    getSessionsAsync(currentPageNumber, user.id, user.chapterId, selectedTerm),
+  ]);
 
   const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
 
   const currentTerm = getCurrentTermForDate(terms, new Date());
 
   return {
+    sessionStats,
+    studentsMentored,
     selectedTermYear,
     selectedTermId: selectedTerm.id.toString(),
     range,
@@ -109,6 +116,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export default function Index({
   loaderData: {
+    sessionStats,
+    studentsMentored,
     selectedTermYear,
     selectedTermId,
     range,
@@ -142,17 +151,61 @@ export default function Index({
         </h2>
       </article>
 
-      {user.profilePicturePath === null && (
-        <article className="prose max-w-none">
-          <h3 className="text-info">
-            You haven&apos;t uploaded a profile picture yet. Go to the{" "}
-            <StateLink className="btn" to="/mentor/profile">
-              Profile page <NavArrowRight />
-            </StateLink>{" "}
-            to upload a profile picture.
-          </h3>
-        </article>
-      )}
+      <div className="flex w-full flex-col justify-center gap-4">
+        {user.profilePicturePath === null && (
+          <article className="prose max-w-none">
+            <h3 className="text-warning flex gap-2">
+              <WarningTriangle /> You haven&apos;t uploaded a profile picture
+              yet. Go to the{" "}
+              <StateLink className="btn" to="/mentor/profile">
+                Profile page <NavArrowRight />
+              </StateLink>{" "}
+              to upload a profile picture.
+            </h3>
+          </article>
+        )}
+
+        {sessionStats && (
+          <div className="stats shadow">
+            <div className="stat">
+              <div className="stat-figure text-secondary">
+                <InfoCircle className="h-8 w-8" />
+              </div>
+              <div className="stat-title">Sessions attended</div>
+              <div className="stat-value">{sessionStats.sessionCount}</div>
+              <div className="stat-desc">
+                {dayjs(sessionStats.minAttendedOn).format("D MMMM YYYY")} -{" "}
+                {dayjs(sessionStats.maxAttendedOn).format("D MMMM YYYY")}
+              </div>
+            </div>
+
+            <div className="stat">
+              <div className="stat-figure text-secondary">
+                <EditPencil className="h-8 w-8" />
+              </div>
+              <div className="stat-title">Reports completed</div>
+              <div className="stat-value">{sessionStats.reportCount}</div>
+              <div className="stat-desc">
+                out of {sessionStats.sessionCount}
+              </div>
+            </div>
+
+            <div className="stat">
+              <div className="stat-figure text-secondary">
+                <GraduationCap className="h-8 w-8" />
+              </div>
+              <div className="stat-title">Students mentored</div>
+              <div className="stat-value">
+                {studentsMentored.studentsMentored}
+              </div>
+              <div className="stat-desc">
+                {dayjs(sessionStats.minAttendedOn).format("D MMMM YYYY")} -{" "}
+                {dayjs(sessionStats.maxAttendedOn).format("D MMMM YYYY")}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
 
       <Form>
         <SubTitle>Sessions</SubTitle>

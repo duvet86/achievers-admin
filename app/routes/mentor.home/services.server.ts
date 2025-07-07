@@ -92,3 +92,39 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
     },
   });
 }
+
+export async function sessionsStatsAsync(userId: number) {
+  const sessionStats = await prisma.$queryRaw<
+    {
+      sessionCount: number;
+      reportCount: number;
+      maxAttendedOn: string;
+      minAttendedOn: string;
+    }[]
+  >`
+      SELECT 
+        COUNT(*) sessionCount,
+        COUNT(s.report) reportCount,
+        MAX(s.attendedOn) maxAttendedOn,
+        MIN(s.attendedOn) minAttendedOn
+      FROM MentorSession ms
+      INNER JOIN Session s ON s.mentorSessionId = ms.id
+      WHERE ms.mentorId = ${userId} AND ms.status = 'AVAILABLE'`;
+
+  return sessionStats?.[0] ?? null;
+}
+
+export async function studentsMentoredAsync(userId: number) {
+  const studentsMentored = await prisma.$queryRaw<
+    { studentsMentored: number }[]
+  >`
+      SELECT
+        COUNT(ss.studentId) studentsMentored
+      FROM MentorSession ms
+      INNER JOIN Session s ON s.mentorSessionId = ms.id
+      INNER JOIN StudentSession ss ON ss.id = s.studentSessionId
+      WHERE ms.mentorId = ${userId}
+      GROUP BY ss.studentId`;
+
+  return studentsMentored?.[0] ?? null;
+}
