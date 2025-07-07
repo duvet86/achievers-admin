@@ -12,6 +12,7 @@ import {
   ThumbsUp,
   WarningTriangle,
 } from "iconoir-react";
+
 import { StateLink } from "~/components";
 
 interface Props {
@@ -66,10 +67,6 @@ export function CheckList({
   approvalbyMRCCompleted,
   volunteerAgreementSignedOn,
 }: Props) {
-  const stopLinkPropagation = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.stopPropagation();
-  };
-
   return (
     <div className="overflow-auto bg-white">
       <table className="table">
@@ -98,7 +95,6 @@ export function CheckList({
               <StateLink
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="eoiProfile"
-                onClick={stopLinkPropagation}
               >
                 View
               </StateLink>
@@ -118,7 +114,6 @@ export function CheckList({
               <StateLink
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="welcomeCall"
-                onClick={stopLinkPropagation}
               >
                 View
               </StateLink>
@@ -138,7 +133,6 @@ export function CheckList({
               <StateLink
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="references"
-                onClick={stopLinkPropagation}
               >
                 View
               </StateLink>
@@ -158,7 +152,6 @@ export function CheckList({
               <StateLink
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="induction"
-                onClick={stopLinkPropagation}
               >
                 View
               </StateLink>
@@ -181,7 +174,6 @@ export function CheckList({
               <StateLink
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="police-check"
-                onClick={stopLinkPropagation}
               >
                 View
               </StateLink>
@@ -204,7 +196,6 @@ export function CheckList({
               <StateLink
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="wwc-check"
-                onClick={stopLinkPropagation}
               >
                 View
               </StateLink>
@@ -224,7 +215,6 @@ export function CheckList({
               <StateLink
                 className="btn btn-neutral btn-xs w-full gap-2"
                 to="approval-mrc"
-                onClick={stopLinkPropagation}
               >
                 View
               </StateLink>

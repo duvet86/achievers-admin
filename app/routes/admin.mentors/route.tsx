@@ -178,10 +178,6 @@ export default function Index({
     void submit(Object.fromEntries(searchParams));
   };
 
-  const stopLinkPropagation = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.stopPropagation();
-  };
-
   return (
     <>
       <div className="flex items-center justify-between">
@@ -309,7 +305,6 @@ export default function Index({
                     <td className="hidden sm:table-cell">
                       <StateLink
                         to={`/admin/mentors/${id}`}
-                        onClick={stopLinkPropagation}
                         className="btn btn-success btn-xs w-full gap-2"
                       >
                         <PageEdit className="hidden h-4 w-4 sm:block" />
