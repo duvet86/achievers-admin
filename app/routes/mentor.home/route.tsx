@@ -5,7 +5,6 @@ import {
   StatsReport,
   Check,
   Xmark,
-  NavArrowRight,
   Eye,
   UserXmark,
   WarningTriangle,
@@ -142,7 +141,7 @@ export default function Index({
   return (
     <>
       <article className="prose relative mb-4 h-24 max-w-none lg:h-28">
-        <div className="bg-achievers h-24 w-full rounded-md opacity-75 lg:h-28"></div>
+        <div className="bg-achievers h-16 w-full rounded-md opacity-75 lg:h-28"></div>
         <h1 className="absolute top-6 left-6 hidden lg:block">
           Welcome {user.fullName} - {currentTermLabel}
         </h1>
@@ -153,20 +152,20 @@ export default function Index({
 
       <div className="flex w-full flex-col justify-center gap-4">
         {user.profilePicturePath === null && (
-          <article className="prose max-w-none">
-            <h3 className="text-warning flex gap-2">
-              <WarningTriangle /> You haven&apos;t uploaded a profile picture
-              yet. Go to the{" "}
-              <StateLink className="btn" to="/mentor/profile">
-                Profile page <NavArrowRight />
+          <div role="alert" className="alert alert-warning">
+            <WarningTriangle />
+            <span>
+              You haven&apos;t uploaded a profile picture yet. Go to the{" "}
+              <StateLink className="link" to="/mentor/profile">
+                profile page
               </StateLink>{" "}
               to upload a profile picture.
-            </h3>
-          </article>
+            </span>
+          </div>
         )}
 
         {sessionStats && (
-          <div className="stats shadow">
+          <div className="stats stats-vertical lg:stats-horizontal shado w-full">
             <div className="stat">
               <div className="stat-figure text-secondary">
                 <InfoCircle className="h-8 w-8" />
