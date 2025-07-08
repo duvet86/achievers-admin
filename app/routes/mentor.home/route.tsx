@@ -174,8 +174,7 @@ export default function Index({
               <div className="stat-title">Sessions attended</div>
               <div className="stat-value">{sessionStats.sessionCount}</div>
               <div className="stat-desc">
-                {dayjs(sessionStats.minAttendedOn).format("D MMMM YYYY")} -{" "}
-                {dayjs(sessionStats.maxAttendedOn).format("D MMMM YYYY")}
+                Since {dayjs(sessionStats.minAttendedOn).format("MMMM YYYY")}
               </div>
             </div>
 
@@ -194,13 +193,10 @@ export default function Index({
               <div className="stat-figure text-secondary">
                 <GraduationCap className="h-8 w-8" />
               </div>
-              <div className="stat-title">Students mentored</div>
-              <div className="stat-value">
-                {studentsMentored.studentsMentored}
-              </div>
+              <div className="stat-title">Unique students mentored</div>
+              <div className="stat-value">{studentsMentored}</div>
               <div className="stat-desc">
-                {dayjs(sessionStats.minAttendedOn).format("D MMMM YYYY")} -{" "}
-                {dayjs(sessionStats.maxAttendedOn).format("D MMMM YYYY")}
+                Since {dayjs(sessionStats.minAttendedOn).format("MMMM YYYY")}
               </div>
             </div>
           </div>

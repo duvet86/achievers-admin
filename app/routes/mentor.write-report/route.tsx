@@ -9,7 +9,6 @@ import { useRef } from "react";
 import dayjs from "dayjs";
 import classNames from "classnames";
 import {
-  FloppyDiskArrowIn,
   CheckCircle,
   WarningTriangle,
   Calendar,
@@ -402,7 +401,7 @@ export default function Index({
               {!completedOn && <EditorQuestions />}
             </div>
 
-            <div className="flex justify-around gap-4 pb-2 sm:justify-end">
+            <div className="flex justify-around gap-8 pb-2 sm:justify-end">
               {!completedOn && session !== null && !session.isCancelled && (
                 <StateLink
                   to={`/mentor/sessions/${session.id}/student-absent`}
@@ -415,27 +414,15 @@ export default function Index({
 
               <div className="flex flex-wrap gap-8">
                 {!completedOn && (
-                  <>
-                    <button
-                      className="btn btn-primary btn-block sm:w-36"
-                      type="button"
-                      onClick={saveReport("draft")}
-                      disabled={isNotMyReport}
-                    >
-                      <FloppyDiskArrowIn />
-                      Save
-                    </button>
-
-                    <button
-                      className="btn btn-success btn-block sm:w-56"
-                      type="button"
-                      onClick={saveReport("completed")}
-                      disabled={isNotMyReport}
-                    >
-                      <CheckCircle />
-                      Submit for review
-                    </button>
-                  </>
+                  <button
+                    className="btn btn-success btn-block sm:w-56"
+                    type="button"
+                    onClick={saveReport("completed")}
+                    disabled={isNotMyReport}
+                  >
+                    <CheckCircle />
+                    Submit for review
+                  </button>
                 )}
 
                 {canUnmarkReport && (
