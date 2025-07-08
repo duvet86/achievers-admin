@@ -196,3 +196,22 @@ export async function getReportsPerSession(
     };
   });
 }
+
+export async function sessionsStatsAsync() {
+  const sessionStats = await prisma.$queryRaw<
+    {
+      sessionCount: number;
+      reportCount: number;
+      minAttendedOn: string;
+    }[]
+  >`
+    SELECT 
+      COUNT(*) sessionCount,
+      COUNT(s.report) reportCount,
+      MIN(s.attendedOn) minAttendedOn
+    FROM MentorSession ms
+    INNER JOIN Session s ON s.mentorSessionId = ms.id
+    WHERE ms.status = 'AVAILABLE' AND s.attendedOn <= ${dayjs().format("YYYY-MM-DD")}`;
+
+  return sessionStats?.[0] ?? null;
+}

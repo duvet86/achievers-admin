@@ -1,7 +1,13 @@
 import type { Route } from "./+types/route";
 
 import { useNavigate, useSearchParams } from "react-router";
-import { UserCircle, GraduationCap, ShopFourTiles } from "iconoir-react";
+import {
+  UserCircle,
+  GraduationCap,
+  ShopFourTiles,
+  InfoCircle,
+  EditPencil,
+} from "iconoir-react";
 import dayjs from "dayjs";
 
 import {
@@ -21,6 +27,7 @@ import {
   getTotalChaptersAsync,
   getTotalMentorsAsync,
   getTotalStudentsAsync,
+  sessionsStatsAsync,
 } from "./services.server";
 
 import {
@@ -72,6 +79,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     chaptersCount,
     mentorsPerMonth,
     reports,
+    sessionStats,
   ] = await Promise.all([
     getTotalMentorsAsync(),
     getIncompleteMentorsAsync(),
@@ -80,6 +88,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     getTotalChaptersAsync(),
     getMentorsPerMonth(),
     getReportsPerSession(Number(selectedChapterId), selectedTerm),
+    sessionsStatsAsync(),
   ]);
 
   const reportsData = {
@@ -139,6 +148,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       value: id.toString(),
       label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
     })),
+    sessionStats,
   };
 }
 
@@ -157,6 +167,7 @@ export default function Index({
     reportsData,
     termYearsOptions,
     termsOptions,
+    sessionStats,
   },
 }: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
@@ -182,7 +193,21 @@ export default function Index({
       </article>
 
       <div className="flex w-full justify-center">
-        <div className="stats stats-vertical lg:stats-horizontal shadow-lg">
+        <div className="stats stats-vertical lg:stats-horizontal w-full shadow">
+          <StatCard
+            Icon={InfoCircle}
+            label="Sessions attended"
+            count={sessionStats.sessionCount}
+            subLabel={`Since ${dayjs(sessionStats.minAttendedOn).format("MMMM YYYY")}`}
+          />
+
+          <StatCard
+            Icon={EditPencil}
+            label="Reports completed"
+            count={sessionStats.reportCount}
+            subLabel={`Since ${dayjs(sessionStats.minAttendedOn).format("MMMM YYYY")}`}
+          />
+
           <StatCard
             Icon={UserCircle}
             label="Mentors with incomplete checks"
@@ -214,7 +239,7 @@ export default function Index({
 
         <fieldset className="fieldset">
           <Select
-            label="Chapters"
+            label="Chapter"
             name="selectedChapterId"
             defaultValue={selectedChapterId}
             options={chapterOptions}

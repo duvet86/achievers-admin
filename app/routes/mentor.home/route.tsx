@@ -140,7 +140,7 @@ export default function Index({
   };
 
   return (
-    <div className="-m-4 h-full p-4">
+    <>
       <article className="prose relative mb-4 h-24 max-w-none lg:h-28">
         <div className="bg-achievers h-24 w-full rounded-md opacity-75 lg:h-28"></div>
         <h1 className="absolute top-6 left-6 hidden lg:block">
@@ -375,6 +375,6 @@ export default function Index({
           totalPageCount={totalPageCount}
         />
       </Form>
-    </div>
+    </>
   );
 }
