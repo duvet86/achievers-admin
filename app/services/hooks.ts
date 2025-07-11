@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useMatches } from "react-router";
+import { useLocation, useMatches, useNavigate } from "react-router";
 
 export function useClientRect<T extends HTMLElement>(): [
   { width: number; height: number },
@@ -48,4 +48,19 @@ export function useLocalStorage<T>(
   }
 
   return [localStorageValue, setLocalStorageStateValue];
+}
+
+export function useStateNavigation() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+  const history: string[] = location.state?.history ?? [];
+
+  return (to: string) =>
+    navigate(to, {
+      state: {
+        history: [...history, location.pathname + location.search],
+      },
+    });
 }

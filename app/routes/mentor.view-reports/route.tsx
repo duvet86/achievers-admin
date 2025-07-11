@@ -4,7 +4,7 @@ import { Form, useSearchParams, useSubmit } from "react-router";
 import { Eye } from "iconoir-react";
 import dayjs from "dayjs";
 
-import { getPaginationRange } from "~/services";
+import { getPaginationRange, useStateNavigation } from "~/services";
 import { getLoggedUserInfoAsync } from "~/services/.server";
 import { Pagination, StateLink, Title } from "~/components";
 
@@ -104,6 +104,7 @@ export default function Index({
 }: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
+  const stateNavigate = useStateNavigation();
 
   const totalPageCount = Math.ceil(count / 10);
 
@@ -124,6 +125,10 @@ export default function Index({
     searchParams.set("mentorId", mentorId);
 
     void submit(Object.fromEntries(searchParams));
+  };
+
+  const navigateToReport = (id: number) => () => {
+    void stateNavigate(`/mentor/view-reports/${id}`);
   };
 
   return (
@@ -186,9 +191,10 @@ export default function Index({
                 }) => (
                   <tr
                     key={id}
-                    className={classNames("hover:bg-base-200", {
+                    className={classNames("hover:bg-base-200 cursor-pointer", {
                       "text-error": isCancelled,
                     })}
+                    onClick={navigateToReport(id)}
                   >
                     <td className="p-2">
                       {mentorSession.mentor.fullName}{" "}
