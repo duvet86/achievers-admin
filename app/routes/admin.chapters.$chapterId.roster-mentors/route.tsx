@@ -20,6 +20,7 @@ import {
   getDistinctTermYears,
   getSelectedTerm,
   getValueFromCircularArray,
+  URLSafeSearch,
 } from "~/services";
 import { getSchoolTermsAsync } from "~/services/.server";
 import { Input, Select, StateLink, TableHeaderSort, Title } from "~/components";
@@ -31,15 +32,19 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 
   const CURRENT_YEAR = dayjs().year();
 
-  const url = new URL(request.url);
+  const url = new URLSafeSearch(request.url);
+
   const selectedTermYear =
-    url.searchParams.get("selectedTermYear") ?? CURRENT_YEAR.toString();
-  const selectedTermId = url.searchParams.get("selectedTermId");
-  let selectedTermDate = url.searchParams.get("selectedTermDate") ?? "";
-  const searchTerm = url.searchParams.get("search") ?? undefined;
+    url.safeSearchParams.getNullOrEmpty("selectedTermYear") ??
+    CURRENT_YEAR.toString();
+  const selectedTermId = url.safeSearchParams.getNullOrEmpty("selectedTermId");
+  let selectedTermDate =
+    url.safeSearchParams.getNullOrEmpty("selectedTermDate") ?? "";
+  const searchTerm = url.safeSearchParams.getNullOrEmpty("search") ?? undefined;
 
   const sortFullNameSubmit: Prisma.SortOrder | undefined =
-    (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? undefined;
+    (url.safeSearchParams.getNullOrEmpty("sortFullName") as Prisma.SortOrder) ??
+    undefined;
 
   const terms = await getSchoolTermsAsync();
 

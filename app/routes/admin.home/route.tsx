@@ -15,7 +15,11 @@ import {
   getPermissionsAbility,
   getSchoolTermsAsync,
 } from "~/services/.server";
-import { getCurrentTermForDate, getDistinctTermYears } from "~/services";
+import {
+  getCurrentTermForDate,
+  getDistinctTermYears,
+  URLSafeSearch,
+} from "~/services";
 import { Select, SubTitle } from "~/components";
 
 import {
@@ -44,12 +48,14 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const chapters = await getChaptersAsync(ability);
 
-  const url = new URL(request.url);
+  const url = new URLSafeSearch(request.url);
+
   const selectedTermYear =
-    url.searchParams.get("selectedTermYear") ?? CURRENT_YEAR.toString();
-  const selectedTermId = url.searchParams.get("selectedTermId");
+    url.safeSearchParams.getNullOrEmpty("selectedTermYear") ??
+    CURRENT_YEAR.toString();
+  const selectedTermId = url.safeSearchParams.getNullOrEmpty("selectedTermId");
   const selectedChapterId =
-    url.searchParams.get("selectedChapterId") ?? chapters[0].id;
+    url.safeSearchParams.getNullOrEmpty("selectedChapterId") ?? chapters[0].id;
 
   const terms = await getSchoolTermsAsync();
   const currentTerm = getCurrentTermForDate(terms, new Date());

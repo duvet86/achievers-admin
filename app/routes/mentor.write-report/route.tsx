@@ -23,7 +23,7 @@ import {
   getDistinctTermYears,
   getSelectedTerm,
   isEditorEmpty,
-  isStringNullOrEmpty,
+  URLSafeSearch,
 } from "~/services";
 import {
   getSchoolTermsAsync,
@@ -55,27 +55,16 @@ export const links: Route.LinksFunction = () => {
 export async function loader({ request }: Route.LoaderArgs) {
   const CURRENT_YEAR = dayjs().year();
 
-  const url = new URL(request.url);
-  const selectedTermYear = isStringNullOrEmpty(
-    url.searchParams.get("selectedTermYear"),
-  )
-    ? CURRENT_YEAR.toString()
-    : url.searchParams.get("selectedTermYear")!;
-  const selectedTermId = isStringNullOrEmpty(
-    url.searchParams.get("selectedTermId"),
-  )
-    ? null
-    : url.searchParams.get("selectedTermId");
-  let selectedTermDate = isStringNullOrEmpty(
-    url.searchParams.get("selectedTermDate"),
-  )
-    ? null
-    : url.searchParams.get("selectedTermDate");
-  let selectedStudentId = isStringNullOrEmpty(
-    url.searchParams.get("selectedStudentId"),
-  )
-    ? null
-    : url.searchParams.get("selectedStudentId");
+  const url = new URLSafeSearch(request.url);
+
+  const selectedTermYear =
+    url.safeSearchParams.getNullOrEmpty("selectedTermYear") ??
+    CURRENT_YEAR.toString();
+  const selectedTermId = url.safeSearchParams.getNullOrEmpty("selectedTermId");
+  let selectedTermDate =
+    url.safeSearchParams.getNullOrEmpty("selectedTermDate");
+  let selectedStudentId =
+    url.safeSearchParams.getNullOrEmpty("selectedStudentId");
 
   const terms = await getSchoolTermsAsync();
 

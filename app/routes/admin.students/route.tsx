@@ -1,15 +1,19 @@
-import type { JSX } from "react";
 import type { Prisma } from "~/prisma/client";
 import type { Route } from "./+types/route";
 
 import { Form, useSearchParams, useSubmit } from "react-router";
 import { BinFull, PageEdit, Plus } from "iconoir-react";
+import classNames from "classnames";
 
 import {
   getLoggedUserInfoAsync,
   getPermissionsAbility,
 } from "~/services/.server";
-import { getPaginationRange } from "~/services";
+import {
+  getPaginationRange,
+  URLSafeSearch,
+  useStateNavigation,
+} from "~/services";
 import { Pagination, StateLink, TableHeaderSort, Title } from "~/components";
 
 import {
@@ -23,30 +27,28 @@ export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const ability = getPermissionsAbility(loggedUser.roles);
 
-  const url = new URL(request.url);
+  const url = new URLSafeSearch(request.url);
 
-  const chapterId = url.searchParams.get("chapterId");
+  const chapterId = url.safeSearchParams.getNullOrEmpty("chapterId");
 
-  const previousPageSubmit = url.searchParams.get("previousBtn");
-  const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
-  const nextPageSubmit = url.searchParams.get("nextBtn");
+  const previousPageSubmit = url.safeSearchParams.getNullOrEmpty("previousBtn");
+  const pageNumberSubmit = url.safeSearchParams.getNullOrEmpty("pageNumberBtn");
+  const nextPageSubmit = url.safeSearchParams.getNullOrEmpty("nextBtn");
 
   const sortFullNameSubmit: Prisma.SortOrder | undefined =
-    (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? undefined;
+    (url.safeSearchParams.getNullOrEmpty("sortFullName") as Prisma.SortOrder) ??
+    undefined;
 
   const sortChapterSubmit: Prisma.SortOrder | undefined =
-    (url.searchParams.get("sortChapter") as Prisma.SortOrder) ?? undefined;
+    (url.safeSearchParams.getNullOrEmpty("sortChapter") as Prisma.SortOrder) ??
+    undefined;
 
-  let searchTerm = url.searchParams.get("searchTerm");
-  const pageNumber = Number(url.searchParams.get("pageNumber")!);
-  const includeArchived = url.searchParams.get("includeArchived") === "on";
+  const searchTerm = url.safeSearchParams.getNullOrEmpty("searchTerm");
+  const pageNumber = Number(url.safeSearchParams.getNullOrEmpty("pageNumber")!);
+  const includeArchived =
+    url.safeSearchParams.getNullOrEmpty("includeArchived") === "on";
 
-  if (searchTerm?.trim() === "") {
-    searchTerm = null;
-  }
-
-  const chapterIdValue =
-    chapterId !== null && chapterId !== "" ? Number(chapterId) : null;
+  const chapterIdValue = chapterId !== null ? Number(chapterId) : null;
 
   const count = await getStudentsCountAsync(
     ability,
@@ -112,6 +114,7 @@ export default function Index({
     includeArchived,
   },
 }: Route.ComponentProps) {
+  const stateNavigate = useStateNavigation();
   const submit = useSubmit();
   const [searchParams] = useSearchParams();
 
@@ -138,6 +141,10 @@ export default function Index({
     searchParams.set("includeArchived", event.target.checked ? "on" : "");
 
     void submit(Object.fromEntries(searchParams));
+  };
+
+  const navigateToPage = (to: string) => () => {
+    void stateNavigate(to);
   };
 
   return (
@@ -200,38 +207,34 @@ export default function Index({
                 </tr>
               )}
               {students.map(
-                ({ id, fullName, yearLevel, chapter, endDate }, index) => {
-                  let className = "hover:bg-base-200 ";
-                  let icon: JSX.Element | undefined;
-                  if (endDate) {
-                    className += "text-error";
-                    icon = <BinFull data-testid="archived" />;
-                  }
-
-                  return (
-                    <tr key={id} className={className}>
-                      <td className="hidden sm:table-cell">
-                        <div className="flex gap-2">
-                          {index + 1 + 10 * currentPageNumber} {icon}
-                        </div>
-                      </td>
-                      <td>{fullName}</td>
-                      <td className="hidden sm:table-cell">
-                        {yearLevel ?? "-"}
-                      </td>
-                      <td>{chapter.name}</td>
-                      <td className="hidden sm:table-cell">
-                        <StateLink
-                          to={`${id}?${searchParams.toString()}`}
-                          className="btn btn-success btn-xs w-full gap-2"
-                        >
-                          <PageEdit className="hidden h-4 w-4 lg:block" />
-                          Edit
-                        </StateLink>
-                      </td>
-                    </tr>
-                  );
-                },
+                ({ id, fullName, yearLevel, chapter, endDate }, index) => (
+                  <tr
+                    key={id}
+                    className={classNames("hover:bg-base-200 cursor-pointer", {
+                      "text-error": endDate !== null,
+                    })}
+                    onClick={navigateToPage(`/admin/students/${id}`)}
+                  >
+                    <td className="hidden sm:table-cell">
+                      <div className="flex gap-2">
+                        {index + 1 + 10 * currentPageNumber}{" "}
+                        {endDate && <BinFull data-testid="archived" />}
+                      </div>
+                    </td>
+                    <td>{fullName}</td>
+                    <td className="hidden sm:table-cell">{yearLevel ?? "-"}</td>
+                    <td>{chapter.name}</td>
+                    <td className="hidden sm:table-cell">
+                      <StateLink
+                        to={`${id}?${searchParams.toString()}`}
+                        className="btn btn-success btn-xs w-full gap-2"
+                      >
+                        <PageEdit className="hidden h-4 w-4 lg:block" />
+                        Edit
+                      </StateLink>
+                    </td>
+                  </tr>
+                ),
               )}
             </tbody>
           </table>

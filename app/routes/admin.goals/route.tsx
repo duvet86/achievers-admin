@@ -10,7 +10,7 @@ import {
   getLoggedUserInfoAsync,
   getPermissionsAbility,
 } from "~/services/.server";
-import { getPaginationRange } from "~/services";
+import { getPaginationRange, URLSafeSearch } from "~/services";
 import {
   Pagination,
   Select,
@@ -31,19 +31,20 @@ export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const ability = getPermissionsAbility(loggedUser.roles);
 
-  const url = new URL(request.url);
+  const url = new URLSafeSearch(request.url);
 
-  const searchTermSubmit = url.searchParams.get("searchBtn");
-  const clearSearchSubmit = url.searchParams.get("clearSearchBtn");
-  const previousPageSubmit = url.searchParams.get("previousBtn");
-  const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
-  const nextPageSubmit = url.searchParams.get("nextBtn");
+  const searchTermSubmit = url.safeSearchParams.getNullOrEmpty("searchBtn");
+  const clearSearchSubmit =
+    url.safeSearchParams.getNullOrEmpty("clearSearchBtn");
+  const previousPageSubmit = url.safeSearchParams.getNullOrEmpty("previousBtn");
+  const pageNumberSubmit = url.safeSearchParams.getNullOrEmpty("pageNumberBtn");
+  const nextPageSubmit = url.safeSearchParams.getNullOrEmpty("nextBtn");
 
-  const chapterIdUrl = url.searchParams.get("chapterId");
-  const mentorIdUrl = url.searchParams.get("mentorId");
-  const studentIdUrl = url.searchParams.get("studentId");
+  const chapterIdUrl = url.safeSearchParams.getNullOrEmpty("chapterId");
+  const mentorIdUrl = url.safeSearchParams.getNullOrEmpty("mentorId");
+  const studentIdUrl = url.safeSearchParams.getNullOrEmpty("studentId");
 
-  const pageNumber = Number(url.searchParams.get("pageNumber")!);
+  const pageNumber = Number(url.safeSearchParams.getNullOrEmpty("pageNumber")!);
 
   let chapterId: number;
   let mentorId: number | undefined;
@@ -51,19 +52,19 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const chapters = await getChaptersAsync(ability);
 
-  if (clearSearchSubmit !== null || chapterIdUrl === "") {
+  if (clearSearchSubmit !== null) {
     chapterId = chapters[0].id;
   } else {
     chapterId =
       chapters.find(({ id }) => id === Number(chapterIdUrl))?.id ??
       chapters[0].id;
   }
-  if (clearSearchSubmit !== null || mentorIdUrl === "") {
+  if (clearSearchSubmit !== null) {
     mentorId = undefined;
   } else if (mentorIdUrl) {
     mentorId = Number(mentorIdUrl);
   }
-  if (clearSearchSubmit !== null || studentIdUrl === "") {
+  if (clearSearchSubmit !== null) {
     studentId = undefined;
   } else if (studentIdUrl) {
     studentId = Number(studentIdUrl);

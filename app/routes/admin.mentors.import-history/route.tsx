@@ -4,7 +4,7 @@ import { Form } from "react-router";
 import dayjs from "dayjs";
 import { PageEdit } from "iconoir-react";
 
-import { getPaginationRange } from "~/services";
+import { getPaginationRange, URLSafeSearch } from "~/services";
 import { Pagination, StateLink, Title } from "~/components";
 
 import {
@@ -13,13 +13,13 @@ import {
 } from "./services.server";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
-  const url = new URL(request.url);
+  const url = new URLSafeSearch(request.url);
 
-  const previousPageSubmit = url.searchParams.get("previousBtn");
-  const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
-  const nextPageSubmit = url.searchParams.get("nextBtn");
+  const previousPageSubmit = url.safeSearchParams.getNullOrEmpty("previousBtn");
+  const pageNumberSubmit = url.safeSearchParams.getNullOrEmpty("pageNumberBtn");
+  const nextPageSubmit = url.safeSearchParams.getNullOrEmpty("nextBtn");
 
-  const pageNumber = Number(url.searchParams.get("pageNumber"));
+  const pageNumber = Number(url.safeSearchParams.getNullOrEmpty("pageNumber"));
 
   const count = await getImportHistoryCountAsync();
   const totalPageCount = Math.ceil(count / 10);

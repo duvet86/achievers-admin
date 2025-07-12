@@ -24,6 +24,7 @@ import {
   getDistinctTermYears,
   getPaginationRange,
   getSelectedTerm,
+  URLSafeSearch,
 } from "~/services";
 import { Pagination, StateLink, SubTitle } from "~/components";
 
@@ -41,16 +42,17 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const CURRENT_YEAR = dayjs().year();
 
-  const url = new URL(request.url);
+  const url = new URLSafeSearch(request.url);
 
-  const pageNumber = Number(url.searchParams.get("pageNumber")!);
-  const previousPageSubmit = url.searchParams.get("previousBtn");
-  const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
-  const nextPageSubmit = url.searchParams.get("nextBtn");
+  const pageNumber = Number(url.safeSearchParams.getNullOrEmpty("pageNumber")!);
+  const previousPageSubmit = url.safeSearchParams.getNullOrEmpty("previousBtn");
+  const pageNumberSubmit = url.safeSearchParams.getNullOrEmpty("pageNumberBtn");
+  const nextPageSubmit = url.safeSearchParams.getNullOrEmpty("nextBtn");
 
   const selectedTermYear =
-    url.searchParams.get("selectedTermYear") ?? CURRENT_YEAR.toString();
-  const selectedTermId = url.searchParams.get("selectedTermId");
+    url.safeSearchParams.getNullOrEmpty("selectedTermYear") ??
+    CURRENT_YEAR.toString();
+  const selectedTermId = url.safeSearchParams.getNullOrEmpty("selectedTermId");
 
   const terms = await getSchoolTermsAsync();
 

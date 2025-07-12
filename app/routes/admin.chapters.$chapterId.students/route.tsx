@@ -5,7 +5,7 @@ import { Form, useSearchParams, useSubmit } from "react-router";
 import invariant from "tiny-invariant";
 import { CoinsSwap, PageEdit } from "iconoir-react";
 
-import { getPaginationRange } from "~/services";
+import { getPaginationRange, URLSafeSearch } from "~/services";
 import {
   Title,
   Pagination,
@@ -22,24 +22,23 @@ import {
 export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.chapterId, "chapterId not found");
 
-  const url = new URL(request.url);
+  const url = new URLSafeSearch(request.url);
 
-  const previousPageSubmit = url.searchParams.get("previousBtn");
-  const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
-  const nextPageSubmit = url.searchParams.get("nextBtn");
+  const previousPageSubmit = url.safeSearchParams.getNullOrEmpty("previousBtn");
+  const pageNumberSubmit = url.safeSearchParams.getNullOrEmpty("pageNumberBtn");
+  const nextPageSubmit = url.safeSearchParams.getNullOrEmpty("nextBtn");
 
   const sortFullNameSubmit: Prisma.SortOrder | undefined =
-    (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? undefined;
+    (url.safeSearchParams.getNullOrEmpty("sortFullName") as Prisma.SortOrder) ??
+    undefined;
 
   const sortCountMentorsSubmit: Prisma.SortOrder | undefined =
-    (url.searchParams.get("sortCountMentors") as Prisma.SortOrder) ?? undefined;
+    (url.safeSearchParams.getNullOrEmpty(
+      "sortCountMentors",
+    ) as Prisma.SortOrder) ?? undefined;
 
-  let searchTerm = url.searchParams.get("searchTerm");
-  const pageNumber = Number(url.searchParams.get("pageNumber")!);
-
-  if (searchTerm?.trim() === "") {
-    searchTerm = null;
-  }
+  const searchTerm = url.safeSearchParams.getNullOrEmpty("searchTerm");
+  const pageNumber = Number(url.safeSearchParams.getNullOrEmpty("pageNumber")!);
 
   const count = await getMentorsWithStudentsCountAsync(
     Number(params.chapterId),

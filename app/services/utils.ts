@@ -373,3 +373,15 @@ export function getSelectedTerm(
 export function getDistinctTermYears(terms: Term[]) {
   return Array.from(new Set(terms.map(({ year }) => year)));
 }
+
+export class URLSafeSearch extends URL {
+  readonly safeSearchParams = new SafeURLSearchParams(this.search);
+}
+
+class SafeURLSearchParams extends URLSearchParams {
+  getNullOrEmpty(name: string): string | null {
+    const value = this.get(name);
+
+    return isStringNullOrEmpty(value) ? null : value;
+  }
+}

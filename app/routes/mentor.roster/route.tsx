@@ -22,7 +22,11 @@ import {
   getLoggedUserInfoAsync,
   getSchoolTermsAsync,
 } from "~/services/.server";
-import { getCurrentTermForDate, getDatesForTerm } from "~/services";
+import {
+  getCurrentTermForDate,
+  getDatesForTerm,
+  URLSafeSearch,
+} from "~/services";
 import { Select, StateLink, Title } from "~/components";
 
 import {
@@ -38,9 +42,10 @@ import {
 import { ManageSession } from "./components/ManageSession";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const url = new URL(request.url);
-  const selectedTermId = url.searchParams.get("selectedTermId");
-  const attendedOn = url.searchParams.get("attendedOn");
+  const url = new URLSafeSearch(request.url);
+
+  const selectedTermId = url.safeSearchParams.getNullOrEmpty("selectedTermId");
+  const attendedOn = url.safeSearchParams.getNullOrEmpty("attendedOn");
 
   const loggedUser = await getLoggedUserInfoAsync(request);
   const user = await getUserByAzureADIdAsync(loggedUser.oid);

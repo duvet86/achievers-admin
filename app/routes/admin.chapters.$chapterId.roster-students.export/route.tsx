@@ -4,7 +4,7 @@ import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
 import { getSchoolTermsAsync } from "~/services/.server";
-import { getCurrentTermForDate } from "~/services";
+import { getCurrentTermForDate, URLSafeSearch } from "~/services";
 
 import { exportRosterToSpreadsheetAsync } from "./services.server";
 
@@ -13,11 +13,12 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 
   const CURRENT_YEAR = dayjs().year();
 
-  const url = new URL(request.url);
+  const url = new URLSafeSearch(request.url);
 
   const selectedTermYear =
-    url.searchParams.get("selectedTermYear") ?? CURRENT_YEAR.toString();
-  const selectedTermId = url.searchParams.get("selectedTermId");
+    url.safeSearchParams.getNullOrEmpty("selectedTermYear") ??
+    CURRENT_YEAR.toString();
+  const selectedTermId = url.safeSearchParams.getNullOrEmpty("selectedTermId");
 
   const terms = await getSchoolTermsAsync();
   const currentTerm = getCurrentTermForDate(terms, new Date());

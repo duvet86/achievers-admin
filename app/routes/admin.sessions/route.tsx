@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import type { Route } from "./+types/route";
 
 import { Form, useSearchParams } from "react-router";
 import { Eye } from "iconoir-react";
 import dayjs from "dayjs";
-import isBetween from "dayjs/plugin/isBetween";
 
 import {
   getLoggedUserInfoAsync,
@@ -15,6 +13,7 @@ import {
   getDatesForTerm,
   getPaginationRange,
   getSelectedTerm,
+  URLSafeSearch,
 } from "~/services";
 import { Pagination, StateLink, Title } from "~/components";
 
@@ -27,32 +26,32 @@ import {
 } from "./services.server";
 import { FormInputs } from "./components";
 
-dayjs.extend(isBetween);
-
 export async function loader({ request }: Route.LoaderArgs) {
   const CURRENT_YEAR = dayjs().year();
 
   const loggedUser = await getLoggedUserInfoAsync(request);
   const ability = getPermissionsAbility(loggedUser.roles);
 
-  const url = new URL(request.url);
+  const url = new URLSafeSearch(request.url);
 
-  const previousPageSubmit = url.searchParams.get("previousBtn");
-  const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
-  const nextPageSubmit = url.searchParams.get("nextBtn");
+  const previousPageSubmit = url.safeSearchParams.getNullOrEmpty("previousBtn");
+  const pageNumberSubmit = url.safeSearchParams.getNullOrEmpty("pageNumberBtn");
+  const nextPageSubmit = url.safeSearchParams.getNullOrEmpty("nextBtn");
 
-  const chapterId = url.searchParams.get("chapterId");
-  const mentorId = url.searchParams.get("mentorId");
-  const studentId = url.searchParams.get("studentId");
+  const chapterId = url.safeSearchParams.getNullOrEmpty("chapterId");
+  const mentorId = url.safeSearchParams.getNullOrEmpty("mentorId");
+  const studentId = url.safeSearchParams.getNullOrEmpty("studentId");
 
   const selectedTermYear =
-    url.searchParams.get("selectedTermYear") || CURRENT_YEAR.toString();
-  const selectedTermId = url.searchParams.get("selectedTermId");
-  const selectedTermDate = url.searchParams.get("selectedTermDate");
+    url.safeSearchParams.getNullOrEmpty("selectedTermYear") ??
+    CURRENT_YEAR.toString();
+  const selectedTermId = url.safeSearchParams.getNullOrEmpty("selectedTermId");
+  const selectedTermDate =
+    url.safeSearchParams.getNullOrEmpty("selectedTermDate");
 
-  const filterReports = url.searchParams.get("filterReports");
+  const filterReports = url.safeSearchParams.getNullOrEmpty("filterReports");
 
-  const pageNumber = Number(url.searchParams.get("pageNumber")!);
+  const pageNumber = Number(url.safeSearchParams.getNullOrEmpty("pageNumber")!);
 
   const [chapters, terms] = await Promise.all([
     getChaptersAsync(ability),

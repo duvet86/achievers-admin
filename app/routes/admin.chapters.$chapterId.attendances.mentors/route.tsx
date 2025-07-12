@@ -12,6 +12,7 @@ import {
   getDatesForTerm,
   getDistinctTermYears,
   getSelectedTerm,
+  URLSafeSearch,
 } from "~/services";
 import { Input, Select, Title } from "~/components";
 
@@ -22,12 +23,15 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
   const CURRENT_YEAR = dayjs().year();
 
-  const url = new URL(request.url);
+  const url = new URLSafeSearch(request.url);
+
   const selectedTermYear =
-    url.searchParams.get("selectedTermYear") ?? CURRENT_YEAR.toString();
-  const searchTerm = url.searchParams.get("search");
-  const selectedTermId = url.searchParams.get("selectedTermId");
-  let selectedTermDate = url.searchParams.get("selectedTermDate");
+    url.safeSearchParams.getNullOrEmpty("selectedTermYear") ??
+    CURRENT_YEAR.toString();
+  const searchTerm = url.safeSearchParams.getNullOrEmpty("search");
+  const selectedTermId = url.safeSearchParams.getNullOrEmpty("selectedTermId");
+  let selectedTermDate =
+    url.safeSearchParams.getNullOrEmpty("selectedTermDate");
 
   const terms = await getSchoolTermsAsync();
 

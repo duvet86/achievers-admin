@@ -4,7 +4,11 @@ import { Form, useSearchParams, useSubmit } from "react-router";
 import { Eye } from "iconoir-react";
 import dayjs from "dayjs";
 
-import { getPaginationRange, useStateNavigation } from "~/services";
+import {
+  getPaginationRange,
+  URLSafeSearch,
+  useStateNavigation,
+} from "~/services";
 import { getLoggedUserInfoAsync } from "~/services/.server";
 import { Pagination, StateLink, Title } from "~/components";
 
@@ -22,20 +26,20 @@ export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const { id: loggedUserId, chapterId } = await getUserAsync(loggedUser.oid);
 
-  const url = new URL(request.url);
+  const url = new URLSafeSearch(request.url);
 
-  const previousPageSubmit = url.searchParams.get("previousBtn");
-  const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
-  const nextPageSubmit = url.searchParams.get("nextBtn");
+  const previousPageSubmit = url.safeSearchParams.getNullOrEmpty("previousBtn");
+  const pageNumberSubmit = url.safeSearchParams.getNullOrEmpty("pageNumberBtn");
+  const nextPageSubmit = url.safeSearchParams.getNullOrEmpty("nextBtn");
 
-  const studentId = url.searchParams.get("studentId");
-  const mentorId = url.searchParams.get("mentorId");
+  const studentId = url.safeSearchParams.getNullOrEmpty("studentId");
+  const mentorId = url.safeSearchParams.getNullOrEmpty("mentorId");
 
   const selectedMentorId = mentorId ? Number(mentorId) : undefined;
   const selectedStudentId = studentId ? Number(studentId) : undefined;
 
-  const pageNumber = url.searchParams.get("pageNumber")
-    ? Number(url.searchParams.get("pageNumber"))
+  const pageNumber = url.safeSearchParams.getNullOrEmpty("pageNumber")
+    ? Number(url.safeSearchParams.getNullOrEmpty("pageNumber"))
     : 0;
 
   const students = await getStudentsAsync(

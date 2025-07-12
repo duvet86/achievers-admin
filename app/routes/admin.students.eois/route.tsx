@@ -8,7 +8,7 @@ import {
   getLoggedUserInfoAsync,
   getPermissionsAbility,
 } from "~/services/.server";
-import { getPaginationRange } from "~/services";
+import { getPaginationRange, URLSafeSearch } from "~/services";
 import { Pagination, StateLink, TableHeaderSort, Title } from "~/components";
 
 import {
@@ -22,31 +22,28 @@ export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const ability = getPermissionsAbility(loggedUser.roles);
 
-  const url = new URL(request.url);
+  const url = new URLSafeSearch(request.url);
 
-  const chapterId = url.searchParams.get("chapterId");
+  const chapterId = url.safeSearchParams.getNullOrEmpty("chapterId");
   const includeApprovedStudents =
-    url.searchParams.get("includeApprovedStudents") === "on";
+    url.safeSearchParams.getNullOrEmpty("includeApprovedStudents") === "on";
 
-  const previousPageSubmit = url.searchParams.get("previousBtn");
-  const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
-  const nextPageSubmit = url.searchParams.get("nextBtn");
+  const previousPageSubmit = url.safeSearchParams.getNullOrEmpty("previousBtn");
+  const pageNumberSubmit = url.safeSearchParams.getNullOrEmpty("pageNumberBtn");
+  const nextPageSubmit = url.safeSearchParams.getNullOrEmpty("nextBtn");
 
   const sortFullNameSubmit: Prisma.SortOrder | undefined =
-    (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? undefined;
+    (url.safeSearchParams.getNullOrEmpty("sortFullName") as Prisma.SortOrder) ??
+    undefined;
 
   const sortChapterSubmit: Prisma.SortOrder | undefined =
-    (url.searchParams.get("sortChapter") as Prisma.SortOrder) ?? undefined;
+    (url.safeSearchParams.getNullOrEmpty("sortChapter") as Prisma.SortOrder) ??
+    undefined;
 
-  let searchTerm = url.searchParams.get("searchTerm");
-  const pageNumber = Number(url.searchParams.get("pageNumber")!);
+  const searchTerm = url.safeSearchParams.getNullOrEmpty("searchTerm");
+  const pageNumber = Number(url.safeSearchParams.getNullOrEmpty("pageNumber")!);
 
-  if (searchTerm?.trim() === "") {
-    searchTerm = null;
-  }
-
-  const chapterIdValue =
-    chapterId !== null && chapterId !== "" ? Number(chapterId) : null;
+  const chapterIdValue = chapterId !== null ? Number(chapterId) : null;
 
   const count = await getStudentEoisCountAsync(
     ability,

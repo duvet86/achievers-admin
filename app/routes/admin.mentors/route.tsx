@@ -9,7 +9,12 @@ import {
   getLoggedUserInfoAsync,
   getPermissionsAbility,
 } from "~/services/.server";
-import { getPaginationRange, isDateExpired } from "~/services";
+import {
+  getPaginationRange,
+  isDateExpired,
+  URLSafeSearch,
+  useStateNavigation,
+} from "~/services";
 import { Title, Pagination, TableHeaderSort, StateLink } from "~/components";
 
 import {
@@ -23,36 +28,36 @@ export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const ability = getPermissionsAbility(loggedUser.roles);
 
-  const url = new URL(request.url);
+  const url = new URLSafeSearch(request.url);
 
-  const chapterId = url.searchParams.get("chapterId");
+  const chapterId = url.safeSearchParams.getNullOrEmpty("chapterId");
 
-  const previousPageSubmit = url.searchParams.get("previousBtn");
-  const pageNumberSubmit = url.searchParams.get("pageNumberBtn");
-  const nextPageSubmit = url.searchParams.get("nextBtn");
+  const previousPageSubmit = url.safeSearchParams.getNullOrEmpty("previousBtn");
+  const pageNumberSubmit = url.safeSearchParams.getNullOrEmpty("pageNumberBtn");
+  const nextPageSubmit = url.safeSearchParams.getNullOrEmpty("nextBtn");
 
   const sortFullNameSubmit: Prisma.SortOrder | undefined =
-    (url.searchParams.get("sortFullName") as Prisma.SortOrder) ?? "ASC";
+    (url.safeSearchParams.getNullOrEmpty("sortFullName") as Prisma.SortOrder) ??
+    "ASC";
 
   const sortChapterSubmit: Prisma.SortOrder | undefined =
-    (url.searchParams.get("sortChapter") as Prisma.SortOrder) ?? undefined;
-
-  const sortChecksCompletedSubmit: Prisma.SortOrder | undefined =
-    (url.searchParams.get("sortChecksCompleted") as Prisma.SortOrder) ??
+    (url.safeSearchParams.getNullOrEmpty("sortChapter") as Prisma.SortOrder) ??
     undefined;
 
-  let searchTerm = url.searchParams.get("searchTerm");
-  const pageNumber = Number(url.searchParams.get("pageNumber")!);
+  const sortChecksCompletedSubmit: Prisma.SortOrder | undefined =
+    (url.safeSearchParams.getNullOrEmpty(
+      "sortChecksCompleted",
+    ) as Prisma.SortOrder) ?? undefined;
 
-  const onlyExpiredChecks = url.searchParams.get("onlyExpiredChecks") === "on";
-  const includeArchived = url.searchParams.get("includeArchived") === "on";
+  const searchTerm = url.safeSearchParams.getNullOrEmpty("searchTerm");
+  const pageNumber = Number(url.safeSearchParams.getNullOrEmpty("pageNumber")!);
 
-  if (searchTerm?.trim() === "") {
-    searchTerm = null;
-  }
+  const onlyExpiredChecks =
+    url.safeSearchParams.getNullOrEmpty("onlyExpiredChecks") === "on";
+  const includeArchived =
+    url.safeSearchParams.getNullOrEmpty("includeArchived") === "on";
 
-  const chapterIdValue =
-    chapterId !== null && chapterId !== "" ? Number(chapterId) : null;
+  const chapterIdValue = chapterId !== null ? Number(chapterId) : null;
 
   const numberItems = 10;
 
@@ -141,6 +146,7 @@ export default function Index({
     includeArchived,
   },
 }: Route.ComponentProps) {
+  const stateNavigate = useStateNavigation();
   const submit = useSubmit();
   const [searchParams] = useSearchParams();
 
@@ -176,6 +182,10 @@ export default function Index({
     searchParams.set("includeArchived", event.target.checked ? "on" : "");
 
     void submit(Object.fromEntries(searchParams));
+  };
+
+  const navigateToPage = (to: string) => () => {
+    void stateNavigate(to);
   };
 
   return (
@@ -260,9 +270,10 @@ export default function Index({
                 ) => (
                   <tr
                     key={id}
-                    className={classNames("hover:bg-base-200", {
+                    className={classNames("hover:bg-base-200 cursor-pointer", {
                       "text-error": endDate !== null,
                     })}
+                    onClick={navigateToPage(`/admin/mentors/${id}`)}
                   >
                     <td className="hidden sm:table-cell">
                       <div className="flex gap-2">
