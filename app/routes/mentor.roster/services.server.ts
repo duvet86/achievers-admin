@@ -497,7 +497,7 @@ export async function deleteSessionByIdAsync(sessionId: number) {
       },
     });
 
-    if (sessionsForStudentCount === 1) {
+    if (sessionsForStudentCount === 0) {
       await tx.studentSession.delete({
         where: {
           id: session.studentSessionId,

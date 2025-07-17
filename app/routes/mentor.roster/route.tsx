@@ -434,15 +434,22 @@ export default function Index({
                                   </span>
                                 </div>
 
-                                {!completedOn && (
-                                  <button
-                                    onClick={handleTakeSessionSubmit(id)}
-                                    className="btn btn-secondary btn-sm w-full sm:w-36"
-                                  >
-                                    <BookmarkBook />
-                                    Take
-                                  </button>
-                                )}
+                                {(!myMentorSession ||
+                                  myMentorSession.session.length === 0) &&
+                                  !completedOn && (
+                                    <div
+                                      className="tooltip tooltip-left"
+                                      data-tip="This action will remove the student from your partner and assign it to you for this session."
+                                    >
+                                      <button
+                                        onClick={handleTakeSessionSubmit(id)}
+                                        className="btn btn-secondary btn-sm w-full sm:w-36"
+                                      >
+                                        <BookmarkBook />
+                                        Take
+                                      </button>
+                                    </div>
+                                  )}
                               </>
                             )}
                           </div>
