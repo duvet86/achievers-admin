@@ -132,12 +132,12 @@ export async function getLoggedUserInfoAsync(
 
 export function getChapterFromAttendancesRole(roles: string[]) {
   if (roles.length === 0) {
-    throw new Error();
+    return null;
   }
 
   const attendancesRole = roles.find((r) => r.includes("Attendances"));
   if (!attendancesRole) {
-    throw new Error();
+    return null;
   }
 
   const parts = attendancesRole.split(".");

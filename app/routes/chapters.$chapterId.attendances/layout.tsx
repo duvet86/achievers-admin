@@ -24,7 +24,11 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const chapterId = getChapterFromAttendancesRole(loggedUser.roles);
 
-  if (isUserBlocked || chapterId !== Number(params.chapterId)) {
+  if (
+    isUserBlocked ||
+    chapterId === null ||
+    chapterId !== Number(params.chapterId)
+  ) {
     trackException(
       new Error(
         `Request url: ${request.url}. loggedUser has no MentorAttendancesArea permissions.`,
