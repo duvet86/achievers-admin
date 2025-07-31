@@ -1,0 +1,6 @@
+@Achievers.DDD_HostAddress = http://localhost:5115
+
+GET {{Achievers.DDD_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
