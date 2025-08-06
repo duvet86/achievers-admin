@@ -3,7 +3,10 @@ import type { SchoolReportCommand } from "./services.server";
 
 import { Form, useSubmit } from "react-router";
 import invariant from "tiny-invariant";
-import { parseFormData } from "@mjackson/form-data-parser";
+import {
+  MaxFileSizeExceededError,
+  parseFormData,
+} from "@mjackson/form-data-parser";
 import { Xmark } from "iconoir-react";
 
 import { getCurrentTermForDate } from "~/services";
@@ -54,7 +57,11 @@ export async function action({ request, params }: Route.ActionArgs) {
 
       await deleteSchoolReportAsync(Number(reportId));
     } else {
-      const formData = await parseFormData(request, uploadHandler);
+      const formData = await parseFormData(
+        request,
+        { maxFileSize: 10 * 1024 * 1024 },
+        uploadHandler,
+      );
 
       const file = formData.get("file") as File;
       const selectedTermId = formData.get("selectedTermId")?.toString();
@@ -76,6 +83,13 @@ export async function action({ request, params }: Route.ActionArgs) {
       memoryHandlerDispose("file");
     }
   } catch (e: unknown) {
+    if (e instanceof MaxFileSizeExceededError) {
+      return {
+        successMessage: null,
+        errorMessage: e.message,
+      };
+    }
+
     return {
       successMessage: null,
       errorMessage: (e as Error).message,
