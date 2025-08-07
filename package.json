@@ -25,7 +25,7 @@
     "@azure/monitor-opentelemetry": "^1.11.1",
     "@azure/storage-blob": "^12.28.0",
     "@casl/ability": "^6.7.3",
-    "@casl/prisma": "^1.5.1",
+    "@casl/prisma": "^1.5.2",
     "@lexical/react": "^0.33.1",
     "@mjackson/file-storage": "^0.7.0",
     "@mjackson/form-data-parser": "^0.9.1",

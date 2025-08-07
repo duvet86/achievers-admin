@@ -1,4 +1,6 @@
+using Achievers.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +11,12 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+
+builder.Services.AddDbContext<DBContext>(options =>
+{
+    options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")
+        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found."));
+});
 
 //IdentityModelEventSource.ShowPII = true;
 //IdentityModelEventSource.LogCompleteSecurityArtifact = true;
@@ -28,7 +36,10 @@ else
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/", () => "Hello World!")
+app.MapGet("/", (DBContext db) =>
+{
+    return db.Sessions.First().Id;
+})
     .RequireAuthorization();
 
 app.Run();

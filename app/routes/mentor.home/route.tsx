@@ -350,7 +350,13 @@ export default function Index({
                           {completedOn === null && (
                             <StateLink
                               to={`/mentor/sessions/${id}/student-absent`}
-                              className="btn btn-error hidden h-9 gap-2 sm:flex sm:w-56"
+                              className={classNames(
+                                "btn btn-error hidden h-9 gap-2 sm:flex",
+                                {
+                                  "sm:w-36": isCancelled,
+                                  "sm:w-56": !isCancelled,
+                                },
+                              )}
                             >
                               <UserXmark className="hidden h-4 w-4 lg:block" />
                               {isCancelled

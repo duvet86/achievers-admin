@@ -2,17 +2,17 @@ import type { EditorState } from "lexical";
 import type { Route } from "./+types/route";
 import type { SessionCommandRequest } from "./services.server";
 
+import { useRef } from "react";
 import { Link, useFetcher, useSearchParams } from "react-router";
 import dayjs from "dayjs";
-import { useRef } from "react";
 import invariant from "tiny-invariant";
 import { DesignNib, NavArrowLeft, WarningTriangle, Xmark } from "iconoir-react";
-
-import editorStylesheetUrl from "~/styles/editor.css?url";
 
 import { getLoggedUserInfoAsync, trackException } from "~/services/.server";
 import { isEditorEmpty } from "~/services";
 import { Editor, Message, SubTitle, Title } from "~/components";
+
+import editorStylesheetUrl from "~/styles/editor.css?url";
 
 import { getSessionByIdAsync, saveReportAsync } from "./services.server";
 
@@ -90,10 +90,8 @@ export default function Index({
   },
 }: Route.ComponentProps) {
   const editorStateRef = useRef<EditorState>(null);
-  const { state, submit, data } = useFetcher<typeof action>();
+  const { submit, data } = useFetcher<typeof action>();
   const [searchParams] = useSearchParams();
-
-  const isLoading = state !== "idle";
 
   const handleSignOff = (isSignedOff: boolean) => () => {
     if (!isSignedOff) {
@@ -134,12 +132,6 @@ export default function Index({
       </div>
 
       <div className="relative flex h-full flex-col">
-        {isLoading && (
-          <div className="bg-opacity-50 absolute z-30 flex h-full w-full justify-center bg-slate-300">
-            <span className="loading loading-spinner loading-lg text-primary"></span>
-          </div>
-        )}
-
         <div className="flex h-full flex-col gap-4">
           <div className="flex flex-1 flex-col gap-4">
             <Editor isReadonly initialEditorStateType={report} />

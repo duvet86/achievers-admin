@@ -14,13 +14,19 @@ import {
 } from "iconoir-react";
 
 import { getEnvironment } from "~/services";
-import { Input, Message, StateLink, Textarea, Title } from "~/components";
+import { Editor, Input, Message, StateLink, Title } from "~/components";
+
+import editorStylesheetUrl from "~/styles/editor.css?url";
 
 import {
   getChapterByIdAsync,
   getNotificationSentOnFromNow,
   getSessionByIdAsync,
 } from "./services.server";
+
+export const links: Route.LinksFunction = () => {
+  return [{ rel: "stylesheet", href: editorStylesheetUrl }];
+};
 
 export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.sessionId, "sessionId not found");
@@ -236,11 +242,10 @@ export default function Index({
                     ? "Mentor was"
                     : ""}
               </p>
+
               <Input defaultValue={session.cancelledReason?.reason} readOnly />
-              <Textarea
-                defaultValue={session.cancelledExtendedReason ?? ""}
-                readOnly
-              />
+
+              <Editor isReadonly initialEditorStateType={session.report} />
             </div>
           </div>
         )}

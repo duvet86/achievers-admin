@@ -22,7 +22,7 @@ export async function getSession(sessionId: number) {
       completedOn: true,
       isCancelled: true,
       cancelledReasonId: true,
-      cancelledExtendedReason: true,
+      report: true,
       mentorSession: {
         select: {
           mentor: {
@@ -51,7 +51,7 @@ export async function cancelSession(
   sessionId: number,
   entityType: $Enums.CancelledEntity,
   cancelledReasonId: number,
-  cancelledExtendedReason: string,
+  report: string,
 ) {
   return await prisma.session.update({
     where: {
@@ -61,7 +61,8 @@ export async function cancelSession(
       cancelledAt: new Date(),
       cancelledBecauseOf: entityType,
       cancelledReasonId,
-      cancelledExtendedReason,
+      report,
+      completedOn: new Date(),
     },
   });
 }

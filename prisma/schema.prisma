@@ -435,12 +435,12 @@ model Session {
 
   writteOnBehalfByAzureId String?
 
-  isCancelled             Boolean                 @default(dbgenerated())
-  cancelledBecauseOf      CancelledEntity?
-  cancelledAt             DateTime?
-  cancelledExtendedReason String?
-  cancelledReason         SessionCancelledReason? @relation(fields: [cancelledReasonId], references: [id])
-  cancelledReasonId       Int?                    @unique
+  isCancelled        Boolean          @default(dbgenerated())
+  cancelledBecauseOf CancelledEntity?
+  cancelledAt        DateTime?
+
+  cancelledReason   SessionCancelledReason? @relation(fields: [cancelledReasonId], references: [id])
+  cancelledReasonId Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -452,7 +452,7 @@ model SessionCancelledReason {
   id     Int    @id @default(autoincrement())
   reason String @unique
 
-  session Session?
+  session Session[]
 }
 
 model MentorSession {

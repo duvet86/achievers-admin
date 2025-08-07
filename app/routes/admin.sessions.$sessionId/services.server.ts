@@ -30,7 +30,7 @@ export async function getSessionByIdAsync(sessionId: number) {
       cancelledAt: true,
       cancelledBecauseOf: true,
       cancelledReason: true,
-      cancelledExtendedReason: true,
+      report: true,
       notificationSentOn: true,
       studentSession: {
         select: {

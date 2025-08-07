@@ -1,17 +1,26 @@
+import type { EditorState } from "lexical";
 import type { Route } from "./+types/route";
 
-import { Form, redirect } from "react-router";
+import { useRef } from "react";
+import { Form, redirect, useFetcher } from "react-router";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
-import { UserXmark } from "iconoir-react";
+import { UserXmark, WarningTriangle } from "iconoir-react";
 
-import { Message, Select, Textarea, Title } from "~/components";
+import { isEditorEmpty } from "~/services";
+import { Editor, Message, Select, Title } from "~/components";
+
+import editorStylesheetUrl from "~/styles/editor.css?url";
 
 import {
   cancelSession,
   getCancelReasons,
   getSessionAsync,
 } from "./services.server";
+
+export const links: Route.LinksFunction = () => {
+  return [{ rel: "stylesheet", href: editorStylesheetUrl }];
+};
 
 export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.sessionId, "sessionId not found");
@@ -43,25 +52,20 @@ export async function loader({ params }: Route.LoaderArgs) {
 export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.sessionId, "sessionId not found");
 
-  const formData = await request.formData();
+  const bodyData = (await request.json()) as {
+    cancelledReasonId: string;
+    report: string;
+  };
 
-  const cancelledReasonId = formData.get("cancelledReasonId")?.toString();
-  const cancelledExtendedReason = formData
-    .get("cancelledExtendedReason")
-    ?.toString();
-
-  if (
-    cancelledReasonId === undefined ||
-    cancelledExtendedReason === undefined
-  ) {
+  if (!bodyData.cancelledReasonId || !bodyData.report) {
     throw new Error();
   }
 
   await cancelSession(
     Number(params.sessionId),
     "STUDENT",
-    Number(cancelledReasonId),
-    cancelledExtendedReason,
+    Number(bodyData.cancelledReasonId),
+    bodyData.report,
   );
 
   return {
@@ -71,21 +75,46 @@ export async function action({ request, params }: Route.ActionArgs) {
 
 export default function Index({
   loaderData: { cancelReasonsOptions, session },
-  actionData,
 }: Route.ComponentProps) {
+  const editorStateRef = useRef<EditorState>(null);
+  const { submit, data } = useFetcher<typeof action>();
+
+  const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    const resportState = editorStateRef.current!;
+
+    if (isEditorEmpty(resportState)) {
+      (document.getElementById("errorModal") as HTMLDialogElement).showModal();
+      return;
+    }
+
+    void submit(
+      {
+        cancelledReasonId: formData.get("cancelledReasonId")!.toString(),
+        report: JSON.stringify(resportState.toJSON()),
+      },
+      {
+        method: "POST",
+        encType: "application/json",
+      },
+    );
+  };
+
   return (
     <>
       <div className="flex flex-col gap-6 sm:flex-row">
-        <Title>
+        <Title className="text-error">
           {session.isCancelled
             ? `Student "${session.studentSession.student.fullName}" was absent for the "${dayjs(session.attendedOn).format("MMMM D, YYYY")}"`
             : `Mark "${session.studentSession.student.fullName}" as absent for the "${dayjs(session.attendedOn).format("MMMM D, YYYY")}"`}
         </Title>
 
-        <Message key={Date.now()} successMessage={actionData?.successMessage} />
+        <Message key={Date.now()} successMessage={data?.successMessage} />
       </div>
 
-      <Form method="post">
+      <Form onSubmit={onFormSubmit}>
         <fieldset className="fieldset p-4">
           {!session.isCancelled && (
             <p>
@@ -104,14 +133,13 @@ export default function Index({
             required
           />
 
-          <Textarea
-            placeholder="Note"
-            name="cancelledExtendedReason"
-            readOnly={session.isCancelled}
-            disabled={session.isCancelled}
-            defaultValue={session.cancelledExtendedReason ?? ""}
-            required
-          />
+          <div className="min-h-56">
+            <Editor
+              isReadonly={session.isCancelled}
+              initialEditorStateType={session.report}
+              onChange={(editorState) => (editorStateRef.current = editorState)}
+            />
+          </div>
 
           {!session.isCancelled && (
             <div className="mt-6 flex items-center justify-end">
@@ -123,6 +151,20 @@ export default function Index({
           )}
         </fieldset>
       </Form>
+      <dialog id="errorModal" className="modal">
+        <div className="modal-box">
+          <h3 className="flex gap-2 text-lg font-bold">
+            <WarningTriangle className="text-error" />
+            Please write a report
+          </h3>
+          <p className="py-4">Report cannot be blank.</p>
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Close</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </>
   );
 }
