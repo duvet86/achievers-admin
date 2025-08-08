@@ -133,6 +133,7 @@ export async function getSessionsAsync(
       attendedOn: true,
       completedOn: true,
       signedOffOn: true,
+      isCancelled: true,
       studentSession: {
         select: {
           student: {
@@ -194,5 +195,7 @@ function whereClause(
       lte: term.end.toDate(),
       gte: term.start.toDate(),
     },
+    isCancelled:
+      filterReports !== "TO_SIGN_OFF" && filterReports !== "OUTSTANDING",
   };
 }

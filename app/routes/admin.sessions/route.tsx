@@ -3,6 +3,7 @@ import type { Route } from "./+types/route";
 import { Form, useSearchParams } from "react-router";
 import { Eye } from "iconoir-react";
 import dayjs from "dayjs";
+import classNames from "classnames";
 
 import {
   getLoggedUserInfoAsync,
@@ -14,6 +15,7 @@ import {
   getPaginationRange,
   getSelectedTerm,
   URLSafeSearch,
+  useStateNavigation,
 } from "~/services";
 import { Pagination, StateLink, Title } from "~/components";
 
@@ -178,9 +180,14 @@ export default function Index({
     range,
   },
 }: Route.ComponentProps) {
+  const stateNavigate = useStateNavigation();
   const [searchParams] = useSearchParams();
 
   const totalPageCount = Math.ceil(count / 10);
+
+  const navigateToPage = (to: string) => () => {
+    void stateNavigate(to);
+  };
 
   return (
     <>
@@ -210,6 +217,9 @@ export default function Index({
           <table className="table-lg sm:table-md table">
             <thead>
               <tr>
+                <th align="left" className="hidden w-14 sm:table-cell">
+                  #
+                </th>
                 <th align="left" className="p-2">
                   Mentor
                 </th>
@@ -237,15 +247,34 @@ export default function Index({
                 </tr>
               )}
               {sessions.map(
-                ({
-                  id,
-                  attendedOn,
-                  completedOn,
-                  signedOffOn,
-                  studentSession,
-                  mentorSession,
-                }) => (
-                  <tr key={id} className="hover:bg-base-200">
+                (
+                  {
+                    id,
+                    attendedOn,
+                    completedOn,
+                    signedOffOn,
+                    studentSession,
+                    mentorSession,
+                    isCancelled,
+                  },
+                  index,
+                ) => (
+                  <tr
+                    key={id}
+                    className={classNames("hover:bg-base-200 cursor-pointer", {
+                      "text-error": isCancelled,
+                    })}
+                    onClick={navigateToPage(
+                      completedOn
+                        ? `/admin/sessions/${id}/report?${searchParams.toString()}`
+                        : `/admin/sessions/${id}?${searchParams.toString()}`,
+                    )}
+                  >
+                    <td className="hidden sm:table-cell">
+                      <div className="flex gap-2">
+                        {index + 1 + 10 * currentPageNumber}
+                      </div>
+                    </td>
                     <td className="p-2">{mentorSession.mentor.fullName}</td>
                     <td className="p-2">{studentSession.student.fullName}</td>
                     <td className="p-2">
