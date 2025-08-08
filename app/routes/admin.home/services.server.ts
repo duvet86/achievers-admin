@@ -11,7 +11,6 @@ interface Report {
   attendedOn: Date;
   reportWithFeedbackCounter: string;
   reportNoFeedbackCounter: string;
-  incompleteReportCounter: string;
   noReportCounter: string;
 }
 
@@ -159,12 +158,11 @@ export async function getReportsPerSession(
     `
     SELECT
       s.attendedOn,
-      SUM(IF(s.report IS NOT NULL AND s.signedOffOn IS NOT NULL AND s.completedOn IS NOT NULL, 1, 0)) reportWithFeedbackCounter,
-      SUM(IF(s.report IS NOT NULL AND s.signedOffOn IS NULL AND s.completedOn IS NOT NULL, 1, 0)) reportNoFeedbackCounter,
-      SUM(IF(s.report IS NOT NULL AND s.completedOn IS NULL, 1, 0)) incompleteReportCounter,
+      SUM(IF(s.report IS NOT NULL AND s.signedOffOn IS NOT NULL, 1, 0)) reportWithFeedbackCounter,
+      SUM(IF(s.report IS NOT NULL AND s.signedOffOn IS NULL, 1, 0)) reportNoFeedbackCounter,
       SUM(IF(s.report IS NULL, 1, 0)) noReportCounter
     FROM Session s
-    WHERE s.attendedOn BETWEEN ? AND ? AND s.chapterId = ?
+    WHERE s.attendedOn BETWEEN ? AND ? AND s.chapterId = ? AND s.isCancelled = 0
     GROUP BY s.attendedOn
     ORDER BY s.attendedOn ASC`,
     selectedTerm.start.format("YYYY-MM-DD"),
@@ -189,7 +187,6 @@ export async function getReportsPerSession(
 
     return {
       attendedOn: new Date(date),
-      incompleteReportCounter: "0",
       noReportCounter: "0",
       reportNoFeedbackCounter: "0",
       reportWithFeedbackCounter: "0",
@@ -211,7 +208,7 @@ export async function sessionsStatsAsync() {
       MIN(s.attendedOn) minAttendedOn
     FROM MentorSession ms
     INNER JOIN Session s ON s.mentorSessionId = ms.id
-    WHERE ms.status = 'AVAILABLE' AND s.attendedOn <= ${dayjs().format("YYYY-MM-DD")}`;
+    WHERE ms.status = 'AVAILABLE' AND s.attendedOn <= ${dayjs().format("YYYY-MM-DD")} AND s.isCancelled = 0`;
 
   return sessionStats?.[0] ?? null;
 }

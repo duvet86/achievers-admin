@@ -7,7 +7,7 @@ import invariant from "tiny-invariant";
 
 import { useRef } from "react";
 import dayjs from "dayjs";
-import { FloppyDiskArrowIn, DesignNib, WarningTriangle } from "iconoir-react";
+import { DesignNib, WarningTriangle } from "iconoir-react";
 
 import { getLoggedUserInfoAsync } from "~/services/.server/session.server";
 
@@ -174,14 +174,6 @@ export default function Index({
             </div>
 
             <div className="flex flex-wrap justify-end gap-4 sm:gap-8">
-              <button
-                className="btn btn-primary w-full sm:w-44"
-                onClick={saveReport("draft")}
-              >
-                <FloppyDiskArrowIn />
-                Save as draft
-              </button>
-
               <button
                 className="btn btn-success w-full sm:w-44"
                 onClick={saveReport("signoff")}

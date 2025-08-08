@@ -117,13 +117,6 @@ export async function loader({ request }: Route.LoaderArgs) {
         backgroundColor: "rgba(255, 205, 86, 0.8)",
       },
       {
-        label: "Incomplete Report",
-        data: reports.map(({ incompleteReportCounter }) =>
-          Number(incompleteReportCounter),
-        ),
-        backgroundColor: "rgba(201, 203, 207, 0.8)",
-      },
-      {
         label: "Missing Report",
         data: reports.map(({ noReportCounter }) => Number(noReportCounter)),
         backgroundColor: "rgba(255, 99, 132, 0.8)",
