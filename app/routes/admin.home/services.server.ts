@@ -3,6 +3,7 @@ import type { Term } from "~/models";
 
 import dayjs from "dayjs";
 
+import { Prisma } from "~/prisma/client";
 import { prisma } from "~/db.server";
 import { getDatesForTerm } from "~/services";
 import { accessibleBy } from "~/casl-prisma";
@@ -42,15 +43,33 @@ export async function getChaptersAsync(ability: AppAbility) {
   });
 }
 
-export async function getTotalMentorsAsync() {
+export async function getTotalMentorsAsync(
+  year: number,
+  chapterId: number | null,
+  selectedTerm: Term | null,
+) {
   return await prisma.mentor.count({
     where: {
       endDate: null,
+      chapterId: chapterId ?? undefined,
+      createdAt: selectedTerm
+        ? {
+            gte: selectedTerm.start.toDate(),
+            lte: selectedTerm.end.toDate(),
+          }
+        : {
+            gte: dayjs().year(year).startOf("year").toDate(),
+            lte: dayjs().year(year).endOf("year").toDate(),
+          },
     },
   });
 }
 
-export async function getIncompleteMentorsAsync() {
+export async function getIncompleteMentorsAsync(
+  year: number,
+  chapterId: number | null,
+  selectedTerm: Term | null,
+) {
   const countQuery = await prisma.$queryRaw<{ count: number }[]>`
     SELECT COUNT(*) count
     FROM
@@ -85,6 +104,8 @@ export async function getIncompleteMentorsAsync() {
         LEFT JOIN Induction i ON i.mentorId = u.id
     ) as s
     WHERE endDate IS NULL
+      AND ${chapterId ? Prisma.sql`chapterId = ${chapterId}` : "1=1"}
+      AND ${selectedTerm ? Prisma.sql`createdAt BETWEEN ${selectedTerm.start.format("YYYY-MM-DD")} AND ${selectedTerm.end.format("YYYY-MM-DD")}` : Prisma.sql`createdAt BETWEEN ${dayjs().year(year).startOf("year").format("YYYY-MM-DD")} AND ${dayjs().year(year).endOf("year").format("YYYY-MM-DD")}`}
       AND (approvalbymrcId IS NULL 
       OR eoiprofileId IS NULL
       OR policecheckId IS NULL
@@ -97,20 +118,41 @@ export async function getIncompleteMentorsAsync() {
   return Number(countQuery[0].count);
 }
 
-export async function getTotalStudentsAsync() {
+export async function getTotalStudentsAsync(
+  year: number,
+  chapterId: number | null,
+  selectedTerm: Term | null,
+) {
   return await prisma.student.count({
     where: {
       endDate: null,
+      chapterId: chapterId ?? undefined,
+      createdAt: selectedTerm
+        ? {
+            gte: selectedTerm.start.toDate(),
+            lte: selectedTerm.end.toDate(),
+          }
+        : {
+            gte: dayjs().year(year).startOf("year").toDate(),
+            lte: dayjs().year(year).endOf("year").toDate(),
+          },
     },
   });
 }
 
-export async function getStudentsWithoutMentorAsync() {
+export async function getStudentsWithoutMentorAsync(
+  year: number,
+  chapterId: number | null,
+  selectedTerm: Term | null,
+) {
   const countQuery = await prisma.$queryRaw<{ count: number }[]>`
     SELECT COUNT(DISTINCT s.id) AS count
     FROM Student AS s
     LEFT JOIN MentorToStudentAssignement AS m ON s.id = m.studentId
-    WHERE m.studentId IS NULL AND s.endDate IS NULL;`;
+    WHERE m.studentId IS NULL
+      AND s.endDate IS NULL
+      AND ${chapterId ? Prisma.sql`s.chapterId = ${chapterId}` : "1=1"}
+      AND ${selectedTerm ? Prisma.sql`s.createdAt BETWEEN ${selectedTerm.start.format("YYYY-MM-DD")} AND ${selectedTerm.end.format("YYYY-MM-DD")}` : Prisma.sql`s.createdAt BETWEEN ${dayjs().year(year).startOf("year").format("YYYY-MM-DD")} AND ${dayjs().year(year).endOf("year").format("YYYY-MM-DD")}`}`;
 
   return Number(countQuery[0].count);
 }
@@ -119,15 +161,26 @@ export async function getTotalChaptersAsync() {
   return await prisma.chapter.count();
 }
 
-export async function getMentorsPerMonth() {
+export async function getMentorsPerMonth(
+  year: number,
+  chapterId: number | null,
+  selectedTerm: Term | null,
+) {
   const mentors = await prisma.mentor.findMany({
     select: {
       createdAt: true,
     },
     where: {
-      createdAt: {
-        gte: dayjs().subtract(6, "months").toDate(),
-      },
+      chapterId: chapterId ?? undefined,
+      createdAt: selectedTerm
+        ? {
+            gte: selectedTerm.start.toDate(),
+            lte: selectedTerm.end.toDate(),
+          }
+        : {
+            gte: dayjs().year(year).startOf("year").toDate(),
+            lte: dayjs().year(year).endOf("year").toDate(),
+          },
     },
   });
 
@@ -151,26 +204,26 @@ export async function getMentorsPerMonth() {
 }
 
 export async function getReportsPerSession(
-  chapterId: number,
-  selectedTerm: Term,
+  year: number,
+  chapterId: number | null,
+  selectedTerm: Term | null,
 ) {
-  const reports = await prisma.$queryRawUnsafe<Report[]>(
-    `
-    SELECT
+  const reports = await prisma.$queryRaw<Report[]>`SELECT
       s.attendedOn,
       SUM(IF(s.report IS NOT NULL AND s.signedOffOn IS NOT NULL, 1, 0)) reportWithFeedbackCounter,
       SUM(IF(s.report IS NOT NULL AND s.signedOffOn IS NULL, 1, 0)) reportNoFeedbackCounter,
       SUM(IF(s.report IS NULL, 1, 0)) noReportCounter
     FROM Session s
-    WHERE s.attendedOn BETWEEN ? AND ? AND s.chapterId = ? AND s.isCancelled = 0
+    WHERE s.isCancelled = 0
+      AND ${chapterId ? Prisma.sql`s.chapterId = ${chapterId}` : "1=1"}
+      AND ${selectedTerm ? Prisma.sql`s.attendedOn BETWEEN ${selectedTerm.start.format("YYYY-MM-DD")} AND ${selectedTerm.end.format("YYYY-MM-DD")}` : Prisma.sql`s.attendedOn BETWEEN ${dayjs().year(year).startOf("year").format("YYYY-MM-DD")} AND ${dayjs().year(year).endOf("year").format("YYYY-MM-DD")}`}
     GROUP BY s.attendedOn
-    ORDER BY s.attendedOn ASC`,
-    selectedTerm.start.format("YYYY-MM-DD"),
-    selectedTerm.end.format("YYYY-MM-DD"),
-    chapterId,
-  );
+    ORDER BY s.attendedOn ASC`;
 
-  const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
+  const sessionDates = getDatesForTerm(
+    selectedTerm ? selectedTerm.start : dayjs().startOf("year"),
+    selectedTerm ? selectedTerm.end : dayjs().endOf("year"),
+  );
 
   const reportsLookup = reports.reduce<Record<string, Report>>(
     (res, report) => {
@@ -194,7 +247,11 @@ export async function getReportsPerSession(
   });
 }
 
-export async function sessionsStatsAsync() {
+export async function sessionsStatsAsync(
+  year: number,
+  chapterId: number | null,
+  selectedTerm: Term | null,
+) {
   const sessionStats = await prisma.$queryRaw<
     {
       sessionCount: number;
@@ -208,7 +265,11 @@ export async function sessionsStatsAsync() {
       MIN(s.attendedOn) minAttendedOn
     FROM MentorSession ms
     INNER JOIN Session s ON s.mentorSessionId = ms.id
-    WHERE ms.status = 'AVAILABLE' AND s.attendedOn <= ${dayjs().format("YYYY-MM-DD")} AND s.isCancelled = 0`;
+    WHERE ms.status = 'AVAILABLE'
+      AND s.attendedOn <= ${dayjs().format("YYYY-MM-DD")}
+      AND s.isCancelled = 0
+      AND ${chapterId ? Prisma.sql`ms.chapterId = ${chapterId}` : "1=1"}
+      AND ${selectedTerm ? Prisma.sql`s.attendedOn BETWEEN ${selectedTerm.start.format("YYYY-MM-DD")} AND ${selectedTerm.end.format("YYYY-MM-DD")}` : Prisma.sql`s.attendedOn BETWEEN ${dayjs().year(year).startOf("year").format("YYYY-MM-DD")} AND ${dayjs().year(year).endOf("year").format("YYYY-MM-DD")}`}`;
 
   return sessionStats?.[0] ?? null;
 }

@@ -55,7 +55,9 @@ export async function loader({ request }: Route.LoaderArgs) {
     CURRENT_YEAR.toString();
   const selectedTermId = url.safeSearchParams.getNullOrEmpty("selectedTermId");
   const selectedChapterId =
-    url.safeSearchParams.getNullOrEmpty("selectedChapterId") ?? chapters[0].id;
+    chapters.length === 1
+      ? chapters[0].id
+      : url.safeSearchParams.getNullOrEmpty("selectedChapterId");
 
   const terms = await getSchoolTermsAsync();
   const currentTerm = getCurrentTermForDate(terms, new Date());
@@ -65,17 +67,13 @@ export async function loader({ request }: Route.LoaderArgs) {
     ({ year }) => year.toString() === selectedTermYear,
   );
 
-  let selectedTerm = termsForYear.find(
-    (t) => t.id.toString() === selectedTermId,
-  );
+  const selectedTerm =
+    selectedTermId === null
+      ? null
+      : (termsForYear.find((t) => t.id.toString() === selectedTermId) ?? null);
 
-  if (!selectedTerm) {
-    if (selectedTermYear === CURRENT_YEAR.toString()) {
-      selectedTerm = currentTerm;
-    } else {
-      selectedTerm = termsForYear[0];
-    }
-  }
+  const selectedChapterIdNumber =
+    selectedChapterId === null ? null : Number(selectedChapterId);
 
   const [
     mentorsCount,
@@ -87,14 +85,42 @@ export async function loader({ request }: Route.LoaderArgs) {
     reports,
     sessionStats,
   ] = await Promise.all([
-    getTotalMentorsAsync(),
-    getIncompleteMentorsAsync(),
-    getTotalStudentsAsync(),
-    getStudentsWithoutMentorAsync(),
+    getTotalMentorsAsync(
+      Number(selectedTermYear),
+      selectedChapterIdNumber,
+      selectedTerm,
+    ),
+    getIncompleteMentorsAsync(
+      Number(selectedTermYear),
+      selectedChapterIdNumber,
+      selectedTerm,
+    ),
+    getTotalStudentsAsync(
+      Number(selectedTermYear),
+      selectedChapterIdNumber,
+      selectedTerm,
+    ),
+    getStudentsWithoutMentorAsync(
+      Number(selectedTermYear),
+      selectedChapterIdNumber,
+      selectedTerm,
+    ),
     getTotalChaptersAsync(),
-    getMentorsPerMonth(),
-    getReportsPerSession(Number(selectedChapterId), selectedTerm),
-    sessionsStatsAsync(),
+    getMentorsPerMonth(
+      Number(selectedTermYear),
+      selectedChapterIdNumber,
+      selectedTerm,
+    ),
+    getReportsPerSession(
+      Number(selectedTermYear),
+      selectedChapterIdNumber,
+      selectedTerm,
+    ),
+    sessionsStatsAsync(
+      Number(selectedTermYear),
+      selectedChapterIdNumber,
+      selectedTerm,
+    ),
   ]);
 
   const reportsData = {
@@ -126,12 +152,14 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   return {
     selectedTermYear,
-    selectedTermId: selectedTerm.id.toString(),
-    selectedChapterId: selectedChapterId.toString(),
-    chapterOptions: chapters.map(({ id, name }) => ({
-      label: name,
-      value: id.toString(),
-    })),
+    selectedTermId: selectedTerm ? selectedTerm.id.toString() : "",
+    selectedChapterId: selectedChapterId ? selectedChapterId.toString() : "",
+    chapterOptions: [{ label: "All chapters", value: "" }].concat(
+      chapters.map(({ id, name }) => ({
+        label: name,
+        value: id.toString(),
+      })),
+    ),
     mentorsCount,
     incompleteMentors,
     studentsCount,
@@ -143,10 +171,12 @@ export async function loader({ request }: Route.LoaderArgs) {
       value: year.toString(),
       label: year.toString(),
     })),
-    termsOptions: termsForYear.map(({ id, start, end, name }) => ({
-      value: id.toString(),
-      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
-    })),
+    termsOptions: [{ value: "", label: "All terms" }].concat(
+      termsForYear.map(({ id, start, end, name }) => ({
+        value: id.toString(),
+        label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
+      })),
+    ),
     sessionStats,
   };
 }
@@ -191,8 +221,50 @@ export default function Index({
         </h2>
       </article>
 
-      <div className="flex w-full justify-center">
-        <div className="stats stats-vertical lg:stats-horizontal w-full shadow">
+      <fieldset className="fieldset mb-2">
+        {chapterOptions.length > 0 && (
+          <Select
+            label="Chapter"
+            name="selectedChapterId"
+            defaultValue={selectedChapterId}
+            options={chapterOptions}
+            onChange={onChange("selectedChapterId")}
+          />
+        )}
+
+        <div key={selectedTermId}>
+          <label className="fieldset-label">Term</label>
+          <div className="join w-full">
+            <select
+              className="select join-item basis-28"
+              name="selectedTermYear"
+              defaultValue={selectedTermYear}
+              onChange={onChange("selectedTermYear")}
+            >
+              {termYearsOptions.map(({ label, value }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            <select
+              className="select join-item w-full"
+              name="selectedTermId"
+              defaultValue={selectedTermId}
+              onChange={onChange("selectedTermId")}
+            >
+              {termsOptions.map(({ label, value }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </fieldset>
+
+      <div className="flex justify-center">
+        <div className="stats stats-vertical lg:stats-horizontal shadow">
           <StatCard
             Icon={InfoCircle}
             label="Sessions attended"
@@ -236,46 +308,6 @@ export default function Index({
       <div className="w-full">
         <SubTitle>Reports completed during last session</SubTitle>
 
-        <fieldset className="fieldset">
-          <Select
-            label="Chapter"
-            name="selectedChapterId"
-            defaultValue={selectedChapterId}
-            options={chapterOptions}
-            onChange={onChange("selectedChapterId")}
-          />
-
-          <div key={selectedTermId}>
-            <label className="fieldset-label">Term</label>
-            <div className="join w-full">
-              <select
-                className="select join-item basis-28"
-                name="selectedTermYear"
-                defaultValue={selectedTermYear}
-                onChange={onChange("selectedTermYear")}
-              >
-                {termYearsOptions.map(({ label, value }) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="select join-item w-full"
-                name="selectedTermId"
-                defaultValue={selectedTermId}
-                onChange={onChange("selectedTermId")}
-              >
-                {termsOptions.map(({ label, value }) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </fieldset>
-
         <div className="h-96">
           <MissingReportsBarChart
             chapterId={selectedChapterId}
@@ -283,7 +315,7 @@ export default function Index({
           />
         </div>
 
-        <SubTitle>Mentors over last 6 months</SubTitle>
+        <SubTitle>Mentors recruited</SubTitle>
 
         <div className="h-96">
           <MentorsOverTimeChart mentorsPerMonth={mentorsPerMonth} />
