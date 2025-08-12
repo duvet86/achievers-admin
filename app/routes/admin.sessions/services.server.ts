@@ -196,6 +196,8 @@ function whereClause(
       gte: term.start.toDate(),
     },
     isCancelled:
-      filterReports !== "TO_SIGN_OFF" && filterReports !== "OUTSTANDING",
+      filterReports === "TO_SIGN_OFF" || filterReports === "OUTSTANDING"
+        ? false
+        : undefined,
   };
 }
