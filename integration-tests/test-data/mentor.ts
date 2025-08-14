@@ -3,8 +3,8 @@ import type { DefaultArgs } from "@prisma/client/runtime/library";
 
 export async function mentorAsync(
   tx: Omit<
-    PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
-    "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
+    PrismaClient<never, Prisma.GlobalOmitConfig | undefined, DefaultArgs>,
+    "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends"
   >,
 ) {
   const { id } = await tx.mentor.findUniqueOrThrow({
