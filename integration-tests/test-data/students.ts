@@ -75,6 +75,7 @@ export async function createStudentsAsync(
           },
         },
         chapterId: (await tx.chapter.findFirstOrThrow()).id,
+        createdAt: new Date(2024, 10, 24, 0, 0),
       },
     });
   }
