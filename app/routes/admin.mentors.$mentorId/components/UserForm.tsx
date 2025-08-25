@@ -60,6 +60,7 @@ export function UserForm({ user, chapters, successMessage }: Props) {
           label="Email"
           name="email"
           disabled={user.azureADId !== null}
+          required
         />
 
         <Select

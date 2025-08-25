@@ -129,7 +129,6 @@ export async function action({ request, params }: Route.ActionArgs) {
     ?.toString();
 
   if (
-    isStringNullOrEmpty(email) ||
     isStringNullOrEmpty(firstName) ||
     isStringNullOrEmpty(lastName) ||
     isStringNullOrEmpty(mobile) ||
@@ -144,7 +143,6 @@ export async function action({ request, params }: Route.ActionArgs) {
   const dataCreate: IUpdateMentorProps = {
     firstName,
     lastName,
-    email,
     mobile,
     addressStreet,
     addressSuburb,
@@ -167,7 +165,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     hasApprovedToPublishPhotos: hasApprovedToPublishPhotos === "true",
   };
 
-  await updateMentorByIdAsync(Number(params.mentorId), dataCreate);
+  await updateMentorByIdAsync(Number(params.mentorId), dataCreate, email);
 
   return {
     successMessage: "User successfully saved!",

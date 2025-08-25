@@ -87,6 +87,7 @@ export async function getUserByIdAsync(id: number) {
 export async function updateMentorByIdAsync(
   mentorId: number,
   dataUpdate: IUpdateMentorProps,
+  email?: string,
 ) {
   const userRepository = new UserRepository();
   const mentor = await userRepository.findOneByIdAsync(mentorId);
@@ -94,6 +95,10 @@ export async function updateMentorByIdAsync(
   mentor.updateInfo({
     ...dataUpdate,
   });
+
+  if (email) {
+    mentor.updateEmail(email);
+  }
 
   await userRepository.saveAsync(mentor);
 }

@@ -42,7 +42,6 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
       hasApprovedToPublishPhotos: true,
       volunteerAgreementSignedOn: true,
       chapterId: true,
-      email: true,
       frequencyInDays: true,
       additionalEmail: true,
       preferredName: true,

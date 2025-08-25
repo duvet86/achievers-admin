@@ -99,7 +99,6 @@ export async function action({ request }: Route.ActionArgs) {
     hasApprovedToPublishPhotos: hasApprovedToPublishPhotos === "on",
     additionalEmail: additionalEmail ?? null,
     chapterId: user.chapterId,
-    email: user.email,
     preferredName: preferredName ?? null,
     frequencyInDays: user.frequencyInDays,
   });

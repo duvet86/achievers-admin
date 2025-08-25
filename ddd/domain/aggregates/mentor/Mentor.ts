@@ -40,7 +40,6 @@ export interface IMentorProps {
 }
 
 export interface IUpdateMentorProps {
-  email: string;
   firstName: string;
   lastName: string;
   preferredName: string | null;
@@ -251,7 +250,6 @@ export class Mentor extends Entity implements IAggregateRoot {
   }
 
   public updateInfo({
-    email,
     firstName,
     lastName,
     preferredName,
@@ -270,14 +268,6 @@ export class Mentor extends Entity implements IAggregateRoot {
     emergencyContactAddress,
     emergencyContactRelationship,
   }: IUpdateMentorProps) {
-    if (this._azureADId !== null && this._email.props.value !== email) {
-      throw new Error(
-        "Email cannot be changed for mentors with an Azure AD ID.",
-      );
-    } else {
-      this._email = Email.from(email);
-    }
-
     this._firstName = firstName;
     this._lastName = lastName;
     this._preferredName = preferredName;
@@ -301,6 +291,16 @@ export class Mentor extends Entity implements IAggregateRoot {
       emergencyContactAddress,
       emergencyContactRelationship,
     });
+  }
+
+  public updateEmail(email: string) {
+    if (this._azureADId !== null && this._email.props.value !== email) {
+      throw new Error(
+        "Email cannot be changed for mentors with an Azure AD ID.",
+      );
+    } else {
+      this._email = Email.from(email);
+    }
   }
 
   public updateProfilePath(profilePicturePath: string | null) {
