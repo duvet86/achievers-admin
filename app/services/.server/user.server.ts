@@ -1,4 +1,4 @@
-import { prisma } from "~/db.server";
+import { UserRepository } from "~/infra/repositories/MentorRepository";
 
 import {
   deleteBlobAsync,
@@ -23,7 +23,7 @@ export function getUserProfilePictureUrl(profilePicturePath: string): string {
 }
 
 export async function saveUserProfilePicture(
-  mentorId: number,
+  userId: number,
   file: File,
 ): Promise<string> {
   if (file.size === 0) {
@@ -33,7 +33,7 @@ export async function saveUserProfilePicture(
   const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
   await containerClient.createIfNotExists();
 
-  const path = `${mentorId}/profile-picture`;
+  const path = `${userId}/profile-picture`;
 
   const resp = await uploadBlobAsync(containerClient, file, path);
 
@@ -41,14 +41,12 @@ export async function saveUserProfilePicture(
     throw new Error(resp.errorCode);
   }
 
-  await prisma.mentor.update({
-    where: {
-      id: mentorId,
-    },
-    data: {
-      profilePicturePath: path,
-    },
-  });
+  const userRepository = new UserRepository();
+  const mentor = await userRepository.findOneByIdAsync(userId);
+
+  mentor.updateProfilePath(path);
+
+  await userRepository.saveAsync(mentor);
 
   return path;
 }
@@ -65,12 +63,10 @@ export async function deleteUserProfilePicture(userId: number): Promise<void> {
     throw new Error(resp.errorCode);
   }
 
-  await prisma.mentor.update({
-    where: {
-      id: userId,
-    },
-    data: {
-      profilePicturePath: null,
-    },
-  });
+  const userRepository = new UserRepository();
+  const mentor = await userRepository.findOneByIdAsync(userId);
+
+  mentor.updateProfilePath(null);
+
+  await userRepository.saveAsync(mentor);
 }

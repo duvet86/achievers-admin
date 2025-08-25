@@ -1,6 +1,5 @@
-import type { Prisma } from "~/prisma/client";
-import type { XOR } from "~/models";
 import type { AzureUserWebAppWithRole } from "~/services/.server";
+import type { IUpdateMentorProps } from "~/domain/aggregates/mentor/Mentor";
 import type { Route } from "./+types/route";
 
 import invariant from "tiny-invariant";
@@ -125,7 +124,12 @@ export async function action({ request, params }: Route.ActionArgs) {
     .get("emergencyContactRelationship")
     ?.toString();
 
+  const hasApprovedToPublishPhotos = formData
+    .get("hasApprovedToPublishPhotos")
+    ?.toString();
+
   if (
+    isStringNullOrEmpty(email) ||
     isStringNullOrEmpty(firstName) ||
     isStringNullOrEmpty(lastName) ||
     isStringNullOrEmpty(mobile) ||
@@ -137,10 +141,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     throw new Error("Missing required fields.");
   }
 
-  const dataCreate: XOR<
-    Prisma.MentorUpdateInput,
-    Prisma.MentorUncheckedUpdateInput
-  > = {
+  const dataCreate: IUpdateMentorProps = {
     firstName,
     lastName,
     email,
@@ -155,14 +156,15 @@ export async function action({ request, params }: Route.ActionArgs) {
     dateOfBirth: isStringNullOrEmpty(dateOfBirth)
       ? null
       : new Date(dateOfBirth + "T00:00"),
-    emergencyContactName,
-    emergencyContactNumber,
-    emergencyContactAddress,
-    emergencyContactRelationship,
+    emergencyContactName: emergencyContactName ?? null,
+    emergencyContactNumber: emergencyContactNumber ?? null,
+    emergencyContactAddress: emergencyContactAddress ?? null,
+    emergencyContactRelationship: emergencyContactRelationship ?? null,
     chapterId: Number(chapterId),
     preferredName: isStringNullOrEmpty(preferredName) ? null : preferredName,
     frequencyInDays:
       frequency === "FORTNIGHTLY" ? 14 : frequency === "WEEKLY" ? 7 : null,
+    hasApprovedToPublishPhotos: hasApprovedToPublishPhotos === "true",
   };
 
   await updateMentorByIdAsync(Number(params.mentorId), dataCreate);

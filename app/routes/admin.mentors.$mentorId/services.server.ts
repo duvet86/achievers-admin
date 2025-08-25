@@ -1,7 +1,7 @@
-import type { Prisma } from "~/prisma/client";
-import type { XOR } from "~/models";
+import type { IUpdateMentorProps } from "~/domain/aggregates/mentor/Mentor";
 
 import { prisma } from "~/db.server";
+import { UserRepository } from "~/infra/repositories/MentorRepository";
 
 export async function getChaptersAsync() {
   return await prisma.chapter.findMany({
@@ -86,12 +86,14 @@ export async function getUserByIdAsync(id: number) {
 
 export async function updateMentorByIdAsync(
   mentorId: number,
-  dataUpdate: XOR<Prisma.MentorUpdateInput, Prisma.MentorUncheckedUpdateInput>,
+  dataUpdate: IUpdateMentorProps,
 ) {
-  return await prisma.mentor.update({
-    data: dataUpdate,
-    where: {
-      id: mentorId,
-    },
+  const userRepository = new UserRepository();
+  const mentor = await userRepository.findOneByIdAsync(mentorId);
+
+  mentor.updateInfo({
+    ...dataUpdate,
   });
+
+  await userRepository.saveAsync(mentor);
 }

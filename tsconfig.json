@@ -18,7 +18,9 @@
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
       "~/prisma/client": ["./prisma/client/client.ts"],
-      "~/*": ["./app/*"]
+      "~/*": ["./app/*"],
+      "~/domain/*": ["./ddd/domain/*"],
+      "~/infra/*": ["./ddd/infra/*"]
     },
 
     // Vite takes care of building everything, not tsc.

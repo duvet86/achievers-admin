@@ -1,4 +1,7 @@
+import type { IUpdateMentorProps } from "~/domain/aggregates/mentor/Mentor";
+
 import { prisma } from "~/db.server";
+import { UserRepository } from "~/infra/repositories/MentorRepository";
 
 export interface UserData {
   firstName: string;
@@ -38,18 +41,24 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
       emergencyContactRelationship: true,
       hasApprovedToPublishPhotos: true,
       volunteerAgreementSignedOn: true,
+      chapterId: true,
+      email: true,
+      frequencyInDays: true,
+      additionalEmail: true,
+      preferredName: true,
     },
   });
 }
 
 export async function confirmUserDetailsAsync(
   mentorId: number,
-  data: UserData,
+  data: IUpdateMentorProps,
 ) {
-  return await prisma.mentor.update({
-    data,
-    where: {
-      id: mentorId,
-    },
-  });
+  const userRepository = new UserRepository();
+  const mentor = await userRepository.findOneByIdAsync(mentorId);
+
+  mentor.updateInfo(data);
+  mentor.signVolunteerAgreement();
+
+  await userRepository.saveAsync(mentor);
 }

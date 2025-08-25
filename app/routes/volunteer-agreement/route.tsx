@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import { CheckSquareSolid, NavArrowLeft } from "iconoir-react";
 
 import { getLoggedUserInfoAsync, version } from "~/services/.server";
-import { getEnvironment } from "~/services";
+import { getEnvironment, isStringNullOrEmpty } from "~/services";
 import {
   Checkbox,
   DateInput,
@@ -36,9 +36,10 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  const formData = await request.formData();
+  const loggedUser = await getLoggedUserInfoAsync(request);
+  const user = await getUserByAzureADIdAsync(loggedUser.oid);
 
-  const userId = formData.get("userId")?.toString();
+  const formData = await request.formData();
 
   const firstName = formData.get("firstName")?.toString();
   const lastName = formData.get("lastName")?.toString();
@@ -61,17 +62,28 @@ export async function action({ request }: Route.ActionArgs) {
   const hasApprovedToPublishPhotos = formData
     .get("hasApprovedToPublishPhotos")
     ?.toString();
+  const additionalEmail = formData.get("additionalEmail")?.toString();
+  const preferredName = formData.get("preferredName")?.toString();
 
   if (
-    userId === undefined ||
-    firstName === undefined ||
-    lastName === undefined ||
-    mobile === undefined
+    isStringNullOrEmpty(firstName) ||
+    isStringNullOrEmpty(lastName) ||
+    isStringNullOrEmpty(mobile) ||
+    isStringNullOrEmpty(addressStreet) ||
+    isStringNullOrEmpty(addressSuburb) ||
+    isStringNullOrEmpty(addressState) ||
+    isStringNullOrEmpty(addressPostcode) ||
+    isStringNullOrEmpty(dateOfBirth) ||
+    isStringNullOrEmpty(emergencyContactName) ||
+    isStringNullOrEmpty(emergencyContactNumber) ||
+    isStringNullOrEmpty(emergencyContactAddress) ||
+    isStringNullOrEmpty(emergencyContactRelationship) ||
+    isStringNullOrEmpty(hasApprovedToPublishPhotos)
   ) {
     throw new Error();
   }
 
-  await confirmUserDetailsAsync(Number(userId), {
+  await confirmUserDetailsAsync(user.id, {
     firstName,
     lastName,
     mobile,
@@ -85,7 +97,11 @@ export async function action({ request }: Route.ActionArgs) {
     emergencyContactAddress,
     emergencyContactRelationship,
     hasApprovedToPublishPhotos: hasApprovedToPublishPhotos === "on",
-    volunteerAgreementSignedOn: new Date(),
+    additionalEmail: additionalEmail ?? null,
+    chapterId: user.chapterId,
+    email: user.email,
+    preferredName: preferredName ?? null,
+    frequencyInDays: user.frequencyInDays,
   });
 
   return redirect("/mentor/home");
@@ -139,10 +155,22 @@ export default function Index({
                     />
 
                     <Input
+                      label="Preferred Name"
+                      name="preferredName"
+                      defaultValue={user.preferredName ?? ""}
+                    />
+
+                    <Input
                       label="Mobile"
                       name="mobile"
                       defaultValue={user.mobile}
                       required
+                    />
+
+                    <Input
+                      label="Additional Email"
+                      name="additionalEmail"
+                      defaultValue={user.additionalEmail ?? ""}
                     />
 
                     <Input
@@ -280,8 +308,6 @@ export default function Index({
                 ) : (
                   <Checkbox name="isOver18" required />
                 )}
-
-                <input type="hidden" name="userId" value={user.id} />
 
                 <div className="flex justify-end">
                   {hasAgreed ? (

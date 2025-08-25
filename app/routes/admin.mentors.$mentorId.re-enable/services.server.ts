@@ -1,4 +1,5 @@
 import { prisma } from "~/db.server";
+import { UserRepository } from "~/infra/repositories/MentorRepository";
 
 export async function getUserByIdAsync(id: number) {
   return await prisma.mentor.findUniqueOrThrow({
@@ -13,12 +14,10 @@ export async function getUserByIdAsync(id: number) {
 }
 
 export async function updateEndDateAsync(mentorId: number) {
-  return await prisma.mentor.update({
-    where: {
-      id: mentorId,
-    },
-    data: {
-      endDate: null,
-    },
-  });
+  const userRepository = new UserRepository();
+  const mentor = await userRepository.findOneByIdAsync(mentorId);
+
+  mentor.unarchive();
+
+  await userRepository.saveAsync(mentor);
 }
