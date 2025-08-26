@@ -2,7 +2,13 @@ import type { Environment } from "~/services";
 
 import { Link } from "react-router";
 import classNames from "classnames";
-import { ProfileCircle, Menu, LogOut, ClipboardCheck } from "iconoir-react";
+import {
+  ProfileCircle,
+  Menu,
+  LogOut,
+  ClipboardCheck,
+  UserCircle,
+} from "iconoir-react";
 
 import { Environments } from "~/services";
 
@@ -79,12 +85,20 @@ export function Navbar({
           className="menu dropdown-content rounded-box bg-base-100 w-64 p-2 shadow-sm"
         >
           {isCurrentViewMentor && (
-            <li className="text-info">
-              <Link className="font-semibold" to="/volunteer-agreement">
-                <ClipboardCheck className="mr-2 w-6" />
-                Volunteer Agreement
-              </Link>
-            </li>
+            <>
+              <li className="text-neutral">
+                <Link className="font-semibold" to="/mentor/profile">
+                  <UserCircle className="mr-2 w-6" />
+                  Profile
+                </Link>
+              </li>
+              <li className="text-info">
+                <Link className="font-semibold" to="/volunteer-agreement">
+                  <ClipboardCheck className="mr-2 w-6" />
+                  Volunteer Agreement
+                </Link>
+              </li>
+            </>
           )}
           <li className="text-error">
             <Link className="font-semibold" to="/logout">

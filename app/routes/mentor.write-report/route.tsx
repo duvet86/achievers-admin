@@ -4,7 +4,7 @@ import type { EditorState } from "lexical";
 import type { Route } from "./+types/route";
 import type { ActionType } from "./services.server";
 
-import { Form, redirect, useSubmit } from "react-router";
+import { Form, useSubmit } from "react-router";
 import { useRef } from "react";
 import dayjs from "dayjs";
 import classNames from "classnames";
@@ -45,6 +45,7 @@ import {
   getStudentsAsync,
   createSessionAsync,
   updateSessionAsync,
+  getCancelReasons,
 } from "./services.server";
 import { isSessionDateInTheFuture } from "./services.client";
 
@@ -98,15 +99,15 @@ export async function loader({ request }: Route.LoaderArgs) {
     selectedTermDate,
   );
 
-  if (session?.isCancelled) {
-    return redirect(`/mentor/sessions/${session.id}/student-absent`);
-  }
-
   const isNotMyReport =
     session !== null && session.mentorSession.mentorId !== user.id;
 
   const currentTerm = getCurrentTermForDate(terms, new Date());
   const distinctTermYears = getDistinctTermYears(terms);
+
+  const cancelReasons = session?.cancelledReasonId
+    ? await getCancelReasons()
+    : [];
 
   return {
     students,
@@ -135,6 +136,10 @@ export async function loader({ request }: Route.LoaderArgs) {
       (session.completedOn !== null ||
         session.signedOffOn !== null ||
         isNotMyReport),
+    cancelReasonsOptions: cancelReasons.map(({ id, reason }) => ({
+      label: reason,
+      value: id.toString(),
+    })),
   };
 }
 
@@ -183,6 +188,7 @@ export default function Index({
     students,
     isNotMyReport,
     isReadOnlyEditor,
+    cancelReasonsOptions,
   },
 }: Route.ComponentProps) {
   const submit = useSubmit();
@@ -221,6 +227,15 @@ export default function Index({
   };
 
   const saveReport = (actionType: ActionType) => () => {
+    if (
+      (actionType === "remove-complete" || actionType === "remove-cancelled") &&
+      !confirm(
+        "Unmarking the report as completed will allow you to edit it again. Are you sure?",
+      )
+    ) {
+      return;
+    }
+
     const formData = new FormData(formRef.current!);
 
     const studentId = formData.get("selectedStudentId")!.toString();
@@ -367,6 +382,18 @@ export default function Index({
               onChange={handleChange}
             />
           </div>
+
+          {session?.cancelledReasonId && (
+            <div>
+              <Select
+                name="cancelledReasonId"
+                options={cancelReasonsOptions}
+                defaultValue={session.cancelledReasonId.toString() ?? ""}
+                required
+                disabled
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex h-full flex-col gap-4">
@@ -418,7 +445,9 @@ export default function Index({
                   <button
                     className="btn btn-error btn-block sm:w-48"
                     type="button"
-                    onClick={saveReport("remove-complete")}
+                    onClick={saveReport(
+                      isCancelled ? "remove-cancelled" : "remove-complete",
+                    )}
                     disabled={isNotMyReport}
                   >
                     <WarningTriangle />

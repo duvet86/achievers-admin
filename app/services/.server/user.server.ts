@@ -7,6 +7,7 @@ import {
   uploadBlobAsync,
   USER_DATA_BLOB_CONTAINER_NAME,
 } from "./blob-storage.server";
+import { trackException } from "./appinsights-logging.server";
 
 export function getUserProfilePictureUrl(profilePicturePath: string): string {
   const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
@@ -60,7 +61,7 @@ export async function deleteUserProfilePicture(userId: number): Promise<void> {
   const resp = await deleteBlobAsync(containerClient, path);
 
   if (resp.errorCode !== undefined) {
-    throw new Error(resp.errorCode);
+    trackException(Error(resp.errorCode));
   }
 
   const userRepository = new UserRepository();

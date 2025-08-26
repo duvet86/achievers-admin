@@ -9,7 +9,11 @@ dayjs.extend(utc);
 dayjs.extend(isBetween);
 dayjs.extend(customParseFormat);
 
-export type ActionType = "completed" | "remove-complete" | "draft";
+export type ActionType =
+  | "completed"
+  | "remove-complete"
+  | "remove-cancelled"
+  | "draft";
 
 interface CreateSessionCommand {
   actionType: ActionType;
@@ -51,6 +55,9 @@ export async function geSessionAsync(
         studentId,
         attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
       },
+      student: {
+        endDate: null,
+      },
     },
     select: {
       id: true,
@@ -67,6 +74,9 @@ export async function geSessionAsync(
         chapterId,
         mentorId,
         attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+      },
+      mentor: {
+        endDate: null,
       },
     },
     select: {
@@ -93,6 +103,7 @@ export async function geSessionAsync(
       signedOffOn: true,
       reportFeedback: true,
       isCancelled: true,
+      cancelledReasonId: true,
       mentorSession: {
         select: {
           mentorId: true,
@@ -169,9 +180,10 @@ export async function createSessionAsync({
       break;
     case "draft":
     case "remove-complete":
-    default:
       completedOn = null;
       break;
+    default:
+      throw new Error("Invalid action type.");
   }
 
   let mentorSession = await prisma.mentorSession.findUnique({
@@ -253,25 +265,49 @@ export async function updateSessionAsync({
   sessionId,
   report,
 }: UpdateSessionCommand) {
-  let completedOn: Date | null;
   switch (actionType) {
     case "completed":
-      completedOn = new Date();
-      break;
+      return await prisma.session.update({
+        where: {
+          id: sessionId,
+        },
+        data: {
+          report,
+          completedOn: new Date(),
+        },
+      });
     case "draft":
     case "remove-complete":
     default:
-      completedOn = null;
-      break;
+      return await prisma.session.update({
+        where: {
+          id: sessionId,
+        },
+        data: {
+          report,
+          completedOn: null,
+        },
+      });
+    case "remove-cancelled":
+      return await prisma.session.update({
+        where: {
+          id: sessionId,
+        },
+        data: {
+          completedOn: null,
+          cancelledAt: null,
+          cancelledReasonId: null,
+          cancelledBecauseOf: null,
+        },
+      });
   }
+}
 
-  return await prisma.session.update({
-    where: {
-      id: sessionId,
-    },
-    data: {
-      report,
-      completedOn,
+export async function getCancelReasons() {
+  return await prisma.sessionCancelledReason.findMany({
+    select: {
+      id: true,
+      reason: true,
     },
   });
 }

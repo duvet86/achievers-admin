@@ -2,12 +2,13 @@ import type { Route } from "./+types/route";
 
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
+import { InfoCircle } from "iconoir-react";
+import classNames from "classnames";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
-import { Editor, SubTitle, Title } from "~/components";
+import { Editor, Select, SubTitle, Title } from "~/components";
 
-import { getSessionAsync } from "./services.server";
-import { redirect } from "react-router";
+import { getCancelReasons, getSessionAsync } from "./services.server";
 
 export const links: Route.LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
@@ -18,25 +19,38 @@ export async function loader({ params }: Route.LoaderArgs) {
 
   const session = await getSessionAsync(Number(params.sessionId));
 
-  if (session.isCancelled) {
-    return redirect(`/mentor/sessions/${session.id}/student-absent`);
-  }
+  const cancelReasons = session?.cancelledReasonId
+    ? await getCancelReasons()
+    : [];
 
   return {
     session,
+    cancelReasonsOptions: cancelReasons.map(({ id, reason }) => ({
+      label: reason,
+      value: id.toString(),
+    })),
   };
 }
 
 export default function Index({
-  loaderData: { session },
+  loaderData: { session, cancelReasonsOptions },
 }: Route.ComponentProps) {
   return (
     <>
-      <Title>
-        Report of &quot;
-        {dayjs(session.attendedOn).format("DD/MM/YYYY")}
-        &quot;
-      </Title>
+      <div className="flex w-full items-center justify-between gap-8">
+        <Title className={classNames({ "text-error": session.isCancelled })}>
+          Report of &quot;
+          {dayjs(session.attendedOn).format("DD/MM/YYYY")}
+          &quot;
+        </Title>
+
+        {session.isCancelled && (
+          <p className="text-error flex gap-4 font-medium">
+            <InfoCircle />
+            Session has been cancelled
+          </p>
+        )}
+      </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6">
         <h3 className="my-4 font-bold">Mentor:</h3>
@@ -46,11 +60,27 @@ export default function Index({
         <p>{session.studentSession.student.fullName}</p>
       </div>
 
+      {session?.cancelledReasonId && (
+        <div>
+          <Select
+            name="cancelledReasonId"
+            options={cancelReasonsOptions}
+            defaultValue={session.cancelledReasonId.toString() ?? ""}
+            required
+            disabled
+          />
+        </div>
+      )}
+
       <SubTitle>Report</SubTitle>
       <Editor isReadonly initialEditorStateType={session.report} />
 
-      <SubTitle>Feedback</SubTitle>
-      <Editor isReadonly initialEditorStateType={session.reportFeedback} />
+      {!session.isCancelled && (
+        <>
+          <SubTitle>Feedback</SubTitle>
+          <Editor isReadonly initialEditorStateType={session.reportFeedback} />
+        </>
+      )}
     </>
   );
 }

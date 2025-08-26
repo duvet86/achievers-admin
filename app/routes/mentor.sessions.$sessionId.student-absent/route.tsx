@@ -27,7 +27,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 
   const session = await getSessionAsync(Number(params.sessionId));
 
-  if (session.completedOn !== null) {
+  if (session.isCancelled) {
     return redirect(`/mentor/view-reports/${params.sessionId}`);
   }
 
@@ -106,9 +106,7 @@ export default function Index({
     <>
       <div className="flex flex-col gap-6 sm:flex-row">
         <Title className="text-error">
-          {session.isCancelled
-            ? `Student "${session.studentSession.student.fullName}" was absent for the "${dayjs(session.attendedOn).format("MMMM D, YYYY")}"`
-            : `Mark "${session.studentSession.student.fullName}" as absent for the "${dayjs(session.attendedOn).format("MMMM D, YYYY")}"`}
+          {`Mark "${session.studentSession.student.fullName}" as absent for the "${dayjs(session.attendedOn).format("MMMM D, YYYY")}"`}
         </Title>
 
         <Message key={Date.now()} successMessage={data?.successMessage} />
@@ -116,18 +114,15 @@ export default function Index({
 
       <Form onSubmit={onFormSubmit}>
         <fieldset className="fieldset p-4">
-          {!session.isCancelled && (
-            <p>
-              You are about to mark ABSENT &quot;
-              {session.studentSession.student.fullName}
-              &quot; for the session of{" "}
-              {dayjs(session.attendedOn).format("MMMM D, YYYY")}
-            </p>
-          )}
+          <p>
+            You are about to mark ABSENT &quot;
+            {session.studentSession.student.fullName}
+            &quot; for the session of{" "}
+            {dayjs(session.attendedOn).format("MMMM D, YYYY")}
+          </p>
 
           <Select
             name="cancelledReasonId"
-            disabled={session.isCancelled}
             options={cancelReasonsOptions}
             defaultValue={session.cancelledReasonId?.toString() ?? ""}
             required
@@ -135,20 +130,17 @@ export default function Index({
 
           <div className="min-h-56">
             <Editor
-              isReadonly={session.isCancelled}
               initialEditorStateType={session.report}
               onChange={(editorState) => (editorStateRef.current = editorState)}
             />
           </div>
 
-          {!session.isCancelled && (
-            <div className="mt-6 flex items-center justify-end">
-              <button className="btn btn-error w-44" type="submit">
-                <UserXmark />
-                Save
-              </button>
-            </div>
-          )}
+          <div className="mt-6 flex items-center justify-end">
+            <button className="btn btn-error w-44" type="submit">
+              <UserXmark />
+              Save
+            </button>
+          </div>
         </fieldset>
       </Form>
       <dialog id="errorModal" className="modal">

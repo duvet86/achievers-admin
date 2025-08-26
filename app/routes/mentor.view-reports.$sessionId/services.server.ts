@@ -14,6 +14,7 @@ export async function getSessionAsync(sessionId: number) {
       reportFeedback: true,
       signedOffOn: true,
       isCancelled: true,
+      cancelledReasonId: true,
       studentSession: {
         select: {
           student: {
@@ -34,6 +35,15 @@ export async function getSessionAsync(sessionId: number) {
           },
         },
       },
+    },
+  });
+}
+
+export async function getCancelReasons() {
+  return await prisma.sessionCancelledReason.findMany({
+    select: {
+      id: true,
+      reason: true,
     },
   });
 }
