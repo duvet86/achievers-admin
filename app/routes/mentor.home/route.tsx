@@ -11,7 +11,6 @@ import {
   InfoCircle,
   EditPencil,
   GraduationCap,
-  Minus,
 } from "iconoir-react";
 import { Form, useSubmit } from "react-router";
 import classNames from "classnames";
@@ -303,8 +302,6 @@ export default function Index({
                           <Check className="text-success h-4 w-4" />
                           {dayjs(completedOn).format("MMMM D, YYYY")}
                         </div>
-                      ) : daysDiff > 0 ? (
-                        <Minus className="text-neutral h-4 w-4" />
                       ) : (
                         <Xmark
                           data-testid="not-completedOn"
@@ -321,8 +318,6 @@ export default function Index({
                           <Check className="text-success h-4 w-4" />
                           {dayjs(signedOffOn).format("MMMM D, YYYY")}
                         </div>
-                      ) : isCancelled || daysDiff > 0 ? (
-                        <Minus className="text-neutral h-4 w-4" />
                       ) : (
                         <Xmark
                           data-testid="not-signedOffOn"
