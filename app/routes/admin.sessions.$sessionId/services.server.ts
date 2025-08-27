@@ -27,6 +27,7 @@ export async function getSessionByIdAsync(sessionId: number) {
       chapterId: true,
       attendedOn: true,
       completedOn: true,
+      isCancelled: true,
       cancelledAt: true,
       cancelledBecauseOf: true,
       cancelledReason: true,
