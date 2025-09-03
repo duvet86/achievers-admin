@@ -4,7 +4,6 @@ import type {
   EntryContext,
   HandleErrorFunction,
 } from "react-router";
-import type { CurentUserInfo } from "~/services/.server";
 
 import { PassThrough } from "node:stream";
 
@@ -13,24 +12,14 @@ import { createReadableStreamFromReadable } from "@react-router/node";
 import { isRouteErrorResponse, ServerRouter } from "react-router";
 import { isbot } from "isbot";
 
-import { getTokenInfoAsync, trackException } from "~/services/.server";
-
-import { parseJwt } from "./services";
+import { trackException } from "~/services/.server";
 
 export const streamTimeout = 5_000;
 
 export const handleError: HandleErrorFunction = (error, { request }) => {
   // React Router may abort some interrupted requests, don't log those
   if (!request.signal.aborted) {
-    getTokenInfoAsync(request)
-      .then((tokenInfo) => {
-        const loggedUser = parseJwt<CurentUserInfo>(tokenInfo.idToken);
-
-        logError(error, loggedUser);
-      })
-      .catch((e) => {
-        trackException(e as Error);
-      });
+    logError(error);
 
     // make sure to still log the error so you can see it
     console.error(error);
@@ -99,22 +88,14 @@ export default function handleRequest(
   });
 }
 
-function logError(error: unknown, loggedUser: CurentUserInfo) {
+function logError(error: unknown) {
   if (isRouteErrorResponse(error)) {
     trackException(new Error(`HTTP ${error.status}: ${error.statusText}`), {
-      userName: loggedUser.name,
-      azureId: loggedUser.oid,
       data: JSON.stringify(error.data),
     });
   } else if (error instanceof Error) {
-    trackException(error, {
-      userName: loggedUser.name,
-      azureId: loggedUser.oid,
-    });
+    trackException(error);
   } else {
-    trackException(new Error(JSON.stringify(error)), {
-      userName: loggedUser.name,
-      azureId: loggedUser.oid,
-    });
+    trackException(new Error(JSON.stringify(error)));
   }
 }
