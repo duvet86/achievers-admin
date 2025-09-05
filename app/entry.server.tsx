@@ -4,6 +4,7 @@ import type {
   HandleErrorFunction,
   unstable_RouterContextProvider,
 } from "react-router";
+import type { CurentUserInfo } from "./services/.server";
 
 import { PassThrough } from "node:stream";
 
@@ -12,7 +13,12 @@ import { createReadableStreamFromReadable } from "@react-router/node";
 import { isRouteErrorResponse, ServerRouter } from "react-router";
 import { isbot } from "isbot";
 
-import { cloneRequestContext, trackException } from "~/services/.server";
+import {
+  cloneRequestContext,
+  getTokenInfoAsync,
+  trackException,
+} from "./services/.server";
+import { parseJwt } from "./services";
 
 export const streamTimeout = 5_000;
 
@@ -98,24 +104,37 @@ async function logError(
   postRequest: Request | null,
   error: unknown,
 ) {
+  let loggedUser: CurentUserInfo | undefined;
+  try {
+    const tokenInfo = await getTokenInfoAsync(request);
+    loggedUser = parseJwt<CurentUserInfo>(tokenInfo.idToken);
+  } catch {
+    /* empty */
+  }
+
+  const body = postRequest ? await postRequest.text() : undefined;
+
   if (isRouteErrorResponse(error)) {
     trackException(new Error(`HTTP ${error.status}: ${error.statusText}`), {
       url: request.url,
       method: request.method,
       errorData: JSON.stringify(error.data),
-      body: postRequest ? await postRequest.text() : undefined,
+      body,
+      azureId: loggedUser?.oid,
     });
   } else if (error instanceof Error) {
     trackException(error, {
       url: request.url,
       method: request.method,
-      body: postRequest ? await postRequest.text() : undefined,
+      body,
+      azureId: loggedUser?.oid,
     });
   } else {
     trackException(new Error(JSON.stringify(error)), {
       url: request.url,
       method: request.method,
-      body: postRequest ? await postRequest.text() : undefined,
+      body,
+      azureId: loggedUser?.oid,
     });
   }
 }

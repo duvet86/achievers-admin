@@ -1,9 +1,12 @@
+import type { TokenInfo } from "../models";
+
 import { redirect } from "react-router";
 import invariant from "tiny-invariant";
 
 import { trackEvent, trackException } from "~/services/.server";
 
-import { getTokenInfoAsync } from "./session.server";
+import { getTokenInfoAsync, LOGIN_PATH } from "./session.server";
+import { getCurrentHost } from "../utils";
 
 const IS_DEV = process.env.NODE_ENV === "development";
 const IS_CI = !!process.env.CI;
@@ -128,7 +131,12 @@ export type AzureRolesLookUp = Record<string, AppRole>;
 export async function getAzureRolesAsync(request: Request): Promise<AppRole[]> {
   invariant(process.env.OBJECT_ID, "OBJECT_ID must be set");
 
-  const tokenInfo = await getTokenInfoAsync(request);
+  let tokenInfo: TokenInfo;
+  try {
+    tokenInfo = await getTokenInfoAsync(request);
+  } catch {
+    throw redirect(getCurrentHost(request) + LOGIN_PATH);
+  }
 
   if (IS_DEV && new Date(tokenInfo.expiresOn) < new Date()) {
     throw redirect("/logout");
@@ -168,7 +176,12 @@ export async function getAzureUsersAsync(
     return [];
   }
 
-  const tokenInfo = await getTokenInfoAsync(request);
+  let tokenInfo: TokenInfo;
+  try {
+    tokenInfo = await getTokenInfoAsync(request);
+  } catch {
+    throw redirect(getCurrentHost(request) + LOGIN_PATH);
+  }
 
   const filter =
     azureIds && azureIds.length > 0
@@ -194,7 +207,12 @@ export async function getAzureUserByAzureEmailAsync(
   request: Request,
   email: string,
 ): Promise<AzureUser> {
-  const tokenInfo = await getTokenInfoAsync(request);
+  let tokenInfo: TokenInfo;
+  try {
+    tokenInfo = await getTokenInfoAsync(request);
+  } catch {
+    throw redirect(getCurrentHost(request) + LOGIN_PATH);
+  }
 
   const response = await fetch(`${MICROSOFT_GRAPH_V1_BASEURL}/users/${email}`, {
     headers: getHeaders(tokenInfo.accessToken),
@@ -230,7 +248,12 @@ async function getAzureUserByIdAsync(
   request: Request,
   azureId: string,
 ): Promise<AzureUserWithRole> {
-  const tokenInfo = await getTokenInfoAsync(request);
+  let tokenInfo: TokenInfo;
+  try {
+    tokenInfo = await getTokenInfoAsync(request);
+  } catch {
+    throw redirect(getCurrentHost(request) + LOGIN_PATH);
+  }
 
   const response = await fetch(
     `${MICROSOFT_GRAPH_V1_BASEURL}/users/${azureId}?$expand=appRoleAssignments`,
@@ -284,7 +307,12 @@ export async function inviteUserToAzureAsync(
   request: Request,
   azureInviteRequest: AzureInviteRequest,
 ): Promise<AzureInviteResponse> {
-  const tokenInfo = await getTokenInfoAsync(request);
+  let tokenInfo: TokenInfo;
+  try {
+    tokenInfo = await getTokenInfoAsync(request);
+  } catch {
+    throw redirect(getCurrentHost(request) + LOGIN_PATH);
+  }
 
   const response = await fetch(`${MICROSOFT_GRAPH_V1_BASEURL}/invitations`, {
     method: "POST",
@@ -308,7 +336,12 @@ export async function assignRoleToUserAsync(
   azureId: string,
   azureAppRoleRequest: AzureAppRoleRequest,
 ): Promise<AzureAppRoleResponse> {
-  const tokenInfo = await getTokenInfoAsync(request);
+  let tokenInfo: TokenInfo;
+  try {
+    tokenInfo = await getTokenInfoAsync(request);
+  } catch {
+    throw redirect(getCurrentHost(request) + LOGIN_PATH);
+  }
 
   const response = await fetch(
     `${MICROSOFT_GRAPH_V1_BASEURL}/users/${azureId}/appRoleAssignments`,
@@ -334,7 +367,12 @@ export async function deleteAzureUserAsync(
   request: Request,
   id: string,
 ): Promise<void> {
-  const tokenInfo = await getTokenInfoAsync(request);
+  let tokenInfo: TokenInfo;
+  try {
+    tokenInfo = await getTokenInfoAsync(request);
+  } catch {
+    throw redirect(getCurrentHost(request) + LOGIN_PATH);
+  }
 
   const response = await fetch(`${MICROSOFT_GRAPH_V1_BASEURL}/users/${id}`, {
     method: "DELETE",
