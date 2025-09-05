@@ -1,8 +1,8 @@
 import type { RenderToPipeableStreamOptions } from "react-dom/server";
 import type {
-  AppLoadContext,
   EntryContext,
   HandleErrorFunction,
+  unstable_RouterContextProvider,
 } from "react-router";
 
 import { PassThrough } from "node:stream";
@@ -12,18 +12,23 @@ import { createReadableStreamFromReadable } from "@react-router/node";
 import { isRouteErrorResponse, ServerRouter } from "react-router";
 import { isbot } from "isbot";
 
-import { trackException } from "~/services/.server";
+import { cloneRequestContext, trackException } from "~/services/.server";
 
 export const streamTimeout = 5_000;
 
-export const handleError: HandleErrorFunction = (error, { request }) => {
+export const handleError: HandleErrorFunction = (
+  error,
+  { request, context },
+) => {
   // React Router may abort some interrupted requests, don't log those
-  if (!request.signal.aborted) {
-    logError(error);
-
-    // make sure to still log the error so you can see it
-    console.error(error);
+  if (request.signal.aborted) {
+    return;
   }
+
+  void logError(request, context.get(cloneRequestContext), error);
+
+  // make sure to still log the error so you can see it
+  console.error(error);
 };
 
 export default function handleRequest(
@@ -31,10 +36,10 @@ export default function handleRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   routerContext: EntryContext,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  loadContext: AppLoadContext,
+  // loadContext: AppLoadContext,
   // If you have middleware enabled:
-  // loadContext: unstable_RouterContextProvider
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  loadContext: unstable_RouterContextProvider,
 ) {
   return new Promise((resolve, reject) => {
     let shellRendered = false;
@@ -88,14 +93,29 @@ export default function handleRequest(
   });
 }
 
-function logError(error: unknown) {
+async function logError(
+  request: Request,
+  postRequest: Request | null,
+  error: unknown,
+) {
   if (isRouteErrorResponse(error)) {
     trackException(new Error(`HTTP ${error.status}: ${error.statusText}`), {
-      data: JSON.stringify(error.data),
+      url: request.url,
+      method: request.method,
+      errorData: JSON.stringify(error.data),
+      body: postRequest ? await postRequest.text() : undefined,
     });
   } else if (error instanceof Error) {
-    trackException(error);
+    trackException(error, {
+      url: request.url,
+      method: request.method,
+      body: postRequest ? await postRequest.text() : undefined,
+    });
   } else {
-    trackException(new Error(JSON.stringify(error)));
+    trackException(new Error(JSON.stringify(error)), {
+      url: request.url,
+      method: request.method,
+      body: postRequest ? await postRequest.text() : undefined,
+    });
   }
 }

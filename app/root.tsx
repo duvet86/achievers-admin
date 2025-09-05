@@ -1,4 +1,4 @@
-import type { LinksFunction } from "react-router";
+import type { LinksFunction, unstable_MiddlewareFunction } from "react-router";
 
 import {
   Links,
@@ -10,6 +10,8 @@ import {
   useNavigation,
   useRouteError,
 } from "react-router";
+
+import { middleware } from "~/services/.server";
 
 import tailwindStylesheetUrl from "~/styles/tailwind.css?url";
 
@@ -23,6 +25,8 @@ import {
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: tailwindStylesheetUrl }];
 };
+
+export const unstable_middleware: unstable_MiddlewareFunction[] = middleware;
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const transition = useNavigation();
