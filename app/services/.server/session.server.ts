@@ -32,7 +32,7 @@ export interface CurentUserInfo {
   email?: string;
 }
 
-export const LOGIN_PATH = "/.auth/login/aad?post_login_redirect_uri=/";
+const loginPath = "/.auth/login/aad?post_login_redirect_uri=/";
 
 export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
   if (process.env.CI ?? process.env.NODE_ENV !== "production") {
@@ -42,8 +42,6 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
     const user = session.get("user") as TokenInfo | undefined;
 
     if (user === undefined) {
-      await sessionStorage_dev.destroySession(session);
-
       try {
         return await authenticator_dev.authenticate("microsoft", request);
       } catch (error) {
@@ -80,16 +78,15 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
     }
 
     if (idToken === null || accessToken === null || expiresOn === null) {
-      throw new Error("Missing authentication tokens");
-      // throw redirect(getCurrentHost(request) + loginPath);
+      throw redirect(getCurrentHost(request) + loginPath);
     }
 
     if (refreshToken !== null && new Date() >= new Date(expiresOn)) {
       const resp = await fetch(getCurrentHost(request) + "/.auth/refresh");
       if (!resp.ok) {
         trackException(new Error(await resp.text()));
-        throw new Error("Failed to refresh authentication tokens");
-        // throw redirect(getCurrentHost(request) + loginPath);
+
+        throw redirect(getCurrentHost(request) + loginPath);
       }
     }
 
@@ -106,12 +103,7 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
 export async function getLoggedUserInfoAsync(
   request: Request,
 ): Promise<CurentUserInfo> {
-  let tokenInfo: TokenInfo;
-  try {
-    tokenInfo = await getTokenInfoAsync(request);
-  } catch {
-    throw redirect(getCurrentHost(request) + LOGIN_PATH);
-  }
+  const tokenInfo = await getTokenInfoAsync(request);
 
   const loggedUser = parseJwt<CurentUserInfo>(tokenInfo.idToken);
 
