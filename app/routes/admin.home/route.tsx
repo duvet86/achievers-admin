@@ -31,13 +31,16 @@ import {
   getTotalChaptersAsync,
   getTotalMentorsAsync,
   getTotalStudentsAsync,
+  getMentorSessionAttendances,
   sessionsStatsAsync,
+  getStudentSessionAttendances,
 } from "./services.server";
 
 import {
   MentorsOverTimeChart,
   StatCard,
   MissingReportsBarChart,
+  AttendancesBarChart,
 } from "./components";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -82,8 +85,10 @@ export async function loader({ request }: Route.LoaderArgs) {
     studentsWithoutMentor,
     chaptersCount,
     mentorsPerMonth,
-    reports,
+    reportsData,
     sessionStats,
+    mentorAttendances,
+    studentAttendances,
   ] = await Promise.all([
     getTotalMentorsAsync(
       Number(selectedTermYear),
@@ -121,34 +126,17 @@ export async function loader({ request }: Route.LoaderArgs) {
       selectedChapterIdNumber,
       selectedTerm,
     ),
-  ]);
-
-  const reportsData = {
-    labels: reports.map(({ attendedOn }) =>
-      dayjs(attendedOn).format("DD/MM/YYYY"),
+    getMentorSessionAttendances(
+      Number(selectedTermYear),
+      selectedChapterIdNumber,
+      selectedTerm,
     ),
-    datasets: [
-      {
-        label: "Has Report With Feedback",
-        data: reports.map(({ reportWithFeedbackCounter }) =>
-          Number(reportWithFeedbackCounter),
-        ),
-        backgroundColor: "rgba(75, 192, 192, 0.8)",
-      },
-      {
-        label: "Has Report No Feedback",
-        data: reports.map(({ reportNoFeedbackCounter }) =>
-          Number(reportNoFeedbackCounter),
-        ),
-        backgroundColor: "rgba(255, 205, 86, 0.8)",
-      },
-      {
-        label: "Missing Report",
-        data: reports.map(({ noReportCounter }) => Number(noReportCounter)),
-        backgroundColor: "rgba(255, 99, 132, 0.8)",
-      },
-    ],
-  };
+    getStudentSessionAttendances(
+      Number(selectedTermYear),
+      selectedChapterIdNumber,
+      selectedTerm,
+    ),
+  ]);
 
   return {
     selectedTermYear,
@@ -178,6 +166,8 @@ export async function loader({ request }: Route.LoaderArgs) {
       })),
     ),
     sessionStats,
+    mentorAttendances,
+    studentAttendances,
   };
 }
 
@@ -197,6 +187,8 @@ export default function Index({
     termYearsOptions,
     termsOptions,
     sessionStats,
+    mentorAttendances,
+    studentAttendances,
   },
 }: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
@@ -313,6 +305,18 @@ export default function Index({
             chapterId={selectedChapterId}
             data={reportsData}
           />
+        </div>
+
+        <SubTitle>Mentors Attendances</SubTitle>
+
+        <div className="h-96">
+          <AttendancesBarChart data={mentorAttendances} />
+        </div>
+
+        <SubTitle>Student Attendances</SubTitle>
+
+        <div className="h-96">
+          <AttendancesBarChart data={studentAttendances} />
         </div>
 
         <SubTitle>Mentors recruited</SubTitle>

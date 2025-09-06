@@ -233,7 +233,7 @@ export async function getReportsPerSession(
     {},
   );
 
-  return sessionDates.map<Report>((date) => {
+  const reportsMapped = sessionDates.map<Report>((date) => {
     if (reportsLookup[date]) {
       return reportsLookup[date];
     }
@@ -245,6 +245,33 @@ export async function getReportsPerSession(
       reportWithFeedbackCounter: "0",
     };
   });
+
+  return {
+    labels: reportsMapped.map(({ attendedOn }) =>
+      dayjs(attendedOn).format("DD/MM/YYYY"),
+    ),
+    datasets: [
+      {
+        label: "Has Report With Feedback",
+        data: reports.map(({ reportWithFeedbackCounter }) =>
+          Number(reportWithFeedbackCounter),
+        ),
+        backgroundColor: "rgba(75, 192, 192, 0.8)",
+      },
+      {
+        label: "Has Report No Feedback",
+        data: reports.map(({ reportNoFeedbackCounter }) =>
+          Number(reportNoFeedbackCounter),
+        ),
+        backgroundColor: "rgba(255, 205, 86, 0.8)",
+      },
+      {
+        label: "Missing Report",
+        data: reports.map(({ noReportCounter }) => Number(noReportCounter)),
+        backgroundColor: "rgba(255, 99, 132, 0.8)",
+      },
+    ],
+  };
 }
 
 export async function sessionsStatsAsync(
@@ -272,4 +299,166 @@ export async function sessionsStatsAsync(
       AND ${selectedTerm ? Prisma.sql`s.attendedOn BETWEEN ${selectedTerm.start.format("YYYY-MM-DD")} AND ${selectedTerm.end.format("YYYY-MM-DD")}` : Prisma.sql`s.attendedOn BETWEEN ${dayjs().year(year).startOf("year").format("YYYY-MM-DD")} AND ${dayjs().year(year).endOf("year").format("YYYY-MM-DD")}`}`;
 
   return sessionStats?.[0] ?? null;
+}
+
+export async function getMentorSessionAttendances(
+  year: number,
+  chapterId: number | null,
+  selectedTerm: Term | null,
+) {
+  const mentorSessionAttendances = await prisma.$queryRaw<
+    {
+      fullName: string;
+      sessionsAttended: number;
+      cancelledWITHReason: number;
+      cancelledWITHOUTReason: number;
+    }[]
+  >`
+    SELECT
+      m.fullName,
+	    SUM(IF(s.cancelledBecauseOf IS NULL, 1, 0)) sessionsAttended,
+	    SUM(IF(s.cancelledBecauseOf = 'MENTOR' AND s.cancelledReasonId = 1, 1, 0)) cancelledWITHReason,
+      SUM(IF(s.cancelledBecauseOf = 'MENTOR' AND s.cancelledReasonId = 2, 1, 0)) cancelledWITHOUTReason,
+      COUNT(*)
+    FROM MentorSession ms
+    INNER JOIN Session s ON s.mentorSessionId = ms.id
+    INNER JOIN Mentor m ON m.id = ms.mentorId
+    WHERE m.endDate IS NULL
+      AND ms.status = 'AVAILABLE'
+      AND ${chapterId ? Prisma.sql`ms.chapterId = ${chapterId}` : "1=1"}
+      AND ${selectedTerm ? Prisma.sql`s.attendedOn BETWEEN ${selectedTerm.start.format("YYYY-MM-DD")} AND ${selectedTerm.end.format("YYYY-MM-DD")}` : Prisma.sql`s.attendedOn BETWEEN ${dayjs().year(year).startOf("year").format("YYYY-MM-DD")} AND ${dayjs().year(year).endOf("year").format("YYYY-MM-DD")}`}
+      AND (s.cancelledBecauseOf = 'MENTOR' OR s.cancelledBecauseOf IS NULL)
+      GROUP BY ms.mentorId, m.fullName
+    HAVING COUNT(*) > 0`;
+
+  if (!mentorSessionAttendances) {
+    return {
+      labels: [],
+      datasets: [
+        {
+          label: "Session Attended",
+          data: [],
+          backgroundColor: "rgba(75, 192, 192, 0.8)",
+        },
+        {
+          label: "Session Cancelled WITH Reason",
+          data: [],
+          backgroundColor: "rgba(255, 205, 86, 0.8)",
+        },
+        {
+          label: "Session Cancelled WITHOUT Reason",
+          data: [],
+          backgroundColor: "rgba(255, 99, 132, 0.8)",
+        },
+      ],
+    };
+  }
+
+  return {
+    labels: mentorSessionAttendances.map(({ fullName }) => fullName),
+    datasets: [
+      {
+        label: "Session Attended",
+        data: mentorSessionAttendances.map(({ sessionsAttended }) =>
+          Number(sessionsAttended),
+        ),
+        backgroundColor: "rgba(75, 192, 192, 0.8)",
+      },
+      {
+        label: "Session Cancelled WITH Reason",
+        data: mentorSessionAttendances.map(({ cancelledWITHReason }) =>
+          Number(cancelledWITHReason),
+        ),
+        backgroundColor: "rgba(255, 205, 86, 0.8)",
+      },
+      {
+        label: "Session Cancelled WITHOUT Reason",
+        data: mentorSessionAttendances.map(({ cancelledWITHOUTReason }) =>
+          Number(cancelledWITHOUTReason),
+        ),
+        backgroundColor: "rgba(255, 99, 132, 0.8)",
+      },
+    ],
+  };
+}
+
+export async function getStudentSessionAttendances(
+  year: number,
+  chapterId: number | null,
+  selectedTerm: Term | null,
+) {
+  const studentAessionAttendances = await prisma.$queryRaw<
+    {
+      fullName: string;
+      sessionsAttended: number;
+      cancelledWITHReason: number;
+      cancelledWITHOUTReason: number;
+    }[]
+  >`
+    SELECT
+      m.fullName,
+	    SUM(IF(s.cancelledBecauseOf IS NULL, 1, 0)) sessionsAttended,
+	    SUM(IF(s.cancelledBecauseOf = 'STUDENT' AND s.cancelledReasonId = 1, 1, 0)) cancelledWITHReason,
+      SUM(IF(s.cancelledBecauseOf = 'STUDENT' AND s.cancelledReasonId = 2, 1, 0)) cancelledWITHOUTReason,
+      COUNT(*)
+    FROM StudentSession ms
+    INNER JOIN Session s ON s.studentSessionId = ms.id
+    INNER JOIN Student m ON m.id = ms.studentId
+    WHERE m.endDate IS NULL
+      AND ms.status = 'AVAILABLE'
+      AND ${chapterId ? Prisma.sql`ms.chapterId = ${chapterId}` : "1=1"}
+      AND ${selectedTerm ? Prisma.sql`s.attendedOn BETWEEN ${selectedTerm.start.format("YYYY-MM-DD")} AND ${selectedTerm.end.format("YYYY-MM-DD")}` : Prisma.sql`s.attendedOn BETWEEN ${dayjs().year(year).startOf("year").format("YYYY-MM-DD")} AND ${dayjs().year(year).endOf("year").format("YYYY-MM-DD")}`}
+      AND (s.cancelledBecauseOf = 'STUDENT' OR s.cancelledBecauseOf IS NULL)
+      GROUP BY ms.studentId, m.fullName
+    HAVING COUNT(*) > 0`;
+
+  if (!studentAessionAttendances) {
+    return {
+      labels: [],
+      datasets: [
+        {
+          label: "Session Attended",
+          data: [],
+          backgroundColor: "rgba(75, 192, 192, 0.8)",
+        },
+        {
+          label: "Session Cancelled WITH Reason",
+          data: [],
+          backgroundColor: "rgba(255, 205, 86, 0.8)",
+        },
+        {
+          label: "Session Cancelled WITHOUT Reason",
+          data: [],
+          backgroundColor: "rgba(255, 99, 132, 0.8)",
+        },
+      ],
+    };
+  }
+
+  return {
+    labels: studentAessionAttendances.map(({ fullName }) => fullName),
+    datasets: [
+      {
+        label: "Session Attended",
+        data: studentAessionAttendances.map(({ sessionsAttended }) =>
+          Number(sessionsAttended),
+        ),
+        backgroundColor: "rgba(75, 192, 192, 0.8)",
+      },
+      {
+        label: "Session Cancelled WITH Reason",
+        data: studentAessionAttendances.map(({ cancelledWITHReason }) =>
+          Number(cancelledWITHReason),
+        ),
+        backgroundColor: "rgba(255, 205, 86, 0.8)",
+      },
+      {
+        label: "Session Cancelled WITHOUT Reason",
+        data: studentAessionAttendances.map(({ cancelledWITHOUTReason }) =>
+          Number(cancelledWITHOUTReason),
+        ),
+        backgroundColor: "rgba(255, 99, 132, 0.8)",
+      },
+    ],
+  };
 }
