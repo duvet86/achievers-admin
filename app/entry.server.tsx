@@ -112,7 +112,9 @@ async function logError(
     /* empty */
   }
 
-  const body = postRequest ? await postRequest.text() : undefined;
+  const body = postRequest
+    ? JSON.stringify(Object.fromEntries(await postRequest.formData()))
+    : undefined;
 
   if (isRouteErrorResponse(error)) {
     trackException(new Error(`HTTP ${error.status}: ${error.statusText}`), {
@@ -120,21 +122,21 @@ async function logError(
       method: request.method,
       errorData: JSON.stringify(error.data),
       body,
-      azureId: loggedUser?.oid,
+      userAzureId: loggedUser?.oid,
     });
   } else if (error instanceof Error) {
     trackException(error, {
       url: request.url,
       method: request.method,
       body,
-      azureId: loggedUser?.oid,
+      userAzureId: loggedUser?.oid,
     });
   } else {
     trackException(new Error(JSON.stringify(error)), {
       url: request.url,
       method: request.method,
       body,
-      azureId: loggedUser?.oid,
+      userAzureId: loggedUser?.oid,
     });
   }
 }

@@ -1,6 +1,6 @@
 /*eslint-env node*/
 import { useAzureMonitor } from "@azure/monitor-opentelemetry";
-import { trace } from "@opentelemetry/api";
+import { trace, SpanStatusCode } from "@opentelemetry/api";
 
 export function initAppInsightsLogger() {
   if (process.env.NODE_ENV !== "production") {
@@ -19,24 +19,33 @@ export function trackEvent(message, properties) {
   const tracer = global.__appinsightsTracer__;
 
   if (tracer) {
-    const span = tracer.startSpan("trace");
-    span.addEvent(message);
-    if (properties) {
-      span.setAttributes(properties);
-    }
-    span.end();
+    tracer.startActiveSpan("exception", (span) => {
+      span.addEvent(message);
+      if (properties) {
+        span.setAttributes(properties);
+      }
+      span.end();
+    });
   } else {
     console.warn(message);
   }
 }
 
-export function trackException(error) {
+export function trackException(error, properties) {
   const tracer = global.__appinsightsTracer__;
 
   if (tracer) {
-    const span = tracer.startSpan("exception");
-    span.recordException(error);
-    span.end();
+    tracer.startActiveSpan("exception", (span) => {
+      span.recordException(error);
+      if (properties) {
+        span.setAttributes(properties);
+      }
+      span.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: error.message,
+      });
+      span.end();
+    });
   } else {
     console.error(error.message);
   }
