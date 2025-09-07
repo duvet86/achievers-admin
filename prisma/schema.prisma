@@ -300,6 +300,8 @@ model Student {
 
   eoiStudentProfile   EoiStudentProfile? @relation(fields: [eoiStudentProfileId], references: [id])
   eoiStudentProfileId Int?               @unique
+
+  studentGrade StudentGrade[]
 }
 
 model StudentGuardian {
@@ -585,4 +587,21 @@ model EoiStudentProfile {
   studentGuardian StudentGuardian[]
   studentTeacher  StudentTeacher[]
   Student         Student?
+}
+
+model StudentGrade {
+  id Int @id @default(autoincrement())
+
+  year     Int
+  semester String
+  subject  String
+  grade    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId Int
+
+  @@unique([year, semester, subject])
 }

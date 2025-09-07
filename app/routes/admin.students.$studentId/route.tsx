@@ -233,12 +233,20 @@ export default function Index({
 
         <div className="flex-1 overflow-y-auto pb-4 lg:pb-0">
           {student && (
-            <StateLink
-              className="btn btn-block mb-4 sm:w-52"
-              to={`/admin/students/${student.id}/school-reports`}
-            >
-              School reports <NavArrowRight />
-            </StateLink>
+            <div className="flex gap-4">
+              <StateLink
+                className="btn btn-block mb-4 sm:w-52"
+                to={`/admin/students/${student.id}/school-reports`}
+              >
+                School reports <NavArrowRight />
+              </StateLink>
+              <StateLink
+                className="btn btn-neutral btn-block mb-4 sm:w-52"
+                to={`/admin/students/${student.id}/grades-tracker`}
+              >
+                Grades tracker <NavArrowRight />
+              </StateLink>
+            </div>
           )}
 
           <GuardianList

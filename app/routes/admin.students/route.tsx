@@ -58,7 +58,6 @@ export async function loader({ request }: Route.LoaderArgs) {
   );
 
   const numberItems = 10;
-
   const totalPageCount = Math.ceil(count / numberItems);
 
   let currentPageNumber = 0;

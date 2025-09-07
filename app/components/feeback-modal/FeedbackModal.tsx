@@ -12,6 +12,12 @@ export function FeedbackModal() {
     errorMessage: string | null;
   }>();
 
+  const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    void submit(e.currentTarget);
+    e.currentTarget.reset();
+  };
+
   const isLoading = state !== "idle";
 
   return (
@@ -37,11 +43,7 @@ export function FeedbackModal() {
           method="POST"
           action="/report-error"
           encType="multipart/form-data"
-          onSubmit={(e) => {
-            e.preventDefault();
-            void submit(e.currentTarget);
-            e.currentTarget.reset();
-          }}
+          onSubmit={submitForm}
         >
           <fieldset disabled={isLoading} className="fieldset relative">
             {isLoading && (

@@ -253,6 +253,13 @@ export default [
               index: true,
             },
           ),
+          route(
+            ":studentId/grades-tracker",
+            "routes/admin.students.$studentId.grades-tracker/route.tsx",
+            {
+              index: true,
+            },
+          ),
           route("export", "routes/admin.students.export/route.tsx", {
             index: true,
           }),
