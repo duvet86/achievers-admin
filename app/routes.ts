@@ -254,6 +254,13 @@ export default [
             },
           ),
           route(
+            ":studentId/school-reports/:reportId",
+            "routes/admin.students.$studentId.school-reports.$reportId/route.tsx",
+            {
+              index: true,
+            },
+          ),
+          route(
             ":studentId/grades-tracker",
             "routes/admin.students.$studentId.grades-tracker/route.tsx",
             {

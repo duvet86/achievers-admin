@@ -2,8 +2,9 @@ import type { DateRange } from "~/services";
 
 import { prisma } from "~/db.server";
 
-export interface NewSchoolTerm extends DateRange {
+export interface SchoolTermCommand extends DateRange {
   year: number;
+  label: string;
 }
 
 export async function getExisitingYearsAsync() {
@@ -17,7 +18,7 @@ export async function getExisitingYearsAsync() {
   return years.map(({ year }) => year);
 }
 
-export async function addTermsAsync(terms: NewSchoolTerm[]) {
+export async function addTermsAsync(terms: SchoolTermCommand[]) {
   await prisma.schoolTerm.createMany({
     data: terms,
   });

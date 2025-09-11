@@ -85,9 +85,9 @@ export async function loader({ request }: Route.LoaderArgs) {
   }, {});
 
   return {
-    termsList: termsForYear.map(({ id, start, end, name }) => ({
+    termsList: termsForYear.map(({ id, start, end, label }) => ({
       value: id.toString(),
-      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")})${todayterm.name === name ? " (Current)" : ""}`,
+      label: `${label} (${start.format("D MMMM")} - ${end.format("D MMMM")})${todayterm.id === id ? " (Current)" : ""}`,
     })),
     selectedTermId: selectedTermId ?? currentTerm.id.toString(),
     myMentorSessionsLookup,

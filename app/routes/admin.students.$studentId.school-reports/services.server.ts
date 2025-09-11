@@ -6,71 +6,49 @@ import {
   getContainerClient,
   getSASQueryString,
   STUDENT_DATA_BLOB_CONTAINER_NAME,
-  uploadBlobAsync,
 } from "~/services/.server";
 
-export interface SchoolReportCommand {
-  schoolTermId: number;
-  filePath: string;
-}
-
-export async function getStudentByIdAsync(studentId: number) {
-  const student = await prisma.student.findUniqueOrThrow({
+export async function getStudentInfoAsync(studentId: number) {
+  return await prisma.student.findUniqueOrThrow({
     where: {
       id: studentId,
     },
     select: {
       id: true,
       fullName: true,
-      studentSchoolReport: {
+    },
+  });
+}
+
+export async function getSchoolReportsAsync(studentId: number) {
+  const schoolReports = await prisma.studentSchoolReport.findMany({
+    where: {
+      studentId,
+    },
+    select: {
+      id: true,
+      label: true,
+      filePath: true,
+      schoolTerm: {
         select: {
-          id: true,
-          filePath: true,
-          schoolTerm: {
-            select: {
-              year: true,
-              startDate: true,
-              endDate: true,
-            },
-          },
+          year: true,
+          label: true,
+          startDate: true,
+          endDate: true,
         },
       },
     },
   });
 
-  return {
-    ...student,
-    studentSchoolReport: undefined,
-    schoolReports: student.studentSchoolReport.map((report) => ({
-      id: report.id,
-      fileName: report.filePath.split("/")[1],
-      filePath: getFileUrl(report.filePath),
-      schoolTermLabel: `${report.schoolTerm.year} (${dayjs(report.schoolTerm.startDate).format("D MMMM")} - ${dayjs(report.schoolTerm.endDate).format("D MMMM")})`,
-    })),
-  };
-}
-
-export async function saveFileAsync(
-  studentId: string,
-  file: File,
-): Promise<string> {
-  if (file.size === 0) {
-    throw new Error("File too small");
-  }
-  const allowedFormats = ["application/pdf", "image/png", "image/jpeg"];
-
-  if (!allowedFormats.includes(file.type)) {
-    throw new Error("Invalid extension.");
-  }
-
-  const containerClient = getContainerClient(STUDENT_DATA_BLOB_CONTAINER_NAME);
-  await containerClient.createIfNotExists();
-
-  const path = `${studentId}/${file.name}`;
-
-  await uploadBlobAsync(containerClient, file, path);
-
-  return path;
+  return schoolReports.map(({ id, label, filePath, schoolTerm }) => {
+    return {
+      id,
+      label,
+      fileName: filePath.split("/")[1],
+      filePath: getFileUrl(filePath),
+      schoolTermLabel: `${schoolTerm.year} ${schoolTerm.label} (${dayjs(schoolTerm.startDate).format("D MMMM")} - ${dayjs(schoolTerm.endDate).format("D MMMM")})`,
+    };
+  });
 }
 
 export async function deleteFileAsync(
@@ -90,19 +68,6 @@ export async function deleteSchoolReportAsync(reportId: number) {
   return await prisma.studentSchoolReport.delete({
     where: {
       id: reportId,
-    },
-  });
-}
-
-export async function saveSchoolReportAsync(
-  studentId: number,
-  data: SchoolReportCommand,
-) {
-  return await prisma.studentSchoolReport.create({
-    data: {
-      schoolTermId: data.schoolTermId,
-      filePath: data.filePath,
-      studentId,
     },
   });
 }

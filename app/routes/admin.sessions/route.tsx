@@ -137,9 +137,9 @@ export async function loader({ request }: Route.LoaderArgs) {
         label: year.toString(),
       }),
     ),
-    termsOptions: termsForYear.map(({ id, name }) => ({
+    termsOptions: termsForYear.map(({ id, label }) => ({
       value: id.toString(),
-      label: name,
+      label,
     })),
     sessionDatesOptions: [
       {

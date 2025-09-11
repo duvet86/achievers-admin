@@ -1,5 +1,5 @@
 import type { Route } from "./+types/route";
-import type { NewSchoolTerm } from "./services.server";
+import type { SchoolTermCommand } from "./services.server";
 
 import { Form, redirect } from "react-router";
 import dayjs from "dayjs";
@@ -85,26 +85,30 @@ export async function action({ request }: Route.ActionArgs) {
     };
   }
 
-  const newTerms: NewSchoolTerm[] = [
+  const newTerms: SchoolTermCommand[] = [
     {
       year: commonYear,
       startDate: dayjs.utc(startDate1, "YYYY-MM-DD").toDate(),
       endDate: dayjs.utc(endDate1, "YYYY-MM-DD").toDate(),
+      label: "Term 1",
     },
     {
       year: commonYear,
       startDate: dayjs.utc(startDate2, "YYYY-MM-DD").toDate(),
       endDate: dayjs.utc(endDate2, "YYYY-MM-DD").toDate(),
+      label: "Term 2",
     },
     {
       year: commonYear,
       startDate: dayjs.utc(startDate3, "YYYY-MM-DD").toDate(),
       endDate: dayjs.utc(endDate3, "YYYY-MM-DD").toDate(),
+      label: "Term 3",
     },
     {
       year: commonYear,
       startDate: dayjs.utc(startDate4, "YYYY-MM-DD").toDate(),
       endDate: dayjs.utc(endDate4, "YYYY-MM-DD").toDate(),
+      label: "Term 4",
     },
   ];
 

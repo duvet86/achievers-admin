@@ -160,9 +160,9 @@ export async function loader({ request }: Route.LoaderArgs) {
       label: year.toString(),
     })),
     termsOptions: [{ value: "", label: "All terms" }].concat(
-      termsForYear.map(({ id, start, end, name }) => ({
+      termsForYear.map(({ id, start, end, label }) => ({
         value: id.toString(),
-        label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
+        label: `${label} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
       })),
     ),
     sessionStats,

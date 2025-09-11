@@ -375,6 +375,7 @@ model SchoolTerm {
   year      Int
   startDate DateTime
   endDate   DateTime
+  label     String
 
   studentSchoolReport StudentSchoolReport[]
 
@@ -501,6 +502,7 @@ model StudentSession {
 model StudentSchoolReport {
   id Int @id @default(autoincrement())
 
+  label    String
   filePath String
 
   createdAt DateTime @default(now())
@@ -602,6 +604,4 @@ model StudentGrade {
 
   student   Student @relation(fields: [studentId], references: [id])
   studentId Int
-
-  @@unique([year, semester, subject])
 }

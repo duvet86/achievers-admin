@@ -101,16 +101,16 @@ export async function loader({ request }: Route.LoaderArgs) {
     range,
     currentPageNumber,
     count,
-    currentTermLabel: `${currentTerm.name} (${currentTerm.start.format("D MMMM")} - ${currentTerm.end.format("D MMMM")})`,
+    currentTermLabel: `${currentTerm.label} (${currentTerm.start.format("D MMMM")} - ${currentTerm.end.format("D MMMM")})`,
     user,
     sessions,
     termYearsOptions: distinctTermYears.map((year) => ({
       value: year.toString(),
       label: year.toString(),
     })),
-    termsOptions: termsForYear.map(({ id, start, end, name }) => ({
+    termsOptions: termsForYear.map(({ id, start, end, label }) => ({
       value: id.toString(),
-      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
+      label: `${label} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
     })),
   };
 }

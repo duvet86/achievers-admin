@@ -47,7 +47,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   return new Response(buf, {
     status: 200,
     headers: new Headers({
-      "Content-Disposition": `attachment; filename="roster_students ${selectedTerm.name} ${selectedTermYear}.xlsx"`,
+      "Content-Disposition": `attachment; filename="roster_students ${selectedTerm.label} ${selectedTermYear}.xlsx"`,
       "Content-Type": "application/vnd.ms-excel",
     }),
   });

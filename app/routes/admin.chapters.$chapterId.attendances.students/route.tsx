@@ -70,9 +70,9 @@ export async function loader({ request, params }: Route.LoaderArgs) {
       value: year.toString(),
       label: year.toString(),
     })),
-    termsOptions: termsForYear.map(({ id, start, end, name }) => ({
+    termsOptions: termsForYear.map(({ id, start, end, label }) => ({
       value: id.toString(),
-      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
+      label: `${label} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
     })),
     sessionDates: sessionDates
       .map((attendedOn) => dayjs(attendedOn))

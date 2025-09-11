@@ -13,25 +13,21 @@ export const searchAcrossFields = (
 
 export async function getSchoolTermsAsync(year?: number): Promise<Term[]> {
   const terms = await prisma.schoolTerm.findMany({
-    select: { id: true, startDate: true, endDate: true, year: true },
+    select: {
+      id: true,
+      label: true,
+      startDate: true,
+      endDate: true,
+      year: true,
+    },
     where: { year },
-    orderBy: { startDate: "asc" },
+    orderBy: { startDate: "desc" },
   });
 
-  let index = 1;
-  let yearTemp = 0;
-
-  return terms.map<Term>(({ id, year, startDate, endDate }) => {
-    if (yearTemp !== year) {
-      index = 1;
-      yearTemp = year;
-    } else {
-      index++;
-    }
-
+  return terms.map<Term>(({ id, label, year, startDate, endDate }) => {
     return {
       id,
-      name: `Term ${index}`,
+      label,
       start: dayjs(startDate),
       end: dayjs(endDate),
       year,

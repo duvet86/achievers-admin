@@ -90,6 +90,8 @@ async function seed() {
     update: {},
   });
 
+  // 2024 --------------------------
+
   await prisma.schoolTerm.upsert({
     where: {
       startDate_endDate: {
@@ -101,8 +103,11 @@ async function seed() {
       year: 2024,
       startDate: dayjs("2024-01-31T00:00:00.000Z").toDate(),
       endDate: dayjs("2024-03-28T00:00:00.000Z").toDate(),
+      label: "Term 1",
     },
-    update: {},
+    update: {
+      label: "Term 1",
+    },
   });
 
   await prisma.schoolTerm.upsert({
@@ -116,8 +121,11 @@ async function seed() {
       year: 2024,
       startDate: dayjs("2024-04-15T00:00:00.000Z").toDate(),
       endDate: dayjs("2024-06-28T00:00:00.000Z").toDate(),
+      label: "Term 2",
     },
-    update: {},
+    update: {
+      label: "Term 2",
+    },
   });
 
   await prisma.schoolTerm.upsert({
@@ -131,8 +139,11 @@ async function seed() {
       year: 2024,
       startDate: dayjs("2024-07-15T00:00:00.000Z").toDate(),
       endDate: dayjs("2024-09-20T00:00:00.000Z").toDate(),
+      label: "Term 3",
     },
-    update: {},
+    update: {
+      label: "Term 3",
+    },
   });
 
   await prisma.schoolTerm.upsert({
@@ -146,11 +157,14 @@ async function seed() {
       year: 2024,
       startDate: dayjs("2024-10-07T00:00:00.000Z").toDate(),
       endDate: dayjs("2024-12-12T00:00:00.000Z").toDate(),
+      label: "Term 4",
     },
-    update: {},
+    update: {
+      label: "Term 4",
+    },
   });
 
-  // --------------------------
+  // 2025 --------------------------
 
   await prisma.schoolTerm.upsert({
     where: {
@@ -163,8 +177,11 @@ async function seed() {
       year: 2025,
       startDate: dayjs("2025-02-05T00:00:00.000Z").toDate(),
       endDate: dayjs("2025-04-11T00:00:00.000Z").toDate(),
+      label: "Term 1",
     },
-    update: {},
+    update: {
+      label: "Term 1",
+    },
   });
 
   await prisma.schoolTerm.upsert({
@@ -178,8 +195,11 @@ async function seed() {
       year: 2025,
       startDate: dayjs("2025-04-28T00:00:00.000Z").toDate(),
       endDate: dayjs("2025-07-04T00:00:00.000Z").toDate(),
+      label: "Term 2",
     },
-    update: {},
+    update: {
+      label: "Term 2",
+    },
   });
 
   await prisma.schoolTerm.upsert({
@@ -193,8 +213,11 @@ async function seed() {
       year: 2025,
       startDate: dayjs("2025-07-21T00:00:00.000Z").toDate(),
       endDate: dayjs("2025-09-26T00:00:00.000Z").toDate(),
+      label: "Term 3",
     },
-    update: {},
+    update: {
+      label: "Term 3",
+    },
   });
 
   await prisma.schoolTerm.upsert({
@@ -208,8 +231,85 @@ async function seed() {
       year: 2025,
       startDate: dayjs("2025-10-13T00:00:00.000Z").toDate(),
       endDate: dayjs("2025-12-18T00:00:00.000Z").toDate(),
+      label: "Term 4",
     },
-    update: {},
+    update: {
+      label: "Term 4",
+    },
+  });
+
+  // 2026 --------------------------
+
+  await prisma.schoolTerm.upsert({
+    where: {
+      startDate_endDate: {
+        startDate: dayjs("2026-02-05T00:00:00.000Z").toDate(),
+        endDate: dayjs("2026-04-02T00:00:00.000Z").toDate(),
+      },
+    },
+    create: {
+      year: 2026,
+      startDate: dayjs("2026-02-05T00:00:00.000Z").toDate(),
+      endDate: dayjs("2026-04-02T00:00:00.000Z").toDate(),
+      label: "Term 1",
+    },
+    update: {
+      label: "Term 1",
+    },
+  });
+
+  await prisma.schoolTerm.upsert({
+    where: {
+      startDate_endDate: {
+        startDate: dayjs("2026-04-20T00:00:00.000Z").toDate(),
+        endDate: dayjs("2026-07-03T00:00:00.000Z").toDate(),
+      },
+    },
+    create: {
+      year: 2026,
+      startDate: dayjs("2026-04-20T00:00:00.000Z").toDate(),
+      endDate: dayjs("2026-07-03T00:00:00.000Z").toDate(),
+      label: "Term 2",
+    },
+    update: {
+      label: "Term 2",
+    },
+  });
+
+  await prisma.schoolTerm.upsert({
+    where: {
+      startDate_endDate: {
+        startDate: dayjs("2026-07-20T00:00:00.000Z").toDate(),
+        endDate: dayjs("2026-09-25T00:00:00.000Z").toDate(),
+      },
+    },
+    create: {
+      year: 2026,
+      startDate: dayjs("2026-07-20T00:00:00.000Z").toDate(),
+      endDate: dayjs("2026-09-25T00:00:00.000Z").toDate(),
+      label: "Term 3",
+    },
+    update: {
+      label: "Term 3",
+    },
+  });
+
+  await prisma.schoolTerm.upsert({
+    where: {
+      startDate_endDate: {
+        startDate: dayjs("2026-10-12T00:00:00.000Z").toDate(),
+        endDate: dayjs("2026-12-17T00:00:00.000Z").toDate(),
+      },
+    },
+    create: {
+      year: 2026,
+      startDate: dayjs("2026-10-12T00:00:00.000Z").toDate(),
+      endDate: dayjs("2026-12-17T00:00:00.000Z").toDate(),
+      label: "Term 4",
+    },
+    update: {
+      label: "Term 4",
+    },
   });
 
   console.info(`Database has been seeded. 🌱`);

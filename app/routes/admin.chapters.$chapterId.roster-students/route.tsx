@@ -86,9 +86,9 @@ export async function loader({ params, request }: Route.LoaderArgs) {
       value: year.toString(),
       label: year.toString(),
     })),
-    termsOptions: termsForYear.map(({ id, start, end, name }) => ({
+    termsOptions: termsForYear.map(({ id, start, end, label }) => ({
       value: id.toString(),
-      label: `${name} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
+      label: `${label} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
     })),
     selectedTermYear,
     selectedTermId: selectedTerm.id.toString(),
