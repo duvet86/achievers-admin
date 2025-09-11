@@ -84,6 +84,25 @@ Run this command:
 npx playwright install --with-deps chromium
 ```
 
+## Impersonating users in DEV enviroment
+
+```SQL
+DROP PROCEDURE impersonate;
+
+delimiter //
+CREATE PROCEDURE impersonate (IN sourceUserId INT, IN destinationUserId INT)
+BEGIN
+	SELECT azureADId
+    INTO @sourceUserAzureADId
+    FROM achievers.Mentor
+    WHERE id = sourceUserId;
+
+	UPDATE achievers.Mentor SET azureADId = NULL WHERE id = sourceUserId;
+
+	UPDATE achievers.Mentor SET azureADId = @sourceUserAzureADId WHERE id = destinationUserId;
+END//
+```
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first

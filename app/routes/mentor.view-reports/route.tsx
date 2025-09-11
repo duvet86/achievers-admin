@@ -3,6 +3,7 @@ import type { Route } from "./+types/route";
 import { Form, useSearchParams, useSubmit } from "react-router";
 import { Eye } from "iconoir-react";
 import dayjs from "dayjs";
+import classNames from "classnames";
 
 import {
   getPaginationRange,
@@ -19,8 +20,7 @@ import {
   getStudentsAsync,
   getUserAsync,
 } from "./services.server";
-import FormInputs from "./components/FormInputs";
-import classNames from "classnames";
+import { FormInputs } from "./components";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);

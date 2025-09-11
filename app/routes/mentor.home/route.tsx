@@ -209,7 +209,7 @@ export default function Index({
 
         <div key={selectedTermId}>
           <label className="fieldset-label">Term</label>
-          <div className="join">
+          <div className="join w-full">
             <select
               className="select join-item basis-28"
               name="selectedTermYear"

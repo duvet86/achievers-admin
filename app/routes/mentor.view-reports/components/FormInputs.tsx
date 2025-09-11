@@ -16,7 +16,7 @@ interface Props {
   onMentorIdChange: (mentorId: string) => void;
 }
 
-export default function FormInputs({
+export function FormInputs({
   selectedStudentId,
   selectedMentorId,
   students,
