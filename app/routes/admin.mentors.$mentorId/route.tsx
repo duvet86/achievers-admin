@@ -1,5 +1,5 @@
 import type { AzureUserWebAppWithRole } from "~/services/.server";
-import type { IUpdateMentorProps } from "~/domain/aggregates/mentor/Mentor";
+import type { MentorCommand } from "~/domain/aggregates/mentor/Mentor";
 import type { Route } from "./+types/route";
 
 import invariant from "tiny-invariant";
@@ -140,7 +140,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     throw new Error("Missing required fields.");
   }
 
-  const dataCreate: IUpdateMentorProps = {
+  const dataCreate: MentorCommand = {
     firstName,
     lastName,
     mobile,

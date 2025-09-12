@@ -1,4 +1,4 @@
-import type { IUpdateMentorProps } from "~/domain/aggregates/mentor/Mentor";
+import type { MentorCommand } from "~/domain/aggregates/mentor/Mentor";
 
 import { prisma } from "~/db.server";
 import { UserRepository } from "~/infra/repositories/MentorRepository";
@@ -51,10 +51,10 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
 
 export async function confirmUserDetailsAsync(
   mentorId: number,
-  data: IUpdateMentorProps,
+  data: MentorCommand,
 ) {
   const userRepository = new UserRepository();
-  const mentor = await userRepository.findOneByIdAsync(mentorId);
+  const mentor = await userRepository.findByIdAsync(mentorId);
 
   mentor.updateInfo(data);
   mentor.signVolunteerAgreement();

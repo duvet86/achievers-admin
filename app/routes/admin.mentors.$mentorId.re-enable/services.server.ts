@@ -15,7 +15,7 @@ export async function getUserByIdAsync(id: number) {
 
 export async function updateEndDateAsync(mentorId: number) {
   const userRepository = new UserRepository();
-  const mentor = await userRepository.findOneByIdAsync(mentorId);
+  const mentor = await userRepository.findByIdAsync(mentorId);
 
   mentor.unarchive();
 

@@ -1,4 +1,4 @@
-import type { IUpdateMentorProps } from "~/domain/aggregates/mentor/Mentor";
+import type { MentorCommand } from "~/domain/aggregates/mentor/Mentor";
 
 import { prisma } from "~/db.server";
 import { UserRepository } from "~/infra/repositories/MentorRepository";
@@ -86,11 +86,11 @@ export async function getUserByIdAsync(id: number) {
 
 export async function updateMentorByIdAsync(
   mentorId: number,
-  dataUpdate: IUpdateMentorProps,
+  dataUpdate: MentorCommand,
   email?: string,
 ) {
   const userRepository = new UserRepository();
-  const mentor = await userRepository.findOneByIdAsync(mentorId);
+  const mentor = await userRepository.findByIdAsync(mentorId);
 
   mentor.updateInfo({
     ...dataUpdate,

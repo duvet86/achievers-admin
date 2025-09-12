@@ -17,7 +17,7 @@ export async function getUserByIdAsync(id: number) {
 
 export async function updateAzureIdAsync(mentorId: number, azureId: string) {
   const userRepository = new UserRepository();
-  const mentor = await userRepository.findOneByIdAsync(mentorId);
+  const mentor = await userRepository.findByIdAsync(mentorId);
 
   mentor.updateAzureId(azureId);
 
@@ -26,7 +26,7 @@ export async function updateAzureIdAsync(mentorId: number, azureId: string) {
 
 export async function removeUserAccessAsync(mentorId: number) {
   const userRepository = new UserRepository();
-  const mentor = await userRepository.findOneByIdAsync(mentorId);
+  const mentor = await userRepository.findByIdAsync(mentorId);
 
   mentor.updateAzureId(null);
 

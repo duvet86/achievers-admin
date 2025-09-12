@@ -1,12 +1,12 @@
 import type { IAggregateRoot } from "../../IAggregateRoot";
 
 import { Entity } from "../../Entity";
+import { Email } from "../../EmailValueObject";
 import { Address } from "./AddressValueObject";
 import { EmergencyContact } from "./EmergencyContactValueObject";
 import { NextOfKin } from "./NextOfKinValueObject";
-import { Email } from "ddd/domain/EmailValueObject";
 
-export interface IMentorProps {
+export interface MentorProps {
   azureADId: string | null;
   email: string;
   firstName: string;
@@ -39,7 +39,7 @@ export interface IMentorProps {
   chapterId: number;
 }
 
-export interface IUpdateMentorProps {
+export interface MentorCommand {
   firstName: string;
   lastName: string;
   preferredName: string | null;
@@ -199,7 +199,7 @@ export class Mentor extends Entity implements IAggregateRoot {
       createdAt,
       updatedAt,
       chapterId,
-    }: IMentorProps,
+    }: MentorProps,
     id?: number,
   ) {
     super(id);
@@ -245,7 +245,7 @@ export class Mentor extends Entity implements IAggregateRoot {
     });
   }
 
-  public static create(props: IMentorProps, id?: number) {
+  public static create(props: MentorProps, id?: number) {
     return new Mentor(props, id);
   }
 
@@ -267,7 +267,7 @@ export class Mentor extends Entity implements IAggregateRoot {
     emergencyContactNumber,
     emergencyContactAddress,
     emergencyContactRelationship,
-  }: IUpdateMentorProps) {
+  }: MentorCommand) {
     this._firstName = firstName;
     this._lastName = lastName;
     this._preferredName = preferredName;

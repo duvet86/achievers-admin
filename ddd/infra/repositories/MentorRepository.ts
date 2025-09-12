@@ -3,7 +3,7 @@ import { Mentor } from "ddd/domain/aggregates/mentor/Mentor";
 import { prisma } from "~/db.server";
 
 export class UserRepository implements IMentorRepository {
-  async findOneByIdAsync(id: number): Promise<Mentor> {
+  async findByIdAsync(id: number): Promise<Mentor> {
     const dbMentor = await prisma.mentor.findUniqueOrThrow({
       where: { id },
       select: {

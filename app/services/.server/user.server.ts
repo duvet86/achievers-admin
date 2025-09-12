@@ -43,7 +43,7 @@ export async function saveUserProfilePicture(
   }
 
   const userRepository = new UserRepository();
-  const mentor = await userRepository.findOneByIdAsync(userId);
+  const mentor = await userRepository.findByIdAsync(userId);
 
   mentor.updateProfilePath(path);
 
@@ -65,7 +65,7 @@ export async function deleteUserProfilePicture(userId: number): Promise<void> {
   }
 
   const userRepository = new UserRepository();
-  const mentor = await userRepository.findOneByIdAsync(userId);
+  const mentor = await userRepository.findByIdAsync(userId);
 
   mentor.updateProfilePath(null);
 
