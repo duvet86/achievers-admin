@@ -1,11 +1,11 @@
-import type { unstable_MiddlewareFunction } from "react-router";
+import type { MiddlewareFunction } from "react-router";
 
-import { unstable_createContext } from "react-router";
+import { createContext } from "react-router";
 
-export const cloneRequestContext = unstable_createContext<Request | null>(null);
+export const cloneRequestContext = createContext<Request | null>(null);
 
 // Server-side Middleware
-const cloneRequestMiddleware: unstable_MiddlewareFunction = async (
+export const cloneRequestMiddleware: MiddlewareFunction = async (
   { request, context },
   next,
 ) => {
@@ -15,7 +15,3 @@ const cloneRequestMiddleware: unstable_MiddlewareFunction = async (
 
   await next();
 };
-
-export const middleware: unstable_MiddlewareFunction[] = [
-  cloneRequestMiddleware,
-];

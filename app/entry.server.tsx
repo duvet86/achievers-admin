@@ -2,7 +2,7 @@ import type { RenderToPipeableStreamOptions } from "react-dom/server";
 import type {
   EntryContext,
   HandleErrorFunction,
-  unstable_RouterContextProvider,
+  RouterContextProvider,
 } from "react-router";
 import type { CurentUserInfo } from "./services/.server";
 
@@ -45,7 +45,7 @@ export default function handleRequest(
   // loadContext: AppLoadContext,
   // If you have middleware enabled:
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  loadContext: unstable_RouterContextProvider,
+  loadContext: RouterContextProvider,
 ) {
   return new Promise((resolve, reject) => {
     let shellRendered = false;

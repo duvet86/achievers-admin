@@ -6,16 +6,11 @@ import { Key, WarningCircle } from "iconoir-react";
 
 import { Message, Title } from "~/components";
 
-import { getUserByIdAsync, updateAzureIdAsync } from "./services.server";
 import {
-  APP_ID,
-  assignRoleToUserAsync,
-  getAzureUserByAzureEmailAsync,
-  inviteUserToAzureAsync,
-  MENTOR_ROLE_APP_ID,
-  trackEvent,
-} from "~/services/.server";
-import { getCurrentHost } from "~/services";
+  getUserByIdAsync,
+  inviteInternalAchieversUserAsync,
+  inviteUserAsync,
+} from "./services.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.mentorId, "mentorId not found");
@@ -32,47 +27,21 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const user = await getUserByIdAsync(Number(params.mentorId));
 
-  let azureUserId: string;
-
   try {
-    if (user.azureADId !== null) {
-      azureUserId = user.azureADId;
-    } else if (user.email.includes("achieversclubwa.org.au")) {
-      const azureUser = await getAzureUserByAzureEmailAsync(
+    if (user.email.includes("achieversclubwa.org.au")) {
+      await inviteInternalAchieversUserAsync(
         request,
         user.email,
+        Number(params.mentorId),
       );
 
-      azureUserId = azureUser.id;
-    } else {
-      const inviteUserToAzureResponse = await inviteUserToAzureAsync(request, {
-        invitedUserEmailAddress: user.email,
-        inviteRedirectUrl: getCurrentHost(request),
-        sendInvitationMessage: true,
-      });
-
-      trackEvent("GIVE_ACCESS_MENTOR", {
-        id: inviteUserToAzureResponse.id,
-      });
-
-      azureUserId = inviteUserToAzureResponse.invitedUser.id;
+      return {
+        successMessage: "User invited successfully",
+        error: null,
+      };
     }
 
-    const assignRoleResponse = await assignRoleToUserAsync(
-      request,
-      azureUserId,
-      {
-        principalId: azureUserId,
-        appRoleId: MENTOR_ROLE_APP_ID,
-        resourceId: APP_ID,
-      },
-    );
-
-    trackEvent("ASSIGN_ROLE_TO_MENTOR", {
-      id: assignRoleResponse.id,
-    });
-
-    await updateAzureIdAsync(Number(params.mentorId), azureUserId);
+    await inviteUserAsync(request, user.email, Number(params.mentorId));
 
     return {
       successMessage: "User invited successfully",

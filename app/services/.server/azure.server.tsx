@@ -193,16 +193,66 @@ export async function getAzureUsersAsync(
 export async function getAzureUserByAzureEmailAsync(
   request: Request,
   email: string,
-): Promise<AzureUser> {
+): Promise<AzureUserWebAppWithRole> {
   const tokenInfo = await getTokenInfoAsync(request);
 
-  const response = await fetch(`${MICROSOFT_GRAPH_V1_BASEURL}/users/${email}`, {
-    headers: getHeaders(tokenInfo.accessToken),
-  });
+  const [azureUsersResp, roles] = await Promise.all([
+    fetch(
+      `${MICROSOFT_GRAPH_V1_BASEURL}/users/${email}?$expand=appRoleAssignments`,
+      {
+        headers: getHeaders(tokenInfo.accessToken),
+      },
+    ),
+    getAzureRolesLookUpAsync(request),
+  ]);
 
-  const azureUser = (await response.json()) as AzureUser;
+  const user = (await azureUsersResp.json()) as AzureUser;
 
-  return azureUser;
+  return {
+    ...user,
+    email: user.mail ?? user.userPrincipalName,
+    appRoleAssignments: user.appRoleAssignments
+      .filter(({ appRoleId }) => roles[appRoleId])
+      .map((roleAssignment) => ({
+        ...roleAssignment,
+        roleName: roles[roleAssignment.appRoleId].displayName,
+      })),
+  };
+}
+
+export async function searchAzureUserByEmailAsync(
+  request: Request,
+  email: string,
+): Promise<AzureUserWebAppWithRole | null> {
+  const tokenInfo = await getTokenInfoAsync(request);
+
+  const [azureUsersResp, roles] = await Promise.all([
+    fetch(
+      `${MICROSOFT_GRAPH_V1_BASEURL}/users?$filter=mail eq '${email}'&$expand=appRoleAssignments`,
+      {
+        headers: getHeaders(tokenInfo.accessToken),
+      },
+    ),
+    getAzureRolesLookUpAsync(request),
+  ]);
+
+  const azureUsers = (await azureUsersResp.json()) as { value: AzureUser[] };
+
+  if (azureUsers.value.length > 0) {
+    const user = azureUsers.value[0];
+    return {
+      ...user,
+      email: user.mail ?? user.userPrincipalName,
+      appRoleAssignments: user.appRoleAssignments
+        .filter(({ appRoleId }) => roles[appRoleId])
+        .map((roleAssignment) => ({
+          ...roleAssignment,
+          roleName: roles[roleAssignment.appRoleId].displayName,
+        })),
+    };
+  }
+
+  return null;
 }
 
 export async function getAzureUsersWithRolesAsync(
