@@ -18,9 +18,9 @@ export const SUBJECTS: Record<string, string> = {
   ENG: "English",
   MATH: "Maths",
   SCIENCE: "Science",
-  CHEM: "Chemistry",
-  BIO: "Biology",
-  PHYS: "Physics",
+  HUM: "Humanities and Social Sciences",
+  DIGT: "Digital Technologies",
+  FLANG: "Foreign Languages",
 };
 
 export const GRADES = ["A", "B", "C", "D", "E"];
