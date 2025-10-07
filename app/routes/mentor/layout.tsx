@@ -26,6 +26,9 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
+  if (user === null) {
+    throw redirect("/403");
+  }
   if (user.volunteerAgreementSignedOn === null) {
     throw redirect("/volunteer-agreement");
   }

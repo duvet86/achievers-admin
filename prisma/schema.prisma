@@ -106,7 +106,7 @@ model EoIProfile {
   id Int @id @default(autoincrement())
 
   bestTimeToContact   String  @db.Text
-  occupation          String
+  occupation          String  @db.Text
   volunteerExperience String  @db.Text
   role                String
   mentoringLevel      String
