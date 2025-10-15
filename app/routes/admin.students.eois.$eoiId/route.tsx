@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/purity */
 import type { Prisma } from "~/prisma/client";
 import type { XOR } from "~/models";
 import type { Route } from "./+types/route";

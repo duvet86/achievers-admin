@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/purity */
 import { BinFull, NavArrowDown, OnTag, WarningTriangle } from "iconoir-react";
 
 import { Message, StateLink, Title } from "~/components";

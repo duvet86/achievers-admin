@@ -278,7 +278,7 @@ export default function Index({
                     />
                   )}
 
-                  {myMentorSession && myMentorSession.session.length === 0 && (
+                  {myMentorSession?.session.length === 0 && (
                     <div className="flex flex-col items-center justify-between gap-2 border-b pb-2 sm:flex-row">
                       {myMentorSession.status === "AVAILABLE" ? (
                         <>

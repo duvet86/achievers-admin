@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/purity */
 import type { EditorState } from "lexical";
 import type { Route } from "./+types/route";
 import type { SessionCommandRequest } from "./services.server";

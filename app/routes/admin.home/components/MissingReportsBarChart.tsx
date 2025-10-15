@@ -28,32 +28,6 @@ ChartJS.register(
   ChartDataLabels,
 );
 
-const options: ChartOptions<"bar"> = {
-  responsive: true,
-  maintainAspectRatio: false,
-  animation: {
-    duration: 0,
-  },
-  scales: {
-    x: {
-      stacked: true,
-    },
-    y: {
-      stacked: true,
-    },
-  },
-  plugins: {
-    datalabels: {
-      formatter: (value: number) => (value !== 0 ? value : ""),
-    },
-  },
-  onHover: function (event, elements) {
-    (event.native!.target as HTMLElement).style.cursor = elements[0]
-      ? "pointer"
-      : "default";
-  },
-};
-
 interface Props {
   chapterId: string;
   data: ChartData<"bar", (number | [number, number] | null)[], unknown>;
@@ -63,18 +37,43 @@ export function MissingReportsBarChart({ chapterId, data }: Props) {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  options.onClick = (event, elements, chart) => {
-    if (elements.length > 0 && chart.data.labels) {
-      const sessionDate = chart.data.labels[elements[0].index] as string;
+  const options: ChartOptions<"bar"> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: {
+      duration: 0,
+    },
+    scales: {
+      x: {
+        stacked: true,
+      },
+      y: {
+        stacked: true,
+      },
+    },
+    plugins: {
+      datalabels: {
+        formatter: (value: number) => (value !== 0 ? value : ""),
+      },
+    },
+    onHover: function (event, elements) {
+      (event.native!.target as HTMLElement).style.cursor = elements[0]
+        ? "pointer"
+        : "default";
+    },
+    onClick: (event, elements, chart) => {
+      if (elements.length > 0 && chart.data.labels) {
+        const sessionDate = chart.data.labels[elements[0].index] as string;
 
-      const selectedTermDate = dayjs.utc(sessionDate, "DD/MM/YYYY").toDate();
+        const selectedTermDate = dayjs.utc(sessionDate, "DD/MM/YYYY").toDate();
 
-      searchParams.set("chapterId", chapterId);
-      searchParams.set("selectedTermDate", selectedTermDate.toISOString());
-      searchParams.set("filterReports", "OUTSTANDING");
+        searchParams.set("chapterId", chapterId);
+        searchParams.set("selectedTermDate", selectedTermDate.toISOString());
+        searchParams.set("filterReports", "OUTSTANDING");
 
-      void navigate(`/admin/sessions?${searchParams.toString()}`);
-    }
+        void navigate(`/admin/sessions?${searchParams.toString()}`);
+      }
+    },
   };
 
   return <Bar options={options} data={data} />;

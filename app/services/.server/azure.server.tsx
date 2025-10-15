@@ -164,7 +164,7 @@ export async function getAzureUsersAsync(
   request: Request,
   azureIds?: string[],
 ): Promise<AzureUserWebApp[]> {
-  if (azureIds && azureIds.length === 0) {
+  if (azureIds?.length === 0) {
     return [];
   }
 
@@ -291,17 +291,11 @@ async function getAzureUserByIdAsync(
 
   const azureUser: unknown = await response.json();
 
-  if (
-    (azureUser as AzureError).error &&
-    (azureUser as AzureError).error.code === "Authorization_RequestDenied"
-  ) {
+  if ((azureUser as AzureError).error?.code === "Authorization_RequestDenied") {
     trackException(new Error((azureUser as AzureError).error.message));
     throw redirect("/403");
   }
-  if (
-    (azureUser as AzureError).error &&
-    (azureUser as AzureError).error.code === "Request_ResourceNotFound"
-  ) {
+  if ((azureUser as AzureError).error?.code === "Request_ResourceNotFound") {
     trackException(new Error((azureUser as AzureError).error.message));
     throw redirect("/404");
   }

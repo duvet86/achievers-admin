@@ -604,5 +604,5 @@ model StudentGrade {
   student   Student @relation(fields: [studentId], references: [id])
   studentId Int
 
-  @@unique([year, semester, subject])
+  @@unique([year, semester, subject, studentId])
 }

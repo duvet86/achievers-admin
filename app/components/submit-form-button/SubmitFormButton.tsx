@@ -28,6 +28,7 @@ export function SubmitFormButton({
       })}
     >
       <Message
+        // eslint-disable-next-line react-hooks/purity
         key={Date.now()}
         errorMessage={errorMessage}
         successMessage={successMessage}

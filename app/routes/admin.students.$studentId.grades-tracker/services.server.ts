@@ -92,13 +92,15 @@ export async function getStudentGradesAsync(
 }
 
 export async function getGradeAsync(
+  studentId: number,
   year: number,
   semester: string,
   subject: string,
 ) {
   return await prisma.studentGrade.findUnique({
     where: {
-      year_semester_subject: {
+      year_semester_subject_studentId: {
+        studentId,
         year,
         semester,
         subject,

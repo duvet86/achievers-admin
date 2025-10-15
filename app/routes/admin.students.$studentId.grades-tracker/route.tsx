@@ -143,6 +143,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   }
 
   const gradeEntry = await getGradeAsync(
+    Number(params.studentId),
     Number(year),
     semester.toString(),
     subject.toString(),
