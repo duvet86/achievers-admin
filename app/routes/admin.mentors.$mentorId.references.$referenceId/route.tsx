@@ -3,7 +3,6 @@ import type { ReferenceUpdateCommand } from "./services.server";
 
 import { Form } from "react-router";
 import invariant from "tiny-invariant";
-import dayjs from "dayjs";
 
 import {
   Title,
@@ -29,11 +28,8 @@ export async function loader({ params }: Route.LoaderArgs) {
     Number(params.referenceId),
   );
 
-  const minEndDate = dayjs().add(1, "year").format("YYYY-MM-DD");
-
   return {
     user,
-    minEndDate,
   };
 }
 
@@ -123,7 +119,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 }
 
 export default function Index({
-  loaderData: { user, minEndDate },
+  loaderData: { user },
   actionData,
 }: Route.ComponentProps) {
   const reference = user.references[0];
@@ -272,7 +268,6 @@ export default function Index({
             defaultValue={reference.calledOndate ?? ""}
             label="On (date)"
             name="calledOndate"
-            min={minEndDate}
             required
           />
 

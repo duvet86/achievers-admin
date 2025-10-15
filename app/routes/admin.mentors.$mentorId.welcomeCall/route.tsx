@@ -3,7 +3,6 @@ import type { UpdateWelcomeCallCommand } from "./services.server";
 
 import { Form } from "react-router";
 import invariant from "tiny-invariant";
-import dayjs from "dayjs";
 
 import {
   DateInput,
@@ -20,11 +19,8 @@ export async function loader({ params }: Route.LoaderArgs) {
 
   const user = await getUserByIdAsync(Number(params.mentorId));
 
-  const minEndDate = dayjs().add(1, "year").format("YYYY-MM-DD");
-
   return {
     user,
-    minEndDate,
   };
 }
 
@@ -59,7 +55,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 }
 
 export default function Index({
-  loaderData: { user, minEndDate },
+  loaderData: { user },
   actionData,
 }: Route.ComponentProps) {
   return (
@@ -84,7 +80,6 @@ export default function Index({
             defaultValue={user.welcomeCall?.calledOnDate ?? ""}
             label="Called on date"
             name="calledOnDate"
-            min={minEndDate}
             required
           />
 
