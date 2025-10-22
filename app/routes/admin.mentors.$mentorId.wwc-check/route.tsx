@@ -118,7 +118,7 @@ export default function Index({
               </h3>
 
               <a href={user.filePath} target="_blank" rel="noreferrer" download>
-                Downlod WWC check
+                Download WWC check
               </a>
             </article>
           )}

@@ -110,7 +110,7 @@ export default function Index({
               </h3>
 
               <a href={user.filePath} target="_blank" rel="noreferrer" download>
-                Downlod police check
+                Download police check
               </a>
             </article>
           )}

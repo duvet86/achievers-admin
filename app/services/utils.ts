@@ -324,7 +324,14 @@ export function getSelectedTerm(
 
     const selectedTerm = termsForYear.find(({ start, end }) =>
       dayjs(selectedTermDate).isBetween(start, end),
-    )!;
+    );
+
+    if (selectedTerm === undefined) {
+      return {
+        selectedTerm: termsForYear[0],
+        termsForYear,
+      };
+    }
 
     return {
       selectedTerm,
