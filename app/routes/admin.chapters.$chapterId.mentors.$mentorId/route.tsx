@@ -44,7 +44,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   const formData = await request.formData();
 
   const studentId = formData.get("studentId")?.toString();
-  if (studentId === undefined) {
+  if (studentId === undefined || studentId === "") {
     return {
       studentId: "",
       message: "You need to select a student first",

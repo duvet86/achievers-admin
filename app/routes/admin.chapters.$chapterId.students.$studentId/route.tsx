@@ -43,7 +43,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   const formData = await request.formData();
 
   const mentorId = formData.get("mentorId")?.toString();
-  if (mentorId === undefined) {
+  if (mentorId === undefined || mentorId === "") {
     return {
       mentorId: "",
       message: "You need to select a mentor first",
