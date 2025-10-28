@@ -122,23 +122,23 @@ export async function action({ request, params }: Route.ActionArgs) {
   const newTerms: SchoolTerm[] = [
     {
       id: Number(termId1),
-      startDate: dayjs.utc(startDate1, "YYYY-MM-DD").toDate(),
-      endDate: dayjs.utc(endDate1, "YYYY-MM-DD").toDate(),
+      startDate: startDate1.toDate(),
+      endDate: endDate1.toDate(),
     },
     {
       id: Number(termId2),
-      startDate: dayjs.utc(startDate2, "YYYY-MM-DD").toDate(),
-      endDate: dayjs.utc(endDate2, "YYYY-MM-DD").toDate(),
+      startDate: startDate2.toDate(),
+      endDate: endDate2.toDate(),
     },
     {
       id: Number(termId3),
-      startDate: dayjs.utc(startDate3, "YYYY-MM-DD").toDate(),
-      endDate: dayjs.utc(endDate3, "YYYY-MM-DD").toDate(),
+      startDate: startDate3.toDate(),
+      endDate: endDate3.toDate(),
     },
     {
       id: Number(termId4),
-      startDate: dayjs(startDate4, "YYYY-MM-DD").toDate(),
-      endDate: dayjs(endDate4, "YYYY-MM-DD").toDate(),
+      startDate: startDate4.toDate(),
+      endDate: endDate4.toDate(),
     },
   ];
 

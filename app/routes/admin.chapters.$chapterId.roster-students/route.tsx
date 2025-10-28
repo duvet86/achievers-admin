@@ -1,7 +1,7 @@
 import type { Prisma } from "~/prisma/client";
 import type { Route } from "./+types/route";
 
-import { Form, useNavigate, useSearchParams, useSubmit } from "react-router";
+import { Form, useSearchParams, useSubmit } from "react-router";
 import { useRef } from "react";
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
@@ -125,7 +125,6 @@ export default function Index({
     sortFullNameSubmit,
   },
 }: Route.ComponentProps) {
-  const navigate = useNavigate();
   const submit = useSubmit();
   const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -141,12 +140,6 @@ export default function Index({
     formData.set("search", "");
 
     void submit(formData);
-  };
-
-  const onStudentClick = (fullName: string) => () => {
-    searchParams.set("search", fullName);
-
-    void navigate({ search: searchParams.toString() });
   };
 
   return (
@@ -261,16 +254,19 @@ export default function Index({
                 }}
               >
                 <th className="z-10 border-r border-b border-gray-300 border-b-white bg-gray-200">
-                  <button
-                    type="button"
-                    onClick={onStudentClick(fullName)}
+                  <div
                     className={classNames(
                       "link text-start",
                       selectedTermDate ? "sm:w-36" : "sm:w-48",
                     )}
                   >
-                    {fullName}
-                  </button>
+                    <StateLink
+                      to={`/admin/students/${studentId}`}
+                      className="link text-start"
+                    >
+                      {fullName}
+                    </StateLink>
+                  </div>
                 </th>
                 {datesInTerm.map((attendedOn, index) => {
                   const studentSession = sessionLookup?.[attendedOn];
