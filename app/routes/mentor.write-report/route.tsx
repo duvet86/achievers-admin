@@ -14,6 +14,7 @@ import {
   Calendar,
   InfoCircle,
   UserXmark,
+  FloppyDiskArrowIn,
 } from "iconoir-react";
 
 import {
@@ -46,6 +47,7 @@ import {
   createSessionAsync,
   updateSessionAsync,
   getCancelReasons,
+  isSessionDateInTheFutureServer,
 } from "./services.server";
 import { isSessionDateInTheFuture } from "./services.client";
 
@@ -140,6 +142,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       label: reason,
       value: id.toString(),
     })),
+    isSessionInTheFuture: isSessionDateInTheFutureServer(selectedTermDate),
   };
 }
 
@@ -189,6 +192,7 @@ export default function Index({
     isNotMyReport,
     isReadOnlyEditor,
     cancelReasonsOptions,
+    isSessionInTheFuture,
   },
 }: Route.ComponentProps) {
   const submit = useSubmit();
@@ -251,7 +255,7 @@ export default function Index({
       return;
     }
 
-    if (isSessionDateInTheFuture(attendedOn)) {
+    if (isSessionDateInTheFuture(attendedOn) && actionType === "completed") {
       (
         document.getElementById("errorModalContent") as HTMLDivElement
       ).textContent = "Session date is in the future.";
@@ -417,28 +421,45 @@ export default function Index({
               {!completedOn && <EditorQuestions />}
             </div>
 
-            <div className="flex justify-around gap-8 pb-2 sm:justify-end">
-              {!completedOn && session !== null && !session.isCancelled && (
-                <StateLink
-                  to={`/mentor/sessions/${session.id}/student-absent`}
-                  className="btn btn-error hidden h-9 gap-2 sm:flex sm:w-56"
-                >
-                  <UserXmark className="hidden h-4 w-4 lg:block" />
-                  {isCancelled ? "View reason" : "Mark student absent"}
-                </StateLink>
-              )}
+            <div className="flex w-full justify-between gap-8 pb-2">
+              {!completedOn &&
+                session !== null &&
+                !session.isCancelled &&
+                !isSessionInTheFuture && (
+                  <StateLink
+                    to={`/mentor/sessions/${session.id}/student-absent`}
+                    className="btn btn-error hidden h-9 gap-2 sm:flex sm:w-56"
+                  >
+                    <UserXmark className="hidden h-4 w-4 lg:block" />
+                    {isCancelled ? "View reason" : "Mark student absent"}
+                  </StateLink>
+                )}
+
+              <div className="flex-1"></div>
 
               <div className="flex flex-wrap gap-8">
                 {!completedOn && (
-                  <button
-                    className="btn btn-success btn-block sm:w-56"
-                    type="button"
-                    onClick={saveReport("completed")}
-                    disabled={isNotMyReport}
-                  >
-                    <CheckCircle />
-                    Submit for review
-                  </button>
+                  <>
+                    <button
+                      className="btn btn-primary btn-block sm:w-36"
+                      type="button"
+                      onClick={saveReport("draft")}
+                      disabled={isNotMyReport}
+                    >
+                      <FloppyDiskArrowIn />
+                      Save
+                    </button>
+
+                    <button
+                      className="btn btn-success btn-block sm:w-56"
+                      type="button"
+                      onClick={saveReport("completed")}
+                      disabled={isNotMyReport}
+                    >
+                      <CheckCircle />
+                      Save & Submit
+                    </button>
+                  </>
                 )}
 
                 {canUnmarkReport && (

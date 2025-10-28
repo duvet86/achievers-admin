@@ -311,3 +311,10 @@ export async function getCancelReasons() {
     },
   });
 }
+
+export function isSessionDateInTheFutureServer(attendedOn: string) {
+  return (
+    dayjs.utc(attendedOn) >
+    dayjs.utc(dayjs().format("YYYY-MM-DD") + "T00:00:00.000Z")
+  );
+}
