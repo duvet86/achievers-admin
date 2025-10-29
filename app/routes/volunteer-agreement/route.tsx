@@ -120,8 +120,8 @@ export default function Index({
     <div className="drawer-content flex flex-col">
       <Navbar userName={userName} environment={environment} version={version} />
 
-      <main className="content-main mt-16 flex flex-col overflow-y-auto p-4">
-        <div className="hero bg-base-200 h-full rounded-md">
+      <main className="content-main mt-16 overflow-y-auto p-4">
+        <div className="hero bg-base-200 rounded-md">
           <div className="hero-content flex-col">
             <div className="text-center">
               <h1 className="text-4xl font-bold uppercase">

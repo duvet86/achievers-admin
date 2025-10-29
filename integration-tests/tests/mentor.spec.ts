@@ -45,9 +45,9 @@ test.describe("Mentor Home Page", () => {
     await mentorWriteReportPage.expect.toHaveQuestions();
 
     await mentorWriteReportPage.typeReport();
-    // await mentorWriteReportPage.saveAsDraft();
+    await mentorWriteReportPage.saveAsDraft();
 
-    // await mentorWriteReportPage.expect.toHaveReport();
+    await mentorWriteReportPage.expect.toHaveReport();
 
     await mentorWriteReportPage.completeReport();
 

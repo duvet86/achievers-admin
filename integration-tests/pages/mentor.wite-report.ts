@@ -17,7 +17,7 @@ export class MentorWriteReportPage {
   editorEditable: Locator;
   editorReadonly: Locator;
 
-  // saveAsDraftButton: Locator;
+  saveAsDraftButton: Locator;
   completeButton: Locator;
 
   reportText: Locator;
@@ -47,11 +47,11 @@ export class MentorWriteReportPage {
       .locator('.lexical div[contenteditable="false"]')
       .first();
 
-    // this.saveAsDraftButton = page.getByRole("button", {
-    //   name: "Save",
-    // });
+    this.saveAsDraftButton = page.getByRole("button", {
+      name: "Save",
+    });
     this.completeButton = page.getByRole("button", {
-      name: "Submit for review",
+      name: "Save & Submit",
     });
 
     this.reportText = page
@@ -68,9 +68,9 @@ export class MentorWriteReportPage {
     await this.page.keyboard.type("Hello this is my first report!");
   }
 
-  // async saveAsDraft() {
-  //   await this.saveAsDraftButton.click();
-  // }
+  async saveAsDraft() {
+    await this.saveAsDraftButton.click();
+  }
 
   async completeReport() {
     await this.completeButton.click();
