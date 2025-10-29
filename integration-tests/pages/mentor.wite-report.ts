@@ -49,6 +49,7 @@ export class MentorWriteReportPage {
 
     this.saveAsDraftButton = page.getByRole("button", {
       name: "Save",
+      exact: true,
     });
     this.completeButton = page.getByRole("button", {
       name: "Save & Submit",
