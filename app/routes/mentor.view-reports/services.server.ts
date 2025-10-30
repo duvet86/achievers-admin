@@ -1,3 +1,5 @@
+import type { Term } from "~/models";
+
 import { prisma } from "~/db.server";
 
 export async function getUserAsync(azureADId: string) {
@@ -196,23 +198,25 @@ export async function getMentorsAsync(
 
 export async function getCountAsync(
   chapterId: number,
+  selectedTerm: Term,
   studentId: number | undefined,
   mentorId: number | undefined,
 ) {
   return await prisma.session.count({
-    where: whereClause(chapterId, studentId, mentorId),
+    where: whereClause(chapterId, selectedTerm, studentId, mentorId),
   });
 }
 
 export async function getSessionsAsync(
   chapterId: number,
+  selectedTerm: Term,
   studentId: number | undefined,
   mentorId: number | undefined,
   pageNumber: number,
   numberItems = 10,
 ) {
   const sessions = await prisma.session.findMany({
-    where: whereClause(chapterId, studentId, mentorId),
+    where: whereClause(chapterId, selectedTerm, studentId, mentorId),
     select: {
       id: true,
       attendedOn: true,
@@ -252,6 +256,7 @@ export async function getSessionsAsync(
 
 function whereClause(
   chapterId: number,
+  term: Term,
   studentId: number | undefined,
   mentorId: number | undefined,
 ) {
@@ -265,6 +270,10 @@ function whereClause(
     },
     studentSession: {
       studentId,
+    },
+    attendedOn: {
+      gte: term.start.toDate(),
+      lte: term.end.toDate(),
     },
   };
 }

@@ -10,11 +10,8 @@ export function trackEvent(message: string, properties?: Attributes) {
   const tracer = global.__appinsightsTracer__;
 
   if (tracer) {
-    tracer.startActiveSpan("exception", (span) => {
+    tracer.startActiveSpan("exception", { attributes: properties }, (span) => {
       span.addEvent(message);
-      if (properties) {
-        span.setAttributes(properties);
-      }
       span.end();
     });
   } else {
@@ -26,11 +23,8 @@ export function trackException(error: Error, properties?: Attributes) {
   const tracer = global.__appinsightsTracer__;
 
   if (tracer) {
-    tracer.startActiveSpan("exception", (span) => {
+    tracer.startActiveSpan("exception", { attributes: properties }, (span) => {
       span.recordException(error);
-      if (properties) {
-        span.setAttributes(properties);
-      }
       span.setStatus({
         code: SpanStatusCode.ERROR,
         message: error.message,

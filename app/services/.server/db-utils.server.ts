@@ -21,7 +21,7 @@ export async function getSchoolTermsAsync(year?: number): Promise<Term[]> {
       year: true,
     },
     where: { year },
-    orderBy: { startDate: "desc" },
+    orderBy: { startDate: "asc" },
   });
 
   return terms.map<Term>(({ id, label, year, startDate, endDate }) => {

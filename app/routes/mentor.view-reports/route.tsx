@@ -6,11 +6,17 @@ import dayjs from "dayjs";
 import classNames from "classnames";
 
 import {
+  getCurrentTermForDate,
+  getDistinctTermYears,
   getPaginationRange,
+  getSelectedTerm,
   URLSafeSearch,
   useStateNavigation,
 } from "~/services";
-import { getLoggedUserInfoAsync } from "~/services/.server";
+import {
+  getLoggedUserInfoAsync,
+  getSchoolTermsAsync,
+} from "~/services/.server";
 import { Pagination, StateLink, Title } from "~/components";
 
 import {
@@ -26,6 +32,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   const loggedUser = await getLoggedUserInfoAsync(request);
   const { id: loggedUserId, chapterId } = await getUserAsync(loggedUser.oid);
 
+  const CURRENT_YEAR = dayjs().year();
+
   const url = new URLSafeSearch(request.url);
 
   const previousPageSubmit = url.safeSearchParams.getNullOrEmpty("previousBtn");
@@ -34,6 +42,22 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const studentId = url.safeSearchParams.getNullOrEmpty("studentId");
   const mentorId = url.safeSearchParams.getNullOrEmpty("mentorId");
+
+  const selectedTermYear =
+    url.safeSearchParams.getNullOrEmpty("selectedTermYear") ??
+    CURRENT_YEAR.toString();
+  const selectedTermId = url.safeSearchParams.getNullOrEmpty("selectedTermId");
+
+  const terms = await getSchoolTermsAsync();
+
+  const distinctTermYears = getDistinctTermYears(terms);
+
+  const { selectedTerm, termsForYear } = getSelectedTerm(
+    terms,
+    selectedTermYear,
+    selectedTermId,
+    null,
+  );
 
   const selectedMentorId = mentorId ? Number(mentorId) : undefined;
   const selectedStudentId = studentId ? Number(studentId) : undefined;
@@ -56,6 +80,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const count = await getCountAsync(
     chapterId,
+    selectedTerm,
     selectedStudentId,
     selectedMentorId,
   );
@@ -73,6 +98,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const sessions = await getSessionsAsync(
     chapterId,
+    selectedTerm,
     selectedStudentId,
     selectedMentorId,
     currentPageNumber,
@@ -80,30 +106,52 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const range = getPaginationRange(totalPageCount, currentPageNumber + 1);
 
+  const currentTerm = getCurrentTermForDate(terms, new Date());
+
   return {
     loggedUserId,
-    students,
-    mentors,
+    studentOptions: students.map(({ id, fullName }) => ({
+      label: fullName,
+      value: id.toString(),
+    })),
+    mentorOptions: mentors.map(({ id, fullName }) => ({
+      label: fullName,
+      value: id.toString(),
+    })),
     selectedStudentId: selectedStudentId?.toString(),
     selectedMentorId: selectedMentorId?.toString(),
     range,
     currentPageNumber,
     count,
     sessions,
+    selectedTermYear,
+    selectedTermId: selectedTerm.id.toString(),
+    termYearsOptions: distinctTermYears.map((year) => ({
+      value: year.toString(),
+      label: year.toString(),
+    })),
+    termsOptions: termsForYear.map(({ id, start, end, label }) => ({
+      value: id.toString(),
+      label: `${label} (${start.format("D MMMM")} - ${end.format("D MMMM")}) ${currentTerm.id === id ? " (Current)" : ""}`,
+    })),
   };
 }
 
 export default function Index({
   loaderData: {
     loggedUserId,
-    students,
-    mentors,
+    studentOptions,
+    mentorOptions,
     selectedStudentId,
     selectedMentorId,
     sessions,
     count,
     currentPageNumber,
     range,
+    selectedTermYear,
+    selectedTermId,
+    termYearsOptions,
+    termsOptions,
   },
 }: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
@@ -131,6 +179,19 @@ export default function Index({
     void submit(Object.fromEntries(searchParams));
   };
 
+  const onTermYearChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    searchParams.set("selectedTermYear", event.target.value);
+    searchParams.set("selectedTermId", "");
+
+    void submit(Object.fromEntries(searchParams));
+  };
+
+  const onTermIdChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    searchParams.set("selectedTermId", event.target.value);
+
+    void submit(Object.fromEntries(searchParams));
+  };
+
   const navigateToReport = (id: number) => () => {
     void stateNavigate(`/mentor/view-reports/${id}`);
   };
@@ -146,11 +207,17 @@ export default function Index({
           key={`${selectedStudentId}-${selectedMentorId}`}
           selectedStudentId={selectedStudentId}
           selectedMentorId={selectedMentorId}
-          students={students}
-          mentors={mentors}
+          studentOptions={studentOptions}
+          mentorOptions={mentorOptions}
           onFormClear={onFormClear}
           onStudentChange={onStudentChange}
           onMentorIdChange={onMentorIdChange}
+          selectedTermYear={selectedTermYear}
+          selectedTermId={selectedTermId}
+          termYearsOptions={termYearsOptions}
+          termsOptions={termsOptions}
+          onTermYearChange={onTermYearChange}
+          onTermIdChange={onTermIdChange}
         />
 
         <div className="overflow-auto bg-white">

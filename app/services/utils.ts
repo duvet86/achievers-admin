@@ -367,6 +367,17 @@ export function getSelectedTerm(
     };
   }
 
+  if (selectedTermYear !== CURRENT_YEAR) {
+    const termsForYear = terms.filter(
+      ({ year }) => year.toString() === selectedTermYear,
+    );
+
+    return {
+      selectedTerm: termsForYear[0],
+      termsForYear,
+    };
+  }
+
   return {
     selectedTerm: getCurrentTermForDate(terms, new Date()),
     termsForYear: terms.filter(({ year }) => year.toString() === CURRENT_YEAR),

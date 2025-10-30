@@ -39,6 +39,46 @@ export async function getSessionAsync(sessionId: number) {
   });
 }
 
+export async function getNextSession(studentId: number, attendedOn: Date) {
+  return await prisma.session.findFirst({
+    where: {
+      hasReport: true,
+      attendedOn: {
+        gt: attendedOn,
+      },
+      studentSession: {
+        studentId,
+      },
+    },
+    select: {
+      id: true,
+    },
+    orderBy: {
+      attendedOn: "asc",
+    },
+  });
+}
+
+export async function getPreviousSession(studentId: number, attendedOn: Date) {
+  return await prisma.session.findFirst({
+    where: {
+      hasReport: true,
+      attendedOn: {
+        lt: attendedOn,
+      },
+      studentSession: {
+        studentId,
+      },
+    },
+    select: {
+      id: true,
+    },
+    orderBy: {
+      attendedOn: "desc",
+    },
+  });
+}
+
 export async function getCancelReasons() {
   return await prisma.sessionCancelledReason.findMany({
     select: {
