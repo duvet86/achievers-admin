@@ -1,8 +1,8 @@
 import type { RenderToPipeableStreamOptions } from "react-dom/server";
 import type {
   EntryContext,
-  HandleErrorFunction,
   RouterContextProvider,
+  unstable_ServerInstrumentation,
 } from "react-router";
 import type { CurentUserInfo } from "./services/.server";
 
@@ -20,22 +20,35 @@ import {
 } from "./services/.server";
 import { parseJwt } from "./services";
 
+interface ReadonlyRequest {
+  method: string;
+  url: string;
+  headers: Pick<Headers, "get">;
+}
+
 export const streamTimeout = 5_000;
 
-export const handleError: HandleErrorFunction = (
-  error,
-  { request, context },
-) => {
-  // React Router may abort some interrupted requests, don't log those
-  if (request.signal.aborted) {
-    return;
-  }
+export const unstable_instrumentations: unstable_ServerInstrumentation[] = [
+  {
+    route(route) {
+      route.instrument({
+        async loader(callLoader, { request }) {
+          const { status, error } = await callLoader();
 
-  void logError(request, context.get(cloneRequestContext), error);
-
-  // make sure to still log the error so you can see it
-  console.error(error);
-};
+          if (status === "error" && error) {
+            void logError(request, null, error);
+          }
+        },
+        async action(callAction, { request, context }) {
+          const { status, error } = await callAction();
+          if (status === "error" && error) {
+            void logError(request, context.get(cloneRequestContext), error);
+          }
+        },
+      });
+    },
+  },
+];
 
 export default function handleRequest(
   request: Request,
@@ -100,13 +113,13 @@ export default function handleRequest(
 }
 
 async function logError(
-  request: Request,
+  request: ReadonlyRequest,
   postRequest: Request | null,
   error: unknown,
 ) {
   let loggedUser: CurentUserInfo | undefined;
   try {
-    const tokenInfo = await getTokenInfoAsync(request);
+    const tokenInfo = await getTokenInfoAsync(request as Request);
     loggedUser = parseJwt<CurentUserInfo>(tokenInfo.idToken);
   } catch {
     /* empty */
