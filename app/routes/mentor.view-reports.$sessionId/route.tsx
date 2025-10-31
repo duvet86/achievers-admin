@@ -14,6 +14,7 @@ import {
   getNextSession,
   getPreviousSession,
   getSessionAsync,
+  getSignedOffBy,
 } from "./services.server";
 
 export const links: Route.LinksFunction = () => {
@@ -25,7 +26,10 @@ export async function loader({ params }: Route.LoaderArgs) {
 
   const session = await getSessionAsync(Number(params.sessionId));
 
-  const [nextSession, prevSession] = await Promise.all([
+  const [signedOffBy, nextSession, prevSession] = await Promise.all([
+    session.signedOffByAzureId
+      ? getSignedOffBy(session.signedOffByAzureId)
+      : Promise.resolve(null),
     getNextSession(session.studentSession.student.id, session.attendedOn),
     getPreviousSession(session.studentSession.student.id, session.attendedOn),
   ]);
@@ -40,13 +44,20 @@ export async function loader({ params }: Route.LoaderArgs) {
       label: reason,
       value: id.toString(),
     })),
+    signedOffBy,
     nextSession,
     prevSession,
   };
 }
 
 export default function Index({
-  loaderData: { session, cancelReasonsOptions, nextSession, prevSession },
+  loaderData: {
+    session,
+    cancelReasonsOptions,
+    signedOffBy,
+    nextSession,
+    prevSession,
+  },
 }: Route.ComponentProps) {
   return (
     <>
@@ -58,7 +69,7 @@ export default function Index({
         </Title>
 
         {session.isCancelled && (
-          <p className="text-error flex gap-4 font-medium">
+          <p className="text-error flex gap-2 font-medium">
             <InfoCircle />
             Session has been cancelled
           </p>
@@ -71,7 +82,7 @@ export default function Index({
         {prevSession ? (
           <StateLink
             to={`/mentor/view-reports/${prevSession.id}`}
-            className="btn btn-square w-28"
+            className="btn btn-square btn-secondary w-28"
           >
             <NavArrowLeft /> Previous
           </StateLink>
@@ -79,10 +90,7 @@ export default function Index({
           <div className="w-28"></div>
         )}
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6">
-          <h3 className="my-4 font-bold">Mentor:</h3>
-          <p>{session.mentorSession.mentor.fullName}</p>
-
+        <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
           <h3 className="my-4 font-bold">Student:</h3>
           <p>{session.studentSession.student.fullName}</p>
         </div>
@@ -90,7 +98,7 @@ export default function Index({
         {nextSession ? (
           <StateLink
             to={`/mentor/view-reports/${nextSession.id}`}
-            className="btn btn-square w-28"
+            className="btn btn-square btn-secondary w-28"
           >
             Next <NavArrowRight />
           </StateLink>
@@ -100,12 +108,11 @@ export default function Index({
       </div>
 
       {session?.cancelledReasonId && (
-        <div>
+        <div className="mt-2 rounded border">
           <Select
             name="cancelledReasonId"
             options={cancelReasonsOptions}
             defaultValue={session.cancelledReasonId.toString() ?? ""}
-            required
             disabled
           />
         </div>
@@ -113,11 +120,19 @@ export default function Index({
 
       <Fragment key={session.id}>
         <SubTitle>Report</SubTitle>
+        <div className="mb-1 flex gap-2">
+          <h3 className="font-bold">Written by mentor:</h3>
+          <p>{session.mentorSession.mentor.fullName}</p>
+        </div>
         <Editor isReadonly initialEditorStateType={session.report} />
 
-        {!session.isCancelled && (
+        {!session.isCancelled && signedOffBy && (
           <>
             <SubTitle>Feedback</SubTitle>
+            <div className="mb-1 flex gap-2">
+              <h3 className="font-bold">Signed by:</h3>
+              <p>{signedOffBy.fullName}</p>
+            </div>
             <Editor
               isReadonly
               initialEditorStateType={session.reportFeedback}

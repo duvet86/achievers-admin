@@ -13,6 +13,7 @@ export async function getSessionAsync(sessionId: number) {
       report: true,
       reportFeedback: true,
       signedOffOn: true,
+      signedOffByAzureId: true,
       isCancelled: true,
       cancelledReasonId: true,
       studentSession: {
@@ -35,6 +36,18 @@ export async function getSessionAsync(sessionId: number) {
           },
         },
       },
+    },
+  });
+}
+
+export async function getSignedOffBy(azureADId: string) {
+  return await prisma.mentor.findUniqueOrThrow({
+    where: {
+      azureADId,
+    },
+    select: {
+      id: true,
+      fullName: true,
     },
   });
 }
