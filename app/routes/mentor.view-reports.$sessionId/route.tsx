@@ -6,29 +6,30 @@ import invariant from "tiny-invariant";
 import { InfoCircle, NavArrowLeft, NavArrowRight } from "iconoir-react";
 import classNames from "classnames";
 
-import editorStylesheetUrl from "~/styles/editor.css?url";
+import { getAzureUserSimpleByIdAsync } from "~/services/.server";
 import { Editor, Select, StateLink, SubTitle, Title } from "~/components";
+
+import editorStylesheetUrl from "~/styles/editor.css?url";
 
 import {
   getCancelReasons,
   getNextSession,
   getPreviousSession,
   getSessionAsync,
-  getSignedOffBy,
 } from "./services.server";
 
 export const links: Route.LinksFunction = () => {
   return [{ rel: "stylesheet", href: editorStylesheetUrl }];
 };
 
-export async function loader({ params }: Route.LoaderArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.sessionId, "sessionId not found");
 
   const session = await getSessionAsync(Number(params.sessionId));
 
   const [signedOffBy, nextSession, prevSession] = await Promise.all([
     session.signedOffByAzureId
-      ? getSignedOffBy(session.signedOffByAzureId)
+      ? getAzureUserSimpleByIdAsync(request, session.signedOffByAzureId)
       : Promise.resolve(null),
     getNextSession(session.studentSession.student.id, session.attendedOn),
     getPreviousSession(session.studentSession.student.id, session.attendedOn),
@@ -126,13 +127,15 @@ export default function Index({
         </div>
         <Editor isReadonly initialEditorStateType={session.report} />
 
-        {!session.isCancelled && signedOffBy && (
+        {!session.isCancelled && (
           <>
             <SubTitle>Feedback</SubTitle>
-            <div className="mb-1 flex gap-2">
-              <h3 className="font-bold">Signed by:</h3>
-              <p>{signedOffBy.fullName}</p>
-            </div>
+            {signedOffBy && (
+              <div className="mb-1 flex gap-2">
+                <h3 className="font-bold">Signed by:</h3>
+                <p>{signedOffBy.displayName}</p>
+              </div>
+            )}
             <Editor
               isReadonly
               initialEditorStateType={session.reportFeedback}

@@ -40,18 +40,6 @@ export async function getSessionAsync(sessionId: number) {
   });
 }
 
-export async function getSignedOffBy(azureADId: string) {
-  return await prisma.mentor.findUniqueOrThrow({
-    where: {
-      azureADId,
-    },
-    select: {
-      id: true,
-      fullName: true,
-    },
-  });
-}
-
 export async function getNextSession(studentId: number, attendedOn: Date) {
   return await prisma.session.findFirst({
     where: {

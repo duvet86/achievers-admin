@@ -276,6 +276,28 @@ export async function getAzureUsersWithRolesAsync(
   }));
 }
 
+export async function getAzureUserSimpleByIdAsync(
+  request: Request,
+  azureId: string,
+): Promise<AzureUserWithRole | null> {
+  const tokenInfo = await getTokenInfoAsync(request);
+
+  const response = await fetch(
+    `${MICROSOFT_GRAPH_V1_BASEURL}/users/${azureId}`,
+    {
+      headers: getHeaders(tokenInfo.accessToken),
+    },
+  );
+
+  const azureUser: unknown = await response.json();
+
+  if ((azureUser as AzureError).error) {
+    return null;
+  }
+
+  return azureUser as AzureUserWithRole;
+}
+
 async function getAzureUserByIdAsync(
   request: Request,
   azureId: string,
