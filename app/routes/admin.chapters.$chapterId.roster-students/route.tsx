@@ -220,6 +220,28 @@ export default function Index({
             onButtonClick={handleButtonClick}
           />
         </div>
+
+        <fieldset className="ml-4 flex gap-4 rounded border p-2">
+          <legend className="fieldset-legend">Legend</legend>
+          <div className="flex gap-2">
+            <div className="badge badge-success gap-1">
+              Report <Check className="h-4 w-4" />
+            </div>
+            <span>Report completed</span>
+          </div>
+          <div className="flex gap-2">
+            <div className="badge badge-warning gap-1">
+              Report <WarningTriangle className="h-4 w-4" />
+            </div>
+            <span>Report written but NOT completed</span>
+          </div>
+          <div className="flex gap-2">
+            <div className="badge badge-error gap-1">
+              Canceled <WarningTriangle className="h-4 w-4" />
+            </div>
+            <span>Session cancelled</span>
+          </div>
+        </fieldset>
       </Form>
 
       <div className="overflow-auto">
@@ -272,6 +294,7 @@ export default function Index({
                   const studentSession = sessionLookup?.[attendedOn];
 
                   let hasReport = false;
+                  let completedOn = null;
                   let isCancelled = false;
                   let label = "";
                   let textHighlightError = false;
@@ -287,13 +310,14 @@ export default function Index({
                     } else if (studentSession.sessions.length === 1) {
                       const session = studentSession.sessions[0];
                       hasReport = session.hasReport;
+                      completedOn = session.completedOn;
                       isCancelled = session.isCancelled;
 
                       label = session.mentorFullName!;
 
                       if (isCancelled) {
                         to = `/admin/sessions/${session.sessionId}`;
-                      } else if (session.completedOn) {
+                      } else if (hasReport) {
                         to = `/admin/sessions/${session.sessionId}/report`;
                       }
                     } else if (studentSession.sessions.length > 1) {
@@ -314,9 +338,14 @@ export default function Index({
                             Canceled <WarningTriangle className="h-4 w-4" />
                           </div>
                         )}
-                        {!isCancelled && hasReport && (
+                        {!isCancelled && hasReport && completedOn && (
                           <div className="badge indicator-item badge-success indicator-center gap-1">
                             Report <Check className="h-4 w-4" />
+                          </div>
+                        )}
+                        {!isCancelled && hasReport && !completedOn && (
+                          <div className="badge indicator-item badge-warning indicator-center gap-1">
+                            Report <WarningTriangle className="h-4 w-4" />
                           </div>
                         )}
                         <StateLink

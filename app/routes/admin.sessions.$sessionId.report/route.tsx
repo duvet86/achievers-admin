@@ -85,6 +85,7 @@ export default function Index({
       report,
       reportFeedback,
       signedOffOn,
+      completedOn,
       mentorSession,
       studentSession,
     },
@@ -130,6 +131,13 @@ export default function Index({
         </Title>
 
         <Message key={Date.now()} successMessage={data?.successMessage} />
+
+        {completedOn === null && (
+          <div className="bg-warning flex gap-4 rounded-lg p-2 pr-12">
+            <WarningTriangle />
+            Report has NOT been submitted for review yet.
+          </div>
+        )}
       </div>
 
       <div className="relative flex h-full flex-col">
@@ -137,51 +145,53 @@ export default function Index({
           <div className="flex flex-1 flex-col gap-4">
             <Editor isReadonly initialEditorStateType={report} />
 
-            <SubTitle>Admin Feedback</SubTitle>
+            {completedOn !== null && <SubTitle>Admin Feedback</SubTitle>}
           </div>
 
-          <div className="flex flex-1 flex-col gap-4">
-            <div className="min-h-56 flex-1">
-              <Editor
-                isReadonly={signedOffOn !== null}
-                initialEditorStateType={reportFeedback}
-                onChange={(editorState) =>
-                  (editorStateRef.current = editorState)
-                }
-              />
-            </div>
+          {completedOn !== null && (
+            <div className="flex flex-1 flex-col gap-4">
+              <div className="min-h-56 flex-1">
+                <Editor
+                  isReadonly={signedOffOn !== null}
+                  initialEditorStateType={reportFeedback}
+                  onChange={(editorState) =>
+                    (editorStateRef.current = editorState)
+                  }
+                />
+              </div>
 
-            <div className="flex items-center gap-4">
-              <p className="text-info flex-1">
-                {signedOffOn
-                  ? `Report has been signed off on ${dayjs(signedOffOn).format("MMMM D, YYYY")}`
-                  : ""}
-              </p>
+              <div className="flex items-center gap-4">
+                <p className="text-info flex-1">
+                  {signedOffOn
+                    ? `Report has been signed off on ${dayjs(signedOffOn).format("MMMM D, YYYY")}`
+                    : ""}
+                </p>
 
-              <Link
-                to={`/admin/sessions?${searchParams.toString()}`}
-                className="btn w-44"
-              >
-                <NavArrowLeft /> Back
-              </Link>
-
-              {signedOffOn ? (
-                <button
-                  className="btn btn-error w-44"
-                  onClick={handleSignOff(false)}
+                <Link
+                  to={`/admin/sessions?${searchParams.toString()}`}
+                  className="btn w-44"
                 >
-                  <Xmark className="h-6 w-6" /> Remove sign off
-                </button>
-              ) : (
-                <button
-                  className="btn btn-primary w-44"
-                  onClick={handleSignOff(true)}
-                >
-                  <DesignNib className="h-6 w-6" /> Sign off
-                </button>
-              )}
+                  <NavArrowLeft /> Back
+                </Link>
+
+                {signedOffOn ? (
+                  <button
+                    className="btn btn-error w-44"
+                    onClick={handleSignOff(false)}
+                  >
+                    <Xmark className="h-6 w-6" /> Remove sign off
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-primary w-44"
+                    onClick={handleSignOff(true)}
+                  >
+                    <DesignNib className="h-6 w-6" /> Sign off
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
       <dialog id="errorModal" className="modal">

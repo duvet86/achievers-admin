@@ -16,6 +16,7 @@ export async function getSessionByIdAsync(sessionId: number) {
       report: true,
       signedOffOn: true,
       reportFeedback: true,
+      completedOn: true,
       mentorSession: {
         select: {
           mentor: {
