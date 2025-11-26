@@ -12,6 +12,7 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
   return await prisma.mentor.findUnique({
     where: {
       azureADId,
+      endDate: null,
     },
     select: {
       id: true,
