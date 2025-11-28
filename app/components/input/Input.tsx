@@ -1,11 +1,10 @@
 import classNames from "classnames";
 import { Xmark } from "iconoir-react";
 
-interface Props
-  extends React.DetailedHTMLProps<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  > {
+interface Props extends React.DetailedHTMLProps<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+> {
   label?: string;
   hasButton?: boolean;
   onButtonClick?: React.MouseEventHandler<HTMLButtonElement>;

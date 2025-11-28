@@ -3,11 +3,10 @@ interface RadioOption {
   value: string;
 }
 
-interface Props
-  extends React.DetailedHTMLProps<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  > {
+interface Props extends React.DetailedHTMLProps<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+> {
   name: string;
   options: RadioOption[];
   label?: string;

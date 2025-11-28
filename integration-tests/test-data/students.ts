@@ -2,7 +2,10 @@ import type { PrismaClient } from "~/prisma/client";
 import type { DefaultArgs } from "@prisma/client/runtime/client";
 
 export async function createStudentsAsync(
-  tx: Omit<PrismaClient<never, undefined, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">,
+  tx: Omit<
+    PrismaClient<never, undefined, DefaultArgs>,
+    "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends"
+  >,
 ) {
   await tx.importedStudentHistory.deleteMany();
   await tx.mentorToStudentAssignement.deleteMany();

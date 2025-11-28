@@ -3,9 +3,7 @@ import type { IMentorStudentAssignmentRepository } from "~/domain/aggregates/men
 import { prisma } from "~/db.server";
 import { MentorStudentAssignment } from "~/domain/aggregates/mentorStudentAssignment/MentorStudentAssignment";
 
-export class MentorStudentAssignmentRepository
-  implements IMentorStudentAssignmentRepository
-{
+export class MentorStudentAssignmentRepository implements IMentorStudentAssignmentRepository {
   async findByPairAsync(
     mentorId: number,
     studentId: number,

@@ -2,7 +2,10 @@ import type { PrismaClient } from "~/prisma/client";
 import type { DefaultArgs } from "@prisma/client/runtime/client";
 
 export async function createUsersAsync(
-  tx: Omit<PrismaClient<never, undefined, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">,
+  tx: Omit<
+    PrismaClient<never, undefined, DefaultArgs>,
+    "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends"
+  >,
   azureId: string,
 ) {
   await tx.importedHistory.deleteMany();

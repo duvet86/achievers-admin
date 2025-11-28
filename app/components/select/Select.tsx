@@ -5,11 +5,10 @@ interface SelectOption {
   value: string;
 }
 
-interface Props
-  extends React.DetailedHTMLProps<
-    React.SelectHTMLAttributes<HTMLSelectElement>,
-    HTMLSelectElement
-  > {
+interface Props extends React.DetailedHTMLProps<
+  React.SelectHTMLAttributes<HTMLSelectElement>,
+  HTMLSelectElement
+> {
   label?: string;
   options: SelectOption[];
 }
