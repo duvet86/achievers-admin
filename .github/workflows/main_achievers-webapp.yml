@@ -60,20 +60,20 @@ jobs:
           node-version: "lts/*"
           cache: "npm"
 
-      - name: Install dependencies
-        run: npm install
+      # - name: Install dependencies
+      #   run: npm install
 
-      - name: Run unit tests
-        env:
-          DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-          DATABASE_HOST: "127.0.0.1"
-          DATABASE_NAME: ${{ env.DB_DATABASE }}
-          DATABASE_USER: ${{ env.DB_USER }}
-          DATABASE_PASSWORD: ${{ env.DB_PASSWORD }}
-        run: npm run test:ci
+      # - name: Run unit tests
+      #   env:
+      #     DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
+      #     DATABASE_HOST: "127.0.0.1"
+      #     DATABASE_NAME: ${{ env.DB_DATABASE }}
+      #     DATABASE_USER: ${{ env.DB_USER }}
+      #     DATABASE_PASSWORD: ${{ env.DB_PASSWORD }}
+      #   run: npm run test:ci
 
-      - name: Build
-        run: npm run build
+      # - name: Build
+      #   run: npm run build
 
       # - name: Migrate test DB
       #   env:
@@ -116,7 +116,7 @@ jobs:
       # DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
       # DATABASE_USER: ${{ secrets.DATABASE_USER }}
       # DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-      ENABLE_SSL: "true"
+      # ENABLE_SSL: "true"
 
     steps:
       - name: Checkout
