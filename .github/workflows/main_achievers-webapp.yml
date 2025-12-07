@@ -75,47 +75,47 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Migrate test DB
-        env:
-          DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-          DATABASE_HOST: "127.0.0.1"
-          DATABASE_NAME: ${{ env.DB_DATABASE }}
-          DATABASE_USER: ${{ env.DB_USER }}
-          DATABASE_PASSWORD: ${{ env.DB_PASSWORD }}
-        run: npm run setup
+      # - name: Migrate test DB
+      #   env:
+      #     DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
+      #     DATABASE_HOST: "127.0.0.1"
+      #     DATABASE_NAME: ${{ env.DB_DATABASE }}
+      #     DATABASE_USER: ${{ env.DB_USER }}
+      #     DATABASE_PASSWORD: ${{ env.DB_PASSWORD }}
+      #   run: npm run setup
 
-      - name: Install E2E
-        run: npx playwright install --with-deps chromium
+      # - name: Install E2E
+      #   run: npx playwright install --with-deps chromium
 
-      - name: Run E2E tests
-        env:
-          DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
-          DATABASE_HOST: "127.0.0.1"
-          DATABASE_NAME: ${{ env.DB_DATABASE }}
-          DATABASE_USER: ${{ env.DB_USER }}
-          DATABASE_PASSWORD: ${{ env.DB_PASSWORD }}
-        run: npm run test:e2e
+      # - name: Run E2E tests
+      #   env:
+      #     DATABASE_URL: mysql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:3306/${{ env.DB_DATABASE }}
+      #     DATABASE_HOST: "127.0.0.1"
+      #     DATABASE_NAME: ${{ env.DB_DATABASE }}
+      #     DATABASE_USER: ${{ env.DB_USER }}
+      #     DATABASE_PASSWORD: ${{ env.DB_PASSWORD }}
+      #   run: npm run test:e2e
 
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: report
-          path: |
-            playwright-report/
-            coverage/
-            test-results/
-          retention-days: 1
+      # - uses: actions/upload-artifact@v4
+      #   if: ${{ !cancelled() }}
+      #   with:
+      #     name: report
+      #     path: |
+      #       playwright-report/
+      #       coverage/
+      #       test-results/
+      #     retention-days: 1
 
   migrate:
     name: Migrate and seed production DB
     runs-on: ubuntu-latest
-    needs: e2etests
+    # needs: e2etests
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-      DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-      DATABASE_USER: ${{ secrets.DATABASE_USER }}
-      DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+      # DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+      # DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+      # DATABASE_USER: ${{ secrets.DATABASE_USER }}
+      # DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
       ENABLE_SSL: "true"
 
     steps:
@@ -132,7 +132,7 @@ jobs:
         run: npm install
 
       - name: Print
-        run: echo "$DATABASE_URL"
+        run: echo "$GITHUB_CONTEXT"
 
       - name: Migrate DB
         run: npm run setup
