@@ -1,5 +1,5 @@
-import { readFileSync, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+// import { readFileSync, writeFileSync } from "node:fs";
+// import { resolve } from "node:path";
 
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import invariant from "tiny-invariant";
@@ -22,12 +22,12 @@ let prisma: PrismaClient;
 // create a new connection to the DB with every change either.
 // in production we'll have a single connection to the DB.
 if (process.env.NODE_ENV === "production") {
-  const cert = readFileSync(
-    resolve(process.cwd(), "prisma/DigiCertGlobalRootCA.crt.pem"),
-    "utf8",
-  );
+  // const cert = readFileSync(
+  //   resolve(process.cwd(), "prisma/DigiCertGlobalRootCA.crt.pem"),
+  //   "utf8",
+  // );
 
-  writeFileSync("/tmp/DigiCertGlobalRootCA.crt.pem", Buffer.from(cert, "utf8"));
+  // writeFileSync("/tmp/DigiCertGlobalRootCA.crt.pem", Buffer.from(cert, "utf8"));
 
   const adapter = new PrismaMariaDb({
     host: process.env.DATABASE_HOST,
@@ -36,10 +36,10 @@ if (process.env.NODE_ENV === "production") {
     database: process.env.DATABASE_NAME,
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
-    ssl: {
-      rejectUnauthorized: true,
-      ca: readFileSync(resolve("/tmp/DigiCertGlobalRootCA.crt.pem"), "utf8"),
-    },
+    // ssl: {
+    //   rejectUnauthorized: true,
+    //   ca: readFileSync(resolve("/tmp/DigiCertGlobalRootCA.crt.pem"), "utf8"),
+    // },
   });
 
   prisma = new PrismaClient({
