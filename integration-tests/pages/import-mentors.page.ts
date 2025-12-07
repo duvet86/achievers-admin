@@ -28,10 +28,12 @@ export class ImportMentorsPage {
       name: "Import mentors from file",
     });
 
-    this.numberHeaderCell = page.getByRole("cell", { name: "#" });
-    this.fullNameHeaderCell = page.getByRole("cell", { name: "Full name" });
-    this.errorHeaderCell = page.getByRole("cell", { name: "Error" });
-    this.actionHeaderCell = page.getByRole("cell", {
+    this.numberHeaderCell = page.getByRole("columnheader", { name: "#" });
+    this.fullNameHeaderCell = page.getByRole("columnheader", {
+      name: "Full name",
+    });
+    this.errorHeaderCell = page.getByRole("columnheader", { name: "Error" });
+    this.actionHeaderCell = page.getByRole("columnheader", {
       name: "Action",
     });
 

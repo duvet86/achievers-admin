@@ -30,11 +30,13 @@ export class AdminUsersPage {
 
     this.title = page.getByRole("heading", { name: "Mentors", exact: true });
 
-    this.fullNameHeaderCell = page.getByRole("cell", { name: "Full name" });
-    this.assigndChapterHeaderCell = page.getByRole("cell", {
+    this.fullNameHeaderCell = page.getByRole("columnheader", {
+      name: "Full name",
+    });
+    this.assigndChapterHeaderCell = page.getByRole("columnheader", {
       name: "Assigned chapter",
     });
-    this.actionHeaderCell = page.getByRole("cell", { name: "Action" });
+    this.actionHeaderCell = page.getByRole("columnheader", { name: "Action" });
 
     this.fullNameCell = page.getByRole("cell", { name: "test_0 user_0" });
     this.assigndChapterCell = page
