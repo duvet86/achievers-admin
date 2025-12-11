@@ -1,47 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import type { ExtractModelName, Model } from "@casl/prisma/runtime";
-import type { hkt } from "@casl/ability";
-import type { Prisma, PrismaClient } from "~/prisma/client";
-
-import {
-  createAbilityFactory,
-  createAccessibleByFactory,
+import type {
+  PrismaModel,
+  PrismaQueryFactory,
+  PrismaTypes,
 } from "@casl/prisma/runtime";
 
-type ModelName = Prisma.ModelName;
-type ModelWhereInput = {
-  [K in Prisma.ModelName]: Uncapitalize<K> extends keyof PrismaClient
-    ? Extract<
-        Parameters<PrismaClient[Uncapitalize<K>]["findFirst"]>[0],
-        { where?: any }
-      >["where"]
-    : never;
-};
+import { createAbilityFactory } from "@casl/prisma/runtime";
 
-type WhereInput<TModelName extends Prisma.ModelName> = Extract<
-  ModelWhereInput[TModelName],
-  Record<any, any>
->;
+import type { Prisma } from "~/prisma/client";
 
-interface PrismaQueryTypeFactory extends hkt.GenericFactory {
-  produce: WhereInput<ExtractModelName<this[0], ModelName>>;
-}
-
-type PrismaModel = Model<Record<string, any>, string>;
-// Higher Order type that allows to infer passed in Prisma Model name
-export type PrismaQuery<T extends PrismaModel = PrismaModel> = WhereInput<
-  ExtractModelName<T, ModelName>
-> &
-  hkt.Container<PrismaQueryTypeFactory>;
-
-type WhereInputPerModel = {
-  [K in ModelName]: WhereInput<K>;
-};
-
-const createPrismaAbility = createAbilityFactory<ModelName, PrismaQuery>();
-const accessibleBy = createAccessibleByFactory<
-  WhereInputPerModel,
+export type { Model, Subjects } from "@casl/prisma/runtime";
+export { accessibleBy, ParsingQueryError } from "@casl/prisma/runtime";
+export type WhereInput<TModelName extends Prisma.ModelName> =
+  PrismaTypes<Prisma.TypeMap>["WhereInput"][TModelName];
+export type PrismaQuery<T extends PrismaModel = PrismaModel> =
+  PrismaQueryFactory<Prisma.TypeMap, T>;
+export const createPrismaAbility = createAbilityFactory<
+  Prisma.ModelName,
   PrismaQuery
 >();
-
-export { createPrismaAbility, accessibleBy };
