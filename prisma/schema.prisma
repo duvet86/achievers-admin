@@ -28,6 +28,11 @@ enum CancelledEntity {
   STUDENT
 }
 
+enum MentorStatus {
+  ARCHIVED
+  BLOCKED
+}
+
 model Mentor {
   id        Int     @id @default(autoincrement())
   azureADId String? @unique // Defined by Azure Active Directory.
@@ -61,8 +66,8 @@ model Mentor {
   hasApprovedToPublishPhotos Boolean?
   volunteerAgreementSignedOn DateTime?
 
-  endDate   DateTime?
-  endReason String?   @db.Text
+  status  MentorStatus?
+  endDate DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -88,6 +93,20 @@ model Mentor {
 
   mentorSharing  MentorShareInfo[] @relation("mentorSharing")
   mentorSharedTo MentorShareInfo[] @relation("mentorSharedTo")
+
+  mentorNotes MentorNote[]
+}
+
+model MentorNote {
+  id Int @id @default(autoincrement())
+
+  note String @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mentor   Mentor @relation(fields: [mentorId], references: [id])
+  mentorId Int
 }
 
 model ImportedHistory {

@@ -20,7 +20,6 @@ export class UserRepository implements IMentorRepository {
         emergencyContactNumber: true,
         emergencyContactRelationship: true,
         endDate: true,
-        endReason: true,
         firstName: true,
         fullName: true,
         hasApprovedToPublishPhotos: true,
@@ -55,7 +54,6 @@ export class UserRepository implements IMentorRepository {
         emergencyContactNumber: dbMentor.emergencyContactNumber,
         emergencyContactRelationship: dbMentor.emergencyContactRelationship,
         endDate: dbMentor.endDate,
-        endReason: dbMentor.endReason,
         firstName: dbMentor.firstName,
         fullName: dbMentor.fullName,
         hasApprovedToPublishPhotos: dbMentor.hasApprovedToPublishPhotos,
@@ -100,7 +98,6 @@ export class UserRepository implements IMentorRepository {
         emergencyContactRelationship:
           entity.emergencyContact.props.emergencyContactRelationship,
         endDate: entity.endDate,
-        endReason: entity.endReason,
         firstName: entity.firstName,
         hasApprovedToPublishPhotos: entity.hasApprovedToPublishPhotos,
         mobile: entity.mobile,

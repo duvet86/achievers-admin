@@ -1,13 +1,26 @@
 import type { Route } from "./+types/route";
 
+import { redirect } from "react-router";
 import invariant from "tiny-invariant";
-
-import { getUserByIdAsync } from "./services.server";
-import { Textarea, Title } from "~/components";
 import dayjs from "dayjs";
 
-export async function loader({ params }: Route.LoaderArgs) {
+import { isLoggedUserBlockedAsync, trackException } from "~/services/.server";
+import { Textarea, Title } from "~/components";
+
+import { getUserByIdAsync } from "./services.server";
+
+export async function loader({ params, request }: Route.LoaderArgs) {
   invariant(params.mentorId, "mentorId not found");
+
+  const isUserBlocked = await isLoggedUserBlockedAsync(request, "Restricted");
+  if (isUserBlocked) {
+    trackException(
+      new Error(
+        `Request url: ${request.url}. loggedUser has no Restricted permissions.`,
+      ),
+    );
+    throw redirect("/403");
+  }
 
   const user = await getUserByIdAsync(Number(params.mentorId));
 
@@ -18,7 +31,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 }
 
 export default function Index({
-  loaderData: { fullName, endDate, endReason },
+  loaderData: { fullName, endDate, mentorNotes },
 }: Route.ComponentProps) {
   return (
     <>
@@ -34,7 +47,9 @@ export default function Index({
 
       <p className="my-4">Reason:</p>
 
-      <Textarea defaultValue={endReason ?? ""} readOnly disabled />
+      {mentorNotes.length > 0 && (
+        <Textarea defaultValue={mentorNotes[0].note} readOnly disabled />
+      )}
     </>
   );
 }

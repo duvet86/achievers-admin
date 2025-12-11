@@ -22,6 +22,13 @@ export async function archiveUserAsync(mentorId: number, endReason: string) {
       },
     });
 
+    await tx.mentorNote.create({
+      data: {
+        note: endReason,
+        mentorId,
+      },
+    });
+
     return await tx.mentor.update({
       where: {
         id: mentorId,
@@ -29,7 +36,7 @@ export async function archiveUserAsync(mentorId: number, endReason: string) {
       data: {
         azureADId: null,
         endDate: new Date(),
-        endReason,
+        status: "ARCHIVED",
       },
     });
   });

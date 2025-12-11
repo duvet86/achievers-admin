@@ -1,18 +1,31 @@
 /* eslint-disable react-hooks/purity */
 import type { Route } from "./+types/route";
 
-import { Form } from "react-router";
-
+import { Form, redirect } from "react-router";
 import invariant from "tiny-invariant";
 import { BinFull } from "iconoir-react";
 
-import { deleteAzureUserAsync } from "~/services/.server";
+import {
+  deleteAzureUserAsync,
+  isLoggedUserBlockedAsync,
+  trackException,
+} from "~/services/.server";
 import { Message, Textarea, Title } from "~/components";
 
 import { archiveUserAsync, getUserByIdAsync } from "./services.server";
 
-export async function loader({ params }: Route.LoaderArgs) {
+export async function loader({ params, request }: Route.LoaderArgs) {
   invariant(params.mentorId, "mentorId not found");
+
+  const isUserBlocked = await isLoggedUserBlockedAsync(request, "Restricted");
+  if (isUserBlocked) {
+    trackException(
+      new Error(
+        `Request url: ${request.url}. loggedUser has no Restricted permissions.`,
+      ),
+    );
+    throw redirect("/403");
+  }
 
   const user = await getUserByIdAsync(Number(params.mentorId));
 

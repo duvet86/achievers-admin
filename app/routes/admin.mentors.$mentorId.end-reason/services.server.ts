@@ -9,7 +9,11 @@ export async function getUserByIdAsync(id: number) {
       id: true,
       fullName: true,
       endDate: true,
-      endReason: true,
+      mentorNotes: {
+        select: {
+          note: true,
+        },
+      },
     },
   });
 }

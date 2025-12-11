@@ -33,7 +33,6 @@ export interface MentorProps {
   hasApprovedToPublishPhotos: boolean | null;
   volunteerAgreementSignedOn: Date | null;
   endDate: Date | null;
-  endReason: string | null;
   createdAt: Date;
   updatedAt: Date | null;
   chapterId: number;
@@ -73,7 +72,6 @@ export class Mentor extends Entity implements IAggregateRoot {
   private _hasApprovedToPublishPhotos: boolean | null;
   private _volunteerAgreementSignedOn: Date | null;
   private _endDate: Date | null;
-  private _endReason: string | null;
   private _createdAt: Date;
   private _updatedAt: Date | null;
   private _chapterId: number;
@@ -135,10 +133,6 @@ export class Mentor extends Entity implements IAggregateRoot {
     return this._endDate;
   }
 
-  public get endReason(): string | null {
-    return this._endReason;
-  }
-
   public get createdAt(): Date {
     return this._createdAt;
   }
@@ -195,7 +189,6 @@ export class Mentor extends Entity implements IAggregateRoot {
       hasApprovedToPublishPhotos,
       volunteerAgreementSignedOn,
       endDate,
-      endReason,
       createdAt,
       updatedAt,
       chapterId,
@@ -216,7 +209,6 @@ export class Mentor extends Entity implements IAggregateRoot {
     this._hasApprovedToPublishPhotos = hasApprovedToPublishPhotos;
     this._volunteerAgreementSignedOn = volunteerAgreementSignedOn;
     this._endDate = endDate;
-    this._endReason = endReason;
     this._createdAt = createdAt;
     this._updatedAt = updatedAt;
     this._chapterId = chapterId;
@@ -313,12 +305,6 @@ export class Mentor extends Entity implements IAggregateRoot {
 
   public signVolunteerAgreement() {
     this._volunteerAgreementSignedOn = new Date();
-  }
-
-  public archive(endReason: string) {
-    this._endDate = new Date();
-    this._azureADId = null;
-    this._endReason = endReason;
   }
 
   public unarchive() {

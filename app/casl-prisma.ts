@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ExtractModelName, Model } from "@casl/prisma/runtime";
 import type { hkt } from "@casl/ability";
-
 import type { Prisma, PrismaClient } from "~/prisma/client";
 
 import {

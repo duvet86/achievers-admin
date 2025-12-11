@@ -5,9 +5,8 @@ import type { PrismaQuery } from "~/casl-prisma";
 
 import { createPrismaAbility } from "~/casl-prisma";
 
-export const ROLES = ["Admin", "ChapterCoordinator"] as const;
 export const ACTIONS = ["manage"] as const;
-export const SUBJECTS_ADMIN = [
+export const SUBJECTS = [
   "all",
   "ChapterArea",
   "ConfigArea",
@@ -18,20 +17,12 @@ export const SUBJECTS_ADMIN = [
   "MentorAttendancesArea",
   "PermissionsArea",
   "GoalsArea",
-] as const;
-
-export const SUBJECTS_CHAPTERCOORDINATOR = [
-  "all",
-  "ChapterArea",
-  "SessionArea",
-  "StudentArea",
-  "UserArea",
-  "GoalsArea",
+  "Restricted",
 ] as const;
 
 export type Action = (typeof ACTIONS)[number];
 export type Subject =
-  | (typeof SUBJECTS_ADMIN)[number]
+  | (typeof SUBJECTS)[number]
   | Subjects<{
       Chapter: Chapter;
     }>;
