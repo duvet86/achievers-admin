@@ -1,5 +1,3 @@
-import React from "react";
-
 import type { Environment } from "~/services";
 
 import { Drawer } from "../drawer/Drawer";

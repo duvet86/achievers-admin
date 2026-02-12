@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/purity */
 import type { Route } from "./+types/route";
 
 import { Form, redirect } from "react-router";
@@ -10,7 +9,7 @@ import {
   isLoggedUserBlockedAsync,
   trackException,
 } from "~/services/.server";
-import { Message, Textarea, Title } from "~/components";
+import { Textarea, Title } from "~/components";
 
 import { archiveUserAsync, getUserByIdAsync } from "./services.server";
 
@@ -48,22 +47,13 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   await archiveUserAsync(user.id, endReason!);
 
-  return {
-    successMessage: "User archived successfully",
-  };
+  return redirect(`/admin/mentors/${params.mentorId}/end-reason`);
 }
 
-export default function Index({
-  loaderData: { user },
-  actionData,
-}: Route.ComponentProps) {
+export default function Index({ loaderData: { user } }: Route.ComponentProps) {
   return (
     <>
-      <div className="flex flex-col gap-6 sm:flex-row">
-        <Title>Archive &quot;{user.fullName}&quot;</Title>
-
-        <Message key={Date.now()} successMessage={actionData?.successMessage} />
-      </div>
+      <Title>Archive &quot;{user.fullName}&quot;</Title>
 
       <Form method="post">
         <fieldset>

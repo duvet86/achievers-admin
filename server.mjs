@@ -1,4 +1,3 @@
-/*eslint-env node*/
 import { initAppInsightsLogger, mockTime } from "./server-utils/index.js";
 initAppInsightsLogger();
 

@@ -1,4 +1,3 @@
-/*eslint-env node*/
 import { useAzureMonitor } from "@azure/monitor-opentelemetry";
 import { trace, SpanStatusCode } from "@opentelemetry/api";
 
