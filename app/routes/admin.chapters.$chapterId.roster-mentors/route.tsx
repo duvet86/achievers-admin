@@ -128,13 +128,30 @@ export default function Index({
   const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  const handleFormSubmit = () => {
+  const onTermYearChange = () => {
+    const formData = new FormData(formRef.current!);
+
+    formData.set("selectedTermId", "");
+    formData.set("selectedTermDate", "");
+
+    void submit(formData);
+  };
+
+  const onTermIdChange = () => {
+    const formData = new FormData(formRef.current!);
+
+    formData.set("selectedTermDate", "");
+
+    void submit(formData);
+  };
+
+  const onTermDateChange = () => {
     const formData = new FormData(formRef.current!);
 
     void submit(formData);
   };
 
-  const handleButtonClick = () => {
+  const onClearSearch = () => {
     const formData = new FormData(formRef.current!);
     formData.set("search", "");
 
@@ -177,7 +194,7 @@ export default function Index({
                 className="select join-item basis-28"
                 name="selectedTermYear"
                 defaultValue={selectedTermYear}
-                onChange={handleFormSubmit}
+                onChange={onTermYearChange}
               >
                 {termYearsOptions.map(({ label, value }) => (
                   <option key={value} value={value}>
@@ -189,7 +206,7 @@ export default function Index({
                 className="select join-item"
                 name="selectedTermId"
                 defaultValue={selectedTermId}
-                onChange={handleFormSubmit}
+                onChange={onTermIdChange}
               >
                 {termsOptions.map(({ label, value }) => (
                   <option key={value} value={value}>
@@ -201,13 +218,13 @@ export default function Index({
           </div>
         </div>
 
-        <div className="w-full sm:w-auto">
+        <div className="w-full min-w-36 sm:w-auto">
           <Select
             label="Session date"
             name="selectedTermDate"
             defaultValue={selectedTermDate}
             options={sessionDateOptions}
-            onChange={handleFormSubmit}
+            onChange={onTermDateChange}
           />
         </div>
 
@@ -218,7 +235,7 @@ export default function Index({
             name="search"
             placeholder="Mentor name"
             defaultValue={searchTerm}
-            onButtonClick={handleButtonClick}
+            onButtonClick={onClearSearch}
           />
         </div>
 
