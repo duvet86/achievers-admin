@@ -1,11 +1,12 @@
-import type { Prisma, SessionStatus } from "~/prisma/client";
+import type { SessionStatus } from "~/prisma/client";
+import type { Term } from "~/models";
 
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import utc from "dayjs/plugin/utc";
 
+import { Prisma } from "~/prisma/client";
 import { prisma } from "~/db.server";
-import type { Term } from "~/models";
 
 dayjs.extend(utc);
 dayjs.extend(isBetween);
@@ -23,6 +24,19 @@ interface MentorSession {
   studentFullName: string | null;
 }
 
+interface SessionForLookup {
+  mentorSessionId: number;
+  status: SessionStatus;
+  attendedOn: string;
+  mentorId: number;
+  sessionId: number;
+  hasReport: boolean;
+  completedOn: string | null;
+  isCancelled: boolean;
+  studentId: number;
+  studentFullName: string;
+}
+
 type SessionLookup = Record<
   string,
   {
@@ -30,18 +44,7 @@ type SessionLookup = Record<
     status: SessionStatus;
     attendedOn: string;
     mentorId: number;
-    sessions: {
-      mentorSessionId: number;
-      status: SessionStatus;
-      attendedOn: string;
-      mentorId: number;
-      sessionId: number;
-      hasReport: boolean;
-      completedOn: string | null;
-      isCancelled: boolean;
-      studentId: number;
-      studentFullName: string;
-    }[];
+    sessions: SessionForLookup[];
   }
 >;
 
@@ -55,26 +58,44 @@ export async function getMentorsAsync(
   chapterId: number,
   term: Term,
   sortFullName: Prisma.SortOrder | undefined,
-  searchTerm: string | undefined,
+  searchTerm: string | null,
+  status: string | null,
+  termDate: string | null,
 ): Promise<SessionViewModel[]> {
-  const mentors = await prisma.mentor.findMany({
-    where: {
-      endDate: null,
-      chapterId,
-      fullName: searchTerm
-        ? {
-            contains: searchTerm,
-          }
-        : undefined,
-    },
-    select: {
-      id: true,
-      fullName: true,
-    },
-    orderBy: {
-      fullName: sortFullName ?? "asc",
-    },
-  });
+  const mentors =
+    status === null
+      ? await prisma.mentor.findMany({
+          where: {
+            endDate: null,
+            chapterId,
+            fullName: searchTerm
+              ? {
+                  contains: searchTerm,
+                }
+              : undefined,
+          },
+          select: {
+            id: true,
+            fullName: true,
+          },
+          orderBy: {
+            fullName: sortFullName ?? "asc",
+          },
+        })
+      : await prisma.$queryRaw<{ id: number; fullName: string }[]>`
+        SELECT
+          DISTINCT
+          m.id,
+          m.fullName
+        FROM Mentor m
+        INNER JOIN MentorSession ms ON ms.MentorId = m.Id
+        WHERE m.endDate IS NULL
+          AND m.chapterId = ${chapterId}
+          AND ${searchTerm ? Prisma.sql`m.fullName LIKE %${searchTerm}%` : "1=1"}
+          AND ms.attendedOn ${termDate ? Prisma.sql`= ${dayjs(termDate).format("YYYY-MM-DD")}` : Prisma.sql`BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`}
+          AND ms.status = ${status}
+        ORDER BY m.fullName ${sortFullName ? Prisma.sql`${sortFullName}` : Prisma.sql`ASC`}
+  `;
 
   const mentorSessions = await prisma.$queryRaw<MentorSession[]>`
       SELECT
@@ -93,14 +114,15 @@ export async function getMentorsAsync(
       LEFT JOIN StudentSession ss ON ss.id = sa.studentSessionId
       LEFT JOIN Student s ON s.id = ss.studentId
       WHERE ms.chapterId = ${chapterId}
-        AND ms.attendedOn BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`;
+        AND ms.attendedOn ${termDate ? Prisma.sql`= ${dayjs(termDate).format("YYYY-MM-DD")}` : Prisma.sql`BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`}
+        AND ${status ? Prisma.sql`ms.status = ${status}` : "1=1"}`;
 
   const mentorSessionLookup = mentorSessions.reduce<
     Record<string, SessionLookup>
   >((res, mentorSession) => {
     const attendedOn = dayjs.utc(mentorSession.attendedOn).format("YYYY-MM-DD");
 
-    const session = {
+    const session: SessionForLookup = {
       mentorSessionId: mentorSession.mentorSessionId,
       attendedOn: mentorSession.attendedOn,
       status: mentorSession.status,

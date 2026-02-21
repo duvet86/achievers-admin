@@ -39,8 +39,9 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     CURRENT_YEAR.toString();
   const selectedTermId = url.safeSearchParams.getNullOrEmpty("selectedTermId");
   let selectedTermDate =
-    url.safeSearchParams.getNullOrEmpty("selectedTermDate") ?? "";
-  const searchTerm = url.safeSearchParams.getNullOrEmpty("search") ?? undefined;
+    url.safeSearchParams.getNullOrEmpty("selectedTermDate");
+  const selectedStatus = url.safeSearchParams.getNullOrEmpty("selectedStatus");
+  const searchTerm = url.safeSearchParams.getNullOrEmpty("search");
 
   const sortFullNameSubmit: Prisma.SortOrder | undefined =
     (url.safeSearchParams.getNullOrEmpty("sortFullName") as Prisma.SortOrder) ??
@@ -60,7 +61,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
 
   if (selectedTermDate && !sessionDates.includes(selectedTermDate)) {
-    selectedTermDate = "";
+    selectedTermDate = null;
   }
 
   const mentors = await getMentorsAsync(
@@ -68,6 +69,8 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     selectedTerm,
     sortFullNameSubmit,
     searchTerm,
+    selectedStatus,
+    selectedTermDate,
   );
 
   const sessionDateOptions = sessionDates
@@ -93,11 +96,12 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     selectedTermId: selectedTerm.id.toString(),
     mentors,
     selectedTermDate,
+    selectedStatus,
     searchTerm,
     datesInTerm: sessionDates
       .filter(
         (attendedOn) =>
-          attendedOn === selectedTermDate || selectedTermDate === "",
+          attendedOn === selectedTermDate || selectedTermDate === null,
       )
       .map((attendedOn) => dayjs(attendedOn).format("YYYY-MM-DD")),
     sessionDateOptions: [{ value: "", label: "All" }].concat(
@@ -118,6 +122,7 @@ export default function Index({
     termsOptions,
     datesInTerm,
     selectedTermDate,
+    selectedStatus,
     searchTerm,
     sessionDateOptions,
     chapterId,
@@ -145,7 +150,7 @@ export default function Index({
     void submit(formData);
   };
 
-  const onTermDateChange = () => {
+  const onFormChange = () => {
     const formData = new FormData(formRef.current!);
 
     void submit(formData);
@@ -185,11 +190,11 @@ export default function Index({
 
       <hr className="my-4" />
 
-      <Form ref={formRef} className="flex flex-col gap-4 pb-2 sm:flex-row">
-        <div className="w-full sm:w-auto">
-          <div key={selectedTermId} className="w-full sm:w-auto">
+      <Form ref={formRef} className="flex flex-col gap-4 pb-2 xl:flex-row">
+        <div className="w-full xl:w-auto">
+          <div key={selectedTermId} className="w-full xl:w-auto">
             <label className="fieldset-label">Term</label>
-            <div className="join">
+            <div className="join w-full">
               <select
                 className="select join-item basis-28"
                 name="selectedTermYear"
@@ -203,7 +208,7 @@ export default function Index({
                 ))}
               </select>
               <select
-                className="select join-item"
+                className="select join-item w-full"
                 name="selectedTermId"
                 defaultValue={selectedTermId}
                 onChange={onTermIdChange}
@@ -222,20 +227,43 @@ export default function Index({
           <Select
             label="Session date"
             name="selectedTermDate"
-            defaultValue={selectedTermDate}
+            defaultValue={selectedTermDate ?? ""}
             options={sessionDateOptions}
-            onChange={onTermDateChange}
+            onChange={onFormChange}
           />
         </div>
 
         <div className="w-full sm:w-auto">
           <Input
             hasButton
-            label="Filter mentor (press Enter to submit)"
+            label="Mentor (press Enter to submit)"
             name="search"
             placeholder="Mentor name"
-            defaultValue={searchTerm}
+            defaultValue={searchTerm ?? ""}
             onButtonClick={onClearSearch}
+          />
+        </div>
+
+        <div className="w-full min-w-36 sm:w-auto">
+          <Select
+            label="Status"
+            name="selectedStatus"
+            defaultValue={selectedStatus ?? ""}
+            options={[
+              {
+                label: "All",
+                value: "",
+              },
+              {
+                label: "Available",
+                value: "AVAILABLE",
+              },
+              {
+                label: "Unavailable",
+                value: "UNAVAILABLE",
+              },
+            ]}
+            onChange={onFormChange}
           />
         </div>
 
