@@ -183,7 +183,7 @@ export default function Index({
                   />
                 </th>
                 <th align="left" className="hidden sm:table-cell">
-                  Year Level
+                  Year Level (* calculated based on date of birth)
                 </th>
                 <th align="left">
                   <TableHeaderSort
