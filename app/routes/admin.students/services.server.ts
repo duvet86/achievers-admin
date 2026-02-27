@@ -28,8 +28,8 @@ export async function getStudentsCountAsync(
         includeArchived ? {} : { endDate: null },
         chapterId !== null
           ? {
-            chapterId: chapterId,
-          }
+              chapterId: chapterId,
+            }
           : {},
         {
           OR: [
@@ -74,8 +74,8 @@ export async function getStudentsAsync(
         includeArchived ? {} : { endDate: null },
         chapterId !== null
           ? {
-            chapterId: chapterId,
-          }
+              chapterId: chapterId,
+            }
           : {},
         {
           OR: [
@@ -92,8 +92,8 @@ export async function getStudentsAsync(
       fullName: sortChapter ? undefined : (sortFullName ?? "asc"),
       chapter: sortChapter
         ? {
-          name: sortChapter,
-        }
+            name: sortChapter,
+          }
         : undefined,
     },
     skip: numberItems * pageNumber,
@@ -110,7 +110,9 @@ export async function getStudentsAsync(
 
     return {
       ...student,
-      yearLevel: yearLevel ? `${yearLevel}${isYearLevelCalculated ? " *" : ""}` : "N/A",
-    }
+      yearLevel: yearLevel
+        ? `${yearLevel}${isYearLevelCalculated ? " *" : ""}`
+        : "N/A",
+    };
   });
 }
