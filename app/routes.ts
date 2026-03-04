@@ -503,6 +503,9 @@ export default [
   route("403", "routes/403.tsx", {
     index: true,
   }),
+  route("500", "routes/500.tsx", {
+    index: true,
+  }),
   route("healthcheck", "routes/healthcheck.tsx", {
     index: true,
   }),

@@ -26,11 +26,12 @@ export async function loader({ request }: Route.LoaderArgs) {
     return redirect(returnTo ?? "/admin/home");
   }
 
-  const { volunteerAgreementSignedOn } = await getUserByAzureADIdAsync(
-    loggedUser.oid,
-  );
+  const user = await getUserByAzureADIdAsync(loggedUser.oid);
+  if (user === null) {
+    throw redirect("/500");
+  }
 
-  if (loggedUser.isMentor && volunteerAgreementSignedOn === null) {
+  if (loggedUser.isMentor && user.volunteerAgreementSignedOn === null) {
     return redirect("/volunteer-agreement");
   }
 
