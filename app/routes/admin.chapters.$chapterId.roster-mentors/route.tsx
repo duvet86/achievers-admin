@@ -190,84 +190,86 @@ export default function Index({
 
       <hr className="my-4" />
 
-      <Form ref={formRef} className="flex flex-col gap-4 pb-2 xl:flex-row">
-        <div className="w-full xl:w-auto">
-          <div key={selectedTermId} className="w-full xl:w-auto">
-            <label className="fieldset-label">Term</label>
-            <div className="join w-full">
-              <select
-                className="select join-item basis-28"
-                name="selectedTermYear"
-                defaultValue={selectedTermYear}
-                onChange={onTermYearChange}
-              >
-                {termYearsOptions.map(({ label, value }) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="select join-item w-full"
-                name="selectedTermId"
-                defaultValue={selectedTermId}
-                onChange={onTermIdChange}
-              >
-                {termsOptions.map(({ label, value }) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
+      <Form ref={formRef} className="pb-2">
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="w-full sm:w-auto">
+            <div key={selectedTermId} className="w-full sm:w-auto">
+              <label className="fieldset-label">Term</label>
+              <div className="join w-full">
+                <select
+                  className="select join-item basis-28"
+                  name="selectedTermYear"
+                  defaultValue={selectedTermYear}
+                  onChange={onTermYearChange}
+                >
+                  {termYearsOptions.map(({ label, value }) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  className="select join-item w-full"
+                  name="selectedTermId"
+                  defaultValue={selectedTermId}
+                  onChange={onTermIdChange}
+                >
+                  {termsOptions.map(({ label, value }) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
+          </div>
+
+          <div className="w-full sm:w-52">
+            <Select
+              label="Session date"
+              name="selectedTermDate"
+              defaultValue={selectedTermDate ?? ""}
+              options={sessionDateOptions}
+              onChange={onFormChange}
+            />
+          </div>
+
+          <div className="w-full sm:w-80">
+            <Input
+              hasButton
+              label="Mentor (press Enter to submit)"
+              name="search"
+              placeholder="Mentor name"
+              defaultValue={searchTerm ?? ""}
+              onButtonClick={onClearSearch}
+            />
+          </div>
+
+          <div className="w-full sm:w-52">
+            <Select
+              label="Status"
+              name="selectedStatus"
+              defaultValue={selectedStatus ?? ""}
+              options={[
+                {
+                  label: "All",
+                  value: "",
+                },
+                {
+                  label: "Available",
+                  value: "AVAILABLE",
+                },
+                {
+                  label: "Unavailable",
+                  value: "UNAVAILABLE",
+                },
+              ]}
+              onChange={onFormChange}
+            />
           </div>
         </div>
 
-        <div className="w-full min-w-36 sm:w-auto">
-          <Select
-            label="Session date"
-            name="selectedTermDate"
-            defaultValue={selectedTermDate ?? ""}
-            options={sessionDateOptions}
-            onChange={onFormChange}
-          />
-        </div>
-
-        <div className="w-full sm:w-auto">
-          <Input
-            hasButton
-            label="Mentor (press Enter to submit)"
-            name="search"
-            placeholder="Mentor name"
-            defaultValue={searchTerm ?? ""}
-            onButtonClick={onClearSearch}
-          />
-        </div>
-
-        <div className="w-full min-w-36 sm:w-auto">
-          <Select
-            label="Status"
-            name="selectedStatus"
-            defaultValue={selectedStatus ?? ""}
-            options={[
-              {
-                label: "All",
-                value: "",
-              },
-              {
-                label: "Available",
-                value: "AVAILABLE",
-              },
-              {
-                label: "Unavailable",
-                value: "UNAVAILABLE",
-              },
-            ]}
-            onChange={onFormChange}
-          />
-        </div>
-
-        <fieldset className="ml-4 flex gap-4 rounded border p-2">
+        <fieldset className="flex gap-4 rounded border p-2">
           <legend className="fieldset-legend">Legend</legend>
           <div className="flex gap-2">
             <div className="badge badge-success gap-1">

@@ -169,59 +169,61 @@ export default function Index({
 
       <hr className="my-4" />
 
-      <Form ref={formRef} className="flex flex-col gap-6 pb-2 sm:flex-row">
-        <div key={selectedTermId} className="w-full sm:w-auto">
-          <label className="fieldset-label">Term</label>
-          <div className="join">
-            <select
-              className="select join-item basis-28"
-              name="selectedTermYear"
-              defaultValue={selectedTermYear}
+      <Form ref={formRef} className="pb-2">
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div key={selectedTermId} className="w-full sm:w-auto">
+            <label className="fieldset-label">Term</label>
+            <div className="join">
+              <select
+                className="select join-item basis-28"
+                name="selectedTermYear"
+                defaultValue={selectedTermYear}
+                onChange={handleFormSubmit}
+              >
+                {termYearsOptions.map(({ label, value }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="select join-item"
+                name="selectedTermId"
+                defaultValue={selectedTermId}
+                onChange={handleFormSubmit}
+              >
+                {termsOptions.map(({ label, value }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="w-full sm:w-52">
+            <Select
+              label="Session date"
+              name="selectedTermDate"
+              defaultValue={selectedTermDate}
+              options={sessionDateOptions}
               onChange={handleFormSubmit}
-            >
-              {termYearsOptions.map(({ label, value }) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-            <select
-              className="select join-item"
-              name="selectedTermId"
-              defaultValue={selectedTermId}
-              onChange={handleFormSubmit}
-            >
-              {termsOptions.map(({ label, value }) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
+            />
+          </div>
+
+          <div className="w-full sm:w-80">
+            <Input
+              hasButton
+              label="Student (press Enter to submit)"
+              name="search"
+              placeholder="Student name"
+              defaultValue={searchTerm}
+              onButtonClick={handleButtonClick}
+            />
           </div>
         </div>
 
-        <div className="w-full sm:w-auto">
-          <Select
-            label="Session date"
-            name="selectedTermDate"
-            defaultValue={selectedTermDate}
-            options={sessionDateOptions}
-            onChange={handleFormSubmit}
-          />
-        </div>
-
-        <div className="w-full sm:w-auto">
-          <Input
-            hasButton
-            label="Filter student (press Enter to submit)"
-            name="search"
-            placeholder="Student name"
-            defaultValue={searchTerm}
-            onButtonClick={handleButtonClick}
-          />
-        </div>
-
-        <fieldset className="ml-4 flex gap-4 rounded border p-2">
+        <fieldset className="flex gap-4 rounded border p-2">
           <legend className="fieldset-legend">Legend</legend>
           <div className="flex gap-2">
             <div className="badge badge-success gap-1">
