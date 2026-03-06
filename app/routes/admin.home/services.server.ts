@@ -54,13 +54,13 @@ export async function getTotalMentorsAsync(
       chapterId: chapterId ?? undefined,
       createdAt: selectedTerm
         ? {
-            gte: selectedTerm.start.toDate(),
-            lte: selectedTerm.end.toDate(),
-          }
+          gte: selectedTerm.start.toDate(),
+          lte: selectedTerm.end.toDate(),
+        }
         : {
-            gte: dayjs().year(year).startOf("year").toDate(),
-            lte: dayjs().year(year).endOf("year").toDate(),
-          },
+          gte: dayjs().year(year).startOf("year").toDate(),
+          lte: dayjs().year(year).endOf("year").toDate(),
+        },
     },
   });
 }
@@ -129,13 +129,13 @@ export async function getTotalStudentsAsync(
       chapterId: chapterId ?? undefined,
       createdAt: selectedTerm
         ? {
-            gte: selectedTerm.start.toDate(),
-            lte: selectedTerm.end.toDate(),
-          }
+          gte: selectedTerm.start.toDate(),
+          lte: selectedTerm.end.toDate(),
+        }
         : {
-            gte: dayjs().year(year).startOf("year").toDate(),
-            lte: dayjs().year(year).endOf("year").toDate(),
-          },
+          gte: dayjs().year(year).startOf("year").toDate(),
+          lte: dayjs().year(year).endOf("year").toDate(),
+        },
     },
   });
 }
@@ -174,13 +174,13 @@ export async function getMentorsPerMonth(
       chapterId: chapterId ?? undefined,
       createdAt: selectedTerm
         ? {
-            gte: selectedTerm.start.toDate(),
-            lte: selectedTerm.end.toDate(),
-          }
+          gte: selectedTerm.start.toDate(),
+          lte: selectedTerm.end.toDate(),
+        }
         : {
-            gte: dayjs().year(year).startOf("year").toDate(),
-            lte: dayjs().year(year).endOf("year").toDate(),
-          },
+          gte: dayjs().year(year).startOf("year").toDate(),
+          lte: dayjs().year(year).endOf("year").toDate(),
+        },
     },
   });
 
@@ -253,21 +253,21 @@ export async function getReportsPerSession(
     datasets: [
       {
         label: "Has Report With Feedback",
-        data: reports.map(({ reportWithFeedbackCounter }) =>
+        data: reportsMapped.map(({ reportWithFeedbackCounter }) =>
           Number(reportWithFeedbackCounter),
         ),
         backgroundColor: "rgba(75, 192, 192, 0.8)",
       },
       {
         label: "Has Report No Feedback",
-        data: reports.map(({ reportNoFeedbackCounter }) =>
+        data: reportsMapped.map(({ reportNoFeedbackCounter }) =>
           Number(reportNoFeedbackCounter),
         ),
         backgroundColor: "rgba(255, 205, 86, 0.8)",
       },
       {
         label: "Missing Report",
-        data: reports.map(({ noReportCounter }) => Number(noReportCounter)),
+        data: reportsMapped.map(({ noReportCounter }) => Number(noReportCounter)),
         backgroundColor: "rgba(255, 99, 132, 0.8)",
       },
     ],
