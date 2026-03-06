@@ -54,13 +54,13 @@ export async function getTotalMentorsAsync(
       chapterId: chapterId ?? undefined,
       createdAt: selectedTerm
         ? {
-          gte: selectedTerm.start.toDate(),
-          lte: selectedTerm.end.toDate(),
-        }
+            gte: selectedTerm.start.toDate(),
+            lte: selectedTerm.end.toDate(),
+          }
         : {
-          gte: dayjs().year(year).startOf("year").toDate(),
-          lte: dayjs().year(year).endOf("year").toDate(),
-        },
+            gte: dayjs().year(year).startOf("year").toDate(),
+            lte: dayjs().year(year).endOf("year").toDate(),
+          },
     },
   });
 }
@@ -129,13 +129,13 @@ export async function getTotalStudentsAsync(
       chapterId: chapterId ?? undefined,
       createdAt: selectedTerm
         ? {
-          gte: selectedTerm.start.toDate(),
-          lte: selectedTerm.end.toDate(),
-        }
+            gte: selectedTerm.start.toDate(),
+            lte: selectedTerm.end.toDate(),
+          }
         : {
-          gte: dayjs().year(year).startOf("year").toDate(),
-          lte: dayjs().year(year).endOf("year").toDate(),
-        },
+            gte: dayjs().year(year).startOf("year").toDate(),
+            lte: dayjs().year(year).endOf("year").toDate(),
+          },
     },
   });
 }
@@ -174,13 +174,13 @@ export async function getMentorsPerMonth(
       chapterId: chapterId ?? undefined,
       createdAt: selectedTerm
         ? {
-          gte: selectedTerm.start.toDate(),
-          lte: selectedTerm.end.toDate(),
-        }
+            gte: selectedTerm.start.toDate(),
+            lte: selectedTerm.end.toDate(),
+          }
         : {
-          gte: dayjs().year(year).startOf("year").toDate(),
-          lte: dayjs().year(year).endOf("year").toDate(),
-        },
+            gte: dayjs().year(year).startOf("year").toDate(),
+            lte: dayjs().year(year).endOf("year").toDate(),
+          },
     },
   });
 
@@ -267,7 +267,9 @@ export async function getReportsPerSession(
       },
       {
         label: "Missing Report",
-        data: reportsMapped.map(({ noReportCounter }) => Number(noReportCounter)),
+        data: reportsMapped.map(({ noReportCounter }) =>
+          Number(noReportCounter),
+        ),
         backgroundColor: "rgba(255, 99, 132, 0.8)",
       },
     ],
