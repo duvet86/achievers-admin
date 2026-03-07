@@ -113,6 +113,7 @@ export async function seedForWriteReportAsync() {
           chapterId: 1,
           studentSessionId: studentSession.id,
           mentorSessionId: mentorSession.id,
+          status: "PENDING",
         },
       });
     });
@@ -178,6 +179,7 @@ export async function seedSessionsFroHomePageAsync() {
           chapterId: 1,
           studentSessionId: studentNextSession.id,
           mentorSessionId: mentorNextSession.id,
+          status: "PENDING",
         },
       });
 
@@ -211,6 +213,7 @@ export async function seedSessionsFroHomePageAsync() {
             '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"Hello this is my first report!","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}',
           completedOn: new Date("2024-11-16T00:00:00.000Z"),
           signedOffOn: new Date("2024-11-18T00:00:00.000Z"),
+          status: "CONFIRMED",
         },
       });
     });

@@ -371,6 +371,7 @@ export async function createSessionWithStudentAsync({
         mentorSessionId: mentorSession.id,
         studentSessionId: studentSession.id,
         attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
+        status: "CONFIRMED",
       },
     });
   });
@@ -425,6 +426,7 @@ export async function takeSessionFromParterAsync(
           attendedOn: partnerStudentSession.attendedOn,
           mentorSessionId: mentorSession.id,
           studentSessionId: partnerStudentSession.studentSession.id,
+          status: "CONFIRMED",
         },
         select: {
           id: true,
@@ -446,6 +448,7 @@ export async function takeSessionFromParterAsync(
         attendedOn: partnerStudentSession.attendedOn,
         mentorSessionId: mentorSession.id,
         studentSessionId: partnerStudentSession.studentSession.id,
+        status: "CONFIRMED",
       },
       select: {
         id: true,

@@ -33,6 +33,11 @@ enum MentorStatus {
   BLOCKED
 }
 
+enum SessionConfirmationStatus {
+  PENDING
+  CONFIRMED
+}
+
 model Mentor {
   id        Int     @id @default(autoincrement())
   azureADId String? @unique // Defined by Azure Active Directory.
@@ -443,9 +448,10 @@ model Session {
   chapter   Chapter @relation(fields: [chapterId], references: [id])
   chapterId Int
 
-  attendedOn         DateTime  @db.Date
-  report             String?   @db.Text
-  hasReport          Boolean   @default(dbgenerated()) // Calculated column based on report != null.
+  attendedOn         DateTime                  @db.Date
+  status             SessionConfirmationStatus
+  report             String?                   @db.Text
+  hasReport          Boolean                   @default(dbgenerated()) // Calculated column based on report != null.
   completedOn        DateTime?
   notificationSentOn DateTime?
 

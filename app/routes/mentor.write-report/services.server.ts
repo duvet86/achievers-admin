@@ -256,6 +256,7 @@ export async function createSessionAsync({
         attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
         report,
         completedOn,
+        status: "CONFIRMED",
       },
     });
   });
