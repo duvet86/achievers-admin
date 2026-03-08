@@ -250,8 +250,11 @@ export default function Index({
   };
 
   const onEditorChange = (editorState: EditorState) => {
-    setIsDirty(true);
     editorStateRef.current = editorState;
+
+    if (!isEditorEmpty(editorState)) {
+      setIsDirty(true);
+    }
   };
 
   const saveReport = (actionType: ActionType) => () => {
