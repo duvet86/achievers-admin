@@ -28,6 +28,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const user = await getUserByAzureADIdAsync(loggedUser.oid);
   if (user === null) {
+    trackException(new Error("Montor existis in DB but not in Azure."));
+
     throw redirect("/500");
   }
 

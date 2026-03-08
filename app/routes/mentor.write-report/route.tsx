@@ -4,8 +4,8 @@ import type { EditorState } from "lexical";
 import type { Route } from "./+types/route";
 import type { ActionType } from "./services.server";
 
-import { Form, useSubmit } from "react-router";
-import { useRef } from "react";
+import { Form, useSubmit, useBlocker } from "react-router";
+import { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import classNames from "classnames";
 import {
@@ -198,6 +198,7 @@ export default function Index({
   const submit = useSubmit();
   const formRef = useRef<HTMLFormElement | null>(null);
   const editorStateRef = useRef<EditorState>(null);
+  const [isDirty, setIsDirty] = useState(false);
 
   const signedOffOn = session?.signedOffOn;
   const completedOn = session?.completedOn;
@@ -206,6 +207,24 @@ export default function Index({
 
   const isMyReport = !isNotMyReport;
   const canUnmarkReport = isMyReport && completedOn && !signedOffOn;
+
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      isDirty && currentLocation.pathname !== nextLocation.pathname,
+  );
+
+  useEffect(() => {
+    if (blocker.state === "blocked") {
+      const proceed = window.confirm(
+        "You have unsaved changes. Are you sure you want to leave?",
+      );
+      if (proceed) {
+        blocker.proceed();
+      } else {
+        blocker.reset();
+      }
+    }
+  }, [blocker]);
 
   const handleSelectedTermYearChange = () => {
     const formData = new FormData(formRef.current!);
@@ -228,6 +247,11 @@ export default function Index({
     const formData = new FormData(formRef.current!);
 
     void submit(formData);
+  };
+
+  const onEditorChange = (editorState: EditorState) => {
+    setIsDirty(true);
+    editorStateRef.current = editorState;
   };
 
   const saveReport = (actionType: ActionType) => () => {
@@ -262,6 +286,8 @@ export default function Index({
       (document.getElementById("errorModal") as HTMLDialogElement).showModal();
       return;
     }
+
+    setIsDirty(false);
 
     void submit(
       {
@@ -412,9 +438,7 @@ export default function Index({
                 <Editor
                   isReadonly={isReadOnlyEditor}
                   initialEditorStateType={session?.report ?? null}
-                  onChange={(editorState) =>
-                    (editorStateRef.current = editorState)
-                  }
+                  onChange={onEditorChange}
                 />
               </div>
 
