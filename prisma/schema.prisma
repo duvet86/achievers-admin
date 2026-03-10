@@ -21,6 +21,7 @@ enum TeachingSubject {
 enum SessionStatus {
   AVAILABLE
   UNAVAILABLE
+  PENDING
 }
 
 enum CancelledEntity {
@@ -31,11 +32,6 @@ enum CancelledEntity {
 enum MentorStatus {
   ARCHIVED
   BLOCKED
-}
-
-enum SessionConfirmationStatus {
-  PENDING
-  CONFIRMED
 }
 
 model Mentor {
@@ -448,10 +444,9 @@ model Session {
   chapter   Chapter @relation(fields: [chapterId], references: [id])
   chapterId Int
 
-  attendedOn         DateTime                  @db.Date
-  status             SessionConfirmationStatus
-  report             String?                   @db.Text
-  hasReport          Boolean                   @default(dbgenerated()) // Calculated column based on report != null.
+  attendedOn         DateTime  @db.Date
+  report             String?   @db.Text
+  hasReport          Boolean   @default(dbgenerated()) // Calculated column based on report != null.
   completedOn        DateTime?
   notificationSentOn DateTime?
 

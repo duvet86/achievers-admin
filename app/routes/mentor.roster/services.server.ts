@@ -371,7 +371,6 @@ export async function createSessionWithStudentAsync({
         mentorSessionId: mentorSession.id,
         studentSessionId: studentSession.id,
         attendedOn: dayjs.utc(attendedOn, "YYYY-MM-DD").toDate(),
-        status: "CONFIRMED",
       },
     });
   });
@@ -426,7 +425,6 @@ export async function takeSessionFromParterAsync(
           attendedOn: partnerStudentSession.attendedOn,
           mentorSessionId: mentorSession.id,
           studentSessionId: partnerStudentSession.studentSession.id,
-          status: "CONFIRMED",
         },
         select: {
           id: true,
@@ -448,7 +446,6 @@ export async function takeSessionFromParterAsync(
         attendedOn: partnerStudentSession.attendedOn,
         mentorSessionId: mentorSession.id,
         studentSessionId: partnerStudentSession.studentSession.id,
-        status: "CONFIRMED",
       },
       select: {
         id: true,
@@ -461,6 +458,17 @@ export async function deleteMentorSessionByIdAsync(mentorSessionId: number) {
   return await prisma.mentorSession.delete({
     where: {
       id: mentorSessionId,
+    },
+  });
+}
+
+export async function confirmMentorSessionByIdAsync(mentorSessionId: number) {
+  return await prisma.mentorSession.update({
+    where: {
+      id: mentorSessionId,
+    },
+    data: {
+      status: "AVAILABLE",
     },
   });
 }

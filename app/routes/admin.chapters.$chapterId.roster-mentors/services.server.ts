@@ -1,4 +1,4 @@
-import type { SessionStatus, SessionConfirmationStatus } from "~/prisma/client";
+import type { SessionStatus } from "~/prisma/client";
 import type { Term } from "~/models";
 
 import dayjs from "dayjs";
@@ -20,7 +20,6 @@ interface MentorSession {
   hasReport: number | null;
   completedOn: string | null;
   isCancelled: number | null;
-  sessionStatus: SessionConfirmationStatus;
   studentId: number | null;
   studentFullName: string | null;
 }
@@ -34,7 +33,6 @@ interface SessionForLookup {
   hasReport: boolean;
   completedOn: string | null;
   isCancelled: boolean;
-  sessionStatus: SessionConfirmationStatus;
   studentId: number;
   studentFullName: string;
 }
@@ -109,7 +107,6 @@ export async function getMentorsAsync(
         sa.hasReport,
         sa.completedOn,
         sa.isCancelled,
-        sa.status AS sessionStatus,
         ss.studentId,
         s.fullName AS studentFullName
       FROM MentorSession ms
@@ -135,7 +132,6 @@ export async function getMentorsAsync(
       hasReport: mentorSession.hasReport === 1,
       completedOn: mentorSession.completedOn,
       isCancelled: mentorSession.isCancelled === 1,
-      sessionStatus: mentorSession.sessionStatus,
       studentFullName: mentorSession.studentFullName!,
     };
 

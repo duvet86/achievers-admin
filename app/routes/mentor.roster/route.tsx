@@ -10,6 +10,7 @@ import {
 import dayjs from "dayjs";
 import {
   BookmarkBook,
+  Check,
   EditPencil,
   Eye,
   Group,
@@ -38,6 +39,7 @@ import {
   deleteMentorSessionByIdAsync,
   createMentorSession,
   deleteSessionByIdAsync,
+  confirmMentorSessionByIdAsync,
 } from "./services.server";
 import { ManageSession } from "./components/ManageSession";
 
@@ -151,6 +153,12 @@ export async function action({ request }: Route.ActionArgs) {
       break;
     }
 
+    case "confirmSession": {
+      const mentorSessionId = bodyData.get("mentorSessionId");
+      await confirmMentorSessionByIdAsync(Number(mentorSessionId));
+      break;
+    }
+
     case "deleteSession": {
       const sessionId = bodyData.get("sessionId");
       await deleteSessionByIdAsync(Number(sessionId));
@@ -189,6 +197,15 @@ export default function Index({
 
     const formData = new FormData();
     formData.append("action", "deleteMentorSession");
+    formData.append("mentorSessionId", mentorSessionId.toString());
+    formData.append("selectedTermId", selectedTermId);
+
+    void submit(formData, { method: "POST" });
+  };
+
+  const handleConfirmSessionSubmit = (mentorSessionId: number) => () => {
+    const formData = new FormData();
+    formData.append("action", "confirmSession");
     formData.append("mentorSessionId", mentorSessionId.toString());
     formData.append("selectedTermId", selectedTermId);
 
@@ -343,24 +360,49 @@ export default function Index({
                           </>
                         ) : (
                           <>
-                            <div className="text-success flex items-center justify-center gap-2 sm:justify-start">
-                              <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
-                              <span>Booked with</span>{" "}
-                              <span className="font-bold">
-                                {studentSession.student.fullName}
-                              </span>
-                            </div>
+                            {myMentorSession.status === "PENDING" && (
+                              <div className="text-warning flex items-center justify-center gap-2 sm:justify-start">
+                                <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
+                                <span>Allocated with</span>{" "}
+                                <span className="font-bold">
+                                  {studentSession.student.fullName}
+                                </span>
+                              </div>
+                            )}
+
+                            {myMentorSession.status === "AVAILABLE" && (
+                              <div className="text-success flex items-center justify-center gap-2 sm:justify-start">
+                                <ThumbsUp className="h-4 w-4 sm:h-6 sm:w-6" />
+                                <span>Booked with</span>{" "}
+                                <span className="font-bold">
+                                  {studentSession.student.fullName}
+                                </span>
+                              </div>
+                            )}
 
                             <div className="flex gap-2">
                               {!hasReport && (
                                 <>
-                                  <StateLink
-                                    to={`/mentor/write-report?selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z&selectedStudentId=${studentSession.student.id}`}
-                                    className="btn btn-sm w-full sm:w-36"
-                                  >
-                                    <EditPencil />
-                                    Write report
-                                  </StateLink>
+                                  {myMentorSession.status === "PENDING" && (
+                                    <button
+                                      onClick={handleConfirmSessionSubmit(
+                                        myMentorSession.id,
+                                      )}
+                                      className="btn btn-success btn-sm w-full sm:w-36"
+                                    >
+                                      <Check />
+                                      Confirm
+                                    </button>
+                                  )}
+                                  {myMentorSession.status === "AVAILABLE" && (
+                                    <StateLink
+                                      to={`/mentor/write-report?selectedTermDate=${dayjs(attendedOn).format("YYYY-MM-DD")}T00:00:00.000Z&selectedStudentId=${studentSession.student.id}`}
+                                      className="btn btn-sm w-full sm:w-36"
+                                    >
+                                      <EditPencil />
+                                      Write report
+                                    </StateLink>
+                                  )}
                                   <button
                                     onClick={handleCancelSessionSubmit(id)}
                                     className="btn btn-error btn-sm w-full sm:w-36"

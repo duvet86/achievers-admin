@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE `Session` DROP COLUMN `status`;
+
+-- AlterTable
+ALTER TABLE `MentorSession` MODIFY `status` ENUM('AVAILABLE', 'UNAVAILABLE', 'PENDING') NOT NULL DEFAULT 'PENDING';
+
+-- AlterTable
+ALTER TABLE `StudentSession` MODIFY `status` ENUM('AVAILABLE', 'UNAVAILABLE', 'PENDING') NOT NULL DEFAULT 'PENDING';

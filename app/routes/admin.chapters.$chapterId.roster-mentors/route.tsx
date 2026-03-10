@@ -12,6 +12,7 @@ import {
   Calendar,
   DatabaseExport,
   WarningTriangle,
+  WarningTriangleSolid,
 } from "iconoir-react";
 
 import {
@@ -256,6 +257,10 @@ export default function Index({
                   value: "",
                 },
                 {
+                  label: "Pending",
+                  value: "PENDING",
+                },
+                {
                   label: "Available",
                   value: "AVAILABLE",
                 },
@@ -269,8 +274,14 @@ export default function Index({
           </div>
         </div>
 
-        <fieldset className="flex gap-4 rounded border p-2">
+        <fieldset className="flex gap-6 rounded border p-2">
           <legend className="fieldset-legend">Legend</legend>
+          <div className="flex gap-2">
+            <div className="badge badge-warning gap-1">
+              <WarningTriangleSolid className="h-4 w-4" /> Pending
+            </div>
+            <span>Mentor hasn&apos;t confirmed presence</span>
+          </div>
           <div className="flex gap-2">
             <div className="badge badge-success gap-1">
               Report <Check className="h-4 w-4" />
@@ -402,6 +413,13 @@ export default function Index({
                             Report <WarningTriangle className="h-4 w-4" />
                           </div>
                         )}
+                        {!isCancelled &&
+                          mentorSession?.status === "PENDING" && (
+                            <div className="badge indicator-item badge-warning indicator-center gap-1">
+                              <WarningTriangleSolid className="h-4 w-4" />{" "}
+                              Pending
+                            </div>
+                          )}
                         <StateLink
                           to={to}
                           className={classNames(

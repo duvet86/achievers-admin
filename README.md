@@ -73,7 +73,7 @@ npx prisma migrate dev --name {name} --create-only
 Run this command:
 
 ```bash
-npx npm-check-updates
+npx npm-check-updates -u
 ```
 
 ## Install Playwright

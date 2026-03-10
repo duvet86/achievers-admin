@@ -275,7 +275,6 @@ export async function addStudentToSessionAsync({
         attendedOn: mentorSession.attendedOn,
         mentorSessionId: mentorSession.id,
         studentSessionId: studentSession.id,
-        status: "PENDING",
       },
     });
   });

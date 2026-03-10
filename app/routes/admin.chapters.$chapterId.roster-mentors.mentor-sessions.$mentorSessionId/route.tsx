@@ -141,6 +141,27 @@ export default function Index({
           <div className="sm:flex-1">{mentorSession.mentor.fullName}</div>
         </div>
 
+        <div className="flex items-center justify-between gap-2 border-b border-gray-300 p-2">
+          <div className="font-bold sm:w-72">Status</div>
+          <div className="sm:flex-1">
+            {mentorSession.status === "PENDING" && (
+              <span className="bg-warning flex gap-2 rounded p-1 font-semibold">
+                <WarningTriangle /> PENDING CONFIRMATION
+              </span>
+            )}
+            {mentorSession.status === "AVAILABLE" && (
+              <span className="bg-success flex gap-2 rounded p-1 font-semibold">
+                <Check /> {mentorSession.status}
+              </span>
+            )}
+            {mentorSession.status === "UNAVAILABLE" && (
+              <span className="bg-error flex gap-2 rounded p-1 font-semibold">
+                <WarningTriangle /> {mentorSession.status}
+              </span>
+            )}
+          </div>
+        </div>
+
         {mentorSession.status === "UNAVAILABLE" ? (
           <Form
             method="POST"
@@ -171,7 +192,7 @@ export default function Index({
               onSubmit={handleFormSubmit}
               className="flex items-center gap-4"
             >
-              <p className="alert alert-info w-full">
+              <p className="alert alert-success w-full">
                 <InfoCircle />
                 Mentor is marked as available for this session
               </p>

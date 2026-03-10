@@ -133,7 +133,7 @@ export default function Index({
               className="btn btn-primary btn-block sm:w-48"
               type="submit"
               name="status"
-              value="AVAILABLE"
+              value="PENDING"
             >
               <FloppyDiskArrowIn />
               Book
