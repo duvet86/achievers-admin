@@ -102,3 +102,43 @@ export async function updateMentorByIdAsync(
 
   await userRepository.saveAsync(mentor);
 }
+
+export async function removeWelcomeCall(mentorId: number) {
+  return await prisma.welcomeCall.delete({
+    where: {
+      mentorId,
+    },
+  });
+}
+
+export async function removeInduction(mentorId: number) {
+  return await prisma.induction.delete({
+    where: {
+      mentorId,
+    },
+  });
+}
+
+export async function removePoliceCheck(mentorId: number) {
+  return await prisma.policeCheck.delete({
+    where: {
+      mentorId,
+    },
+  });
+}
+
+export async function removeWwccheck(mentorId: number) {
+  return await prisma.wWCCheck.delete({
+    where: {
+      mentorId,
+    },
+  });
+}
+
+export async function removeApprovalMrc(mentorId: number) {
+  return await prisma.approvalbyMRC.delete({
+    where: {
+      mentorId,
+    },
+  });
+}

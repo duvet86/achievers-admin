@@ -1,3 +1,4 @@
+import { useSubmit } from "react-router";
 import dayjs from "dayjs";
 import {
   Sparks,
@@ -11,6 +12,8 @@ import {
   Xmark,
   ThumbsUp,
   WarningTriangle,
+  Bin,
+  Eye,
 } from "iconoir-react";
 
 import { StateLink } from "~/components";
@@ -67,6 +70,21 @@ export function CheckList({
   approvalbyMRCCompleted,
   volunteerAgreementSignedOn,
 }: Props) {
+  const submit = useSubmit();
+
+  const submitDelete = (action: string) => () => {
+    if (!confirm(`Are you sure you want to delete this '${action}'?`)) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("action", action);
+
+    void submit(formData, {
+      method: "DELETE",
+    });
+  };
+
   return (
     <div className="overflow-auto bg-white">
       <table className="table">
@@ -93,10 +111,10 @@ export function CheckList({
             </td>
             <td>
               <StateLink
-                className="btn btn-neutral btn-xs w-full gap-2"
+                className="btn btn-success btn-xs w-full gap-2"
                 to="eoiProfile"
               >
-                View
+                <Eye /> View
               </StateLink>
             </td>
           </tr>
@@ -111,12 +129,22 @@ export function CheckList({
               <CheckStatus isCompleted={welcomeCallCompleted} />
             </td>
             <td>
-              <StateLink
-                className="btn btn-neutral btn-xs w-full gap-2"
-                to="welcomeCall"
-              >
-                View
-              </StateLink>
+              <div className="flex w-full gap-2">
+                <StateLink
+                  className="btn btn-success btn-xs flex-1 gap-2"
+                  to="welcomeCall"
+                >
+                  <Eye /> View
+                </StateLink>
+                {welcomeCallCompleted && (
+                  <button
+                    className="btn btn-error btn-xs flex-1 gap-2"
+                    onClick={submitDelete("welcomeCall")}
+                  >
+                    <Bin /> Delete
+                  </button>
+                )}
+              </div>
             </td>
           </tr>
           <tr className="hover:bg-base-200">
@@ -131,10 +159,10 @@ export function CheckList({
             </td>
             <td>
               <StateLink
-                className="btn btn-neutral btn-xs w-full gap-2"
+                className="btn btn-success btn-xs w-full gap-2"
                 to="references"
               >
-                View
+                <Eye /> View
               </StateLink>
             </td>
           </tr>
@@ -149,12 +177,22 @@ export function CheckList({
               <CheckStatus isCompleted={inductionCompleted} />
             </td>
             <td>
-              <StateLink
-                className="btn btn-neutral btn-xs w-full gap-2"
-                to="induction"
-              >
-                View
-              </StateLink>
+              <div className="flex w-full gap-2">
+                <StateLink
+                  className="btn btn-success btn-xs flex-1 gap-2"
+                  to="induction"
+                >
+                  <Eye /> View
+                </StateLink>
+                {inductionCompleted && (
+                  <button
+                    className="btn btn-error btn-xs flex-1 gap-2"
+                    onClick={submitDelete("induction")}
+                  >
+                    <Bin /> Delete
+                  </button>
+                )}
+              </div>
             </td>
           </tr>
           <tr className="hover:bg-base-200">
@@ -171,12 +209,22 @@ export function CheckList({
               />
             </td>
             <td>
-              <StateLink
-                className="btn btn-neutral btn-xs w-full gap-2"
-                to="police-check"
-              >
-                View
-              </StateLink>
+              <div className="flex w-full gap-2">
+                <StateLink
+                  className="btn btn-success btn-xs flex-1 gap-2"
+                  to="police-check"
+                >
+                  <Eye /> View
+                </StateLink>
+                {policeCheckCompleted && (
+                  <button
+                    className="btn btn-error btn-xs flex-1 gap-2"
+                    onClick={submitDelete("police-check")}
+                  >
+                    <Bin /> Delete
+                  </button>
+                )}
+              </div>
             </td>
           </tr>
           <tr className="hover:bg-base-200">
@@ -193,12 +241,22 @@ export function CheckList({
               />
             </td>
             <td>
-              <StateLink
-                className="btn btn-neutral btn-xs w-full gap-2"
-                to="wwc-check"
-              >
-                View
-              </StateLink>
+              <div className="flex w-full gap-2">
+                <StateLink
+                  className="btn btn-success btn-xs flex-1 gap-2"
+                  to="wwc-check"
+                >
+                  <Eye /> View
+                </StateLink>
+                {wwcCheckCompleted && (
+                  <button
+                    className="btn btn-error btn-xs flex-1 gap-2"
+                    onClick={submitDelete("wwc-check")}
+                  >
+                    <Bin /> Delete
+                  </button>
+                )}
+              </div>
             </td>
           </tr>
           <tr className="hover:bg-base-200">
@@ -212,12 +270,22 @@ export function CheckList({
               <CheckStatus isCompleted={approvalbyMRCCompleted} />
             </td>
             <td>
-              <StateLink
-                className="btn btn-neutral btn-xs w-full gap-2"
-                to="approval-mrc"
-              >
-                View
-              </StateLink>
+              <div className="flex w-full gap-2">
+                <StateLink
+                  className="btn btn-success btn-xs flex-1 gap-2"
+                  to="approval-mrc"
+                >
+                  <Eye /> View
+                </StateLink>
+                {approvalbyMRCCompleted && (
+                  <button
+                    className="btn btn-error btn-xs flex-1 gap-2"
+                    onClick={submitDelete("approval-mrc")}
+                  >
+                    <Bin /> Delete
+                  </button>
+                )}
+              </div>
             </td>
           </tr>
         </tbody>

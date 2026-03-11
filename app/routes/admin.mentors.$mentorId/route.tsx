@@ -21,6 +21,11 @@ import {
   getUserByIdAsync,
   updateMentorByIdAsync,
   getChaptersAsync,
+  removeWelcomeCall,
+  removeInduction,
+  removePoliceCheck,
+  removeWwccheck,
+  removeApprovalMrc,
 } from "./services.server";
 import { UserForm, CheckList, Header } from "./components";
 
@@ -74,6 +79,38 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
 export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.mentorId, "mentorId not found");
+
+  if (request.method === "DELETE") {
+    const formDataDelete = await request.formData();
+
+    const action = formDataDelete.get("action")!.toString();
+    switch (action) {
+      case "welcomeCall":
+        await removeWelcomeCall(Number(params.mentorId));
+        break;
+
+      case "induction":
+        await removeInduction(Number(params.mentorId));
+        break;
+
+      case "police-check":
+        await removePoliceCheck(Number(params.mentorId));
+        break;
+
+      case "wwc-check":
+        await removeWwccheck(Number(params.mentorId));
+        break;
+
+      case "approval-mrc":
+        await removeApprovalMrc(Number(params.mentorId));
+        break;
+    }
+
+    return {
+      successMessage: "Deleted successfully!",
+      errorMessage: null,
+    };
+  }
 
   const formData = await parseFormData(request, uploadHandler);
 
