@@ -55,7 +55,7 @@ export async function getStudentsAsync(
   chapterId: number,
   term: Term,
   sortFullName: Prisma.SortOrder | undefined,
-  searchTerm: string | undefined,
+  searchTerm: string | null,
 ): Promise<SessionViewModel[]> {
   const students = await prisma.student.findMany({
     where: {

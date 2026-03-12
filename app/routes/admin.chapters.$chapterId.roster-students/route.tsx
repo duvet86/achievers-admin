@@ -39,8 +39,8 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     CURRENT_YEAR.toString();
   const selectedTermId = url.safeSearchParams.getNullOrEmpty("selectedTermId");
   let selectedTermDate =
-    url.safeSearchParams.getNullOrEmpty("selectedTermDate") ?? "";
-  const searchTerm = url.safeSearchParams.getNullOrEmpty("search") ?? undefined;
+    url.safeSearchParams.getNullOrEmpty("selectedTermDate");
+  const searchTerm = url.safeSearchParams.getNullOrEmpty("search");
 
   const sortFullNameSubmit: Prisma.SortOrder | undefined =
     (url.safeSearchParams.getNullOrEmpty("sortFullName") as Prisma.SortOrder) ??
@@ -129,13 +129,30 @@ export default function Index({
   const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  const handleFormSubmit = () => {
+  const onTermYearChange = () => {
+    const formData = new FormData(formRef.current!);
+
+    formData.set("selectedTermId", "");
+    formData.set("selectedTermDate", "");
+
+    void submit(formData);
+  };
+
+  const onTermIdChange = () => {
+    const formData = new FormData(formRef.current!);
+
+    formData.set("selectedTermDate", "");
+
+    void submit(formData);
+  };
+
+  const onFormChange = () => {
     const formData = new FormData(formRef.current!);
 
     void submit(formData);
   };
 
-  const handleButtonClick = () => {
+  const onClearSearch = () => {
     const formData = new FormData(formRef.current!);
     formData.set("search", "");
 
@@ -178,7 +195,7 @@ export default function Index({
                 className="select join-item basis-28"
                 name="selectedTermYear"
                 defaultValue={selectedTermYear}
-                onChange={handleFormSubmit}
+                onChange={onTermYearChange}
               >
                 {termYearsOptions.map(({ label, value }) => (
                   <option key={value} value={value}>
@@ -190,7 +207,7 @@ export default function Index({
                 className="select join-item"
                 name="selectedTermId"
                 defaultValue={selectedTermId}
-                onChange={handleFormSubmit}
+                onChange={onTermIdChange}
               >
                 {termsOptions.map(({ label, value }) => (
                   <option key={value} value={value}>
@@ -205,9 +222,9 @@ export default function Index({
             <Select
               label="Session date"
               name="selectedTermDate"
-              defaultValue={selectedTermDate}
+              defaultValue={selectedTermDate ?? ""}
               options={sessionDateOptions}
-              onChange={handleFormSubmit}
+              onChange={onFormChange}
             />
           </div>
 
@@ -217,8 +234,8 @@ export default function Index({
               label="Student (press Enter to submit)"
               name="search"
               placeholder="Student name"
-              defaultValue={searchTerm}
-              onButtonClick={handleButtonClick}
+              defaultValue={searchTerm ?? ""}
+              onButtonClick={onClearSearch}
             />
           </div>
         </div>
