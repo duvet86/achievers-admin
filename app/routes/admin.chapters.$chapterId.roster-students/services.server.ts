@@ -1,6 +1,7 @@
-import type { Prisma, SessionStatus } from "~/prisma/client";
+import type { SessionStatus } from "~/prisma/client";
 import type { Term } from "~/models";
 
+import { Prisma } from "~/prisma/client";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import utc from "dayjs/plugin/utc";
@@ -56,6 +57,7 @@ export async function getStudentsAsync(
   term: Term,
   sortFullName: Prisma.SortOrder | undefined,
   searchTerm: string | null,
+  termDate: string | null,
 ): Promise<SessionViewModel[]> {
   const students = await prisma.student.findMany({
     where: {
@@ -93,6 +95,7 @@ export async function getStudentsAsync(
     LEFT JOIN MentorSession ms ON ms.id = sa.mentorSessionId
     LEFT JOIN Mentor u ON u.id = ms.mentorId
     WHERE ss.chapterId = ${chapterId}
+      AND ms.attendedOn ${termDate ? Prisma.sql`= ${dayjs(termDate).format("YYYY-MM-DD")}` : Prisma.sql`BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`}
       AND ss.attendedOn BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`;
 
   const studentSessionLookup = studentSessions.reduce<

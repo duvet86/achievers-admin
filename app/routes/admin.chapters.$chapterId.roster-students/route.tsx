@@ -61,7 +61,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
 
   if (selectedTermDate && !sessionDates.includes(selectedTermDate)) {
-    selectedTermDate = "";
+    selectedTermDate = null;
   }
 
   const students = await getStudentsAsync(
@@ -69,6 +69,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     selectedTerm,
     sortFullNameSubmit,
     searchTerm,
+    selectedTermDate,
   );
 
   const sessionDateOptions = sessionDates
@@ -98,7 +99,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     datesInTerm: sessionDates
       .filter(
         (attendedOn) =>
-          attendedOn === selectedTermDate || selectedTermDate === "",
+          attendedOn === selectedTermDate || selectedTermDate === null,
       )
       .map((attendedOn) => dayjs(attendedOn).format("YYYY-MM-DD")),
     sessionDateOptions: [{ value: "", label: "All" }].concat(
