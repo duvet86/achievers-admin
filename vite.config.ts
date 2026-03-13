@@ -2,6 +2,7 @@ import path from "node:path";
 
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 import { configDefaults } from "vitest/config";
 import tailwindcss from "@tailwindcss/vite";
 
@@ -13,7 +14,11 @@ export default defineConfig(({ isSsrBuild }) => ({
         }
       : undefined,
   },
-  plugins: [tailwindcss(), !process.env.VITEST && reactRouter()],
+  plugins: [
+    tailwindcss(),
+    !process.env.VITEST && reactRouter(),
+    tsconfigPaths(),
+  ],
   test: {
     globals: true,
     environment: "jsdom",
@@ -27,7 +32,6 @@ export default defineConfig(({ isSsrBuild }) => ({
     },
   },
   resolve: {
-    tsconfigPaths: true,
     alias: {
       "@opentelemetry/api": path.resolve(
         __dirname,
