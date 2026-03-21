@@ -22,6 +22,18 @@ export interface ReferenceUpdateCommand {
   generalComment?: string | null;
 }
 
+export async function getUserByIdAsync(mentorId: number) {
+  return await prisma.mentor.findUniqueOrThrow({
+    where: {
+      id: mentorId,
+    },
+    select: {
+      id: true,
+      fullName: true,
+    },
+  });
+}
+
 export async function getUserWithReferenceByIdAsync(
   mentorId: number,
   referenceId: number,
@@ -32,8 +44,7 @@ export async function getUserWithReferenceByIdAsync(
     },
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
+      fullName: true,
       references: {
         where: {
           id: referenceId,
@@ -45,35 +56,40 @@ export async function getUserWithReferenceByIdAsync(
 
 export async function updateReferenceByIdAsync(
   mentorId: number,
-  referenceId: number,
+  referenceId: number | undefined,
   data: ReferenceUpdateCommand,
 ) {
-  return await prisma.reference.upsert({
+  if (referenceId === undefined) {
+    return await prisma.reference.create({
+      data: {
+        mentorId,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        mobile: data.mobile,
+        email: data.email,
+        bestTimeToContact: data.bestTimeToContact,
+        relationship: data.relationship,
+        hasKnowApplicantForAYear: data.hasKnowApplicantForAYear,
+        isRelated: data.isRelated,
+        knownForComment: data.knownForComment,
+        safeWithChildren: data.safeWithChildren,
+        skillAndKnowledgeComment: data.skillAndKnowledgeComment,
+        empathyAndPatienceComment: data.empathyAndPatienceComment,
+        buildRelationshipsComment: data.buildRelationshipsComment,
+        outcomeComment: data.outcomeComment,
+        generalComment: data.generalComment,
+        isMentorRecommended: data.isMentorRecommended,
+        calledBy: data.calledBy,
+        calledOndate: dayjs(data.calledOndate, "YYYY-MM-DD").toDate(),
+      },
+    });
+  }
+
+  return await prisma.reference.update({
     where: {
       id: referenceId,
     },
-    create: {
-      mentorId,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      mobile: data.mobile,
-      email: data.email,
-      bestTimeToContact: data.bestTimeToContact,
-      relationship: data.relationship,
-      hasKnowApplicantForAYear: data.hasKnowApplicantForAYear,
-      isRelated: data.isRelated,
-      knownForComment: data.knownForComment,
-      safeWithChildren: data.safeWithChildren,
-      skillAndKnowledgeComment: data.skillAndKnowledgeComment,
-      empathyAndPatienceComment: data.empathyAndPatienceComment,
-      buildRelationshipsComment: data.buildRelationshipsComment,
-      outcomeComment: data.outcomeComment,
-      generalComment: data.generalComment,
-      isMentorRecommended: data.isMentorRecommended,
-      calledBy: data.calledBy,
-      calledOndate: dayjs(data.calledOndate, "YYYY-MM-DD").toDate(),
-    },
-    update: {
+    data: {
       firstName: data.firstName,
       lastName: data.lastName,
       mobile: data.mobile,

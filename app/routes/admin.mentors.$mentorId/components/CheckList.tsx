@@ -22,7 +22,9 @@ interface Props {
   isWwcCheckExpired: boolean;
   isPoliceCheckExpired: boolean;
   welcomeCallCompleted: boolean;
-  referencesCompleted: boolean;
+  references: {
+    calledOndate: Date | null;
+  }[];
   inductionCompleted: boolean;
   policeCheckCompleted: boolean;
   wwcCheckCompleted: boolean;
@@ -63,7 +65,7 @@ export function CheckList({
   isWwcCheckExpired,
   isPoliceCheckExpired,
   welcomeCallCompleted,
-  referencesCompleted,
+  references,
   inductionCompleted,
   policeCheckCompleted,
   wwcCheckCompleted,
@@ -71,6 +73,10 @@ export function CheckList({
   volunteerAgreementSignedOn,
 }: Props) {
   const submit = useSubmit();
+
+  const referencesCompleted = references.filter(
+    (ref) => ref.calledOndate !== null,
+  ).length;
 
   const submitDelete = (action: string) => () => {
     if (!confirm(`Are you sure you want to delete this '${action}'?`)) {
@@ -155,7 +161,18 @@ export function CheckList({
               </div>
             </td>
             <td>
-              <CheckStatus isCompleted={referencesCompleted} />
+              <div className="flex items-center gap-4">
+                {references.length === referencesCompleted ? (
+                  <>
+                    <Check className="text-success h-6 w-6" /> Yes
+                  </>
+                ) : (
+                  <>
+                    <Xmark className="text-error h-6 w-6" /> No (
+                  </>
+                )}
+                {referencesCompleted}/{references.length})
+              </div>
             </td>
             <td>
               <StateLink

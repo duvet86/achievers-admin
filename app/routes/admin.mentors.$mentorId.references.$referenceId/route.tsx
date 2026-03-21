@@ -15,6 +15,7 @@ import {
 } from "~/components";
 
 import {
+  getUserByIdAsync,
   getUserWithReferenceByIdAsync,
   updateReferenceByIdAsync,
 } from "./services.server";
@@ -22,6 +23,17 @@ import {
 export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.mentorId, "mentorId not found");
   invariant(params.referenceId, "referenceId not found");
+
+  if (params.referenceId === "new") {
+    const user = await getUserByIdAsync(Number(params.mentorId));
+
+    return {
+      user: {
+        ...user,
+        references: [],
+      },
+    };
+  }
 
   const user = await getUserWithReferenceByIdAsync(
     Number(params.mentorId),
@@ -108,7 +120,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   await updateReferenceByIdAsync(
     Number(params.mentorId),
-    Number(params.referenceId),
+    params.referenceId === "new" ? undefined : Number(params.referenceId),
     data,
   );
 
@@ -127,9 +139,9 @@ export default function Index({
   return (
     <>
       <Title>
-        Reference &quot;{reference.firstName} {reference.lastName}&quot; for
-        mentor &quot;
-        {user.firstName} {user.lastName}&quot;
+        {reference
+          ? `Reference "${reference.firstName} ${reference.lastName}" for mentor "${user.fullName}"`
+          : `New Reference for mentor "${user.fullName}"`}
       </Title>
 
       <Form className="relative" method="post">
@@ -139,42 +151,42 @@ export default function Index({
           <Input
             label="First name"
             name="firstName"
-            defaultValue={reference.firstName ?? ""}
+            defaultValue={reference?.firstName ?? ""}
             required
           />
 
           <Input
             label="Last name"
             name="lastName"
-            defaultValue={reference.lastName ?? ""}
+            defaultValue={reference?.lastName ?? ""}
             required
           />
 
           <Input
             label="Mobile"
             name="mobile"
-            defaultValue={reference.mobile ?? ""}
+            defaultValue={reference?.mobile ?? ""}
             required
           />
 
           <Input
             label="Email"
             name="email"
-            defaultValue={reference.email ?? ""}
+            defaultValue={reference?.email ?? ""}
             required
           />
 
           <Input
             label="Relationship"
             name="relationship"
-            defaultValue={reference.relationship ?? ""}
+            defaultValue={reference?.relationship ?? ""}
             required
           />
 
           <Input
             label="Best time to contact"
             name="bestTimeToContact"
-            defaultValue={reference.bestTimeToContact ?? ""}
+            defaultValue={reference?.bestTimeToContact ?? ""}
           />
 
           <SubTitle>Outcome</SubTitle>
@@ -182,7 +194,7 @@ export default function Index({
           <Radio
             label="Has the referee known the applicant for at least one year?"
             name="hasKnowApplicantForAYear"
-            defaultValue={reference.hasKnowApplicantForAYear?.toString()}
+            defaultValue={reference?.hasKnowApplicantForAYear?.toString()}
             options={[
               {
                 label: "Yes",
@@ -199,7 +211,7 @@ export default function Index({
           <Radio
             label="Is the referee a family member or partner of the applicant?"
             name="isRelated"
-            defaultValue={reference.isRelated?.toString()}
+            defaultValue={reference?.isRelated?.toString()}
             options={[
               {
                 label: "Yes",
@@ -216,42 +228,42 @@ export default function Index({
           <Textarea
             label="Please describe how long and in what capacity you have known the Applicant? (Use this to also confirm employment status, dates and role of the applicant)"
             name="knownForComment"
-            defaultValue={reference.knownForComment ?? ""}
+            defaultValue={reference?.knownForComment ?? ""}
             required
           />
 
           <Textarea
             label="Would you be happy with your own children, or children you know, to be mentored by the Applicant?"
             name="safeWithChildren"
-            defaultValue={reference.safeWithChildren ?? ""}
+            defaultValue={reference?.safeWithChildren ?? ""}
             required
           />
 
           <Textarea
             label="What skills and knowledge do you think the Applicant has that will help them fulfil this mentoring role?"
             name="skillAndKnowledgeComment"
-            defaultValue={reference.skillAndKnowledgeComment ?? ""}
+            defaultValue={reference?.skillAndKnowledgeComment ?? ""}
             required
           />
 
           <Textarea
             label="Empathy and patience are key attributes for mentoring. Does the Applicant have these attributes? Provide examples."
             name="empathyAndPatienceComment"
-            defaultValue={reference.empathyAndPatienceComment ?? ""}
+            defaultValue={reference?.empathyAndPatienceComment ?? ""}
             required
           />
 
           <Textarea
             label="Another key attribute for this role is the ability to build relationships, especially with children. Does the Applicant have this attribute? Provide examples."
             name="buildRelationshipsComment"
-            defaultValue={reference.buildRelationshipsComment ?? ""}
+            defaultValue={reference?.buildRelationshipsComment ?? ""}
             required
           />
 
           <Textarea
             label="Any other comments? (Use this response to provide any other relevant information that may be helpful)."
             name="outcomeComment"
-            defaultValue={reference.outcomeComment ?? ""}
+            defaultValue={reference?.outcomeComment ?? ""}
             required
           />
 
@@ -260,12 +272,12 @@ export default function Index({
           <Input
             label="By (name)"
             name="calledBy"
-            defaultValue={reference.calledBy ?? ""}
+            defaultValue={reference?.calledBy ?? ""}
             required
           />
 
           <DateInput
-            defaultValue={reference.calledOndate ?? ""}
+            defaultValue={reference?.calledOndate ?? ""}
             label="On (date)"
             name="calledOndate"
             required
@@ -274,13 +286,13 @@ export default function Index({
           <Textarea
             label="General comment"
             name="generalComment"
-            defaultValue={reference.generalComment ?? ""}
+            defaultValue={reference?.generalComment ?? ""}
           />
 
           <Radio
             label="Based on this reference check, do you recommend the Potential Mentor named above be accepted as a Mentor?"
             name="isMentorRecommended"
-            defaultValue={reference.isMentorRecommended?.toString()}
+            defaultValue={reference?.isMentorRecommended?.toString()}
             options={[
               {
                 label: "Yes",

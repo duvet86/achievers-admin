@@ -1,12 +1,19 @@
 import type { Route } from "./+types/route";
 
+import { useFetcher } from "react-router";
 import invariant from "tiny-invariant";
-
-import { ChatBubbleEmpty, Check, WarningTriangle, Xmark } from "iconoir-react";
+import {
+  Bin,
+  ChatBubbleEmpty,
+  Check,
+  Plus,
+  WarningTriangle,
+  Xmark,
+} from "iconoir-react";
 
 import { StateLink, Title } from "~/components";
 
-import { getUserByIdAsync } from "./services.server";
+import { deleteReferenceById, getUserByIdAsync } from "./services.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.mentorId, "mentorId not found");
@@ -16,6 +23,17 @@ export async function loader({ params }: Route.LoaderArgs) {
   return {
     user,
   };
+}
+
+export async function action({ request, params }: Route.ActionArgs) {
+  invariant(params.mentorId, "mentorId not found");
+
+  const formData = await request.formData();
+  const referenceId = formData.get("referenceId")!.toString();
+
+  await deleteReferenceById(Number(referenceId));
+
+  return null;
 }
 
 // Checks the isMentorRecommended status. If it is null, it returns a warning triangle icon. If it is true, it returns a check icon. If it is false, it returns a xmark icon.
@@ -32,6 +50,23 @@ const renderMentorRecommendationStatus = (
 };
 
 export default function Index({ loaderData: { user } }: Route.ComponentProps) {
+  const { submit } = useFetcher();
+
+  const handleDelete = (referenceId: number) => () => {
+    if (!confirm("Are you sure you want to delete this reference?")) {
+      return;
+    }
+
+    void submit(
+      {
+        referenceId: referenceId.toString(),
+      },
+      {
+        method: "DELETE",
+      },
+    );
+  };
+
   return (
     <>
       <Title>References for &quot;{user.fullName}&quot;</Title>
@@ -64,18 +99,36 @@ export default function Index({ loaderData: { user } }: Route.ComponentProps) {
                   {renderMentorRecommendationStatus(isMentorRecommended)}
                 </td>
                 <td align="center">
-                  <StateLink
-                    to={`${id}`}
-                    className="btn btn-success btn-xs w-full gap-2"
-                  >
-                    <ChatBubbleEmpty className="h-4 w-4" />
-                    View
-                  </StateLink>
+                  <div className="flex w-full gap-2">
+                    <StateLink
+                      to={`${id}`}
+                      className="btn btn-success btn-xs flex-1 gap-2"
+                    >
+                      <ChatBubbleEmpty className="h-4 w-4" />
+                      View
+                    </StateLink>
+                    <button
+                      className="btn btn-error btn-xs flex-1 gap-2"
+                      onClick={handleDelete(id)}
+                    >
+                      <Bin /> Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="mt-4 flex justify-end">
+        <StateLink
+          className="btn btn-primary mt-4 w-56 gap-4 lg:mt-0"
+          to={`/admin/mentors/${user.id}/references/new`}
+        >
+          <Plus className="h-6 w-6" />
+          Add reference
+        </StateLink>
       </div>
     </>
   );

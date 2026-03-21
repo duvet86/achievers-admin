@@ -62,8 +62,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     isWwcCheckExpired: isDateExpired(user.wwcCheck?.expiryDate),
     isPoliceCheckExpired: isDateExpired(user.policeCheck?.expiryDate),
     welcomeCallCompleted: user.welcomeCall !== null,
-    referencesCompleted:
-      user.references.filter((ref) => ref.calledOndate !== null).length >= 2,
+    references: user.references,
     inductionCompleted: user.induction !== null,
     policeCheckCompleted: user.policeCheck !== null,
     wwcCheckCompleted: user.wwcCheck !== null,
@@ -241,7 +240,7 @@ export default function Index({
             isPoliceCheckExpired={loaderData.isPoliceCheckExpired}
             isWwcCheckExpired={loaderData.isWwcCheckExpired}
             policeCheckCompleted={loaderData.policeCheckCompleted}
-            referencesCompleted={loaderData.referencesCompleted}
+            references={loaderData.references}
             volunteerAgreementSignedOn={loaderData.volunteerAgreementSignedOn}
             welcomeCallCompleted={loaderData.welcomeCallCompleted}
             wwcCheckCompleted={loaderData.wwcCheckCompleted}

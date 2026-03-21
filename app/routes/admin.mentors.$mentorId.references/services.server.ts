@@ -18,3 +18,11 @@ export async function getUserByIdAsync(id: number) {
     },
   });
 }
+
+export async function deleteReferenceById(id: number) {
+  return await prisma.reference.delete({
+    where: {
+      id,
+    },
+  });
+}

@@ -1,6 +1,6 @@
 export type { InitialConfigType } from "@lexical/react/LexicalComposer";
-
 export type { EditorState } from "lexical";
+
 export { LexicalComposer } from "@lexical/react/LexicalComposer";
 export { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 export { ContentEditable } from "@lexical/react/LexicalContentEditable";
@@ -10,7 +10,7 @@ export { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 export { HeadingNode, QuoteNode } from "@lexical/rich-text";
 export { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 export { ListItemNode, ListNode } from "@lexical/list";
-export { CodeHighlightNode, CodeNode } from "@lexical/code";
+export { CodeHighlightNode, CodeNode } from "@lexical/code-core";
 export { AutoLinkNode, LinkNode } from "@lexical/link";
 export { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 export { ListPlugin } from "@lexical/react/LexicalListPlugin";
