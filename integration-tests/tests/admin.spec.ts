@@ -2,16 +2,16 @@ import { test, expect } from "@playwright/test";
 
 import { seedDataAsync } from "../test-data";
 
-import { AdminLayoutPage } from "integration-tests/pages/admin-layout.page";
-import { AdminHomePage } from "integration-tests/pages/admin-home.page";
+import { AdminLayoutPage } from "../pages/admin-layout.page";
+import { AdminHomePage } from "../pages/admin-home.page";
 import { AdminUsersPage } from "../pages/admin-users.page";
 import { AdminUserPage } from "../pages/admin-user/admin-userInfo.page";
 import { EOIInfoPage } from "../pages/eoi.page";
 import { ImportMentorsPage } from "../pages/import-mentors.page";
-import { ReferencePage } from "integration-tests/pages/reference";
-import { PoliceCheckPage } from "integration-tests/pages/police-check.page";
-import { WWCCheckPage } from "integration-tests/pages/wwc-check.page";
-import { ApprovalMRCPage } from "integration-tests/pages/approval-mrc.page";
+import { ReferencePage } from "../pages/reference";
+import { PoliceCheckPage } from "../pages/police-check.page";
+import { WWCCheckPage } from "../pages/wwc-check.page";
+import { ApprovalMRCPage } from "../pages/approval-mrc.page";
 
 test.describe("Admin", () => {
   let adminLayoutPage: AdminLayoutPage;

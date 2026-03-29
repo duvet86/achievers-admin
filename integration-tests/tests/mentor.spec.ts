@@ -6,10 +6,10 @@ import {
   seedSessionsFroHomePageAsync,
 } from "../test-data";
 
-import { AdminLayoutPage } from "integration-tests/pages/admin-layout.page";
-import { MentorLayoutPage } from "integration-tests/pages/mentor-layout.page";
-import { MentorHomePage } from "integration-tests/pages/mentor.home";
-import { MentorWriteReportPage } from "integration-tests/pages/mentor.wite-report";
+import { AdminLayoutPage } from "../pages/admin-layout.page";
+import { MentorLayoutPage } from "../pages/mentor-layout.page";
+import { MentorHomePage } from "../pages/mentor.home";
+import { MentorWriteReportPage } from "../pages/mentor.wite-report";
 
 test.describe("Mentor Home Page", () => {
   let adminLayoutPage: AdminLayoutPage;

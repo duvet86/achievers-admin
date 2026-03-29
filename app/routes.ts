@@ -163,6 +163,13 @@ export default [
               index: true,
             },
           ),
+          route(
+            "mentor-resources",
+            "routes/admin.config.mentor-resources/route.tsx",
+            {
+              index: true,
+            },
+          ),
         ]),
       ]),
       route(

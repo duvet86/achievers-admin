@@ -2,9 +2,9 @@ import { test, expect } from "@playwright/test";
 
 import { seedDataAsync } from "../test-data";
 
-import { AdminLayoutPage } from "integration-tests/pages/admin-layout.page";
-import { MentorLayoutPage } from "integration-tests/pages/mentor-layout.page";
-import { MentorVolunteerAgreementPage } from "integration-tests/pages/mentor.volunteer-agreement";
+import { AdminLayoutPage } from "../pages/admin-layout.page";
+import { MentorLayoutPage } from "../pages/mentor-layout.page";
+import { MentorVolunteerAgreementPage } from "../pages/mentor.volunteer-agreement";
 
 test.describe("Mentor Volunteer Agreement", () => {
   let adminLayoutPage: AdminLayoutPage;

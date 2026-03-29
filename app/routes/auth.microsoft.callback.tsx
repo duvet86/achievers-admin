@@ -2,8 +2,9 @@ import type { Route } from "./+types/auth.microsoft.callback";
 
 import { redirect } from "react-router";
 
-import { trackException } from "server-utils/azure-logger";
 import { returnToCookie } from "~/services/.server";
+
+import { trackException } from "../../server-utils/azure-logger";
 
 import {
   authenticator_dev,

@@ -1,4 +1,4 @@
-import { ValueObject } from "ddd/domain/ValueObject";
+import { ValueObject } from "../../ValueObject";
 
 interface IEmergencyContactProps {
   emergencyContactName: string | null;

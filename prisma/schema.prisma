@@ -625,3 +625,34 @@ model StudentGrade {
 
   @@unique([year, semester, subject, studentId])
 }
+
+model MentorResourceCategory {
+  id Int @id @default(autoincrement())
+
+  order Int
+  label String
+
+  mentorResource MentorResource[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([label])
+}
+
+model MentorResource {
+  id Int @id @default(autoincrement())
+
+  order       Int
+  label       String
+  description String? @db.Text
+  url         String
+
+  mentorResourcesCategory  MentorResourceCategory @relation(fields: [mentorResourceCategoryId], references: [id])
+  mentorResourceCategoryId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([label, url])
+}

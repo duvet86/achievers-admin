@@ -162,16 +162,16 @@ export function CheckList({
             </td>
             <td>
               <div className="flex items-center gap-4">
-                {references.length === referencesCompleted ? (
+                {references.length > 1 ? (
                   <>
                     <Check className="text-success h-6 w-6" /> Yes
                   </>
                 ) : (
                   <>
-                    <Xmark className="text-error h-6 w-6" /> No (
+                    <Xmark className="text-error h-6 w-6" /> No
                   </>
-                )}
-                {referencesCompleted}/{references.length})
+                )}{" "}
+                ({referencesCompleted}/{references.length})
               </div>
             </td>
             <td>

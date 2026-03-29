@@ -1,4 +1,4 @@
-import { ValueObject } from "ddd/domain/ValueObject";
+import { ValueObject } from "../../ValueObject";
 
 interface IAddressProps {
   addressStreet: string;

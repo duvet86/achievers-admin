@@ -1,6 +1,8 @@
-import type { IMentorRepository } from "ddd/domain/aggregates/mentor/IMentorRepository";
-import { Mentor } from "ddd/domain/aggregates/mentor/Mentor";
+import type { IMentorRepository } from "../../domain/aggregates/mentor/IMentorRepository";
+
 import { prisma } from "~/db.server";
+
+import { Mentor } from "../../domain/aggregates/mentor/Mentor";
 
 export class UserRepository implements IMentorRepository {
   async findByIdAsync(id: number): Promise<Mentor> {
