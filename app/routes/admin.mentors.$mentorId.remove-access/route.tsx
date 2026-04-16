@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/purity */
 import type { Route } from "./+types/route";
 
-import { Form } from "react-router";
+import { Form, redirect } from "react-router";
 import invariant from "tiny-invariant";
 import { BinFull, WarningCircle } from "iconoir-react";
 
@@ -39,10 +39,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     return { successMessage: null, error: error as Error };
   }
 
-  return {
-    successMessage: "User access removed successfully",
-    error: null,
-  };
+  return redirect(`/admin/mentors/${params.mentorId}`);
 }
 
 export default function Index({

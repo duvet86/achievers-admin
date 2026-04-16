@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/purity */
 import type { Route } from "./+types/route";
 
-import { Form } from "react-router";
+import { Form, redirect } from "react-router";
 import invariant from "tiny-invariant";
 import { Key, WarningCircle } from "iconoir-react";
 
@@ -36,18 +36,12 @@ export async function action({ request, params }: Route.ActionArgs) {
         Number(params.mentorId),
       );
 
-      return {
-        successMessage: "User invited successfully",
-        error: null,
-      };
+      return redirect(`/admin/mentors/${params.mentorId}`);
     }
 
     await inviteUserAsync(request, user.email, Number(params.mentorId));
 
-    return {
-      successMessage: "User invited successfully",
-      error: null,
-    };
+    return redirect(`/admin/mentors/${params.mentorId}`);
   } catch (error) {
     return { successMessage: null, error: error as Error };
   }
