@@ -62,7 +62,7 @@ export default function Index({
                       className="btn btn-success w-48 gap-2"
                     >
                       <StatsReport className="hidden h-4 w-4 lg:block" />
-                      Mentor reports
+                      Session Summaries
                     </StateLink>
 
                     <StateLink

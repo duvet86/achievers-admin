@@ -102,6 +102,7 @@ export default function Index({
       }
     }
 
+    // eslint-disable-next-line react-hooks/refs
     const resportState = editorStateRef.current!;
 
     if (isEditorEmpty(resportState)) {

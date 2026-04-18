@@ -36,7 +36,7 @@ export class MentorWriteReportPage {
     this.studentSelect = page.getByLabel("Student");
 
     this.editorQuestionsHeading = page.getByText(
-      "Have you answered these questions?",
+      "You might like to reflect on…",
     );
     this.editorQuestionsList = page.getByTestId("questions");
 

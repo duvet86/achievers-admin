@@ -13,6 +13,7 @@ interface Report {
   reportWithFeedbackCounter: string;
   reportNoFeedbackCounter: string;
   noReportCounter: string;
+  isCancelledCounter: string;
 }
 
 export const MONTHS = [
@@ -210,12 +211,13 @@ export async function getReportsPerSession(
 ) {
   const reports = await prisma.$queryRaw<Report[]>`SELECT
       s.attendedOn,
-      SUM(IF(s.report IS NOT NULL AND s.signedOffOn IS NOT NULL, 1, 0)) reportWithFeedbackCounter,
-      SUM(IF(s.report IS NOT NULL AND s.signedOffOn IS NULL, 1, 0)) reportNoFeedbackCounter,
-      SUM(IF(s.report IS NULL, 1, 0)) noReportCounter
+      SUM(IF(s.report IS NOT NULL AND s.signedOffOn IS NOT NULL AND s.isCancelled = 0, 1, 0)) reportWithFeedbackCounter,
+      SUM(IF(s.report IS NOT NULL AND s.signedOffOn IS NULL AND s.isCancelled = 0, 1, 0)) reportNoFeedbackCounter,
+      SUM(IF(s.report IS NULL AND s.isCancelled = 0, 1, 0)) noReportCounter,
+      SUM(s.isCancelled) isCancelledCounter
     FROM Session s
-    WHERE s.isCancelled = 0
-      AND ${chapterId ? Prisma.sql`s.chapterId = ${chapterId}` : "1=1"}
+    WHERE
+      ${chapterId ? Prisma.sql`s.chapterId = ${chapterId}` : "1=1"}
       AND ${selectedTerm ? Prisma.sql`s.attendedOn BETWEEN ${selectedTerm.start.format("YYYY-MM-DD")} AND ${selectedTerm.end.format("YYYY-MM-DD")}` : Prisma.sql`s.attendedOn BETWEEN ${dayjs().year(year).startOf("year").format("YYYY-MM-DD")} AND ${dayjs().year(year).endOf("year").format("YYYY-MM-DD")}`}
     GROUP BY s.attendedOn
     ORDER BY s.attendedOn ASC`;
@@ -243,6 +245,7 @@ export async function getReportsPerSession(
       noReportCounter: "0",
       reportNoFeedbackCounter: "0",
       reportWithFeedbackCounter: "0",
+      isCancelledCounter: "0",
     };
   });
 
@@ -271,6 +274,13 @@ export async function getReportsPerSession(
           Number(noReportCounter),
         ),
         backgroundColor: "rgba(255, 99, 132, 0.8)",
+      },
+      {
+        label: "Cancelled",
+        data: reportsMapped.map(({ isCancelledCounter }) =>
+          Number(isCancelledCounter),
+        ),
+        backgroundColor: "rgb(219, 219, 219)",
       },
     ],
   };

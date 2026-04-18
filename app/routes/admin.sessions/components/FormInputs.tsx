@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from "react-router";
 import { Select, SelectSearch } from "~/components";
 
 interface Props {
-  selectedChapterId: string;
+  selectedChapterId: string | undefined;
   selectedTermId: string;
   selectedTermYear: string;
   selectedTermDate: string | undefined;
@@ -187,6 +187,18 @@ export function FormInputs({
               type="radio"
               name="filterReports"
               className="radio radio-neutral"
+              defaultChecked={filterReports === "OUTSTANDING"}
+              value="OUTSTANDING"
+              onChange={onFilterReportsChange}
+            />
+            <span className="label-text">Outstanding</span>
+          </label>
+
+          <label className="label cursor-pointer gap-2">
+            <input
+              type="radio"
+              name="filterReports"
+              className="radio radio-neutral"
               defaultChecked={filterReports === "TO_SIGN_OFF"}
               value="TO_SIGN_OFF"
               onChange={onFilterReportsChange}
@@ -199,11 +211,11 @@ export function FormInputs({
               type="radio"
               name="filterReports"
               className="radio radio-neutral"
-              defaultChecked={filterReports === "OUTSTANDING"}
-              value="OUTSTANDING"
+              defaultChecked={filterReports === "CANCELLED"}
+              value="CANCELLED"
               onChange={onFilterReportsChange}
             />
-            <span className="label-text">Outstanding</span>
+            <span className="label-text">Cancelled</span>
           </label>
 
           <label className="label cursor-pointer gap-2">

@@ -69,14 +69,14 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
 
-  const selectedChapterId = chapterId ? Number(chapterId) : chapters[0].id;
+  const selectedChapterId = chapterId ? Number(chapterId) : undefined;
   const selectedMentorId = mentorId ? Number(mentorId) : undefined;
   const selectedStudentId = studentId ? Number(studentId) : undefined;
-  const selectedFilterReports = filterReports ?? "TO_SIGN_OFF";
+  const selectedFilterReports = filterReports ?? "OUTSTANDING";
 
   const count = await getCountAsync(
-    selectedChapterId,
     selectedTerm,
+    selectedChapterId,
     selectedTermDate ?? undefined,
     selectedMentorId,
     selectedStudentId,
@@ -95,8 +95,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 
   const sessions = await getSessionsAsync(
-    selectedChapterId,
     selectedTerm,
+    selectedChapterId,
     selectedTermDate ?? undefined,
     selectedMentorId,
     selectedStudentId,
@@ -112,10 +112,17 @@ export async function loader({ request }: Route.LoaderArgs) {
   ]);
 
   return {
-    chaptersOptions: chapters.map(({ id, name }) => ({
-      label: name,
-      value: id.toString(),
-    })),
+    chaptersOptions: [
+      {
+        label: "All",
+        value: "",
+      },
+    ].concat(
+      chapters.map(({ id, name }) => ({
+        label: name,
+        value: id.toString(),
+      })),
+    ),
     mentorsOptions: mentors.map(({ id, fullName }) => ({
       label: fullName,
       value: id.toString(),
@@ -124,7 +131,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       label: fullName,
       value: id.toString(),
     })),
-    selectedChapterId: selectedChapterId.toString(),
+    selectedChapterId: selectedChapterId?.toString(),
     selectedMentorId: selectedMentorId?.toString(),
     selectedStudentId: selectedStudentId?.toString(),
     selectedFilterReports,
@@ -191,7 +198,7 @@ export default function Index({
 
   return (
     <>
-      <Title>Reports</Title>
+      <Title>Session Summaries</Title>
 
       <hr className="my-4" />
 
@@ -221,6 +228,9 @@ export default function Index({
                   #
                 </th>
                 <th align="left" className="p-2">
+                  Chapter
+                </th>
+                <th align="left" className="p-2">
                   Mentor
                 </th>
                 <th align="left" className="p-2">
@@ -243,7 +253,7 @@ export default function Index({
             <tbody>
               {sessions.length === 0 && (
                 <tr>
-                  <td colSpan={6}>No reports available</td>
+                  <td colSpan={6}>No session summaries available</td>
                 </tr>
               )}
               {sessions.map(
@@ -256,6 +266,7 @@ export default function Index({
                     studentSession,
                     mentorSession,
                     isCancelled,
+                    chapter,
                   },
                   index,
                 ) => (
@@ -275,6 +286,7 @@ export default function Index({
                         {index + 1 + 10 * currentPageNumber}
                       </div>
                     </td>
+                    <td className="p-2">{chapter.name}</td>
                     <td className="p-2">{mentorSession.mentor.fullName}</td>
                     <td className="p-2">{studentSession.student.fullName}</td>
                     <td className="p-2">

@@ -1,19 +1,13 @@
 import { prisma } from "~/db.server";
 
-export type ActionType = "signoff" | "draft";
-
 export interface SessionCommandRequest {
-  actionType: ActionType;
   sessionId: number;
   report: string;
-  reportFeedback: string;
 }
 
 export interface SessionCommand {
-  actionType: ActionType;
   sessionId: number;
   report: string;
-  reportFeedback: string;
   userAzureId: string;
 }
 
@@ -26,7 +20,6 @@ export async function getSessionIdAsync(sessionId: number) {
       id: true,
       attendedOn: true,
       report: true,
-      reportFeedback: true,
       signedOffOn: true,
       mentorSession: {
         select: {
@@ -43,36 +36,17 @@ export async function getSessionIdAsync(sessionId: number) {
 }
 
 export async function saveReportAsync({
-  actionType,
   sessionId,
   report,
-  reportFeedback,
   userAzureId,
 }: SessionCommand) {
-  let completedOn: Date | null;
-  let isSignedOff: boolean;
-  switch (actionType) {
-    case "signoff":
-      completedOn = new Date();
-      isSignedOff = true;
-      break;
-    case "draft":
-    default:
-      completedOn = null;
-      isSignedOff = false;
-      break;
-  }
-
   return await prisma.session.update({
     where: {
       id: sessionId,
     },
     data: {
       report,
-      reportFeedback,
-      signedOffOn: isSignedOff ? new Date() : null,
-      signedOffByAzureId: isSignedOff ? userAzureId : null,
-      completedOn,
+      completedOn: new Date(),
       writteOnBehalfByAzureId: userAzureId,
     },
   });

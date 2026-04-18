@@ -1,26 +1,20 @@
 /* eslint-disable react-hooks/purity */
 import type { EditorState } from "lexical";
 import type { Route } from "./+types/route";
-import type { ActionType, SessionCommandRequest } from "./services.server";
+import type { SessionCommandRequest } from "./services.server";
 
 import { redirect, useFetcher } from "react-router";
 import invariant from "tiny-invariant";
 
 import { useRef } from "react";
 import dayjs from "dayjs";
-import { DesignNib, WarningTriangle } from "iconoir-react";
+import { FloppyDisk, WarningTriangle } from "iconoir-react";
 
 import { getLoggedUserInfoAsync } from "~/services/.server/session.server";
 
 import editorStylesheetUrl from "~/styles/editor.css?url";
 import { isEditorEmpty } from "~/services";
-import {
-  Editor,
-  EditorQuestions,
-  Message,
-  SubTitle,
-  Title,
-} from "~/components";
+import { Editor, EditorQuestions, Message, Title } from "~/components";
 
 import { getSessionIdAsync, saveReportAsync } from "./services.server";
 import { isSessionDateInTheFuture } from "./services.client";
@@ -49,16 +43,12 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const bodyData = (await request.json()) as SessionCommandRequest;
 
-  const actionType = bodyData.actionType;
   const sessionId = bodyData.sessionId;
   const report = bodyData.report;
-  const reportFeedback = bodyData.reportFeedback;
 
   await saveReportAsync({
-    actionType,
     sessionId,
     report,
-    reportFeedback,
     userAzureId: loggedUser.oid,
   });
 
@@ -69,17 +59,15 @@ export async function action({ request, params }: Route.ActionArgs) {
 
 export default function Index({
   loaderData: {
-    session: { id, report, reportFeedback, attendedOn, mentorSession },
+    session: { id, report, attendedOn, mentorSession },
   },
 }: Route.ComponentProps) {
   const { data, state, submit } = useFetcher<typeof action>();
-
   const editorReportStateRef = useRef<EditorState>(null);
-  const editorFeedbackStateRef = useRef<EditorState>(null);
 
   const isLoading = state !== "idle";
 
-  const saveReport = (type: ActionType) => () => {
+  const saveReport = () => {
     const reportState = editorReportStateRef.current!;
 
     if (isEditorEmpty(reportState)) {
@@ -98,28 +86,10 @@ export default function Index({
       return;
     }
 
-    const reportFeedbackState = editorFeedbackStateRef.current!;
-
-    if (type === "signoff") {
-      if (isEditorEmpty(reportFeedbackState)) {
-        (
-          document.getElementById("errorModalContent") as HTMLDivElement
-        ).textContent = "Report Feedback cannot be blank.";
-        (
-          document.getElementById("errorModal") as HTMLDialogElement
-        ).showModal();
-        return;
-      }
-    }
-
     void submit(
       {
-        actionType: type,
         sessionId: id,
         report: JSON.stringify(reportState.toJSON()),
-        reportFeedback: isEditorEmpty(reportFeedbackState)
-          ? null
-          : JSON.stringify(reportFeedbackState.toJSON()),
       },
       {
         method: "POST",
@@ -146,45 +116,28 @@ export default function Index({
           </div>
         )}
 
-        <div className="flex h-full flex-col gap-4">
-          <div className="flex flex-1 flex-col gap-4">
-            <div className="flex h-full flex-row">
-              <div className="w-full">
-                <Editor
-                  initialEditorStateType={report}
-                  onChange={(editorState) =>
-                    (editorReportStateRef.current = editorState)
-                  }
-                />
-              </div>
-
-              <EditorQuestions />
-            </div>
-
-            <SubTitle>Admin Feedback</SubTitle>
-          </div>
-
-          <div className="flex flex-1 flex-col gap-4 pb-2">
-            <div className="flex-1">
+        <div className="flex flex-1 flex-col gap-4">
+          <div className="flex h-full flex-row">
+            <div className="w-full">
               <Editor
-                initialEditorStateType={reportFeedback}
+                initialEditorStateType={report}
                 onChange={(editorState) =>
-                  (editorFeedbackStateRef.current = editorState)
+                  (editorReportStateRef.current = editorState)
                 }
               />
             </div>
 
-            <div className="flex flex-wrap justify-end gap-4 sm:gap-8">
-              <button
-                className="btn btn-success w-full sm:w-44"
-                onClick={saveReport("signoff")}
-              >
-                <DesignNib /> Sign off
-              </button>
-            </div>
+            <EditorQuestions />
           </div>
         </div>
       </div>
+
+      <div className="mt-4 flex flex-wrap justify-end gap-4 sm:gap-8">
+        <button className="btn btn-success w-full sm:w-44" onClick={saveReport}>
+          <FloppyDisk /> Save
+        </button>
+      </div>
+
       <dialog id="errorModal" className="modal">
         <div className="modal-box">
           <h3 className="flex gap-2 text-lg font-bold">

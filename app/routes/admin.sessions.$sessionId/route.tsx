@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/purity */
 import type { Route } from "./+types/route";
 
-import { Form } from "react-router";
+import { Form, redirect } from "react-router";
 import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 import classNames from "classnames";
@@ -33,6 +33,11 @@ export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.sessionId, "sessionId not found");
 
   const session = await getSessionByIdAsync(Number(params.sessionId));
+
+  if (session.completedOn !== null) {
+    return redirect(`/admin/sessions/${params.sessionId}/report`);
+  }
+
   const chapter = await getChapterByIdAsync(Number(session.chapterId));
 
   return {

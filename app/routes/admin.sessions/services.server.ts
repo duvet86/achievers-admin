@@ -25,7 +25,7 @@ export async function getChaptersAsync(ability: AppAbility) {
 
 export async function getAvailabelMentorsAsync(
   ability: AppAbility,
-  chapterId: number,
+  chapterId: number | undefined,
   studentId: number | undefined,
 ) {
   const chapterIdFilter = accessibleBy(ability).Chapter.id ?? chapterId;
@@ -35,30 +35,31 @@ export async function getAvailabelMentorsAsync(
   if (studentId) {
     sessions = await prisma.$queryRaw<DBOption[]>`
       SELECT 
-        u.id, u.fullName
+        m.id, m.fullName
       FROM Session sa
       INNER JOIN MentorSession ms ON ms.id = sa.mentorSessionId
       INNER JOIN StudentSession ss ON ss.id = sa.studentSessionId
-      INNER JOIN Mentor u ON u.id = ms.mentorId
-      WHERE sa.chapterId = ${chapterId} AND ss.studentId = ${studentId}
-      GROUP BY u.id, u.fullName
-      ORDER BY u.fullName ASC`;
+      INNER JOIN Mentor m ON m.id = ms.mentorId
+      WHERE ss.studentId = ${studentId} AND ${chapterId ? Prisma.sql`sa.chapterId = ${chapterId}` : "1=1"}
+      GROUP BY m.id, m.fullName
+      ORDER BY m.fullName ASC`;
   }
 
   const dbOptions = await prisma.$queryRaw<DBOption[]>`
     SELECT DISTINCT
-      u.id, u.fullName
-    FROM Mentor u
-    INNER JOIN MentorToStudentAssignement msa ON msa.mentorId = u.id
-    WHERE u.chapterId = ${chapterIdFilter} AND ${sessions.length > 0 ? Prisma.sql`u.id NOT IN (${Prisma.join(sessions.map((s) => s.id))})` : "1=1"}
-    ORDER BY u.fullName ASC`;
+      m.id, m.fullName
+    FROM Mentor m
+    INNER JOIN MentorToStudentAssignement msa ON msa.mentorId = m.id
+    WHERE ${sessions.length > 0 ? Prisma.sql`m.id NOT IN (${Prisma.join(sessions.map((s) => s.id))})` : "1=1"}
+      AND ${chapterIdFilter ? Prisma.sql`m.chapterId = ${chapterIdFilter}` : "1=1"}
+    ORDER BY m.fullName ASC`;
 
   return sessions.concat(dbOptions);
 }
 
 export async function getAvailabelStudentsAsync(
   ability: AppAbility,
-  chapterId: number,
+  chapterId: number | undefined,
   mentorId: number | undefined,
 ) {
   const chapterIdFilter = accessibleBy(ability).Chapter.id ?? chapterId;
@@ -73,7 +74,7 @@ export async function getAvailabelStudentsAsync(
       INNER JOIN MentorSession ms ON ms.id = sa.mentorSessionId
       INNER JOIN StudentSession ss ON ss.id = sa.studentSessionId
       INNER JOIN Student s ON s.id = ss.studentId
-      WHERE sa.chapterId = ${chapterId} AND ms.mentorId = ${mentorId}
+      WHERE ms.mentorId = ${mentorId} AND ${chapterId ? Prisma.sql`sa.chapterId = ${chapterId}` : "1=1"}
       GROUP BY s.id, s.fullName
       ORDER BY s.fullName ASC`;
   }
@@ -83,15 +84,16 @@ export async function getAvailabelStudentsAsync(
       s.id, s.fullName
     FROM Student s
     INNER JOIN MentorToStudentAssignement msa ON msa.studentId = s.id
-    WHERE s.chapterId = ${chapterIdFilter} AND ${sessions.length > 0 ? Prisma.sql`s.id NOT IN (${Prisma.join(sessions.map((s) => s.id))})` : "1=1"}
+    WHERE ${sessions.length > 0 ? Prisma.sql`s.id NOT IN (${Prisma.join(sessions.map((s) => s.id))})` : "1=1"}
+      AND ${chapterIdFilter ? Prisma.sql`s.chapterId = ${chapterIdFilter}` : "1=1"}
     ORDER BY s.fullName ASC`;
 
   return sessions.concat(dbOptions);
 }
 
 export async function getCountAsync(
-  chapterId: number,
   term: Term,
+  chapterId: number | undefined,
   termDate: string | undefined,
   mentorId: number | undefined,
   studentId: number | undefined,
@@ -99,8 +101,8 @@ export async function getCountAsync(
 ) {
   return await prisma.session.count({
     where: whereClause(
-      chapterId,
       term,
+      chapterId,
       termDate,
       mentorId,
       studentId,
@@ -110,8 +112,8 @@ export async function getCountAsync(
 }
 
 export async function getSessionsAsync(
-  chapterId: number,
   term: Term,
+  chapterId: number | undefined,
   termDate: string | undefined,
   mentorId: number | undefined,
   studentId: number | undefined,
@@ -121,8 +123,8 @@ export async function getSessionsAsync(
 ) {
   return await prisma.session.findMany({
     where: whereClause(
-      chapterId,
       term,
+      chapterId,
       termDate,
       mentorId,
       studentId,
@@ -154,6 +156,11 @@ export async function getSessionsAsync(
           },
         },
       },
+      chapter: {
+        select: {
+          name: true,
+        },
+      },
     },
     orderBy: {
       attendedOn: "desc",
@@ -164,8 +171,8 @@ export async function getSessionsAsync(
 }
 
 function whereClause(
-  chapterId: number,
   term: Term,
+  chapterId: number | undefined,
   termDate: string | undefined,
   mentorId: number | undefined,
   studentId: number | undefined,
@@ -192,12 +199,14 @@ function whereClause(
         ? null
         : undefined,
     attendedOn: termDate ?? {
-      lte: term.end.toDate(),
+      lte: term.end.isAfter(new Date()) ? new Date() : term.end.toDate(),
       gte: term.start.toDate(),
     },
     isCancelled:
-      filterReports === "TO_SIGN_OFF" || filterReports === "OUTSTANDING"
-        ? false
-        : undefined,
+      filterReports === "CANCELLED"
+        ? true
+        : filterReports === "TO_SIGN_OFF" || filterReports === "OUTSTANDING"
+          ? false
+          : undefined,
   };
 }

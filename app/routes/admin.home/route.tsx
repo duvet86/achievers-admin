@@ -266,7 +266,7 @@ export default function Index({
 
           <StatCard
             Icon={EditPencil}
-            label="Reports completed"
+            label="Session Summaries completed"
             count={sessionStats.reportCount}
             subLabel={`Since ${dayjs(sessionStats.minAttendedOn).format("MMMM YYYY")}`}
           />
@@ -298,7 +298,7 @@ export default function Index({
       </div>
 
       <div className="w-full">
-        <SubTitle>Reports completed during last session</SubTitle>
+        <SubTitle>Session Summaries completed during last session</SubTitle>
 
         <div className="h-96">
           <MissingReportsBarChart

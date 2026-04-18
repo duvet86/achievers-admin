@@ -183,7 +183,7 @@ export default function Index({
               <div className="stat-figure text-secondary">
                 <EditPencil className="h-8 w-8" />
               </div>
-              <div className="stat-title">Reports completed</div>
+              <div className="stat-title">Session Summaries completed</div>
               <div className="stat-value">{sessionStats.reportCount}</div>
               <div className="stat-desc">
                 out of {sessionStats.sessionCount}

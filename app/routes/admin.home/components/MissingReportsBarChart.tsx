@@ -64,12 +64,14 @@ export function MissingReportsBarChart({ chapterId, data }: Props) {
     onClick: (event, elements, chart) => {
       if (elements.length > 0 && chart.data.labels) {
         const sessionDate = chart.data.labels[elements[0].index] as string;
+        const isCancelled =
+          chart.data.datasets[elements[0].datasetIndex].label === "Cancelled";
 
         const selectedTermDate = dayjs.utc(sessionDate, "DD/MM/YYYY").toDate();
 
         searchParams.set("chapterId", chapterId);
         searchParams.set("selectedTermDate", selectedTermDate.toISOString());
-        searchParams.set("filterReports", "OUTSTANDING");
+        searchParams.set("filterReports", isCancelled ? "CANCELLED" : "ALL");
 
         void navigate(`/admin/sessions?${searchParams.toString()}`);
       }

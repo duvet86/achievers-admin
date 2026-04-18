@@ -198,7 +198,7 @@ export default function Index({
 
   return (
     <>
-      <Title>Reports</Title>
+      <Title>Session Summaries</Title>
 
       <hr className="my-4" />
 
