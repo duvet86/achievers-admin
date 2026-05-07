@@ -2,7 +2,7 @@ import type { RenderToPipeableStreamOptions } from "react-dom/server";
 import type {
   EntryContext,
   RouterContextProvider,
-  unstable_ServerInstrumentation,
+  ServerInstrumentation,
 } from "react-router";
 import type { CurentUserInfo } from "./services/.server";
 
@@ -28,7 +28,7 @@ interface ReadonlyRequest {
 
 export const streamTimeout = 5_000;
 
-export const unstable_instrumentations: unstable_ServerInstrumentation[] = [
+export const unstable_instrumentations: ServerInstrumentation[] = [
   {
     route(route) {
       route.instrument({

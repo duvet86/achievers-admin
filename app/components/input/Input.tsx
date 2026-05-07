@@ -1,5 +1,8 @@
+import type { RefObject } from "react";
+
 import classNames from "classnames";
 import { Xmark } from "iconoir-react";
+import { useRef } from "react";
 
 interface Props extends React.DetailedHTMLProps<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -7,7 +10,7 @@ interface Props extends React.DetailedHTMLProps<
 > {
   label?: string;
   hasButton?: boolean;
-  onButtonClick?: React.MouseEventHandler<HTMLButtonElement>;
+  onButtonClick?: (inputRef: RefObject<HTMLInputElement | null>) => void;
 }
 
 export function Input({
@@ -21,6 +24,14 @@ export function Input({
   disabled,
   ...props
 }: Props) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const onButtonClickInternal = () => {
+    if (onButtonClick) {
+      onButtonClick(inputRef);
+    }
+  };
+
   return (
     <>
       <label htmlFor={name} className="fieldset-label">
@@ -36,6 +47,7 @@ export function Input({
           })}
         >
           <input
+            ref={inputRef}
             type={type}
             id={name}
             name={name}
@@ -52,7 +64,7 @@ export function Input({
             <button
               type="button"
               className="btn btn-neutral join-item"
-              onClick={onButtonClick}
+              onClick={onButtonClickInternal}
               disabled={disabled}
             >
               <Xmark />

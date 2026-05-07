@@ -91,7 +91,7 @@ export async function getMentorsAsync(
         INNER JOIN MentorSession ms ON ms.MentorId = m.Id
         WHERE m.endDate IS NULL
           AND m.chapterId = ${chapterId}
-          AND ${searchTerm ? Prisma.sql`m.fullName LIKE %${searchTerm}%` : "1=1"}
+          AND ${searchTerm ? Prisma.sql`m.fullName LIKE '%${searchTerm}%'` : "1=1"}
           AND ms.attendedOn ${termDate ? Prisma.sql`= ${dayjs(termDate).format("YYYY-MM-DD")}` : Prisma.sql`BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`}
           AND ms.status = ${status}
         ORDER BY m.fullName ${sortFullName ? Prisma.sql`${sortFullName}` : Prisma.sql`ASC`}

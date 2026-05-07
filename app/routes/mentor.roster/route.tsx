@@ -78,7 +78,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     Record<string, Option[] | null>
   >((res, val) => {
     if (val === attendedOn) {
-      res[val] = studentsForSession as Option[];
+      res[val] = studentsForSession;
     } else {
       res[val] = null;
     }

@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import type { Prisma } from "~/prisma/client";
 import type { Route } from "./+types/route";
 
@@ -157,11 +158,15 @@ export default function Index({
     void submit(formData);
   };
 
-  const onClearSearch = () => {
+  const onClearSearch = (inputRef: RefObject<HTMLInputElement | null>) => {
     const formData = new FormData(formRef.current!);
     formData.set("search", "");
 
     void submit(formData);
+
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   };
 
   return (
