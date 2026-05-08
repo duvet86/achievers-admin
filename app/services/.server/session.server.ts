@@ -6,7 +6,7 @@ import { createCookie, redirect } from "react-router";
 
 import { getCurrentHost, parseJwt } from "../utils";
 
-import { trackException } from "./appinsights-logging.server";
+import { trackEvent, trackException } from "./appinsights-logging.server";
 import { authenticator_dev, sessionStorage_dev } from "./session-dev.server";
 import { createAbility } from "./permissions.server";
 
@@ -70,10 +70,8 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
     const refreshToken = request.headers.get("X-MS-TOKEN-AAD-REFRESH-TOKEN");
 
     if (refreshToken === null) {
-      trackException(
-        new Error(
-          "Missing refresh token. See: https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-oauth-tokens#refresh-auth-tokens",
-        ),
+      trackEvent(
+        "Missing refresh token. See: https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-oauth-tokens#refresh-auth-tokens",
       );
     }
 
@@ -84,8 +82,7 @@ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
     if (refreshToken !== null && new Date() >= new Date(expiresOn)) {
       const resp = await fetch(getCurrentHost(request) + "/.auth/refresh");
       if (!resp.ok) {
-        trackException(new Error(await resp.text()));
-
+        trackEvent(await resp.text());
         throw redirect(getCurrentHost(request) + loginPath);
       }
     }
