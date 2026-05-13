@@ -311,6 +311,41 @@ async function seed() {
     },
   });
 
+  // Skills -----------------------------
+
+  const skillsSeed = [
+    "Administration",
+    "Bookkeeping",
+    "Teaching or training",
+    "Marketing, social media or graphic design",
+    "IT or tech support",
+    "Event planning",
+    "First aid certificate",
+    "Counceling",
+    "Human resources",
+    "Legal",
+    "Photography",
+    "Fundraising",
+    "Grant writing",
+    "Leadership or management",
+    "Disability support or working with children or adults with additional needs",
+    "Other",
+  ];
+
+  for (const skill of skillsSeed) {
+    await prisma.skill.upsert({
+      where: {
+        label: skill,
+      },
+      create: {
+        label: skill,
+      },
+      update: {
+        label: skill,
+      },
+    });
+  }
+
   console.info(`Database has been seeded. 🌱`);
 }
 

@@ -66,6 +66,7 @@ model Mentor {
   profilePicturePath         String?
   hasApprovedToPublishPhotos Boolean?
   volunteerAgreementSignedOn DateTime?
+  skillOther                 String?
 
   status  MentorStatus?
   endDate DateTime?
@@ -95,7 +96,31 @@ model Mentor {
   mentorSharing  MentorShareInfo[] @relation("mentorSharing")
   mentorSharedTo MentorShareInfo[] @relation("mentorSharedTo")
 
-  mentorNotes MentorNote[]
+  mentorNotes  MentorNote[]
+  mentorSkills MentorSkill[]
+}
+
+model MentorSkill {
+  id Int @id @default(autoincrement())
+
+  skill   Skill @relation(fields: [skillId], references: [id])
+  skillId Int
+
+  mentor   Mentor @relation(fields: [mentorId], references: [id])
+  mentorId Int
+}
+
+model Skill {
+  id Int @id @default(autoincrement())
+
+  label String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mentorSkills MentorSkill[]
+
+  @@unique([label])
 }
 
 model MentorNote {
