@@ -14,6 +14,7 @@ import {
   StatsReport,
   RefreshDouble,
   TowerWarning,
+  Reports,
   EditPencil,
   BubbleWarning,
   Archery,
@@ -92,6 +93,12 @@ function getLinks(
           path: "/admin/permissions",
           label: "Permissions",
           isVisible: linkMappings.Permissions,
+        },
+        {
+          icon: <Reports />,
+          path: "/admin/data-reports",
+          label: "Data Reports",
+          isVisible: linkMappings.DataReports,
         },
       ]
     : [
