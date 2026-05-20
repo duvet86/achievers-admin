@@ -433,6 +433,18 @@ export default [
           index("routes/admin.permissions/route.tsx"),
         ]),
       ]),
+      ...prefix("data-reports", [
+        layout("routes/admin.data-reports/layout.tsx", [
+          index("routes/admin.data-reports/route.tsx"),
+          route(
+            "mentor-demographics",
+            "routes/admin.data-reports.mentor-demographics/route.tsx",
+            {
+              index: true,
+            },
+          ),
+        ]),
+      ]),
     ]),
   ),
   layout(

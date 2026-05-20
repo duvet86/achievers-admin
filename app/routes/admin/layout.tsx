@@ -36,6 +36,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     Config: ability.can("manage", "ConfigArea"),
     Permissions: ability.can("manage", "PermissionsArea"),
     Goals: ability.can("manage", "GoalsArea"),
+    DataReports: ability.can("manage", "DataReportArea"),
   };
 
   return {

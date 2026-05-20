@@ -17,6 +17,7 @@ export const SUBJECTS = [
   "MentorAttendancesArea",
   "PermissionsArea",
   "GoalsArea",
+  "DataReportArea",
   "Restricted",
 ] as const;
 
