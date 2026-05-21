@@ -9,6 +9,10 @@ import { getCurrentHost, parseJwt } from "../utils";
 import { trackEvent, trackException } from "./appinsights-logging.server";
 import { authenticator_dev, sessionStorage_dev } from "./session-dev.server";
 import { createAbility } from "./permissions.server";
+import {
+  buildDevTokenInfo,
+  isDevAuthBypassEnabled,
+} from "./dev-auth-bypass.server";
 
 export interface CurentUserInfo {
   aud: string;
@@ -35,6 +39,10 @@ export interface CurentUserInfo {
 const loginPath = "/.auth/login/aad?post_login_redirect_uri=/";
 
 export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
+  if (isDevAuthBypassEnabled()) {
+    return buildDevTokenInfo();
+  }
+
   if (process.env.CI ?? process.env.NODE_ENV !== "production") {
     const session = await sessionStorage_dev.getSession(
       request.headers.get("cookie"),
