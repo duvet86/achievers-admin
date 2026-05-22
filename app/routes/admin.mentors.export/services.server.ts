@@ -1,4 +1,8 @@
-import type { Attendance, Chapter, SpreadsheetUser } from "~/models/spreadsheet";
+import type {
+  Attendance,
+  Chapter,
+  SpreadsheetUser,
+} from "~/models/spreadsheet";
 
 import dayjs from "dayjs";
 
