@@ -5,7 +5,7 @@ export type Attendance = "Weekly" | "Fortnightly" | "Other";
 export type VaccinationStatus = "Confirmed" | "Unconfirmed";
 export type Gender = "Male" | "Female";
 
-export interface SpeadsheetUser {
+export interface SpreadsheetUser {
   "First Name": string;
   "Last Name": string;
   "Email address": string;
@@ -34,7 +34,7 @@ export interface SpeadsheetUser {
   "Is Archived": BooleanAnswer;
 }
 
-export interface SpeadsheetStudent {
+export interface SpreadsheetStudent {
   "First Name": string;
   "Last Name": string;
   Chapter: string;
@@ -47,16 +47,16 @@ export interface SpeadsheetStudent {
   "Dietary Requirements/Allergies": string | undefined;
   "Best Person to Contact": string | undefined;
   "Best Contact Method": string | undefined;
-  "Parent/Gaurdian 1 Full name": string | undefined;
-  "Parent/Gaurdian 1 Relationship": string | undefined;
-  "Parent/Gaurdian 1 Phone": number | undefined;
-  "Parent/Gaurdian 1 Email": string | undefined;
-  "Parent/Gaurdian 1 Address": string | undefined;
-  "Parent/Gaurdian 2 Full name": string | undefined;
-  "Parent/Gaurdian 2 Relationship": string | undefined;
-  "Parent/Gaurdian 2 Phone": number | undefined;
-  "Parent/Gaurdian 2 Email": string | undefined;
-  "Parent/Gaurdian 2 Address": string | undefined;
+  "Parent/Guardian 1 Full name": string | undefined;
+  "Parent/Guardian 1 Relationship": string | undefined;
+  "Parent/Guardian 1 Phone": number | undefined;
+  "Parent/Guardian 1 Email": string | undefined;
+  "Parent/Guardian 1 Address": string | undefined;
+  "Parent/Guardian 2 Full name": string | undefined;
+  "Parent/Guardian 2 Relationship": string | undefined;
+  "Parent/Guardian 2 Phone": number | undefined;
+  "Parent/Guardian 2 Email": string | undefined;
+  "Parent/Guardian 2 Address": string | undefined;
   "Emergency Contact Full Name": string | undefined;
   "Emergency Contact Relationship": string | undefined;
   "Emergency Contact Phone": number | undefined;

@@ -1,5 +1,5 @@
 import type { ImportedStudentHistory, Student } from "~/prisma/client";
-import type { SpeadsheetStudent } from "~/models/speadsheet";
+import type { SpreadsheetStudent } from "~/models/spreadsheet";
 
 import { Readable } from "node:stream";
 import { stream, read, utils } from "xlsx";
@@ -16,7 +16,7 @@ export async function readExcelFileAsync(file: File) {
   return workbook.SheetNames.flatMap((sheetName) => {
     const firstWs = workbook.Sheets[sheetName];
 
-    return utils.sheet_to_json<SpeadsheetStudent>(firstWs);
+    return utils.sheet_to_json<SpreadsheetStudent>(firstWs);
   });
 }
 
@@ -35,7 +35,7 @@ export type StudentHistory = Student & {
 };
 
 export async function importSpreadsheetStudentsAsync(
-  newStudents: SpeadsheetStudent[],
+  newStudents: SpreadsheetStudent[],
 ): Promise<StudentHistory[]> {
   const students: StudentHistory[] = [];
 
@@ -97,32 +97,32 @@ export async function importSpreadsheetStudentsAsync(
           guardian: {
             createMany: {
               data:
-                newStudent["Parent/Gaurdian 1 Address"] != null &&
-                newStudent["Parent/Gaurdian 1 Email"] != null &&
-                newStudent["Parent/Gaurdian 1 Phone"] != null &&
-                newStudent["Parent/Gaurdian 1 Relationship"] != null &&
-                newStudent["Parent/Gaurdian 2 Address"] != null &&
-                newStudent["Parent/Gaurdian 2 Email"] != null &&
-                newStudent["Parent/Gaurdian 2 Phone"] != null &&
-                newStudent["Parent/Gaurdian 2 Relationship"] != null
+                newStudent["Parent/Guardian 1 Address"] != null &&
+                newStudent["Parent/Guardian 1 Email"] != null &&
+                newStudent["Parent/Guardian 1 Phone"] != null &&
+                newStudent["Parent/Guardian 1 Relationship"] != null &&
+                newStudent["Parent/Guardian 2 Address"] != null &&
+                newStudent["Parent/Guardian 2 Email"] != null &&
+                newStudent["Parent/Guardian 2 Phone"] != null &&
+                newStudent["Parent/Guardian 2 Relationship"] != null
                   ? [
                       {
-                        address: newStudent["Parent/Gaurdian 1 Address"].trim(),
-                        email: newStudent["Parent/Gaurdian 1 Email"].trim(),
+                        address: newStudent["Parent/Guardian 1 Address"].trim(),
+                        email: newStudent["Parent/Guardian 1 Email"].trim(),
                         fullName:
-                          newStudent["Parent/Gaurdian 1 Full name"]!.trim(),
-                        phone: newStudent["Parent/Gaurdian 1 Phone"].toString(),
+                          newStudent["Parent/Guardian 1 Full name"]!.trim(),
+                        phone: newStudent["Parent/Guardian 1 Phone"].toString(),
                         relationship:
-                          newStudent["Parent/Gaurdian 1 Relationship"].trim(),
+                          newStudent["Parent/Guardian 1 Relationship"].trim(),
                       },
                       {
-                        address: newStudent["Parent/Gaurdian 2 Address"].trim(),
-                        email: newStudent["Parent/Gaurdian 2 Email"].trim(),
+                        address: newStudent["Parent/Guardian 2 Address"].trim(),
+                        email: newStudent["Parent/Guardian 2 Email"].trim(),
                         fullName:
-                          newStudent["Parent/Gaurdian 2 Full name"]!.trim(),
-                        phone: newStudent["Parent/Gaurdian 2 Phone"].toString(),
+                          newStudent["Parent/Guardian 2 Full name"]!.trim(),
+                        phone: newStudent["Parent/Guardian 2 Phone"].toString(),
                         relationship:
-                          newStudent["Parent/Gaurdian 2 Relationship"].trim(),
+                          newStudent["Parent/Guardian 2 Relationship"].trim(),
                       },
                     ]
                   : [],

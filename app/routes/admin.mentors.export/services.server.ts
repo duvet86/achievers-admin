@@ -1,9 +1,9 @@
-import type { Attendance, Chapter, SpeadsheetUser } from "~/models/speadsheet";
+import type { Attendance, Chapter, SpreadsheetUser } from "~/models/spreadsheet";
 
-import { write, utils } from "xlsx";
 import dayjs from "dayjs";
 
 import { prisma } from "~/db.server";
+import { addCollectionToSpreadsheet } from "~/services/.server";
 
 export async function exportMentorsToSpreadsheetAsync() {
   const mentors = await prisma.mentor.findMany({
@@ -24,7 +24,7 @@ export async function exportMentorsToSpreadsheetAsync() {
     },
   });
 
-  const speadsheetMentors = mentors.map<SpeadsheetUser>((m) => ({
+  const spreadsheetMentors = mentors.map<SpreadsheetUser>((m) => ({
     "First Name": m.firstName,
     "Last Name": m.lastName,
     "Email address": m.email,
@@ -66,14 +66,5 @@ export async function exportMentorsToSpreadsheetAsync() {
     "Is Archived": m.endDate !== null ? "Yes" : "No",
   }));
 
-  const wb = utils.book_new();
-
-  utils.book_append_sheet(
-    wb,
-    utils.json_to_sheet<SpeadsheetUser>(speadsheetMentors),
-  );
-
-  const buf = write(wb, { type: "buffer", bookType: "xlsx" }) as ReadableStream;
-
-  return buf;
+  return addCollectionToSpreadsheet(spreadsheetMentors);
 }

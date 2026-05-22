@@ -1,12 +1,12 @@
 import type { SessionStatus } from "~/prisma/client";
 import type { Term } from "~/models";
 
-import { write, utils } from "xlsx";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
 import { prisma } from "~/db.server";
 import { getDatesForTerm } from "~/services";
+import { addCollectionToSpreadsheet } from "~/services/.server";
 
 dayjs.extend(utc);
 
@@ -58,12 +58,7 @@ export async function exportRosterToSpreadsheetAsync(
     return result;
   });
 
-  const wb = utils.book_new();
-  utils.book_append_sheet(wb, utils.json_to_sheet(spreadsheet));
-
-  const buf = write(wb, { type: "buffer", bookType: "xlsx" }) as ReadableStream;
-
-  return buf;
+  return addCollectionToSpreadsheet(spreadsheet);
 }
 
 export async function getStudentsAsync(

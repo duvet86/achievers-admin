@@ -1,5 +1,5 @@
 import type { ImportedHistory, Mentor } from "~/prisma/client";
-import type { SpeadsheetUser } from "~/models/speadsheet";
+import type { SpreadsheetUser } from "~/models/spreadsheet";
 
 import { Readable } from "node:stream";
 import { stream, read, utils } from "xlsx";
@@ -15,7 +15,7 @@ export async function readExcelFileAsync(file: File) {
   return workbook.SheetNames.flatMap((sheetName) => {
     const firstWs = workbook.Sheets[sheetName];
 
-    return utils.sheet_to_json<SpeadsheetUser>(firstWs);
+    return utils.sheet_to_json<SpreadsheetUser>(firstWs);
   });
 }
 
@@ -32,7 +32,7 @@ export type UserHistory = Mentor & {
 };
 
 export async function importSpreadsheetMentorsAsync(
-  newUsers: SpeadsheetUser[],
+  newUsers: SpreadsheetUser[],
 ): Promise<UserHistory[]> {
   const uniqueUsers = newUsers.filter(
     (obj, index) =>
