@@ -1,6 +1,33 @@
 import dayjs from "dayjs";
 import { type PrismaClient } from "./client/client";
 
+function randomPhoneNumber() {
+  return `04${Math.random()}.substr(2, 8)`;
+}
+
+function randomInt(max: number) {
+  return Math.floor(Math.random() * max);
+}
+
+function randomAddress() {
+  const streetNames = ['Girrawheen Drive', 'Royal Court', 'Forrest Run', 'Vaya con Dios', 'Somerville Parade', 'Another Avenue', 'Baiting Lane', 'Miracle St', 'Soap Box Drive', 'Merryville Lane', 'Cross Crescent', 'Nimby Close', 'Highway to Help', 'Yolo Road', 'Crispy Dreams Street', 'Bacon Avenue'];
+  const suburbs = ['Girrawheen', 'Balga', 'Padbury', 'Belmont', 'Joondalup', 'Stirling', 'Craigie', 'Balcatta', 'Morley', 'Wangara'];
+  const number = randomInt(400) + 10;
+  const street = streetNames[randomInt(streetNames.length)];
+  const suburb = suburbs[randomInt(suburbs.length)];
+  return [`${number} ${street}`, suburb];
+}
+
+function randomName() {
+  const firstNames = ['Reynalda', 'Musa', 'Hienadz', 'Leyla', 'Pratima', 'Irene', 'Abdul', 'Qusay', 'Leda', 'Baggi', 'Jessie', 'Bret', 'Letitia', 'Iðunn', 'Augustin', 'Booker', 'Valter', 'Mark', 'Cináed', 'Augustine', 'Chlodochar', 'Ardith', 'Ruairidh', 'Presley', 'Erle', 'Jamil', 'Lauren', 'Lydia', 'Nicole', 'Erika'];
+  const lastNames = ['Truman', 'Moore', 'Biškup', 'Ismail', 'Barbieri', 'Nordström', 'Spannagel', 'School', 'Feld', 'Thorsen', 'Jeanes', 'Wash', 'Moffett', 'Barron', 'Josephson', 'Groot', 'Speight', 'Beasley', 'Beck', 'Linville', 'MacMillan', 'Jordache', 'Foster', 'Woodham', 'Mercier', 'Dam', 'Steele', 'Brown', 'Pellé', 'Javier'];
+  
+  return [
+    firstNames[Math.floor(Math.random() * firstNames.length)],
+    lastNames[Math.floor(Math.random() * lastNames.length)],
+  ]
+}
+
 export async function seedDevData(prisma: PrismaClient) {
   const chapter = await prisma.chapter.findUniqueOrThrow({
     where: { name: "Girrawheen" },
@@ -8,7 +35,7 @@ export async function seedDevData(prisma: PrismaClient) {
 
   const mentorBase = {
     mobile: "0400000000",
-    addressStreet: "1 Test Street",
+    addressStreet: '1 Test St',
     addressSuburb: "Girrawheen",
     addressState: "WA",
     addressPostcode: "6064",
@@ -19,21 +46,23 @@ export async function seedDevData(prisma: PrismaClient) {
 
   const mentors = await Promise.all(
     [
-      { email: "dev.mentor1@local.test", firstName: "Alex", lastName: "Stone" },
-      { email: "dev.mentor2@local.test", firstName: "Beth", lastName: "Park" },
-      { email: "dev.mentor3@local.test", firstName: "Cleo", lastName: "Reed" },
-    ].map((m) =>
-      prisma.mentor.upsert({
-        where: { email: m.email },
-        create: { ...mentorBase, ...m },
+      { email: "dev.mentor1@local.test" },
+      { email: "dev.mentor2@local.test" },
+      { email: "dev.mentor3@local.test" },
+    ].map((record) => {
+      const [ firstName, lastName ] = randomName();
+      const mobile = randomPhoneNumber();
+      const [ addressStreet, addressSuburb ] = randomAddress();
+      return prisma.mentor.upsert({
+        where: { email: record.email },
+        create: { ...mentorBase, ...record, mobile, firstName, lastName, addressStreet, addressSuburb },
         update: {},
-      }),
-    ),
+      });
+    }),
   );
 
-  // Full lifecycle records for the first two mentors
-  for (const mentor of mentors.slice(0, 2)) {
-    const expiry = dayjs().add(1, "year").toDate();
+  for (const mentor of mentors) {
+    const expiry = dayjs().add(1, "year").add(Math.floor(Math.random() * 50), "day").toDate();
     const completed = dayjs().subtract(2, "month").toDate();
 
     await prisma.policeCheck.upsert({
@@ -82,12 +111,14 @@ export async function seedDevData(prisma: PrismaClient) {
       where: { mentorId: mentor.id },
     });
     if (refCount === 0) {
+      const [ firstName, lastName ] = randomName();
+      const mobile = randomPhoneNumber();
       await prisma.reference.create({
         data: {
           mentorId: mentor.id,
-          firstName: "Ref",
-          lastName: `For${mentor.lastName}`,
-          mobile: "0400000111",
+          firstName,
+          lastName,
+          mobile,
           email: `ref.${mentor.email}`,
           relationship: "Colleague",
         },
