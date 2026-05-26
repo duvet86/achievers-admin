@@ -12,7 +12,7 @@ interface DBOption {
 
 export async function getChaptersAsync(ability: AppAbility) {
   return await prisma.chapter.findMany({
-    where: accessibleBy(ability).Chapter,
+    where: accessibleBy(ability).ofType("Chapter"),
     select: {
       id: true,
       name: true,
@@ -28,7 +28,8 @@ export async function getAvailabelMentorsAsync(
   chapterId: number | undefined,
   studentId: number | undefined,
 ) {
-  const chapterIdFilter = accessibleBy(ability).Chapter.id ?? chapterId;
+  const chapterIdFilter =
+    accessibleBy(ability).ofType("Chapter").id ?? chapterId;
 
   let sessions: DBOption[] = [];
 
@@ -62,7 +63,8 @@ export async function getAvailabelStudentsAsync(
   chapterId: number | undefined,
   mentorId: number | undefined,
 ) {
-  const chapterIdFilter = accessibleBy(ability).Chapter.id ?? chapterId;
+  const chapterIdFilter =
+    accessibleBy(ability).ofType("Chapter").id ?? chapterId;
 
   let sessions: DBOption[] = [];
 

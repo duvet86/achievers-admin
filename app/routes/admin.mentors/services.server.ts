@@ -20,7 +20,7 @@ export interface UserQuery {
 
 export async function getChaptersAsync(ability: AppAbility) {
   return await prisma.chapter.findMany({
-    where: accessibleBy(ability).Chapter,
+    where: accessibleBy(ability).ofType("Chapter"),
     select: {
       id: true,
       name: true,
@@ -37,7 +37,7 @@ export async function getUsersCountAsync(
 ) {
   const count = await prisma.$queryRawUnsafe<{ count: number }[]>(
     `SELECT count(*) count FROM (${getUserQuery(ability, searchTerm, chapterId, onlyExpiredChecks, includeArchived)}) s`,
-    accessibleBy(ability).Chapter.id ?? chapterId ?? "1",
+    accessibleBy(ability).ofType("Chapter").id ?? chapterId ?? "1",
     searchTerm ? `%${searchTerm}%` : "1",
   );
 
@@ -75,7 +75,7 @@ export async function getUsersAsync(
 
   return await prisma.$queryRawUnsafe<UserQuery[]>(
     query,
-    accessibleBy(ability).Chapter.id ?? chapterId ?? "1",
+    accessibleBy(ability).ofType("Chapter").id ?? chapterId ?? "1",
     searchTerm ? `%${searchTerm}%` : "1",
   );
 }
@@ -88,7 +88,7 @@ export function getUserQuery(
   includeArchived: boolean,
 ) {
   let chapterWhereClause = "1 = ?";
-  if (accessibleBy(ability).Chapter.id || chapterId !== null) {
+  if (accessibleBy(ability).ofType("Chapter").id || chapterId !== null) {
     chapterWhereClause = `chapterId = ?`;
   }
   let searchTermWhereClause = "1 = ?";

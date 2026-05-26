@@ -5,6 +5,6 @@ import { accessibleBy } from "~/casl-prisma";
 
 export async function getChaptersAsync(ability: AppAbility) {
   return await prisma.chapter.findMany({
-    where: accessibleBy(ability).Chapter,
+    where: accessibleBy(ability).ofType("Chapter"),
   });
 }

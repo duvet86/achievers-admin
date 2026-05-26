@@ -1,20 +1,24 @@
 import type {
   PrismaModel,
-  PrismaQueryFactory,
-  PrismaTypes,
+  PrismaQueryOf,
+  WhereInputOf,
 } from "@casl/prisma/runtime";
-
-import { createAbilityFactory } from "@casl/prisma/runtime";
-
 import type { Prisma } from "~/prisma/client";
 
-export type { Model, Subjects } from "@casl/prisma/runtime";
-export { accessibleBy, ParsingQueryError } from "@casl/prisma/runtime";
-export type WhereInput<TModelName extends Prisma.ModelName> =
-  PrismaTypes<Prisma.TypeMap>["WhereInput"][TModelName];
-export type PrismaQuery<T extends PrismaModel = PrismaModel> =
-  PrismaQueryFactory<Prisma.TypeMap, T>;
-export const createPrismaAbility = createAbilityFactory<
-  Prisma.ModelName,
-  PrismaQuery
->();
+import {
+  accessibleBy,
+  createPrismaAbility,
+  ParsingQueryError,
+  prismaQuery,
+} from "@casl/prisma/runtime";
+
+export { accessibleBy, createPrismaAbility, ParsingQueryError, prismaQuery };
+
+export type PrismaQuery<T extends PrismaModel = PrismaModel> = PrismaQueryOf<
+  Prisma.TypeMap,
+  T
+>;
+export type WhereInput<TModelName extends Prisma.ModelName> = WhereInputOf<
+  Prisma.TypeMap,
+  TModelName
+>;

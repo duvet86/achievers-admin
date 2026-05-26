@@ -193,7 +193,7 @@ model Reference {
   fullName     String @default(dbgenerated()) // Calculated column firstName + lastName.
   mobile       String
   email        String
-  relationship String
+  relationship String @db.Text
 
   bestTimeToContact         String?
   generalComment            String? @db.Text

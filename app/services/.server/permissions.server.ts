@@ -1,4 +1,4 @@
-import type { RawRuleOf, PureAbility } from "@casl/ability";
+import type { RawRuleOf, Ability } from "@casl/ability";
 import type { Subjects } from "@casl/prisma";
 import type { Chapter } from "~/prisma/client";
 import type { PrismaQuery } from "~/casl-prisma";
@@ -28,7 +28,7 @@ export type Subject =
     }>;
 
 export type Abilities = [Action, Subject];
-export type AppAbility = PureAbility<Abilities, PrismaQuery>;
+export type AppAbility = Ability<Abilities, PrismaQuery>;
 
 const IS_DEV = process.env.NODE_ENV === "development";
 const IS_CI = !!process.env.CI;

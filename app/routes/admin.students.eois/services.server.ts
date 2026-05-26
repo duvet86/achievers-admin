@@ -7,7 +7,7 @@ import { accessibleBy } from "~/casl-prisma";
 
 export async function getChaptersAsync(ability: AppAbility) {
   return await prisma.chapter.findMany({
-    where: accessibleBy(ability).Chapter,
+    where: accessibleBy(ability).ofType("Chapter"),
     select: {
       id: true,
       name: true,
@@ -89,7 +89,7 @@ function getWhereClause(
   includeApprovedStudents: boolean,
 ) {
   return {
-    chapter: accessibleBy(ability).Chapter,
+    chapter: accessibleBy(ability).ofType("Chapter"),
     AND: [
       includeApprovedStudents ? {} : { Student: null },
       chapterId !== null
