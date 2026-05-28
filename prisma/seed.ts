@@ -347,7 +347,7 @@ async function seed() {
     });
   }
 
-  if (process.env.SEED_DEV_DATA === "true") {
+  if (process.env.DEV_SEED_DATA === "true") {
     await seedDevData(prisma);
   }
 

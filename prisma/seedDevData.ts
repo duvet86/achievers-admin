@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { type PrismaClient } from "./client/client";
 
 function randomPhoneNumber() {
-  return `04${Math.random()}.substr(2, 8)`;
+  return `04${Math.random().toString().slice(2, 10).padEnd(8, "0")}`;
 }
 
 function randomInt(max: number) {
@@ -10,8 +10,36 @@ function randomInt(max: number) {
 }
 
 function randomAddress() {
-  const streetNames = ['Girrawheen Drive', 'Royal Court', 'Forrest Run', 'Vaya con Dios', 'Somerville Parade', 'Another Avenue', 'Baiting Lane', 'Miracle St', 'Soap Box Drive', 'Merryville Lane', 'Cross Crescent', 'Nimby Close', 'Highway to Help', 'Yolo Road', 'Crispy Dreams Street', 'Bacon Avenue'];
-  const suburbs = ['Girrawheen', 'Balga', 'Padbury', 'Belmont', 'Joondalup', 'Stirling', 'Craigie', 'Balcatta', 'Morley', 'Wangara'];
+  const streetNames = [
+    "Girrawheen Drive",
+    "Royal Court",
+    "Forrest Run",
+    "Vaya con Dios",
+    "Somerville Parade",
+    "Another Avenue",
+    "Baiting Lane",
+    "Miracle St",
+    "Soap Box Drive",
+    "Merryville Lane",
+    "Cross Crescent",
+    "Nimby Close",
+    "Highway to Help",
+    "Yolo Road",
+    "Crispy Dreams Street",
+    "Bacon Avenue",
+  ];
+  const suburbs = [
+    "Girrawheen",
+    "Balga",
+    "Padbury",
+    "Belmont",
+    "Joondalup",
+    "Stirling",
+    "Craigie",
+    "Balcatta",
+    "Morley",
+    "Wangara",
+  ];
   const number = randomInt(400) + 10;
   const street = streetNames[randomInt(streetNames.length)];
   const suburb = suburbs[randomInt(suburbs.length)];
@@ -19,14 +47,99 @@ function randomAddress() {
 }
 
 function randomName() {
-  const firstNames = ['Reynalda', 'Musa', 'Hienadz', 'Leyla', 'Pratima', 'Irene', 'Abdul', 'Qusay', 'Leda', 'Baggi', 'Jessie', 'Bret', 'Letitia', 'Iðunn', 'Augustin', 'Booker', 'Valter', 'Mark', 'Cináed', 'Augustine', 'Chlodochar', 'Ardith', 'Ruairidh', 'Presley', 'Erle', 'Jamil', 'Lauren', 'Lydia', 'Nicole', 'Erika'];
-  const lastNames = ['Truman', 'Moore', 'Biškup', 'Ismail', 'Barbieri', 'Nordström', 'Spannagel', 'School', 'Feld', 'Thorsen', 'Jeanes', 'Wash', 'Moffett', 'Barron', 'Josephson', 'Groot', 'Speight', 'Beasley', 'Beck', 'Linville', 'MacMillan', 'Jordache', 'Foster', 'Woodham', 'Mercier', 'Dam', 'Steele', 'Brown', 'Pellé', 'Javier'];
-  
+  const firstNames = [
+    "Reynalda",
+    "Musa",
+    "Hienadz",
+    "Leyla",
+    "Pratima",
+    "Irene",
+    "Abdul",
+    "Qusay",
+    "Leda",
+    "Baggi",
+    "Jessie",
+    "Bret",
+    "Letitia",
+    "Iðunn",
+    "Augustin",
+    "Booker",
+    "Valter",
+    "Mark",
+    "Cináed",
+    "Augustine",
+    "Chlodochar",
+    "Ardith",
+    "Ruairidh",
+    "Presley",
+    "Erle",
+    "Jamil",
+    "Lauren",
+    "Lydia",
+    "Nicole",
+    "Erika",
+  ];
+  const lastNames = [
+    "Truman",
+    "Moore",
+    "Biškup",
+    "Ismail",
+    "Barbieri",
+    "Nordström",
+    "Spannagel",
+    "School",
+    "Feld",
+    "Thorsen",
+    "Jeanes",
+    "Wash",
+    "Moffett",
+    "Barron",
+    "Josephson",
+    "Groot",
+    "Speight",
+    "Beasley",
+    "Beck",
+    "Linville",
+    "MacMillan",
+    "Jordache",
+    "Foster",
+    "Woodham",
+    "Mercier",
+    "Dam",
+    "Steele",
+    "Brown",
+    "Pellé",
+    "Javier",
+  ];
+
   return [
     firstNames[Math.floor(Math.random() * firstNames.length)],
     lastNames[Math.floor(Math.random() * lastNames.length)],
-  ]
+  ];
 }
+
+const devStudentRecords = [
+  { firstName: "Sam", lastName: "Lee", gender: "MALE" },
+  { firstName: "Maya", lastName: "Chen", gender: "FEMALE" },
+  { firstName: "Jordan", lastName: "Wright", gender: "MALE" },
+  { firstName: "Riley", lastName: "Patel", gender: "FEMALE" },
+  { firstName: "Aisha", lastName: "Khan", gender: "FEMALE" },
+  { firstName: "Noah", lastName: "Williams", gender: "MALE" },
+  { firstName: "Olivia", lastName: "Nguyen", gender: "FEMALE" },
+  { firstName: "Ethan", lastName: "Taylor", gender: "MALE" },
+  { firstName: "Amelia", lastName: "Singh", gender: "FEMALE" },
+  { firstName: "Lucas", lastName: "Martin", gender: "MALE" },
+  { firstName: "Sofia", lastName: "Garcia", gender: "FEMALE" },
+  { firstName: "Liam", lastName: "Brown", gender: "MALE" },
+  { firstName: "Grace", lastName: "Wilson", gender: "FEMALE" },
+  { firstName: "Oscar", lastName: "Anderson", gender: "MALE" },
+  { firstName: "Chloe", lastName: "Thomas", gender: "FEMALE" },
+  { firstName: "Henry", lastName: "Roberts", gender: "MALE" },
+  { firstName: "Zara", lastName: "Campbell", gender: "FEMALE" },
+  { firstName: "Leo", lastName: "Mitchell", gender: "MALE" },
+  { firstName: "Isla", lastName: "Davis", gender: "FEMALE" },
+  { firstName: "Arlo", lastName: "Walker", gender: "MALE" },
+] as const;
 
 export async function seedDevData(prisma: PrismaClient) {
   const chapter = await prisma.chapter.findUniqueOrThrow({
@@ -35,7 +148,7 @@ export async function seedDevData(prisma: PrismaClient) {
 
   const mentorBase = {
     mobile: "0400000000",
-    addressStreet: '1 Test St',
+    addressStreet: "1 Test St",
     addressSuburb: "Girrawheen",
     addressState: "WA",
     addressPostcode: "6064",
@@ -45,24 +158,33 @@ export async function seedDevData(prisma: PrismaClient) {
   };
 
   const mentors = await Promise.all(
-    [
-      { email: "dev.mentor1@local.test" },
-      { email: "dev.mentor2@local.test" },
-      { email: "dev.mentor3@local.test" },
-    ].map((record) => {
-      const [ firstName, lastName ] = randomName();
+    Array.from({ length: 40 }, (_, index) => ({
+      email: `dev.mentor${index + 1}@local.test`,
+    })).map((record) => {
+      const [firstName, lastName] = randomName();
       const mobile = randomPhoneNumber();
-      const [ addressStreet, addressSuburb ] = randomAddress();
+      const [addressStreet, addressSuburb] = randomAddress();
       return prisma.mentor.upsert({
         where: { email: record.email },
-        create: { ...mentorBase, ...record, mobile, firstName, lastName, addressStreet, addressSuburb },
+        create: {
+          ...mentorBase,
+          ...record,
+          mobile,
+          firstName,
+          lastName,
+          addressStreet,
+          addressSuburb,
+        },
         update: {},
       });
     }),
   );
 
   for (const mentor of mentors) {
-    const expiry = dayjs().add(1, "year").add(Math.floor(Math.random() * 50), "day").toDate();
+    const expiry = dayjs()
+      .add(1, "year")
+      .add(Math.floor(Math.random() * 50), "day")
+      .toDate();
     const completed = dayjs().subtract(2, "month").toDate();
 
     await prisma.policeCheck.upsert({
@@ -111,7 +233,7 @@ export async function seedDevData(prisma: PrismaClient) {
       where: { mentorId: mentor.id },
     });
     if (refCount === 0) {
-      const [ firstName, lastName ] = randomName();
+      const [firstName, lastName] = randomName();
       const mobile = randomPhoneNumber();
       await prisma.reference.create({
         data: {
@@ -127,12 +249,7 @@ export async function seedDevData(prisma: PrismaClient) {
   }
 
   const students = await Promise.all(
-    [
-      { firstName: "Sam", lastName: "Lee" },
-      { firstName: "Maya", lastName: "Chen" },
-      { firstName: "Jordan", lastName: "Wright" },
-      { firstName: "Riley", lastName: "Patel" },
-    ].map(async ({ firstName, lastName }) => {
+    devStudentRecords.map(async ({ firstName, lastName, gender }, index) => {
       const existing = await prisma.student.findFirst({
         where: { firstName, lastName, chapterId: chapter.id },
       });
@@ -142,11 +259,13 @@ export async function seedDevData(prisma: PrismaClient) {
           firstName,
           lastName,
           chapterId: chapter.id,
-          gender: "MALE",
+          gender,
           startDate: dayjs().subtract(6, "month").toDate(),
-          dateOfBirth: dayjs().subtract(12, "year").toDate(),
+          dateOfBirth: dayjs()
+            .subtract(10 + (index % 4), "year")
+            .toDate(),
           schoolName: "Girrawheen Primary",
-          yearLevel: 6,
+          yearLevel: 4 + (index % 3),
           allergies: false,
           guardian: {
             create: [
@@ -174,11 +293,12 @@ export async function seedDevData(prisma: PrismaClient) {
     }),
   );
 
-  // Pair mentor1↔student1, mentor2↔student2
-  for (const [mentor, student] of [
-    [mentors[0], students[0]],
-    [mentors[1], students[1]],
-  ] as const) {
+  const pairs = students.map((student, index) => ({
+    mentor: mentors[index],
+    student,
+  }));
+
+  for (const { mentor, student } of pairs) {
     await prisma.mentorToStudentAssignement.upsert({
       where: {
         mentorId_studentId: { mentorId: mentor.id, studentId: student.id },
@@ -200,11 +320,6 @@ export async function seedDevData(prisma: PrismaClient) {
     cursor = cursor.add(1, "week");
   }
   const today = dayjs().startOf("day");
-
-  const pairs = [
-    { mentor: mentors[0], student: students[0] },
-    { mentor: mentors[1], student: students[1] },
-  ];
 
   for (const attendedOn of sats) {
     const isPast = dayjs(attendedOn).isBefore(today);
