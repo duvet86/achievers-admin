@@ -52,7 +52,9 @@ export interface SessionViewModel {
   sessionLookup?: SessionLookup;
   id: number;
   fullName: string;
+  preferredName?: string | null;
 }
+
 
 export async function getMentorsAsync(
   chapterId: number,

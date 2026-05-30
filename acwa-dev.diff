@@ -1,0 +1,524 @@
+diff --git a/app/routes/logout.tsx b/app/routes/logout.tsx
+index 5eb4978..d435a89 100644
+--- a/app/routes/logout.tsx
++++ b/app/routes/logout.tsx
+@@ -21,7 +21,9 @@ export async function loader({ request }: Route.LoaderArgs) {
+ 
+     const user = session.get("user") as TokenInfo | undefined;
+ 
+-    await strategy_dev.revokeToken(user!.accessToken);
++    if (strategy_dev && user) {
++      await strategy_dev.revokeToken(user.accessToken);
++    }
+ 
+     return redirect("/", {
+       headers: {
+diff --git a/app/services/.server/dev-auth-bypass.server.ts b/app/services/.server/dev-auth-bypass.server.ts
+new file mode 100644
+index 0000000..c909fab
+--- /dev/null
++++ b/app/services/.server/dev-auth-bypass.server.ts
+@@ -0,0 +1,66 @@
++import type { TokenInfo } from "../models";
++import type { CurentUserInfo } from "./session.server";
++
++export const DEV_BYPASS_OID = "00000000-0000-0000-0000-000000000001";
++
++const DEV_ADMIN_ROLES = [
++  "Admin.manage.UserArea",
++  "Admin.manage.StudentArea",
++  "Admin.manage.SessionArea",
++  "Admin.manage.ChapterArea",
++  "Admin.manage.SchoolTermArea",
++  "Admin.manage.ConfigArea",
++  "Admin.manage.PermissionsArea",
++  "Admin.manage.GoalsArea",
++];
++
++export function isDevAuthBypassEnabled(): boolean {
++  return (
++    process.env.NODE_ENV !== "production" &&
++    process.env.DEV_AUTH_BYPASS === "true"
++  );
++}
++
++export function buildDevTokenInfo(): TokenInfo {
++  const now = Math.floor(Date.now() / 1000);
++  const oneYear = 60 * 60 * 24 * 365;
++
++  const payload: CurentUserInfo = {
++    aud: "dev",
++    iss: "dev",
++    iat: now,
++    nbf: now,
++    exp: now + oneYear,
++    aio: "dev",
++    name: "Dev Admin",
++    oid: DEV_BYPASS_OID,
++    preferred_username: "dev-admin@local.test",
++    rh: "dev",
++    roles: DEV_ADMIN_ROLES,
++    sub: DEV_BYPASS_OID,
++    tid: "dev",
++    uti: "dev",
++    ver: "2.0",
++    email: "dev-admin@local.test",
++    isAdmin: true,
++    isMentor: false,
++    isAttendances: false,
++  };
++
++  // parseJwt() base64-decodes segment [1] only; signature is never verified.
++  const header = Buffer.from(
++    JSON.stringify({ alg: "none", typ: "JWT" }),
++  ).toString("base64");
++  const body = Buffer.from(JSON.stringify(payload)).toString("base64");
++  const idToken = `${header}.${body}.`;
++
++  const expiresOn = new Date((now + oneYear) * 1000).toISOString();
++
++  return {
++    idToken,
++    accessToken: "dev-bypass-access-token",
++    expiresOn,
++    issuedAt: new Date(now * 1000).toISOString(),
++    refreshToken: null,
++  };
++}
+diff --git a/app/services/.server/session-dev.server.ts b/app/services/.server/session-dev.server.ts
+index b14ae75..2982278 100644
+--- a/app/services/.server/session-dev.server.ts
++++ b/app/services/.server/session-dev.server.ts
+@@ -9,10 +9,16 @@ import { OAuth2Strategy } from "remix-auth-oauth2";
+ import { createCookie, redirect } from "react-router";
+ import { createFileSessionStorage } from "@react-router/node";
+ 
+-invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");
+-invariant(process.env.CLIENT_SECRET, "CLIENT_SECRET must be set");
+-invariant(process.env.TENANT_ID, "TENANT_ID must be set");
+-invariant(process.env.REDIRECT_URI, "REDIRECT_URI must be set");
++import { isDevAuthBypassEnabled } from "./dev-auth-bypass.server";
++
++const BYPASS = isDevAuthBypassEnabled();
++
++if (!BYPASS) {
++  invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");
++  invariant(process.env.CLIENT_SECRET, "CLIENT_SECRET must be set");
++  invariant(process.env.TENANT_ID, "TENANT_ID must be set");
++  invariant(process.env.REDIRECT_URI, "REDIRECT_URI must be set");
++}
+ invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
+ 
+ const sessionCookie = createCookie("__session", {
+@@ -29,31 +35,35 @@ export const sessionStorage_dev = createFileSessionStorage({
+ 
+ export const authenticator_dev = new Authenticator<TokenInfo>();
+ 
+-export const strategy_dev = new OAuth2Strategy(
+-  {
+-    clientId: process.env.CLIENT_ID,
+-    clientSecret: process.env.CLIENT_SECRET,
+-
+-    authorizationEndpoint: `https://login.microsoftonline.com/${process.env.TENANT_ID}/oauth2/v2.0/authorize`,
+-    tokenEndpoint: `https://login.microsoftonline.com/${process.env.TENANT_ID}/oauth2/v2.0/token`,
+-    redirectURI: process.env.REDIRECT_URI,
+-    scopes: ["openid", "profile", "email", "offline_access"],
+-
+-    tokenRevocationEndpoint: `https://login.windows.net/${process.env.TENANT_ID}/oauth2/logout`,
+-  },
+-  ({ tokens }) => {
+-    if (new Date() >= tokens.accessTokenExpiresAt()) {
+-      throw redirect("/logout");
+-    }
+-
+-    return Promise.resolve({
+-      idToken: tokens.idToken(),
+-      accessToken: tokens.accessToken(),
+-      expiresOn: tokens.accessTokenExpiresAt().toISOString(),
+-      refreshToken: tokens.hasRefreshToken() ? tokens.refreshToken() : null,
+-      issuedAt: new Date().toISOString(),
+-    });
+-  },
+-);
+-
+-authenticator_dev.use(strategy_dev, "microsoft");
++export const strategy_dev: OAuth2Strategy<TokenInfo> | undefined = BYPASS
++  ? undefined
++  : new OAuth2Strategy(
++      {
++        clientId: process.env.CLIENT_ID!,
++        clientSecret: process.env.CLIENT_SECRET!,
++
++        authorizationEndpoint: `https://login.microsoftonline.com/${process.env.TENANT_ID}/oauth2/v2.0/authorize`,
++        tokenEndpoint: `https://login.microsoftonline.com/${process.env.TENANT_ID}/oauth2/v2.0/token`,
++        redirectURI: process.env.REDIRECT_URI!,
++        scopes: ["openid", "profile", "email", "offline_access"],
++
++        tokenRevocationEndpoint: `https://login.windows.net/${process.env.TENANT_ID}/oauth2/logout`,
++      },
++      ({ tokens }) => {
++        if (new Date() >= tokens.accessTokenExpiresAt()) {
++          throw redirect("/logout");
++        }
++
++        return Promise.resolve({
++          idToken: tokens.idToken(),
++          accessToken: tokens.accessToken(),
++          expiresOn: tokens.accessTokenExpiresAt().toISOString(),
++          refreshToken: tokens.hasRefreshToken() ? tokens.refreshToken() : null,
++          issuedAt: new Date().toISOString(),
++        });
++      },
++    );
++
++if (strategy_dev) {
++  authenticator_dev.use(strategy_dev, "microsoft");
++}
+diff --git a/app/services/.server/session.server.ts b/app/services/.server/session.server.ts
+index e163b32..6751488 100644
+--- a/app/services/.server/session.server.ts
++++ b/app/services/.server/session.server.ts
+@@ -9,6 +9,10 @@ import { getCurrentHost, parseJwt } from "../utils";
+ import { trackEvent, trackException } from "./appinsights-logging.server";
+ import { authenticator_dev, sessionStorage_dev } from "./session-dev.server";
+ import { createAbility } from "./permissions.server";
++import {
++  buildDevTokenInfo,
++  isDevAuthBypassEnabled,
++} from "./dev-auth-bypass.server";
+ 
+ export interface CurentUserInfo {
+   aud: string;
+@@ -35,6 +39,10 @@ export interface CurentUserInfo {
+ const loginPath = "/.auth/login/aad?post_login_redirect_uri=/";
+ 
+ export async function getTokenInfoAsync(request: Request): Promise<TokenInfo> {
++  if (isDevAuthBypassEnabled()) {
++    return buildDevTokenInfo();
++  }
++
+   if (process.env.CI ?? process.env.NODE_ENV !== "production") {
+     const session = await sessionStorage_dev.getSession(
+       request.headers.get("cookie"),
+diff --git a/prisma/seed.ts b/prisma/seed.ts
+index 06f089f..f7c9fdd 100644
+--- a/prisma/seed.ts
++++ b/prisma/seed.ts
+@@ -6,6 +6,7 @@ import dayjs from "dayjs";
+ import invariant from "tiny-invariant";
+ 
+ import { PrismaClient } from "./client/client";
++import { seedDevData } from "./seedDevData";
+ 
+ invariant(process.env.DATABASE_HOST, "DATABASE_HOST must be set");
+ invariant(process.env.DATABASE_NAME, "DATABASE_NAME must be set");
+@@ -346,6 +347,10 @@ async function seed() {
+     });
+   }
+ 
++  if (process.env.SEED_DEV_DATA === "true") {
++    await seedDevData(prisma);
++  }
++
+   console.info(`Database has been seeded. 🌱`);
+ }
+ 
+diff --git a/prisma/seedDevData.ts b/prisma/seedDevData.ts
+new file mode 100644
+index 0000000..e25e36e
+--- /dev/null
++++ b/prisma/seedDevData.ts
+@@ -0,0 +1,292 @@
++import dayjs from "dayjs";
++import { type PrismaClient } from "./client/client";
++
++export async function seedDevData(prisma: PrismaClient) {
++  const chapter = await prisma.chapter.findUniqueOrThrow({
++    where: { name: "Girrawheen" },
++  });
++
++  const mentorBase = {
++    mobile: "0400000000",
++    addressStreet: "1 Test Street",
++    addressSuburb: "Girrawheen",
++    addressState: "WA",
++    addressPostcode: "6064",
++    chapterId: chapter.id,
++    volunteerAgreementSignedOn: dayjs().subtract(1, "year").toDate(),
++    hasApprovedToPublishPhotos: true,
++  };
++
++  const mentors = await Promise.all(
++    [
++      { email: "dev.mentor1@local.test", firstName: "Alex", lastName: "Stone" },
++      { email: "dev.mentor2@local.test", firstName: "Beth", lastName: "Park" },
++      { email: "dev.mentor3@local.test", firstName: "Cleo", lastName: "Reed" },
++    ].map((m) =>
++      prisma.mentor.upsert({
++        where: { email: m.email },
++        create: { ...mentorBase, ...m },
++        update: {},
++      }),
++    ),
++  );
++
++  // Full lifecycle records for the first two mentors
++  for (const mentor of mentors.slice(0, 2)) {
++    const expiry = dayjs().add(1, "year").toDate();
++    const completed = dayjs().subtract(2, "month").toDate();
++
++    await prisma.policeCheck.upsert({
++      where: { mentorId: mentor.id },
++      create: { mentorId: mentor.id, expiryDate: expiry },
++      update: {},
++    });
++    await prisma.wWCCheck.upsert({
++      where: { mentorId: mentor.id },
++      create: {
++        mentorId: mentor.id,
++        wwcNumber: `WWC-${mentor.id}`,
++        expiryDate: expiry,
++      },
++      update: {},
++    });
++    await prisma.welcomeCall.upsert({
++      where: { mentorId: mentor.id },
++      create: {
++        mentorId: mentor.id,
++        calledBy: "Dev Admin",
++        calledOnDate: completed,
++      },
++      update: {},
++    });
++    await prisma.induction.upsert({
++      where: { mentorId: mentor.id },
++      create: {
++        mentorId: mentor.id,
++        runBy: "Dev Admin",
++        completedOnDate: completed,
++      },
++      update: {},
++    });
++    await prisma.approvalbyMRC.upsert({
++      where: { mentorId: mentor.id },
++      create: {
++        mentorId: mentor.id,
++        completedBy: "Dev Admin",
++        submittedDate: completed,
++      },
++      update: {},
++    });
++
++    const refCount = await prisma.reference.count({
++      where: { mentorId: mentor.id },
++    });
++    if (refCount === 0) {
++      await prisma.reference.create({
++        data: {
++          mentorId: mentor.id,
++          firstName: "Ref",
++          lastName: `For${mentor.lastName}`,
++          mobile: "0400000111",
++          email: `ref.${mentor.email}`,
++          relationship: "Colleague",
++        },
++      });
++    }
++  }
++
++  const students = await Promise.all(
++    [
++      { firstName: "Sam", lastName: "Lee" },
++      { firstName: "Maya", lastName: "Chen" },
++      { firstName: "Jordan", lastName: "Wright" },
++      { firstName: "Riley", lastName: "Patel" },
++    ].map(async ({ firstName, lastName }) => {
++      const existing = await prisma.student.findFirst({
++        where: { firstName, lastName, chapterId: chapter.id },
++      });
++      if (existing) return existing;
++      return prisma.student.create({
++        data: {
++          firstName,
++          lastName,
++          chapterId: chapter.id,
++          gender: "MALE",
++          startDate: dayjs().subtract(6, "month").toDate(),
++          dateOfBirth: dayjs().subtract(12, "year").toDate(),
++          schoolName: "Girrawheen Primary",
++          yearLevel: 6,
++          allergies: false,
++          guardian: {
++            create: [
++              {
++                fullName: `Parent of ${firstName}`,
++                relationship: "Parent",
++                phone: "0400000222",
++                email: `parent.${firstName.toLowerCase()}@local.test`,
++                address: "1 Test Street, Girrawheen WA 6064",
++              },
++            ],
++          },
++          studentTeacher: {
++            create: [
++              {
++                fullName: "Ms. Teacher",
++                email: "teacher@local.test",
++                schoolName: "Girrawheen Primary",
++                subject: "ENGLISH",
++              },
++            ],
++          },
++        },
++      });
++    }),
++  );
++
++  // Pair mentor1↔student1, mentor2↔student2
++  for (const [mentor, student] of [
++    [mentors[0], students[0]],
++    [mentors[1], students[1]],
++  ] as const) {
++    await prisma.mentorToStudentAssignement.upsert({
++      where: {
++        mentorId_studentId: { mentorId: mentor.id, studentId: student.id },
++      },
++      create: {
++        mentorId: mentor.id,
++        studentId: student.id,
++        assignedBy: "Dev Admin",
++      },
++      update: {},
++    });
++  }
++
++  // 8 weekly Saturdays: 4 in the past, 4 in the future
++  const sats: Date[] = [];
++  let cursor = dayjs().day(6).subtract(4, "week"); // upcoming/this Saturday minus 4 weeks
++  for (let i = 0; i < 8; i++) {
++    sats.push(cursor.startOf("day").toDate());
++    cursor = cursor.add(1, "week");
++  }
++  const today = dayjs().startOf("day");
++
++  const pairs = [
++    { mentor: mentors[0], student: students[0] },
++    { mentor: mentors[1], student: students[1] },
++  ];
++
++  for (const attendedOn of sats) {
++    const isPast = dayjs(attendedOn).isBefore(today);
++
++    for (const { mentor, student } of pairs) {
++      const ms = await prisma.mentorSession.upsert({
++        where: {
++          chapterId_mentorId_attendedOn: {
++            chapterId: chapter.id,
++            mentorId: mentor.id,
++            attendedOn,
++          },
++        },
++        create: {
++          chapterId: chapter.id,
++          mentorId: mentor.id,
++          attendedOn,
++          status: "AVAILABLE",
++        },
++        update: {},
++      });
++
++      const ss = await prisma.studentSession.upsert({
++        where: {
++          chapterId_studentId_attendedOn: {
++            chapterId: chapter.id,
++            studentId: student.id,
++            attendedOn,
++          },
++        },
++        create: {
++          chapterId: chapter.id,
++          studentId: student.id,
++          attendedOn,
++          status: "AVAILABLE",
++        },
++        update: {},
++      });
++
++      await prisma.session.upsert({
++        where: {
++          chapterId_mentorSessionId_studentSessionId: {
++            chapterId: chapter.id,
++            mentorSessionId: ms.id,
++            studentSessionId: ss.id,
++          },
++        },
++        create: {
++          chapterId: chapter.id,
++          mentorSessionId: ms.id,
++          studentSessionId: ss.id,
++          attendedOn,
++          report: isPast
++            ? `<p>Worked on reading comprehension with ${student.firstName}.</p>`
++            : null,
++          completedOn: isPast ? attendedOn : null,
++        },
++        update: {},
++      });
++
++      if (isPast) {
++        await prisma.mentorAttendance.upsert({
++          where: {
++            chapterId_mentorId_attendedOn: {
++              chapterId: chapter.id,
++              mentorId: mentor.id,
++              attendedOn,
++            },
++          },
++          create: {
++            chapterId: chapter.id,
++            mentorId: mentor.id,
++            attendedOn,
++          },
++          update: {},
++        });
++        await prisma.studentAttendance.upsert({
++          where: {
++            chapterId_studentId_attendedOn: {
++              chapterId: chapter.id,
++              studentId: student.id,
++              attendedOn,
++            },
++          },
++          create: {
++            chapterId: chapter.id,
++            studentId: student.id,
++            attendedOn,
++          },
++          update: {},
++        });
++      }
++    }
++  }
++
++  // Goals (no unique constraint — gate on count)
++  const existingGoals = await prisma.goal.count({
++    where: { chapterId: chapter.id },
++  });
++  if (existingGoals === 0) {
++    await prisma.goal.createMany({
++      data: pairs.map(({ mentor, student }) => ({
++        chapterId: chapter.id,
++        mentorId: mentor.id,
++        studentId: student.id,
++        title: `Improve reading for ${student.firstName}`,
++        goal: "Read one short story per week and discuss it.",
++        endDate: dayjs().add(3, "month").toDate(),
++      })),
++    });
++  }
++
++  console.info(
++    `Dev data seeded: ${mentors.length} mentors, ${students.length} students, ${sats.length} saturdays.`,
++  );
++}
+\ No newline at end of file

@@ -51,6 +51,7 @@ interface SessionViewModel {
   sessionLookup?: SessionLookup;
   id: number;
   fullName: string;
+  preferredName?: string | null;
 }
 
 export async function exportRosterToSpreadsheetAsync(
@@ -60,8 +61,7 @@ export async function exportRosterToSpreadsheetAsync(
   const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
   const mentors = await getMentorsAsync(chapterId, selectedTerm);
 
-  const spreadsheet = mentors.map(({ fullName, sessionLookup }) => {
-    const result: Record<string, string> = { Mentors: fullName };
+  const spreadsheet = mentors.map(({ fullName, preferredName, sessionLookup }) => {const result: Record<string, string> = {Mentors: preferredName || fullName,};
 
     sessionDates.forEach((attendedOn) => {
       const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
@@ -104,6 +104,7 @@ export async function getMentorsAsync(
     select: {
       id: true,
       fullName: true,
+      preferredName: true,
     },
     orderBy: {
       fullName: "asc",
