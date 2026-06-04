@@ -8,6 +8,7 @@ import {
   SessionStatus,
   TeachingSubject,
 } from "./client/enums";
+import { DEV_BYPASS_OID } from "~/services/.server/dev-auth-bypass.server";
 
 const CHAPTERS = [
   {
@@ -506,72 +507,77 @@ async function seedMentors(
   for (let index = 0; index < MENTORS_PER_CHAPTER; index += 1) {
     const { firstName, lastName } = unique.nextName();
     const address = unique.nextAddress(chapter);
-    const isArchived = index === 0;
-    const isBlocked = index === 1;
-    const missingSecondReference = index === 2;
-    const missingMrcApproval = index === 3;
-    const missingWelcomeCall = index === 4;
-    const missingInduction = index === 5;
-    const hasExpiringChecks = index === 6;
+    const isArchived = index === 10;
+    const isBlocked = index === 11;
+    const missingSecondReference = index === 12;
+    const missingMrcApproval = index === 13;
+    const missingWelcomeCall = index === 14;
+    const missingInduction = index === 15;
+    const hasExpiringChecks = index === 16;
     const expiryDate = dayjs()
       .add(hasExpiringChecks ? 21 : 370 + randomInt(120), "day")
       .toDate();
 
-    const mentor = await prisma.mentor.create({
-      data: {
-        email: devMentorEmail(chapter, index),
-        firstName,
-        lastName,
-        preferredName: index % 5 === 0 ? firstName : null,
-        mobile: unique.nextPhoneNumber(),
-        addressStreet: address.street,
-        addressSuburb: address.suburb,
-        addressState: address.state,
-        addressPostcode: address.postcode,
-        additionalEmail: `alternate.${chapter.slug}.mentor${index + 1}@${DEV_DOMAIN}`,
-        dateOfBirth: dayjs()
-          .subtract(22 + (index % 32), "year")
-          .subtract(randomInt(300), "day")
-          .toDate(),
-        frequencyInDays: index % 4 === 0 ? 14 : 7,
-        emergencyContactName: `Emergency contact ${index + 1}`,
-        emergencyContactNumber: unique.nextPhoneNumber(),
-        emergencyContactAddress: unique.nextAddress(chapter).full,
-        emergencyContactRelationship: "Friend",
-        nextOfKinName: `Next of kin ${index + 1}`,
-        nextOfKinNumber: unique.nextPhoneNumber(),
-        nextOfKinAddress: unique.nextAddress(chapter).full,
-        nextOfKinRelationship: "Parent",
-        hasApprovedToPublishPhotos: index % 7 !== 0,
-        volunteerAgreementSignedOn:
-          index === 7 ? null : dayjs().subtract(1, "year").toDate(),
-        skillOther: index % 11 === 0 ? "Board games" : null,
-        status: isArchived
-          ? MentorStatus.ARCHIVED
-          : isBlocked
-            ? MentorStatus.BLOCKED
-            : null,
-        endDate: isArchived ? dayjs().subtract(1, "month").toDate() : null,
-        chapterId: chapter.id,
-        eoIProfile: {
-          create: {
-            bestTimeToContact: "Weekday evenings",
-            occupation: "Community volunteer",
-            volunteerExperience: "Has supported school and community programs.",
-            role: "Mentor",
-            mentoringLevel: index % 2 === 0 ? "Primary school" : "High school",
-            heardAboutUs: "Friend or colleague",
-            preferredFrequency: index % 4 === 0 ? "Fortnightly" : "Weekly",
-            preferredSubject: index % 3 === 0 ? "Maths" : "English",
-            isOver18: true,
-            comment: "Dev seed mentor profile.",
-            wasMentor: index % 6 === 0 ? "Yes" : "No",
-            linkedInProfile: null,
-            aboutMe:
-              "Enjoys helping students build confidence through practical goals.",
-          },
+    const azureADId = chapter.id == 1 && index == 0 ? DEV_BYPASS_OID : null;
+
+    const data = {
+      email: devMentorEmail(chapter, index),
+      firstName,
+      lastName,
+      preferredName: index % 5 === 0 ? firstName : null,
+      mobile: unique.nextPhoneNumber(),
+      azureADId,
+      addressStreet: address.street,
+      addressSuburb: address.suburb,
+      addressState: address.state,
+      addressPostcode: address.postcode,
+      additionalEmail: `alternate.${chapter.slug}.mentor${index + 1}@${DEV_DOMAIN}`,
+      dateOfBirth: dayjs()
+        .subtract(22 + (index % 32), "year")
+        .subtract(randomInt(300), "day")
+        .toDate(),
+      frequencyInDays: index % 4 === 0 ? 14 : 7,
+      emergencyContactName: `Emergency contact ${index + 1}`,
+      emergencyContactNumber: unique.nextPhoneNumber(),
+      emergencyContactAddress: unique.nextAddress(chapter).full,
+      emergencyContactRelationship: "Friend",
+      nextOfKinName: `Next of kin ${index + 1}`,
+      nextOfKinNumber: unique.nextPhoneNumber(),
+      nextOfKinAddress: unique.nextAddress(chapter).full,
+      nextOfKinRelationship: "Parent",
+      hasApprovedToPublishPhotos: index % 7 !== 0,
+      volunteerAgreementSignedOn:
+        index === 7 ? null : dayjs().subtract(1, "year").toDate(),
+      skillOther: index % 11 === 0 ? "Board games" : null,
+      status: isArchived
+        ? MentorStatus.ARCHIVED
+        : isBlocked
+          ? MentorStatus.BLOCKED
+          : null,
+      endDate: isArchived ? dayjs().subtract(1, "month").toDate() : null,
+      chapterId: chapter.id,
+      eoIProfile: {
+        create: {
+          bestTimeToContact: "Weekday evenings",
+          occupation: "Community volunteer",
+          volunteerExperience: "Has supported school and community programs.",
+          role: "Mentor",
+          mentoringLevel: index % 2 === 0 ? "Primary school" : "High school",
+          heardAboutUs: "Friend or colleague",
+          preferredFrequency: index % 4 === 0 ? "Fortnightly" : "Weekly",
+          preferredSubject: index % 3 === 0 ? "Maths" : "English",
+          isOver18: true,
+          comment: "Dev seed mentor profile.",
+          wasMentor: index % 6 === 0 ? "Yes" : "No",
+          linkedInProfile: null,
+          aboutMe:
+            "Enjoys helping students build confidence through practical goals.",
         },
       },
+    };
+
+    const mentor = await prisma.mentor.create({
+      data,
     });
 
     await prisma.mentorNote.create({

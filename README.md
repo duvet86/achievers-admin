@@ -66,6 +66,20 @@ npm run setup
 npm run dev
 ```
 
+- To run application for development, run
+
+```bash
+DEV_SEED_DATA=true npm run setup
+```
+
+to set up dev data, then run
+
+```bash
+DEV_AUTH_BYPASS=true npm run dev
+```
+
+to fake Azure auth.
+
 ## Usage
 
 The application will run at: http://localhost:3000/

@@ -2,6 +2,7 @@ import type { TokenInfo } from "../models";
 import type { CurentUserInfo } from "./session.server";
 
 export const DEV_BYPASS_OID = "00000000-0000-0000-0000-000000000001";
+export const DEV_BYPASS_EMAIL = "dev-admin@local.test";
 
 const DEV_ADMIN_ROLES = [
   "Admin.manage.UserArea",
@@ -12,6 +13,7 @@ const DEV_ADMIN_ROLES = [
   "Admin.manage.ConfigArea",
   "Admin.manage.PermissionsArea",
   "Admin.manage.GoalsArea",
+  "Mentor",
 ];
 
 export function isDevAuthBypassEnabled(): boolean {
@@ -34,16 +36,16 @@ export function buildDevTokenInfo(): TokenInfo {
     aio: "dev",
     name: "Dev Admin",
     oid: DEV_BYPASS_OID,
-    preferred_username: "dev-admin@local.test",
+    preferred_username: DEV_BYPASS_EMAIL,
     rh: "dev",
     roles: DEV_ADMIN_ROLES,
     sub: DEV_BYPASS_OID,
     tid: "dev",
     uti: "dev",
     ver: "2.0",
-    email: "dev-admin@local.test",
+    email: DEV_BYPASS_EMAIL,
     isAdmin: true,
-    isMentor: false,
+    isMentor: true,
     isAttendances: false,
   };
 
