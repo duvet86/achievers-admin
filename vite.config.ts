@@ -5,13 +5,15 @@ import { defineConfig } from "vite";
 import { configDefaults } from "vitest/config";
 import tailwindcss from "@tailwindcss/vite";
 
-export default defineConfig(({ isSsrBuild }) => ({
-  build: {
-    rollupOptions: isSsrBuild
-      ? {
-          input: "./server-dev/app.ts",
-        }
-      : undefined,
+export default defineConfig(() => ({
+  environments: {
+    ssr: {
+      build: {
+        rollupOptions: {
+          input: "./server/app.ts",
+        },
+      },
+    },
   },
   plugins: [tailwindcss(), !process.env.VITEST && reactRouter()],
   test: {

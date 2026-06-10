@@ -28,7 +28,7 @@ interface ReadonlyRequest {
 
 export const streamTimeout = 5_000;
 
-export const unstable_instrumentations: ServerInstrumentation[] = [
+export const instrumentations: ServerInstrumentation[] = [
   {
     route(route) {
       route.instrument({
