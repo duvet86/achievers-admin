@@ -8,6 +8,8 @@ interface Props {
   fullName: string;
 }
 
+const PROFILE_PHOTO_MAX_SIZE = 1000000; // would be nice to humanise in error message
+
 export function ProfileInput({ defaultValue, fullName }: Props) {
   const submit = useSubmit();
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -34,7 +36,7 @@ export function ProfileInput({ defaultValue, fullName }: Props) {
     setProfilePicturePath(null);
 
     const formData = new FormData();
-    formData.append("profilePicure", "DELETE");
+    formData.append("profilePicture", "DELETE");
 
     void submit(formData, { method: "POST", encType: "multipart/form-data" });
   };
@@ -48,8 +50,8 @@ export function ProfileInput({ defaultValue, fullName }: Props) {
       return;
     }
 
-    if (file.size > 1000000) {
-      alert("File too big.");
+    if (file.size > PROFILE_PHOTO_MAX_SIZE) {
+      alert(`File too big, maximum accepted is 1MB`);
       e.currentTarget.value = "";
       return;
     }
@@ -67,7 +69,7 @@ export function ProfileInput({ defaultValue, fullName }: Props) {
     setSelectedImage(file);
 
     const formData = new FormData();
-    formData.append("profilePicure", file);
+    formData.append("profilePicture", file);
 
     void submit(formData, { method: "POST", encType: "multipart/form-data" });
   };
