@@ -20,6 +20,7 @@ storageState*
 
 __azurite*
 __blobstorage__
+/.local-blob-storage
 .react-router/
 /prisma/client
 

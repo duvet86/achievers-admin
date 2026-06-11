@@ -11,6 +11,7 @@ export default [
   route("auth/microsoft/callback", "routes/auth.microsoft.callback.tsx", {
     index: true,
   }),
+  route("dev-blob/*", "routes/dev-blob.$.tsx"),
   layout(
     "routes/chapters.$chapterId.attendances/layout.tsx",
     prefix("chapters/:chapterId/attendances", [
