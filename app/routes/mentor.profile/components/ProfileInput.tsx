@@ -74,7 +74,7 @@ export function ProfileInput({
 
     const formData = new FormData();
     formData.append("userId", userId.toString());
-    formData.append("profilePicure", file);
+    formData.append("profilePicture", file);
 
     void submit(formData, { method: "POST", encType: "multipart/form-data" });
   };

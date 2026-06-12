@@ -21,7 +21,9 @@ export async function loader({ request }: Route.LoaderArgs) {
 
     const user = session.get("user") as TokenInfo | undefined;
 
-    await strategy_dev.revokeToken(user!.accessToken);
+    if (strategy_dev && user) {
+      await strategy_dev.revokeToken(user.accessToken);
+    }
 
     return redirect("/", {
       headers: {

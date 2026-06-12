@@ -26,10 +26,22 @@ Achievers Management Web App is an application made to:
 docker pull mysql
 ```
 
-- On the terminal again type:
+- On the terminal again type the following to create and start a new container running MySQL:
 
 ```bash
 docker run -p 3306:3306 --name achievers-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:8.0 mysqld --lower_case_table_names=1 --mysql-native-password=ON
+```
+
+- If container was not removed after stopping (manually, or with `--rm` parameter), you can reuse it:
+
+```bash
+docker start achievers-mysql
+```
+
+- There is a rudimentary MySQL interface that can be accessed with Prisma Studio:
+
+```bash
+npx prisma studio
 ```
 
 - Install nodejs LTS version from here: https://nodejs.org/en
@@ -53,6 +65,20 @@ npm run setup
 ```bash
 npm run dev
 ```
+
+- To run application for development, run
+
+```bash
+DEV_SEED_DATA=true npm run setup
+```
+
+to set up dev data, then run
+
+```bash
+DEV_AUTH_BYPASS=true npm run dev
+```
+
+to fake Azure auth.
 
 ## Usage
 
