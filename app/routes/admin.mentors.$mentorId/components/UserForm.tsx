@@ -197,7 +197,10 @@ export function UserForm({
           ]}
         />
 
-        <div className="sticky bottom-0 z-10 flex justify-between">
+        <div
+          data-testid="container"
+          className="sticky bottom-0 z-10 flex justify-between"
+        >
           <Message
             // eslint-disable-next-line react-hooks/purity
             key={Date.now()}

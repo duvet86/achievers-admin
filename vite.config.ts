@@ -5,7 +5,7 @@ import { defineConfig } from "vite";
 import { configDefaults } from "vitest/config";
 import tailwindcss from "@tailwindcss/vite";
 
-export default defineConfig(() => ({
+export default defineConfig({
   environments: {
     ssr: {
       build: {
@@ -21,12 +21,7 @@ export default defineConfig(() => ({
     environment: "jsdom",
     setupFiles: ["dotenv/config", "./test/setup-test-env.ts"],
     exclude: [...configDefaults.exclude, "integration-tests/tests/*"],
-    poolOptions: {
-      threads: {
-        minThreads: process.env.CI ? 1 : undefined,
-        maxThreads: process.env.CI ? 1 : undefined,
-      },
-    },
+    maxWorkers: process.env.CI ? 1 : undefined,
   },
   resolve: {
     tsconfigPaths: true,
@@ -37,4 +32,4 @@ export default defineConfig(() => ({
       ),
     },
   },
-}));
+});
