@@ -75,10 +75,8 @@ export default function Index({ loaderData: { user } }: Route.ComponentProps) {
         <table className="table">
           <thead>
             <tr>
-              <th align="center">Full Name</th>
-              <th align="center" className="w-1/12">
-                Status
-              </th>
+              <th>Full Name</th>
+              <th align="center">Status</th>
               <th align="center" className="w-1/4">
                 Action
               </th>

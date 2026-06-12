@@ -14,7 +14,7 @@ import {
   saveUserProfilePicture,
   uploadHandler,
 } from "~/services/.server";
-import { isDateExpired, isStringNullOrEmpty } from "~/services";
+import { isDateExpired, isStringNullOrEmpty, URLSafeSearch } from "~/services";
 import { StateLink } from "~/components";
 
 import {
@@ -31,6 +31,11 @@ import { UserForm, CheckList, Header } from "./components";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.mentorId, "mentorId not found");
+
+  const safeUrl = new URLSafeSearch(request.url);
+
+  const isFormEditable =
+    safeUrl.safeSearchParams.getNullOrEmpty("isFormEditable") ?? false;
 
   const user = await getUserByIdAsync(Number(params.mentorId));
 
@@ -49,6 +54,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const chapters = await getChaptersAsync();
 
   return {
+    isFormEditable: Boolean(isFormEditable),
     user: {
       ...user,
       profilePicturePath,
@@ -226,6 +232,7 @@ export default function Index({
 
       <div className="content-area md:flex">
         <UserForm
+          isFormEditable={loaderData.isFormEditable}
           user={loaderData.user}
           chapters={loaderData.chapters}
           successMessage={actionData?.successMessage}
