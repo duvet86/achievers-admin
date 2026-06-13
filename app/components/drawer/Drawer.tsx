@@ -110,7 +110,7 @@ function getLinks(
         {
           icon: <EditPencil />,
           path: "/mentor/write-report",
-          label: "Write Report",
+          label: "Write Session Summary",
           isVisible: true,
         },
         {

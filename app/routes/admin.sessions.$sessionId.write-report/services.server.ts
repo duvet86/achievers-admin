@@ -31,6 +31,11 @@ export async function getSessionIdAsync(sessionId: number) {
           },
         },
       },
+      studentSession: {
+        select: {
+          studentId: true,
+        },
+      },
     },
   });
 }
