@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/refs */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { EditorState } from "lexical";

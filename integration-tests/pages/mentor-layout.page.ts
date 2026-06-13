@@ -28,7 +28,7 @@ export class MentorLayoutPage {
       exact: true,
     });
     this.writeReportLink = page.getByRole("link", {
-      name: "Write Report",
+      name: "Write Session Summary",
       exact: true,
     });
     this.studentsLink = page.getByRole("link", {

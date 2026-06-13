@@ -2,7 +2,7 @@ import type { MiddlewareFunction } from "react-router";
 
 import { createContext } from "react-router";
 
-export const cloneRequestContext = createContext<Request | null>(null);
+export const CloneRequestContext = createContext<Request | null>(null);
 
 // Server-side Middleware
 export const cloneRequestMiddleware: MiddlewareFunction = async (
@@ -10,7 +10,7 @@ export const cloneRequestMiddleware: MiddlewareFunction = async (
   next,
 ) => {
   if (request.method.toUpperCase() !== "GET") {
-    context.set(cloneRequestContext, request.clone());
+    context.set(CloneRequestContext, request.clone());
   }
 
   await next();

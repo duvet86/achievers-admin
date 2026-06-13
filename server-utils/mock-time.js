@@ -1,5 +1,4 @@
 export function mockTime() {
-  // eslint-disable-next-line no-global-assign
   Date = class extends Date {
     constructor(...options) {
       if (options.length) {

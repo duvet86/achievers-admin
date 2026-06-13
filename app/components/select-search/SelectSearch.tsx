@@ -56,6 +56,7 @@ export function SelectSearch({
       inputRef.current!.value = defaultValue;
     }
 
+    // eslint-disable-next-line @eslint-react/web-api-no-leaked-event-listener
     inputRef.current?.form?.addEventListener("reset", resetHandler);
 
     return () => document.removeEventListener("reset", resetHandler);

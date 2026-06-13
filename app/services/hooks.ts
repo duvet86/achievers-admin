@@ -32,7 +32,7 @@ export function useLocalStorage<T>(
     return [null, () => {}];
   }
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  // eslint-disable-next-line @eslint-react/rules-of-hooks
   const [localStorageValue, setLocalStorageValue] = useState<T | null>(() => {
     const value = window.localStorage.getItem(key);
     if (value === null) {

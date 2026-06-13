@@ -14,7 +14,7 @@ import { isRouteErrorResponse, ServerRouter } from "react-router";
 import { isbot } from "isbot";
 
 import {
-  cloneRequestContext,
+  CloneRequestContext,
   getTokenInfoAsync,
   trackException,
 } from "./services/.server";
@@ -42,7 +42,7 @@ export const instrumentations: ServerInstrumentation[] = [
         async action(callAction, { request, context }) {
           const { status, error } = await callAction();
           if (status === "error" && error) {
-            void logError(request, context.get(cloneRequestContext), error);
+            void logError(request, context.get(CloneRequestContext), error);
           }
         },
       });

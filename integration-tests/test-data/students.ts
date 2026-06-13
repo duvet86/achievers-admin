@@ -18,6 +18,8 @@ export async function createStudentsAsync(
   await tx.student.deleteMany();
   await tx.$queryRaw`ALTER TABLE Student AUTO_INCREMENT = 1;`;
 
+  const chapterId = (await tx.chapter.findFirstOrThrow()).id;
+
   let i: number;
 
   for (i = 0; i < 18; i++) {
@@ -75,7 +77,7 @@ export async function createStudentsAsync(
             ],
           },
         },
-        chapterId: (await tx.chapter.findFirstOrThrow()).id,
+        chapterId,
         createdAt: new Date(2024, 10, 24, 0, 0),
       },
     });

@@ -1,3 +1,4 @@
+/* eslint-disable @eslint-react/purity */
 import { Form, Link } from "react-router";
 import { EditPencil, FloppyDiskArrowIn } from "iconoir-react";
 
@@ -201,11 +202,7 @@ export function UserForm({
           data-testid="container"
           className="sticky bottom-0 z-10 flex justify-between"
         >
-          <Message
-            // eslint-disable-next-line react-hooks/purity
-            key={Date.now()}
-            successMessage={successMessage}
-          />
+          <Message key={Date.now()} successMessage={successMessage} />
 
           {!isFormEditable ? (
             <Link

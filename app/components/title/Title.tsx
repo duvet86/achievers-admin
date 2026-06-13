@@ -20,7 +20,7 @@ export function Title({ className, children }: Props) {
 
   useEffect(() => {
     setHistoryState(history);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line @eslint-react/exhaustive-deps
   }, [history]);
 
   return (
