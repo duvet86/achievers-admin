@@ -51,7 +51,7 @@ export class MentorHomePage {
 
   async goToViewReportPage(tableRow: number) {
     await (
-      await this.page.getByRole("link", { name: "Report" }).all()
+      await this.page.getByRole("link", { name: "View Report" }).all()
     )[tableRow].click();
   }
 }
