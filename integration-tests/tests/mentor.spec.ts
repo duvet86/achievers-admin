@@ -76,7 +76,7 @@ test.describe("Mentor Home Page", () => {
       },
     ]);
 
-    await mentorHomePage.goToViewReportPage(1);
+    await mentorHomePage.goToViewReportPage(0);
     await mentorWriteReportPage.expect.toHaveHeading();
   });
 });
