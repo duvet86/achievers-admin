@@ -15,6 +15,7 @@ interface Props {
     email: string;
     azureADId: string | null;
     chapterId: number;
+    note: string | null;
     firstName: string;
     lastName: string;
     preferredName: string | null;
@@ -109,6 +110,8 @@ export function UserForm({
           name="lastName"
           required
         />
+
+        <Input defaultValue={user.note ?? ""} label="Title/Note" name="note" />
 
         <Input
           defaultValue={user.mobile}

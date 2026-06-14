@@ -46,6 +46,7 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
       frequencyInDays: true,
       additionalEmail: true,
       preferredName: true,
+      note: true,
     },
   });
 }

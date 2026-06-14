@@ -139,6 +139,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   }
 
   const chapterId = formData.get("chapterId")?.toString();
+  const note = formData.get("note")?.toString();
   const firstName = formData.get("firstName")?.toString();
   const lastName = formData.get("lastName")?.toString();
   const preferredName = formData.get("preferredName")?.toString();
@@ -202,6 +203,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     emergencyContactRelationship: emergencyContactRelationship ?? null,
     chapterId: Number(chapterId),
     preferredName: isStringNullOrEmpty(preferredName) ? null : preferredName,
+    note: isStringNullOrEmpty(note) ? null : note,
     frequencyInDays:
       frequency === "FORTNIGHTLY" ? 14 : frequency === "WEEKLY" ? 7 : null,
     hasApprovedToPublishPhotos: hasApprovedToPublishPhotos === "true",
