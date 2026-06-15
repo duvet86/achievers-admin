@@ -100,6 +100,7 @@ export async function action({ request }: Route.ActionArgs) {
     additionalEmail: additionalEmail ?? null,
     chapterId: user.chapterId,
     preferredName: preferredName ?? null,
+    note: user.note,
     frequencyInDays: user.frequencyInDays,
     gender: user.gender ?? null,
   });

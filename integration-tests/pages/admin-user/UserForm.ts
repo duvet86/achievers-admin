@@ -132,6 +132,14 @@ export class UserForm {
   async saveForm(): Promise<void> {
     await this.page.getByRole("button", { name: "Save" }).click();
   }
+
+  async makeFormEditable(): Promise<void> {
+    await this.page
+      .getByRole("link", {
+        name: "Edit",
+      })
+      .click();
+  }
 }
 
 class UserFormAssertions {

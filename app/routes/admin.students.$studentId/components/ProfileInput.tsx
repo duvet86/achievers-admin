@@ -78,7 +78,8 @@ export function ProfileInput({ defaultValue, fullName }: Props) {
         <img
           src={
             selectedImage
-              ? URL.createObjectURL(selectedImage)
+              ? // eslint-disable-next-line @eslint-react/purity
+                URL.createObjectURL(selectedImage)
               : (profilePicturePath ?? "/images/profile-picture.webp")
           }
           alt="profile"

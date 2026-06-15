@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/purity */
+/* eslint-disable @eslint-react/purity */
 import type { EditorState } from "lexical";
 import type { Route } from "./+types/route";
 import type { SessionCommandRequest } from "./services.server";
@@ -59,7 +59,13 @@ export async function action({ request, params }: Route.ActionArgs) {
 
 export default function Index({
   loaderData: {
-    session: { id, report, attendedOn, mentorSession },
+    session: {
+      id,
+      report,
+      attendedOn,
+      mentorSession,
+      studentSession: { studentId },
+    },
   },
 }: Route.ComponentProps) {
   const { data, state, submit } = useFetcher<typeof action>();
@@ -127,7 +133,7 @@ export default function Index({
               />
             </div>
 
-            <EditorQuestions />
+            <EditorQuestions studentId={studentId} />
           </div>
         </div>
       </div>

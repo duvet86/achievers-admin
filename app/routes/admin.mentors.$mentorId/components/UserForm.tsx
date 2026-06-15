@@ -1,23 +1,22 @@
-import { Form } from "react-router";
+/* eslint-disable @eslint-react/purity */
+import { Form, Link } from "react-router";
 import type { $Enums } from "~/prisma/client";
+import { EditPencil, FloppyDiskArrowIn } from "iconoir-react";
 
-import {
-  DateInput,
-  Input,
-  Radio,
-  Select,
-  SubmitFormButton,
-} from "~/components";
+import { DateInput, Input, Message, Radio, Select } from "~/components";
 
 import { ProfileInput } from "./ProfileInput";
 
 interface Props {
+  isFormEditable: boolean;
   user: {
+    id: number;
     profilePicturePath: string | null;
     fullName: string;
     email: string;
     azureADId: string | null;
     chapterId: number;
+    note: string | null;
     firstName: string;
     lastName: string;
     preferredName: string | null;
@@ -43,14 +42,19 @@ interface Props {
   successMessage: string | undefined;
 }
 
-export function UserForm({ user, chapters, successMessage }: Props) {
+export function UserForm({
+  isFormEditable,
+  user,
+  chapters,
+  successMessage,
+}: Props) {
   return (
     <Form
       method="post"
       encType="multipart/form-data"
       className="border-primary relative mb-8 flex-1 overflow-y-auto md:mr-8 md:mb-0 md:border-r md:pr-4"
     >
-      <fieldset className="fieldset">
+      <fieldset disabled={!isFormEditable} className="fieldset">
         <ProfileInput
           defaultValue={user.profilePicturePath}
           fullName={user.fullName}
@@ -120,6 +124,8 @@ export function UserForm({ user, chapters, successMessage }: Props) {
             { value: "PREFER_NOT_TO_SAY", label: "Rather not answer" },
           ]}
         />
+
+        <Input defaultValue={user.note ?? ""} label="Title/Note" name="note" />
 
         <Input
           defaultValue={user.mobile}
@@ -209,11 +215,28 @@ export function UserForm({ user, chapters, successMessage }: Props) {
           ]}
         />
 
-        <SubmitFormButton
-          sticky
-          successMessage={successMessage}
-          className="justify-between"
-        />
+        <div
+          data-testid="container"
+          className="sticky bottom-0 z-10 flex justify-between"
+        >
+          <Message key={Date.now()} successMessage={successMessage} />
+
+          {!isFormEditable ? (
+            <Link
+              className="btn btn-primary w-48"
+              type="button"
+              to={`/admin/mentors/${user.id}?isFormEditable=true`}
+            >
+              <EditPencil />
+              Edit
+            </Link>
+          ) : (
+            <button className="btn btn-primary w-48" type="submit">
+              <FloppyDiskArrowIn />
+              Save
+            </button>
+          )}
+        </div>
       </fieldset>
     </Form>
   );

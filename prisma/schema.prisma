@@ -44,6 +44,7 @@ model Mentor {
   firstName       String
   lastName        String
   preferredName   String?
+  note            String?
   fullName        String  @default(dbgenerated()) // Calculated column firstName + lastName.
   gender          Gender?
   mobile          String

@@ -29,9 +29,7 @@ docker pull mysql
 - On the terminal again type:
 
 ```bash
-docker run -p 3306:3306 --name achievers-mysql \
--e MYSQL_ROOT_PASSWORD=my-secret-pw \
--d mysql:8.0
+docker run -p 3306:3306 --name achievers-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:8.4 mysqld --lower_case_table_names=1
 ```
 
 - Install nodejs LTS version from here: https://nodejs.org/en

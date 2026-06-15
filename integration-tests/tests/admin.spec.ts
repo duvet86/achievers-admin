@@ -115,6 +115,8 @@ test.describe("Admin", () => {
 
     await userInfoPage.expect.toHaveTitle();
 
+    await userInfoPage.userForm.makeFormEditable();
+
     // Test that empty values are saved correctly.
     await userInfoPage.userForm.saveForm();
 

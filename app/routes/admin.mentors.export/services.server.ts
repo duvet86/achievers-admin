@@ -31,6 +31,7 @@ export async function exportMentorsToSpreadsheetAsync() {
   const spreadsheetMentors = mentors.map<SpreadsheetUser>((m) => ({
     "First Name": m.firstName,
     "Last Name": m.lastName,
+    "Full Name": m.fullName,
     "Email address": m.email,
     "Additional email addresses (for intranet access)": m.additionalEmail ?? "",
     Mobile: Number(m.mobile),

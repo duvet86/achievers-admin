@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/refs */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { EditorState } from "lexical";
@@ -321,14 +320,6 @@ export default function Index({
               Session has been cancelled
             </p>
           )}
-
-          <StateLink
-            className="btn btn-error w-48 gap-2"
-            to={`/mentor/students/${selectedStudentId}/report-to-admin`}
-          >
-            <WarningTriangle className="hidden h-4 w-4 lg:block" />
-            Report to Admin
-          </StateLink>
         </div>
 
         {isNotMyReport && session && (
@@ -446,7 +437,9 @@ export default function Index({
                 />
               </div>
 
-              {!completedOn && <EditorQuestions />}
+              {!completedOn && (
+                <EditorQuestions studentId={Number(selectedStudentId)} />
+              )}
             </div>
 
             <div className="flex w-full justify-between gap-8 pb-2">

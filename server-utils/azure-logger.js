@@ -8,7 +8,6 @@ export function initAppInsightsLogger() {
 
   console.log("Connected to app insights.");
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useAzureMonitor();
 
   global.__appinsightsTracer__ = trace.getTracer("appTracer");

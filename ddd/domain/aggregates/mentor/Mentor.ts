@@ -13,6 +13,7 @@ export interface MentorProps {
   firstName: string;
   lastName: string;
   preferredName: string | null;
+  note: string | null;
   fullName: string;
   mobile: string;
   addressStreet: string;
@@ -43,6 +44,7 @@ export interface MentorCommand {
   firstName: string;
   lastName: string;
   preferredName: string | null;
+  note: string | null;
   mobile: string;
   addressStreet: string;
   addressSuburb: string;
@@ -65,6 +67,7 @@ export class Mentor extends Entity implements IAggregateRoot {
   private _firstName: string;
   private _lastName: string;
   private _preferredName: string | null;
+  private _note: string | null;
   private _fullName: string;
   private _mobile: string;
   private _additionalEmail: string | null;
@@ -97,6 +100,10 @@ export class Mentor extends Entity implements IAggregateRoot {
 
   public get preferredName(): string | null {
     return this._preferredName;
+  }
+
+  public get note(): string | null {
+    return this._note;
   }
 
   public get fullName(): string {
@@ -170,6 +177,7 @@ export class Mentor extends Entity implements IAggregateRoot {
       firstName,
       lastName,
       preferredName,
+      note,
       fullName,
       mobile,
       addressStreet,
@@ -202,6 +210,7 @@ export class Mentor extends Entity implements IAggregateRoot {
     this._firstName = firstName;
     this._lastName = lastName;
     this._preferredName = preferredName;
+    this._note = note;
     this._fullName = fullName;
     this._mobile = mobile;
     this._additionalEmail = additionalEmail;
@@ -247,6 +256,7 @@ export class Mentor extends Entity implements IAggregateRoot {
     firstName,
     lastName,
     preferredName,
+    note,
     mobile,
     additionalEmail,
     dateOfBirth,
@@ -265,6 +275,7 @@ export class Mentor extends Entity implements IAggregateRoot {
     this._firstName = firstName;
     this._lastName = lastName;
     this._preferredName = preferredName;
+    this._note = note;
     this._mobile = mobile;
     this._additionalEmail = additionalEmail;
     this._dateOfBirth = dateOfBirth;

@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/purity */
+/* eslint-disable @eslint-react/purity */
 import type { EditorState } from "lexical";
 import type { Route } from "./+types/route";
 

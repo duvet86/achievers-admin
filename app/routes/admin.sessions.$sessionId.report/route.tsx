@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/purity */
+/* eslint-disable @eslint-react/purity */
 import type { EditorState } from "lexical";
 import type { Route } from "./+types/route";
 import type { SessionCommandRequest } from "./services.server";
@@ -102,7 +102,6 @@ export default function Index({
       }
     }
 
-    // eslint-disable-next-line react-hooks/refs
     const resportState = editorStateRef.current!;
 
     if (isEditorEmpty(resportState)) {

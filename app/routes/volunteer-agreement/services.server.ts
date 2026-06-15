@@ -49,6 +49,7 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
       additionalEmail: true,
       preferredName: true,
       gender: true,
+      note: true,
     },
   });
 }

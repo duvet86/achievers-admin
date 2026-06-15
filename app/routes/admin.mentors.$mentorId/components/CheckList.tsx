@@ -162,7 +162,7 @@ export function CheckList({
             </td>
             <td>
               <div className="flex items-center gap-4">
-                {references.length > 1 ? (
+                {referencesCompleted >= 1 ? (
                   <>
                     <Check className="text-success h-6 w-6" /> Yes
                   </>

@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/purity */
+/* eslint-disable @eslint-react/purity */
 import type { Route } from "./+types/route";
 
 import { Form, redirect, useSearchParams } from "react-router";

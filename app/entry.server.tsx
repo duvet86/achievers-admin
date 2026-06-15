@@ -14,7 +14,7 @@ import { isRouteErrorResponse, ServerRouter } from "react-router";
 import { isbot } from "isbot";
 
 import {
-  cloneRequestContext,
+  CloneRequestContext,
   getTokenInfoAsync,
   trackException,
 } from "./services/.server";
@@ -28,7 +28,7 @@ interface ReadonlyRequest {
 
 export const streamTimeout = 5_000;
 
-export const unstable_instrumentations: ServerInstrumentation[] = [
+export const instrumentations: ServerInstrumentation[] = [
   {
     route(route) {
       route.instrument({
@@ -42,7 +42,7 @@ export const unstable_instrumentations: ServerInstrumentation[] = [
         async action(callAction, { request, context }) {
           const { status, error } = await callAction();
           if (status === "error" && error) {
-            void logError(request, context.get(cloneRequestContext), error);
+            void logError(request, context.get(CloneRequestContext), error);
           }
         },
       });

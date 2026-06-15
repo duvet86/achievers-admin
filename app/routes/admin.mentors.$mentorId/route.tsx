@@ -14,7 +14,7 @@ import {
   saveUserProfilePicture,
   uploadHandler,
 } from "~/services/.server";
-import { isDateExpired, isStringNullOrEmpty } from "~/services";
+import { isDateExpired, isStringNullOrEmpty, URLSafeSearch } from "~/services";
 import { StateLink } from "~/components";
 
 import {
@@ -47,6 +47,11 @@ function parseGender(value: string | undefined) {
 export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.mentorId, "mentorId not found");
 
+  const safeUrl = new URLSafeSearch(request.url);
+
+  const isFormEditable =
+    safeUrl.safeSearchParams.getNullOrEmpty("isFormEditable") ?? false;
+
   const user = await getUserByIdAsync(Number(params.mentorId));
 
   let azureUserInfo: AzureUserWebAppWithRole | null = null;
@@ -64,6 +69,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const chapters = await getChaptersAsync();
 
   return {
+    isFormEditable: Boolean(isFormEditable),
     user: {
       ...user,
       profilePicturePath,
@@ -148,6 +154,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   }
 
   const chapterId = formData.get("chapterId")?.toString();
+  const note = formData.get("note")?.toString();
   const firstName = formData.get("firstName")?.toString();
   const lastName = formData.get("lastName")?.toString();
   const preferredName = formData.get("preferredName")?.toString();
@@ -212,6 +219,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     emergencyContactRelationship: emergencyContactRelationship ?? null,
     chapterId: Number(chapterId),
     preferredName: isStringNullOrEmpty(preferredName) ? null : preferredName,
+    note: isStringNullOrEmpty(note) ? null : note,
     frequencyInDays:
       frequency === "FORTNIGHTLY" ? 14 : frequency === "WEEKLY" ? 7 : null,
     hasApprovedToPublishPhotos: hasApprovedToPublishPhotos === "true",
@@ -243,6 +251,7 @@ export default function Index({
 
       <div className="content-area md:flex">
         <UserForm
+          isFormEditable={loaderData.isFormEditable}
           user={loaderData.user}
           chapters={loaderData.chapters}
           successMessage={actionData?.successMessage}

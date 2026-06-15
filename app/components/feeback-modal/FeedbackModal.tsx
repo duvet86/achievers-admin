@@ -1,3 +1,4 @@
+/* eslint-disable @eslint-react/purity */
 import { useFetcher } from "react-router";
 import { Send, Xmark } from "iconoir-react";
 
@@ -61,7 +62,6 @@ export function FeedbackModal() {
 
             <div className="modal-action flex-wrap gap-4">
               <Message
-                // eslint-disable-next-line react-hooks/purity
                 key={Date.now()}
                 successMessage={data?.successMessage}
                 errorMessage={data?.errorMessage}

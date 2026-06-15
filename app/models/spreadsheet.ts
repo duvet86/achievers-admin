@@ -8,6 +8,7 @@ export type Gender = "Male" | "Female";
 export interface SpreadsheetUser {
   "First Name": string;
   "Last Name": string;
+  "Full Name": string;
   "Email address": string;
   "Additional email addresses (for intranet access)": string;
   Mobile: number;

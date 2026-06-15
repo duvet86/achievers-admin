@@ -5,13 +5,15 @@ import { defineConfig } from "vite";
 import { configDefaults } from "vitest/config";
 import tailwindcss from "@tailwindcss/vite";
 
-export default defineConfig(({ isSsrBuild }) => ({
-  build: {
-    rollupOptions: isSsrBuild
-      ? {
-          input: "./server-dev/app.ts",
-        }
-      : undefined,
+export default defineConfig({
+  environments: {
+    ssr: {
+      build: {
+        rollupOptions: {
+          input: "./server/app.ts",
+        },
+      },
+    },
   },
   plugins: [tailwindcss(), !process.env.VITEST && reactRouter()],
   test: {
@@ -19,12 +21,7 @@ export default defineConfig(({ isSsrBuild }) => ({
     environment: "jsdom",
     setupFiles: ["dotenv/config", "./test/setup-test-env.ts"],
     exclude: [...configDefaults.exclude, "integration-tests/tests/*"],
-    poolOptions: {
-      threads: {
-        minThreads: process.env.CI ? 1 : undefined,
-        maxThreads: process.env.CI ? 1 : undefined,
-      },
-    },
+    maxWorkers: process.env.CI ? 1 : undefined,
   },
   resolve: {
     tsconfigPaths: true,
@@ -35,4 +32,4 @@ export default defineConfig(({ isSsrBuild }) => ({
       ),
     },
   },
-}));
+});
