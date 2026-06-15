@@ -57,7 +57,7 @@ export interface MentorCommand {
   emergencyContactRelationship: string | null;
   hasApprovedToPublishPhotos: boolean | null;
   chapterId: number;
-  gender: Gender;
+  gender: Gender | null;
 }
 
 export class Mentor extends Entity implements IAggregateRoot {
