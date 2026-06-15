@@ -1,4 +1,5 @@
 import { Form } from "react-router";
+import type { $Enums } from "~/prisma/client";
 
 import {
   DateInput,
@@ -20,6 +21,7 @@ interface Props {
     firstName: string;
     lastName: string;
     preferredName: string | null;
+    gender: $Enums.Gender | null;
     mobile: string;
     addressStreet: string;
     addressSuburb: string;
@@ -106,6 +108,18 @@ export function UserForm({ user, chapters, successMessage }: Props) {
           name="lastName"
           required
         />
+
+        <Select
+            label="Gender"
+            name="gender"
+            defaultValue={user.gender ?? ""}
+            options={[
+              { value: "MALE", label: "Male" },
+              { value: "FEMALE", label: "Female" },
+              { value: "OTHER", label: "Other" },
+              { value: "PREFER_NOT_TO_SAY", label: "Rather not answer" },
+            ]}
+          />
 
         <Input
           defaultValue={user.mobile}

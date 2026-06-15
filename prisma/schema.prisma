@@ -11,6 +11,8 @@ generator client {
 enum Gender {
   MALE
   FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
 }
 
 enum TeachingSubject {
@@ -43,6 +45,7 @@ model Mentor {
   lastName        String
   preferredName   String?
   fullName        String  @default(dbgenerated()) // Calculated column firstName + lastName.
+  gender          Gender?
   mobile          String
   addressStreet   String  @db.VarChar(2000)
   addressSuburb   String

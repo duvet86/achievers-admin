@@ -7,7 +7,6 @@ import utc from "dayjs/plugin/utc";
 import { prisma } from "~/db.server";
 import { getDatesForTerm } from "~/services";
 import { addCollectionToSpreadsheet } from "~/services/.server";
-import { FingerprintScan } from "iconoir-react";
 
 dayjs.extend(utc);
 
@@ -51,7 +50,6 @@ type SessionLookup = Record<
 interface SessionViewModel {
   sessionLookup?: SessionLookup;
   id: number;
-  fullName: string;
   preferredName?: string | null;
   lastName?: string | null;
 
@@ -64,33 +62,38 @@ export async function exportRosterToSpreadsheetAsync(
 ) {
   const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
   const mentors = await getMentorsAsync(chapterId, selectedTerm);
-  const spreadsheet = mentors.map(({ fullName, preferredName,firstName, lastName, sessionLookup }) => {const result: Record<string, string> = {Mentors:`${preferredName ?? firstName} ${lastName ?? ""}`.trim()};// selects prefered name if it exists apendign last name 
+  const spreadsheet = mentors.map(
+    ({ preferredName, firstName, lastName, sessionLookup }) => {
+      const result: Record<string, string> = {
+        Mentors: `${preferredName ?? firstName} ${lastName ?? ""}`.trim(),
+      }; // selects prefered name if it exists apendign last name
 
-    sessionDates.forEach((attendedOn) => {
-      const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
-      const mentorSession = sessionLookup?.[attendedOnFormatted];
+      sessionDates.forEach((attendedOn) => {
+        const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
+        const mentorSession = sessionLookup?.[attendedOnFormatted];
 
-      let label = "";
-      if (mentorSession) {
-        if (mentorSession.sessions.length === 0) {
-          if (mentorSession.status === "UNAVAILABLE") {
-            label = "Unavailable";
+        let label = "";
+        if (mentorSession) {
+          if (mentorSession.sessions.length === 0) {
+            if (mentorSession.status === "UNAVAILABLE") {
+              label = "Unavailable";
+            } else {
+              label = "Available";
+            }
+          } else if (mentorSession.sessions.length === 1) {
+            const session = mentorSession.sessions[0];
+            label = `${session.studentFirstName} (Year ${session.yearLevel ?? "-"})${session.isCancelled ? " (Cancelled)" : ""}`;
           } else {
-            label = "Available";
+            label = `${mentorSession.sessions.length} Students`;
           }
-        } else if (mentorSession.sessions.length === 1) {
-          const session = mentorSession.sessions[0];
-          label = `${session.studentFirstName} (Year ${session.yearLevel ?? "-"})${session.isCancelled ? " (Cancelled)" : ""}`;
-        } else {
-          label = `${mentorSession.sessions.length} Students`;
         }
-      }
 
-      result[attendedOnFormatted] = label;
-    });
+        result[attendedOnFormatted] = label;
+      });
 
-    return result;
-  });
+      return result;
+    },
+  );
 
   return addCollectionToSpreadsheet(spreadsheet);
 }
@@ -109,7 +112,7 @@ export async function getMentorsAsync(
       fullName: true,
       preferredName: true,
       lastName: true,
-      firstName: true
+      firstName: true,
     },
     orderBy: {
       fullName: "asc",

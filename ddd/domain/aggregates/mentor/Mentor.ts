@@ -5,6 +5,7 @@ import { Email } from "../../EmailValueObject";
 import { Address } from "./AddressValueObject";
 import { EmergencyContact } from "./EmergencyContactValueObject";
 import { NextOfKin } from "./NextOfKinValueObject";
+import type { Gender } from "../../../../prisma/client/enums";
 
 export interface MentorProps {
   azureADId: string | null;
@@ -56,6 +57,7 @@ export interface MentorCommand {
   emergencyContactRelationship: string | null;
   hasApprovedToPublishPhotos: boolean | null;
   chapterId: number;
+  gender: Gender;
 }
 
 export class Mentor extends Entity implements IAggregateRoot {

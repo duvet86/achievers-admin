@@ -42,6 +42,7 @@ export async function getUserByIdAsync(id: number) {
       endDate: true,
       chapterId: true,
       frequencyInDays: true,
+      gender:true,
       chapter: {
         select: {
           id: true,
@@ -80,6 +81,7 @@ export async function getUserByIdAsync(id: number) {
           expiryDate: true,
         },
       },
+
     },
   });
 }

@@ -33,29 +33,33 @@ export async function exportRosterToSpreadsheetAsync(
   const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
   const students = await getStudentsAsync(chapterId, selectedTerm);
 
-  const spreadsheet = students.map(({ firstName, yearLevel, sessionLookup }) => {
-    const result: Record<string, string> = {
-      Students: `${firstName} (Year ${yearLevel ?? "-"})`,
-    };
+  const spreadsheet = students.map(
+    ({ firstName, yearLevel, sessionLookup }) => {
+      const result: Record<string, string> = {
+        Students: `${firstName} (Year ${yearLevel ?? "-"})`,
+      };
 
-    sessionDates.forEach((attendedOn) => {
-      const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
-      const session = sessionLookup?.[attendedOnFormatted];
+      sessionDates.forEach((attendedOn) => {
+        const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
+        const session = sessionLookup?.[attendedOnFormatted];
 
-      let label = "";
-      if (session) {
-        if (session.mentorPreferredName !== null) {
-          label =   `${session.mentorPreferredName ?? ""} ${session.mentorLastName ?? ""}`.trim() + (session.isCancelled ? " (Cancelled)" : "");
-        } else if (session.status === "UNAVAILABLE") {
-          label = "Unavailable";
+        let label = "";
+        if (session) {
+          if (session.mentorPreferredName !== null) {
+            label =
+              `${session.mentorPreferredName ?? ""} ${session.mentorLastName ?? ""}`.trim() +
+              (session.isCancelled ? " (Cancelled)" : "");
+          } else if (session.status === "UNAVAILABLE") {
+            label = "Unavailable";
+          }
         }
-      }
 
-      result[attendedOnFormatted] = label;
-    });
+        result[attendedOnFormatted] = label;
+      });
 
-    return result;
-  });
+      return result;
+    },
+  );
 
   return addCollectionToSpreadsheet(spreadsheet);
 }
@@ -104,7 +108,7 @@ export async function getStudentsAsync(
         studentId: value.studentId,
         isCancelled: value.isCancelled,
         mentorPreferredName: value.mentorPreferredName,
-        mentorLastName: value.mentorLastName
+        mentorLastName: value.mentorLastName,
       };
     } else {
       res[value.studentId] = {

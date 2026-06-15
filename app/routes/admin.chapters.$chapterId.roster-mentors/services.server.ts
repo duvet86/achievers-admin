@@ -55,7 +55,6 @@ export interface SessionViewModel {
   preferredName?: string | null;
 }
 
-
 export async function getMentorsAsync(
   chapterId: number,
   term: Term,
