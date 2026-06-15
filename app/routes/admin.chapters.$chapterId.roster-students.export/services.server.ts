@@ -15,13 +15,14 @@ interface StudentSession {
   attendedOn: string;
   studentId: number;
   isCancelled: number | null;
-  mentorFullName: string | null;
+  mentorPreferredName: string | null;
+  mentorLastName: string | null;
 }
 
 interface SessionViewModelLookup {
   sessionLookup?: Record<string, StudentSession>;
   id: number;
-  fullName: string;
+  firstName: string;
   yearLevel: number | null;
 }
 
@@ -32,9 +33,9 @@ export async function exportRosterToSpreadsheetAsync(
   const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
   const students = await getStudentsAsync(chapterId, selectedTerm);
 
-  const spreadsheet = students.map(({ fullName, yearLevel, sessionLookup }) => {
+  const spreadsheet = students.map(({ firstName, yearLevel, sessionLookup }) => {
     const result: Record<string, string> = {
-      Students: `${fullName} (Year ${yearLevel ?? "-"})`,
+      Students: `${firstName} (Year ${yearLevel ?? "-"})`,
     };
 
     sessionDates.forEach((attendedOn) => {
@@ -43,10 +44,8 @@ export async function exportRosterToSpreadsheetAsync(
 
       let label = "";
       if (session) {
-        if (session.mentorFullName !== null) {
-          label =
-            session.mentorFullName +
-            (session.isCancelled ? " (Cancelled)" : "");
+        if (session.mentorPreferredName !== null) {
+          label =   `${session.mentorPreferredName ?? ""} ${session.mentorLastName ?? ""}`.trim() + (session.isCancelled ? " (Cancelled)" : "");
         } else if (session.status === "UNAVAILABLE") {
           label = "Unavailable";
         }
@@ -72,11 +71,11 @@ export async function getStudentsAsync(
     },
     select: {
       id: true,
-      fullName: true,
+      firstName: true,
       yearLevel: true,
     },
     orderBy: {
-      fullName: "asc",
+      firstName: "asc",
     },
   });
 
@@ -86,7 +85,8 @@ export async function getStudentsAsync(
       ss.attendedOn,
       ss.studentId,
       sa.isCancelled,
-      u.fullName AS mentorFullName
+      u.preferredName AS mentorPreferredName,
+      u.lastName AS mentorLastName
     FROM StudentSession ss
     LEFT JOIN Session sa ON sa.studentSessionId = ss.id
     LEFT JOIN MentorSession ms ON ms.id = sa.mentorSessionId
@@ -103,7 +103,8 @@ export async function getStudentsAsync(
         status: value.status,
         studentId: value.studentId,
         isCancelled: value.isCancelled,
-        mentorFullName: value.mentorFullName,
+        mentorPreferredName: value.mentorPreferredName,
+        mentorLastName: value.mentorLastName
       };
     } else {
       res[value.studentId] = {
@@ -112,7 +113,8 @@ export async function getStudentsAsync(
           status: value.status,
           studentId: value.studentId,
           isCancelled: value.isCancelled,
-          mentorFullName: value.mentorFullName,
+          mentorPreferredName: value.mentorPreferredName,
+          mentorLastName: value.mentorLastName,
         },
       };
     }

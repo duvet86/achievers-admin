@@ -7,6 +7,7 @@ import utc from "dayjs/plugin/utc";
 import { prisma } from "~/db.server";
 import { getDatesForTerm } from "~/services";
 import { addCollectionToSpreadsheet } from "~/services/.server";
+import { FingerprintScan } from "iconoir-react";
 
 dayjs.extend(utc);
 
@@ -20,7 +21,7 @@ interface MentorSession {
   completedOn: string | null;
   isCancelled: number | null;
   studentId: number | null;
-  studentFullName: string | null;
+  studentFirstName: string | null;
   yearLevel: number | null;
 }
 
@@ -41,7 +42,7 @@ type SessionLookup = Record<
       completedOn: string | null;
       isCancelled: boolean;
       studentId: number;
-      studentFullName: string;
+      studentFirstName: string;
       yearLevel: number | null;
     }[];
   }
@@ -52,6 +53,9 @@ interface SessionViewModel {
   id: number;
   fullName: string;
   preferredName?: string | null;
+  lastName?: string | null;
+
+  firstName?: string | null;
 }
 
 export async function exportRosterToSpreadsheetAsync(
@@ -60,8 +64,7 @@ export async function exportRosterToSpreadsheetAsync(
 ) {
   const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
   const mentors = await getMentorsAsync(chapterId, selectedTerm);
-
-  const spreadsheet = mentors.map(({ fullName, preferredName, sessionLookup }) => {const result: Record<string, string> = {Mentors: preferredName || fullName,};
+  const spreadsheet = mentors.map(({ fullName, preferredName,firstName, lastName, sessionLookup }) => {const result: Record<string, string> = {Mentors:`${preferredName ?? firstName} ${lastName ?? ""}`.trim()};// selects prefered name if it exists apendign last name 
 
     sessionDates.forEach((attendedOn) => {
       const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
@@ -77,7 +80,7 @@ export async function exportRosterToSpreadsheetAsync(
           }
         } else if (mentorSession.sessions.length === 1) {
           const session = mentorSession.sessions[0];
-          label = `${session.studentFullName} (Year ${session.yearLevel ?? "-"})${session.isCancelled ? " (Cancelled)" : ""}`;
+          label = `${session.studentFirstName} (Year ${session.yearLevel ?? "-"})${session.isCancelled ? " (Cancelled)" : ""}`;
         } else {
           label = `${mentorSession.sessions.length} Students`;
         }
@@ -105,6 +108,8 @@ export async function getMentorsAsync(
       id: true,
       fullName: true,
       preferredName: true,
+      lastName: true,
+      firstName: true
     },
     orderBy: {
       fullName: "asc",
@@ -122,7 +127,7 @@ export async function getMentorsAsync(
         sa.completedOn,
         sa.isCancelled,
         ss.studentId,
-        s.fullName AS studentFullName,
+        s.firstName AS studentFirstName,
         s.yearLevel
       FROM MentorSession ms
       LEFT JOIN Session sa ON sa.mentorSessionId = ms.id
@@ -146,7 +151,7 @@ export async function getMentorsAsync(
       hasReport: mentorSession.hasReport === 1,
       completedOn: mentorSession.completedOn,
       isCancelled: mentorSession.isCancelled === 1,
-      studentFullName: mentorSession.studentFullName!,
+      studentFirstName: mentorSession.studentFirstName!,
       yearLevel: mentorSession.yearLevel,
     };
 
