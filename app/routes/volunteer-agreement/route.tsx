@@ -102,6 +102,7 @@ export async function action({ request }: Route.ActionArgs) {
     preferredName: preferredName ?? null,
     note: user.note,
     frequencyInDays: user.frequencyInDays,
+    gender: user.gender ?? null,
   });
 
   return redirect("/mentor/home");

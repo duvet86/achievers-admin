@@ -5,7 +5,7 @@ import type { Route } from "./+types/route";
 import invariant from "tiny-invariant";
 import { NavArrowRight } from "iconoir-react";
 import { parseFormData } from "@mjackson/form-data-parser";
-
+import { $Enums } from "~/prisma/client";
 import {
   deleteUserProfilePicture,
   getAzureUserWithRolesByIdAsync,
@@ -28,7 +28,22 @@ import {
   removeApprovalMrc,
 } from "./services.server";
 import { UserForm, CheckList, Header } from "./components";
+function parseGender(value: string | undefined) {
+  if (!value) return $Enums.Gender.PREFER_NOT_TO_SAY;
 
+  switch (value) {
+    case "MALE":
+      return $Enums.Gender.MALE;
+    case "FEMALE":
+      return $Enums.Gender.FEMALE;
+    case "OTHER":
+      return $Enums.Gender.OTHER;
+    case "PREFER_NOT_TO_SAY":
+      return $Enums.Gender.PREFER_NOT_TO_SAY;
+    default:
+      return $Enums.Gender.PREFER_NOT_TO_SAY;
+  }
+}
 export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.mentorId, "mentorId not found");
 
@@ -143,6 +158,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   const firstName = formData.get("firstName")?.toString();
   const lastName = formData.get("lastName")?.toString();
   const preferredName = formData.get("preferredName")?.toString();
+  const gender = formData.get("gender")?.toString();
   const email = formData.get("email")?.toString();
   const mobile = formData.get("mobile")?.toString();
 
@@ -207,6 +223,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     frequencyInDays:
       frequency === "FORTNIGHTLY" ? 14 : frequency === "WEEKLY" ? 7 : null,
     hasApprovedToPublishPhotos: hasApprovedToPublishPhotos === "true",
+    gender: parseGender(gender),
   };
 
   await updateMentorByIdAsync(Number(params.mentorId), dataCreate, email);
