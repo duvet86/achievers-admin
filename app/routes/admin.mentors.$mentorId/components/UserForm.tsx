@@ -117,7 +117,9 @@ export function UserForm({
           label="Gender"
           name="gender"
           defaultValue={user.gender ?? ""}
+          
           options={[
+            { value: "", label: "Select a gender" },
             { value: "MALE", label: "Male" },
             { value: "FEMALE", label: "Female" },
             { value: "OTHER", label: "Other" },

@@ -28,11 +28,11 @@ import {
   removeApprovalMrc,
 } from "./services.server";
 import { UserForm, CheckList, Header } from "./components";
-function parseGender(value: string | undefined) {
+function parseGender(value: string | undefined | null) {
   if (!value) return $Enums.Gender.PREFER_NOT_TO_SAY;
 
   switch (value) {
-    case "MALE":
+    case "MALE": 
       return $Enums.Gender.MALE;
     case "FEMALE":
       return $Enums.Gender.FEMALE;
@@ -158,7 +158,6 @@ export async function action({ request, params }: Route.ActionArgs) {
   const firstName = formData.get("firstName")?.toString();
   const lastName = formData.get("lastName")?.toString();
   const preferredName = formData.get("preferredName")?.toString();
-  const gender = formData.get("gender")?.toString();
   const email = formData.get("email")?.toString();
   const mobile = formData.get("mobile")?.toString();
 
@@ -182,7 +181,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   const emergencyContactRelationship = formData
     .get("emergencyContactRelationship")
     ?.toString();
-
+  const gender = parseGender(formData.get("gender")?.toString());
   const hasApprovedToPublishPhotos = formData
     .get("hasApprovedToPublishPhotos")
     ?.toString();
@@ -223,7 +222,8 @@ export async function action({ request, params }: Route.ActionArgs) {
     frequencyInDays:
       frequency === "FORTNIGHTLY" ? 14 : frequency === "WEEKLY" ? 7 : null,
     hasApprovedToPublishPhotos: hasApprovedToPublishPhotos === "true",
-    gender: parseGender(gender),
+    
+    gender: gender,
   };
 
   await updateMentorByIdAsync(Number(params.mentorId), dataCreate, email);

@@ -2,8 +2,24 @@ import type { IMentorRepository } from "../../domain/aggregates/mentor/IMentorRe
 
 import { prisma } from "~/db.server";
 
+import { $Enums } from "~/prisma/client";
 import { Mentor } from "../../domain/aggregates/mentor/Mentor";
+function parseGender(value: string | undefined | null) {
+  if (!value) return $Enums.Gender.PREFER_NOT_TO_SAY;
 
+  switch (value) {
+    case "MALE":
+      return $Enums.Gender.MALE;
+    case "FEMALE":
+      return $Enums.Gender.FEMALE;
+    case "OTHER":
+      return $Enums.Gender.OTHER;
+    case "PREFER_NOT_TO_SAY":
+      return $Enums.Gender.PREFER_NOT_TO_SAY;
+    default:
+      return $Enums.Gender.PREFER_NOT_TO_SAY;
+  }
+}
 export class UserRepository implements IMentorRepository {
   async findByIdAsync(id: number): Promise<Mentor> {
     const dbMentor = await prisma.mentor.findUniqueOrThrow({
@@ -39,6 +55,7 @@ export class UserRepository implements IMentorRepository {
         lastName: true,
         createdAt: true,
         updatedAt: true,
+        gender: true,
       },
     });
 
@@ -74,6 +91,7 @@ export class UserRepository implements IMentorRepository {
         lastName: dbMentor.lastName,
         createdAt: dbMentor.createdAt,
         updatedAt: dbMentor.updatedAt,
+        gender: dbMentor.gender,
       },
       id,
     );
@@ -115,6 +133,7 @@ export class UserRepository implements IMentorRepository {
         nextOfKinNumber: entity.nextOfKin.props.nextOfKinNumber,
         nextOfKinRelationship: entity.nextOfKin.props.nextOfKinRelationship,
         lastName: entity.lastName,
+        gender: parseGender(entity.gender),
         note: entity.note,
       },
     });

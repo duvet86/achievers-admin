@@ -5,7 +5,7 @@ import { Email } from "../../EmailValueObject";
 import { Address } from "./AddressValueObject";
 import { EmergencyContact } from "./EmergencyContactValueObject";
 import { NextOfKin } from "./NextOfKinValueObject";
-import type { Gender } from "../../../../prisma/client/enums";
+import type { Gender } from "~/prisma/client";
 
 export interface MentorProps {
   azureADId: string | null;
@@ -94,7 +94,7 @@ export class Mentor extends Entity implements IAggregateRoot {
   public get firstName(): string {
     return this._firstName;
   }
-  public get gender(): string | null{
+  public get gender(): string | null {
     return this._gender;
   }
   public get lastName(): string {
@@ -205,7 +205,7 @@ export class Mentor extends Entity implements IAggregateRoot {
       createdAt,
       updatedAt,
       chapterId,
-      gender
+      gender,
     }: MentorProps,
     id?: number,
   ) {
@@ -276,7 +276,7 @@ export class Mentor extends Entity implements IAggregateRoot {
     emergencyContactNumber,
     emergencyContactAddress,
     emergencyContactRelationship,
-    gender
+    gender,
   }: MentorCommand) {
     this._firstName = firstName;
     this._lastName = lastName;
@@ -289,6 +289,7 @@ export class Mentor extends Entity implements IAggregateRoot {
     this._hasApprovedToPublishPhotos = hasApprovedToPublishPhotos;
     this._chapterId = chapterId;
     this._gender = gender;
+
     this._address = new Address({
       addressStreet,
       addressSuburb,
@@ -313,7 +314,6 @@ export class Mentor extends Entity implements IAggregateRoot {
       this._email = Email.from(email);
     }
   }
-
   public updateProfilePath(profilePicturePath: string | null) {
     this._profilePicturePath = profilePicturePath;
   }

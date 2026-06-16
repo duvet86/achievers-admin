@@ -2,7 +2,7 @@ import type { MentorCommand } from "~/domain/aggregates/mentor/Mentor";
 
 import { prisma } from "~/db.server";
 import { UserRepository } from "~/infra/repositories/MentorRepository";
-import type { Gender } from "../../../prisma/client/enums";
+import type { Gender } from "~/prisma/client";
 
 export interface UserData {
   firstName: string;
