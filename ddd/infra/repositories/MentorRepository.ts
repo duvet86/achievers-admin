@@ -27,6 +27,7 @@ export class UserRepository implements IMentorRepository {
         hasApprovedToPublishPhotos: true,
         mobile: true,
         preferredName: true,
+        note: true,
         profilePicturePath: true,
         volunteerAgreementSignedOn: true,
         azureADId: true,
@@ -61,6 +62,7 @@ export class UserRepository implements IMentorRepository {
         hasApprovedToPublishPhotos: dbMentor.hasApprovedToPublishPhotos,
         mobile: dbMentor.mobile,
         preferredName: dbMentor.preferredName,
+        note: dbMentor.note,
         profilePicturePath: dbMentor.profilePicturePath,
         volunteerAgreementSignedOn: dbMentor.volunteerAgreementSignedOn,
         azureADId: dbMentor.azureADId,
@@ -113,6 +115,7 @@ export class UserRepository implements IMentorRepository {
         nextOfKinNumber: entity.nextOfKin.props.nextOfKinNumber,
         nextOfKinRelationship: entity.nextOfKin.props.nextOfKinRelationship,
         lastName: entity.lastName,
+        note: entity.note,
       },
     });
   }

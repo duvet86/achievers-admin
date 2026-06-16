@@ -1,3 +1,4 @@
+/* eslint-disable @eslint-react/purity */
 import { useRef, useState } from "react";
 
 import { useSubmit } from "react-router";

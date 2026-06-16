@@ -29,7 +29,7 @@ docker pull mysql
 - On the terminal again type the following to create and start a new container running MySQL:
 
 ```bash
-docker run -p 3306:3306 --name achievers-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:8.0 mysqld --lower_case_table_names=1 --mysql-native-password=ON
+docker run -p 3306:3306 --name achievers-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:8.4 mysqld --lower_case_table_names=1
 ```
 
 - If container was not removed after stopping (manually, or with `--rm` parameter), you can reuse it:

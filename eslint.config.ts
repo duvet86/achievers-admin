@@ -1,11 +1,9 @@
 import { defineConfig } from "eslint/config";
 
-import pluginJs from "@eslint/js";
+import eslintJs from "@eslint/js";
 import globals from "globals";
 import tseslint from "typescript-eslint";
-import pluginReact from "eslint-plugin-react";
-import jsxA11y from "eslint-plugin-jsx-a11y";
-import reactHooks from "eslint-plugin-react-hooks";
+import eslintReact from "@eslint-react/eslint-plugin";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
 import vitest from "@vitest/eslint-plugin";
 
@@ -21,84 +19,43 @@ export default defineConfig([
       "**/prisma/client",
     ],
   },
-  { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
-  pluginJs.configs.recommended,
-  tseslint.configs.recommendedTypeChecked,
-  tseslint.configs.stylisticTypeChecked,
   {
+    files: ["**/*.js", "**/*.cjs", "**/*.mjs"],
+    extends: [tseslint.configs.disableTypeChecked],
+  },
+  { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+
+    // Extend recommended rule sets from:
+    // 1. ESLint JS's recommended rules
+    // 2. TypeScript ESLint recommended rules
+    // 3. ESLint React's recommended-typescript rules
+    extends: [
+      eslintJs.configs.recommended,
+      tseslint.configs.recommendedTypeChecked,
+      tseslint.configs.stylisticTypeChecked,
+      eslintReact.configs["recommended-typescript"],
+    ],
+
+    // Configure language/parsing options
     languageOptions: {
+      // Use TypeScript ESLint parser for TypeScript files
+      parser: tseslint.parser,
       parserOptions: {
+        // Enable project service for better TypeScript integration
         projectService: true,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
+
     rules: {
       "@typescript-eslint/only-throw-error": "off",
       "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/no-base-to-string": "off",
       "@typescript-eslint/consistent-generic-constructors": "off", // not required.
-    },
-  },
-  {
-    files: ["**/*.js", "**/*.cjs", "**/*.mjs"],
-    extends: [tseslint.configs.disableTypeChecked],
-  },
-  {
-    files: ["**/*.{js,jsx,ts,tsx}"],
-    ...pluginReact.configs.flat.recommended,
-    // settings: {
-    //   react: {
-    //     version: "detect",
-    //   },
-    // },
-  },
-  {
-    files: ["**/*.{js,jsx,ts,tsx}"],
-    ...pluginReact.configs.flat["jsx-runtime"],
-  },
-  // {
-  //   files: ["**/*.{js,jsx,ts,tsx}"],
-  //   ...pluginReact.configs.flat.recommended,
-  //   languageOptions: {
-  //     ...pluginReact.configs.flat.recommended.languageOptions,
-  //     globals: {
-  //       ...globals.node,
-  //       ...globals.browser,
-  //     },
-  //   },
-  //   settings: {
-  //     react: {
-  //       version: "detect",
-  //     },
-  //     formComponents: ["Form"],
-  //     linkComponents: [
-  //       { name: "Link", linkAttribute: "to" },
-  //       { name: "NavLink", linkAttribute: "to" },
-  //     ],
-  //     "import/resolver": {
-  //       typescript: {},
-  //     },
-  //   },
-  //   rules: {
-  //     ...pluginReact.configs.recommended.rules,
-  //     ...pluginReact.configs.flat["jsx-runtime"].rules,
-  //     "react/jsx-key": [
-  //       2,
-  //       { checkFragmentShorthand: true, warnOnDuplicates: true },
-  //     ],
-  //   },
-  // },
-  reactHooks.configs.flat.recommended,
-  {
-    files: ["**/*.{js,jsx,ts,tsx}"],
-    plugins: {
-      "jsx-a11y": jsxA11y,
-    },
-    languageOptions: {
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
+      "@eslint-react/static-components": "off",
+      "@eslint-react/no-array-index-key": "off",
     },
   },
   {

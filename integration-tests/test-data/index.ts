@@ -1,6 +1,3 @@
-import { resolve } from "node:path";
-import { readFileSync } from "node:fs";
-
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 
 import { PrismaClient } from "~/prisma/client";
@@ -17,18 +14,6 @@ const adapter = new PrismaMariaDb({
   database: process.env.DATABASE_NAME,
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
-  ssl:
-    process.env.NODE_ENV === "production"
-      ? {
-          rejectUnauthorized: true,
-          ca: [
-            readFileSync(
-              resolve(process.cwd(), "prisma/DigiCertGlobalRootCA.crt.pem"),
-              "utf8",
-            ),
-          ],
-        }
-      : undefined,
 });
 
 export const CHAPTER_DATA: Record<string, string> = {

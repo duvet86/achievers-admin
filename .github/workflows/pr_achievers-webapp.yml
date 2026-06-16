@@ -35,7 +35,7 @@ jobs:
 
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:8.4
         env:
           MYSQL_ROOT_PASSWORD: ${{ env.DB_PASSWORD }}
           MYSQL_DATABASE: ${{ env.DB_DATABASE }}
@@ -194,7 +194,7 @@ jobs:
 
     steps:
       - name: "Az CLI login"
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 

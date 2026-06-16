@@ -1,3 +1,4 @@
+/* eslint-disable @eslint-react/purity */
 import classnames from "classnames";
 import { FloppyDiskArrowIn } from "iconoir-react";
 
@@ -28,7 +29,6 @@ export function SubmitFormButton({
       })}
     >
       <Message
-        // eslint-disable-next-line react-hooks/purity
         key={Date.now()}
         errorMessage={errorMessage}
         successMessage={successMessage}

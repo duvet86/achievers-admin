@@ -24,6 +24,7 @@ export async function getUserByIdAsync(id: number) {
       firstName: true,
       lastName: true,
       preferredName: true,
+      note: true,
       email: true,
       mobile: true,
       addressStreet: true,
