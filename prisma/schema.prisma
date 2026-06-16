@@ -40,11 +40,11 @@ model Mentor {
   id        Int     @id @default(autoincrement())
   azureADId String? @unique // Defined by Azure Active Directory.
 
+  note            String? 
   email           String  @unique
   firstName       String
   lastName        String
   preferredName   String?
-  note            String?
   fullName        String  @default(dbgenerated()) // Calculated column firstName + lastName.
   gender          Gender?
   mobile          String
@@ -74,7 +74,6 @@ model Mentor {
 
   status  MentorStatus?
   endDate DateTime?
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
