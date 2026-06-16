@@ -38,6 +38,7 @@ export interface MentorProps {
   createdAt: Date;
   updatedAt: Date | null;
   chapterId: number;
+  gender: Gender | null;
 }
 
 export interface MentorCommand {
@@ -80,7 +81,7 @@ export class Mentor extends Entity implements IAggregateRoot {
   private _createdAt: Date;
   private _updatedAt: Date | null;
   private _chapterId: number;
-
+  private _gender: Gender | null;
   private _email: Email;
   private _address: Address;
   private _emergencyContact: EmergencyContact;
@@ -93,7 +94,9 @@ export class Mentor extends Entity implements IAggregateRoot {
   public get firstName(): string {
     return this._firstName;
   }
-
+  public get gender(): string | null{
+    return this._gender;
+  }
   public get lastName(): string {
     return this._lastName;
   }
@@ -202,6 +205,7 @@ export class Mentor extends Entity implements IAggregateRoot {
       createdAt,
       updatedAt,
       chapterId,
+      gender
     }: MentorProps,
     id?: number,
   ) {
@@ -223,6 +227,7 @@ export class Mentor extends Entity implements IAggregateRoot {
     this._createdAt = createdAt;
     this._updatedAt = updatedAt;
     this._chapterId = chapterId;
+    this._gender = gender;
 
     this._email = Email.from(email);
 
@@ -271,6 +276,7 @@ export class Mentor extends Entity implements IAggregateRoot {
     emergencyContactNumber,
     emergencyContactAddress,
     emergencyContactRelationship,
+    gender
   }: MentorCommand) {
     this._firstName = firstName;
     this._lastName = lastName;
@@ -282,7 +288,7 @@ export class Mentor extends Entity implements IAggregateRoot {
     this._frequencyInDays = frequencyInDays;
     this._hasApprovedToPublishPhotos = hasApprovedToPublishPhotos;
     this._chapterId = chapterId;
-
+    this._gender = gender;
     this._address = new Address({
       addressStreet,
       addressSuburb,
