@@ -2,6 +2,7 @@ import type { MentorCommand } from "~/domain/aggregates/mentor/Mentor";
 
 import { prisma } from "~/db.server";
 import { UserRepository } from "~/infra/repositories/MentorRepository";
+import type { Gender } from "~/prisma/client";
 
 export interface UserData {
   firstName: string;
@@ -18,6 +19,7 @@ export interface UserData {
   emergencyContactRelationship: string | undefined;
   hasApprovedToPublishPhotos: boolean | undefined;
   volunteerAgreementSignedOn: Date | undefined;
+  gender: Gender;
 }
 
 export async function getUserByAzureADIdAsync(azureADId: string) {
@@ -46,6 +48,7 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
       frequencyInDays: true,
       additionalEmail: true,
       preferredName: true,
+      gender: true,
       note: true,
     },
   });

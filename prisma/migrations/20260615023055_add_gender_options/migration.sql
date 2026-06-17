@@ -1,0 +1,5 @@
+
+-- AlterTable
+ALTER TABLE `Mentor` ADD COLUMN `gender` ENUM('MALE', 'FEMALE', 'OTHER', 'PREFER_NOT_TO_SAY') NULL;
+-- AlterTable
+ALTER TABLE `Student` MODIFY `gender` ENUM('MALE', 'FEMALE', 'OTHER', 'PREFER_NOT_TO_SAY') NULL;

@@ -1,5 +1,6 @@
 /* eslint-disable @eslint-react/purity */
 import { Form, Link } from "react-router";
+import type { $Enums } from "~/prisma/client";
 import { EditPencil, FloppyDiskArrowIn } from "iconoir-react";
 
 import { DateInput, Input, Message, Radio, Select } from "~/components";
@@ -19,6 +20,7 @@ interface Props {
     firstName: string;
     lastName: string;
     preferredName: string | null;
+    gender: $Enums.Gender | null;
     mobile: string;
     addressStreet: string;
     addressSuburb: string;
@@ -109,6 +111,20 @@ export function UserForm({
           label="Last name"
           name="lastName"
           required
+        />
+
+        <Select
+          label="Gender"
+          name="gender"
+          defaultValue={user.gender ?? ""}
+          
+          options={[
+            { value: "", label: "Select a gender" },
+            { value: "MALE", label: "Male" },
+            { value: "FEMALE", label: "Female" },
+            { value: "OTHER", label: "Other" },
+            { value: "PREFER_NOT_TO_SAY", label: "Rather not answer" },
+          ]}
         />
 
         <Input defaultValue={user.note ?? ""} label="Title/Note" name="note" />

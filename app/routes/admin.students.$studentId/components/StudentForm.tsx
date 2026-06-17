@@ -85,6 +85,8 @@ export function StudentForm({ student, chapters, yearLevelCalculated }: Props) {
             { value: "", label: "Select a gender" },
             { value: "MALE", label: "Male" },
             { value: "FEMALE", label: "Female" },
+            { value: "OTHER", label: "Other" },
+            { value: "PREFER_NOT_TO_SAY", label: "Rather not answer" },
           ]}
         />
 
