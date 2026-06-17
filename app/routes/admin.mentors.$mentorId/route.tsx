@@ -28,22 +28,6 @@ import {
   removeApprovalMrc,
 } from "./services.server";
 import { UserForm, CheckList, Header } from "./components";
-function parseGender(value: string | undefined | null) {
-  if (!value) return $Enums.Gender.PREFER_NOT_TO_SAY;
-
-  switch (value) {
-    case "MALE":
-      return $Enums.Gender.MALE;
-    case "FEMALE":
-      return $Enums.Gender.FEMALE;
-    case "OTHER":
-      return $Enums.Gender.OTHER;
-    case "PREFER_NOT_TO_SAY":
-      return $Enums.Gender.PREFER_NOT_TO_SAY;
-    default:
-      return $Enums.Gender.PREFER_NOT_TO_SAY;
-  }
-}
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.mentorId, "mentorId not found");

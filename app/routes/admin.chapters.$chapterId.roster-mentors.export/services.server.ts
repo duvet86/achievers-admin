@@ -20,7 +20,7 @@ interface MentorSession {
   completedOn: string | null;
   isCancelled: number | null;
   studentId: number | null;
-  studentFirstName: string | null;
+  studentDisplayName: string;
   yearLevel: number | null;
 }
 
@@ -41,7 +41,7 @@ type SessionLookup = Record<
       completedOn: string | null;
       isCancelled: boolean;
       studentId: number;
-      studentFirstName: string;
+      studentDisplayName: string;
       yearLevel: number | null;
     }[];
   }
@@ -52,7 +52,6 @@ interface SessionViewModel {
   id: number;
   preferredName?: string | null;
   lastName?: string | null;
-
   firstName?: string | null;
 }
 
@@ -82,7 +81,7 @@ export async function exportRosterToSpreadsheetAsync(
             }
           } else if (mentorSession.sessions.length === 1) {
             const session = mentorSession.sessions[0];
-            label = `${session.studentFirstName} (Year ${session.yearLevel ?? "-"})${session.isCancelled ? " (Cancelled)" : ""}`;
+            label = `${session.studentDisplayName} (Year ${session.yearLevel ?? "-"})${session.isCancelled ? " (Cancelled)" : ""}`;
           } else {
             label = `${mentorSession.sessions.length} Students`;
           }
@@ -130,12 +129,16 @@ export async function getMentorsAsync(
         sa.completedOn,
         sa.isCancelled,
         ss.studentId,
-        s.firstName AS studentFirstName,
+        COALESCE(
+          NULLIF(TRIM(esp.preferredName), ''),
+          s.firstName
+        ) AS studentDisplayName,
         s.yearLevel
       FROM MentorSession ms
       LEFT JOIN Session sa ON sa.mentorSessionId = ms.id
       LEFT JOIN StudentSession ss ON ss.id = sa.studentSessionId
       LEFT JOIN Student s ON s.id = ss.studentId
+      LEFT JOIN EoiStudentProfile esp ON esp.id = s.eoiStudentProfileId
       WHERE ms.chapterId = ${chapterId}
         AND ms.attendedOn BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`;
 
@@ -154,7 +157,7 @@ export async function getMentorsAsync(
       hasReport: mentorSession.hasReport === 1,
       completedOn: mentorSession.completedOn,
       isCancelled: mentorSession.isCancelled === 1,
-      studentFirstName: mentorSession.studentFirstName!,
+      studentDisplayName: mentorSession.studentDisplayName,
       yearLevel: mentorSession.yearLevel,
     };
 

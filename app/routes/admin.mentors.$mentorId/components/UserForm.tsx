@@ -111,8 +111,6 @@ export function UserForm({
           required
         />
 
-
-
         <Input defaultValue={user.note ?? ""} label="Title/Note" name="note" />
 
         <Input
