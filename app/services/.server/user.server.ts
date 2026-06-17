@@ -1,4 +1,4 @@
-import { UserRepository } from "~/infra/repositories/MentorRepository";
+import { prisma } from "~/db.server";
 
 import {
   deleteBlobAsync,
@@ -42,12 +42,14 @@ export async function saveUserProfilePicture(
     throw new Error(resp.errorCode);
   }
 
-  const userRepository = new UserRepository();
-  const mentor = await userRepository.findByIdAsync(userId);
-
-  mentor.updateProfilePath(path);
-
-  await userRepository.saveAsync(mentor);
+  await prisma.mentor.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      profilePicturePath: path,
+    },
+  });
 
   return path;
 }
@@ -64,10 +66,12 @@ export async function deleteUserProfilePicture(userId: number): Promise<void> {
     trackException(Error(resp.errorCode));
   }
 
-  const userRepository = new UserRepository();
-  const mentor = await userRepository.findByIdAsync(userId);
-
-  mentor.updateProfilePath(null);
-
-  await userRepository.saveAsync(mentor);
+  await prisma.mentor.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      profilePicturePath: null,
+    },
+  });
 }

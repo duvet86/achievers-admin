@@ -1,25 +1,24 @@
-import type { MentorCommand } from "~/domain/aggregates/mentor/Mentor";
+import { Gender } from "~/prisma/client";
 
 import { prisma } from "~/db.server";
-import { UserRepository } from "~/infra/repositories/MentorRepository";
-import type { Gender } from "~/prisma/client";
 
-export interface UserData {
+interface MentorCommand {
   firstName: string;
   lastName: string;
+  preferredName: string | null;
   mobile: string;
-  addressStreet: string | undefined;
-  addressSuburb: string | undefined;
-  addressState: string | undefined;
-  addressPostcode: string | undefined;
-  dateOfBirth: Date | undefined;
-  emergencyContactName: string | undefined;
-  emergencyContactNumber: string | undefined;
-  emergencyContactAddress: string | undefined;
-  emergencyContactRelationship: string | undefined;
-  hasApprovedToPublishPhotos: boolean | undefined;
-  volunteerAgreementSignedOn: Date | undefined;
-  gender: Gender;
+  addressStreet: string;
+  addressSuburb: string;
+  addressState: string;
+  addressPostcode: string;
+  additionalEmail: string | null;
+  dateOfBirth: Date | null;
+  emergencyContactName: string | null;
+  emergencyContactNumber: string | null;
+  emergencyContactAddress: string | null;
+  emergencyContactRelationship: string | null;
+  hasApprovedToPublishPhotos: boolean | null;
+  gender: Gender | null;
 }
 
 export async function getUserByAzureADIdAsync(azureADId: string) {
@@ -44,12 +43,9 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
       emergencyContactRelationship: true,
       hasApprovedToPublishPhotos: true,
       volunteerAgreementSignedOn: true,
-      chapterId: true,
-      frequencyInDays: true,
       additionalEmail: true,
       preferredName: true,
       gender: true,
-      note: true,
     },
   });
 }
@@ -58,11 +54,32 @@ export async function confirmUserDetailsAsync(
   mentorId: number,
   data: MentorCommand,
 ) {
-  const userRepository = new UserRepository();
-  const mentor = await userRepository.findByIdAsync(mentorId);
+  await prisma.mentor.update({
+    where: {
+      id: mentorId,
+    },
+    data: {
+      ...data,
+      volunteerAgreementSignedOn: new Date(),
+    },
+  });
+}
 
-  mentor.updateInfo(data);
-  mentor.signVolunteerAgreement();
+export function parseGender(value: string | undefined | null): Gender | null {
+  if (!value) {
+    return null;
+  }
 
-  await userRepository.saveAsync(mentor);
+  switch (value) {
+    case "MALE":
+      return Gender.MALE;
+    case "FEMALE":
+      return Gender.FEMALE;
+    case "OTHER":
+      return Gender.OTHER;
+    case "PREFER_NOT_TO_SAY":
+      return Gender.PREFER_NOT_TO_SAY;
+    default:
+      return Gender.PREFER_NOT_TO_SAY;
+  }
 }
