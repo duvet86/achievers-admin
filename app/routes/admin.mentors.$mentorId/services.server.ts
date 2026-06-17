@@ -1,7 +1,27 @@
-import type { MentorCommand } from "~/domain/aggregates/mentor/Mentor";
-
+import { Gender } from "~/prisma/client";
 import { prisma } from "~/db.server";
-import { UserRepository } from "~/infra/repositories/MentorRepository";
+
+export interface MentorCommand {
+  firstName: string;
+  lastName: string;
+  preferredName: string | null;
+  note: string | null;
+  mobile: string;
+  addressStreet: string;
+  addressSuburb: string;
+  addressState: string;
+  addressPostcode: string;
+  additionalEmail: string | null;
+  dateOfBirth: Date | null;
+  frequencyInDays: number | null;
+  emergencyContactName: string | null;
+  emergencyContactNumber: string | null;
+  emergencyContactAddress: string | null;
+  emergencyContactRelationship: string | null;
+  hasApprovedToPublishPhotos: boolean | null;
+  chapterId: number;
+  gender: Gender | null;
+}
 
 export async function getChaptersAsync() {
   return await prisma.chapter.findMany({
@@ -43,6 +63,7 @@ export async function getUserByIdAsync(id: number) {
       endDate: true,
       chapterId: true,
       frequencyInDays: true,
+      gender: true,
       chapter: {
         select: {
           id: true,
@@ -90,18 +111,15 @@ export async function updateMentorByIdAsync(
   dataUpdate: MentorCommand,
   email?: string,
 ) {
-  const userRepository = new UserRepository();
-  const mentor = await userRepository.findByIdAsync(mentorId);
-
-  mentor.updateInfo({
-    ...dataUpdate,
+  await prisma.mentor.update({
+    where: {
+      id: mentorId,
+    },
+    data: {
+      email: email ?? undefined,
+      ...dataUpdate,
+    },
   });
-
-  if (email) {
-    mentor.updateEmail(email);
-  }
-
-  await userRepository.saveAsync(mentor);
 }
 
 export async function removeWelcomeCall(mentorId: number) {
@@ -142,4 +160,23 @@ export async function removeApprovalMrc(mentorId: number) {
       mentorId,
     },
   });
+}
+
+export function parseGender(value: string | undefined | null): Gender | null {
+  if (!value) {
+    return null;
+  }
+
+  switch (value) {
+    case "MALE":
+      return Gender.MALE;
+    case "FEMALE":
+      return Gender.FEMALE;
+    case "OTHER":
+      return Gender.OTHER;
+    case "PREFER_NOT_TO_SAY":
+      return Gender.PREFER_NOT_TO_SAY;
+    default:
+      return Gender.PREFER_NOT_TO_SAY;
+  }
 }

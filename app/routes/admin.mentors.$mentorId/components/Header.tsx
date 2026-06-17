@@ -13,7 +13,7 @@ interface Props {
   chapterId: number;
   mentorId: number;
   endDate: Date | null;
-  mentorAppRoleAssignmentId: string | null;
+  hasAccess: boolean;
 }
 
 export function Header(props: Props) {
@@ -51,7 +51,7 @@ export function Header(props: Props) {
   );
 }
 
-function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
+function getLinks({ endDate, hasAccess }: Props) {
   if (endDate !== null) {
     return (
       <li>
@@ -67,7 +67,7 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
     );
   }
 
-  if (mentorAppRoleAssignmentId !== null) {
+  if (hasAccess) {
     return (
       <>
         <li>
@@ -110,7 +110,7 @@ function getLinks({ endDate, mentorAppRoleAssignmentId }: Props) {
   );
 }
 
-function getMessage({ endDate, mentorAppRoleAssignmentId }: Props) {
+function getMessage({ endDate, hasAccess }: Props) {
   if (endDate !== null) {
     return (
       <p
@@ -126,7 +126,7 @@ function getMessage({ endDate, mentorAppRoleAssignmentId }: Props) {
     );
   }
 
-  if (mentorAppRoleAssignmentId === null) {
+  if (!hasAccess) {
     return (
       <p
         title="No access"

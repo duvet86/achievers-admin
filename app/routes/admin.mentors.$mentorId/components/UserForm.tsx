@@ -1,5 +1,6 @@
 /* eslint-disable @eslint-react/purity */
 import { Form, Link } from "react-router";
+import type { $Enums } from "~/prisma/client";
 import { EditPencil, FloppyDiskArrowIn } from "iconoir-react";
 
 import { DateInput, Input, Message, Radio, Select } from "~/components";
@@ -19,6 +20,7 @@ interface Props {
     firstName: string;
     lastName: string;
     preferredName: string | null;
+    gender: $Enums.Gender | null;
     mobile: string;
     addressStreet: string;
     addressSuburb: string;
@@ -66,7 +68,6 @@ export function UserForm({
           disabled={user.azureADId !== null}
           required
         />
-
         <Select
           name="chapterId"
           label="Chapter"
@@ -79,7 +80,6 @@ export function UserForm({
             })),
           )}
         />
-
         <Select
           name="frequency"
           label="Preferred frequency"
@@ -90,101 +90,97 @@ export function UserForm({
             { value: "WEEKLY", label: "Weekly" },
           ]}
         />
-
         <Input
           defaultValue={user.firstName}
           label="First name"
           name="firstName"
           required
         />
-
         <Input
           defaultValue={user.preferredName ?? ""}
           label="Preferred name"
           name="preferredName"
         />
-
         <Input
           defaultValue={user.lastName}
           label="Last name"
           name="lastName"
           required
         />
-
+        <Select
+          label="Gender"
+          name="gender"
+          defaultValue={user.gender ?? ""}
+          options={[
+            { value: "", label: "Select a gender" },
+            { value: "MALE", label: "Male" },
+            { value: "FEMALE", label: "Female" },
+            { value: "OTHER", label: "Other" },
+            { value: "PREFER_NOT_TO_SAY", label: "Rather not answer" },
+          ]}
+        />
         <Input defaultValue={user.note ?? ""} label="Title/Note" name="note" />
-
         <Input
           defaultValue={user.mobile}
           label="Mobile"
           name="mobile"
           required
         />
-
         <Input
           defaultValue={user.addressStreet}
           label="Address street"
           name="addressStreet"
           required
         />
-
         <Input
           defaultValue={user.addressSuburb}
           label="Address suburb"
           name="addressSuburb"
           required
         />
-
         <Input
           defaultValue={user.addressState}
           label="Address state"
           name="addressState"
           required
         />
-
         <Input
           defaultValue={user.addressPostcode}
           label="Address postcode"
           name="addressPostcode"
           required
         />
-
         <DateInput
           defaultValue={user.dateOfBirth ?? ""}
           label="Date of birth"
           name="dateOfBirth"
         />
-
         <Input
           defaultValue={user.emergencyContactName ?? ""}
           label="Emergency contact name"
           name="emergencyContactName"
         />
-
         <Input
           defaultValue={user.emergencyContactNumber ?? ""}
           label="Emergency contact number"
           name="emergencyContactNumber"
         />
-
         <Input
           defaultValue={user.emergencyContactAddress ?? ""}
           label="Emergency contact address"
           name="emergencyContactAddress"
         />
-
         <Input
           defaultValue={user.emergencyContactRelationship ?? ""}
           label="Emergency contact relationship"
           name="emergencyContactRelationship"
         />
-
         <Input
           type="email"
           defaultValue={user.additionalEmail ?? ""}
           label="Additional email"
           name="additionalEmail"
         />
-
         <Radio
           label="Permission to publish photos?"
           name="hasApprovedToPublishPhotos"
@@ -200,7 +196,6 @@ export function UserForm({
             },
           ]}
         />
-
         <div
           data-testid="container"
           className="sticky bottom-0 z-10 flex justify-between"

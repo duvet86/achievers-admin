@@ -67,6 +67,22 @@ export async function loader({ params }: Route.LoaderArgs) {
   };
 }
 
+function parseGender(value: string | undefined) {
+  if (!value) return $Enums.Gender.PREFER_NOT_TO_SAY;
+
+  switch (value) {
+    case "MALE":
+      return $Enums.Gender.MALE;
+    case "FEMALE":
+      return $Enums.Gender.FEMALE;
+    case "OTHER":
+      return $Enums.Gender.OTHER;
+    case "PREFER_NOT_TO_SAY":
+      return $Enums.Gender.PREFER_NOT_TO_SAY;
+    default:
+      return $Enums.Gender.PREFER_NOT_TO_SAY;
+  }
+}
 export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.studentId, "studentId not found");
 
@@ -178,7 +194,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     > = {
       firstName,
       lastName,
-      gender: gender === "MALE" ? $Enums.Gender.MALE : $Enums.Gender.FEMALE,
+      gender: parseGender(gender),
       dateOfBirth: dateOfBirth ? dayjs(dateOfBirth).toDate() : null,
       yearLevel: yearLevel ? Number(yearLevel) : null,
       address,

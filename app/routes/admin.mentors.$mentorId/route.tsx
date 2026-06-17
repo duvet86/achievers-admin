@@ -1,6 +1,5 @@
-import type { AzureUserWebAppWithRole } from "~/services/.server";
-import type { MentorCommand } from "~/domain/aggregates/mentor/Mentor";
 import type { Route } from "./+types/route";
+import type { MentorCommand } from "./services.server";
 
 import invariant from "tiny-invariant";
 import { NavArrowRight } from "iconoir-react";
@@ -8,7 +7,6 @@ import { parseFormData } from "@mjackson/form-data-parser";
 
 import {
   deleteUserProfilePicture,
-  getAzureUserWithRolesByIdAsync,
   getUserProfilePictureUrl,
   memoryHandlerDispose,
   saveUserProfilePicture,
@@ -26,6 +24,7 @@ import {
   removePoliceCheck,
   removeWwccheck,
   removeApprovalMrc,
+  parseGender,
 } from "./services.server";
 import { UserForm, CheckList, Header } from "./components";
 
@@ -38,14 +37,6 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     safeUrl.safeSearchParams.getNullOrEmpty("isFormEditable") ?? false;
 
   const user = await getUserByIdAsync(Number(params.mentorId));
-
-  let azureUserInfo: AzureUserWebAppWithRole | null = null;
-  if (user.azureADId !== null) {
-    azureUserInfo = await getAzureUserWithRolesByIdAsync(
-      request,
-      user.azureADId,
-    );
-  }
 
   const profilePicturePath = user?.profilePicturePath
     ? getUserProfilePictureUrl(user.profilePicturePath)
@@ -74,10 +65,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     wwcCheckCompleted: user.wwcCheck !== null,
     approvalbyMRCCompleted: user.approvalbyMRC !== null,
     volunteerAgreementSignedOn: user.volunteerAgreementSignedOn,
-    mentorAppRoleAssignmentId:
-      azureUserInfo?.appRoleAssignments.find(
-        ({ roleName }) => roleName === "Mentor",
-      )?.id ?? null,
+    hasAccess: user.azureADId !== null,
     chapters,
   };
 }
@@ -166,7 +154,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   const emergencyContactRelationship = formData
     .get("emergencyContactRelationship")
     ?.toString();
-
+  const gender = parseGender(formData.get("gender")?.toString());
   const hasApprovedToPublishPhotos = formData
     .get("hasApprovedToPublishPhotos")
     ?.toString();
@@ -229,7 +217,7 @@ export default function Index({
         chapterId={loaderData.user.chapterId}
         mentorId={loaderData.user.id}
         endDate={loaderData.user.endDate}
-        mentorAppRoleAssignmentId={loaderData.mentorAppRoleAssignmentId}
+        hasAccess={loaderData.hasAccess}
       />
 
       <hr className="my-4" />

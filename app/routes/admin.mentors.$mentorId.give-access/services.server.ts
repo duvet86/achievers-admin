@@ -1,5 +1,4 @@
 import { prisma } from "~/db.server";
-import { UserRepository } from "~/infra/repositories/MentorRepository";
 import { getCurrentHost } from "~/services";
 import {
   APP_ID,
@@ -104,11 +103,13 @@ export async function inviteUserAsync(
   await updateAzureIdAsync(mentorId, azureuserId);
 }
 
-async function updateAzureIdAsync(mentorId: number, azureId: string) {
-  const userRepository = new UserRepository();
-  const mentor = await userRepository.findByIdAsync(mentorId);
-
-  mentor.updateAzureId(azureId);
-
-  await userRepository.saveAsync(mentor);
+async function updateAzureIdAsync(mentorId: number, azureADId: string) {
+  await prisma.mentor.update({
+    where: {
+      id: mentorId,
+    },
+    data: {
+      azureADId,
+    },
+  });
 }

@@ -1,6 +1,4 @@
 import { prisma } from "~/db.server";
-import { MentorStudentAssignment } from "~/domain/aggregates/mentorStudentAssignment/MentorStudentAssignment";
-import { MentorStudentAssignmentRepository } from "~/infra/repositories/MentorStudentAssignmentRepository";
 import { getLoggedUserInfoAsync } from "~/services/.server";
 
 export async function getMentorsInChapterAsync(
@@ -55,28 +53,25 @@ export async function assignStudentToMentorAsync(
 ) {
   const loggedUser = await getLoggedUserInfoAsync(request);
 
-  const pair = new MentorStudentAssignment({
-    mentorId,
-    studentId,
-    assignedByAzureId: loggedUser.oid,
+  await prisma.mentorToStudentAssignement.create({
+    data: {
+      mentorId,
+      studentId,
+      assignedBy: loggedUser.oid,
+    },
   });
-
-  const repo = new MentorStudentAssignmentRepository();
-
-  await repo.saveAsync(pair);
-
-  return pair;
 }
 
 export async function removeMentorStudentAssignement(
   mentorId: number,
   studentId: number,
 ) {
-  const repo = new MentorStudentAssignmentRepository();
-
-  const pair = await repo.findByPairAsync(mentorId, studentId);
-
-  await repo.deleteAsync(pair.id);
-
-  return pair;
+  await prisma.mentorToStudentAssignement.delete({
+    where: {
+      mentorId_studentId: {
+        mentorId,
+        studentId,
+      },
+    },
+  });
 }

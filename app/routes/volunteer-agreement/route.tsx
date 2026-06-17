@@ -11,6 +11,7 @@ import {
   DateInput,
   Input,
   Navbar,
+  Select,
   SubTitle,
   SubmitFormButton,
   Title,
@@ -19,6 +20,7 @@ import {
 import {
   confirmUserDetailsAsync,
   getUserByAzureADIdAsync,
+  parseGender,
 } from "./services.server";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -64,6 +66,7 @@ export async function action({ request }: Route.ActionArgs) {
     ?.toString();
   const additionalEmail = formData.get("additionalEmail")?.toString();
   const preferredName = formData.get("preferredName")?.toString();
+  const gender = parseGender(formData.get("gender")?.toString());
 
   if (
     isStringNullOrEmpty(firstName) ||
@@ -98,10 +101,8 @@ export async function action({ request }: Route.ActionArgs) {
     emergencyContactRelationship,
     hasApprovedToPublishPhotos: hasApprovedToPublishPhotos === "on",
     additionalEmail: additionalEmail ?? null,
-    chapterId: user.chapterId,
     preferredName: preferredName ?? null,
-    note: user.note,
-    frequencyInDays: user.frequencyInDays,
+    gender,
   });
 
   return redirect("/mentor/home");
@@ -152,6 +153,22 @@ export default function Index({
                       name="lastName"
                       defaultValue={user.lastName}
                       required
+                    />
+
+                    <Select
+                      label="Gender"
+                      name="gender"
+                      defaultValue={user.gender ?? ""}
+                      options={[
+                        { value: "", label: "Select a gender" },
+                        { value: "MALE", label: "Male" },
+                        { value: "FEMALE", label: "Female" },
+                        { value: "OTHER", label: "Other" },
+                        {
+                          value: "PREFER_NOT_TO_SAY",
+                          label: "Rather not answer",
+                        },
+                      ]}
                     />
 
                     <Input
