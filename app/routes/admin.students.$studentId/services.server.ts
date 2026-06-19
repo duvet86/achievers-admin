@@ -22,6 +22,7 @@ export async function getStudentByIdAsync(id: number) {
       fullName: true,
       firstName: true,
       lastName: true,
+      preferredName: true,
       dateOfBirth: true,
       gender: true,
       address: true,

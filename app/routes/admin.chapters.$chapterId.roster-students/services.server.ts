@@ -1,12 +1,13 @@
 import type { SessionStatus } from "~/prisma/client";
 import type { Term } from "~/models";
 
-import { Prisma } from "~/prisma/client";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import utc from "dayjs/plugin/utc";
 
+import { Prisma } from "~/prisma/client";
 import { prisma } from "~/db.server";
+import { calculateYearLevel } from "~/services";
 
 dayjs.extend(utc);
 dayjs.extend(isBetween);
@@ -50,6 +51,7 @@ export interface SessionViewModel {
   sessionLookup?: SessionLookup;
   id: number;
   fullName: string;
+  yearLevel: string;
 }
 
 export async function getStudentsAsync(
@@ -72,6 +74,8 @@ export async function getStudentsAsync(
     select: {
       id: true,
       fullName: true,
+      yearLevel: true,
+      dateOfBirth: true,
     },
     orderBy: {
       fullName: sortFullName ?? "asc",
@@ -89,11 +93,11 @@ export async function getStudentsAsync(
       sa.completedOn,
       sa.isCancelled,
       ms.mentorId,
-      u.fullName AS mentorFullName
+      m.fullName AS mentorFullName
     FROM StudentSession ss
     LEFT JOIN Session sa ON sa.studentSessionId = ss.id
     LEFT JOIN MentorSession ms ON ms.id = sa.mentorSessionId
-    LEFT JOIN Mentor u ON u.id = ms.mentorId
+    LEFT JOIN Mentor m ON m.id = ms.mentorId
     WHERE ss.chapterId = ${chapterId}
       AND ms.attendedOn ${termDate ? Prisma.sql`= ${dayjs(termDate).format("YYYY-MM-DD")}` : Prisma.sql`BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`}
       AND ss.attendedOn BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`;
@@ -148,13 +152,27 @@ export async function getStudentsAsync(
   }, {});
 
   return students.map((student) => {
+    let yearLevel = student.yearLevel;
+    let isYearLevelCalculated = false;
+    if (!yearLevel) {
+      yearLevel = calculateYearLevel(student.dateOfBirth);
+      isYearLevelCalculated = true;
+    }
+
+    const studentWithYearLevel = {
+      ...student,
+      yearLevel: yearLevel
+        ? `${yearLevel}${isYearLevelCalculated ? " *" : ""}`
+        : "N/A",
+    };
+
     const session = studentSessionLookup[student.id.toString()];
     if (session === undefined) {
-      return student;
+      return studentWithYearLevel;
     }
 
     return {
-      ...student,
+      ...studentWithYearLevel,
       sessionLookup: session,
     };
   });
