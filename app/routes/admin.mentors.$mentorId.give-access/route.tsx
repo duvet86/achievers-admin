@@ -43,6 +43,9 @@ export async function action({ request, params }: Route.ActionArgs) {
 
     return redirect(`/admin/mentors/${params.mentorId}`);
   } catch (error) {
+    if (error instanceof Response) {
+      throw error;
+    }
     return { successMessage: null, error: error as Error };
   }
 }

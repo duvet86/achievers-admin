@@ -1,5 +1,4 @@
 import { prisma } from "~/db.server";
-import { getCurrentHost } from "~/services";
 import {
   APP_ID,
   assignRoleToUserAsync,
@@ -66,7 +65,7 @@ export async function inviteUserAsync(
   if (azureUser === null) {
     const inviteUserToAzureResponse = await inviteUserToAzureAsync(request, {
       invitedUserEmailAddress: email,
-      inviteRedirectUrl: getCurrentHost(request),
+      inviteRedirectUrl: "https://achievers-webapp.azurewebsites.net",
       sendInvitationMessage: true,
     });
 
