@@ -10,7 +10,8 @@ import {
 
 export interface PoliceCheckUpdateCommand {
   expiryDate: Date | string;
-  filePath: string | undefined;
+  filePath: string | null;
+  applicationNumber: string | null;
 }
 
 export async function getUserByIdAsync(id: number) {
@@ -39,11 +40,13 @@ export async function updatePoliceCheckAsync(
     create: {
       expiryDate,
       filePath: data.filePath,
+      applicationNumber: data.applicationNumber,
       mentorId,
     },
     update: {
       expiryDate,
       filePath: data.filePath,
+      applicationNumber: data.applicationNumber,
       reminderSentAt: dayjs(data.expiryDate).isAfter(
         dayjs().subtract(3, "months"),
       )

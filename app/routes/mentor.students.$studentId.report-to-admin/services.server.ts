@@ -21,6 +21,12 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
     select: {
       id: true,
       fullName: true,
+      chapter: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   });
 }
