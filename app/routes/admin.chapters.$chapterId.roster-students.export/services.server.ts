@@ -15,14 +15,13 @@ interface StudentSession {
   attendedOn: string;
   studentId: number;
   isCancelled: number | null;
-  mentorPreferredName: string | null;
-  mentorLastName: string | null;
+  mentorFullName: string | null;
 }
 
 interface SessionViewModelLookup {
   sessionLookup?: Record<string, StudentSession>;
   id: number;
-  firstName: string;
+  fullName: string;
   yearLevel: number | null;
 }
 
@@ -33,33 +32,31 @@ export async function exportRosterToSpreadsheetAsync(
   const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
   const students = await getStudentsAsync(chapterId, selectedTerm);
 
-  const spreadsheet = students.map(
-    ({ firstName, yearLevel, sessionLookup }) => {
-      const result: Record<string, string> = {
-        Students: `${firstName} (Year ${yearLevel ?? "-"})`,
-      };
+  const spreadsheet = students.map(({ fullName, yearLevel, sessionLookup }) => {
+    const result: Record<string, string> = {
+      Students: `${fullName} (Year ${yearLevel ?? "-"})`,
+    };
 
-      sessionDates.forEach((attendedOn) => {
-        const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
-        const session = sessionLookup?.[attendedOnFormatted];
+    sessionDates.forEach((attendedOn) => {
+      const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
+      const session = sessionLookup?.[attendedOnFormatted];
 
-        let label = "";
-        if (session) {
-          if (session.mentorPreferredName !== null) {
-            label =
-              `${session.mentorPreferredName ?? ""} ${session.mentorLastName ?? ""}`.trim() +
-              (session.isCancelled ? " (Cancelled)" : "");
-          } else if (session.status === "UNAVAILABLE") {
-            label = "Unavailable";
-          }
+      let label = "";
+      if (session) {
+        if (session.mentorFullName !== null) {
+          label =
+            session.mentorFullName +
+            (session.isCancelled ? " (Cancelled)" : "");
+        } else if (session.status === "UNAVAILABLE") {
+          label = "Unavailable";
         }
+      }
 
-        result[attendedOnFormatted] = label;
-      });
+      result[attendedOnFormatted] = label;
+    });
 
-      return result;
-    },
-  );
+    return result;
+  });
 
   return addCollectionToSpreadsheet(spreadsheet);
 }
@@ -75,11 +72,11 @@ export async function getStudentsAsync(
     },
     select: {
       id: true,
-      firstName: true,
+      fullName: true,
       yearLevel: true,
     },
     orderBy: {
-      firstName: "asc",
+      fullName: "asc",
     },
   });
 
@@ -89,8 +86,7 @@ export async function getStudentsAsync(
       ss.attendedOn,
       ss.studentId,
       sa.isCancelled,
-      u.preferredName AS mentorPreferredName,
-      u.lastName AS mentorLastName
+      u.fullName AS mentorFullName
     FROM StudentSession ss
     LEFT JOIN Session sa ON sa.studentSessionId = ss.id
     LEFT JOIN MentorSession ms ON ms.id = sa.mentorSessionId
@@ -107,8 +103,7 @@ export async function getStudentsAsync(
         status: value.status,
         studentId: value.studentId,
         isCancelled: value.isCancelled,
-        mentorPreferredName: value.mentorPreferredName,
-        mentorLastName: value.mentorLastName,
+        mentorFullName: value.mentorFullName,
       };
     } else {
       res[value.studentId] = {
@@ -117,8 +112,7 @@ export async function getStudentsAsync(
           status: value.status,
           studentId: value.studentId,
           isCancelled: value.isCancelled,
-          mentorPreferredName: value.mentorPreferredName,
-          mentorLastName: value.mentorLastName,
+          mentorFullName: value.mentorFullName,
         },
       };
     }
