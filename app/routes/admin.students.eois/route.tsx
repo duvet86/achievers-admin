@@ -8,7 +8,11 @@ import {
   getLoggedUserInfoAsync,
   getPermissionsAbility,
 } from "~/services/.server";
-import { getPaginationRange, URLSafeSearch } from "~/services";
+import {
+  getPaginationRange,
+  URLSafeSearch,
+  useStateNavigation,
+} from "~/services";
 import { Pagination, StateLink, TableHeaderSort, Title } from "~/components";
 
 import {
@@ -111,6 +115,7 @@ export default function Index({
 }: Route.ComponentProps) {
   const submit = useSubmit();
   const [searchParams] = useSearchParams();
+  const stateNavigate = useStateNavigation();
 
   const totalPageCount = Math.ceil(count / 10);
 
@@ -138,6 +143,10 @@ export default function Index({
     );
 
     void submit(Object.fromEntries(searchParams));
+  };
+
+  const navigateToPage = (to: string) => () => {
+    void stateNavigate(to);
   };
 
   return (
@@ -197,7 +206,11 @@ export default function Index({
               )}
               {students.map(({ id, fullName, yearLevel, chapter }, index) => {
                 return (
-                  <tr key={id} className="hover:bg-base-200">
+                  <tr
+                    key={id}
+                    className="hover:bg-base-200 cursor-pointer"
+                    onClick={navigateToPage(`${id}?${searchParams.toString()}`)}
+                  >
                     <td className="hidden sm:table-cell">
                       <div className="flex gap-2">
                         {index + 1 + 10 * currentPageNumber}
