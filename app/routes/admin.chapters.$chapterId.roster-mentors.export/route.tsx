@@ -30,6 +30,8 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   let selectedTerm = termsForYear.find(
     (t) => t.id.toString() === selectedTermId,
   );
+  const selectedTermDate =url.safeSearchParams.getNullOrEmpty("selectedTermDate");
+  const weekDate = selectedTermDate ? new Date(selectedTermDate) : null;
 
   if (!selectedTerm) {
     if (selectedTermYear === CURRENT_YEAR.toString()) {
@@ -42,6 +44,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   const buf = await exportRosterToSpreadsheetAsync(
     Number(params.chapterId),
     selectedTerm,
+    weekDate,
   );
 
   return new Response(buf, {

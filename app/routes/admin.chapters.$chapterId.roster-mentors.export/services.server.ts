@@ -56,40 +56,89 @@ interface SessionViewModel {
 export async function exportRosterToSpreadsheetAsync(
   chapterId: number,
   selectedTerm: Term,
+  selectedTermDate: Date | null,
+
 ) {
-  const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
-  const mentors = await getMentorsAsync(chapterId, selectedTerm);
 
-  const spreadsheet = mentors.map(({ fullName, sessionLookup }) => {
-    const result: Record<string, string> = { Mentors: fullName };
 
-    sessionDates.forEach((attendedOn) => {
-      const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
-      const mentorSession = sessionLookup?.[attendedOnFormatted];
 
-      let label = "";
-      if (mentorSession) {
-        if (mentorSession.sessions.length === 0) {
-          if (mentorSession.status === "UNAVAILABLE") {
-            label = "Unavailable";
+  if (selectedTermDate == null) {
+    //if no week selected 
+    const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
+    const mentors = await getMentorsAsync(chapterId, selectedTerm);
+
+    const spreadsheet = mentors.map(({ fullName, sessionLookup }) => {
+      const result: Record<string, string> = { Mentors: fullName };
+
+      sessionDates.forEach((attendedOn) => {
+        const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
+        const mentorSession = sessionLookup?.[attendedOnFormatted];
+
+        let label = "";
+        if (mentorSession) {
+          if (mentorSession.sessions.length === 0) {
+            if (mentorSession.status === "UNAVAILABLE") {
+              label = "Unavailable";
+            } else {
+              label = "Available";
+            }
+          } else if (mentorSession.sessions.length === 1) {
+            const session = mentorSession.sessions[0];
+            label = `${session.studentFullName} (Year ${session.yearLevel ?? "-"})${session.isCancelled ? " (Cancelled)" : ""}`;
           } else {
-            label = "Available";
+            label = `${mentorSession.sessions.length} Students`;
           }
-        } else if (mentorSession.sessions.length === 1) {
-          const session = mentorSession.sessions[0];
-          label = `${session.studentFullName} (Year ${session.yearLevel ?? "-"})${session.isCancelled ? " (Cancelled)" : ""}`;
-        } else {
-          label = `${mentorSession.sessions.length} Students`;
         }
-      }
 
-      result[attendedOnFormatted] = label;
+        result[attendedOnFormatted] = label;
+      });
+
+      return result;
     });
+    
+    return addCollectionToSpreadsheet(spreadsheet);
 
-    return result;
-  });
 
-  return addCollectionToSpreadsheet(spreadsheet);
+  }else{
+    //if selected a week
+    const mentors = await getMentorsAsync(chapterId, selectedTerm);
+    const spreadsheet = mentors.map(({ fullName, sessionLookup }) =>{
+      const result: Record<string, string> = { Mentors: fullName };
+    
+      if (selectedTermDate) {
+        const attendedOnFormatted = dayjs(selectedTermDate).format("YYYY-MM-DD");
+        const mentorSession = sessionLookup?.[attendedOnFormatted];
+    
+        let label = "";
+    
+        if (mentorSession) {
+          //if (mentorSession.sessions.length === 0) {
+            if (mentorSession.status === "UNAVAILABLE") {
+              label = "Unavailable";
+            } else {
+              label = "Available";
+            }
+          /*} /*else if (mentorSession.sessions.length === 1) {
+            const session = mentorSession.sessions[0];
+    
+            label = `${session.studentFullName} (Year ${session.yearLevel ?? "-"})${
+              session.isCancelled ? " (Cancelled)" : ""
+            }`;
+          } else {
+            label = `${mentorSession.sessions.length} Students`;
+          }*/
+        }
+    
+        result[attendedOnFormatted] = label;
+      }
+    
+      return result;
+    });
+    
+    return addCollectionToSpreadsheet(spreadsheet);
+
+  }
+
 }
 
 export async function getMentorsAsync(
