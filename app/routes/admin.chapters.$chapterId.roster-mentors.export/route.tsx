@@ -4,7 +4,7 @@ import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
 import { getSchoolTermsAsync } from "~/services/.server";
-import { getCurrentTermForDate, URLSafeSearch } from "~/services";
+import { getCurrentTermForDate, getDatesForTerm, URLSafeSearch } from "~/services";
 
 import { exportRosterToSpreadsheetAsync } from "./services.server";
 
@@ -30,9 +30,30 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   let selectedTerm = termsForYear.find(
     (t) => t.id.toString() === selectedTermId,
   );
+
   const selectedTermDate =
-    url.safeSearchParams.getNullOrEmpty("selectedTermDate");
-  const weekDate = selectedTermDate ? new Date(selectedTermDate) : null;
+  url.safeSearchParams.getNullOrEmpty("selectedTermDate");
+
+  const validSessionDates = getDatesForTerm(selectedTerm!.start, selectedTerm!.end);
+
+  let weekDate: Date | null = null;
+
+  if (selectedTermDate) {
+    const parsedDate = new Date(selectedTermDate);
+
+    const formattedDate = dayjs(parsedDate).format("YYYY-MM-DD");
+
+    const isValidDate = !Number.isNaN(parsedDate.getTime());
+
+    const isInTerm = validSessionDates.some(
+      (date) => dayjs(date).format("YYYY-MM-DD") === formattedDate,
+    );
+
+    if (isValidDate && isInTerm) {
+      weekDate = parsedDate;
+    }
+  }
+
 
   if (!selectedTerm) {
     if (selectedTermYear === CURRENT_YEAR.toString()) {

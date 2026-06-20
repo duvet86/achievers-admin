@@ -188,7 +188,7 @@ export async function getMentorsAsync(
       LEFT JOIN Session sa ON sa.mentorSessionId = ms.id
       LEFT JOIN StudentSession ss ON ss.id = sa.studentSessionId
       LEFT JOIN Student s ON s.id = ss.studentId
-      LEFT JOIN EoiStudentProfile esp ON esp.id = s.Id
+      LEFT JOIN EoiStudentProfile esp ON esp.id = s.eoiStudentProfileId
       WHERE ms.chapterId = ${chapterId}
         AND ms.attendedOn BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`;
 
