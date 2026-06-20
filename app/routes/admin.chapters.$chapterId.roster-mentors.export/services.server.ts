@@ -50,25 +50,25 @@ type SessionLookup = Record<
 interface SessionViewModel {
   sessionLookup?: SessionLookup;
   id: number;
-  fullName: string;
+  firstName : string;
+  preferredName: string | null;
+  lastName: string;
 }
 
 export async function exportRosterToSpreadsheetAsync(
   chapterId: number,
   selectedTerm: Term,
   selectedTermDate: Date | null,
-
 ) {
-
-
-
   if (selectedTermDate == null) {
-    //if no week selected 
+    //if no week selected
     const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
     const mentors = await getMentorsAsync(chapterId, selectedTerm);
 
-    const spreadsheet = mentors.map(({ fullName, sessionLookup }) => {
-      const result: Record<string, string> = { Mentors: fullName };
+    const spreadsheet = mentors.map(({ firstName, preferredName, lastName, sessionLookup }) => {
+      const mentorName =
+        `${preferredName ?? firstName} ${lastName}`.trim();
+      const result: Record<string, string> = { Mentors: mentorName };
 
       sessionDates.forEach((attendedOn) => {
         const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
@@ -95,30 +95,36 @@ export async function exportRosterToSpreadsheetAsync(
 
       return result;
     });
-    
+
     return addCollectionToSpreadsheet(spreadsheet);
+  } else {
+    const attendedOnFormatted = dayjs(selectedTermDate).format("YYYY-MM-DD");
 
-
-  }else{
-    //if selected a week
-    const mentors = await getMentorsAsync(chapterId, selectedTerm);
-    const spreadsheet = mentors.map(({ fullName, sessionLookup }) =>{
-      const result: Record<string, string> = { Mentors: fullName };
+    const mentors = (await getMentorsAsync(chapterId, selectedTerm)).filter(
+      (mentor) => {
+        const mentorSession = mentor.sessionLookup?.[attendedOnFormatted];
+    
+        return mentorSession?.status == "AVAILABLE";
+      },
+    );
+    const spreadsheet = mentors.map(({ firstName, preferredName, lastName, sessionLookup }) => {
+      const mentorName =
+        `${preferredName ?? firstName} ${lastName}`.trim();
+      const result: Record<string, string> = { Mentors: mentorName };
     
       if (selectedTermDate) {
-        const attendedOnFormatted = dayjs(selectedTermDate).format("YYYY-MM-DD");
         const mentorSession = sessionLookup?.[attendedOnFormatted];
     
         let label = "";
     
         if (mentorSession) {
-          //if (mentorSession.sessions.length === 0) {
+          if (mentorSession.sessions.length === 0) {
             if (mentorSession.status === "UNAVAILABLE") {
               label = "Unavailable";
             } else {
               label = "Available";
             }
-          /*} /*else if (mentorSession.sessions.length === 1) {
+          } else if (mentorSession.sessions.length === 1) {
             const session = mentorSession.sessions[0];
     
             label = `${session.studentFullName} (Year ${session.yearLevel ?? "-"})${
@@ -126,7 +132,7 @@ export async function exportRosterToSpreadsheetAsync(
             }`;
           } else {
             label = `${mentorSession.sessions.length} Students`;
-          }*/
+          }
         }
     
         result[attendedOnFormatted] = label;
@@ -136,10 +142,9 @@ export async function exportRosterToSpreadsheetAsync(
     });
     
     return addCollectionToSpreadsheet(spreadsheet);
-
   }
-
 }
+
 
 export async function getMentorsAsync(
   chapterId: number,
@@ -153,6 +158,9 @@ export async function getMentorsAsync(
     select: {
       id: true,
       fullName: true,
+      firstName: true,
+      preferredName: true,
+      lastName: true,
     },
     orderBy: {
       fullName: "asc",
