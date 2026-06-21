@@ -71,9 +71,9 @@ export async function exportRosterToSpreadsheetAsync(
         const result: Record<string, string> = { Mentors: mentorName };
 
         sessionDates.forEach((attendedOn) => {
-          const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
+          const attendedOnFormatted = dayjs.utc(attendedOn).format("YYYY-MM-DD");
+        
           const mentorSession = sessionLookup?.[attendedOnFormatted];
-
           let label = "";
           if (mentorSession) {
             if (mentorSession.sessions.length === 0) {
@@ -99,12 +99,13 @@ export async function exportRosterToSpreadsheetAsync(
 
     return addCollectionToSpreadsheet(spreadsheet);
   } else {
-    const attendedOnFormatted = dayjs(selectedTermDate).format("YYYY-MM-DD");
 
+    const attendedOnFormatted = dayjs.utc(selectedTermDate).format("YYYY-MM-DD");
+    
     const mentors = (await getMentorsAsync(chapterId, selectedTerm)).filter(
       (mentor) => {
         const mentorSession = mentor.sessionLookup?.[attendedOnFormatted];
-
+    
         return mentorSession?.status === "AVAILABLE";
       },
     );
