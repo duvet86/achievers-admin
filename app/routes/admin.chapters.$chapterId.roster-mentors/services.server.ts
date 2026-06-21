@@ -78,6 +78,7 @@ export async function getMentorsAsync(
           select: {
             id: true,
             fullName: true,
+            preferredName: true,
           },
           orderBy: {
             fullName: sortFullName ?? "asc",
