@@ -9,10 +9,16 @@ import { OAuth2Strategy } from "remix-auth-oauth2";
 import { createCookie, redirect } from "react-router";
 import { createFileSessionStorage } from "@react-router/node";
 
-invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");
-invariant(process.env.CLIENT_SECRET, "CLIENT_SECRET must be set");
-invariant(process.env.TENANT_ID, "TENANT_ID must be set");
-invariant(process.env.REDIRECT_URI, "REDIRECT_URI must be set");
+import { isDevAuthBypassEnabled } from "./dev-auth-bypass.server";
+
+const BYPASS = isDevAuthBypassEnabled();
+
+if (!BYPASS) {
+  invariant(process.env.CLIENT_ID, "CLIENT_ID must be set");
+  invariant(process.env.CLIENT_SECRET, "CLIENT_SECRET must be set");
+  invariant(process.env.TENANT_ID, "TENANT_ID must be set");
+  invariant(process.env.REDIRECT_URI, "REDIRECT_URI must be set");
+}
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 
 const sessionCookie = createCookie("__session", {
@@ -29,31 +35,35 @@ export const sessionStorage_dev = createFileSessionStorage({
 
 export const authenticator_dev = new Authenticator<TokenInfo>();
 
-export const strategy_dev = new OAuth2Strategy(
-  {
-    clientId: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
+export const strategy_dev: OAuth2Strategy<TokenInfo> | undefined = BYPASS
+  ? undefined
+  : new OAuth2Strategy(
+      {
+        clientId: process.env.CLIENT_ID!,
+        clientSecret: process.env.CLIENT_SECRET!,
 
-    authorizationEndpoint: `https://login.microsoftonline.com/${process.env.TENANT_ID}/oauth2/v2.0/authorize`,
-    tokenEndpoint: `https://login.microsoftonline.com/${process.env.TENANT_ID}/oauth2/v2.0/token`,
-    redirectURI: process.env.REDIRECT_URI,
-    scopes: ["openid", "profile", "email", "offline_access"],
+        authorizationEndpoint: `https://login.microsoftonline.com/${process.env.TENANT_ID}/oauth2/v2.0/authorize`,
+        tokenEndpoint: `https://login.microsoftonline.com/${process.env.TENANT_ID}/oauth2/v2.0/token`,
+        redirectURI: process.env.REDIRECT_URI!,
+        scopes: ["openid", "profile", "email", "offline_access"],
 
-    tokenRevocationEndpoint: `https://login.windows.net/${process.env.TENANT_ID}/oauth2/logout`,
-  },
-  ({ tokens }) => {
-    if (new Date() >= tokens.accessTokenExpiresAt()) {
-      throw redirect("/logout");
-    }
+        tokenRevocationEndpoint: `https://login.windows.net/${process.env.TENANT_ID}/oauth2/logout`,
+      },
+      ({ tokens }) => {
+        if (new Date() >= tokens.accessTokenExpiresAt()) {
+          throw redirect("/logout");
+        }
 
-    return Promise.resolve({
-      idToken: tokens.idToken(),
-      accessToken: tokens.accessToken(),
-      expiresOn: tokens.accessTokenExpiresAt().toISOString(),
-      refreshToken: tokens.hasRefreshToken() ? tokens.refreshToken() : null,
-      issuedAt: new Date().toISOString(),
-    });
-  },
-);
+        return Promise.resolve({
+          idToken: tokens.idToken(),
+          accessToken: tokens.accessToken(),
+          expiresOn: tokens.accessTokenExpiresAt().toISOString(),
+          refreshToken: tokens.hasRefreshToken() ? tokens.refreshToken() : null,
+          issuedAt: new Date().toISOString(),
+        });
+      },
+    );
 
-authenticator_dev.use(strategy_dev, "microsoft");
+if (strategy_dev) {
+  authenticator_dev.use(strategy_dev, "microsoft");
+}

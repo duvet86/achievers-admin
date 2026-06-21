@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import invariant from "tiny-invariant";
 
 import { PrismaClient } from "./client/client";
+import { seedDevData } from "./seedDevData";
 
 invariant(process.env.DATABASE_HOST, "DATABASE_HOST must be set");
 invariant(process.env.DATABASE_NAME, "DATABASE_NAME must be set");
@@ -344,6 +345,10 @@ async function seed() {
         label: skill,
       },
     });
+  }
+
+  if (process.env.DEV_SEED_DATA === "true") {
+    await seedDevData(prisma);
   }
 
   console.info(`Database has been seeded. 🌱`);

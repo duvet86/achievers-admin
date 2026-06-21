@@ -12,6 +12,9 @@ import {
 } from "@azure/storage-blob";
 import invariant from "tiny-invariant";
 
+import { isDevAuthBypassEnabled } from "./dev-auth-bypass.server";
+import { createLocalContainerClient } from "./local-blob-storage.server";
+
 export const USER_DATA_BLOB_CONTAINER_NAME = "user-data";
 export const STUDENT_DATA_BLOB_CONTAINER_NAME = "student-data";
 
@@ -27,6 +30,10 @@ function getBlobUrl(): string {
 }
 
 export function getContainerClient(containerName: string): ContainerClient {
+  if (isDevAuthBypassEnabled()) {
+    return createLocalContainerClient(containerName);
+  }
+
   invariant(
     process.env.BLOB_STORAGE_ACCOUNT_NAME,
     "BLOB_STORAGE_ACCOUNT_NAME not found",
@@ -59,6 +66,10 @@ export function getSASQueryString(
   blobPath: string,
   expiresOnMinutes: number,
 ): string {
+  if (isDevAuthBypassEnabled()) {
+    return "";
+  }
+
   const startsOn = new Date();
   const expiresOn = new Date(startsOn);
 

@@ -92,18 +92,18 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const formData = await parseFormData(request, uploadHandler);
 
-  const profilePicure = formData.get("profilePicure");
-  if (profilePicure === "DELETE") {
+  const profilePicture = formData.get("profilePicture");
+  if (profilePicture === "DELETE") {
     await deleteStudentProfilePicture(Number(params.studentId));
 
     return {
       successMessage: "Profile picture deleted successfully!",
       errorMessage: null,
     };
-  } else if (profilePicure instanceof File) {
-    await saveStudentProfilePicture(Number(params.studentId), profilePicure);
+  } else if (profilePicture instanceof File) {
+    await saveStudentProfilePicture(Number(params.studentId), profilePicture);
 
-    memoryHandlerDispose("profilePicure");
+    memoryHandlerDispose("profilePicture");
 
     return {
       successMessage: "Profile picture updated successfully!",
