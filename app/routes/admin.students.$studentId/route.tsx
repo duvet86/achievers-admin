@@ -15,7 +15,11 @@ import {
   saveStudentProfilePicture,
   uploadHandler,
 } from "~/services/.server";
-import { areEqualIgnoreCase, calculateYearLevel } from "~/services";
+import {
+  areEqualIgnoreCase,
+  calculateYearLevel,
+  isStringNullOrEmpty,
+} from "~/services";
 import { StateLink } from "~/components";
 
 import {
@@ -124,6 +128,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const firstName = formData.get("firstName")?.toString();
   const lastName = formData.get("lastName")?.toString();
+  const preferredName = formData.get("preferredName")?.toString();
   const dateOfBirth = formData.get("dateOfBirth")?.toString();
   const yearLevel = formData.get("yearLevel")?.toString();
   const gender = formData.get("gender")?.toString();
@@ -164,6 +169,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     > = {
       firstName,
       lastName,
+      preferredName: isStringNullOrEmpty(preferredName) ? null : preferredName,
       gender: gender === "MALE" ? $Enums.Gender.MALE : $Enums.Gender.FEMALE,
       dateOfBirth: dateOfBirth ? dayjs(dateOfBirth).toDate() : null,
       yearLevel: yearLevel ? Number(yearLevel) : null,
@@ -194,6 +200,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     > = {
       firstName,
       lastName,
+      preferredName: isStringNullOrEmpty(preferredName) ? null : preferredName,
       gender: parseGender(gender),
       dateOfBirth: dateOfBirth ? dayjs(dateOfBirth).toDate() : null,
       yearLevel: yearLevel ? Number(yearLevel) : null,

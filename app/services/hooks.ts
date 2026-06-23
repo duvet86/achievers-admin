@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useLocation, useMatches, useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 export function useClientRect<T extends HTMLElement>(): [
   { width: number; height: number },
@@ -15,13 +15,6 @@ export function useClientRect<T extends HTMLElement>(): [
   }, []);
 
   return [rect, ref];
-}
-
-export function useRouteData<T>(routeId: string): T {
-  const matches = useMatches();
-  const data = matches.find((match) => match.id === routeId)?.data;
-
-  return data as T;
 }
 
 export function useLocalStorage<T>(

@@ -14,6 +14,7 @@ interface Props {
     chapterId: number;
     firstName: string;
     lastName: string;
+    preferredName: string | null;
     gender: $Enums.Gender | null;
     dateOfBirth: Date | null;
     yearLevel: number | null;
@@ -68,6 +69,12 @@ export function StudentForm({ student, chapters, yearLevelCalculated }: Props) {
           label="First name"
           name="firstName"
           required
+        />
+
+        <Input
+          defaultValue={student?.preferredName ?? ""}
+          label="Preferred name"
+          name="preferredName"
         />
 
         <Input

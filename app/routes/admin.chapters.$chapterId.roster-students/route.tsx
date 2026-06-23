@@ -288,104 +288,106 @@ export default function Index({
             </tr>
           </thead>
           <tbody>
-            {students.map(({ id: studentId, fullName, sessionLookup }, i) => (
-              <tr
-                key={studentId}
-                style={{
-                  backgroundColor: getValueFromCircularArray(i, colours),
-                }}
-              >
-                <th className="z-10 border-r border-b border-gray-300 border-b-white bg-gray-200">
-                  <div
-                    className={classNames(
-                      "link text-start",
-                      selectedTermDate ? "sm:w-36" : "sm:w-48",
-                    )}
-                  >
-                    <StateLink
-                      to={`/admin/students/${studentId}`}
-                      className="link text-start"
+            {students.map(
+              ({ id: studentId, fullName, yearLevel, sessionLookup }, i) => (
+                <tr
+                  key={studentId}
+                  style={{
+                    backgroundColor: getValueFromCircularArray(i, colours),
+                  }}
+                >
+                  <th className="z-10 border-r border-b border-gray-300 border-b-white bg-gray-200">
+                    <div
+                      className={classNames(
+                        "link text-start",
+                        selectedTermDate ? "sm:w-36" : "sm:w-48",
+                      )}
                     >
-                      {fullName}
-                    </StateLink>
-                  </div>
-                </th>
-                {datesInTerm.map((attendedOn, index) => {
-                  const studentSession = sessionLookup?.[attendedOn];
-
-                  let hasReport = false;
-                  let completedOn = null;
-                  let isCancelled = false;
-                  let label = "";
-                  let textHighlightError = false;
-
-                  let to = studentSession?.studentSessionId
-                    ? `/admin/chapters/${chapterId}/roster-students/student-sessions/${studentSession.studentSessionId}`
-                    : `/admin/chapters/${chapterId}/roster-students/${studentId}/attended-on/${attendedOn}/new`;
-
-                  if (studentSession) {
-                    if (studentSession.status === "UNAVAILABLE") {
-                      textHighlightError = true;
-                      label = "Unavailable";
-                    } else if (studentSession.sessions.length === 1) {
-                      const session = studentSession.sessions[0];
-                      hasReport = session.hasReport;
-                      completedOn = session.completedOn;
-                      isCancelled = session.isCancelled;
-
-                      label = session.mentorFullName!;
-
-                      if (isCancelled) {
-                        to = `/admin/sessions/${session.sessionId}`;
-                      } else if (hasReport) {
-                        to = `/admin/sessions/${session.sessionId}/report`;
-                      }
-                    } else if (studentSession.sessions.length > 1) {
-                      label = `${studentSession.sessions.length} Mentors`;
-                    }
-                  }
-
-                  return (
-                    <td key={index} className="border-r border-gray-300">
-                      <div
-                        className={classNames(
-                          "indicator",
-                          selectedTermDate ? "w-full" : "w-48",
-                        )}
+                      <StateLink
+                        to={`/admin/students/${studentId}`}
+                        className="link text-start"
                       >
-                        {isCancelled && (
-                          <div className="badge indicator-item badge-error indicator-center gap-1">
-                            Canceled <WarningTriangle className="h-4 w-4" />
-                          </div>
-                        )}
-                        {!isCancelled && hasReport && completedOn && (
-                          <div className="badge indicator-item badge-success indicator-center gap-1">
-                            Report <Check className="h-4 w-4" />
-                          </div>
-                        )}
-                        {!isCancelled && hasReport && !completedOn && (
-                          <div className="badge indicator-item badge-warning indicator-center gap-1">
-                            Report <WarningTriangle className="h-4 w-4" />
-                          </div>
-                        )}
-                        <StateLink
-                          to={to}
+                        {`${fullName} (YL: ${yearLevel})`}
+                      </StateLink>
+                    </div>
+                  </th>
+                  {datesInTerm.map((attendedOn, index) => {
+                    const studentSession = sessionLookup?.[attendedOn];
+
+                    let hasReport = false;
+                    let completedOn = null;
+                    let isCancelled = false;
+                    let label = "";
+                    let textHighlightError = false;
+
+                    let to = studentSession?.studentSessionId
+                      ? `/admin/chapters/${chapterId}/roster-students/student-sessions/${studentSession.studentSessionId}`
+                      : `/admin/chapters/${chapterId}/roster-students/${studentId}/attended-on/${attendedOn}/new`;
+
+                    if (studentSession) {
+                      if (studentSession.status === "UNAVAILABLE") {
+                        textHighlightError = true;
+                        label = "Unavailable";
+                      } else if (studentSession.sessions.length === 1) {
+                        const session = studentSession.sessions[0];
+                        hasReport = session.hasReport;
+                        completedOn = session.completedOn;
+                        isCancelled = session.isCancelled;
+
+                        label = session.mentorFullName!;
+
+                        if (isCancelled) {
+                          to = `/admin/sessions/${session.sessionId}`;
+                        } else if (hasReport) {
+                          to = `/admin/sessions/${session.sessionId}/report`;
+                        }
+                      } else if (studentSession.sessions.length > 1) {
+                        label = `${studentSession.sessions.length} Mentors`;
+                      }
+                    }
+
+                    return (
+                      <td key={index} className="border-r border-gray-300">
+                        <div
                           className={classNames(
-                            "btn btn-ghost btn-block justify-between truncate font-bold",
-                            {
-                              "text-error": textHighlightError,
-                            },
+                            "indicator",
+                            selectedTermDate ? "w-full" : "w-48",
                           )}
                         >
-                          <span className="flex-1">{label}</span>
-                          <NavArrowRight />
-                        </StateLink>
-                      </div>
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
+                          {isCancelled && (
+                            <div className="badge indicator-item badge-error indicator-center gap-1">
+                              Canceled <WarningTriangle className="h-4 w-4" />
+                            </div>
+                          )}
+                          {!isCancelled && hasReport && completedOn && (
+                            <div className="badge indicator-item badge-success indicator-center gap-1">
+                              Report <Check className="h-4 w-4" />
+                            </div>
+                          )}
+                          {!isCancelled && hasReport && !completedOn && (
+                            <div className="badge indicator-item badge-warning indicator-center gap-1">
+                              Report <WarningTriangle className="h-4 w-4" />
+                            </div>
+                          )}
+                          <StateLink
+                            to={to}
+                            className={classNames(
+                              "btn btn-ghost btn-block justify-between truncate font-bold",
+                              {
+                                "text-error": textHighlightError,
+                              },
+                            )}
+                          >
+                            <span className="flex-1">{label}</span>
+                            <NavArrowRight />
+                          </StateLink>
+                        </div>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ),
+            )}
           </tbody>
         </table>
       </div>

@@ -6,7 +6,14 @@ import { Form } from "react-router";
 import invariant from "tiny-invariant";
 
 import { memoryHandlerDispose, uploadHandler } from "~/services/.server";
-import { DateInput, Title, FileInput, SubmitFormButton } from "~/components";
+import { isStringNullOrEmpty } from "~/services";
+import {
+  DateInput,
+  Title,
+  FileInput,
+  SubmitFormButton,
+  Input,
+} from "~/components";
 
 import {
   getFileUrl,
@@ -40,6 +47,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
     const file = formData.get("file") as File;
     const expiryDate = formData.get("expiryDate")?.toString();
+    const applicationNumber = formData.get("applicationNumber")?.toString();
 
     if (expiryDate === undefined) {
       return {
@@ -50,8 +58,11 @@ export async function action({ request, params }: Route.ActionArgs) {
 
     const data: PoliceCheckUpdateCommand = {
       expiryDate,
+      applicationNumber: isStringNullOrEmpty(applicationNumber)
+        ? null
+        : applicationNumber,
       filePath:
-        file.size > 0 ? await saveFileAsync(params.mentorId, file) : undefined,
+        file.size > 0 ? await saveFileAsync(params.mentorId, file) : null,
     };
 
     memoryHandlerDispose("file");
@@ -94,6 +105,12 @@ export default function Index({
             label="Expiry Date (3 years from issue)"
             name="expiryDate"
             required
+          />
+
+          <Input
+            defaultValue={user.policeCheck?.applicationNumber ?? ""}
+            label="Application Number"
+            name="applicationNumber"
           />
 
           <FileInput

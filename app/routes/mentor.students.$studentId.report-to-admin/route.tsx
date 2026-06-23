@@ -49,6 +49,8 @@ export async function action({ request, params }: Route.ActionArgs) {
         mentorName: mentor.fullName,
         studentId: student.id,
         studentName: student.fullName,
+        chapterId: mentor.chapter.id,
+        chapterName: mentor.chapter.name,
         message,
       }),
     });

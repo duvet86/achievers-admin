@@ -40,7 +40,7 @@ model Mentor {
   id        Int     @id @default(autoincrement())
   azureADId String? @unique // Defined by Azure Active Directory.
 
-  note            String? 
+  note            String?
   email           String  @unique
   firstName       String
   lastName        String
@@ -72,10 +72,10 @@ model Mentor {
   volunteerAgreementSignedOn DateTime?
   skillOther                 String?
 
-  status  MentorStatus?
-  endDate DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  status    MentorStatus?
+  endDate   DateTime?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 
   eoIProfile    EoIProfile?
   welcomeCall   WelcomeCall?
@@ -238,9 +238,10 @@ model Induction {
 model PoliceCheck {
   id Int @id @default(autoincrement())
 
-  expiryDate     DateTime
-  filePath       String?
-  reminderSentAt DateTime?
+  expiryDate        DateTime
+  applicationNumber String?
+  filePath          String?
+  reminderSentAt    DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -301,9 +302,10 @@ model Chapter {
 model Student {
   id Int @id @default(autoincrement())
 
-  firstName String
-  lastName  String
-  fullName  String @default(dbgenerated()) // Calculated column firstName + lastName.
+  firstName     String
+  lastName      String
+  preferredName String?
+  fullName      String  @default(dbgenerated()) // Calculated column firstName + lastName.
 
   gender                     Gender?
   startDate                  DateTime?

@@ -90,6 +90,7 @@ export function UserForm({
             { value: "WEEKLY", label: "Weekly" },
           ]}
         />
+        <Input defaultValue={user.note ?? ""} label="Title/Note" name="note" />
         <Input
           defaultValue={user.firstName}
           label="First name"
@@ -119,7 +120,6 @@ export function UserForm({
             { value: "PREFER_NOT_TO_SAY", label: "Rather not answer" },
           ]}
         />
-        <Input defaultValue={user.note ?? ""} label="Title/Note" name="note" />
         <Input
           defaultValue={user.mobile}
           label="Mobile"

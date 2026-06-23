@@ -25,6 +25,7 @@ export async function promoteStudentEOIByIdAsync(id: number) {
     select: {
       firstName: true,
       lastName: true,
+      preferredName: true,
       address: true,
       chapterId: true,
       dateOfBirth: true,
@@ -38,6 +39,7 @@ export async function promoteStudentEOIByIdAsync(id: number) {
     data: {
       firstName: eoiStudent.firstName,
       lastName: eoiStudent.lastName,
+      preferredName: eoiStudent.preferredName,
       address: eoiStudent.address,
       chapterId: eoiStudent.chapterId,
       dateOfBirth: eoiStudent.dateOfBirth,
