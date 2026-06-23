@@ -65,8 +65,7 @@ export async function exportRosterToSpreadsheetAsync(
     ({ preferredName, firstName, lastName, sessionLookup }) => {
       const displayFirstName = preferredName?.trim() ?? firstName;
       const result: Record<string, string> = {
-        Mentors: `${displayFirstName} ${lastName ?? ""}`.trim(),
-      };
+        Mentors:`${displayFirstName ?? "Error No First Name"} ${lastName ?? ""}`.trim()};
       sessionDates.forEach((attendedOn) => {
         const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
         const mentorSession = sessionLookup?.[attendedOnFormatted];
