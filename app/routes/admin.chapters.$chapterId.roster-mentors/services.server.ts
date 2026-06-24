@@ -52,6 +52,7 @@ export interface SessionViewModel {
   sessionLookup?: SessionLookup;
   id: number;
   fullName: string;
+  preferredName?: string | null;
 }
 
 export async function getMentorsAsync(
@@ -77,6 +78,7 @@ export async function getMentorsAsync(
           select: {
             id: true,
             fullName: true,
+            preferredName: true,
           },
           orderBy: {
             fullName: sortFullName ?? "asc",
