@@ -63,9 +63,15 @@ export async function exportRosterToSpreadsheetAsync(
   const mentors = await getMentorsAsync(chapterId, selectedTerm);
   const spreadsheet = mentors.map(
     ({ preferredName, firstName, lastName, sessionLookup }) => {
-      const displayFirstName = preferredName?.trim() ?? firstName;
+      const displayFirstName = preferredName?.trim()
+        ? preferredName.trim()
+        : firstName?.trim()
+          ? firstName.trim()
+          : "Error No First Name";
+
       const result: Record<string, string> = {
-        Mentors:`${displayFirstName ?? "Error No First Name"} ${lastName ?? ""}`.trim()};
+        Mentors: `${displayFirstName} ${lastName ?? ""}`.trim(),
+      };
       sessionDates.forEach((attendedOn) => {
         const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
         const mentorSession = sessionLookup?.[attendedOnFormatted];
@@ -130,7 +136,7 @@ export async function getMentorsAsync(
         ss.studentId,
         COALESCE(
           NULLIF(TRIM(esp.preferredName), ''),
-          s.firstName,
+          NULLIF(TRIM(s.firstName), ''),
           'Error'
         ) AS studentDisplayName,
         s.yearLevel
