@@ -107,7 +107,7 @@ export default function Index({
 }: Route.ComponentProps) {
   const [searchParams] = useSearchParams();
 
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     if (!confirm(`Are you sure?`)) {
       e.preventDefault();
       return;

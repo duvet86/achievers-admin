@@ -1,7 +1,11 @@
 import { redirect } from "react-router";
 import invariant from "tiny-invariant";
 
-import { trackEvent, trackException } from "~/services/.server";
+import {
+  MENTOR_ROLE_APP_ID,
+  trackEvent,
+  trackException,
+} from "~/services/.server";
 
 import { getTokenInfoAsync } from "./session.server";
 
@@ -416,6 +420,83 @@ export async function deleteAzureUserAsync(
   }
 
   trackEvent("DELETE_AZURE_USER");
+}
+
+export async function inviteInternalAchieversUserAsync(
+  request: Request,
+  email: string,
+): Promise<AzureUserWebAppWithRole> {
+  const azureUser = await getAzureUserByAzureEmailAsync(request, email);
+
+  if (
+    azureUser.appRoleAssignments.filter(
+      (p) => p.appRoleId === MENTOR_ROLE_APP_ID,
+    ).length === 0
+  ) {
+    const assignRoleResponse = await assignRoleToUserAsync(
+      request,
+      azureUser.id,
+      {
+        principalId: azureUser.id,
+        appRoleId: MENTOR_ROLE_APP_ID,
+        resourceId: APP_ID,
+      },
+    );
+
+    trackEvent("ASSIGN_ROLE_TO_MENTOR", {
+      id: assignRoleResponse.id,
+    });
+  }
+
+  return azureUser;
+}
+
+export async function inviteMentorAsync(
+  request: Request,
+  email: string,
+): Promise<string> {
+  const azureUser = await searchAzureUserByEmailAsync(request, email);
+
+  let azureUserId: string;
+
+  if (azureUser === null) {
+    const inviteUserToAzureResponse = await inviteUserToAzureAsync(request, {
+      invitedUserEmailAddress: email,
+      inviteRedirectUrl: "https://achievers-webapp.azurewebsites.net",
+      sendInvitationMessage: true,
+    });
+
+    trackEvent("GIVE_ACCESS_MENTOR", {
+      id: inviteUserToAzureResponse.id,
+    });
+
+    azureUserId = inviteUserToAzureResponse.invitedUser.id;
+  } else {
+    azureUserId = azureUser.id;
+  }
+
+  if (
+    azureUser === null ||
+    azureUser.appRoleAssignments.filter(
+      (p) => p.appRoleId === MENTOR_ROLE_APP_ID,
+    ).length === 0
+  ) {
+    const assignRoleResponse = await assignRoleToUserAsync(
+      request,
+      azureUserId,
+      {
+        principalId: azureUserId,
+        appRoleId: MENTOR_ROLE_APP_ID,
+        resourceId: APP_ID,
+      },
+    );
+
+    trackEvent("ASSIGN_ROLE_TO_MENTOR", {
+      id: assignRoleResponse.id,
+    });
+  }
+
+  return azureUserId;
 }
 
 function getHeaders(accessToken: string): HeadersInit {

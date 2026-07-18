@@ -89,7 +89,7 @@ export default function Index({
   loaderData: { attendedOnLabel, chapter, session, notificationSentOnFromNow },
   actionData,
 }: Route.ComponentProps) {
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     if (!confirm("Are you sure you want to send a notification email?")) {
       e.preventDefault();
       return;

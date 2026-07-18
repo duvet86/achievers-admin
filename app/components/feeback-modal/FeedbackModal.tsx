@@ -13,7 +13,7 @@ export function FeedbackModal() {
     errorMessage: string | null;
   }>();
 
-  const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
+  const submitForm = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     void submit(e.currentTarget);
     e.currentTarget.reset();

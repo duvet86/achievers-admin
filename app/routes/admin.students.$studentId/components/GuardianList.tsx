@@ -20,7 +20,7 @@ export function GuardianList({ guardian, isNewStudent }: Props) {
   const noGuardiansAssigned = guardian.length === 0;
 
   const onGuardianRemoved =
-    (fullName: string) => (e: React.FormEvent<HTMLFormElement>) => {
+    (fullName: string) => (e: React.SubmitEvent<HTMLFormElement>) => {
       e.preventDefault();
 
       if (confirm(`Are you sure you want to remove "${fullName}"?`)) {

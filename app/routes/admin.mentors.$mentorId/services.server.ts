@@ -174,8 +174,6 @@ export function parseGender(value: string | undefined | null): Gender | null {
       return Gender.FEMALE;
     case "OTHER":
       return Gender.OTHER;
-    case "PREFER_NOT_TO_SAY":
-      return Gender.PREFER_NOT_TO_SAY;
     default:
       return Gender.PREFER_NOT_TO_SAY;
   }

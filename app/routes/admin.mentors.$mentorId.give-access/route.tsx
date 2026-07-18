@@ -9,8 +9,8 @@ import { Message, Title } from "~/components";
 
 import {
   getUserByIdAsync,
-  inviteInternalAchieversUserAsync,
-  inviteUserAsync,
+  inviteInternalAchieversUserAndUpdateAsync,
+  inviteMentorAndUpdateAsync,
 } from "./services.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -30,16 +30,18 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   try {
     if (user.email.includes("achieversclubwa.org.au")) {
-      await inviteInternalAchieversUserAsync(
+      await inviteInternalAchieversUserAndUpdateAsync(
         request,
         user.email,
         Number(params.mentorId),
       );
-
-      return redirect(`/admin/mentors/${params.mentorId}`);
+    } else {
+      await inviteMentorAndUpdateAsync(
+        request,
+        user.email,
+        Number(params.mentorId),
+      );
     }
-
-    await inviteUserAsync(request, user.email, Number(params.mentorId));
 
     return redirect(`/admin/mentors/${params.mentorId}`);
   } catch (error) {

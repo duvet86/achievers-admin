@@ -20,7 +20,7 @@ export function TeacherList({ studentTeacher, isNewStudent }: Props) {
   const noTeachersAssigned = studentTeacher.length === 0;
 
   const onTeacherRemoved =
-    (fullName: string) => (e: React.FormEvent<HTMLFormElement>) => {
+    (fullName: string) => (e: React.SubmitEvent<HTMLFormElement>) => {
       e.preventDefault();
 
       if (confirm(`Are you sure you want to remove "${fullName}"?`)) {

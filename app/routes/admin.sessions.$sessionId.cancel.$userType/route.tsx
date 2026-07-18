@@ -82,7 +82,7 @@ export default function Index({
   const editorStateRef = useRef<EditorState>(null);
   const { submit, data } = useFetcher<typeof action>();
 
-  const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onFormSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);

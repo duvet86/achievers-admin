@@ -1,16 +1,19 @@
-import {
-  type RouteConfig,
-  route,
-  index,
-  layout,
-  prefix,
-} from "@react-router/dev/routes";
+import type { RouteConfig } from "@react-router/dev/routes";
+
+import { route, index, layout, prefix } from "@react-router/dev/routes";
 
 export default [
   index("routes/root/route.tsx"),
   route("auth/microsoft/callback", "routes/auth.microsoft.callback.tsx", {
     index: true,
   }),
+  route(
+    "api/v1/mentors/:mentorId/update-email",
+    "routes/_api/update-mentor-email/api.tsx",
+    {
+      index: true,
+    },
+  ),
   layout(
     "routes/chapters.$chapterId.attendances/layout.tsx",
     prefix("chapters/:chapterId/attendances", [

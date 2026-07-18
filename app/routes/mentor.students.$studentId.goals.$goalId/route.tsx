@@ -112,7 +112,7 @@ export default function Index({
 
   const editorStateRef = useRef<EditorState>(null);
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const resportState = editorStateRef.current!;

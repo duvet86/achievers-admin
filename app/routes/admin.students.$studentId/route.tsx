@@ -81,8 +81,6 @@ function parseGender(value: string | undefined) {
       return $Enums.Gender.FEMALE;
     case "OTHER":
       return $Enums.Gender.OTHER;
-    case "PREFER_NOT_TO_SAY":
-      return $Enums.Gender.PREFER_NOT_TO_SAY;
     default:
       return $Enums.Gender.PREFER_NOT_TO_SAY;
   }

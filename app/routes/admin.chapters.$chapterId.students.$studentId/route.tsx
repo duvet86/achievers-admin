@@ -82,7 +82,7 @@ export default function Index({
   const isLoading = state !== "idle";
 
   const onMentorRemoved =
-    (studentFullName: string) => (e: React.FormEvent<HTMLFormElement>) => {
+    (studentFullName: string) => (e: React.SubmitEvent<HTMLFormElement>) => {
       e.preventDefault();
 
       if (confirm(`Are you sure you want to unassign "${studentFullName}"?`)) {
