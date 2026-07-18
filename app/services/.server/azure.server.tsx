@@ -370,7 +370,77 @@ export async function inviteUserToAzureAsync(
     throw (JSON.parse(textError) as { error: string }).error;
   }
 
-  return (await response.json()) as AzureInviteResponse;
+  const invitation = (await response.json()) as AzureInviteResponse;
+
+  if (process.env.MENTOR_INVITATION_LOGIC_APP_URL) {
+    const reponse = await fetch(process.env.MENTOR_INVITATION_LOGIC_APP_URL, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: azureInviteRequest.invitedUserEmailAddress,
+        inviteRedeemUrl: invitation.inviteRedeemUrl,
+      }),
+    });
+
+    if (!reponse.ok) {
+      trackException(new Error("Failed to send signoff notification."));
+    }
+  }
+
+  return invitation;
+}
+
+export async function resetUserInvitationToAzureAsync(
+  request: Request,
+  azureId: string,
+  email: string,
+): Promise<AzureInviteResponse> {
+  const tokenInfo = await getTokenInfoAsync(request);
+
+  const response = await fetch(`${MICROSOFT_GRAPH_V1_BASEURL}/invitations`, {
+    method: "POST",
+    headers: getHeaders(tokenInfo.accessToken),
+    body: JSON.stringify({
+      invitedUserEmailAddress: email,
+      inviteRedirectUrl: "https://achievers-webapp.azurewebsites.net",
+      sendInvitationMessage: false,
+      invitedUser: {
+        id: azureId,
+      },
+      resetRedemption: true,
+    }),
+  });
+
+  if (!response.ok) {
+    const textError = await response.text();
+
+    trackException(new Error(textError));
+
+    throw (JSON.parse(textError) as { error: string }).error;
+  }
+
+  const invitation = (await response.json()) as AzureInviteResponse;
+
+  if (process.env.MENTOR_INVITATION_LOGIC_APP_URL) {
+    const reponse = await fetch(process.env.MENTOR_INVITATION_LOGIC_APP_URL, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        inviteRedeemUrl: invitation.inviteRedeemUrl,
+      }),
+    });
+
+    if (!reponse.ok) {
+      trackException(new Error("Failed to send signoff notification."));
+    }
+  }
+
+  return invitation;
 }
 
 export async function assignRoleToUserAsync(
@@ -463,7 +533,7 @@ export async function inviteMentorAsync(
     const inviteUserToAzureResponse = await inviteUserToAzureAsync(request, {
       invitedUserEmailAddress: email,
       inviteRedirectUrl: "https://achievers-webapp.azurewebsites.net",
-      sendInvitationMessage: true,
+      sendInvitationMessage: false,
     });
 
     trackEvent("GIVE_ACCESS_MENTOR", {

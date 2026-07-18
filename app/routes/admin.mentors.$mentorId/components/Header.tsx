@@ -5,6 +5,7 @@ import {
   BinFull,
   OnTag,
   Group,
+  KeyXmark,
 } from "iconoir-react";
 
 import { StateLink, Title } from "~/components";
@@ -72,10 +73,19 @@ function getLinks({ endDate, hasAccess }: Props) {
       <>
         <li>
           <StateLink
-            to="remove-access"
+            to="reset-access"
             className="text-warning gap-4 font-semibold"
           >
             <Key />
+            Reset access
+          </StateLink>
+        </li>
+        <li>
+          <StateLink
+            to="remove-access"
+            className="text-error gap-4 font-semibold"
+          >
+            <KeyXmark />
             Remove access
           </StateLink>
         </li>

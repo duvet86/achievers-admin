@@ -361,6 +361,13 @@ export default [
             },
           ),
           route(
+            ":mentorId/reset-access",
+            "routes/admin.mentors.$mentorId.reset-access/route.tsx",
+            {
+              index: true,
+            },
+          ),
+          route(
             ":mentorId/induction",
             "routes/admin.mentors.$mentorId.induction/route.tsx",
             {

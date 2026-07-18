@@ -1,0 +1,85 @@
+/* eslint-disable @eslint-react/purity */
+import type { Route } from "./+types/route";
+
+import { Form, redirect } from "react-router";
+import invariant from "tiny-invariant";
+import { Key, WarningCircle } from "iconoir-react";
+
+import { resetUserInvitationToAzureAsync } from "~/services/.server";
+import { Message, Title } from "~/components";
+
+import { getUserByIdAsync } from "./services.server";
+
+export async function loader({ params }: Route.LoaderArgs) {
+  invariant(params.mentorId, "mentorId not found");
+
+  const user = await getUserByIdAsync(Number(params.mentorId));
+  if (user.azureADId === null) {
+    throw new Error("User not part of Azure AD.");
+  }
+
+  return {
+    user,
+  };
+}
+
+export async function action({ request, params }: Route.ActionArgs) {
+  invariant(params.mentorId, "mentorId not found");
+
+  const user = await getUserByIdAsync(Number(params.mentorId));
+  if (user.azureADId === null) {
+    throw new Error("User not part of Azure AD.");
+  }
+
+  try {
+    await resetUserInvitationToAzureAsync(request, user.azureADId, user.email);
+
+    return redirect(`/admin/mentors/${params.mentorId}`);
+  } catch (error) {
+    if (error instanceof Response) {
+      throw error;
+    }
+    return { successMessage: null, error: error as Error };
+  }
+}
+
+export default function Chapter({
+  loaderData: { user },
+  actionData,
+}: Route.ComponentProps) {
+  return (
+    <>
+      <div className="flex flex-col gap-6 sm:flex-row">
+        <Title>
+          Reset access for &quot;{user.fullName}&quot; to the achievers&apos;
+          web app
+        </Title>
+
+        <Message key={Date.now()} successMessage={actionData?.successMessage} />
+      </div>
+
+      <Form method="post" className="mt-4">
+        <fieldset>
+          <p>
+            Are you sure you want to RESET the access for &quot;{user.fullName}
+            &quot; to the achievers&apos; web app?
+          </p>
+
+          {actionData?.error && (
+            <div role="alert" className="alert alert-error mt-4">
+              <WarningCircle />
+              <span>{actionData?.error?.message}</span>
+            </div>
+          )}
+
+          <div className="mt-6 flex items-center justify-end">
+            <button className="btn btn-success w-44 gap-4" type="submit">
+              <Key className="h-6 w-6" />
+              Reset
+            </button>
+          </div>
+        </fieldset>
+      </Form>
+    </>
+  );
+}
