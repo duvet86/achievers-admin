@@ -10,10 +10,7 @@ dayjs.extend(isBetween);
 dayjs.extend(customParseFormat);
 
 export type ActionType =
-  | "completed"
-  | "remove-complete"
-  | "remove-cancelled"
-  | "draft";
+  "completed" | "remove-complete" | "remove-cancelled" | "draft";
 
 interface CreateSessionCommand {
   actionType: ActionType;

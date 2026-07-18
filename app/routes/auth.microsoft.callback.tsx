@@ -22,8 +22,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 
     const returnTo =
       ((await returnToCookie.parse(request.headers.get("Cookie"))) as
-        | string
-        | null) ?? "/";
+        string | null) ?? "/";
 
     return redirect(returnTo, {
       headers: {
