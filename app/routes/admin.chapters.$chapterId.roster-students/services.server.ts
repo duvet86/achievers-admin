@@ -99,8 +99,7 @@ export async function getStudentsAsync(
     LEFT JOIN MentorSession ms ON ms.id = sa.mentorSessionId
     LEFT JOIN Mentor m ON m.id = ms.mentorId
     WHERE ss.chapterId = ${chapterId}
-      AND ms.attendedOn ${termDate ? Prisma.sql`= ${dayjs(termDate).format("YYYY-MM-DD")}` : Prisma.sql`BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`}
-      AND ss.attendedOn BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`;
+      AND ss.attendedOn ${termDate ? Prisma.sql`= ${dayjs(termDate).format("YYYY-MM-DD")}` : Prisma.sql`BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`}`;
 
   const studentSessionLookup = studentSessions.reduce<
     Record<string, SessionLookup>
