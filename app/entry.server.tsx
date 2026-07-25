@@ -1,9 +1,5 @@
 import type { RenderToPipeableStreamOptions } from "react-dom/server";
-import type {
-  EntryContext,
-  RouterContextProvider,
-  ServerInstrumentation,
-} from "react-router";
+import type { EntryContext, ServerInstrumentation } from "react-router";
 import type { CurentUserInfo } from "./services/.server";
 
 import { PassThrough } from "node:stream";
@@ -26,22 +22,16 @@ interface ReadonlyRequest {
   headers: Pick<Headers, "get">;
 }
 
-export const streamTimeout = 5_000;
+const STREAM_TIMEOUT = 5_000;
 
 export const instrumentations: ServerInstrumentation[] = [
   {
     route(route) {
       route.instrument({
-        async loader(callLoader, { request }) {
+        async loader(callLoader, { request, context }) {
           const { status, error } = await callLoader();
 
-          if (status === "error" && error) {
-            void logError(request, null, error);
-          }
-        },
-        async action(callAction, { request, context }) {
-          const { status, error } = await callAction();
-          if (status === "error" && error) {
+          if (status === "error") {
             void logError(request, context.get(CloneRequestContext), error);
           }
         },
@@ -57,8 +47,7 @@ export default function handleRequest(
   routerContext: EntryContext,
   // loadContext: AppLoadContext,
   // If you have middleware enabled:
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  loadContext: RouterContextProvider,
+  // loadContext: RouterContextProvider,
 ) {
   return new Promise((resolve, reject) => {
     let shellRendered = false;
@@ -108,7 +97,7 @@ export default function handleRequest(
 
     // Abort the rendering stream after the `streamTimeout` so it has time to
     // flush down the rejected boundaries
-    setTimeout(abort, streamTimeout + 1000);
+    setTimeout(abort, STREAM_TIMEOUT + 1000);
   });
 }
 

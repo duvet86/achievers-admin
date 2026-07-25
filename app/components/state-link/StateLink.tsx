@@ -2,10 +2,7 @@ import type { LinkProps } from "react-router";
 
 import { Link, useLocation } from "react-router";
 
-export function StateLink({
-  children,
-  ...props
-}: LinkProps & React.RefAttributes<HTMLAnchorElement>) {
+export function StateLink({ children, ...props }: LinkProps) {
   const location = useLocation();
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
