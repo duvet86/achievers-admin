@@ -57,7 +57,6 @@ export class MentorVolunteerAgreementPage {
   hasApprovedSafetyDirections: Locator;
   hasAcceptedNoLegalResp: Locator;
   agree: Locator;
-  isOver18: Locator;
 
   expect: MentorVolunteerAgreementPageAssertions;
 
@@ -106,7 +105,6 @@ export class MentorVolunteerAgreementPage {
       "input[type='checkbox'][name='hasAcceptedNoLegalResp']",
     );
     this.agree = page.locator("input[type='checkbox'][name='agree']");
-    this.isOver18 = page.locator("input[type='checkbox'][name='isOver18']");
 
     this.expect = new MentorVolunteerAgreementPageAssertions(this);
   }
@@ -145,7 +143,6 @@ export class MentorVolunteerAgreementPage {
     await this.hasApprovedSafetyDirections.check();
     await this.hasAcceptedNoLegalResp.check();
     await this.agree.check();
-    await this.isOver18.check();
   }
 
   async saveForm(): Promise<void> {
@@ -202,6 +199,5 @@ class MentorVolunteerAgreementPageAssertions {
     await expect(this.page.hasApprovedSafetyDirections).not.toBeChecked();
     await expect(this.page.hasAcceptedNoLegalResp).not.toBeChecked();
     await expect(this.page.agree).not.toBeChecked();
-    await expect(this.page.isOver18).not.toBeChecked();
   }
 }
