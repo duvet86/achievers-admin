@@ -319,13 +319,6 @@ export default function Index({
                   <Checkbox name="agree" required />
                 )}
 
-                <p className="mt-6">I am over 18 years of age:</p>
-                {hasAgreed ? (
-                  <CheckSquareSolid />
-                ) : (
-                  <Checkbox name="isOver18" required />
-                )}
-
                 <div className="flex justify-end">
                   {hasAgreed ? (
                     <Link
