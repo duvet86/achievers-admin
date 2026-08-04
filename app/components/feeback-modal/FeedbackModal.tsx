@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/purity */
 import { useFetcher } from "react-router";
 import { Send, Xmark } from "iconoir-react";
 
@@ -26,6 +25,11 @@ export function FeedbackModal() {
       <div className="modal-box w-11/12 max-w-5xl">
         <div className="mb-4 flex justify-between">
           <Title>Feedback</Title>
+          <Message
+            key={Date.now()}
+            successMessage={data?.successMessage}
+            errorMessage={data?.errorMessage}
+          />
           <button
             className="btn btn-circle btn-ghost"
             onClick={() => {
@@ -61,12 +65,6 @@ export function FeedbackModal() {
             />
 
             <div className="modal-action flex-wrap gap-4">
-              <Message
-                key={Date.now()}
-                successMessage={data?.successMessage}
-                errorMessage={data?.errorMessage}
-              />
-
               <button
                 className="btn btn-block sm:w-48"
                 type="button"

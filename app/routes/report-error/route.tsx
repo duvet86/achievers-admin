@@ -24,11 +24,11 @@ export async function action({ request }: Route.ActionArgs) {
     const file = formData.get("file") as File | null;
 
     const attachments = [];
-    if (file) {
+    if (file && file.size > 0) {
       const filesize = Number((file.size / 1024 / 1024).toFixed(4)); // MB
       if (filesize > 1.5) {
         return {
-          errorMessage: "File too large. Max size is 1 MB.",
+          errorMessage: "File too large. Max size is 1.5 MB.",
           successMessage: null,
         };
       }
@@ -59,7 +59,9 @@ export async function action({ request }: Route.ActionArgs) {
     trackException(e as Error);
 
     return {
-      errorMessage: "File too large. Max size is 1 MB.",
+      errorMessage:
+        (e as Error).message ??
+        "An error occurred while submitting the support request.",
       successMessage: null,
     };
   }
