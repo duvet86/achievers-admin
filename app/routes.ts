@@ -173,6 +173,13 @@ export default [
               index: true,
             },
           ),
+          route(
+            "mentor-resources/:resourceId",
+            "routes/admin.config.mentor-resources.$resourceId/route.tsx",
+            {
+              index: true,
+            },
+          ),
         ]),
       ]),
       route(

@@ -1,16 +1,7 @@
-import type { HTMLInputTypeAttribute } from "react";
-
 import classNames from "classnames";
 
 interface Props {
-  name?: string;
   label?: string;
-  defaultValue?: string;
-  type?: HTMLInputTypeAttribute;
-  readOnly?: boolean;
-  disabled?: boolean;
-  required?: boolean;
-  placeholder?: string;
 }
 
 export function Textarea({
@@ -19,7 +10,11 @@ export function Textarea({
   required,
   placeholder,
   ...props
-}: Props) {
+}: Props &
+  React.DetailedHTMLProps<
+    React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+    HTMLTextAreaElement
+  >) {
   return (
     <>
       <label htmlFor={name} className="fieldset-label">

@@ -1,20 +1,18 @@
 import { prisma } from "~/db.server";
 
+export interface CategoryOrderCommand {
+  id: number;
+  order: number;
+}
+
 export async function getMentorResourcesAsync() {
   return await prisma.mentorResourceCategory.findMany({
     select: {
       id: true,
       label: true,
-      mentorResource: {
+      _count: {
         select: {
-          id: true,
-          order: true,
-          label: true,
-          description: true,
-          url: true,
-        },
-        orderBy: {
-          order: "asc",
+          mentorResource: true,
         },
       },
     },
@@ -24,45 +22,21 @@ export async function getMentorResourcesAsync() {
   });
 }
 
-export async function updateCategory(categoryId: number, label: string) {
-  return await prisma.mentorResourceCategory.update({
-    where: {
-      id: categoryId,
-    },
-    data: {
-      label,
-    },
-  });
-}
-
-export async function updateResource(
-  resourceId: number,
-  label: string,
-  url: string,
+export async function updateCategoryOrder(
+  categoryOrders: CategoryOrderCommand[],
 ) {
-  return await prisma.mentorResource.update({
-    where: {
-      id: resourceId,
-    },
-    data: {
-      label,
-      url,
-    },
-  });
-}
+  await prisma.$transaction(async (tx) => {
+    const updatePromises = categoryOrders.map(({ id, order }) =>
+      tx.mentorResourceCategory.update({
+        where: {
+          id,
+        },
+        data: {
+          order,
+        },
+      }),
+    );
 
-export async function addResource(
-  categoryId: number,
-  label: string,
-  url: string,
-  order: number,
-) {
-  return await prisma.mentorResource.create({
-    data: {
-      mentorResourceCategoryId: categoryId,
-      order,
-      label,
-      url,
-    },
+    await Promise.all(updatePromises);
   });
 }

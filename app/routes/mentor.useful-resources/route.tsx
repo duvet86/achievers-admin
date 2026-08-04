@@ -23,11 +23,11 @@ export default function Index({
 
           <ul className="m-4 list-inside list-disc">
             {mentorResource.map(({ id, label, description, url }) => (
-              <li key={id}>
+              <li key={id} className="mb-2">
                 <a className="link" href={url} target="_blank" rel="noreferrer">
                   {label}
                 </a>
-                {description}
+                <p className="text-sm italic">{description}</p>
               </li>
             ))}
           </ul>

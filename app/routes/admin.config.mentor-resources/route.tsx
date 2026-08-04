@@ -1,15 +1,21 @@
 import type { Route } from "./+types/route";
+import type { CategoryOrderCommand } from "./services.server";
 
-import { Form, useNavigation } from "react-router";
-import { Bin, FloppyDiskArrowIn } from "iconoir-react";
+import { useRef, useState } from "react";
+import { useFetcher } from "react-router";
+import {
+  EditPencil,
+  FloppyDisk,
+  InfoCircle,
+  LineSpace,
+  Plus,
+} from "iconoir-react";
 
-import { Title } from "~/components";
+import { Message, StateLink, Title } from "~/components";
 
 import {
-  addResource,
   getMentorResourcesAsync,
-  updateCategory,
-  updateResource,
+  updateCategoryOrder,
 } from "./services.server";
 
 export async function loader() {
@@ -19,191 +25,159 @@ export async function loader() {
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  const formData = await request.formData();
+  const jsonData = (await request.json()) as CategoryOrderCommand[];
 
-  const action = formData.get("action")!.toString();
+  await updateCategoryOrder(jsonData);
 
-  switch (action) {
-    case "updateCategory": {
-      const categoryId = formData.get("categoryId")!.toString();
-      const label = formData.get("label")!.toString();
-
-      await updateCategory(Number(categoryId), label);
-
-      break;
-    }
-
-    case "updateResource": {
-      const resourceId = formData.get("resourceId")!.toString();
-      const label = formData.get("label")!.toString();
-      const url = formData.get("url")!.toString();
-
-      await updateResource(Number(resourceId), label, url);
-
-      break;
-    }
-
-    case "addResource": {
-      const categoryId = formData.get("categoryId")!.toString();
-      const order = formData.get("order")!.toString();
-      const label = formData.get("label")!.toString();
-      const url = formData.get("url")!.toString();
-
-      await addResource(Number(categoryId), label, url, Number(order));
-
-      break;
-    }
-  }
-
-  return { submissionId: Date.now().toString() };
+  return { successMessage: "Success" };
 }
 
 export default function Index({
   loaderData: { mentorResources },
-  actionData,
 }: Route.ComponentProps) {
-  const { state } = useNavigation();
+  const { Form, submit, state, data } = useFetcher<{
+    successMessage: string;
+  }>();
+  const [list, setList] = useState(mentorResources);
+  const draggingRowIndexRef = useRef<number | null>(null);
+
+  const onDragStart = (
+    e: React.DragEvent<HTMLTableRowElement>,
+    index: number,
+  ) => {
+    draggingRowIndexRef.current = index;
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const onDragOver = (
+    e: React.DragEvent<HTMLTableRowElement>,
+    index: number,
+  ) => {
+    e.preventDefault();
+
+    if (draggingRowIndexRef.current === index) {
+      return;
+    }
+
+    const newList = [...list];
+    const targetItem = newList.splice(draggingRowIndexRef.current!, 1)[0];
+    newList.splice(index, 0, targetItem);
+
+    draggingRowIndexRef.current = index;
+    setList(newList);
+  };
+
+  const onDragEnd = () => {
+    draggingRowIndexRef.current = null;
+  };
+
+  const onFormSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+
+    const orderJsonData = list.map((item, index) => ({
+      id: Number(formData.get(`order[${index}]['id']`)!.toString()),
+      order: Number(formData.get(`order[${index}]['order']`)!.toString()),
+    }));
+
+    void submit(orderJsonData, {
+      method: "POST",
+      encType: "application/json",
+    });
+  };
 
   return (
     <>
-      <Title>Configure mentor resources</Title>
+      <div className="flex flex-col gap-6 sm:flex-row">
+        <Title>Configure mentor resources</Title>
 
-      <fieldset disabled={state !== "idle"}>
-        {mentorResources.map(({ id: categoryId, label, mentorResource }) => (
-          <div key={categoryId} className="mt-4">
-            <Form
-              method="POST"
-              className="border-primary flex gap-4 border-b py-4 font-bold"
-            >
-              <div className="indicator w-full">
-                <span className="indicator-item badge text-error">*</span>
-                <label className="input w-full">
-                  <span className="label">Category</span>
-                  <input
-                    type="text"
-                    placeholder="Category"
-                    defaultValue={label}
-                    name="label"
-                    required
-                  />
-                </label>
-              </div>
-              <input type="hidden" name="categoryId" value={categoryId} />
-              <button
-                className="btn btn-primary w-44"
-                name="action"
-                value="updateCategory"
-                type="submit"
-              >
-                <FloppyDiskArrowIn /> Save category
-              </button>
-            </Form>
+        <Message key={Date.now()} successMessage={data?.successMessage} />
+      </div>
 
-            <ul className="m-4">
-              <li className="flex gap-4 p-2">
-                <span className="input ml-2 flex-1 border-0 font-bold">
-                  Label
-                </span>
-                <span className="input ml-2 flex-1 border-0 font-bold">
-                  Link
-                </span>
-                <div className="w-80"></div>
-              </li>
-              {mentorResource.map(({ id: resourceId, order, label, url }) => (
-                <li key={resourceId} className="p-2">
-                  <Form method="POST" className="flex items-center gap-4">
-                    <span className="w-8">{order})</span>
-                    <div className="indicator flex-1">
-                      <span className="indicator-item badge text-error">*</span>
-                      <input
-                        type="text"
-                        placeholder="Label"
-                        className="input w-full"
-                        defaultValue={label}
-                        name="label"
-                        required
-                      />
-                    </div>
-                    <div className="indicator flex-1">
-                      <span className="indicator-item badge text-error">*</span>
-                      <input
-                        type="text"
-                        placeholder="Link"
-                        className="input w-full"
-                        defaultValue={url}
-                        name="url"
-                        required
-                      />
-                    </div>
-                    <input type="hidden" name="resourceId" value={resourceId} />
-                    <div className="flex w-80 gap-2">
-                      <button
-                        className="btn btn-primary flex-1"
-                        name="action"
-                        value="updateResource"
-                        type="submit"
-                      >
-                        <FloppyDiskArrowIn /> Save
-                      </button>
-                      <button
-                        className="btn btn-error flex-1"
-                        name="action"
-                        value="deleteCategory"
-                        type="submit"
-                      >
-                        <Bin /> Delete
-                      </button>
-                    </div>
-                  </Form>
-                </li>
-              ))}
-              <li className="p-2">
-                <Form
-                  method="POST"
-                  className="flex items-center gap-4"
-                  key={actionData?.submissionId}
+      <p className="text-info mt-4 flex items-center gap-2">
+        <InfoCircle /> Drag and drop the table rows to reorder mentor resources.
+        Don't forget to click "Save order" after reordering.
+      </p>
+
+      <Form method="POST" onSubmit={onFormSubmit}>
+        <div className="mt-4 overflow-auto bg-white">
+          <table className="table-lg sm:table-md table">
+            <thead>
+              <tr>
+                <th align="left" className="p-2">
+                  Order
+                </th>
+                <th align="left" className="p-2">
+                  Title
+                </th>
+                <th align="left" className="p-2">
+                  Count Resources
+                </th>
+                <th align="right" className="hidden p-2 sm:table-cell">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {list.length === 0 && (
+                <tr>
+                  <td className="italic">No mentor resources available</td>
+                </tr>
+              )}
+              {list.map(({ id, label, _count }, index) => (
+                <tr
+                  key={id}
+                  draggable
+                  onDragStart={(e) => onDragStart(e, index)}
+                  onDragOver={(e) => onDragOver(e, index)}
+                  onDragEnd={onDragEnd}
+                  className="hover:bg-base-200 cursor-move"
                 >
-                  <span className="w-8">{mentorResource.length + 1})</span>
-                  <div className="indicator flex-1">
-                    <span className="indicator-item badge text-error">*</span>
+                  <td className="p-2">
+                    <div className="flex items-center gap-2">
+                      <LineSpace /> {index + 1}
+                    </div>
                     <input
-                      type="text"
-                      placeholder="Label"
-                      className="input w-full"
-                      name="label"
-                      required
+                      type="hidden"
+                      name={`order[${index}]['id']`}
+                      value={id}
                     />
-                  </div>
-                  <div className="indicator flex-1">
-                    <span className="indicator-item badge text-error">*</span>
                     <input
-                      type="text"
-                      placeholder="Link"
-                      className="input w-full"
-                      name="url"
-                      required
+                      type="hidden"
+                      name={`order[${index}]['order']`}
+                      value={index + 1}
                     />
-                  </div>
-                  <input type="hidden" name="categoryId" value={categoryId} />
-                  <input
-                    type="hidden"
-                    name="order"
-                    value={mentorResource.length + 1}
-                  />
-                  <button
-                    className="btn btn-primary w-80"
-                    name="action"
-                    value="addResource"
-                    type="submit"
-                  >
-                    <FloppyDiskArrowIn /> Add new
-                  </button>
-                </Form>
-              </li>
-            </ul>
-          </div>
-        ))}
-      </fieldset>
+                  </td>
+                  <td className="p-2">{label}</td>
+                  <td className="p-2">{_count.mentorResource}</td>
+                  <td className="hidden p-2 sm:table-cell" align="right">
+                    <StateLink
+                      to={`/admin/config/mentor-resources/${id}`}
+                      className="btn btn-neutral btn-xs btn-block"
+                    >
+                      <EditPencil className="h-4 w-4" />
+                      Edit
+                    </StateLink>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mt-4 flex justify-between">
+          <StateLink
+            to="/admin/config/mentor-resources/new"
+            className="btn btn-primary w-36"
+          >
+            <Plus /> Add new
+          </StateLink>
+          <button className="btn btn-success w-36" disabled={state !== "idle"}>
+            <FloppyDisk /> Save order
+          </button>
+        </div>
+      </Form>
     </>
   );
 }
