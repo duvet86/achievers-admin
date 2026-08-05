@@ -5,6 +5,7 @@ interface SupportRequestCommand {
   userId?: number;
   email?: string;
   description: string;
+  chapterId: number;
   attachments: { name: string; content: string }[];
 }
 
@@ -17,6 +18,7 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
     select: {
       id: true,
       email: true,
+      chapterId: true,
     },
   });
 }

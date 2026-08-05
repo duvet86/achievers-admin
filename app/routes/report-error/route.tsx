@@ -46,6 +46,7 @@ export async function action({ request }: Route.ActionArgs) {
       userId: user?.id,
       email: user?.email ?? loggedUser?.email ?? loggedUser.preferred_username,
       description: formData.get("description")!.toString(),
+      chapterId: user?.chapterId ?? 0,
       attachments,
     });
 
