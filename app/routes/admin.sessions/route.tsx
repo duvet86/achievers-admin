@@ -220,6 +220,13 @@ export default function Index({
           sessionDatesOptions={sessionDatesOptions}
         />
 
+        <fieldset className="mb-2 flex gap-6 rounded border p-2">
+          <legend className="fieldset-legend">Legend</legend>
+          <span>Outstanding</span>
+          <span className="text-info">Require Sign off</span>
+          <span className="text-error">Session Cancelled</span>
+        </fieldset>
+
         <div className="overflow-auto bg-white">
           <table className="table-lg sm:table-md table">
             <thead>
@@ -274,6 +281,10 @@ export default function Index({
                     key={id}
                     className={classNames("hover:bg-base-200 cursor-pointer", {
                       "text-error": isCancelled,
+                      "text-info":
+                        !isCancelled &&
+                        completedOn !== null &&
+                        signedOffOn === null,
                     })}
                     onClick={navigateToPage(
                       completedOn

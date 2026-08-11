@@ -103,7 +103,7 @@ export function FormInputs({
   };
 
   return (
-    <div className="mb-6 flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
       {chaptersOptions.length > 1 && (
         <div>
           <Select
