@@ -50,7 +50,6 @@ export async function getAvailabelMentorsAsync(
     SELECT DISTINCT
       m.id, m.fullName
     FROM Mentor m
-    INNER JOIN MentorToStudentAssignement msa ON msa.mentorId = m.id
     WHERE ${sessions.length > 0 ? Prisma.sql`m.id NOT IN (${Prisma.join(sessions.map((s) => s.id))})` : "1=1"}
       AND ${chapterIdFilter ? Prisma.sql`m.chapterId = ${chapterIdFilter}` : "1=1"}
     ORDER BY m.fullName ASC`;
@@ -85,7 +84,6 @@ export async function getAvailabelStudentsAsync(
     SELECT DISTINCT
       s.id, s.fullName
     FROM Student s
-    INNER JOIN MentorToStudentAssignement msa ON msa.studentId = s.id
     WHERE ${sessions.length > 0 ? Prisma.sql`s.id NOT IN (${Prisma.join(sessions.map((s) => s.id))})` : "1=1"}
       AND ${chapterIdFilter ? Prisma.sql`s.chapterId = ${chapterIdFilter}` : "1=1"}
     ORDER BY s.fullName ASC`;
