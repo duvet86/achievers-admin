@@ -86,6 +86,7 @@ export default function Index({
       reportFeedback,
       signedOffOn,
       completedOn,
+      isCancelled,
       mentorSession,
       studentSession,
     },
@@ -124,7 +125,7 @@ export default function Index({
   return (
     <>
       <div className="mb-4 flex flex-col gap-6 sm:flex-row">
-        <Title>
+        <Title className={isCancelled ? "text-error" : undefined}>
           {dayjs(attendedOn).format("MMMM D, YYYY")} - mentor: &quot;
           {mentorSession.mentor.fullName}&quot; student: &quot;
           {studentSession.student.fullName}&quot;
@@ -136,6 +137,12 @@ export default function Index({
           <div className="bg-warning flex gap-4 rounded-lg p-2 pr-12">
             <WarningTriangle />
             Report has NOT been submitted for review yet.
+          </div>
+        )}
+
+        {isCancelled && (
+          <div className="alert alert-error w-48">
+            <WarningTriangle /> Session cancelled
           </div>
         )}
       </div>
