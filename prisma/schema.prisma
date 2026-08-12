@@ -350,6 +350,19 @@ model Student {
   eoiStudentProfileId Int?               @unique
 
   studentGrade StudentGrade[]
+  studentNotes StudentNote[]
+}
+
+model StudentNote {
+  id Int @id @default(autoincrement())
+
+  note String @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId Int
 }
 
 model StudentGuardian {

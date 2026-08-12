@@ -1,8 +1,6 @@
-import type { Student } from "~/prisma/client";
-
 import { prisma } from "~/db.server";
 
-export async function getStudentByIdAsync(id: Student["id"]) {
+export async function getStudentByIdAsync(id: number) {
   return await prisma.student.findUniqueOrThrow({
     where: {
       id,
@@ -14,13 +12,25 @@ export async function getStudentByIdAsync(id: Student["id"]) {
   });
 }
 
-export async function archiveStudentAsync(id: Student["id"]) {
-  return await prisma.student.update({
-    where: {
-      id,
-    },
-    data: {
-      endDate: new Date(),
-    },
+export async function archiveStudentAsync(
+  studentId: number,
+  endReason: string,
+) {
+  return await prisma.$transaction(async (tx) => {
+    await tx.studentNote.create({
+      data: {
+        note: endReason,
+        studentId,
+      },
+    });
+
+    return await tx.student.update({
+      where: {
+        id: studentId,
+      },
+      data: {
+        endDate: new Date(),
+      },
+    });
   });
 }

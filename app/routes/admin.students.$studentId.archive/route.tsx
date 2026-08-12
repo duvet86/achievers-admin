@@ -1,11 +1,10 @@
-/* eslint-disable @eslint-react/purity */
 import type { Route } from "./+types/route";
 
-import { Form, useNavigation } from "react-router";
+import { Form, redirect } from "react-router";
 import invariant from "tiny-invariant";
 import { BinFull } from "iconoir-react";
 
-import { Message, Title } from "~/components";
+import { Textarea, Title } from "~/components";
 
 import { archiveStudentAsync, getStudentByIdAsync } from "./services.server";
 
@@ -19,39 +18,35 @@ export async function loader({ params }: Route.LoaderArgs) {
   };
 }
 
-export async function action({ params }: Route.ActionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   invariant(params.studentId, "studentId not found");
 
-  await archiveStudentAsync(Number(params.studentId));
+  const formData = await request.formData();
+  const endReason = formData.get("endReason")?.toString();
 
-  return {
-    successMessage: "Student archived successfully",
-  };
+  await archiveStudentAsync(Number(params.studentId), endReason!);
+
+  return redirect(`/admin/students/${params.studentId}/end-reason`);
 }
 
 export default function Chapter({
   loaderData: { student },
-  actionData,
 }: Route.ComponentProps) {
-  const transition = useNavigation();
-
   return (
     <>
-      <div className="flex flex-col gap-6 sm:flex-row">
-        <Title>Archive &quot;{student.fullName}&quot;</Title>
-
-        <Message key={Date.now()} successMessage={actionData?.successMessage} />
-      </div>
+      <Title>Archive &quot;{student.fullName}&quot;</Title>
 
       <Form method="post">
-        <fieldset disabled={transition.state === "submitting"}>
+        <fieldset>
           <p>
             Are you sure you want to archive &quot;{student.fullName}&quot;?
           </p>
 
+          <Textarea placeholder="Reason to Archive" name="endReason" required />
+
           <div className="mt-6 flex items-center justify-end">
             <button className="btn btn-success w-44 gap-4" type="submit">
-              <BinFull className="h-6 w-6" />
+              <BinFull />
               Archive
             </button>
           </div>

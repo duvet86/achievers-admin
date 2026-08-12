@@ -19,10 +19,13 @@ export function Header({ title, endDate, successMessage }: Props) {
       {endDate && (
         <p
           title="archived"
-          className="bg-error mb-4 flex items-center gap-2 rounded-sm px-6 py-2"
+          className="bg-error flex items-center gap-4 rounded-sm px-6 py-2"
         >
-          <WarningTriangle className="h-6 w-6" />
-          This student is archived!
+          <WarningTriangle />
+          This student is archived!{" "}
+          <StateLink to="end-reason" className="link">
+            View reason
+          </StateLink>
         </p>
       )}
 

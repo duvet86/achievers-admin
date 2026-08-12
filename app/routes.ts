@@ -243,6 +243,13 @@ export default [
             },
           ),
           route(
+            ":studentId/end-reason",
+            "routes/admin.students.$studentId.end-reason/route.tsx",
+            {
+              index: true,
+            },
+          ),
+          route(
             ":studentId/guardians/:guardianId",
             "routes/admin.students.$studentId.guardians.$guardianId/route.tsx",
             {
