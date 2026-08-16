@@ -26,13 +26,42 @@ const STREAM_TIMEOUT = 5_000;
 
 export const instrumentations: ServerInstrumentation[] = [
   {
+    handler(route) {
+      route.instrument({
+        request: async (fn, { request, context }) => {
+          const { error } = await fn();
+
+          if (error) {
+            await logError(
+              request,
+              context?.get(CloneRequestContext) ?? null,
+              error,
+            );
+          }
+        },
+      });
+    },
     route(route) {
       route.instrument({
-        async loader(callLoader, { request, context }) {
-          const { status, error } = await callLoader();
+        middleware: async (fn, { request, context }) => {
+          const { error } = await fn();
 
-          if (status === "error") {
-            void logError(request, context.get(CloneRequestContext), error);
+          if (error) {
+            await logError(request, context?.get(CloneRequestContext), error);
+          }
+        },
+        loader: async (fn, { request, context }) => {
+          const { error } = await fn();
+
+          if (error) {
+            await logError(request, context?.get(CloneRequestContext), error);
+          }
+        },
+        action: async (fn, { request, context }) => {
+          const { error } = await fn();
+
+          if (error) {
+            await logError(request, context?.get(CloneRequestContext), error);
           }
         },
       });
