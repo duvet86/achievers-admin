@@ -1,7 +1,6 @@
 import type { Route } from "./+types/route";
 
 import { Form, Link, redirect } from "react-router";
-import dayjs from "dayjs";
 import { CheckSquareSolid, NavArrowLeft } from "iconoir-react";
 
 import { getLoggedUserInfoAsync, version } from "~/services/.server";
@@ -32,7 +31,6 @@ export async function loader({ request }: Route.LoaderArgs) {
     userName: loggedUser.preferred_username,
     hasAgreed: user.volunteerAgreementSignedOn !== null,
     version,
-    maxDateOfBirth: `${dayjs().year() - 18}-01-01`, // At least 18 years old.
     user,
   };
 }
@@ -109,14 +107,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function Index({
-  loaderData: {
-    user,
-    maxDateOfBirth,
-    userName,
-    environment,
-    version,
-    hasAgreed,
-  },
+  loaderData: { user, userName, environment, version, hasAgreed },
 }: Route.ComponentProps) {
   return (
     <div className="drawer-content flex flex-col">
@@ -224,7 +215,6 @@ export default function Index({
                       label="Date of birth"
                       name="dateOfBirth"
                       defaultValue={user.dateOfBirth ?? ""}
-                      max={maxDateOfBirth}
                       required
                     />
 
