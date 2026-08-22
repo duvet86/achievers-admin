@@ -20,7 +20,7 @@ interface MentorSession {
   completedOn: string | null;
   isCancelled: number | null;
   studentId: number | null;
-  studentFullName: string | null;
+  studentDisplayName: string | null;
   yearLevel: number | null;
 }
 
@@ -41,7 +41,7 @@ type SessionLookup = Record<
       completedOn: string | null;
       isCancelled: boolean;
       studentId: number;
-      studentFullName: string;
+      studentDisplayName: string;
       yearLevel: number | null;
     }[];
   }
@@ -50,46 +50,102 @@ type SessionLookup = Record<
 interface SessionViewModel {
   sessionLookup?: SessionLookup;
   id: number;
-  fullName: string;
+  firstName: string;
+  preferredName: string | null;
+  lastName: string;
 }
 
 export async function exportRosterToSpreadsheetAsync(
   chapterId: number,
   selectedTerm: Term,
+  selectedTermDate: Date | null,
 ) {
-  const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
-  const mentors = await getMentorsAsync(chapterId, selectedTerm);
+  if (selectedTermDate == null) {
+    //if no week selected
+    const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
+    const mentors = await getMentorsAsync(chapterId, selectedTerm);
 
-  const spreadsheet = mentors.map(({ fullName, sessionLookup }) => {
-    const result: Record<string, string> = { Mentors: fullName };
+    const spreadsheet = mentors.map(
+      ({ firstName, preferredName, lastName, sessionLookup }) => {
+        const mentorName = `${preferredName ?? firstName} ${lastName}`.trim();
+        const result: Record<string, string> = { Mentors: mentorName };
 
-    sessionDates.forEach((attendedOn) => {
-      const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
-      const mentorSession = sessionLookup?.[attendedOnFormatted];
-
-      let label = "";
-      if (mentorSession) {
-        if (mentorSession.sessions.length === 0) {
-          if (mentorSession.status === "UNAVAILABLE") {
-            label = "Unavailable";
-          } else {
-            label = "Available";
+        sessionDates.forEach((attendedOn) => {
+          const attendedOnFormatted = dayjs.utc(attendedOn).format("YYYY-MM-DD");
+        
+          const mentorSession = sessionLookup?.[attendedOnFormatted];
+          let label = "";
+          if (mentorSession) {
+            if (mentorSession.sessions.length === 0) {
+              if (mentorSession.status === "UNAVAILABLE") {
+                label = "Unavailable";
+              } else {
+                label = "Available";
+              }
+            } else if (mentorSession.sessions.length === 1) {
+              const session = mentorSession.sessions[0];
+              label = `${session.studentDisplayName} (Year ${session.yearLevel ?? "-"})${session.isCancelled ? " (Cancelled)" : ""}`;
+            } else {
+              label = `${mentorSession.sessions.length} Students`;
+            }
           }
-        } else if (mentorSession.sessions.length === 1) {
-          const session = mentorSession.sessions[0];
-          label = `${session.studentFullName} (Year ${session.yearLevel ?? "-"})${session.isCancelled ? " (Cancelled)" : ""}`;
-        } else {
-          label = `${mentorSession.sessions.length} Students`;
+
+          result[attendedOnFormatted] = label;
+        });
+
+        return result;
+      },
+    );
+
+    return addCollectionToSpreadsheet(spreadsheet);
+  } else {
+
+    const attendedOnFormatted = dayjs.utc(selectedTermDate).format("YYYY-MM-DD");
+    
+    const mentors = (await getMentorsAsync(chapterId, selectedTerm)).filter(
+      (mentor) => {
+        const mentorSession = mentor.sessionLookup?.[attendedOnFormatted];
+    
+        return mentorSession?.status === "AVAILABLE";
+      },
+    );
+    const spreadsheet = mentors.map(
+      ({ firstName, preferredName, lastName, sessionLookup }) => {
+        const mentorName = `${preferredName ?? firstName} ${lastName}`.trim();
+        const result: Record<string, string> = { Mentors: mentorName };
+
+        if (selectedTermDate) {
+          const mentorSession = sessionLookup?.[attendedOnFormatted];
+
+          let label = "";
+
+          if (mentorSession) {
+            if (mentorSession.sessions.length === 0) {
+              if (mentorSession.status === "UNAVAILABLE") {
+                label = "Unavailable";
+              } else {
+                label = "Available";
+              }
+            } else if (mentorSession.sessions.length === 1) {
+              const session = mentorSession.sessions[0];
+
+              label = `${session.studentDisplayName} (Year ${session.yearLevel ?? "-"})${
+                session.isCancelled ? " (Cancelled)" : ""
+              }`;
+            } else {
+              label = `${mentorSession.sessions.length} Students`;
+            }
+          }
+
+          result[attendedOnFormatted] = label;
         }
-      }
 
-      result[attendedOnFormatted] = label;
-    });
+        return result;
+      },
+    );
 
-    return result;
-  });
-
-  return addCollectionToSpreadsheet(spreadsheet);
+    return addCollectionToSpreadsheet(spreadsheet);
+  }
 }
 
 export async function getMentorsAsync(
@@ -104,6 +160,9 @@ export async function getMentorsAsync(
     select: {
       id: true,
       fullName: true,
+      firstName: true,
+      preferredName: true,
+      lastName: true,
     },
     orderBy: {
       fullName: "asc",
@@ -121,12 +180,16 @@ export async function getMentorsAsync(
         sa.completedOn,
         sa.isCancelled,
         ss.studentId,
-        s.fullName AS studentFullName,
+        COALESCE(
+          NULLIF(TRIM(esp.preferredName), ''),
+          s.firstName
+        ) AS studentDisplayName,
         s.yearLevel
       FROM MentorSession ms
       LEFT JOIN Session sa ON sa.mentorSessionId = ms.id
       LEFT JOIN StudentSession ss ON ss.id = sa.studentSessionId
       LEFT JOIN Student s ON s.id = ss.studentId
+      LEFT JOIN EoiStudentProfile esp ON esp.id = s.eoiStudentProfileId
       WHERE ms.chapterId = ${chapterId}
         AND ms.attendedOn BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`;
 
@@ -145,7 +208,7 @@ export async function getMentorsAsync(
       hasReport: mentorSession.hasReport === 1,
       completedOn: mentorSession.completedOn,
       isCancelled: mentorSession.isCancelled === 1,
-      studentFullName: mentorSession.studentFullName!,
+      studentDisplayName: mentorSession.studentDisplayName!,
       yearLevel: mentorSession.yearLevel,
     };
 
