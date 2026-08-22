@@ -20,7 +20,7 @@ interface MentorSession {
   completedOn: string | null;
   isCancelled: number | null;
   studentId: number | null;
-  studentFullName: string | null;
+  studentDisplayName: string;
   yearLevel: number | null;
 }
 
@@ -41,7 +41,7 @@ type SessionLookup = Record<
       completedOn: string | null;
       isCancelled: boolean;
       studentId: number;
-      studentFullName: string;
+      studentDisplayName: string;
       yearLevel: number | null;
     }[];
   }
@@ -50,7 +50,9 @@ type SessionLookup = Record<
 interface SessionViewModel {
   sessionLookup?: SessionLookup;
   id: number;
-  fullName: string;
+  preferredName?: string | null;
+  lastName?: string | null;
+  firstName?: string | null;
 }
 
 export async function exportRosterToSpreadsheetAsync(
@@ -59,35 +61,43 @@ export async function exportRosterToSpreadsheetAsync(
 ) {
   const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
   const mentors = await getMentorsAsync(chapterId, selectedTerm);
+  const spreadsheet = mentors.map(
+    ({ preferredName, firstName, lastName, sessionLookup }) => {
+      const displayFirstName = preferredName?.trim()
+        ? preferredName.trim()
+        : firstName?.trim()
+          ? firstName.trim()
+          : "Error No First Name";
 
-  const spreadsheet = mentors.map(({ fullName, sessionLookup }) => {
-    const result: Record<string, string> = { Mentors: fullName };
+      const result: Record<string, string> = {
+        Mentors: `${displayFirstName} ${lastName ?? ""}`.trim(),
+      };
+      sessionDates.forEach((attendedOn) => {
+        const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
+        const mentorSession = sessionLookup?.[attendedOnFormatted];
 
-    sessionDates.forEach((attendedOn) => {
-      const attendedOnFormatted = dayjs(attendedOn).format("YYYY-MM-DD");
-      const mentorSession = sessionLookup?.[attendedOnFormatted];
-
-      let label = "";
-      if (mentorSession) {
-        if (mentorSession.sessions.length === 0) {
-          if (mentorSession.status === "UNAVAILABLE") {
-            label = "Unavailable";
+        let label = "";
+        if (mentorSession) {
+          if (mentorSession.sessions.length === 0) {
+            if (mentorSession.status === "UNAVAILABLE") {
+              label = "Unavailable";
+            } else {
+              label = "Available";
+            }
+          } else if (mentorSession.sessions.length === 1) {
+            const session = mentorSession.sessions[0];
+            label = `${session.studentDisplayName} (Year ${session.yearLevel ?? "-"})${session.isCancelled ? " (Cancelled)" : ""}`;
           } else {
-            label = "Available";
+            label = `${mentorSession.sessions.length} Students`;
           }
-        } else if (mentorSession.sessions.length === 1) {
-          const session = mentorSession.sessions[0];
-          label = `${session.studentFullName} (Year ${session.yearLevel ?? "-"})${session.isCancelled ? " (Cancelled)" : ""}`;
-        } else {
-          label = `${mentorSession.sessions.length} Students`;
         }
-      }
 
-      result[attendedOnFormatted] = label;
-    });
+        result[attendedOnFormatted] = label;
+      });
 
-    return result;
-  });
+      return result;
+    },
+  );
 
   return addCollectionToSpreadsheet(spreadsheet);
 }
@@ -104,6 +114,9 @@ export async function getMentorsAsync(
     select: {
       id: true,
       fullName: true,
+      preferredName: true,
+      lastName: true,
+      firstName: true,
     },
     orderBy: {
       fullName: "asc",
@@ -121,7 +134,11 @@ export async function getMentorsAsync(
         sa.completedOn,
         sa.isCancelled,
         ss.studentId,
-        s.fullName AS studentFullName,
+        COALESCE(
+          NULLIF(TRIM(s.preferredName), ''),
+          NULLIF(TRIM(s.firstName), ''),
+          'Error'
+        ) AS studentDisplayName,
         s.yearLevel
       FROM MentorSession ms
       LEFT JOIN Session sa ON sa.mentorSessionId = ms.id
@@ -145,7 +162,7 @@ export async function getMentorsAsync(
       hasReport: mentorSession.hasReport === 1,
       completedOn: mentorSession.completedOn,
       isCancelled: mentorSession.isCancelled === 1,
-      studentFullName: mentorSession.studentFullName!,
+      studentDisplayName: mentorSession.studentDisplayName,
       yearLevel: mentorSession.yearLevel,
     };
 
