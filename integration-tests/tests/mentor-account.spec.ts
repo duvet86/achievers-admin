@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { goToMentorPage, setMentorClock, waitForHydration } from "../helpers";
+import { goToMentorPage, setMentorClock } from "../helpers";
 import {
   MENTOR_RESOURCE_CATEGORY,
   deleteMentorResourcesAsync,
@@ -172,7 +172,6 @@ test.describe("Mentor partners", () => {
     ).toHaveCount(0);
 
     await page.reload();
-    await waitForHydration(page);
 
     await expect(
       page

@@ -2,7 +2,7 @@ import type { Page } from "@playwright/test";
 
 import { test, expect } from "@playwright/test";
 
-import { goToMentorPage, setMentorClock, waitForHydration } from "../helpers";
+import { goToMentorPage, setMentorClock } from "../helpers";
 import { seedDataAsync, seedGoalsAsync } from "../test-data";
 
 const STUDENT = "student_0 student_lastname_0";
@@ -14,7 +14,6 @@ async function goToStudentLink(page: Page, link: string) {
     .getByRole("row", { name: STUDENT })
     .getByRole("link", { name: link, exact: true })
     .click();
-  await waitForHydration(page);
 }
 
 async function typeInEditor(page: Page, text: string) {
@@ -128,7 +127,6 @@ async function goToNewGoal(page: Page) {
     .getAttribute("href");
 
   await page.goto(`${goalsUrl}/new`);
-  await waitForHydration(page);
 
   await expect(
     page.getByRole("heading", { name: `Goal for "${STUDENT}"` }),
@@ -170,7 +168,6 @@ test.describe("Mentor goals", () => {
 
     await saveGoal(page, "Save");
     await page.waitForURL(/\/goals\/\d+$/);
-    await waitForHydration(page);
 
     await expect(page.getByLabel("Goal title")).toHaveValue("Read one book");
     await expect(page.getByLabel("To be completed on")).toHaveValue(
@@ -185,7 +182,6 @@ test.describe("Mentor goals", () => {
     await saveGoal(page, "Save");
 
     await page.reload();
-    await waitForHydration(page);
 
     await expect(page.getByLabel("Goal title")).toHaveValue("Read two books");
 
@@ -224,7 +220,6 @@ test.describe("Mentor goals", () => {
 
     // The form keeps what has been typed, read what has been saved.
     await page.reload();
-    await waitForHydration(page);
 
     await expect(page.getByLabel("Result")).toHaveValue("Still reading");
   });

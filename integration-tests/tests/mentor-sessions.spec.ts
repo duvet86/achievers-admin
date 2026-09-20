@@ -2,12 +2,7 @@ import type { Page } from "@playwright/test";
 
 import { test, expect } from "@playwright/test";
 
-import {
-  goToMentorPage,
-  selectSearchOption,
-  setMentorClock,
-  waitForHydration,
-} from "../helpers";
+import { goToMentorPage, selectSearchOption, setMentorClock } from "../helpers";
 import {
   seedDataAsync,
   seedSessionsForAdminAsync,
@@ -126,7 +121,6 @@ test.describe("Mentor session summaries (read only)", () => {
       .getByRole("link", { name: "View report" })
       .click();
     await page.waitForURL(/\/mentor\/view-reports\/\d+/);
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: 'Report of "16/11/2024"' }),
@@ -166,7 +160,6 @@ test.describe("Mentor session summaries of a student", () => {
       .getByRole("link", { name: "View report" })
       .click();
     await page.waitForURL(/\/mentor\/view-reports\/\d+/);
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: 'Report of "09/11/2024"' }),
@@ -207,7 +200,6 @@ test.describe("Mentor sessions (edit)", () => {
 
     await sessionRow.getByRole("link", { name: "Mark student absent" }).click();
     await page.waitForURL(/\/student-absent/);
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", {
@@ -250,7 +242,6 @@ test.describe("Mentor sessions (edit)", () => {
 
     await absentRow.getByRole("link", { name: "View report" }).click();
     await page.waitForURL(/\/mentor\/view-reports\/\d+/);
-    await waitForHydration(page);
 
     await expect(page.getByText("Session has been cancelled")).toBeVisible();
     await expect(

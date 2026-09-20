@@ -2,7 +2,7 @@ import type { Page } from "@playwright/test";
 
 import { test, expect } from "@playwright/test";
 
-import { goToSidebarPage, waitForHydration } from "../helpers";
+import { goToSidebarPage } from "../helpers";
 import { deleteSchoolTermsAsync } from "../test-data";
 
 // School terms of 2024 come from the database seed.
@@ -83,7 +83,6 @@ test.describe("Admin school terms", () => {
 
     // End date before start date.
     await page.reload();
-    await waitForHydration(page);
 
     await page.locator("#endDate0").fill("2024-01-01");
     await save(page);
@@ -94,7 +93,6 @@ test.describe("Admin school terms", () => {
 
     // Nothing has been saved.
     await page.reload();
-    await waitForHydration(page);
 
     await expectTerms(page, TERMS_2024);
   });
@@ -110,7 +108,6 @@ test.describe("Admin school terms", () => {
       await expect(getMessage(page)).toContainText("Success");
 
       await page.reload();
-      await waitForHydration(page);
 
       await expectTerms(page, [
         { start: "2024-01-31", end: "2024-03-27" },
@@ -118,7 +115,6 @@ test.describe("Admin school terms", () => {
       ]);
     } finally {
       await page.goto("/admin/school-terms");
-      await waitForHydration(page);
 
       await fillTerms(page, TERMS_2024);
       await save(page);
@@ -127,7 +123,6 @@ test.describe("Admin school terms", () => {
     }
 
     await page.reload();
-    await waitForHydration(page);
 
     await expectTerms(page, TERMS_2024);
   });
@@ -137,7 +132,6 @@ test.describe("Admin school terms", () => {
 
     await page.getByRole("link", { name: "Add new term" }).click();
     await page.waitForURL(/\/admin\/school-terms\/new/);
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: "Add new school term" }),
@@ -157,7 +151,6 @@ test.describe("Admin school terms", () => {
 
       await page.getByRole("link", { name: "Add new term" }).click();
       await page.waitForURL(/\/admin\/school-terms\/new/);
-      await waitForHydration(page);
 
       await fillTerms(page, NEW_TERMS);
       await save(page);
@@ -165,13 +158,11 @@ test.describe("Admin school terms", () => {
       await expect(getMessage(page)).toContainText("Terms added successfully");
 
       await page.goto("/admin/school-terms");
-      await waitForHydration(page);
 
       await page
         .getByLabel("Select a year")
         .selectOption({ label: `${NEW_YEAR}` });
       await page.waitForURL(new RegExp(`/admin/school-terms/${NEW_YEAR}`));
-      await waitForHydration(page);
 
       await expectTerms(page, NEW_TERMS);
     } finally {

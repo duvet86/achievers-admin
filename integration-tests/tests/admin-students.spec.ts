@@ -7,7 +7,6 @@ import {
   expectFields,
   fillFields,
   goToSidebarPage,
-  waitForHydration,
 } from "../helpers";
 import { CHAPTER_DATA, seedDataAsync } from "../test-data";
 
@@ -20,7 +19,6 @@ async function goToEditFirstStudent(page: Page) {
     .getByRole("row", { name: FIRST_STUDENT })
     .getByRole("link", { name: "Edit" })
     .click();
-  await waitForHydration(page);
 
   await expect(
     page.getByRole("heading", { name: "Edit student info" }),
@@ -30,7 +28,6 @@ async function goToEditFirstStudent(page: Page) {
 async function openHeaderAction(page: Page, name: string) {
   await page.getByRole("button", { name: "Actions" }).click();
   await page.getByRole("link", { name }).click();
-  await waitForHydration(page);
 }
 
 test.describe("Admin students (read only)", () => {
@@ -266,7 +263,6 @@ test.describe("Admin students (edit)", () => {
     );
 
     await page.reload();
-    await waitForHydration(page);
 
     await expectFields(page, updatedValues, { exact: true });
     await expect(page.getByLabel("Chapter", { exact: true })).toHaveValue(
@@ -289,7 +285,6 @@ test.describe("Admin students (edit)", () => {
 
     // Add.
     await page.getByRole("link", { name: "Add a guardian" }).click();
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: "Add new guardian" }),
@@ -320,7 +315,6 @@ test.describe("Admin students (edit)", () => {
 
     // Edit.
     await guardianRow.getByRole("link", { name: "Edit" }).click();
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: "Edit info for guardian" }),
@@ -369,7 +363,6 @@ test.describe("Admin students (edit)", () => {
 
     // Add.
     await page.getByRole("link", { name: "Add a teacher" }).click();
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: "Add new teacher" }),
@@ -396,7 +389,6 @@ test.describe("Admin students (edit)", () => {
 
     // Edit.
     await teacherRow.getByRole("link", { name: "Edit" }).click();
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: "Edit info for teacher" }),
@@ -469,7 +461,6 @@ test.describe("Admin students (edit)", () => {
       .getByRole("row", { name: FIRST_STUDENT })
       .getByRole("link", { name: "Edit" })
       .click();
-    await waitForHydration(page);
 
     await expect(page.getByTitle("archived")).toBeVisible();
 
@@ -498,7 +489,6 @@ test.describe("Admin students (edit)", () => {
 
     await page.getByRole("link", { name: "Add new student" }).click();
     await page.waitForURL(/\/admin\/students\/new/);
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: "Add new student" }),
@@ -556,7 +546,6 @@ test.describe("Admin students (edit)", () => {
 
     await page.getByRole("link", { name: "Grades tracker" }).click();
     await page.waitForURL(/grades-tracker/);
-    await waitForHydration(page);
 
     await expect(page.getByText("No grades yet")).toBeVisible();
 

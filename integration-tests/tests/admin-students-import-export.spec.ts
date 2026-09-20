@@ -10,7 +10,6 @@ import {
   buildSpreadsheet,
   goToSidebarPage,
   uploadFile,
-  waitForHydration,
 } from "../helpers";
 import { seedDataAsync } from "../test-data";
 
@@ -56,7 +55,6 @@ async function goToImportStudents(page: Page) {
   await page.getByTitle("actions").click();
   await page.getByRole("link", { name: "Import students" }).click();
   await page.waitForURL(/\/admin\/students\/import$/);
-  await waitForHydration(page);
 }
 
 async function importStudents(page: Page, rows: Record<string, unknown>[]) {
@@ -100,7 +98,6 @@ test.describe("Admin students import and export", () => {
     // History.
     await page.getByRole("link", { name: "View history" }).click();
     await page.waitForURL(/import-history/);
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: "History of imported students" }),
@@ -122,7 +119,6 @@ test.describe("Admin students import and export", () => {
     ).toBeVisible();
 
     await studentRow.getByRole("link", { name: "Edit" }).click();
-    await waitForHydration(page);
 
     await expect(page.getByLabel("First name")).toHaveValue("Import");
     await expect(page.getByLabel("Last name")).toHaveValue("Student");

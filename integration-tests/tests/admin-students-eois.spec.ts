@@ -2,12 +2,7 @@ import type { Page } from "@playwright/test";
 
 import { test, expect } from "@playwright/test";
 
-import {
-  expectFields,
-  fillFields,
-  goToSidebarPage,
-  waitForHydration,
-} from "../helpers";
+import { expectFields, fillFields, goToSidebarPage } from "../helpers";
 import { CHAPTER_DATA, seedDataAsync, seedStudentEoiAsync } from "../test-data";
 
 const EOI_STUDENT = "Eoi Student";
@@ -23,7 +18,6 @@ async function goToEois(page: Page) {
   await page.getByTitle("actions").click();
   await page.getByRole("link", { name: "EOIs" }).click();
   await page.waitForURL(/\/admin\/students\/eois$/);
-  await waitForHydration(page);
 }
 
 async function goToEoi(page: Page) {
@@ -31,7 +25,6 @@ async function goToEoi(page: Page) {
 
   await page.getByRole("row", { name: EOI_STUDENT }).click();
   await page.waitForURL(/\/admin\/students\/eois\/\d+/);
-  await waitForHydration(page);
 
   await expect(
     page.getByRole("heading", { name: "Student Expression Of Interest" }),
@@ -158,7 +151,6 @@ test.describe("Admin students expressions of interest (edit)", () => {
     );
 
     await page.reload();
-    await waitForHydration(page);
 
     await expectFields(page, updatedValues, { exact: true });
   });
@@ -170,7 +162,6 @@ test.describe("Admin students expressions of interest (edit)", () => {
 
     await page.getByRole("link", { name: "Promote student" }).click();
     await page.waitForURL(/promote/);
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: `Promote student "${EOI_STUDENT}"` }),
@@ -191,7 +182,6 @@ test.describe("Admin students expressions of interest (edit)", () => {
 
     await page.getByRole("row", { name: EOI_STUDENT }).click();
     await page.waitForURL(/\/admin\/students\/eois\/\d+/);
-    await waitForHydration(page);
 
     await expect(
       page.getByText("This student is already part of the Achievers!"),

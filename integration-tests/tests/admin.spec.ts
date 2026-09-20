@@ -2,17 +2,15 @@ import type { Page } from "@playwright/test";
 
 import { test, expect } from "@playwright/test";
 
-import { expectFields, fillFields, waitForHydration } from "../helpers";
+import { expectFields, fillFields } from "../helpers";
 import { CHAPTER_DATA, seedDataAsync } from "../test-data";
 
 async function goToEditFirstMentor(page: Page) {
   await page.getByRole("link", { name: "Mentors", exact: true }).click();
-  await waitForHydration(page);
   await page
     .getByRole("row", { name: "test_0 user_0" })
     .getByRole("link", { name: "Edit" })
     .click();
-  await waitForHydration(page);
 }
 
 async function goToMentorSection(page: Page, section: string) {
@@ -20,7 +18,6 @@ async function goToMentorSection(page: Page, section: string) {
     .getByRole("row", { name: section })
     .getByRole("link", { name: "View" })
     .click();
-  await waitForHydration(page);
 }
 
 test.describe("Admin", () => {
@@ -148,10 +145,6 @@ test.describe("Admin", () => {
 
   test("should import mentors from file", async ({ page }) => {
     await page.getByRole("link", { name: "Mentors", exact: true }).click();
-
-    // The actions dropdown is focus based, hydration re-renders it and closes
-    // the menu, swallowing the click on "Import mentors".
-    await waitForHydration(page);
 
     await page.getByTitle("actions").click();
     await page.getByRole("link", { name: "Import mentors" }).click();

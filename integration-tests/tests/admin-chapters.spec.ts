@@ -2,12 +2,7 @@ import type { Page } from "@playwright/test";
 
 import { test, expect } from "@playwright/test";
 
-import {
-  acceptDialogs,
-  goToSidebarPage,
-  selectSearchOption,
-  waitForHydration,
-} from "../helpers";
+import { acceptDialogs, goToSidebarPage, selectSearchOption } from "../helpers";
 import { CHAPTER_DATA, seedDataAsync } from "../test-data";
 
 const CHAPTERS = [
@@ -34,7 +29,6 @@ async function goToChapterLink(page: Page, chapter: string, link: string) {
   await goToSidebarPage(page, "Chapters");
 
   await getChapterCard(page, chapter).getByRole("link", { name: link }).click();
-  await waitForHydration(page);
 }
 
 test.describe("Admin chapters (read only)", () => {
@@ -183,7 +177,6 @@ test.describe("Admin chapters (read only)", () => {
   // nothing links to it, so only check that it renders.
   test("should display chapter info", async ({ page }) => {
     await page.goto(`/admin/chapters/${CHAPTER_DATA.Butler}`);
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: "Edit chapter" }),
@@ -214,7 +207,6 @@ test.describe("Admin chapters (edit)", () => {
       .getByRole("row", { name: /^student_2 student_lastname_2/ })
       .getByRole("link", { name: "Edit" })
       .click();
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: "Assign mentor to student" }),
@@ -260,7 +252,6 @@ test.describe("Admin chapters (edit)", () => {
       .getByRole("row", { name: /^test_0 user_0/ })
       .getByRole("link", { name: "Edit" })
       .click();
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: "Assign student to mentor" }),

@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { goToSidebarPage, waitForHydration } from "../helpers";
+import { goToSidebarPage } from "../helpers";
 
 test.describe("Admin config", () => {
   test("should display config settings", async ({ page }) => {
@@ -30,7 +30,6 @@ test.describe("Admin config", () => {
 
     await page.getByRole("link", { name: "View Police check" }).click();
     await page.waitForURL(/email-reminders-police-check/);
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: "Police check email reminders" }),
@@ -51,7 +50,6 @@ test.describe("Admin config", () => {
 
     await page.getByRole("link", { name: "View WWC" }).click();
     await page.waitForURL(/email-reminders-wwc/);
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: "WWC email reminders" }),
@@ -74,7 +72,6 @@ test.describe("Admin config", () => {
       .getByRole("link", { name: "Configure mentor resources" })
       .click();
     await page.waitForURL(/mentor-resources/);
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: "Configure mentor resources" }),

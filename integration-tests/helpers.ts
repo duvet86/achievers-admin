@@ -29,28 +29,19 @@ export async function expectFields(
   }
 }
 
-// The app is server rendered. Interacting before hydration finishes can lose
-// clicks and reset filled values, so wait for the page to settle after
-// navigating.
-export async function waitForHydration(page: Page) {
-  await page.waitForLoadState("networkidle");
-}
-
 export async function goToSidebarPage(
   page: Page,
   name: string,
   startPath = "/",
 ) {
   await page.goto(startPath);
-  await waitForHydration(page);
 
   const link = page.getByRole("link", { name, exact: true });
   const href = await link.getAttribute("href");
 
   await link.click();
-  // Waiting for the network alone can resolve before the navigation starts.
+  // The link is handled on the client, wait for the navigation to finish.
   await page.waitForURL((url) => url.pathname.startsWith(href!));
-  await waitForHydration(page);
 }
 
 // Accept the `confirm()` dialogs used before destructive actions.

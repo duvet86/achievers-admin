@@ -2,11 +2,7 @@ import type { Page } from "@playwright/test";
 
 import { test, expect } from "@playwright/test";
 
-import {
-  goToSidebarPage,
-  selectSearchOption,
-  waitForHydration,
-} from "../helpers";
+import { goToSidebarPage, selectSearchOption } from "../helpers";
 import { CHAPTER_DATA, seedDataAsync, seedGoalsAsync } from "../test-data";
 
 const MENTOR = "test_0 user_0";
@@ -112,7 +108,6 @@ test.describe("Admin goals", () => {
       .getByRole("link", { name: "View" })
       .click();
     await page.waitForURL(/\/admin\/goals\/\d+/);
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: `Goal for "${OPEN_GOAL.student}"` }),
@@ -137,7 +132,6 @@ test.describe("Admin goals", () => {
       .getByRole("link", { name: "View" })
       .click();
     await page.waitForURL(/\/admin\/goals\/\d+/);
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", {

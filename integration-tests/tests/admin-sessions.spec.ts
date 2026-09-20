@@ -2,7 +2,7 @@ import type { Page } from "@playwright/test";
 
 import { test, expect } from "@playwright/test";
 
-import { goToSidebarPage, waitForHydration } from "../helpers";
+import { goToSidebarPage } from "../helpers";
 import { seedDataAsync, seedSessionsForAdminAsync } from "../test-data";
 
 const MENTOR = "test_0 user_0";
@@ -30,7 +30,6 @@ async function seedAsync() {
 
 async function filterSessions(page: Page, filter: string) {
   await page.getByLabel(filter, { exact: true }).check();
-  await waitForHydration(page);
 }
 
 async function typeInEditor(page: Page, text: string) {
@@ -144,7 +143,6 @@ test.describe("Admin sessions (read only)", () => {
       .getByRole("row", { name: OUTSTANDING_SESSION.student })
       .getByRole("link", { name: "Session" })
       .click();
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", { name: /Session of/ }),
@@ -183,7 +181,6 @@ test.describe("Admin sessions (read only)", () => {
       .getByRole("row", { name: TO_SIGN_OFF_SESSION.student })
       .getByRole("link", { name: "Report" })
       .click();
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", {
@@ -215,7 +212,6 @@ test.describe("Admin sessions (read only)", () => {
       .getByRole("row", { name: SIGNED_OFF_SESSION.student })
       .getByRole("link", { name: "Report" })
       .click();
-    await waitForHydration(page);
 
     await expect(
       page.getByText(
@@ -246,10 +242,8 @@ test.describe("Admin sessions (edit)", () => {
       .getByRole("row", { name: OUTSTANDING_SESSION.student })
       .getByRole("link", { name: "Session" })
       .click();
-    await waitForHydration(page);
 
     await page.getByRole("link", { name: "Mark absent" }).first().click();
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", {
@@ -283,7 +277,6 @@ test.describe("Admin sessions (edit)", () => {
       .getByRole("link", { name: "Report" })
       .click();
     await page.waitForURL(/\/report/);
-    await waitForHydration(page);
 
     await expect(
       page.getByText("Session cancelled", { exact: true }),
@@ -302,10 +295,8 @@ test.describe("Admin sessions (edit)", () => {
       .getByRole("row", { name: OUTSTANDING_SESSION.student })
       .getByRole("link", { name: "Session" })
       .click();
-    await waitForHydration(page);
 
     await page.getByRole("link", { name: "Report on behalf" }).click();
-    await waitForHydration(page);
 
     await expect(
       page.getByRole("heading", {
@@ -322,7 +313,6 @@ test.describe("Admin sessions (edit)", () => {
     );
 
     await page.reload();
-    await waitForHydration(page);
 
     await expect(
       page.locator('.lexical span[data-lexical-text="true"]').first(),
