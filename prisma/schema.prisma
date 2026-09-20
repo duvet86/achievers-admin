@@ -280,9 +280,11 @@ model ApprovalbyMRC {
 }
 
 model Chapter {
-  id      Int    @id @default(autoincrement())
-  name    String @unique
-  address String
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  address     String
+  isMentorHub Boolean @default(true)
+  order       Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

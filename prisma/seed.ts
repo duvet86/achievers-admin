@@ -41,6 +41,7 @@ async function seed() {
     create: {
       name: "Girrawheen",
       address: "11 Patrick Court Girrawheen WA 6064",
+      order: 2,
     },
     update: {},
   });
@@ -53,6 +54,7 @@ async function seed() {
       name: "Armadale",
       address:
         "Library, Westfield Park Primary School, Hemingway Drive Camillo WA 6111",
+      order: 3,
     },
     update: {},
   });
@@ -64,6 +66,20 @@ async function seed() {
     create: {
       name: "Butler",
       address: "East Butler Primary School, Amersham Crescent Butler 6036",
+      order: 4,
+    },
+    update: {},
+  });
+
+  await prisma.chapter.upsert({
+    where: {
+      name: "Head Office",
+    },
+    create: {
+      name: "Head Office",
+      address: "11 Patrick Court Girrawheen WA 6064",
+      order: 1,
+      isMentorHub: false,
     },
     update: {},
   });

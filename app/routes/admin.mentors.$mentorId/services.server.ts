@@ -29,6 +29,9 @@ export async function getChaptersAsync() {
       id: true,
       name: true,
     },
+    orderBy: {
+      order: "asc",
+    },
   });
 }
 
