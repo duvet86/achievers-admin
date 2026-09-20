@@ -2,26 +2,8 @@ import type { Page } from "@playwright/test";
 
 import { test, expect } from "@playwright/test";
 
+import { expectFields, fillFields, waitForHydration } from "../helpers";
 import { CHAPTER_DATA, seedDataAsync } from "../test-data";
-
-async function fillFields(page: Page, fields: Record<string, string>) {
-  for (const [label, value] of Object.entries(fields)) {
-    await page.getByLabel(label).fill(value);
-  }
-}
-
-async function expectFields(page: Page, fields: Record<string, string>) {
-  for (const [label, value] of Object.entries(fields)) {
-    await expect(page.getByLabel(label)).toHaveValue(value);
-  }
-}
-
-// The app is server rendered. Interacting before hydration finishes can lose
-// clicks and reset filled values, so wait for the page to settle after
-// navigating.
-async function waitForHydration(page: Page) {
-  await page.waitForLoadState("networkidle");
-}
 
 async function goToEditFirstMentor(page: Page) {
   await page.getByRole("link", { name: "Mentors", exact: true }).click();
