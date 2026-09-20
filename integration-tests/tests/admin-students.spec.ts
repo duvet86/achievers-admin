@@ -492,4 +492,113 @@ test.describe("Admin students (edit)", () => {
     ).toHaveCount(0);
     await expect(page.getByRole("row", { name: FIRST_STUDENT })).toBeVisible();
   });
+
+  test("should add a new student", async ({ page }) => {
+    await goToSidebarPage(page, "Students");
+
+    await page.getByRole("link", { name: "Add new student" }).click();
+    await page.waitForURL(/\/admin\/students\/new/);
+    await waitForHydration(page);
+
+    await expect(
+      page.getByRole("heading", { name: "Add new student" }),
+    ).toBeVisible();
+
+    // Guardians and teachers can only be added once the student exists.
+    await expect(
+      page.getByRole("link", { name: "School reports" }),
+    ).toHaveCount(0);
+
+    await fillFields(
+      page,
+      {
+        "First name": "New",
+        "Last name": "Kid",
+        Address: "1 New street",
+        "Best person to contact": "Mum",
+        "Best contact method": "phone",
+        "Name of the school": "New school",
+        "Emergency contact full name": "Emergency name",
+        "Emergency contact relationship": "aunt",
+        "Emergency contact phone": "999999",
+        "Emergency contact email": "new@emergency.com",
+        "Emergency contact address": "New emergency address",
+      },
+      { exact: true },
+    );
+    await page.getByLabel("Chapter", { exact: true }).selectOption({
+      label: "Butler",
+    });
+    await page.getByLabel("Gender").selectOption("FEMALE");
+    await page.getByLabel("Date of birth").fill("2015-03-04");
+
+    await page.getByRole("button", { name: "Save" }).click();
+
+    await expect(page.getByTestId("message").first()).toContainText(
+      "Student updated successfully",
+    );
+
+    await goToSidebarPage(page, "Students");
+
+    await page.getByPlaceholder("Search").fill("New Kid");
+    await page.keyboard.press("Enter");
+
+    await expect(page.getByRole("row")).toHaveCount(2);
+    await expect(
+      page.getByRole("row", { name: "New Kid" }).getByRole("cell", {
+        name: "Butler",
+      }),
+    ).toBeVisible();
+  });
+
+  test("should add and delete grades of a student", async ({ page }) => {
+    await goToEditFirstStudent(page);
+
+    await page.getByRole("link", { name: "Grades tracker" }).click();
+    await page.waitForURL(/grades-tracker/);
+    await waitForHydration(page);
+
+    await expect(page.getByText("No grades yet")).toBeVisible();
+
+    const addGrade = async (
+      year: string,
+      semester: string,
+      subject: string,
+      grade: string,
+    ) => {
+      await page.getByLabel("Year").selectOption(year);
+      await page.getByLabel("Semester").selectOption(semester);
+      await page.getByLabel("Subject").selectOption(subject);
+      await page.getByLabel("Grade").selectOption(grade);
+      await page.getByRole("button", { name: "Submit" }).click();
+    };
+
+    const mathsRow = page.getByRole("row", { name: /2024 Semester 1 Maths A/ });
+    const englishRow = page.getByRole("row", {
+      name: /2024 Semester 2 English B/,
+    });
+
+    await addGrade("2024", "sem1", "MATH", "A");
+
+    await expect(mathsRow).toBeVisible();
+    await expect(page.getByText("No grades yet")).not.toBeVisible();
+
+    await addGrade("2024", "sem2", "ENG", "B");
+
+    await expect(englishRow).toBeVisible();
+    await expect(mathsRow).toBeVisible();
+
+    // A subject can be graded once per semester.
+    await addGrade("2024", "sem1", "MATH", "C");
+
+    await expect(page.getByText("Grade entry already exists.")).toBeVisible();
+    await expect(
+      page.getByRole("row", { name: /2024 Semester 1 Maths C/ }),
+    ).toHaveCount(0);
+
+    await mathsRow.getByRole("button", { name: "Delete" }).click();
+
+    await expect(mathsRow).toHaveCount(0);
+    await expect(englishRow).toBeVisible();
+  });
 });

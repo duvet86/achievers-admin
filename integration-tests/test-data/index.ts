@@ -404,3 +404,245 @@ export async function deleteSchoolTermsAsync(year: number) {
     await prisma.$disconnect();
   }
 }
+
+// A student expression of interest, with a guardian and a teacher.
+export async function seedStudentEoiAsync() {
+  const prisma = new PrismaClient({ adapter });
+
+  try {
+    await prisma.$connect();
+
+    await prisma.$transaction(async (tx) => {
+      await tx.eoiStudentProfile.deleteMany();
+
+      const chapterId = (await tx.chapter.findFirstOrThrow()).id;
+
+      await tx.eoiStudentProfile.create({
+        data: {
+          firstName: "Eoi",
+          lastName: "Student",
+          preferredName: "Eoi pref",
+          dateOfBirth: new Date("2014-05-12T00:00:00.000Z"),
+          gender: "MALE",
+          mobile: "0400111222",
+          email: "eoi@test.com",
+          address: "1 Eoi street",
+          dietaryRequirements: "None",
+          isEnglishMainLanguage: true,
+          otherLanguagesSpoken: "Italian",
+          bestPersonToContact: "Mum",
+          bestPersonToContactForEmergency: "Dad",
+          yearLevel: "5",
+          favouriteSchoolSubject: "Maths",
+          leastFavouriteSchoolSubject: "Art",
+          supportReason: "Needs help with reading",
+          otherSupport: "None",
+          alreadyInAchievers: "No",
+          heardAboutUs: "A friend",
+          schoolName: "Eoi school",
+          weeklyCommitment: true,
+          hasApprovedToPublishPhotos: true,
+          chapterId,
+          studentGuardian: {
+            create: {
+              fullName: "Eoi Guardian",
+              relationship: "mother",
+              phone: "0400333444",
+              email: "guardian@eoi.com",
+              address: "1 Eoi street",
+            },
+          },
+          studentTeacher: {
+            create: {
+              fullName: "Eoi Teacher",
+              email: "teacher@eoi.com",
+              schoolName: "Eoi school",
+            },
+          },
+        },
+      });
+    });
+  } catch (e) {
+    console.log(e);
+
+    throw e;
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+// test_1 shares its email and mobile with test_0.
+export async function seedPartnerSharedInfoAsync() {
+  const prisma = new PrismaClient({ adapter });
+
+  try {
+    await prisma.$connect();
+
+    await prisma.$transaction(async (tx) => {
+      await tx.volunteerShareInfo.deleteMany();
+
+      const [sharing, sharedTo] = await Promise.all([
+        tx.volunteer.findUniqueOrThrow({
+          where: { email: "test_1@test.com" },
+          select: { id: true },
+        }),
+        tx.volunteer.findUniqueOrThrow({
+          where: { email: "test_0@test.com" },
+          select: { id: true },
+        }),
+      ]);
+
+      await tx.volunteerShareInfo.create({
+        data: {
+          volunteerSharingId: sharing.id,
+          volunteerSharedToId: sharedTo.id,
+        },
+      });
+    });
+  } catch (e) {
+    console.log(e);
+
+    throw e;
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+export const MENTOR_RESOURCE_CATEGORY = "Integration tests resources";
+
+// Mentor resources are not part of the seed data, tests that add them need to
+// remove them.
+export async function seedMentorResourcesAsync() {
+  await deleteMentorResourcesAsync();
+
+  const prisma = new PrismaClient({ adapter });
+
+  try {
+    await prisma.$connect();
+
+    await prisma.volunteerResourceCategory.create({
+      data: {
+        label: MENTOR_RESOURCE_CATEGORY,
+        order: 999,
+        volunteerResource: {
+          createMany: {
+            data: [
+              {
+                label: "Reading tips",
+                description: "How to read with your student",
+                url: "https://example.com/reading",
+                order: 1,
+              },
+              {
+                label: "Maths games",
+                description: "Games to practice maths",
+                url: "https://example.com/maths",
+                order: 2,
+              },
+            ],
+          },
+        },
+      },
+    });
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+export async function deleteMentorResourcesAsync() {
+  const prisma = new PrismaClient({ adapter });
+
+  try {
+    await prisma.$connect();
+
+    await prisma.volunteerResource.deleteMany({
+      where: {
+        volunteerResourcesCategory: {
+          label: MENTOR_RESOURCE_CATEGORY,
+        },
+      },
+    });
+    await prisma.volunteerResourceCategory.deleteMany({
+      where: {
+        label: MENTOR_RESOURCE_CATEGORY,
+      },
+    });
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+// Three sessions of test_0 with student_0, all with a submitted report.
+export async function seedSessionsOfStudentAsync() {
+  const prisma = new PrismaClient({ adapter });
+
+  try {
+    await prisma.$connect();
+
+    await prisma.$transaction(async (tx) => {
+      await tx.session.deleteMany();
+      await tx.volunteerSession.deleteMany();
+      await tx.studentSession.deleteMany();
+
+      const testVolunteer = await tx.volunteer.findUniqueOrThrow({
+        where: {
+          email: "test_0@test.com",
+        },
+        select: {
+          id: true,
+          chapterId: true,
+        },
+      });
+
+      const studentAssignment =
+        await tx.volunteerToStudentAssignement.findFirstOrThrow({
+          where: {
+            volunteerId: testVolunteer.id,
+          },
+          select: {
+            studentId: true,
+          },
+          orderBy: {
+            studentId: "asc",
+          },
+        });
+
+      for (const day of ["2024-11-02", "2024-11-09", "2024-11-16"]) {
+        const attendedOn = new Date(`${day}T00:00:00.000Z`);
+
+        const studentSession = await tx.studentSession.create({
+          data: {
+            chapterId: testVolunteer.chapterId,
+            studentId: studentAssignment.studentId,
+            attendedOn,
+          },
+        });
+
+        const volunteerSession = await tx.volunteerSession.create({
+          data: {
+            chapterId: testVolunteer.chapterId,
+            volunteerId: testVolunteer.id,
+            attendedOn,
+          },
+        });
+
+        await tx.session.create({
+          data: {
+            attendedOn,
+            chapterId: testVolunteer.chapterId,
+            studentSessionId: studentSession.id,
+            volunteerSessionId: volunteerSession.id,
+            report: REPORT_JSON,
+            completedOn: new Date(`${day}T12:00:00.000Z`),
+          },
+        });
+      }
+    });
+  } catch (e) {
+    console.log(e);
+
+    throw e;
+  } finally {
+    await prisma.$disconnect();
+  }
+}

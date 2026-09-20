@@ -69,7 +69,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   const title = formData.get("title")?.toString();
   const endDate = formData.get("endDate")?.toString();
   const goal = formData.get("goal")?.toString();
-  const result = formData.get("goal")?.toString();
+  const result = formData.get("result")?.toString();
   const isComplete = formData.get("complete")?.toString();
 
   invariant(title);

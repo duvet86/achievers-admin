@@ -17,6 +17,7 @@ export async function createStudentsAsync(
   await tx.studentNote.deleteMany();
 
   await tx.student.deleteMany();
+  await tx.eoiStudentProfile.deleteMany();
   await tx.$queryRaw`ALTER TABLE Student AUTO_INCREMENT = 1;`;
 
   const chapterId = (await tx.chapter.findFirstOrThrow()).id;

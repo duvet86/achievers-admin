@@ -27,14 +27,14 @@ export async function exportStudentsToSpreadsheetAsync() {
     "Dietary Requirements/Allergies": s.allergies === true ? "Yes" : "No",
     "Best Person to Contact": s.bestPersonToContact ?? undefined,
     "Best Contact Method": s.bestContactMethod ?? undefined,
-    "Parent/Guardian 1 Full name": s.guardian[0]?.address ?? undefined,
+    "Parent/Guardian 1 Full name": s.guardian[0]?.fullName ?? undefined,
     "Parent/Guardian 1 Relationship": s.guardian[0]?.relationship ?? undefined,
     "Parent/Guardian 1 Phone": s.guardian[0]?.phone
       ? Number(s.guardian[0].phone)
       : undefined,
     "Parent/Guardian 1 Email": s.guardian[0]?.email ?? undefined,
     "Parent/Guardian 1 Address": s.guardian[0]?.address ?? undefined,
-    "Parent/Guardian 2 Full name": s.guardian[1]?.address ?? undefined,
+    "Parent/Guardian 2 Full name": s.guardian[1]?.fullName ?? undefined,
     "Parent/Guardian 2 Relationship": s.guardian[1]?.relationship ?? undefined,
     "Parent/Guardian 2 Phone": s.guardian[1]?.phone
       ? Number(s.guardian[1].phone)

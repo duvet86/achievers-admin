@@ -65,6 +65,7 @@ export async function createGoalAsync(data: GoalCommad) {
       studentId: data.studentId,
       endDate: dayjs.utc(data.endDate, "YYYY-MM-DD").toDate(),
       goal: data.goal,
+      result: data.result,
       title: data.title,
       isAchieved: false,
     },
@@ -84,6 +85,7 @@ export async function updateGoalByIdAsync(goalId: number, data: GoalCommad) {
     data: {
       endDate: dayjs.utc(data.endDate, "YYYY-MM-DD").toDate(),
       goal: data.goal,
+      result: data.result,
       title: data.title,
       isAchieved: data.isComplete,
     },

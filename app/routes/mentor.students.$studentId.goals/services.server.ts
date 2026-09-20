@@ -24,10 +24,13 @@ export async function getUserByAzureADIdAsync(azureADId: string) {
   });
 }
 
-export async function getGoalsForStudent(mentorId: number, studentId: number) {
+export async function getGoalsForStudent(
+  volunteerId: number,
+  studentId: number,
+) {
   return await prisma.goal.findMany({
     where: {
-      mentorId,
+      volunteerId,
       studentId,
     },
     select: {
