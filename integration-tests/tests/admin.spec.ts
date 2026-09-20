@@ -1,358 +1,458 @@
+import type { Page } from "@playwright/test";
+
 import { test, expect } from "@playwright/test";
 
-import { seedDataAsync } from "../test-data";
+import { CHAPTER_DATA, seedDataAsync } from "../test-data";
 
-import { AdminLayoutPage } from "../pages/admin-layout.page";
-import { AdminHomePage } from "../pages/admin-home.page";
-import { AdminUsersPage } from "../pages/admin-users.page";
-import { AdminUserPage } from "../pages/admin-user/admin-userInfo.page";
-import { EOIInfoPage } from "../pages/eoi.page";
-import { ImportMentorsPage } from "../pages/import-mentors.page";
-import { ReferencePage } from "../pages/reference";
-import { PoliceCheckPage } from "../pages/police-check.page";
-import { WWCCheckPage } from "../pages/wwc-check.page";
-import { ApprovalMRCPage } from "../pages/approval-mrc.page";
+async function fillFields(page: Page, fields: Record<string, string>) {
+  for (const [label, value] of Object.entries(fields)) {
+    await page.getByLabel(label).fill(value);
+  }
+}
+
+async function expectFields(page: Page, fields: Record<string, string>) {
+  for (const [label, value] of Object.entries(fields)) {
+    await expect(page.getByLabel(label)).toHaveValue(value);
+  }
+}
+
+// The app is server rendered. Interacting before hydration finishes can lose
+// clicks and reset filled values, so wait for the page to settle after
+// navigating.
+async function waitForHydration(page: Page) {
+  await page.waitForLoadState("networkidle");
+}
+
+async function goToEditFirstMentor(page: Page) {
+  await page.getByRole("link", { name: "Mentors", exact: true }).click();
+  await waitForHydration(page);
+  await page
+    .getByRole("row", { name: "test_0 user_0" })
+    .getByRole("link", { name: "Edit" })
+    .click();
+  await waitForHydration(page);
+}
+
+async function goToMentorSection(page: Page, section: string) {
+  await page
+    .getByRole("row", { name: section })
+    .getByRole("link", { name: "View" })
+    .click();
+  await waitForHydration(page);
+}
 
 test.describe("Admin", () => {
-  let adminLayoutPage: AdminLayoutPage;
-  let adminHomePage: AdminHomePage;
-  let usersListPage: AdminUsersPage;
-  let userInfoPage: AdminUserPage;
-  let eoiInfoPage: EOIInfoPage;
-  let importMentorsPage: ImportMentorsPage;
-  let referencePage: ReferencePage;
-  let policeCheckPage: PoliceCheckPage;
-  let wWCCheckPage: WWCCheckPage;
-  let approvalMRCPage: ApprovalMRCPage;
-
   test.beforeEach(async ({ page }) => {
     await seedDataAsync();
-
-    adminLayoutPage = new AdminLayoutPage(page);
-    adminHomePage = new AdminHomePage(page);
-    usersListPage = new AdminUsersPage(page);
-    userInfoPage = new AdminUserPage(page);
-    eoiInfoPage = new EOIInfoPage(page);
-    importMentorsPage = new ImportMentorsPage(page);
-    referencePage = new ReferencePage(page);
-    policeCheckPage = new PoliceCheckPage(page);
-    wWCCheckPage = new WWCCheckPage(page);
-    approvalMRCPage = new ApprovalMRCPage(page);
 
     await page.goto("/");
 
     await expect(page).toHaveTitle(/Achievers WA/);
 
-    await adminLayoutPage.expect.toHaveTitle();
-    await adminLayoutPage.expect.toHaveDrawerLinks();
+    await expect(
+      page.getByRole("link", { name: "Achievers WA" }),
+    ).toBeVisible();
+
+    for (const name of ["Home", "Mentors", "Students", "Chapters"]) {
+      await expect(page.getByRole("link", { name, exact: true })).toBeVisible();
+    }
   });
 
-  test("should have home page", async () => {
-    await adminHomePage.expect.toHaveTitle();
-    await adminHomePage.expect.toHaveCounters();
-    await adminHomePage.expect.toHaveLinks();
+  test("should have home page", async ({ page }) => {
+    await expect(
+      page.getByRole("heading", {
+        name: "Welcome to Achievers Club WA admin system",
+      }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole("heading", { name: "Mentors with incomplete checks" }),
+    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "17" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "of 18 total mentors" }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole("heading", { name: "Students without a mentor" }),
+    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "15" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "of 18 total students" }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("heading", { name: "Chapters" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "4" })).toBeVisible();
+
+    const links = page.getByRole("link", { name: "View" });
+
+    await expect(links).toHaveCount(4);
+    await expect(links.nth(0)).toHaveAttribute("href", "/admin/mentors");
+    await expect(links.nth(1)).toHaveAttribute("href", "/admin/students");
+    await expect(links.nth(2)).toHaveAttribute("href", "/admin/chapters");
+    await expect(links.nth(3)).toHaveAttribute("href", "/mentor/home");
   });
 
-  test("should display list of mentors", async () => {
-    await adminLayoutPage.goToMentorsList();
+  test("should display list of mentors", async ({ page }) => {
+    const rows = page.getByRole("row");
+    const previousPageButton = page.getByTitle("previous");
+    const nextPageButton = page.getByTitle("next");
 
-    await usersListPage.expect.toHaveTitle();
+    await page.getByRole("link", { name: "Mentors", exact: true }).click();
 
-    await usersListPage.expect.toHaveTableHeaders();
-    await usersListPage.expect.toHaveTableCells();
+    await expect(
+      page.getByRole("heading", { name: "Mentors", exact: true }),
+    ).toBeVisible();
 
-    await usersListPage.expect.toHaveTableRows(11);
-    await usersListPage.expect.toHavePreviousPageButtonDisabled();
+    await expect(
+      page.getByRole("columnheader", { name: "Full name" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("columnheader", { name: "Assigned chapter" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("columnheader", { name: "Action" }),
+    ).toBeVisible();
 
-    await usersListPage.expect.toHaveCompletedMentor();
+    await expect(
+      page.getByRole("cell", { name: "test_0 user_0" }),
+    ).toBeVisible();
+    await expect(
+      page
+        .getByRole("row", { name: "test_0 user_0" })
+        .getByRole("cell", { name: "Girrawheen" }),
+    ).toBeVisible();
+    await expect(
+      page
+        .getByRole("row", { name: "test_0 user_0" })
+        .getByRole("link", { name: "Edit" }),
+    ).toBeVisible();
 
-    await usersListPage.goToNextPage();
+    await expect(rows).toHaveCount(11);
+    await expect(previousPageButton).toBeDisabled();
 
-    await usersListPage.expect.toHaveTableRows(9);
-    await usersListPage.expect.toHaveNextPageButtonDisabled();
+    await expect(
+      page.getByRole("row", { name: /test_18/ }).getByTestId("completed"),
+    ).toBeVisible();
 
-    await usersListPage.goToPage(1);
+    await nextPageButton.click();
 
-    await usersListPage.expect.toHaveTableRows(11);
+    await expect(rows).toHaveCount(9);
+    await expect(nextPageButton).toBeDisabled();
 
-    await usersListPage.searchUser("test_0");
+    await page.getByRole("button", { name: "1" }).click();
 
-    await usersListPage.expect.toHaveTableRows(2);
+    await expect(rows).toHaveCount(11);
 
-    await usersListPage.clearSelection();
+    await page.getByPlaceholder("Search").fill("test_0");
+    await page.keyboard.press("Enter");
 
-    await usersListPage.expect.toHaveTableRows(11);
+    await expect(rows).toHaveCount(2);
 
-    await usersListPage.includeArchivedUsers();
-    await usersListPage.expect.toHaveArchivedMentor();
+    await page.getByRole("button", { name: "Reset" }).click();
 
-    await usersListPage.goToNextPage();
+    await expect(rows).toHaveCount(11);
 
-    await usersListPage.expect.toHaveTableRows(10);
+    await page.getByLabel("Include archived").check();
+
+    await expect(
+      page.getByRole("row", { name: /test_17/ }).getByTestId("archived"),
+    ).toBeVisible();
+
+    await nextPageButton.click();
+
+    await expect(rows).toHaveCount(10);
   });
 
-  test("should import mentors from file", async () => {
-    await adminLayoutPage.goToMentorsList();
+  test("should import mentors from file", async ({ page }) => {
+    await page.getByRole("link", { name: "Mentors", exact: true }).click();
 
-    await usersListPage.goToImportMentorsFromFile();
+    // The actions dropdown is focus based, hydration re-renders it and closes
+    // the menu, swallowing the click on "Import mentors".
+    await waitForHydration(page);
 
-    await importMentorsPage.expect.toHaveTitle();
+    await page.getByTitle("actions").click();
+    await page.getByRole("link", { name: "Import mentors" }).click();
 
-    await importMentorsPage.uploadFile(
+    await expect(
+      page.getByRole("heading", { name: "Import mentors from file" }),
+    ).toBeVisible();
+
+    const fileChooserPromise = page.waitForEvent("filechooser");
+
+    await page.getByLabel("Upload a spreadsheet with new users").click();
+
+    const fileChooser = await fileChooserPromise;
+
+    await fileChooser.setFiles(
       "./integration-tests/test-data/VolunteerDatabaseInfo.xlsx",
     );
 
-    await importMentorsPage.expect.toHaveTableHeaders();
-    await importMentorsPage.expect.toHaveTableCells();
+    await page.getByRole("button", { name: "Import" }).click();
 
-    await importMentorsPage.expect.toHaveTableRows(4);
+    await expect(page.getByRole("columnheader", { name: "#" })).toBeVisible();
+    await expect(
+      page.getByRole("columnheader", { name: "Full name" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("columnheader", { name: "Error" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("columnheader", { name: "Action" }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("cell", { name: "1" })).toBeVisible();
+    await expect(page.getByRole("cell", { name: "A D" })).toBeVisible();
+    await expect(
+      page
+        .getByRole("row", { name: "A D" })
+        .getByRole("cell", { name: "", exact: true }),
+    ).toBeVisible();
+    await expect(
+      page
+        .getByRole("row", { name: "A D" })
+        .getByRole("cell", { name: "Edit" }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("row")).toHaveCount(4);
   });
 
-  test("should edit mentor info", async () => {
-    await adminLayoutPage.goToMentorsList();
+  test("should edit mentor info", async ({ page }) => {
+    await goToEditFirstMentor(page);
 
-    await usersListPage.goToEditUser();
+    await expect(
+      page.getByRole("heading", { name: "Edit mentor info" }),
+    ).toBeVisible();
 
-    await userInfoPage.expect.toHaveTitle();
-
-    await userInfoPage.userForm.makeFormEditable();
+    await page.getByRole("link", { name: "Edit" }).click();
 
     // Test that empty values are saved correctly.
-    await userInfoPage.userForm.saveForm();
+    await page.getByRole("button", { name: "Save" }).click();
 
-    await userInfoPage.userForm.expect.toHaveProfilePicture();
-    await userInfoPage.userForm.expect.toHaveValues({
-      email: "test_0@test.com",
-      chapter: "Girrawheen",
-      firstName: "test_0",
-      lastName: "user_0",
-      mobile: "123",
-      addressStreet: "street",
-      addressSuburb: "suburb",
-      addressState: "state",
-      addressPostcode: "123123",
-      dateOfBirth: "",
-      emergencyContactName: "",
-      emergencyContactNumber: "",
-      emergencyContactAddress: "",
-      emergencyContactRelationship: "",
-      additionalEmail: "",
-    });
+    await expect(page.getByRole("figure")).toBeVisible();
 
-    await userInfoPage.expect.toHaveNOTNoAccessWarning();
+    const emptyValues = {
+      "First name": "test_0",
+      "Last name": "user_0",
+      Mobile: "123",
+      "Address street": "street",
+      "Address suburb": "suburb",
+      "Address state": "state",
+      "Address postcode": "123123",
+      "Date of birth": "",
+      "Emergency contact name": "",
+      "Emergency contact number": "",
+      "Emergency contact address": "",
+      "Emergency contact relationship": "",
+      "Additional email": "",
+    };
+
+    await expect(page.getByLabel("Chapter")).toHaveValue(
+      CHAPTER_DATA.Girrawheen,
+    );
+    await expect(page.getByLabel("Email", { exact: true })).toHaveValue(
+      "test_0@test.com",
+    );
+    await expectFields(page, emptyValues);
+
+    await expect(page.getByTitle("No access")).not.toBeVisible();
 
     // Update user info.
-    await userInfoPage.userForm.updateUserForm({
-      chapter: "Butler",
-      firstName: "Luca",
-      lastName: "Mara",
-      mobile: "1111111",
-      addressStreet: "Address street",
-      addressSuburb: "Address suburb",
-      addressState: "Address state",
-      addressPostcode: "Address postcode",
-      dateOfBirth: "2018-07-22",
-      emergencyContactName: "Luca",
-      emergencyContactNumber: "Luca",
-      emergencyContactAddress: "Luca",
-      emergencyContactRelationship: "Luca",
-      additionalEmail: "Luca@luca.com",
-    });
+    const updatedValues = {
+      "First name": "Luca",
+      "Last name": "Mara",
+      Mobile: "1111111",
+      "Address street": "Address street",
+      "Address suburb": "Address suburb",
+      "Address state": "Address state",
+      "Address postcode": "Address postcode",
+      "Date of birth": "2018-07-22",
+      "Emergency contact name": "Luca",
+      "Emergency contact number": "Luca",
+      "Emergency contact address": "Luca",
+      "Emergency contact relationship": "Luca",
+      "Additional email": "Luca@luca.com",
+    };
 
-    await userInfoPage.userForm.saveForm();
+    await page.getByLabel("Chapter").selectOption({ label: "Butler" });
+    await fillFields(page, updatedValues);
 
-    await userInfoPage.userForm.expect.toHaveSaved();
+    await page.getByRole("button", { name: "Save" }).click();
 
-    await userInfoPage.userForm.expect.toHaveValues({
-      email: "test_0@test.com",
-      chapter: "Butler",
-      firstName: "Luca",
-      lastName: "Mara",
-      mobile: "1111111",
-      addressStreet: "Address street",
-      addressSuburb: "Address suburb",
-      addressState: "Address state",
-      addressPostcode: "Address postcode",
-      dateOfBirth: "2018-07-22",
-      emergencyContactName: "Luca",
-      emergencyContactNumber: "Luca",
-      emergencyContactAddress: "Luca",
-      emergencyContactRelationship: "Luca",
-      additionalEmail: "Luca@luca.com",
-    });
+    await expect(
+      page.getByTestId("container").getByTestId("message"),
+    ).toBeVisible();
+
+    await expect(page.getByLabel("Chapter")).toHaveValue(CHAPTER_DATA.Butler);
+    await expect(page.getByLabel("Email", { exact: true })).toHaveValue(
+      "test_0@test.com",
+    );
+    await expectFields(page, updatedValues);
   });
 
-  test("should display eoi info for mentor", async () => {
-    await adminLayoutPage.goToMentorsList();
+  test("should display eoi info for mentor", async ({ page }) => {
+    await goToEditFirstMentor(page);
+    await goToMentorSection(page, "Expression of interest");
 
-    await usersListPage.goToEditUser();
-    await userInfoPage.goToEOIProfile();
+    const isOver18 = page.getByTestId("isOver18");
 
-    await eoiInfoPage.expect.toHaveValues({
-      bestTimeToContact: "Afternoon after 3pm",
-      occupation: "Retired",
-      volunteerExperience: "None",
-      role: "Mentor",
-      mentoringLevel: "2 years at Curtin university",
-      preferredFrequency: "every week",
-      hearAboutUs: "Linkid",
-      isOver18: "Yes",
-      whyVolunteer: "I am ready to rock",
-      aboutMe: "I have a lot of energy and I want to share it with everyone",
-    });
+    const initialValues = {
+      "Best time to contact": "Afternoon after 3pm",
+      Occupation: "Retired",
+      "Volunteer experience": "None",
+      Role: "Mentor",
+      "Mentoring level": "2 years at Curtin university",
+      "Preferred frequency": "every week",
+      "How did you hear about us?": "Linkid",
+      "Why a volunteer?": "I am ready to rock",
+      "About me": "I have a lot of energy and I want to share it with everyone",
+    };
 
-    await eoiInfoPage.updateForm({
-      bestTimeToContact: "AAAAA",
-      occupation: "asdasd",
-      volunteerExperience: "ddddd",
-      role: "sdsdsd",
-      mentoringLevel: "wwwww",
-      preferredFrequency: "vvcvcv",
-      hearAboutUs: "Linkidvvvvvvvvvvvv",
-      isOver18: "No",
-      whyVolunteer: "mnmnmmmmm",
-      aboutMe: "vvvvvvvvvvvvvvvv",
-    });
+    await expectFields(page, initialValues);
+    await expect(isOver18.getByText("Yes")).toBeChecked();
 
-    await eoiInfoPage.submitForm();
+    const updatedValues = {
+      "Best time to contact": "AAAAA",
+      Occupation: "asdasd",
+      "Volunteer experience": "ddddd",
+      Role: "sdsdsd",
+      "Mentoring level": "wwwww",
+      "Preferred frequency": "vvcvcv",
+      "How did you hear about us?": "Linkidvvvvvvvvvvvv",
+      "Why a volunteer?": "mnmnmmmmm",
+      "About me": "vvvvvvvvvvvvvvvv",
+    };
 
-    await eoiInfoPage.expect.toHaveValues({
-      bestTimeToContact: "AAAAA",
-      occupation: "asdasd",
-      volunteerExperience: "ddddd",
-      role: "sdsdsd",
-      mentoringLevel: "wwwww",
-      preferredFrequency: "vvcvcv",
-      hearAboutUs: "Linkidvvvvvvvvvvvv",
-      isOver18: "No",
-      whyVolunteer: "mnmnmmmmm",
-      aboutMe: "vvvvvvvvvvvvvvvv",
-    });
+    await fillFields(page, updatedValues);
+    await isOver18.getByText("No").check();
+
+    await page.getByRole("button", { name: "Save" }).click();
+
+    await expectFields(page, updatedValues);
+    await expect(isOver18.getByText("No")).toBeChecked();
   });
 
-  test("should update reference for mentor", async () => {
-    await adminLayoutPage.goToMentorsList();
+  test("should update reference for mentor", async ({ page }) => {
+    await goToEditFirstMentor(page);
+    await goToMentorSection(page, "References");
+    await goToMentorSection(page, "referenceA_0 lastnameA_0");
 
-    await usersListPage.goToEditUser();
-    await userInfoPage.goToReferences("referenceA_0 lastnameA_0");
+    await expect(
+      page.getByRole("heading", {
+        name: 'Reference "referenceA_0 lastnameA_0" for mentor "test_0 user_0"',
+      }),
+    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Details" })).toBeVisible();
 
-    await referencePage.expect.toHaveHeadings();
+    const hasKnownApplicantForAYear = page.getByTestId(
+      "hasKnowApplicantForAYear",
+    );
+    const isRelated = page.getByTestId("isRelated");
+    const isMentorRecommended = page.getByTestId("isMentorRecommended");
 
-    await referencePage.updateReference({
-      firstName: "Luca",
-      lastName: "Mara",
-      mobile: "123123",
-      email: "asd@asd.com",
-      bestTimeToContact: "now",
-      relationship: "father",
-      hasKnowApplicantForAYear: "Yes",
-      isRelated: "No",
-      knownForComment: "asdasdasdasdsa",
-      safeWithChildren: "Yes asdasdasasd",
-      skillAndKnowledgeComment: "asdasdasdssss",
-      empathyAndPatienceComment: "sssssssssssssssssss",
-      buildRelationshipsComment: "aaaaaaaaaaaaaaaaaaa",
-      outcomeComment: "sssssssssssssssssss",
-      generalComment: "ddddddddddddddddddddddd",
-      isMentorRecommended: "Yes",
-      calledBy: "Tony",
-      calledOndate: "2020-02-02",
-    });
+    const values = {
+      "First name": "Luca",
+      "Last name": "Mara",
+      Mobile: "123123",
+      Email: "asd@asd.com",
+      "Best time to contact": "now",
+      "Please describe how long and in what capacity you have known the Applicant? (Use this to also confirm employment status, dates and role of the applicant)":
+        "asdasdasdasdsa",
+      "Would you be happy with your own children, or children you know, to be mentored by the Applicant?":
+        "Yes asdasdasasd",
+      "What skills and knowledge do you think the Applicant has that will help them fulfil this mentoring role?":
+        "asdasdasdssss",
+      "Empathy and patience are key attributes for mentoring. Does the Applicant have these attributes? Provide examples.":
+        "sssssssssssssssssss",
+      "Another key attribute for this role is the ability to build relationships, especially with children. Does the Applicant have this attribute? Provide examples.":
+        "aaaaaaaaaaaaaaaaaaa",
+      "Any other comments? (Use this response to provide any other relevant information that may be helpful).":
+        "sssssssssssssssssss",
+      "General comment": "ddddddddddddddddddddddd",
+      "By (name)": "Tony",
+      "On (date)": "2020-02-02",
+    };
 
-    await referencePage.submitForm();
+    await fillFields(page, values);
+    await page.getByPlaceholder("Relationship", { exact: true }).fill("father");
+    await hasKnownApplicantForAYear.getByText("Yes").check();
+    await isRelated.getByText("No").check();
+    await isMentorRecommended.getByText("Yes").check();
 
-    await referencePage.expect.toHaveInputs({
-      firstName: "Luca",
-      lastName: "Mara",
-      mobile: "123123",
-      email: "asd@asd.com",
-      bestTimeToContact: "now",
-      relationship: "father",
-      hasKnowApplicantForAYear: "Yes",
-      isRelated: "No",
-      knownForComment: "asdasdasdasdsa",
-      safeWithChildren: "Yes asdasdasasd",
-      skillAndKnowledgeComment: "asdasdasdssss",
-      empathyAndPatienceComment: "sssssssssssssssssss",
-      buildRelationshipsComment: "aaaaaaaaaaaaaaaaaaa",
-      outcomeComment: "sssssssssssssssssss",
-      generalComment: "ddddddddddddddddddddddd",
-      isMentorRecommended: "Yes",
-      calledBy: "Tony",
-      calledOndate: "2020-02-02",
-    });
+    await page.getByRole("button", { name: "Save" }).click();
+
+    await expectFields(page, values);
+    await expect(
+      page.getByPlaceholder("Relationship", { exact: true }),
+    ).toHaveValue("father");
+    await expect(hasKnownApplicantForAYear.getByLabel("Yes")).toBeChecked();
+    await expect(isRelated.getByLabel("No")).toBeChecked();
+    await expect(isMentorRecommended.getByLabel("Yes")).toBeChecked();
   });
 
-  test("should update police check for mentor", async () => {
-    await adminLayoutPage.goToMentorsList();
+  test("should update police check for mentor", async ({ page }) => {
+    const expiryDate = page.getByLabel("Expiry Date (3 years from issue)");
 
-    await usersListPage.goToEditUser();
-    await userInfoPage.goToPoliceCheck();
+    await goToEditFirstMentor(page);
+    await goToMentorSection(page, "Police check");
 
-    await policeCheckPage.expect.toHaveTitle();
-    await policeCheckPage.expect.toHaveVNPCLink();
+    await expect(
+      page.getByRole("heading", { name: /Police check for/ }),
+    ).toBeVisible();
+    await expect(page.getByRole("link", { name: "VNPC Portal" })).toBeVisible();
 
-    await policeCheckPage.expect.toHaveInputValues({
-      expiryDate: "2023-09-16",
-    });
+    await expect(expiryDate).toHaveValue("2023-09-16");
 
-    await policeCheckPage.updateInputValues({
-      expiryDate: "1999-11-11",
-    });
+    await expiryDate.fill("1999-11-11");
 
-    await policeCheckPage.submitForm();
+    await page.getByRole("button", { name: "Save" }).click();
 
-    await policeCheckPage.expect.toHaveInputValues({
-      expiryDate: "1999-11-11",
-    });
+    await expect(expiryDate).toHaveValue("1999-11-11");
   });
 
-  test("should update WWC check for mentor", async () => {
-    await adminLayoutPage.goToMentorsList();
+  test("should update WWC check for mentor", async ({ page }) => {
+    await goToEditFirstMentor(page);
+    await goToMentorSection(page, "WWC check");
 
-    await usersListPage.goToEditUser();
-    await userInfoPage.goToWwcCheck();
+    await expect(
+      page.getByRole("heading", { name: /WWC check for/ }),
+    ).toBeVisible();
 
-    await wWCCheckPage.expect.toHaveTitle();
-
-    await wWCCheckPage.expect.toHaveInputValues({
-      wwcNumber: "123456",
-      expiryDate: "2023-09-16",
+    await expectFields(page, {
+      "WWC number": "123456",
+      "Expiry date": "2023-09-16",
     });
 
-    await wWCCheckPage.updateInputValues({
-      wwcNumber: "00000",
-      expiryDate: "1999-11-11",
-    });
+    const updatedValues = {
+      "WWC number": "00000",
+      "Expiry date": "1999-11-11",
+    };
 
-    await wWCCheckPage.submitForm();
+    await fillFields(page, updatedValues);
 
-    await wWCCheckPage.expect.toHaveInputValues({
-      wwcNumber: "00000",
-      expiryDate: "1999-11-11",
-    });
+    await page.getByRole("button", { name: "Save" }).click();
+
+    await expectFields(page, updatedValues);
   });
 
-  test("should update Approbal by MRC for mentor", async () => {
-    await adminLayoutPage.goToMentorsList();
+  test("should update Approbal by MRC for mentor", async ({ page }) => {
+    await goToEditFirstMentor(page);
+    await goToMentorSection(page, "Approval by MRC");
 
-    await usersListPage.goToEditUser();
-    await userInfoPage.goToApprovalByMRC();
+    await expect(
+      page.getByRole("heading", { name: /Approval by MRC for/ }),
+    ).toBeVisible();
 
-    await approvalMRCPage.expect.toHaveTitle();
+    const updatedValues = {
+      "Completed by": "Luca",
+      "Submitted date": "1999-11-11",
+      Comment: "comment asd",
+    };
 
-    await approvalMRCPage.updateInputValues({
-      completedBy: "Luca",
-      submittedDate: "1999-11-11",
-      comment: "comment asd",
-    });
+    await fillFields(page, updatedValues);
 
-    await approvalMRCPage.submitForm();
+    await page.getByRole("button", { name: "Save" }).click();
 
-    await approvalMRCPage.expect.toHaveInputs({
-      completedBy: "Luca",
-      submittedDate: "1999-11-11",
-      comment: "comment asd",
-    });
+    await expectFields(page, updatedValues);
   });
 });

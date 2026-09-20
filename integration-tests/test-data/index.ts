@@ -20,6 +20,7 @@ export const CHAPTER_DATA: Record<string, string> = {
   Girrawheen: "1",
   Armadale: "2",
   Butler: "3",
+  "Head Office": "4",
 };
 
 export async function seedDataAsync(isMentor = false) {
@@ -28,16 +29,22 @@ export async function seedDataAsync(isMentor = false) {
   try {
     await prisma.$connect();
 
-    await prisma.$transaction(async (tx) => {
-      await createUsersAsync(tx, process.env.TEST_MENTOR_AZURE_ID!);
-      await createStudentsAsync(tx);
+    await prisma.$transaction(
+      async (tx) => {
+        await createUsersAsync(tx, process.env.TEST_MENTOR_AZURE_ID!);
+        await createStudentsAsync(tx);
 
-      await assignMentorsToStudentsAsync(tx);
+        await assignMentorsToStudentsAsync(tx);
 
-      if (isMentor) {
-        await mentorAsync(tx);
-      }
-    });
+        if (isMentor) {
+          await mentorAsync(tx);
+        }
+      },
+      {
+        maxWait: 10000, // 10 seconds default
+        timeout: 30000, // 30 seconds default
+      },
+    );
   } catch (e) {
     console.log(e);
   } finally {
