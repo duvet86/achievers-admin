@@ -23,6 +23,8 @@ export async function createUsersAsync(
   await tx.volunteerAttendance.deleteMany();
   await tx.goal.deleteMany();
   await tx.volunteerShareInfo.deleteMany();
+  await tx.volunteerNote.deleteMany();
+  await tx.volunteerSkill.deleteMany();
 
   await tx.volunteer.deleteMany();
   await tx.$queryRaw`ALTER TABLE Volunteer AUTO_INCREMENT = 1;`;
@@ -161,6 +163,8 @@ export async function createUsersAsync(
             updatedAt: new Date(2024, 10, 24, 0, 0),
           },
         },
+        volunteerNote: undefined,
+        volunteerSkill: undefined,
         chapterId,
       },
     });

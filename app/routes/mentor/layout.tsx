@@ -37,8 +37,6 @@ export async function loader({ request }: Route.LoaderArgs) {
     ? getUserProfilePictureUrl(user.profilePicturePath)
     : null;
 
-  console.log("profilePicturePath", profilePicturePath);
-
   return {
     currentView: "mentor",
     isMentorAndAdmin: loggedUser.isAdmin && loggedUser.isMentor,

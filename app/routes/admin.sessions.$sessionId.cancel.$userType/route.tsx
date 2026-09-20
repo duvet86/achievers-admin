@@ -57,8 +57,6 @@ export async function action({ request, params }: Route.ActionArgs) {
     report: string;
   };
 
-  console.log("bodyData", bodyData);
-
   if (!bodyData.cancelledReasonId || !bodyData.report) {
     throw new Error();
   }

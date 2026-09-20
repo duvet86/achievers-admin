@@ -131,8 +131,6 @@ export default function Index({
       formData.append("complete", "true");
     }
 
-    console.log(JSON.stringify(editorStateRef.current?.toJSON()));
-
     void submit(formData, { method: "post" });
   };
 

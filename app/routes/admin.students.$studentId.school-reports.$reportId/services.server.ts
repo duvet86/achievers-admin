@@ -65,8 +65,6 @@ export async function saveFileAsync(
   }
   const allowedFormats = ["application/pdf", "image/png", "image/jpeg"];
 
-  console.log("file.type", file.type);
-
   if (!allowedFormats.includes(file.type)) {
     throw new Error("Invalid extension.");
   }
