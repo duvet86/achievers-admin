@@ -385,29 +385,39 @@ test.describe("Admin", () => {
     await expect(expiryDate).toHaveValue("1999-11-11");
   });
 
-  test("should update WWC check for mentor", async ({ page }) => {
+  test("should add WWC check to the history of a mentor", async ({ page }) => {
     await goToEditFirstMentor(page);
     await goToMentorSection(page, "WWC check");
 
     await expect(
-      page.getByRole("heading", { name: /WWC check for/ }),
+      page.getByRole("heading", { name: /WWC checks for/ }),
     ).toBeVisible();
 
-    await expectFields(page, {
-      "WWC number": "123456",
-      "Expiry date": "2023-09-16",
-    });
+    await expect(page.getByRole("row", { name: /123456/ })).toBeVisible();
 
-    const updatedValues = {
+    await page.getByRole("link", { name: "Add WWC check" }).click();
+
+    await expect(
+      page.getByRole("heading", { name: /Add WWC check for/ }),
+    ).toBeVisible();
+
+    await fillFields(page, {
       "WWC number": "00000",
-      "Expiry date": "1999-11-11",
-    };
-
-    await fillFields(page, updatedValues);
+      "Expiry date": "2099-11-11",
+    });
 
     await page.getByRole("button", { name: "Save" }).click();
 
-    await expectFields(page, updatedValues);
+    // Back on the list: the new check is the current one, the seeded check is kept as history.
+    await expect(
+      page.getByRole("heading", { name: /WWC checks for/ }),
+    ).toBeVisible();
+    await expect(page.getByRole("row", { name: /00000/ })).toContainText(
+      "Current",
+    );
+    await expect(page.getByRole("row", { name: /123456/ })).toContainText(
+      "Previous",
+    );
   });
 
   test("should update Approbal by MRC for mentor", async ({ page }) => {

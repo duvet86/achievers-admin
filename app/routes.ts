@@ -431,6 +431,13 @@ export default [
             },
           ),
           route(
+            ":mentorId/wwc-check/new",
+            "routes/admin.mentors.$mentorId.wwc-check.new/route.tsx",
+            {
+              index: true,
+            },
+          ),
+          route(
             ":mentorId/end-reason",
             "routes/admin.mentors.$mentorId.end-reason/route.tsx",
             {

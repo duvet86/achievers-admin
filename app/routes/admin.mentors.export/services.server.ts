@@ -24,7 +24,10 @@ export async function exportMentorsToSpreadsheetAsync() {
       policeCheck: true,
       references: true,
       welcomeCall: true,
-      wwcCheck: true,
+      wwcCheck: {
+        orderBy: [{ expiryDate: "desc" }, { id: "desc" }],
+        take: 1,
+      },
     },
   });
 
@@ -55,8 +58,8 @@ export async function exportMentorsToSpreadsheetAsync() {
     "Induction Date": m.induction?.completedOnDate.toString() ?? "",
     Attendance: m.eoIProfile?.preferredFrequency as Attendance,
     "Police Check Renewal Date": m.policeCheck?.expiryDate.toString() ?? "",
-    "WWC Check Renewal Date": m.wwcCheck?.expiryDate
-      ? dayjs(m.wwcCheck.expiryDate).format("MM/DD/YYYY")
+    "WWC Check Renewal Date": m.wwcCheck[0]?.expiryDate
+      ? dayjs(m.wwcCheck[0].expiryDate).format("MM/DD/YYYY")
       : "",
     "Volunteer Agreement Complete":
       m.volunteerAgreementSignedOn !== undefined ? "Yes" : "No",
@@ -65,7 +68,7 @@ export async function exportMentorsToSpreadsheetAsync() {
     "Emergency Contact Address": m.emergencyContactAddress ?? "",
     "Emergency Contact Relationship": m.emergencyContactRelationship ?? "",
     Occupation: m.eoIProfile?.occupation ?? "",
-    "WWC Check Number": m.wwcCheck?.wwcNumber ?? "",
+    "WWC Check Number": m.wwcCheck[0]?.wwcNumber ?? "",
     "Missing Information": m.importedHistory?.error ?? "",
     "End Date": m.endDate ? dayjs(m.endDate).format("MM/DD/YYYY") : "",
     "Is Archived": m.endDate !== null ? "Yes" : "No",

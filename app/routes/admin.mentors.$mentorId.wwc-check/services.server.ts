@@ -1,18 +1,9 @@
-import dayjs from "dayjs";
-
 import { prisma } from "~/db.server";
 import {
   getContainerClient,
   getSASQueryString,
-  uploadBlobAsync,
   USER_DATA_BLOB_CONTAINER_NAME,
 } from "~/services/.server";
-
-export interface UpdateWWCCheckCommand {
-  wwcNumber: string;
-  expiryDate: Date | string;
-  filePath: string | undefined;
-}
 
 export async function getUserByIdAsync(id: number) {
   return await prisma.volunteer.findUniqueOrThrow({
@@ -22,31 +13,19 @@ export async function getUserByIdAsync(id: number) {
     select: {
       id: true,
       fullName: true,
-      wwcCheck: true,
+      wwcCheck: {
+        // The first item is the current check (the one that expires last).
+        orderBy: [{ expiryDate: "desc" }, { id: "desc" }],
+      },
     },
   });
 }
 
-export async function updateWWCCheckAsync(
-  mentorId: number,
-  data: UpdateWWCCheckCommand,
-) {
-  const expiryDate = dayjs(data.expiryDate).toDate();
-
-  return await prisma.wWCCheck.upsert({
+export async function deleteWWCCheckAsync(mentorId: number, checkId: number) {
+  return await prisma.wWCCheck.deleteMany({
     where: {
+      id: checkId,
       volunteerId: mentorId,
-    },
-    create: {
-      expiryDate,
-      filePath: data.filePath,
-      wwcNumber: data.wwcNumber,
-      volunteerId: mentorId,
-    },
-    update: {
-      expiryDate,
-      filePath: data.filePath,
-      wwcNumber: data.wwcNumber,
     },
   });
 }
@@ -59,27 +38,4 @@ export function getFileUrl(path: string): string {
   const sasQueryString = getSASQueryString(containerClient, path, 60);
 
   return `${blob.url}?${sasQueryString}`;
-}
-
-export async function saveFileAsync(
-  userId: string,
-  file: File,
-): Promise<string> {
-  if (file.size === 0) {
-    throw new Error("File too small");
-  }
-  const allowedFormats = ["application/pdf", "image/png", "image/jpeg"];
-
-  if (!allowedFormats.includes(file.type)) {
-    throw new Error("Invalid extension.");
-  }
-
-  const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
-  await containerClient.createIfNotExists();
-
-  const path = `${userId}/wwc-check`;
-
-  await uploadBlobAsync(containerClient, file, path);
-
-  return path;
 }

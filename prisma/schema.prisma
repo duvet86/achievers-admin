@@ -82,7 +82,7 @@ model Volunteer {
   references    Reference[]
   induction     Induction?
   policeCheck   PoliceCheck?
-  wwcCheck      WWCCheck?
+  wwcCheck      WWCCheck[]
   approvalbyMRC ApprovalbyMRC?
 
   chapterId Int
@@ -262,7 +262,9 @@ model WWCCheck {
   updatedAt DateTime @updatedAt
 
   volunteer   Volunteer @relation(fields: [volunteerId], references: [id])
-  volunteerId Int       @unique
+  volunteerId Int
+
+  @@index([volunteerId])
 }
 
 model ApprovalbyMRC {

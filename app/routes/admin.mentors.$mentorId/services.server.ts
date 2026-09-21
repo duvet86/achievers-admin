@@ -104,6 +104,9 @@ export async function getUserByIdAsync(id: number) {
           createdAt: true,
           expiryDate: true,
         },
+        // Only the current check (the one that expires last) matters here.
+        orderBy: [{ expiryDate: "desc" }, { id: "desc" }],
+        take: 1,
       },
     },
   });
@@ -150,7 +153,7 @@ export async function removePoliceCheck(mentorId: number) {
 }
 
 export async function removeWwccheck(mentorId: number) {
-  return await prisma.wWCCheck.delete({
+  return await prisma.wWCCheck.deleteMany({
     where: {
       volunteerId: mentorId,
     },
