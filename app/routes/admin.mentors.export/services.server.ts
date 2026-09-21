@@ -21,7 +21,10 @@ export async function exportMentorsToSpreadsheetAsync() {
       approvalbyMRC: true,
       eoIProfile: true,
       induction: true,
-      policeCheck: true,
+      policeCheck: {
+        orderBy: [{ expiryDate: "desc" }, { id: "desc" }],
+        take: 1,
+      },
       references: true,
       welcomeCall: true,
       wwcCheck: {
@@ -57,7 +60,7 @@ export async function exportMentorsToSpreadsheetAsync() {
     "Role(s)": "Mentor",
     "Induction Date": m.induction?.completedOnDate.toString() ?? "",
     Attendance: m.eoIProfile?.preferredFrequency as Attendance,
-    "Police Check Renewal Date": m.policeCheck?.expiryDate.toString() ?? "",
+    "Police Check Renewal Date": m.policeCheck[0]?.expiryDate.toString() ?? "",
     "WWC Check Renewal Date": m.wwcCheck[0]?.expiryDate
       ? dayjs(m.wwcCheck[0].expiryDate).format("MM/DD/YYYY")
       : "",

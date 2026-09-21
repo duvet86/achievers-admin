@@ -8,10 +8,10 @@ import {
   USER_DATA_BLOB_CONTAINER_NAME,
 } from "~/services/.server";
 
-export interface CreateWWCCheckCommand {
-  wwcNumber: string;
+export interface CreatePoliceCheckCommand {
   expiryDate: Date | string;
-  filePath: string | undefined;
+  applicationNumber: string | null;
+  filePath: string | null;
 }
 
 export async function getUserByIdAsync(id: number) {
@@ -26,15 +26,15 @@ export async function getUserByIdAsync(id: number) {
   });
 }
 
-export async function createWWCCheckAsync(
+export async function createPoliceCheckAsync(
   mentorId: number,
-  data: CreateWWCCheckCommand,
+  data: CreatePoliceCheckCommand,
 ) {
-  return await prisma.wWCCheck.create({
+  return await prisma.policeCheck.create({
     data: {
       expiryDate: dayjs(data.expiryDate).toDate(),
+      applicationNumber: data.applicationNumber,
       filePath: data.filePath,
-      wwcNumber: data.wwcNumber,
       volunteerId: mentorId,
     },
   });
@@ -57,7 +57,7 @@ export async function saveFileAsync(
   await containerClient.createIfNotExists();
 
   // Unique path per check so that uploading a new check doesn't overwrite the previous file.
-  const path = `${userId}/wwc-check-${dayjs().format("YYYYMMDD-HHmmss")}.${getExtension(file.name)}`;
+  const path = `${userId}/police-check-${dayjs().format("YYYYMMDD-HHmmss")}.${getExtension(file.name)}`;
 
   await uploadBlobAsync(containerClient, file, path);
 

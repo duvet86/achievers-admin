@@ -21,11 +21,10 @@ export async function getUserByIdAsync(id: number) {
   });
 }
 
-export async function deleteWWCCheckAsync(mentorId: number, checkId: number) {
+export async function deleteWWCCheckAsync(checkId: number) {
   return await prisma.wWCCheck.deleteMany({
     where: {
       id: checkId,
-      volunteerId: mentorId,
     },
   });
 }

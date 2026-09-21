@@ -2,7 +2,13 @@ import type { Page } from "@playwright/test";
 
 import { test, expect } from "@playwright/test";
 
-import { expectFields, fillFields } from "../helpers";
+import {
+  acceptDialogs,
+  expectFields,
+  fillFields,
+  isBlobStorageAvailable,
+  uploadFile,
+} from "../helpers";
 import { CHAPTER_DATA, seedDataAsync } from "../test-data";
 
 async function goToEditFirstMentor(page: Page) {
@@ -365,24 +371,148 @@ test.describe("Admin", () => {
     await expect(isMentorRecommended.getByLabel("Yes")).toBeChecked();
   });
 
-  test("should update police check for mentor", async ({ page }) => {
-    const expiryDate = page.getByLabel("Expiry Date (3 years from issue)");
-
+  test("should add police check to the history of a mentor", async ({
+    page,
+  }) => {
     await goToEditFirstMentor(page);
     await goToMentorSection(page, "Police check");
 
     await expect(
-      page.getByRole("heading", { name: /Police check for/ }),
+      page.getByRole("heading", { name: /Police checks for/ }),
     ).toBeVisible();
     await expect(page.getByRole("link", { name: "VNPC Portal" })).toBeVisible();
 
-    await expect(expiryDate).toHaveValue("2023-09-16");
+    await expect(
+      page.getByRole("row", { name: /September 16, 2023/ }),
+    ).toBeVisible();
 
-    await expiryDate.fill("1999-11-11");
+    await page.getByRole("link", { name: "Add police check" }).click();
+
+    await expect(
+      page.getByRole("heading", { name: /Add police check for/ }),
+    ).toBeVisible();
+    await expect(page.getByLabel("Police check file")).toBeVisible();
+
+    await fillFields(page, {
+      "Expiry Date (3 years from issue)": "2099-11-11",
+      "Application Number": "APP00000",
+    });
 
     await page.getByRole("button", { name: "Save" }).click();
 
-    await expect(expiryDate).toHaveValue("1999-11-11");
+    // Back on the list: the new check is the current one, the seeded check is kept as history.
+    await expect(
+      page.getByRole("heading", { name: /Police checks for/ }),
+    ).toBeVisible();
+    await expect(page.getByRole("row", { name: /APP00000/ })).toContainText(
+      "Current",
+    );
+    await expect(
+      page.getByRole("row", { name: /September 16, 2023/ }),
+    ).toContainText("Previous");
+  });
+
+  test("should edit police check of a mentor", async ({ page }) => {
+    await goToEditFirstMentor(page);
+    await goToMentorSection(page, "Police check");
+
+    await page
+      .getByRole("row", { name: /September 16, 2023/ })
+      .getByRole("link", { name: "Edit" })
+      .click();
+
+    await expect(
+      page.getByRole("heading", { name: /Edit police check for/ }),
+    ).toBeVisible();
+
+    await expectFields(page, {
+      "Expiry Date (3 years from issue)": "2023-09-16",
+      "Application Number": "",
+    });
+    // The seeded check has no file, so a file can be uploaded.
+    await expect(page.getByLabel("Police check file")).toBeVisible();
+
+    await fillFields(page, {
+      "Expiry Date (3 years from issue)": "1999-11-11",
+      "Application Number": "APP00000",
+    });
+
+    await page.getByRole("button", { name: "Save" }).click();
+
+    // Back on the list with the updated values.
+    await expect(
+      page.getByRole("heading", { name: /Police checks for/ }),
+    ).toBeVisible();
+    await expect(page.getByRole("row", { name: /APP00000/ })).toContainText(
+      "November 11, 1999",
+    );
+    await expect(
+      page.getByRole("row", { name: /September 16, 2023/ }),
+    ).toHaveCount(0);
+  });
+
+  test("should upload the police check file only when it is missing", async ({
+    page,
+  }) => {
+    test.skip(
+      !(await isBlobStorageAvailable()),
+      "Uploading needs the blob storage emulator (Azurite).",
+    );
+
+    await goToEditFirstMentor(page);
+    await goToMentorSection(page, "Police check");
+
+    const row = page.getByRole("row", { name: /September 16, 2023/ });
+
+    await expect(row.getByRole("link", { name: "Download" })).toHaveCount(0);
+
+    await row.getByRole("link", { name: "Edit" }).click();
+
+    await uploadFile(page, "Police check file", {
+      name: "police-check.pdf",
+      mimeType: "application/pdf",
+      buffer: Buffer.from("%PDF-1.4 police check"),
+    });
+
+    await page.getByRole("button", { name: "Save" }).click();
+
+    // Back on the list: the check now has a file.
+    await expect(
+      page.getByRole("heading", { name: /Police checks for/ }),
+    ).toBeVisible();
+    await expect(row.getByRole("link", { name: "Download" })).toBeVisible();
+
+    // The file can't be replaced: only the download link is offered.
+    await row.getByRole("link", { name: "Edit" }).click();
+
+    await expect(
+      page.getByRole("heading", { name: /Edit police check for/ }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Download police check" }),
+    ).toBeVisible();
+    await expect(page.getByLabel("Police check file")).toHaveCount(0);
+  });
+
+  test("should delete police check from the history of a mentor", async ({
+    page,
+  }) => {
+    acceptDialogs(page);
+
+    await goToEditFirstMentor(page);
+    await goToMentorSection(page, "Police check");
+
+    await page
+      .getByRole("row", { name: /September 16, 2023/ })
+      .getByRole("button", { name: "Delete" })
+      .click();
+
+    await expect(
+      page.getByText("No police checks defined for this user"),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("row", { name: /September 16, 2023/ }),
+    ).toHaveCount(0);
   });
 
   test("should add WWC check to the history of a mentor", async ({ page }) => {
@@ -400,6 +530,7 @@ test.describe("Admin", () => {
     await expect(
       page.getByRole("heading", { name: /Add WWC check for/ }),
     ).toBeVisible();
+    await expect(page.getByLabel("WWC check file")).toBeVisible();
 
     await fillFields(page, {
       "WWC number": "00000",
@@ -418,6 +549,105 @@ test.describe("Admin", () => {
     await expect(page.getByRole("row", { name: /123456/ })).toContainText(
       "Previous",
     );
+  });
+
+  test("should edit WWC check of a mentor", async ({ page }) => {
+    await goToEditFirstMentor(page);
+    await goToMentorSection(page, "WWC check");
+
+    await page
+      .getByRole("row", { name: /123456/ })
+      .getByRole("link", { name: "Edit" })
+      .click();
+
+    await expect(
+      page.getByRole("heading", { name: /Edit WWC check for/ }),
+    ).toBeVisible();
+
+    await expectFields(page, {
+      "WWC number": "123456",
+      "Expiry date": "2023-09-16",
+    });
+    // The seeded check has no file, so a file can be uploaded.
+    await expect(page.getByLabel("WWC check file")).toBeVisible();
+
+    await fillFields(page, {
+      "WWC number": "00000",
+      "Expiry date": "1999-11-11",
+    });
+
+    await page.getByRole("button", { name: "Save" }).click();
+
+    // Back on the list with the updated values.
+    await expect(
+      page.getByRole("heading", { name: /WWC checks for/ }),
+    ).toBeVisible();
+    await expect(page.getByRole("row", { name: /00000/ })).toContainText(
+      "November 11, 1999",
+    );
+    await expect(page.getByRole("row", { name: /123456/ })).toHaveCount(0);
+  });
+
+  test("should upload the WWC check file only when it is missing", async ({
+    page,
+  }) => {
+    test.skip(
+      !(await isBlobStorageAvailable()),
+      "Uploading needs the blob storage emulator (Azurite).",
+    );
+
+    await goToEditFirstMentor(page);
+    await goToMentorSection(page, "WWC check");
+
+    const row = page.getByRole("row", { name: /123456/ });
+
+    await expect(row.getByRole("link", { name: "Download" })).toHaveCount(0);
+
+    await row.getByRole("link", { name: "Edit" }).click();
+
+    await uploadFile(page, "WWC check file", {
+      name: "wwc-check.pdf",
+      mimeType: "application/pdf",
+      buffer: Buffer.from("%PDF-1.4 wwc check"),
+    });
+
+    await page.getByRole("button", { name: "Save" }).click();
+
+    // Back on the list: the check now has a file.
+    await expect(
+      page.getByRole("heading", { name: /WWC checks for/ }),
+    ).toBeVisible();
+    await expect(row.getByRole("link", { name: "Download" })).toBeVisible();
+
+    // The file can't be replaced: only the download link is offered.
+    await row.getByRole("link", { name: "Edit" }).click();
+
+    await expect(
+      page.getByRole("heading", { name: /Edit WWC check for/ }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Download WWC check" }),
+    ).toBeVisible();
+    await expect(page.getByLabel("WWC check file")).toHaveCount(0);
+  });
+
+  test("should delete WWC check from the history of a mentor", async ({
+    page,
+  }) => {
+    acceptDialogs(page);
+
+    await goToEditFirstMentor(page);
+    await goToMentorSection(page, "WWC check");
+
+    await page
+      .getByRole("row", { name: /123456/ })
+      .getByRole("button", { name: "Delete" })
+      .click();
+
+    await expect(
+      page.getByText("No WWC checks defined for this user"),
+    ).toBeVisible();
+    await expect(page.getByRole("row", { name: /123456/ })).toHaveCount(0);
   });
 
   test("should update Approbal by MRC for mentor", async ({ page }) => {

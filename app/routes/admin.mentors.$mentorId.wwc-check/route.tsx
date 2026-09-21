@@ -3,7 +3,7 @@ import type { Route } from "./+types/route";
 import { useFetcher } from "react-router";
 import classNames from "classnames";
 import dayjs from "dayjs";
-import { Bin, Download, Plus } from "iconoir-react";
+import { Bin, Download, PageEdit, Plus } from "iconoir-react";
 import invariant from "tiny-invariant";
 
 import { StateLink, Title } from "~/components";
@@ -42,10 +42,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const formData = await request.formData();
 
-  await deleteWWCCheckAsync(
-    Number(params.mentorId),
-    Number(formData.get("checkId")),
-  );
+  await deleteWWCCheckAsync(Number(formData.get("checkId")));
 
   return null;
 }
@@ -122,7 +119,7 @@ export default function Index({
                       <div className="flex w-full gap-2">
                         {fileUrl ? (
                           <a
-                            className="btn btn-success btn-xs flex-1 gap-2"
+                            className="btn btn-xs flex-1 gap-2"
                             href={fileUrl}
                             target="_blank"
                             rel="noreferrer"
@@ -134,6 +131,13 @@ export default function Index({
                         ) : (
                           <span className="flex-1" />
                         )}
+                        <StateLink
+                          className="btn btn-success btn-xs flex-1 gap-2"
+                          to={`/admin/mentors/${user.id}/wwc-check/${id}`}
+                        >
+                          <PageEdit className="h-4 w-4" />
+                          Edit
+                        </StateLink>
                         <button
                           className="btn btn-error btn-xs flex-1 gap-2"
                           onClick={handleDelete(id)}

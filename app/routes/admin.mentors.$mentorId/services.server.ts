@@ -88,6 +88,9 @@ export async function getUserByIdAsync(id: number) {
           createdAt: true,
           expiryDate: true,
         },
+        // Only the current check (the one that expires last) matters here.
+        orderBy: [{ expiryDate: "desc" }, { id: "desc" }],
+        take: 1,
       },
       references: {
         select: {
@@ -145,7 +148,7 @@ export async function removeInduction(mentorId: number) {
 }
 
 export async function removePoliceCheck(mentorId: number) {
-  return await prisma.policeCheck.delete({
+  return await prisma.policeCheck.deleteMany({
     where: {
       volunteerId: mentorId,
     },

@@ -32,6 +32,9 @@ jobs:
       DB_DATABASE: achievers
       DB_USER: root
       DB_PASSWORD: my-secret-pw
+      # Well-known credentials of the Azurite (Azure Storage emulator) service below.
+      BLOB_STORAGE_ACCOUNT_NAME: devstoreaccount1
+      BLOB_STORAGE_ACCOUNT_KEY: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
 
     services:
       mysql:
@@ -43,6 +46,12 @@ jobs:
         ports:
           - "3306:3306"
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      # Blob storage emulator, used to store the files uploaded during the E2E tests.
+      azurite:
+        image: mcr.microsoft.com/azure-storage/azurite
+        ports:
+          - "10000:10000"
 
     steps:
       - name: Set up test DB

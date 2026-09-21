@@ -1,18 +1,9 @@
-import dayjs from "dayjs";
-
 import { prisma } from "~/db.server";
 import {
   getContainerClient,
   getSASQueryString,
-  uploadBlobAsync,
   USER_DATA_BLOB_CONTAINER_NAME,
 } from "~/services/.server";
-
-export interface PoliceCheckUpdateCommand {
-  expiryDate: Date | string;
-  filePath: string | null;
-  applicationNumber: string | null;
-}
 
 export async function getUserByIdAsync(id: number) {
   return await prisma.volunteer.findUniqueOrThrow({
@@ -22,36 +13,18 @@ export async function getUserByIdAsync(id: number) {
     select: {
       id: true,
       fullName: true,
-      policeCheck: true,
+      policeCheck: {
+        // The first item is the current check (the one that expires last).
+        orderBy: [{ expiryDate: "desc" }, { id: "desc" }],
+      },
     },
   });
 }
 
-export async function updatePoliceCheckAsync(
-  volunteerId: number,
-  data: PoliceCheckUpdateCommand,
-) {
-  const expiryDate = dayjs(data.expiryDate).toDate();
-
-  return await prisma.policeCheck.upsert({
+export async function deletePoliceCheckAsync(checkId: number) {
+  return await prisma.policeCheck.delete({
     where: {
-      volunteerId,
-    },
-    create: {
-      expiryDate,
-      filePath: data.filePath,
-      applicationNumber: data.applicationNumber,
-      volunteerId,
-    },
-    update: {
-      expiryDate,
-      filePath: data.filePath,
-      applicationNumber: data.applicationNumber,
-      reminderSentAt: dayjs(data.expiryDate).isAfter(
-        dayjs().subtract(3, "months"),
-      )
-        ? null
-        : undefined,
+      id: checkId,
     },
   });
 }
@@ -64,27 +37,4 @@ export function getFileUrl(path: string): string {
   const sasQueryString = getSASQueryString(containerClient, path, 60);
 
   return `${blob.url}?${sasQueryString}`;
-}
-
-export async function saveFileAsync(
-  userId: string,
-  file: File,
-): Promise<string> {
-  if (file.size === 0) {
-    throw new Error("File too small");
-  }
-  const allowedFormats = ["application/pdf", "image/png", "image/jpeg"];
-
-  if (!allowedFormats.includes(file.type)) {
-    throw new Error("Invalid extension.");
-  }
-
-  const containerClient = getContainerClient(USER_DATA_BLOB_CONTAINER_NAME);
-  await containerClient.createIfNotExists();
-
-  const path = `${userId}/police-check`;
-
-  await uploadBlobAsync(containerClient, file, path);
-
-  return path;
 }

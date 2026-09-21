@@ -396,6 +396,20 @@ export default [
             },
           ),
           route(
+            ":mentorId/police-check/new",
+            "routes/admin.mentors.$mentorId.police-check.new/route.tsx",
+            {
+              index: true,
+            },
+          ),
+          route(
+            ":mentorId/police-check/:checkId",
+            "routes/admin.mentors.$mentorId.police-check.$checkId/route.tsx",
+            {
+              index: true,
+            },
+          ),
+          route(
             ":mentorId/re-enable",
             "routes/admin.mentors.$mentorId.re-enable/route.tsx",
             {
@@ -433,6 +447,13 @@ export default [
           route(
             ":mentorId/wwc-check/new",
             "routes/admin.mentors.$mentorId.wwc-check.new/route.tsx",
+            {
+              index: true,
+            },
+          ),
+          route(
+            ":mentorId/wwc-check/:checkId",
+            "routes/admin.mentors.$mentorId.wwc-check.$checkId/route.tsx",
             {
               index: true,
             },

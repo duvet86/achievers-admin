@@ -99,7 +99,9 @@ export async function getIncompleteMentorsAsync(
         INNER JOIN Chapter c ON c.id = u.chapterId
         LEFT JOIN ApprovalbyMRC ap ON ap.volunteerId = u.id
         LEFT JOIN EoIProfile p ON p.volunteerId = u.id
-        LEFT JOIN PoliceCheck pc ON pc.volunteerId = u.id
+        LEFT JOIN PoliceCheck pc ON pc.id = (
+          SELECT p2.id FROM PoliceCheck p2 WHERE p2.volunteerId = u.id ORDER BY p2.expiryDate DESC, p2.id DESC LIMIT 1
+        )
         LEFT JOIN WWCCheck wcc ON wcc.id = (
           SELECT w.id FROM WWCCheck w WHERE w.volunteerId = u.id ORDER BY w.expiryDate DESC, w.id DESC LIMIT 1
         )

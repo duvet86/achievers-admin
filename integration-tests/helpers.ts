@@ -96,6 +96,27 @@ export async function uploadFile(
   await fileChooser.setFiles(file);
 }
 
+// Files are uploaded to the blob storage emulator (Azurite): a service of the
+// CI jobs, it has to be started manually when running the tests locally.
+export async function isBlobStorageAvailable() {
+  if (
+    !process.env.BLOB_STORAGE_ACCOUNT_NAME ||
+    !process.env.BLOB_STORAGE_ACCOUNT_KEY
+  ) {
+    return false;
+  }
+
+  try {
+    await fetch("http://127.0.0.1:10000/devstoreaccount1", {
+      signal: AbortSignal.timeout(2000),
+    });
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 // The logged in user is a mentor and an admin, the mentor view starts here.
 export async function goToMentorPage(page: Page, name: string) {
   await goToSidebarPage(page, name, "/mentor/home");
