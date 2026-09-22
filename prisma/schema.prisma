@@ -248,8 +248,6 @@ model PoliceCheck {
 
   volunteer   Volunteer @relation(fields: [volunteerId], references: [id])
   volunteerId Int
-
-  @@index([volunteerId])
 }
 
 model WWCCheck {
@@ -265,8 +263,6 @@ model WWCCheck {
 
   volunteer   Volunteer @relation(fields: [volunteerId], references: [id])
   volunteerId Int
-
-  @@index([volunteerId])
 }
 
 model ApprovalbyMRC {
