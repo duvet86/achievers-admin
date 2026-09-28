@@ -37,13 +37,13 @@ export async function action({ request }: Route.ActionArgs) {
 
   const userId = formData.get("userId");
 
-  const profilePicure = formData.get("profilePicure");
-  if (profilePicure === "DELETE") {
+  const profilePicture = formData.get("profilePicture");
+  if (profilePicture === "DELETE") {
     await deleteUserProfilePicture(Number(userId));
-  } else if (profilePicure instanceof File) {
-    await saveUserProfilePicture(Number(userId), profilePicure);
+  } else if (profilePicture instanceof File) {
+    await saveUserProfilePicture(Number(userId), profilePicture);
 
-    memoryHandlerDispose("profilePicure");
+    memoryHandlerDispose("profilePicture");
   } else {
     throw new Error();
   }
