@@ -5,12 +5,34 @@ import type {
 } from "~/models/spreadsheet";
 
 import dayjs from "dayjs";
+import type { Prisma } from "~/prisma/client";
+import type { AppAbility } from "~/services/.server";
+import { getUsersAsync } from "../admin.mentors/services.server";
 
 import { prisma } from "~/db.server";
 import { addCollectionToSpreadsheet } from "~/services/.server";
 
-export async function exportMentorsToSpreadsheetAsync() {
+export async function exportMentorsToSpreadsheetAsync(
+  ability: AppAbility,
+  searchParams: URLSearchParams,
+) {
+  const chapterId = searchParams.get("chapterId");
+  const matchingUsers = await getUsersAsync(
+    ability,
+    0,
+    searchParams.get("searchTerm") ?? null,
+    chapterId ? Number(chapterId) : null,
+    (searchParams.get("sortFullName") ?? "asc") as Prisma.SortOrder,
+    (searchParams.get("sortChapter") ?? undefined) as
+      Prisma.SortOrder | undefined,
+    (searchParams.get("sortChecksCompleted") ?? undefined) as
+      Prisma.SortOrder | undefined,
+    searchParams.get("onlyExpiredChecks") === "on",
+    searchParams.get("includeArchived") === "on",
+    null,
+  );
   const mentors = await prisma.volunteer.findMany({
+    where: { id: { in: matchingUsers.map(({ id }) => id) } },
     include: {
       chapter: true,
       importedHistory: {
@@ -34,7 +56,10 @@ export async function exportMentorsToSpreadsheetAsync() {
     },
   });
 
-  const spreadsheetMentors = mentors.map<SpreadsheetUser>((m) => ({
+  const mentorsById = new Map(mentors.map((mentor) => [mentor.id, mentor]));
+  const orderedMentors = matchingUsers.map(({ id }) => mentorsById.get(id)!);
+
+  const spreadsheetMentors = orderedMentors.map<SpreadsheetUser>((m) => ({
     "First Name": m.firstName,
     "Last Name": m.lastName,
     "Full Name": m.fullName,

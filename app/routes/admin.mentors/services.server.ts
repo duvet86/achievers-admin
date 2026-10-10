@@ -52,29 +52,31 @@ export async function getUsersAsync(
   pageNumber: number,
   searchTerm: string | null,
   chapterId: number | null,
-  sortFullName: Prisma.SortOrder,
-  sortChapter: Prisma.SortOrder,
-  sortChecksCompletedSubmit: Prisma.SortOrder,
+  sortFullName: Prisma.SortOrder | undefined,
+  sortChapter: Prisma.SortOrder | undefined,
+  sortChecksCompletedSubmit: Prisma.SortOrder | undefined,
   onlyExpiredChecks = false,
   includeArchived = false,
-  numberItems = 10,
+  numberItems: number | null = 10,
 ) {
-  let orderBy = "";
-  if (sortFullName) {
+  let orderBy = "fullName asc";
+  if (sortFullName === "asc" || sortFullName === "desc") {
     orderBy = `fullName ${sortFullName}`;
   }
-  if (sortChapter) {
+  if (sortChapter === "asc" || sortChapter === "desc") {
     orderBy = `chapterName ${sortChapter}`;
   }
-  if (sortChecksCompletedSubmit) {
+  if (
+    sortChecksCompletedSubmit === "asc" ||
+    sortChecksCompletedSubmit === "desc"
+  ) {
     orderBy = `checksCompleted ${sortChecksCompletedSubmit}`;
   }
 
   const query = `
     ${getUserQuery(ability, searchTerm, chapterId, onlyExpiredChecks, includeArchived)}
     ORDER BY ${orderBy}
-    LIMIT ${numberItems}
-    OFFSET ${numberItems * pageNumber}`;
+    ${numberItems === null ? "" : `LIMIT ${numberItems} OFFSET ${numberItems * pageNumber}`}`;
 
   return await prisma.$queryRawUnsafe<UserQuery[]>(
     query,

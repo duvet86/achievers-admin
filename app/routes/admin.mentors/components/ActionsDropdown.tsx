@@ -1,8 +1,11 @@
+import { useSearchParams } from "react-router";
+
 import { DatabaseExport, DatabaseRestore, NavArrowDown } from "iconoir-react";
 
 import { StateLink } from "~/components";
 
 export function ActionsDropdown() {
+  const [searchParams] = useSearchParams();
   return (
     <div className="dropdown dropdown-end">
       <div title="actions" tabIndex={0} className="btn w-40 gap-2">
@@ -20,7 +23,11 @@ export function ActionsDropdown() {
           </StateLink>
         </li>
         <li>
-          <a className="gap-4" href="/admin/mentors/export" download>
+          <a
+            className="gap-4"
+            href={`/admin/mentors/export?${searchParams.toString()}`}
+            download
+          >
             <DatabaseExport />
             Export mentors
           </a>
