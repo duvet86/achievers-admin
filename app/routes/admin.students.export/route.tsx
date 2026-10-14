@@ -1,7 +1,18 @@
+import type { Route } from "./+types/route";
+
+import {
+  getLoggedUserInfoAsync,
+  getPermissionsAbility,
+} from "~/services/.server";
+
 import { exportStudentsToSpreadsheetAsync } from "./services.server";
 
-export async function loader() {
-  const buf = await exportStudentsToSpreadsheetAsync();
+export async function loader({ request }: Route.LoaderArgs) {
+  const user = await getLoggedUserInfoAsync(request);
+  const buf = await exportStudentsToSpreadsheetAsync(
+    getPermissionsAbility(user.roles),
+    new URL(request.url).searchParams,
+  );
 
   return new Response(buf, {
     status: 200,

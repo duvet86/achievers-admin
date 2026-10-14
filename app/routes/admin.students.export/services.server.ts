@@ -1,11 +1,34 @@
+import type { Prisma } from "~/prisma/client";
+import type { AppAbility } from "~/services/.server";
+import { getStudentsAsync } from "../admin.students/services.server";
+
 import type { SpreadsheetStudent } from "~/models/spreadsheet";
 
 import { prisma } from "~/db.server";
 import { calculateYearLevel } from "~/services";
 import { addCollectionToSpreadsheet } from "~/services/.server";
 
-export async function exportStudentsToSpreadsheetAsync() {
+export async function exportStudentsToSpreadsheetAsync(
+  ability: AppAbility,
+  searchParams: URLSearchParams,
+) {
+  const chapterId = searchParams.get("chapterId");
+  const sortOrder = (key: string): Prisma.SortOrder | undefined => {
+    const value = searchParams.get(key);
+    return value === "asc" || value === "desc" ? value : undefined;
+  };
+  const matchingStudents = await getStudentsAsync(
+    ability,
+    0,
+    searchParams.get("searchTerm") ?? null,
+    chapterId ? Number(chapterId) : null,
+    sortOrder("sortFullName"),
+    sortOrder("sortChapter"),
+    searchParams.get("includeArchived") === "on",
+    null,
+  );
   const students = await prisma.student.findMany({
+    where: { id: { in: matchingStudents.map(({ id }) => id) } },
     include: {
       guardian: true,
       studentTeacher: true,
@@ -13,7 +36,14 @@ export async function exportStudentsToSpreadsheetAsync() {
     },
   });
 
-  const spreadsheetMentors = students.map<SpreadsheetStudent>((s) => ({
+  const studentsById = new Map(
+    students.map((student) => [student.id, student]),
+  );
+  const orderedStudents = matchingStudents.map(({ id }) =>
+    studentsById.get(id)!,
+  );
+
+  const spreadsheetMentors = orderedStudents.map<SpreadsheetStudent>((s) => ({
     "First Name": s.firstName,
     "Last Name": s.lastName,
     Chapter: s.chapter.name,

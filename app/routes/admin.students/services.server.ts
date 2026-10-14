@@ -53,7 +53,7 @@ export async function getStudentsAsync(
   sortFullName: Prisma.SortOrder | undefined,
   sortChapter: Prisma.SortOrder | undefined,
   includeArchived = false,
-  numberItems = 10,
+  numberItems: number | null = 10,
 ) {
   const students = await prisma.student.findMany({
     select: {
@@ -96,8 +96,8 @@ export async function getStudentsAsync(
           }
         : undefined,
     },
-    skip: numberItems * pageNumber,
-    take: numberItems,
+    skip: numberItems === null ? undefined : numberItems * pageNumber,
+    take: numberItems ?? undefined,
   });
 
   return students.map((student) => {
