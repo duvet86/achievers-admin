@@ -97,7 +97,7 @@ export function getUserQuery(
     chapterWhereClause = `chapterId = ?`;
   }
   let searchTermWhereClause = "1 = ?";
-  if (searchTerm !== null) {
+  if (searchTerm?.length) {
     searchTermWhereClause = `fullName LIKE ?`;
   }
   let archivedWhereClause = "endDate IS NULL";
