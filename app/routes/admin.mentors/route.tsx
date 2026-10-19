@@ -19,8 +19,8 @@ import { Title, Pagination, TableHeaderSort, StateLink } from "~/components";
 
 import {
   getChaptersAsync,
-  getUsersAsync,
-  getUsersCountAsync,
+  getVolunteersAsync,
+  getVolunteersCountAsync,
 } from "./services.server";
 import { ActionsDropdown, FormInputs } from "./components";
 
@@ -61,7 +61,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const numberItems = 10;
 
-  const count = await getUsersCountAsync(
+  const count = await getVolunteersCountAsync(
     ability,
     searchTerm,
     chapterIdValue,
@@ -81,7 +81,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const [chapters, users] = await Promise.all([
     getChaptersAsync(ability),
-    getUsersAsync(
+    getVolunteersAsync(
       ability,
       currentPageNumber,
       searchTerm,

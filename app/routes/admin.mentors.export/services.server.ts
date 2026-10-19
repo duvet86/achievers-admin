@@ -7,7 +7,7 @@ import type {
 import dayjs from "dayjs";
 import type { Prisma } from "~/prisma/client";
 import type { AppAbility } from "~/services/.server";
-import { getUsersAsync } from "../admin.mentors/services.server";
+import { getVolunteersAsync } from "../admin.mentors/services.server";
 
 import { prisma } from "~/db.server";
 import { addCollectionToSpreadsheet } from "~/services/.server";
@@ -17,7 +17,7 @@ export async function exportMentorsToSpreadsheetAsync(
   searchParams: URLSearchParams,
 ) {
   const chapterId = searchParams.get("chapterId");
-  const matchingUsers = await getUsersAsync(
+  const matchingUsers = await getVolunteersAsync(
     ability,
     0,
     searchParams.get("searchTerm") ?? null,

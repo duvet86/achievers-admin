@@ -4,7 +4,7 @@ import type { AppAbility } from "~/services/.server";
 import { prisma } from "~/db.server";
 import { accessibleBy } from "~/casl-prisma";
 
-export interface UserQuery {
+interface VolunteerQuery {
   id: number;
   fullName: string;
   volunteerAgreementSignedOn: string | null;
@@ -31,7 +31,7 @@ export async function getChaptersAsync(ability: AppAbility) {
   });
 }
 
-export async function getUsersCountAsync(
+export async function getVolunteersCountAsync(
   ability: AppAbility,
   searchTerm: string | null,
   chapterId: number | null,
@@ -39,7 +39,7 @@ export async function getUsersCountAsync(
   includeArchived = false,
 ) {
   const count = await prisma.$queryRawUnsafe<{ count: number }[]>(
-    `SELECT count(*) count FROM (${getUserQuery(ability, searchTerm, chapterId, onlyExpiredChecks, includeArchived)}) s`,
+    `SELECT count(*) count FROM (${getVolunteerQuery(ability, searchTerm, chapterId, onlyExpiredChecks, includeArchived)}) s`,
     accessibleBy(ability).ofType("Chapter").id ?? chapterId ?? "1",
     searchTerm ? `%${searchTerm}%` : "1",
   );
@@ -47,7 +47,7 @@ export async function getUsersCountAsync(
   return Number(count[0].count);
 }
 
-export async function getUsersAsync(
+export async function getVolunteersAsync(
   ability: AppAbility,
   pageNumber: number,
   searchTerm: string | null,
@@ -74,18 +74,18 @@ export async function getUsersAsync(
   }
 
   const query = `
-    ${getUserQuery(ability, searchTerm, chapterId, onlyExpiredChecks, includeArchived)}
+    ${getVolunteerQuery(ability, searchTerm, chapterId, onlyExpiredChecks, includeArchived)}
     ORDER BY ${orderBy}
     ${numberItems === null ? "" : `LIMIT ${numberItems} OFFSET ${numberItems * pageNumber}`}`;
 
-  return await prisma.$queryRawUnsafe<UserQuery[]>(
+  return await prisma.$queryRawUnsafe<VolunteerQuery[]>(
     query,
     accessibleBy(ability).ofType("Chapter").id ?? chapterId ?? "1",
     searchTerm ? `%${searchTerm}%` : "1",
   );
 }
 
-export function getUserQuery(
+function getVolunteerQuery(
   ability: AppAbility,
   searchTerm: string | null,
   chapterId: number | null,
