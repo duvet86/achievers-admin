@@ -216,7 +216,7 @@ export async function createSessionAsync({
     },
   });
 
-  if (studentSession !== null && studentSession.status !== "AVAILABLE") {
+  if (studentSession !== null && studentSession.status === "UNAVAILABLE") {
     throw new Error("Student is not available.");
   }
 
