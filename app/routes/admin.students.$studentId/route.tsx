@@ -239,6 +239,7 @@ export default function Index({
         title={title}
         endDate={student?.endDate}
         successMessage={actionData?.successMessage}
+        result={actionData}
       />
 
       <hr className="my-4" />

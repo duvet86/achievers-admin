@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/purity */
 import type { EditorState } from "lexical";
 import type { Route } from "./+types/route";
 import type { SessionCommandRequest } from "./services.server";
@@ -112,7 +111,7 @@ export default function Index({
           behalf of &quot;{volunteerSession.volunteer.fullName}&quot;
         </Title>
 
-        <Message key={Date.now()} successMessage={data?.successMessage} />
+        <Message result={data} successMessage={data?.successMessage} />
       </div>
 
       <div className="relative flex h-full flex-col">

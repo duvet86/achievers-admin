@@ -4,10 +4,23 @@ import { useEffect, useState } from "react";
 interface MessageProps {
   successMessage: string | undefined | null;
   errorMessage?: string | undefined | null;
+  // The action/fetcher data the messages come from. A new object means a new
+  // submission, so the success message is shown again even if its text is the same.
+  result?: unknown;
 }
 
-export function Message({ successMessage, errorMessage }: MessageProps) {
+export function Message({
+  successMessage,
+  errorMessage,
+  result,
+}: MessageProps) {
   const [isActive, setIsActive] = useState(true);
+  const [prevResult, setPrevResult] = useState(result);
+
+  if (result !== prevResult) {
+    setPrevResult(result);
+    setIsActive(true);
+  }
 
   useEffect(() => {
     if (!successMessage) {
@@ -26,7 +39,7 @@ export function Message({ successMessage, errorMessage }: MessageProps) {
         clearTimeout(n);
       }
     };
-  }, [isActive, successMessage]);
+  }, [isActive, successMessage, result]);
 
   return (
     <div data-testid="message">

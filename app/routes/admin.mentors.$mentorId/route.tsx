@@ -228,6 +228,7 @@ export default function Index({
           user={loaderData.user}
           chapters={loaderData.chapters}
           successMessage={actionData?.successMessage}
+          result={actionData}
         />
 
         <hr className="my-8 md:hidden" />

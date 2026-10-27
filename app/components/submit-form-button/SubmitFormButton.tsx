@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/purity */
 import classnames from "classnames";
 import { FloppyDiskArrowIn } from "iconoir-react";
 
@@ -8,6 +7,7 @@ interface Props {
   label?: string;
   successMessage?: string | null;
   errorMessage?: string | null;
+  result?: unknown;
   sticky?: boolean;
   className?: string;
   disabled?: boolean;
@@ -16,6 +16,7 @@ interface Props {
 export function SubmitFormButton({
   successMessage,
   errorMessage,
+  result,
   sticky,
   className,
   label = "Save",
@@ -29,7 +30,7 @@ export function SubmitFormButton({
       })}
     >
       <Message
-        key={Date.now()}
+        result={result}
         errorMessage={errorMessage}
         successMessage={successMessage}
       />

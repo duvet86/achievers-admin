@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/purity */
 import type { EditorState } from "lexical";
 import type { Route } from "./+types/route";
 import type { SessionCommandRequest } from "./services.server";
@@ -131,7 +130,7 @@ export default function Index({
           {studentSession.student.fullName}&quot;
         </Title>
 
-        <Message key={Date.now()} successMessage={data?.successMessage} />
+        <Message result={data} successMessage={data?.successMessage} />
 
         {completedOn === null && (
           <div className="bg-warning flex gap-4 rounded-lg p-2 pr-12">

@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/purity */
 import type { EditorState } from "lexical";
 import type { Route } from "./+types/route";
 
@@ -110,7 +109,7 @@ export default function Index({
           {`Mark "${session.studentSession.student.fullName}" as absent for the "${dayjs(session.attendedOn).format("MMMM D, YYYY")}"`}
         </Title>
 
-        <Message key={Date.now()} successMessage={data?.successMessage} />
+        <Message result={data} successMessage={data?.successMessage} />
       </div>
 
       <Form onSubmit={onFormSubmit}>

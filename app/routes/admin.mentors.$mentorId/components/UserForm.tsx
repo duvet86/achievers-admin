@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/purity */
 import type { $Enums } from "~/prisma/client";
 
 import { useEffect } from "react";
@@ -42,6 +41,7 @@ interface Props {
     name: string;
   }[];
   successMessage: string | undefined;
+  result?: unknown;
 }
 
 export function UserForm({
@@ -49,6 +49,7 @@ export function UserForm({
   user,
   chapters,
   successMessage,
+  result,
 }: Props) {
   const { submit, data, state } = useFetcher<{ message: string }>();
 
@@ -280,7 +281,7 @@ export function UserForm({
             data-testid="container"
             className="sticky bottom-0 z-10 flex justify-between"
           >
-            <Message key={Date.now()} successMessage={successMessage} />
+            <Message result={result} successMessage={successMessage} />
 
             {!isFormEditable ? (
               <Link

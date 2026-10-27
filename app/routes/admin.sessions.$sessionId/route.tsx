@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/purity */
 import type { Route } from "./+types/route";
 
 import { Form, redirect } from "react-router";
@@ -112,7 +111,7 @@ export default function Index({
         </Title>
 
         <Message
-          key={Date.now()}
+          result={actionData}
           errorMessage={actionData?.errorMessage}
           successMessage={actionData?.successMessage}
         />

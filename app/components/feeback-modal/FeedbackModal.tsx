@@ -26,7 +26,7 @@ export function FeedbackModal() {
         <div className="mb-4 flex justify-between">
           <Title>Feedback</Title>
           <Message
-            key={Date.now()}
+            result={data}
             successMessage={data?.successMessage}
             errorMessage={data?.errorMessage}
           />

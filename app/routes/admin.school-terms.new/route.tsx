@@ -148,6 +148,7 @@ export default function Index({ actionData }: Route.ComponentProps) {
           ))}
 
         <SubmitFormButton
+          result={actionData}
           sticky
           className="justify-between"
           successMessage={actionData?.successMessage}

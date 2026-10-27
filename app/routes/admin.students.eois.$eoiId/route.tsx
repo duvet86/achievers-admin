@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/purity */
 import type { Prisma } from "~/prisma/client";
 import type { XOR } from "~/models";
 import type { Route } from "./+types/route";
@@ -115,7 +114,10 @@ export default function Index({
       <div className="flex flex-col justify-between gap-2 sm:flex-row sm:gap-10">
         <Title>Student Expression Of Interest</Title>
 
-        <Message key={Date.now()} successMessage={actionData?.successMessage} />
+        <Message
+          result={actionData}
+          successMessage={actionData?.successMessage}
+        />
 
         {eoiStudent.Student ? (
           <p className="bg-success mb-4 flex items-center gap-2 rounded-sm px-6 py-2">

@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/purity */
 import { BinFull, NavArrowDown, OnTag, WarningTriangle } from "iconoir-react";
 
 import { Message, StateLink, Title } from "~/components";
@@ -7,14 +6,15 @@ interface Props {
   title: string;
   endDate: Date | null | undefined;
   successMessage?: string;
+  result?: unknown;
 }
 
-export function Header({ title, endDate, successMessage }: Props) {
+export function Header({ title, endDate, successMessage, result }: Props) {
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:gap-10">
       <Title>{title}</Title>
 
-      <Message key={Date.now()} successMessage={successMessage} />
+      <Message result={result} successMessage={successMessage} />
 
       {endDate && (
         <p

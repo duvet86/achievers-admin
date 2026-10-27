@@ -27,7 +27,7 @@ export default defineConfig({
     tsconfigPaths: true,
     alias: {
       "@opentelemetry/api": path.resolve(
-        __dirname,
+        import.meta.dirname,
         "./node_modules/@opentelemetry/api/build/esnext/index.js",
       ),
     },

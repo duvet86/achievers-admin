@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/purity */
 import type { Route } from "./+types/route";
 
 import invariant from "tiny-invariant";
@@ -41,7 +40,10 @@ export default function Index({
       <div className="flex flex-col gap-6 sm:flex-row">
         <Title>Promote student &quot;{eoiStudent.fullName}&quot;</Title>
 
-        <Message key={Date.now()} successMessage={actionData?.successMessage} />
+        <Message
+          result={actionData}
+          successMessage={actionData?.successMessage}
+        />
       </div>
 
       <Form method="post">

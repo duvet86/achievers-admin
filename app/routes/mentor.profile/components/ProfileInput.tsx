@@ -1,5 +1,4 @@
-/* eslint-disable @eslint-react/purity */
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useSubmit } from "react-router";
 import { Xmark } from "iconoir-react";
@@ -21,9 +20,18 @@ export function ProfileInput({
   const [profilePicturePath, setProfilePicturePath] = useState<string | null>(
     defaultProfilePicturePath,
   );
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
 
-  const hasImage = selectedImage ?? profilePicturePath;
+  // Free the previous preview URL when it is replaced or on unmount.
+  useEffect(() => {
+    return () => {
+      if (selectedImageUrl) {
+        URL.revokeObjectURL(selectedImageUrl);
+      }
+    };
+  }, [selectedImageUrl]);
+
+  const hasImage = selectedImageUrl ?? profilePicturePath;
 
   const removeProfilePic = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -36,7 +44,7 @@ export function ProfileInput({
       inputRef.current.files = null;
       inputRef.current.value = "";
     }
-    setSelectedImage(null);
+    setSelectedImageUrl(null);
     setProfilePicturePath(null);
 
     const formData = new FormData();
@@ -71,7 +79,7 @@ export function ProfileInput({
       return;
     }
 
-    setSelectedImage(file);
+    setSelectedImageUrl(URL.createObjectURL(file));
 
     const formData = new FormData();
     formData.append("userId", userId.toString());
@@ -85,9 +93,9 @@ export function ProfileInput({
       <figure className="border">
         <img
           src={
-            selectedImage
-              ? URL.createObjectURL(selectedImage)
-              : (profilePicturePath ?? "/images/profile-picture.webp")
+            selectedImageUrl ??
+            profilePicturePath ??
+            "/images/profile-picture.webp"
           }
           alt="profile"
           className="h-44 w-44"

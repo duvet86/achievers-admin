@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/purity */
 import type { Route } from "./+types/route";
 
 import { Form, redirect } from "react-router";
@@ -63,7 +62,10 @@ export default function Chapter({
           Invite &quot;{user.fullName}&quot; to the achievers&apos; web app
         </Title>
 
-        <Message key={Date.now()} successMessage={actionData?.successMessage} />
+        <Message
+          result={actionData}
+          successMessage={actionData?.successMessage}
+        />
       </div>
 
       <Form method="post" className="mt-4">

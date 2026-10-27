@@ -159,7 +159,7 @@ export default function Index({
         <Title>Configure mentor resource</Title>
 
         <Message
-          key={Date.now()}
+          result={data}
           successMessage={data?.successMessage}
           errorMessage={data?.errorMessage}
         />

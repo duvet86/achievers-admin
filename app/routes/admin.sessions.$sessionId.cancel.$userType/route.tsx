@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/purity */
 import type { EditorState } from "lexical";
 import type { Route } from "./+types/route";
 
@@ -117,7 +116,7 @@ export default function Index({
           &quot;
         </Title>
 
-        <Message key={Date.now()} successMessage={data?.successMessage} />
+        <Message result={data} successMessage={data?.successMessage} />
       </div>
 
       <Form onSubmit={onFormSubmit}>

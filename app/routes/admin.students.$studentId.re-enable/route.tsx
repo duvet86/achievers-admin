@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/purity */
 import type { Route } from "./+types/route";
 
 import { Form } from "react-router";
@@ -38,7 +37,10 @@ export default function Index({
       <div className="flex flex-col gap-6 sm:flex-row">
         <Title>Re enable &quot;{student.fullName}&quot;</Title>
 
-        <Message key={Date.now()} successMessage={actionData?.successMessage} />
+        <Message
+          result={actionData}
+          successMessage={actionData?.successMessage}
+        />
       </div>
 
       <Form method="post">

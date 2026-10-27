@@ -92,7 +92,7 @@ export default function Index({
       <div className="flex flex-col gap-6 sm:flex-row">
         <Title>Configure mentor resources</Title>
 
-        <Message key={Date.now()} successMessage={data?.successMessage} />
+        <Message result={data} successMessage={data?.successMessage} />
       </div>
 
       <p className="text-info mt-4 flex items-center gap-2">

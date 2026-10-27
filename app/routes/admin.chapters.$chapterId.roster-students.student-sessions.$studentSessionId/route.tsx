@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/purity */
 import type { Route } from "./+types/route";
 
 import { Form, redirect, useSearchParams } from "react-router";
@@ -129,7 +128,10 @@ export default function Index({
           {attendedOnLabel}&quot;
         </Title>
 
-        <Message key={Date.now()} successMessage={actionData?.successMessage} />
+        <Message
+          result={actionData}
+          successMessage={actionData?.successMessage}
+        />
       </div>
 
       <div className="my-8 flex flex-col gap-6">

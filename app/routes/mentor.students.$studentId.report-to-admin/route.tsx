@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/purity */
 import type { Route } from "./+types/route";
 
 import { Form } from "react-router";
@@ -84,7 +83,7 @@ export default function Index({
         <Textarea name="message" required />
 
         <div className="mt-4 flex justify-between">
-          <Message key={Date.now()} successMessage={actionData?.message} />
+          <Message result={actionData} successMessage={actionData?.message} />
 
           <button className="btn btn-primary w-48" type="submit">
             <SubmitDocument />
