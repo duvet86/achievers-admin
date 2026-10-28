@@ -36,7 +36,7 @@ jobs:
       DB_DATABASE: achievers
       DB_USER: root
       DB_PASSWORD: my-secret-pw
-      # Well-known credentials of the Azurite (Azure Storage emulator) service below.
+      # Well-known credentials of the Azurite (Azure Storage emulator) started below.
       BLOB_STORAGE_ACCOUNT_NAME: devstoreaccount1
       BLOB_STORAGE_ACCOUNT_KEY: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
 
@@ -51,13 +51,13 @@ jobs:
           - "3306:3306"
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-      # Blob storage emulator, used to store the files uploaded during the E2E tests.
-      azurite:
-        image: mcr.microsoft.com/azure-storage/azurite
-        ports:
-          - "10000:10000"
-
     steps:
+      # Blob storage emulator, used to store the files uploaded during the E2E tests.
+      # Started here because services can't pass arguments: the Azure SDK can use an API
+      # version newer than the ones known by Azurite, which then rejects every request.
+      - name: Start Azurite
+        run: docker run -d -p 10000:10000 mcr.microsoft.com/azure-storage/azurite azurite-blob --blobHost 0.0.0.0 --skipApiVersionCheck
+
       - name: Set up test DB
         run: mysql -h 127.0.0.1 --port 3306 -u ${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
 
