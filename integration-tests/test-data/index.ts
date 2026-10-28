@@ -4,6 +4,7 @@ import { PrismaClient } from "~/prisma/client";
 
 import { createUsersAsync } from "./users";
 import { createStudentsAsync } from "./students";
+import { createSchoolTermsAsync } from "./school-terms";
 import { assignMentorsToStudentsAsync } from "./mentor-to-sudent-assignement";
 import { mentorAsync } from "./mentor";
 
@@ -33,6 +34,7 @@ export async function seedDataAsync(isMentor = false) {
       async (tx) => {
         await createUsersAsync(tx, process.env.TEST_MENTOR_AZURE_ID!);
         await createStudentsAsync(tx);
+        await createSchoolTermsAsync(tx);
 
         await assignMentorsToStudentsAsync(tx);
 
@@ -387,8 +389,7 @@ export async function seedGoalsAsync() {
   }
 }
 
-// School terms are not part of the seed data, tests that add terms need to
-// remove them.
+// Removes the terms of a year added by a test.
 export async function deleteSchoolTermsAsync(year: number) {
   const prisma = new PrismaClient({ adapter });
 

@@ -75,7 +75,9 @@ const config: PlaywrightTestConfig = {
   webServer: {
     command: "npm start",
     port: 3000,
-    timeout: 10000,
+    timeout: 60000,
+    // Freezes the server time (see server-utils/mock-time.js), tests rely on it.
+    env: { LOCAL_TEST: "true" },
     reuseExistingServer: !process.env.CI,
   },
 };
