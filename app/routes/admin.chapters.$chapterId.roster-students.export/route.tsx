@@ -1,10 +1,11 @@
+import type { Prisma } from "~/prisma/client";
 import type { Route } from "./+types/route";
 
 import invariant from "tiny-invariant";
 import dayjs from "dayjs";
 
 import { getSchoolTermsAsync } from "~/services/.server";
-import { getCurrentTermForDate, URLSafeSearch } from "~/services";
+import { getDatesForTerm, getSelectedTerm, URLSafeSearch } from "~/services";
 
 import { exportRosterToSpreadsheetAsync } from "./services.server";
 
@@ -20,28 +21,32 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     CURRENT_YEAR.toString();
   const selectedTermId = url.safeSearchParams.getNullOrEmpty("selectedTermId");
 
+  let selectedTermDate =
+    url.safeSearchParams.getNullOrEmpty("selectedTermDate");
+  const search = url.safeSearchParams.getNullOrEmpty("search");
+  const sortFullName = url.safeSearchParams.getNullOrEmpty(
+    "sortFullName",
+  ) as Prisma.SortOrder | null;
+
   const terms = await getSchoolTermsAsync();
-  const currentTerm = getCurrentTermForDate(terms, new Date());
-
-  const termsForYear = terms.filter(
-    ({ year }) => year.toString() === selectedTermYear,
+  const { selectedTerm } = getSelectedTerm(
+    terms,
+    selectedTermYear,
+    selectedTermId,
+    selectedTermDate,
   );
 
-  let selectedTerm = termsForYear.find(
-    (t) => t.id.toString() === selectedTermId,
-  );
-
-  if (!selectedTerm) {
-    if (selectedTermYear === CURRENT_YEAR.toString()) {
-      selectedTerm = currentTerm;
-    } else {
-      selectedTerm = termsForYear[0];
-    }
+  const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
+  if (selectedTermDate && !sessionDates.includes(selectedTermDate)) {
+    selectedTermDate = null;
   }
 
   const buf = await exportRosterToSpreadsheetAsync(
     Number(params.chapterId),
     selectedTerm,
+    selectedTermDate,
+    search,
+    sortFullName ?? "asc",
   );
 
   return new Response(buf, {

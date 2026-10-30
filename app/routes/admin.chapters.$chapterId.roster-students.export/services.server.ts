@@ -4,6 +4,7 @@ import type { Term } from "~/models";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
+import { Prisma } from "~/prisma/client";
 import { prisma } from "~/db.server";
 import { getDatesForTerm } from "~/services";
 import { addCollectionToSpreadsheet } from "~/services/.server";
@@ -28,9 +29,21 @@ interface SessionViewModelLookup {
 export async function exportRosterToSpreadsheetAsync(
   chapterId: number,
   selectedTerm: Term,
+  selectedTermDate: string | null = null,
+  search: string | null = null,
+  sortFullName: Prisma.SortOrder = "asc",
 ) {
-  const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
-  const students = await getStudentsAsync(chapterId, selectedTerm);
+  const sessionDates = getDatesForTerm(
+    selectedTerm.start,
+    selectedTerm.end,
+  ).filter((date) => selectedTermDate === null || date === selectedTermDate);
+  const students = await getStudentsAsync(
+    chapterId,
+    selectedTerm,
+    selectedTermDate,
+    search,
+    sortFullName,
+  );
 
   const spreadsheet = students.map(({ fullName, yearLevel, sessionLookup }) => {
     const result: Record<string, string> = {
@@ -64,11 +77,15 @@ export async function exportRosterToSpreadsheetAsync(
 export async function getStudentsAsync(
   chapterId: number,
   term: Term,
+  selectedTermDate: string | null = null,
+  search: string | null = null,
+  sortFullName: Prisma.SortOrder = "asc",
 ): Promise<SessionViewModelLookup[]> {
   const students = await prisma.student.findMany({
     where: {
       endDate: null,
       chapterId,
+      fullName: search ? { contains: search } : undefined,
     },
     select: {
       id: true,
@@ -76,7 +93,7 @@ export async function getStudentsAsync(
       yearLevel: true,
     },
     orderBy: {
-      fullName: "asc",
+      fullName: sortFullName,
     },
   });
 
@@ -92,7 +109,7 @@ export async function getStudentsAsync(
     LEFT JOIN VolunteerSession ms ON ms.id = sa.volunteerSessionId
     LEFT JOIN Volunteer u ON u.id = ms.volunteerId
     WHERE ss.chapterId = ${chapterId}
-      AND ss.attendedOn BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`;
+      AND ss.attendedOn ${selectedTermDate ? Prisma.sql`= ${dayjs(selectedTermDate).format("YYYY-MM-DD")}` : Prisma.sql`BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`}`;
 
   const studentSessionLookup = studentSessions.reduce<
     Record<string, Record<string, StudentSession>>

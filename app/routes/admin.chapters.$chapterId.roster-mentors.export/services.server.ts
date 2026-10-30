@@ -4,6 +4,7 @@ import type { Term } from "~/models";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
+import { Prisma } from "~/prisma/client";
 import { prisma } from "~/db.server";
 import { getDatesForTerm } from "~/services";
 import { addCollectionToSpreadsheet } from "~/services/.server";
@@ -56,9 +57,23 @@ interface SessionViewModel {
 export async function exportRosterToSpreadsheetAsync(
   chapterId: number,
   selectedTerm: Term,
+  selectedTermDate: string | null = null,
+  search: string | null = null,
+  selectedStatus: string | null = null,
+  sortFullName: Prisma.SortOrder = "asc",
 ) {
-  const sessionDates = getDatesForTerm(selectedTerm.start, selectedTerm.end);
-  const mentors = await getMentorsAsync(chapterId, selectedTerm);
+  const sessionDates = getDatesForTerm(
+    selectedTerm.start,
+    selectedTerm.end,
+  ).filter((date) => selectedTermDate === null || date === selectedTermDate);
+  const mentors = await getMentorsAsync(
+    chapterId,
+    selectedTerm,
+    selectedTermDate,
+    search,
+    selectedStatus,
+    sortFullName,
+  );
 
   const spreadsheet = mentors.map(({ fullName, sessionLookup }) => {
     const result: Record<string, string> = { Mentors: fullName };
@@ -95,18 +110,34 @@ export async function exportRosterToSpreadsheetAsync(
 export async function getMentorsAsync(
   chapterId: number,
   term: Term,
+  selectedTermDate: string | null = null,
+  search: string | null = null,
+  selectedStatus: string | null = null,
+  sortFullName: Prisma.SortOrder = "asc",
 ): Promise<SessionViewModel[]> {
   const mentors = await prisma.volunteer.findMany({
     where: {
       endDate: null,
       chapterId,
+      fullName: search ? { contains: search } : undefined,
+      volunteerSession: selectedStatus
+        ? {
+            some: {
+              chapterId,
+              status: selectedStatus as SessionStatus,
+              attendedOn: selectedTermDate
+                ? dayjs(selectedTermDate).toDate()
+                : { gte: term.start.toDate(), lte: term.end.toDate() },
+            },
+          }
+        : undefined,
     },
     select: {
       id: true,
       fullName: true,
     },
     orderBy: {
-      fullName: "asc",
+      fullName: sortFullName,
     },
   });
 
@@ -128,7 +159,8 @@ export async function getMentorsAsync(
       LEFT JOIN StudentSession ss ON ss.id = sa.studentSessionId
       LEFT JOIN Student s ON s.id = ss.studentId
       WHERE ms.chapterId = ${chapterId}
-        AND ms.attendedOn BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`;
+        AND ms.attendedOn ${selectedTermDate ? Prisma.sql`= ${dayjs(selectedTermDate).format("YYYY-MM-DD")}` : Prisma.sql`BETWEEN ${term.start.utc().format("YYYY-MM-DD")} AND ${term.end.utc().format("YYYY-MM-DD")}`}
+        ${selectedStatus ? Prisma.sql`AND ms.status = ${selectedStatus}` : Prisma.empty}`;
 
   const volunteerSessionLookup = volunteerSessions.reduce<
     Record<string, SessionLookup>
