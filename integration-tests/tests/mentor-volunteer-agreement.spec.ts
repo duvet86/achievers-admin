@@ -18,7 +18,9 @@ test.describe("Mentor Volunteer Agreement", () => {
       await expect(page.getByRole("link", { name, exact: true })).toBeVisible();
     }
 
-    await page.getByRole("link", { name: "Mentor View", exact: true }).click();
+    await page
+      .getByRole("link", { name: "Change To Mentor View", exact: true })
+      .click();
   });
 
   test("should have volunteer agreement", async ({ page }) => {

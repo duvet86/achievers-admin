@@ -18,7 +18,9 @@ test.describe("Mentor Home Page", () => {
 
     await expect(page).toHaveTitle(/Achievers WA/);
 
-    await page.getByRole("link", { name: "Mentor View", exact: true }).click();
+    await page
+      .getByRole("link", { name: "Change To Mentor View", exact: true })
+      .click();
 
     await expect(
       page.getByRole("link", { name: "Achievers WA" }),

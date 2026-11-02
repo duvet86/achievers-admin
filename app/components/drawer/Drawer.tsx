@@ -215,7 +215,9 @@ export function Drawer({ currentView, linkMappings, isMentorAndAdmin }: Props) {
               >
                 <div className="flex items-center gap-4">
                   <RefreshDouble />{" "}
-                  {`Change To ${isCurrentViewAdmin ? "Mentor View" : "Admin View"}`}
+                  {isCurrentViewAdmin
+                    ? "Change To Mentor View"
+                    : "Change To Admin View"}
                 </div>
               </Link>
             </li>
