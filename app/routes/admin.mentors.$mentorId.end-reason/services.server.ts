@@ -10,6 +10,8 @@ export async function getUserByIdAsync(id: number) {
       fullName: true,
       endDate: true,
       volunteerNotes: {
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        take: 1,
         select: {
           note: true,
         },

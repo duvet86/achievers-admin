@@ -10,6 +10,8 @@ export async function getStudentByIdAsync(id: number) {
       fullName: true,
       endDate: true,
       studentNotes: {
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        take: 1,
         select: {
           note: true,
         },
