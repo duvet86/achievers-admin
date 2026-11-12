@@ -7,7 +7,7 @@
   "scripts": {
     "build": "react-router build",
     "dev": "cross-env NODE_ENV=development node -r dotenv/config ./server.mjs",
-    "start": "node ./server.mjs",
+    "start": "node --import @azure/monitor-opentelemetry/loader ./server.mjs",
     "format": "prettier --write .",
     "lint": "eslint",
     "seed": "prisma db seed",

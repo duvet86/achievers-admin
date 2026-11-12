@@ -1,5 +1,6 @@
-import { initAppInsightsLogger, mockTime } from "./server-utils/index.js";
-initAppInsightsLogger();
+// Must stay first: initialises telemetry before express/http are evaluated.
+import "./server-utils/instrumentation.js";
+import { mockTime } from "./server-utils/index.js";
 
 import express from "express";
 import compression from "compression";
