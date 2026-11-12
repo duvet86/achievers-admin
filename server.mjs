@@ -1,6 +1,6 @@
 // Must stay first: initialises telemetry before express/http are evaluated.
 import "./server-utils/instrumentation.js";
-import { mockTime } from "./server-utils/index.js";
+import { mockTime, nameRequestSpan } from "./server-utils/index.js";
 
 import express from "express";
 import compression from "compression";
@@ -19,6 +19,7 @@ const PORT = Number.parseInt(process.env.PORT || "3000");
 
 const app = express();
 
+app.use(nameRequestSpan);
 app.use(compression());
 app.disable("x-powered-by");
 app.set("trust proxy", 1);

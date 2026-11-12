@@ -2,9 +2,7 @@ import type { Route } from "./+types/auth.microsoft.callback";
 
 import { redirect } from "react-router";
 
-import { returnToCookie } from "~/services/.server";
-
-import { trackException } from "../../server-utils/azure-logger";
+import { returnToCookie, trackException } from "~/services/.server";
 
 import {
   authenticator_dev,
@@ -30,8 +28,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
       },
     });
   } catch (error) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    trackException(error as any);
+    trackException(error);
 
     throw error;
   }

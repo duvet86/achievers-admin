@@ -57,7 +57,7 @@ export async function action({ request }: Route.ActionArgs) {
       successMessage: "Successfully submitted. You can close the window now.",
     };
   } catch (e) {
-    trackException(e as Error);
+    trackException(e);
 
     return {
       errorMessage:

@@ -1,9 +1,9 @@
 import type { Dayjs } from "dayjs";
-import type { RootNode, EditorState } from "lexical";
+import type { EditorState } from "lexical";
 import type { Term } from "~/models";
 import type { DateRange, Environment } from "./models";
 
-import { $getRoot } from "lexical";
+import { $getRoot, $isElementNode } from "lexical";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 
@@ -301,13 +301,14 @@ export function getCurrentTermForDate(terms: Term[], date: Date): Term {
 export function isEditorEmpty(reportState: EditorState) {
   return reportState.read(() => {
     const root = $getRoot();
+    const firstChild = root.getFirstChild();
 
-    const isEmpty =
-      !root.getFirstChild<RootNode>() ||
-      (root.getFirstChild<RootNode>()?.isEmpty() &&
-        root.getChildrenSize() === 1);
-
-    return isEmpty;
+    return (
+      !firstChild ||
+      ($isElementNode(firstChild) &&
+        firstChild.isEmpty() &&
+        root.getChildrenSize() === 1)
+    );
   });
 }
 

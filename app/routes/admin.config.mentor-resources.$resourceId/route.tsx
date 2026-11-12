@@ -52,7 +52,7 @@ export async function action({ request, params }: Route.ActionArgs) {
       return redirect(`/admin/config/mentor-resources/${id}`);
     }
   } catch (e) {
-    trackException(e as Error);
+    trackException(e);
     return {
       errorMessage: `Category label "${jsonData.label}" already exists. Please choose a different label.`,
     };
